@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zerek Wiki — Отраслевые обзоры для бизнеса в Казахстане</title>
+<meta name="description" content="Бесплатные отраслевые обзоры для предпринимателей Казахстана. Риски, рынок и реальные цифры по нишам — база постоянно пополняется.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:    #080a0e;
+  --bg2:   #0e1118;
+  --bg3:   #141820;
+  --card:  #111520;
+  --line:  rgba(255,255,255,0.06);
+  --line2: rgba(255,255,255,0.1);
+  --t1:    #eef0f6;
+  --t2:    #7a8099;
+  --t3:    #40465a;
+  --ac:    #c8f542;
+  --ac-dim:rgba(200,245,66,0.08);
+  --r:     14px;
+  --sans:  'DM Sans', sans-serif;
+  --disp:  'Syne', sans-serif;
+  --max:   1200px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);background:var(--bg);color:var(--t1);overflow-x:hidden;line-height:1.6}
+a{color:inherit;text-decoration:none}
+
+.w{max-width:var(--max);margin:0 auto;padding:0 40px}
+
+/* HEADER */
+.hdr{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;transition:background .4s}
+.hdr.s{background:rgba(8,10,14,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--line)}
+.hdr .w{display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:var(--disp);font-weight:800;font-size:20px;letter-spacing:.12em;color:var(--ac)}
+.logo span{color:var(--t2);font-weight:400;font-size:13px;letter-spacing:.08em;margin-left:6px}
+.nav{display:flex;gap:28px;align-items:center}
+.nav a{font-size:13px;color:var(--t2);font-weight:500;transition:color .2s}
+.nav a:hover{color:var(--t1)}
+.nav-cta{padding:8px 22px;background:var(--ac);color:var(--bg);font-weight:700;font-size:12px;letter-spacing:.04em;border-radius:100px;transition:all .2s}
+.nav-cta:hover{background:#d8ff55}
+
+.burger{display:none;flex-direction:column;gap:5px;width:24px;cursor:pointer}
+.burger span{display:block;height:1.5px;background:var(--t1);border-radius:2px;transition:.3s}
+.burger.on span:nth-child(1){transform:rotate(45deg) translate(4.5px,4.5px)}
+.burger.on span:nth-child(2){opacity:0}
+.burger.on span:nth-child(3){transform:rotate(-45deg) translate(4.5px,-4.5px)}
+.mob{display:none;position:fixed;inset:0;background:rgba(8,10,14,.97);backdrop-filter:blur(30px);z-index:99;flex-direction:column;justify-content:center;align-items:center;gap:24px;opacity:0;pointer-events:none;transition:opacity .3s}
+.mob.on{opacity:1;pointer-events:all}
+.mob a{font-family:var(--disp);font-size:26px;font-weight:700;color:var(--t1)}
+.mob a:hover{color:var(--ac)}
+
+/* HERO */
+.hero{
+  padding:140px 0 80px;
+  border-bottom:1px solid var(--line);
+  position:relative; overflow:hidden;
+  background:radial-gradient(ellipse 70% 60% at 50% 0%, rgba(200,245,66,.04) 0%, transparent 60%);
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 100% 100% at 50% 0%, black 30%, transparent 70%);
+}
+.hero .w{position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:4px 14px 4px 8px;background:var(--ac-dim);border:1px solid rgba(200,245,66,.2);border-radius:100px;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ac);margin-bottom:24px}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--ac);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-family:var(--disp);font-size:clamp(36px,5vw,64px);font-weight:800;line-height:1.05;letter-spacing:-.02em;margin-bottom:16px}
+.hero h1 em{font-style:normal;color:var(--ac)}
+.hero-sub{font-size:16px;color:var(--t2);max-width:560px;line-height:1.8;margin-bottom:40px}
+.hero-meta{display:flex;gap:32px;flex-wrap:wrap}
+.hmeta{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--t3)}
+.hmeta strong{color:var(--t2)}
+
+/* SEARCH + FILTERS */
+.controls{padding:40px 0 0;position:sticky;top:57px;z-index:50;background:var(--bg);border-bottom:1px solid var(--line);padding-bottom:20px}
+.search-wrap{position:relative;max-width:480px;margin-bottom:20px}
+.search-ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:15px}
+#search{width:100%;padding:11px 16px 11px 40px;background:var(--bg2);border:1px solid var(--line2);border-radius:100px;font-family:var(--sans);font-size:14px;color:var(--t1);outline:none;transition:border .2s}
+#search::placeholder{color:var(--t3)}
+#search:focus{border-color:rgba(200,245,66,.3)}
+
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.ftag{padding:6px 16px;background:var(--bg2);border:1px solid var(--line);border-radius:100px;font-size:12px;font-weight:500;color:var(--t2);cursor:pointer;transition:all .2s;white-space:nowrap}
+.ftag:hover{border-color:rgba(200,245,66,.3);color:var(--t1)}
+.ftag.on{background:var(--ac-dim);border-color:rgba(200,245,66,.35);color:var(--ac)}
+
+/* GRID */
+.grid-wrap{padding:40px 0 100px}
+.grid-label{font-size:12px;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px}
+.grid-label span{color:var(--t2);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+
+/* CARD */
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:26px 24px;display:flex;flex-direction:column;
+  transition:all .25s;cursor:pointer;position:relative;overflow:hidden;
+}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--ac);transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.card:hover{border-color:rgba(200,245,66,.2);transform:translateY(-3px);background:var(--bg3)}
+.card:hover::before{transform:scaleX(1)}
+.card.hidden{display:none}
+
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.card-ico{font-size:26px}
+.card-badge{padding:3px 10px;border-radius:100px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.badge-ready{background:var(--ac-dim);border:1px solid rgba(200,245,66,.15);color:var(--ac)}
+.badge-soon{background:rgba(122,128,153,.08);border:1px solid rgba(122,128,153,.15);color:var(--t3)}
+
+.card-cat{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:6px}
+.card-title{font-family:var(--disp);font-size:17px;font-weight:700;margin-bottom:8px;color:var(--t1)}
+.card-desc{font-size:13px;color:var(--t2);line-height:1.65;flex:1}
+
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
+.card-tags{display:flex;gap:5px;flex-wrap:wrap}
+.ctag{padding:2px 8px;border:1px solid var(--line);border-radius:100px;font-size:10px;color:var(--t3)}
+.card-arrow{font-size:13px;color:var(--t3);transition:all .2s;white-space:nowrap}
+.card:hover .card-arrow{color:var(--ac);transform:translateX(3px)}
+.card-arrow.soon-lbl{color:var(--t3);font-size:11px}
+
+/* EMPTY */
+.empty{text-align:center;padding:80px 0;display:none}
+.empty h3{font-family:var(--disp);font-size:22px;font-weight:700;margin-bottom:8px;color:var(--t2)}
+.empty p{font-size:14px;color:var(--t3)}
+
+/* CTA */
+.cta-bar{
+  background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);
+  padding:40px 48px;display:flex;align-items:center;justify-content:space-between;gap:32px;
+  margin-bottom:60px;flex-wrap:wrap;
+}
+.cta-bar h3{font-family:var(--disp);font-size:22px;font-weight:700;margin-bottom:6px}
+.cta-bar p{font-size:14px;color:var(--t2);max-width:440px;line-height:1.7}
+.btn-main{display:inline-flex;align-items:center;gap:8px;padding:13px 32px;background:var(--ac);color:var(--bg);font-weight:700;font-size:13px;letter-spacing:.04em;border-radius:100px;transition:all .2s;white-space:nowrap}
+.btn-main:hover{background:#d8ff55;transform:translateY(-2px)}
+
+/* FOOTER */
+.footer{padding:36px 0;border-top:1px solid var(--line);background:var(--bg2)}
+.footer .w{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.footer-logo{font-family:var(--disp);font-weight:800;font-size:16px;letter-spacing:.12em;color:var(--ac)}
+.footer-copy{font-size:12px;color:var(--t3)}
+.footer-links{display:flex;gap:20px}
+.footer-links a{font-size:12px;color:var(--t3);transition:color .2s}
+.footer-links a:hover{color:var(--t1)}
+
+.coming-note{
+  padding:20px 24px;
+  background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);
+  font-size:14px;color:var(--t2);line-height:1.7;
+  margin-top:8px;margin-bottom:40px;
+}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.rv.vis{opacity:1;transform:none}
+.d1{transition-delay:.06s}.d2{transition-delay:.12s}.d3{transition-delay:.18s}
+.d4{transition-delay:.24s}.d5{transition-delay:.30s}.d6{transition-delay:.36s}
+
+@media(max-width:1024px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){
+  .w{padding:0 20px}
+  .nav{display:none}.burger{display:flex}
+  .hero{padding:110px 0 60px}
+  .grid{grid-template-columns:1fr}
+  .cta-bar{padding:28px 24px;flex-direction:column;align-items:flex-start}
+  .footer .w{flex-direction:column;text-align:center}
+  .footer-links{justify-content:center}
+  .controls{top:53px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr" id="hdr">
+  <div class="w">
+    <a href="index.html" class="logo">ZEREK <span>/ Wiki</span></a>
+    <nav class="nav">
+      <a href="index.html">Главная</a>
+      <a href="index.html#products">Продукты</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="https://t.me/u777oxo07" target="_blank" class="nav-cta">Открыть в Telegram</a>
+    </nav>
+    <div class="burger" id="burger"><span></span><span></span><span></span></div>
+  </div>
+</header>
+
+<div class="mob" id="mob">
+  <a href="index.html" onclick="closeMob()">Главная</a>
+  <a href="index.html#products" onclick="closeMob()">Продукты</a>
+  <a href="https://t.me/u777oxo07" target="_blank" style="color:var(--ac)">Telegram →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="w">
+    <div class="hero-badge"><span class="badge-dot"></span>Бесплатные обзоры</div>
+    <h1>Zerek <em>Wiki</em></h1>
+    <p class="hero-sub">Честные отраслевые разборы с упором на риски, реальные цифры и подводные камни. Читайте до того, как вложите деньги.</p>
+    <div class="hero-meta">
+      <div class="hmeta"><strong>Бесплатно</strong> без регистрации</div>
+      <div class="hmeta"><strong>База</strong> пополняется</div>
+      <div class="hmeta"><strong>Упор</strong> на риски и реальные цифры</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <div class="w">
+    <div class="search-wrap">
+      <span class="search-ico">🔍</span>
+      <input type="text" id="search" placeholder="Поиск по нише...">
+    </div>
+    <div class="filters" id="filters">
+      <div class="ftag on" data-cat="all">Все</div>
+      <div class="ftag" data-cat="food">Еда и напитки</div>
+      <div class="ftag" data-cat="service">Услуги</div>
+      <div class="ftag" data-cat="retail">Торговля</div>
+      <div class="ftag" data-cat="health">Здоровье</div>
+      <div class="ftag" data-cat="auto">Авто</div>
+    </div>
+  </div>
+</div>
+
+<!-- GRID -->
+<div class="grid-wrap">
+  <div class="w">
+    <div class="grid-label">Обзоров: <span id="count">6</span></div>
+    <div class="grid" id="grid">
+
+      <!-- READY -->
+      <a href="coffee.html" target="_blank" class="card rv d1" data-cat="food" data-title="кофейня кофе кофейный бизнес напитки">
+        <div class="card-top">
+          <div class="card-ico">☕</div>
+          <div class="card-badge badge-ready">Готов</div>
+        </div>
+        <div class="card-cat">Еда и напитки</div>
+        <div class="card-title">Кофейный бизнес</div>
+        <div class="card-desc">Форматы, юнит-экономика, риски и региональные данные по зарплатам и среднему чеку по всем регионам КЗ.</div>
+        <div class="card-footer">
+          <div class="card-tags">
+            <span class="ctag">Юнит-экономика</span>
+            <span class="ctag">Регионы</span>
+            <span class="ctag">Риски</span>
+          </div>
+          <div class="card-arrow">Читать →</div>
+        </div>
+      </a>
+
+      <a href="carwash.html" target="_blank" class="card rv d2" data-cat="auto" data-title="автомойка мойка авто машина">
+        <div class="card-top">
+          <div class="card-ico">🚗</div>
+          <div class="card-badge badge-ready">Готов</div>
+        </div>
+        <div class="card-cat">Авто</div>
+        <div class="card-title">Автомойка</div>
+        <div class="card-desc">Боксы, оборудование, трафик, сезонность и скрытые расходы — честный разбор одного из самых популярных бизнесов KZ.</div>
+        <div class="card-footer">
+          <div class="card-tags">
+            <span class="ctag">Форматы</span>
+            <span class="ctag">Сезонность</span>
+            <span class="ctag">CAPEX</span>
+          </div>
+          <div class="card-arrow">Читать →</div>
+        </div>
+      </a>
+
+      <a href="doner.html" target="_blank" class="card rv d3" data-cat="food" data-title="донер донерная фастфуд шаурма быстрое питание">
+        <div class="card-top">
+          <div class="card-ico">🌮</div>
+          <div class="card-badge badge-ready">Готов</div>
+        </div>
+        <div class="card-cat">Еда и напитки</div>
+        <div class="card-title">Донерная / фастфуд</div>
+        <div class="card-desc">Форматы, оборот, рентабельность и ключевые риски точки быстрого питания в казахстанских реалиях.</div>
+        <div class="card-footer">
+          <div class="card-tags">
+            <span class="ctag">Трафик</span>
+            <span class="ctag">Маржа</span>
+            <span class="ctag">Локация</span>
+          </div>
+          <div class="card-arrow">Читать →</div>
+        </div>
+      </a>
+
+      <a href="cleaning.html" target="_blank" class="card rv d4" data-cat="service" data-title="клининг уборка чистка cleaning">
+        <div class="card-top">
+          <div class="card-ico">🧹</div>
+          <div class="card-badge badge-ready">Готов</div>
+        </div>
+        <div class="card-cat">Услуги</div>
+        <div class="card-title">Клининг</div>
+        <div class="card-desc">Старт с минимальными вложениями, масштабирование через персонал и типичные ловушки клинингового бизнеса.</div>
+        <div class="card-footer">
+          <div class="card-tags">
+            <span class="ctag">Низкий CAPEX</span>
+            <span class="ctag">Масштаб</span>
+            <span class="ctag">B2B/B2C</span>
+          </div>
+          <div class="card-arrow">Читать →</div>
+        </div>
+      </a>
+
+      <a href="grocery.html" target="_blank" class="card rv d5" data-cat="retail" data-title="продуктовый магазин продукты торговля ритейл">
+        <div class="card-top">
+          <div class="card-ico">🛒</div>
+          <div class="card-badge badge-ready">Готов</div>
+        </div>
+        <div class="card-cat">Торговля</div>
+        <div class="card-title">Продуктовый магазин</div>
+        <div class="card-desc">Форматы, трафик, конкуренция с сетями и реальная маржа в регионах. Где точка безубыточности в рознице.</div>
+        <div class="card-footer">
+          <div class="card-tags">
+            <span class="ctag">Ассортимент</span>
+            <span class="ctag">Конкуренция</span>
+            <span class="ctag">Маржа</span>
+          </div>
+          <div class="card-arrow">Читать →</div>
+        </div>
+      </a>
+
+      <a href="pharmacy.html" target="_blank" class="card rv d6" data-cat="health" data-title="аптека фармацевтика лекарства здоровье">
+        <div class="card-top">
+          <div class="card-ico">💊</div>
+          <div class="card-badge badge-ready">Готов</div>
+        </div>
+        <div class="card-cat">Здоровье</div>
+        <div class="card-title">Аптека</div>
+        <div class="card-desc">Лицензирование, ассортимент, локация и экономика фармацевтической точки. Что важно знать до входа в нишу.</div>
+        <div class="card-footer">
+          <div class="card-tags">
+            <span class="ctag">Лицензия</span>
+            <span class="ctag">Локация</span>
+            <span class="ctag">Ассортимент</span>
+          </div>
+          <div class="card-arrow">Читать →</div>
+        </div>
+      </a>
+
+
+</div>
+
+    <div class="coming-note rv">📌 Новые обзоры выходят регулярно — подпишитесь на <a href="https://t.me/u777oxo07" target="_blank" style="color:var(--ac)">Zerek Wiki в Telegram</a></div>
+
+    <div class="empty" id="empty">
+      <h3>Ничего не найдено</h3>
+      <p>Попробуйте другой запрос или сбросьте фильтры</p>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-bar rv" style="margin-top:60px">
+      <div>
+        <h3>Нашли нужную нишу?</h3>
+        <p>Обзор показывает общую картину и риски. Но решение принимается на основе расчёта с вашими параметрами — городом, форматом и бюджетом.</p>
+      </div>
+      <a href="https://t.me/u777oxo07" target="_blank" class="btn-main">Рассчитать под себя →</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="w">
+    <div class="footer-logo">ZEREK</div>
+    <div class="footer-copy">© 2025 ZEREK · Данные: БНС РК</div>
+    <div class="footer-links">
+      <a href="index.html">Лендинг</a>
+      <a href="index.html#products">Продукты</a>
+      <a href="https://t.me/u777oxo07" target="_blank">Telegram</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Header
+var hdr=document.getElementById('hdr');
+window.addEventListener('scroll',function(){hdr.classList.toggle('s',window.scrollY>40)});
+
+// Burger
+var burger=document.getElementById('burger'),mob=document.getElementById('mob');
+burger.addEventListener('click',function(){burger.classList.toggle('on');mob.classList.toggle('on');document.body.style.overflow=mob.classList.contains('on')?'hidden':''});
+function closeMob(){burger.classList.remove('on');mob.classList.remove('on');document.body.style.overflow=''}
+
+// Reveal
+var obs=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting)x.target.classList.add('vis')})},{threshold:.08});
+document.querySelectorAll('.rv').forEach(function(el){obs.observe(el)});
+
+// Filter + Search
+var cards=Array.from(document.querySelectorAll('.card'));
+var activeCat='all';
+
+function filterCards(){
+  var q=document.getElementById('search').value.toLowerCase().trim();
+  var visible=0;
+  cards.forEach(function(c){
+    var cat=c.dataset.cat||'';
+    var title=(c.dataset.title||'').toLowerCase();
+    var text=(c.querySelector('.card-title')||{}).textContent||'';
+    var desc=(c.querySelector('.card-desc')||{}).textContent||'';
+    var matchCat=activeCat==='all'||cat===activeCat;
+    var matchQ=!q||title.includes(q)||text.toLowerCase().includes(q)||desc.toLowerCase().includes(q);
+    if(matchCat&&matchQ){c.classList.remove('hidden');visible++}
+    else c.classList.add('hidden');
+  });
+  document.getElementById('count').textContent=visible;
+  document.getElementById('empty').style.display=visible===0?'block':'none';
+}
+
+document.getElementById('search').addEventListener('input',filterCards);
+
+document.querySelectorAll('.ftag').forEach(function(f){
+  f.addEventListener('click',function(){
+    document.querySelectorAll('.ftag').forEach(function(x){x.classList.remove('on')});
+    f.classList.add('on');
+    activeCat=f.dataset.cat;
+    filterCards();
+  });
+});
+</script>
+</body>
+</html>
