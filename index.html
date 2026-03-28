@@ -98,7 +98,40 @@ ul { list-style:none }
   background-size:60px 60px;
   mask-image:radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 70%);
 }
-.hero .w { position:relative; z-index:1 }
+/* terminal canvas */
+#termCanvas {
+  position:absolute; inset:0; z-index:0;
+  opacity:.55; pointer-events:none;
+}
+/* floating data cards */
+.hero-float {
+  position:absolute; z-index:1; pointer-events:none;
+  font-family:'JetBrains Mono','Courier New',monospace;
+}
+@keyframes floatup { 0%{opacity:0;transform:translateY(18px)} 15%{opacity:1} 85%{opacity:1} 100%{opacity:0;transform:translateY(-18px)} }
+.fcard {
+  background:rgba(14,17,24,.82);
+  border:1px solid rgba(200,245,66,.18);
+  border-radius:10px; padding:12px 16px;
+  backdrop-filter:blur(12px);
+  animation:floatup 4s ease-in-out infinite;
+}
+.fcard-lbl { font-size:9px; color:rgba(200,245,66,.5); letter-spacing:.12em; text-transform:uppercase; margin-bottom:4px }
+.fcard-val { font-size:18px; font-weight:700; color:#c8f542; line-height:1 }
+.fcard-sub { font-size:10px; color:rgba(122,128,153,.7); margin-top:3px }
+.fc1 { right:8%; top:22%; animation-delay:0s }
+.fc2 { right:18%; top:55%; animation-delay:1.4s }
+.fc3 { right:4%; top:68%; animation-delay:2.8s }
+
+/* mini sparkline */
+.spark { display:flex; align-items:flex-end; gap:2px; margin-top:6px; height:20px }
+.spark-b { width:4px; background:rgba(200,245,66,.35); border-radius:2px; transition:.3s }
+.spark-b.hi { background:#c8f542 }
+
+/* counter animation */
+.count-up { display:inline-block }
+
+.hero .w { position:relative; z-index:2 }
 .hero-inner { max-width:820px }
 
 .hero-chip {
@@ -420,6 +453,31 @@ ul { list-style:none }
 <section class="hero">
   <div class="hero-bg"></div>
   <div class="hero-grid-bg"></div>
+  <canvas id="termCanvas"></canvas>
+  <div class="hero-float fc1 fcard">
+    <div class="fcard-lbl">Окупаемость</div>
+    <div class="fcard-val">14.2 мес</div>
+    <div class="fcard-sub">кофейня · Алматы</div>
+    <div class="spark">
+      <div class="spark-b" style="height:6px"></div>
+      <div class="spark-b" style="height:10px"></div>
+      <div class="spark-b" style="height:8px"></div>
+      <div class="spark-b" style="height:14px"></div>
+      <div class="spark-b" style="height:11px"></div>
+      <div class="spark-b hi" style="height:18px"></div>
+      <div class="spark-b hi" style="height:20px"></div>
+    </div>
+  </div>
+  <div class="hero-float fc2 fcard">
+    <div class="fcard-lbl">BEP · день</div>
+    <div class="fcard-val">47 чашек</div>
+    <div class="fcard-sub">точка безубыточности</div>
+  </div>
+  <div class="hero-float fc3 fcard">
+    <div class="fcard-lbl">Маржа</div>
+    <div class="fcard-val">62%</div>
+    <div class="fcard-sub">валовая · автомойка</div>
+  </div>
   <div class="w">
     <div class="hero-inner">
       <div class="hero-chip"><span class="chip-dot"></span>Telegram Mini App · Казахстан</div>
@@ -764,6 +822,178 @@ ul { list-style:none }
 <script>
 var hdr=document.getElementById('hdr');
 window.addEventListener('scroll',function(){hdr.classList.toggle('s',window.scrollY>40)});
+
+/* ── PARTICLE + NETWORK ANIMATION (Bloomberg/Vercel style) ── */
+(function(){
+  var c=document.getElementById('termCanvas');
+  if(!c)return;
+  var ctx=c.getContext('2d');
+  var W,H,pts,mouse={x:-9999,y:-9999};
+
+  function resize(){
+    W=c.width=c.offsetWidth;
+    H=c.height=c.offsetHeight;
+    init();
+  }
+
+  function init(){
+    pts=[];
+    var n=Math.min(Math.floor(W*H/9000),90);
+    for(var i=0;i<n;i++){
+      pts.push({
+        x:Math.random()*W,
+        y:Math.random()*H,
+        vx:(Math.random()-.5)*0.4,
+        vy:(Math.random()-.5)*0.4,
+        r:Math.random()*1.5+0.5,
+        pulse:Math.random()*Math.PI*2
+      });
+    }
+  }
+
+  resize();
+  window.addEventListener('resize',resize);
+
+  var hero=document.querySelector('.hero');
+  if(hero){
+    hero.addEventListener('mousemove',function(e){
+      var r=c.getBoundingClientRect();
+      mouse.x=e.clientX-r.left;
+      mouse.y=e.clientY-r.top;
+    });
+    hero.addEventListener('mouseleave',function(){mouse.x=-9999;mouse.y=-9999});
+  }
+
+  var frame=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    frame++;
+
+    for(var i=0;i<pts.length;i++){
+      var p=pts[i];
+      p.pulse+=0.018;
+
+      // mouse repulsion
+      var mdx=p.x-mouse.x, mdy=p.y-mouse.y;
+      var md=Math.sqrt(mdx*mdx+mdy*mdy);
+      if(md<160){
+        var force=(160-md)/160*0.012;
+        p.vx+=mdx*force;
+        p.vy+=mdy*force;
+      }
+
+      // damping
+      p.vx*=0.992; p.vy*=0.992;
+      p.x+=p.vx; p.y+=p.vy;
+
+      // bounce
+      if(p.x<0){p.x=0;p.vx*=-1}
+      if(p.x>W){p.x=W;p.vx*=-1}
+      if(p.y<0){p.y=0;p.vy*=-1}
+      if(p.y>H){p.y=H;p.vy*=-1}
+
+      // draw connections
+      for(var j=i+1;j<pts.length;j++){
+        var q=pts[j];
+        var dx=p.x-q.x, dy=p.y-q.y;
+        var dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<140){
+          var alpha=(1-dist/140)*0.18;
+          // highlight lines near mouse
+          if(md<200) alpha*=2.5;
+          ctx.beginPath();
+          ctx.moveTo(p.x,p.y);
+          ctx.lineTo(q.x,q.y);
+          ctx.strokeStyle='rgba(200,245,66,'+alpha+')';
+          ctx.lineWidth=0.6;
+          ctx.stroke();
+        }
+      }
+
+      // draw node
+      var pAlpha=0.25+Math.sin(p.pulse)*0.12;
+      if(md<160) pAlpha=Math.min(pAlpha*3,0.9);
+      var pr=p.r+(md<160?(160-md)/160*1.5:0);
+
+      // glow
+      if(md<160){
+        var grd=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,pr*4);
+        grd.addColorStop(0,'rgba(200,245,66,0.3)');
+        grd.addColorStop(1,'rgba(200,245,66,0)');
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,pr*4,0,Math.PI*2);
+        ctx.fillStyle=grd;
+        ctx.fill();
+      }
+
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,pr,0,Math.PI*2);
+      ctx.fillStyle='rgba(200,245,66,'+pAlpha+')';
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  /* ── COUNT-UP for hero stats ── */
+  function countUp(el,target,suffix,duration){
+    var start=0,startTime=null;
+    var isFloat=target%1!==0;
+    function step(ts){
+      if(!startTime)startTime=ts;
+      var prog=Math.min((ts-startTime)/duration,1);
+      var ease=1-Math.pow(1-prog,3);
+      var val=start+(target-start)*ease;
+      el.textContent=(isFloat?val.toFixed(1):Math.floor(val))+suffix;
+      if(prog<1)requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  // trigger when hero stats visible
+  var statsEl=document.querySelector('.hero-stats');
+  if(statsEl){
+    var done=false;
+    var obs=new IntersectionObserver(function(entries){
+      if(entries[0].isIntersecting&&!done){
+        done=true;
+        var items=statsEl.querySelectorAll('.hstat-val');
+        // 30+, 20+, 3 мин, 5
+        var data=[
+          {el:items[0],val:30,suffix:'+',dur:1200},
+          {el:items[1],val:20,suffix:'+',dur:1000},
+          {el:items[2],val:3,suffix:' мин',dur:800},
+          {el:items[3],val:5,suffix:'',dur:600}
+        ];
+        data.forEach(function(d){
+          if(d.el){
+            // clear existing text, keep span
+            var span=d.el.querySelector('span');
+            d.el.textContent='';
+            if(span)d.el.appendChild(span);
+            countUp(d.el,d.val,d.suffix,d.dur);
+          }
+        });
+      }
+    },{threshold:0.5});
+    obs.observe(statsEl);
+  }
+
+  /* ── FLICKER: randomly update floating card values ── */
+  var roiVals=['14.2 мес','11.8 мес','16.4 мес','13.0 мес'];
+  var bepVals=['47 чашек','53 чашки','41 чашка','60 чашек'];
+  var marginVals=['62%','58%','71%','65%'];
+  var ri=0,bi=0,mi=0;
+  setInterval(function(){
+    ri=(ri+1)%roiVals.length;
+    bi=(bi+1)%bepVals.length;
+    mi=(mi+1)%marginVals.length;
+    var cards=document.querySelectorAll('.fcard .fcard-val');
+    if(cards[0])cards[0].textContent=roiVals[ri];
+    if(cards[1])cards[1].textContent=bepVals[bi];
+    if(cards[2])cards[2].textContent=marginVals[mi];
+  },2800);
+})();
 
 var burger=document.getElementById('burger'),mob=document.getElementById('mob');
 burger.addEventListener('click',function(){
