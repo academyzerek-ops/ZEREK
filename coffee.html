@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZEREK — Кофейный бизнес Казахстана</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root{
+--bg-dark:#0f0d0a;--bg-mid:#171411;--bg-warm:#1c1814;--bg-card:#1a1610;--bg-card2:#211d17;--bg-light:#252019;
+--brd:#2a2318;--brd2:#3a3125;
+--t1:#f0e8dc;--t2:#a0947e;--t3:#6b6050;
+--ac:#b8885a;--ac2:#d4a872;--ac3:#8f6838;--ac-light:#e8c89a;
+--cream:#f5ead6;--espresso:#3a2210;--latte:#c8a47a;--mocha:#5c3d24;
+--ok:#6abf7b;--wrn:#d4a03a;--err:#c45c4a;--inf:#6a9fd4;
+--r:16px;--rs:10px
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg-dark);color:var(--t1);font-family:'Inter',-apple-system,sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.ct{max-width:1100px;margin:0 auto;padding:0 24px}
+
+/* HERO */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;background:radial-gradient(ellipse at 50% 40%,rgba(184,136,90,.08) 0%,transparent 60%),linear-gradient(180deg,var(--bg-dark) 0%,#12100c 100%)}
+.hero-ct{position:relative;z-index:2;padding:60px 24px}
+.hero-badge{display:inline-block;padding:6px 20px;background:rgba(184,136,90,.1);border:1px solid rgba(184,136,90,.25);border-radius:100px;font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--ac2);margin-bottom:28px}
+.hero h1{font-size:clamp(2.2rem,5vw,3.8rem);font-weight:800;line-height:1.1;letter-spacing:-1.5px;margin-bottom:20px;background:linear-gradient(135deg,var(--cream) 0%,var(--latte) 50%,var(--mocha) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:clamp(.95rem,2vw,1.1rem);color:var(--t2);max-width:620px;margin:0 auto;font-weight:400;line-height:1.75}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:rgba(15,13,10,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--brd);padding:12px 0}
+.nav-in{display:flex;align-items:center;gap:20px;overflow-x:auto;scrollbar-width:none}.nav-in::-webkit-scrollbar{display:none}
+.nav-logo{font-size:15px;font-weight:800;color:var(--ac2);letter-spacing:4px;flex-shrink:0;text-decoration:none}
+.nav-a{font-size:12px;color:var(--t3);text-decoration:none;white-space:nowrap;padding:6px 12px;border-radius:6px;transition:.2s;font-weight:500}
+.nav-a:hover{color:var(--ac2);background:rgba(184,136,90,.08)}
+
+/* SECTIONS — alternating */
+.sec{padding:72px 0;border-bottom:1px solid var(--brd)}
+.sec-dark{background:var(--bg-dark)}
+.sec-warm{background:var(--bg-warm)}
+.sec-mid{background:var(--bg-mid)}
+.sec-lb{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--ac);margin-bottom:14px}
+.sec-lb::before{content:'';width:20px;height:2px;background:var(--ac);border-radius:1px}
+.sec-t{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;letter-spacing:-.8px;margin-bottom:16px;line-height:1.2;color:var(--cream)}
+.p{font-size:.95rem;color:var(--t2);text-align:justify;line-height:1.8;margin-bottom:20px}
+.p strong{color:var(--t1)}.p em{color:var(--ac2);font-style:normal;font-weight:600}
+
+/* CARDS */
+.cd{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:28px;transition:.3s}
+.cd:hover{border-color:var(--brd2);box-shadow:0 0 30px rgba(184,136,90,.05)}
+.cd2{background:var(--bg-card2)}
+.cg{display:grid;gap:20px}
+.cg2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.cg3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.cg4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.cg5{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+
+/* STATS */
+.sc{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:20px;text-align:center}
+.sv{font-size:1.5rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--ac2);line-height:1.2}
+.sl{font-size:11px;color:var(--t2);margin-top:4px;line-height:1.4}
+.ss{font-size:9px;color:var(--t3);margin-top:6px;font-style:italic}
+
+/* BADGES */
+.bg{display:inline-block;padding:3px 10px;border-radius:100px;font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.bg-d{background:rgba(106,159,212,.12);color:var(--inf)}.bg-i{background:rgba(184,136,90,.12);color:var(--ac2)}.bg-r{background:rgba(196,92,74,.12);color:var(--err)}.bg-s{background:rgba(106,191,123,.12);color:var(--ok)}.bg-w{background:rgba(212,160,58,.12);color:var(--wrn)}
+
+/* PROGRESS */
+.pr{margin-bottom:14px}.prh{display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px}
+.prn{color:var(--t1);font-weight:500}.prv{color:var(--ac2);font-family:'JetBrains Mono',monospace;font-weight:600;font-size:12px}
+.prt{height:7px;background:rgba(184,136,90,.1);border-radius:4px;overflow:hidden}
+.prf{height:100%;border-radius:4px;background:linear-gradient(135deg,var(--ac),var(--ac3));transition:width 1s}
+
+/* TABLES */
+table.dt{width:100%;border-collapse:collapse;font-size:13px}
+.dt thead th{padding:11px 14px;text-align:left;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);border-bottom:2px solid var(--brd2);background:rgba(184,136,90,.04)}
+.dt td{padding:11px 14px;border-bottom:1px solid var(--brd);color:var(--t2)}.dt tr:hover td{background:rgba(184,136,90,.03);color:var(--t1)}
+.dt .n{font-family:'JetBrains Mono',monospace;font-weight:500;color:var(--t1)}.dt .hl{color:var(--ac2);font-weight:600}
+.tw{overflow-x:auto;border-radius:var(--r);border:1px solid var(--brd)}
+
+/* RISK CARDS */
+.rc{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:22px 24px;display:flex;gap:16px;align-items:flex-start;margin-bottom:14px}
+.ri{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.rh .ri{background:rgba(196,92,74,.12)}.rm .ri{background:rgba(212,160,58,.12)}.rl .ri{background:rgba(106,191,123,.12)}
+.rt{font-weight:700;font-size:15px;margin-bottom:6px}.rx{font-size:13px;color:var(--t2);text-align:justify;line-height:1.7}
+
+/* CALLOUTS */
+.callout{padding:20px 24px;border-radius:var(--rs);margin:20px 0}
+.callout-err{background:rgba(196,92,74,.04);border:1px solid rgba(196,92,74,.12);border-left:3px solid var(--err)}
+.callout-wrn{background:rgba(212,160,58,.04);border:1px solid rgba(212,160,58,.12);border-left:3px solid var(--wrn)}
+.callout-ok{background:rgba(106,191,123,.04);border:1px solid rgba(106,191,123,.12);border-left:3px solid var(--ok)}
+.callout-ac{background:rgba(184,136,90,.04);border:1px solid rgba(184,136,90,.12);border-left:3px solid var(--ac)}
+
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(184,136,90,.06);border:1px solid var(--brd);border-radius:100px;font-size:12px;font-weight:500;color:var(--t2);margin:4px}
+.chip-d{width:6px;height:6px;border-radius:50%;background:var(--ac)}
+.tg{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.pn{background:rgba(184,136,90,.04);border:1px solid var(--brd);border-radius:var(--rs);padding:16px;text-align:center}
+.tc{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.quote{font-size:1.05rem;color:var(--ac2);font-weight:600;font-style:italic;padding:20px 0;border-top:1px solid var(--brd);border-bottom:1px solid var(--brd);margin:28px 0;text-align:center;line-height:1.6}
+
+/* CTA */
+.cta{padding:100px 0;text-align:center;background:radial-gradient(ellipse at 50% 50%,rgba(184,136,90,.06) 0%,transparent 60%),var(--bg-warm)}
+.cta-t{font-size:clamp(1.6rem,4vw,2.6rem);font-weight:800;letter-spacing:-1px;margin-bottom:16px;color:var(--cream)}
+.cta-d{color:var(--t2);max-width:540px;margin:0 auto 32px;font-size:1rem;line-height:1.75}
+.cta-b{display:inline-block;padding:14px 40px;background:linear-gradient(135deg,var(--ac2),var(--ac3));color:var(--bg-dark);font-weight:700;font-size:14px;letter-spacing:1px;text-transform:uppercase;border-radius:100px;text-decoration:none;transition:.3s;border:none;cursor:pointer}
+.cta-b:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(184,136,90,.3)}
+.ft{padding:40px 0;border-top:1px solid var(--brd);text-align:center;background:var(--bg-dark)}
+.ft-t{font-size:12px;color:var(--t3)}
+
+@media(max-width:768px){.ct{padding:0 16px}.sec{padding:48px 0}.cd{padding:20px}.tc,.cg2,.cg3,.cg4,.cg5{grid-template-columns:1fr}.hero h1{font-size:2rem}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero" id="top"><div class="hero-ct">
+<div style="font-size:28px;font-weight:800;color:var(--ac2);letter-spacing:8px;margin-bottom:28px">ZEREK</div>
+<div class="hero-badge">Отраслевой обзор</div>
+<h1>Кофейный бизнес<br>Казахстана</h1>
+<p class="hero-sub">Форматы, юнит-экономика, оборудование, кадры, скрытые расходы и матрица рисков — честный разбор для тех, кто собирается открыть кофейню. С использованием актуальных макропараметров страны из достоверных источников: БНС, аналитических отчётов и реального бизнеса.</p>
+</div></section>
+
+<!-- NAV -->
+<nav class="nav"><div class="ct nav-in">
+<a href="#top" class="nav-logo">ZEREK</a>
+<a href="#culture" class="nav-a">Рынок</a>
+<a href="#formats" class="nav-a">Форматы</a>
+<a href="#unit" class="nav-a">Юнит-экономика</a>
+<a href="#upsell" class="nav-a">Апсейл</a>
+<a href="#equipment" class="nav-a">Оборудование</a>
+<a href="#labor" class="nav-a">Бариста</a>
+<a href="#location" class="nav-a">Локация</a>
+<a href="#hidden" class="nav-a">Скрытые расходы</a>
+<a href="#risks" class="nav-a">Риски</a>
+<a href="#regions" class="nav-a">Регионы</a>
+<a href="#cta" class="nav-a">Расчёт</a>
+</div></nav>
+
+<!-- INTRO -->
+<section class="sec sec-warm"><div class="ct">
+<div class="sec-lb">Зачем этот обзор</div>
+<h2 class="sec-t">Кофейня — это не «просто варить кофе»</h2>
+<p class="p">Давайте начистоту. Каждый второй начинающий предприниматель хоть раз думал: <em>«А не открыть ли кофейню?»</em> Звучит красиво: утренний аромат арабики, уютный свет, хипстерская вывеска, очередь за латте. Instagram уже пишется в голове.</p>
+<p class="p">А потом начинается реальность. Кофемашина за 4 миллиона ломается на третий месяц. Бариста увольняется ровно тогда, когда вы наконец его обучили. Арендодатель поднимает ставку на 30%. Молоко подорожало. Летом продажи проседают. А бизнес-план, нарисованный на салфетке, показывал совсем другие цифры.</p>
+<p class="p">Этот обзор — <strong>не рекламный буклет и не мотивационная статья</strong>. Это попытка собрать всё, что стоит знать до того, как вы подпишете договор аренды. Главный фокус — на <strong>операционной реальности кофейного бизнеса</strong>: на чём зарабатываете, на чём теряете, и где риски, которые не видны со стороны.</p>
+<div class="callout callout-ac"><p style="font-size:13px;color:var(--ac2);margin:0"><strong>Дисклеймер:</strong> все оценки — экспертные, на основе данных БНС РК и рыночной аналитики. Конкретные цифры вашей кофейни будут зависеть от города, формата и лично вас. Но порядок цифр — именно такой.</p></div>
+</div></section>
+
+<!-- COFFEE CULTURE -->
+<section class="sec sec-dark" id="culture"><div class="ct">
+<div class="sec-lb">Кофейная культура</div>
+<h2 class="sec-t">Казахстан — чайная страна. Но кофе приходит</h2>
+<p class="p">Важный контекст, который многие упускают. Казахстан исторически — <strong>страна чая</strong>. Чай пьют все, везде и всегда. Потребление чая на душу населения — одно из самых высоких в мире. Кофе — это культурный импорт, который только набирает обороты.</p>
+<p class="p">И вот ключевое: <em>кофейная культура приходит, но не однородно</em>. В Алматы и Астане уже сформировалась аудитория, которая различает арабику и робусту, спрашивает про обжарку и готова платить 2 500 ₸ за фильтр. В Караганде и Актобе спрос растёт, но ещё формируется. А в моногородах и южных регионах кофейня — это до сих пор «место, где наливают Nescafe 3-в-1».</p>
+<div class="cg cg3" style="margin-bottom:20px">
+<div class="cd cd2" style="border-left:3px solid var(--ok)"><h4 style="font-size:14px;font-weight:700;color:var(--ok);margin-bottom:6px">Зрелые рынки</h4><p style="font-size:13px;color:var(--t2)">Алматы, Астана — сформированный спрос, высокая конкуренция, аудитория разбирается в кофе. Можно работать со specialty.</p></div>
+<div class="cd cd2" style="border-left:3px solid var(--wrn)"><h4 style="font-size:14px;font-weight:700;color:var(--wrn);margin-bottom:6px">Растущие рынки</h4><p style="font-size:13px;color:var(--t2)">Караганда, Актобе, Павлодар, Костанай, ВКО, ЗКО — спрос формируется, конкуренция низкая, но и готовность платить за premium — ограничена.</p></div>
+<div class="cd cd2" style="border-left:3px solid var(--err)"><h4 style="font-size:14px;font-weight:700;color:var(--err);margin-bottom:6px">Незрелые рынки</h4><p style="font-size:13px;color:var(--t2)">Моногорода, южные регионы — чайная традиция сильна, кофе воспринимается как необязательная роскошь. Риск — работать «впустую», формируя рынок за свой счёт.</p></div>
+</div>
+<p class="p">Это не значит, что в моногороде нельзя открыть кофейню. Можно. Но нужно понимать: <strong>вы будете не столько продавать кофе, сколько продавать идею кофе</strong>. Это другой маркетинг, другие сроки окупаемости и другой уровень терпения.</p>
+</div></section>
+
+<!-- FORMATS -->
+<section class="sec sec-warm" id="formats"><div class="ct">
+<div class="sec-lb">Форматы</div>
+<h2 class="sec-t">Пять моделей: от фургона до франшизы</h2>
+<p class="p">Слово «кофейня» может означать что угодно — от переоборудованного фургона до лофта на 120 м². Экономика отличается радикально.</p>
+
+<div class="cg cg2" style="margin-bottom:28px">
+<!-- Mobile -->
+<div class="cd cd2" style="border-top:3px solid var(--inf)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-d">Мобильность</span><h3 style="font-size:17px;font-weight:700;margin-top:8px">🚐 Мобильная кофейня</h3></div><div style="text-align:right"><div style="font-size:20px;font-weight:800;font-family:'JetBrains Mono';color:var(--inf)">4–12M ₸</div><div style="font-size:10px;color:var(--t3)">авто + оборудование</div></div></div>
+<div style="margin-top:14px">
+<div class="pr"><div class="prh"><span class="prn">Площадь</span><span class="prv">авто / фургон</span></div><div class="prt"><div class="prf" style="width:10%;background:var(--inf)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Персонал</span><span class="prv">1 чел.</span></div><div class="prt"><div class="prf" style="width:10%;background:var(--inf)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Средний чек</span><span class="prv">700–1 200 ₸</span></div><div class="prt"><div class="prf" style="width:20%;background:var(--inf)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Окупаемость</span><span class="prv">6–14 мес.</span></div><div class="prt"><div class="prf" style="width:40%;background:var(--inf)"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:10px;text-align:justify">Переоборудованный авто, прицеп или фургон. Нет аренды — главное преимущество. Но: разрешения, санитария, зависимость от погоды, ограниченное меню, электричество от генератора. Отлично для тестирования спроса и мероприятий.</p>
+</div>
+
+<!-- To-Go -->
+<div class="cd cd2" style="border-top:3px solid var(--ok)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-s">Вход</span><h3 style="font-size:17px;font-weight:700;margin-top:8px">☕ Coffee To-Go</h3></div><div style="text-align:right"><div style="font-size:20px;font-weight:800;font-family:'JetBrains Mono';color:var(--ok)">3–8M ₸</div><div style="font-size:10px;color:var(--t3)">стартовые инвестиции</div></div></div>
+<div style="margin-top:14px">
+<div class="pr"><div class="prh"><span class="prn">Площадь</span><span class="prv">5–15 м²</span></div><div class="prt"><div class="prf" style="width:15%;background:var(--ok)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Персонал</span><span class="prv">1–2 чел.</span></div><div class="prt"><div class="prf" style="width:15%;background:var(--ok)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Средний чек</span><span class="prv">800–1 400 ₸</span></div><div class="prt"><div class="prf" style="width:25%;background:var(--ok)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Окупаемость</span><span class="prv">4–8 мес.</span></div><div class="prt"><div class="prf" style="width:25%;background:var(--ok)"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:10px;text-align:justify">Островок в ТРЦ, киоск, окно. Высокая маржа, но потолок выручки ограничен. Вы буквально покупаете трафик. Если трафик ушёл — вы тоже.</p>
+</div>
+
+<!-- Мини -->
+<div class="cd cd2" style="border-top:3px solid var(--ac)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-i">Баланс</span><h3 style="font-size:17px;font-weight:700;margin-top:8px">🏪 Мини-кофейня</h3></div><div style="text-align:right"><div style="font-size:20px;font-weight:800;font-family:'JetBrains Mono';color:var(--ac2)">8–20M ₸</div><div style="font-size:10px;color:var(--t3)">стартовые инвестиции</div></div></div>
+<div style="margin-top:14px">
+<div class="pr"><div class="prh"><span class="prn">Площадь</span><span class="prv">20–50 м²</span></div><div class="prt"><div class="prf" style="width:35%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Персонал</span><span class="prv">3–5 чел.</span></div><div class="prt"><div class="prf" style="width:35%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Средний чек</span><span class="prv">1 500–2 500 ₸</span></div><div class="prt"><div class="prf" style="width:45%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Окупаемость</span><span class="prv">8–14 мес.</span></div><div class="prt"><div class="prf" style="width:45%"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:10px;text-align:justify">Золотая середина. Есть посадка — есть «третье место». Можно продавать десерты, завтраки. ФОТ ещё управляем. Формат, с которого чаще всего стоит начинать.</p>
+</div>
+
+<!-- Полная -->
+<div class="cd cd2" style="border-top:3px solid var(--wrn)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-w">Масштаб</span><h3 style="font-size:17px;font-weight:700;margin-top:8px">🏬 Полноформатная</h3></div><div style="text-align:right"><div style="font-size:20px;font-weight:800;font-family:'JetBrains Mono';color:var(--wrn)">20–50M ₸</div><div style="font-size:10px;color:var(--t3)">стартовые инвестиции</div></div></div>
+<div style="margin-top:14px">
+<div class="pr"><div class="prh"><span class="prn">Площадь</span><span class="prv">60–120 м²</span></div><div class="prt"><div class="prf" style="width:65%;background:var(--wrn)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Персонал</span><span class="prv">6–12 чел.</span></div><div class="prt"><div class="prf" style="width:65%;background:var(--wrn)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Средний чек</span><span class="prv">2 500–4 500 ₸</span></div><div class="prt"><div class="prf" style="width:70%;background:var(--wrn)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Окупаемость</span><span class="prv">14–24 мес.</span></div><div class="prt"><div class="prf" style="width:70%;background:var(--wrn)"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:10px;text-align:justify">Полноценная кухня, атмосфера, бренд. Здесь уже нельзя «играть в бизнес» — нужна команда, система и терпение.</p>
+</div>
+
+<!-- Франшиза -->
+<div class="cd cd2" style="border-top:3px solid var(--err)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-r">Франшиза</span><h3 style="font-size:17px;font-weight:700;margin-top:8px">🔗 Франчайзинг</h3></div><div style="text-align:right"><div style="font-size:20px;font-weight:800;font-family:'JetBrains Mono';color:var(--err)">15–70M ₸</div><div style="font-size:10px;color:var(--t3)">стартовые инвестиции</div></div></div>
+<div style="margin-top:14px">
+<div class="pr"><div class="prh"><span class="prn">Паушальный взнос</span><span class="prv">2–15M ₸</span></div><div class="prt"><div class="prf" style="width:50%;background:var(--err)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Роялти</span><span class="prv">3–7% выручки</span></div><div class="prt"><div class="prf" style="width:40%;background:var(--err)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Окупаемость</span><span class="prv">12–30 мес.</span></div><div class="prt"><div class="prf" style="width:75%;background:var(--err)"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:10px;text-align:justify">Готовая модель, обучение, бренд. Но вы платите за чужие правила, чужих поставщиков и чужие ограничения. Если повезёт с франчайзером.</p>
+</div>
+</div>
+</div></section>
+
+<!-- UNIT ECONOMICS -->
+<section class="sec sec-dark" id="unit"><div class="ct">
+<div class="sec-lb">Юнит-экономика</div>
+<h2 class="sec-t">Сколько зарабатывает чашка кофе</h2>
+
+<div class="callout callout-ok" style="margin-top:0;margin-bottom:24px">
+<p style="font-size:14px;font-weight:700;color:var(--ok);margin-bottom:8px">📊 Бенчмарк: средние показатели мини-кофейни (30 м², город 400K+ ₸)</p>
+<div class="cg cg5" style="margin-top:12px">
+<div class="sc"><div class="sv">100</div><div class="sl">чашек / день</div></div>
+<div class="sc"><div class="sv">1 800 ₸</div><div class="sl">средний чек</div></div>
+<div class="sc"><div class="sv">5.4M ₸</div><div class="sl">выручка / мес</div></div>
+<div class="sc"><div class="sv">60–75%</div><div class="sl">маржа на чашку</div></div>
+<div class="sc"><div class="sv" style="color:var(--ok)">8–15%</div><div class="sl">чистая маржа</div></div>
+</div>
+</div>
+
+<div class="cd" style="margin-bottom:24px">
+<h3 style="font-size:15px;font-weight:700;margin-bottom:16px">Куда уходит выручка (~5M ₸/мес)</h3>
+<div class="pr"><div class="prh"><span class="prn">🫘 Себестоимость напитков и еды</span><span class="prv">25–30%</span></div><div class="prt"><div class="prf" style="width:28%;background:var(--mocha)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">👥 ФОТ (3–4 человека)</span><span class="prv">20–28%</span></div><div class="prt"><div class="prf" style="width:24%;background:var(--inf)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">🏠 Аренда</span><span class="prv">15–25%</span></div><div class="prt"><div class="prf" style="width:20%;background:var(--wrn)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">⚡ Коммунальные + эквайринг</span><span class="prv">5–8%</span></div><div class="prt"><div class="prf" style="width:7%;background:var(--t3)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">📢 Маркетинг + расходники</span><span class="prv">5–10%</span></div><div class="prt"><div class="prf" style="width:8%;background:var(--ac3)"></div></div></div>
+<div style="margin-top:16px;padding:14px 18px;background:rgba(106,191,123,.05);border:1px solid rgba(106,191,123,.12);border-radius:var(--rs);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+<div><span style="font-size:11px;color:var(--ok);font-weight:600;text-transform:uppercase;letter-spacing:1px">Чистая прибыль</span></div>
+<div style="font-size:24px;font-weight:800;font-family:'JetBrains Mono';color:var(--ok)">400K–1.2M ₸/мес</div>
+</div>
+</div>
+
+<div class="callout callout-err">
+<p style="font-size:13px;color:var(--err);margin:0"><strong>Реальность часто отличается.</strong> Бенчмарк выше — это при хорошем раскладе. Первые 2–4 месяца почти всегда убыточные. Сезонные спады, поломки, текучесть кадров, ошибки с локацией — всё это снижает реальную маржу до 5% или уводит в минус. Именно поэтому ниже — подробный разбор рисков и скрытых расходов.</p>
+</div>
+</div></section>
+
+<!-- UPSELL -->
+<section class="sec sec-warm" id="upsell"><div class="ct">
+<div class="sec-lb">Апсейл</div>
+<h2 class="sec-t">На чём зарабатывать помимо кофе</h2>
+<p class="p">Кофе — это трафик. Но <strong>прибыль делается на допродажах</strong>. Клиент уже у кассы, уже достал кошелёк — правильно предложите. Кофейня, которая продаёт только кофе — это, мягко говоря, благотворительность.</p>
+<div class="cg cg2">
+<div class="cd cd2"><h3 style="font-size:15px;font-weight:700;margin-bottom:10px">🥐 Выпечка и десерты</h3><p style="font-size:13px;color:var(--t2);text-align:justify;margin-bottom:10px">Круассан за 200 ₸ себестоимости → 800–1 200 ₸ в продаже. «К вашему латте — свежий круассан?» — работает на автопилоте.</p><div class="tg"><span class="chip"><span class="chip-d"></span>Круассан: ×4–6</span><span class="chip"><span class="chip-d"></span>Чизкейк: ×3–4</span><span class="chip"><span class="chip-d"></span>Печенье: ×5–8</span></div></div>
+<div class="cd cd2"><h3 style="font-size:15px;font-weight:700;margin-bottom:10px">🥑 Завтраки и сэндвичи</h3><p style="font-size:13px;color:var(--t2);text-align:justify;margin-bottom:10px">Средний чек с завтраком — <em>2 500–4 000 ₸</em> вместо 1 500 ₸. Но кухня — это повар, продукты, санитария и списания. Считайте дважды.</p><div class="tg"><span class="chip"><span class="chip-d"></span>Тост: ×3–4</span><span class="chip"><span class="chip-d"></span>Сэндвич: ×3–5</span></div></div>
+<div class="cd cd2"><h3 style="font-size:15px;font-weight:700;margin-bottom:10px">🧊 Сезонное меню</h3><p style="font-size:13px;color:var(--t2);text-align:justify;margin-bottom:10px">Летом горячий кофе -20–30%. Айс-латте, лимонады, матча — спасение с наценкой ×4–7. Лимонад себестоимостью 150 ₸ → 900–1 200 ₸.</p><div class="tg"><span class="chip"><span class="chip-d"></span>Лимонад: ×5–7</span><span class="chip"><span class="chip-d"></span>Матча: ×4–5</span><span class="chip"><span class="chip-d"></span>Раф: ×4–6</span></div></div>
+<div class="cd cd2"><h3 style="font-size:15px;font-weight:700;margin-bottom:10px">☕ Зерно, мерч, подписки</h3><p style="font-size:13px;color:var(--t2);text-align:justify;margin-bottom:10px">Пачка зерна — ×2–3, работает на бренд. Мерч — маржинально, но штучно. Подписки — пока экзотика, но тренд приходит.</p><div class="tg"><span class="chip"><span class="chip-d"></span>Зерно 250г: ×2–3</span><span class="chip"><span class="chip-d"></span>Стакан: ×3–5</span></div></div>
+</div>
+<div class="callout callout-ac"><p style="font-size:13px;color:var(--ac2);margin:0"><strong>Правило:</strong> правильный апсейл увеличивает средний чек на 40–80% без увеличения трафика. Это самый «дешёвый» рост выручки.</p></div>
+</div></section>
+
+<!-- EQUIPMENT -->
+<section class="sec sec-dark" id="equipment"><div class="ct">
+<div class="sec-lb">Оборудование</div>
+<h2 class="sec-t">Железо: на чём не стоит экономить</h2>
+<p class="p">Эспрессо-машина — сердце кофейни. Но не единственная покупка. Полный чек-лист:</p>
+<div class="tw" style="margin-bottom:20px"><table class="dt"><thead><tr><th>Оборудование</th><th>Бюджет</th><th>Оптимум</th><th>Премиум</th><th>⚠</th></tr></thead><tbody>
+<tr><td>Эспрессо-машина (2 гр.)</td><td class="n">1.5–2.5M</td><td class="n hl">3–5M</td><td class="n">6–12M</td><td style="color:var(--err)">●●●●●</td></tr>
+<tr><td>Кофемолка</td><td class="n">300–500K</td><td class="n hl">600K–1.2M</td><td class="n">1.5–3M</td><td style="color:var(--err)">●●●●●</td></tr>
+<tr><td>Фильтрация воды</td><td class="n">80–150K</td><td class="n hl">200–400K</td><td class="n">500K+</td><td style="color:var(--err)">●●●●○</td></tr>
+<tr><td>Холодильники</td><td class="n">200–400K</td><td class="n">500K–1M</td><td class="n">1–2M</td><td style="color:var(--wrn)">●●●○○</td></tr>
+<tr><td>Блендер</td><td class="n">50–100K</td><td class="n">150–250K</td><td class="n">300K+</td><td style="color:var(--wrn)">●●●○○</td></tr>
+<tr><td>Касса + POS</td><td class="n">100–200K</td><td class="n">250–400K</td><td class="n">500K+</td><td style="color:var(--err)">●●●●●</td></tr>
+<tr><td>Посуда, питчеры, весы</td><td class="n">100–200K</td><td class="n">200–400K</td><td class="n">500K+</td><td style="color:var(--wrn)">●●●●○</td></tr>
+</tbody></table></div>
+<p class="p"><strong>Нельзя экономить:</strong> кофемолка и фильтрация. Дешёвый гриндер = нестабильный помол = нестабильный вкус = потеря клиентов. Плохая вода убивает машину за год. <em>Гриндер за миллион окупится быстрее, чем ремонт машины за два.</em></p>
+<p class="p"><strong>Можно:</strong> мебель (б/у лофт > новый IKEA), декор (DIY + локальные ремесленники), касса (облачная, не тяжёлое железо).</p>
+</div></section>
+
+<!-- LABOR -->
+<section class="sec sec-warm" id="labor"><div class="ct">
+<div class="sec-lb">Кадры</div>
+<h2 class="sec-t">Бариста: найти, обучить, потерять, повторить</h2>
+<p class="p">Средняя зарплата в секторе питания — <em>335 142 ₸</em>. На 22% ниже средней по стране. Реальные доходы работников падают. Вы конкурируете за людей с ритейлом, доставкой, маркетплейсами. Курьер Glovo зарабатывает сопоставимо — но ему не нужно учиться латте-арту.</p>
+<div class="tc" style="margin-bottom:20px">
+<div class="cd cd2"><h3 style="font-size:15px;font-weight:700;margin-bottom:12px">💰 Зарплатная вилка</h3>
+<div class="pr"><div class="prh"><span class="prn">Стажёр</span><span class="prv">180–250K ₸</span></div><div class="prt"><div class="prf" style="width:35%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Уверенный бариста</span><span class="prv">250–350K ₸</span></div><div class="prt"><div class="prf" style="width:50%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Старший / шеф</span><span class="prv">350–500K ₸</span></div><div class="prt"><div class="prf" style="width:70%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Управляющий</span><span class="prv">400–700K ₸</span></div><div class="prt"><div class="prf" style="width:90%"></div></div></div>
+<p style="font-size:11px;color:var(--t3);margin-top:8px">+ ~25% сверху (ОПВ, ОСМС, ИПН)</p></div>
+<div class="cd cd2"><h3 style="font-size:15px;font-weight:700;margin-bottom:12px">⏱ Цена текучести</h3><p style="font-size:13px;color:var(--t2);text-align:justify;margin-bottom:12px">Средний бариста работает 4–8 мес. Каждый уход:</p>
+<div class="pr"><div class="prh"><span class="prn">Поиск и найм</span><span class="prv">1–3 нед.</span></div><div class="prt"><div class="prf" style="width:30%;background:var(--err)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Обучение</span><span class="prv">2–4 нед.</span></div><div class="prt"><div class="prf" style="width:40%;background:var(--err)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Ошибки новичка</span><span class="prv">3–7% выручки</span></div><div class="prt"><div class="prf" style="width:25%;background:var(--err)"></div></div></div>
+<div class="callout callout-err" style="margin-bottom:0"><p style="font-size:12px;color:var(--err);margin:0"><strong>1 уход = 50–150K ₸.</strong> При 2–3 сменах в год — до 450K ₸ на замену людей.</p></div></div>
+</div>
+</div></section>
+
+<!-- LOCATION -->
+<section class="sec sec-dark" id="location"><div class="ct">
+<div class="sec-lb">Локация</div>
+<h2 class="sec-t">Расположение решает всё. Буквально</h2>
+<p class="p">Можно иметь лучший кофе, лучшего бариста и самый красивый интерьер — <strong>и закрыться через полгода из-за плохой локации</strong>. Расположение — единственный параметр, который нельзя «допилить» после запуска.</p>
+<div class="cg cg2" style="margin-bottom:20px">
+<div class="cd cd2" style="border-left:3px solid var(--ok)"><h3 style="font-size:14px;font-weight:700;color:var(--ok);margin-bottom:6px">✓ Хорошие локации</h3><p style="font-size:13px;color:var(--t2);text-align:justify">Первая линия у БЦ и коворкингов. Рядом с вузами. Пешеходные улицы. ЖК 500+ квартир. ТРЦ (но аренда!). У метро / остановок.</p></div>
+<div class="cd cd2" style="border-left:3px solid var(--err)"><h3 style="font-size:14px;font-weight:700;color:var(--err);margin-bottom:6px">✗ Плохие локации</h3><p style="font-size:13px;color:var(--t2);text-align:justify">Вторая линия. Промзоны. Спальные районы без якоря. Рядом с 3+ кофейнями. Подвалы. Сильный авто-, но слабый пешеходный трафик.</p></div>
+</div>
+<div class="callout callout-err"><p style="font-size:13px;color:var(--err);margin:0"><strong>Правило «50 метров»:</strong> между первой линией и «за углом» — минус 40–60% трафика. Не экономьте на аренде, переплачивая жизнью бизнеса.</p></div>
+<p class="p">Перед подписанием: постойте у точки 3 дня, считайте людей утром, днём, вечером. В будни и выходные. Если не готовы потратить 3 дня — не готовы потратить 15 миллионов.</p>
+</div></section>
+
+<!-- HIDDEN COSTS -->
+<section class="sec sec-warm" id="hidden"><div class="ct">
+<div class="sec-lb">Скрытые расходы</div>
+<h2 class="sec-t">Деньги, которые бизнес-план не показал</h2>
+<p class="p">Каждый бизнес-план содержит: аренда, ФОТ, зерно, молоко. И <em>не содержит</em> примерно 15–25% реальных расходов:</p>
+<div class="cg cg2" style="margin-bottom:16px">
+<div class="cd cd2"><div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div style="width:36px;height:36px;border-radius:10px;background:rgba(196,92,74,.1);display:flex;align-items:center;justify-content:center;font-size:16px">🔧</div><div><h4 style="font-size:13px;font-weight:700">Ремонт оборудования</h4><span class="bg bg-r">80–250K/мес</span></div></div><p style="font-size:12px;color:var(--t2);text-align:justify">Профилактика, замена уплотнителей, калибровка. Гарантия 12 мес — проблемы на 13-й.</p></div>
+<div class="cd cd2"><div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div style="width:36px;height:36px;border-radius:10px;background:rgba(212,160,58,.1);display:flex;align-items:center;justify-content:center;font-size:16px">📋</div><div><h4 style="font-size:13px;font-weight:700">СЭС, пожарная, лицензии</h4><span class="bg bg-w">200–600K разово</span></div></div><p style="font-size:12px;color:var(--t2);text-align:justify">Обновление ежегодно. Штрафы — от 50 МРП. Не та статья, где стоит экспериментировать.</p></div>
+<div class="cd cd2"><div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div style="width:36px;height:36px;border-radius:10px;background:rgba(106,159,212,.1);display:flex;align-items:center;justify-content:center;font-size:16px">🚰</div><div><h4 style="font-size:13px;font-weight:700">Фильтрация воды</h4><span class="bg bg-d">15–40K/мес</span></div></div><p style="font-size:12px;color:var(--t2);text-align:justify">Обратный осмос + реминерализация. Без этого — накипь убивает машину, вкус плывёт.</p></div>
+<div class="cd cd2"><div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div style="width:36px;height:36px;border-radius:10px;background:rgba(184,136,90,.1);display:flex;align-items:center;justify-content:center;font-size:16px">🗑</div><div><h4 style="font-size:13px;font-weight:700">Списания и порча</h4><span class="bg bg-w">3–7% от выручки</span></div></div><p style="font-size:12px;color:var(--t2);text-align:justify">Молоко, выпечка, ошибки бариста. Для десертов — до 15%.</p></div>
+<div class="cd cd2"><div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div style="width:36px;height:36px;border-radius:10px;background:rgba(106,191,123,.1);display:flex;align-items:center;justify-content:center;font-size:16px">👤</div><div><h4 style="font-size:13px;font-weight:700">Текучесть кадров</h4><span class="bg bg-r">50–150K за уход</span></div></div><p style="font-size:12px;color:var(--t2);text-align:justify">Обучение 2–3 недели, ошибки новичка. До 450K/год.</p></div>
+<div class="cd cd2"><div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div style="width:36px;height:36px;border-radius:10px;background:rgba(184,136,90,.1);display:flex;align-items:center;justify-content:center;font-size:16px">💳</div><div><h4 style="font-size:13px;font-weight:700">Эквайринг, касса, ОФД</h4><span class="bg bg-i">1.5–2.5% оборота</span></div></div><p style="font-size:12px;color:var(--t2);text-align:justify">70–85% безнал. На 5M выручки — 75–125K/мес за право принимать деньги.</p></div>
+</div>
+<div class="callout callout-err"><p style="font-size:13px;color:var(--err);margin:0"><strong>Итого: 15–25% от выручки.</strong> Бизнес-план показывал 20% маржи? После этих статей — 5–10%. Подушка 2–3 мес. операционки (1.5–3M ₸) — не опция.</p></div>
+</div></section>
+
+<!-- RISKS -->
+<section class="sec sec-dark" id="risks"><div class="ct">
+<div class="sec-lb">Матрица рисков</div>
+<h2 class="sec-t">Всё, что может пойти не так</h2>
+<p class="p">Самый важный раздел. Не потому что мы пессимисты — а потому что <strong>бизнес, который не считает риски, считает убытки.</strong></p>
+
+<h3 style="font-size:16px;font-weight:800;color:var(--err);margin:24px 0 14px">🔴 Критические</h3>
+<div class="rc rh"><div class="ri">📍</div><div><div class="rt">Провал локации</div><div class="rx">Подписали аренду, вложили 3M в ремонт — а трафика нет. Убрали остановку, закрыли БЦ, открыли конкурента. Для to-go — смертельно.</div><div class="callout callout-err" style="margin-bottom:0"><p style="font-size:12px;color:var(--err);margin:0"><strong>Защита:</strong> 3 дня замеров. Краткосрочная аренда на 6 мес. Пункт о досрочном расторжении.</p></div></div></div>
+<div class="rc rh"><div class="ri">📈</div><div><div class="rt">Инфляция расходников</div><div class="rx">Молоко, сиропы, стаканы — всё дорожает двузначными темпами. Импортное зерно зависит от курса тенге. Повышать меню каждый месяц — терять клиентов. Маржа тает в реальном времени.</div><div class="callout callout-err" style="margin-bottom:0"><p style="font-size:12px;color:var(--err);margin:0"><strong>Защита:</strong> пересмотр цен раз в квартал. Локальные поставщики. Фиксация цен в контрактах на 3 мес.</p></div></div></div>
+<div class="rc rh"><div class="ri">👥</div><div><div class="rt">Кадровый голод</div><div class="rx">Зарплата в питании — одна из самых низких. Бариста уходят в ритейл, доставку, маркетплейсы. Средний срок — 4–8 мес. Постоянно учите новых и теряете обученных.</div><div class="callout callout-err" style="margin-bottom:0"><p style="font-size:12px;color:var(--err);margin:0"><strong>Защита:</strong> з/п чуть выше рынка + бонусы + обучение как ценность + нормальный график.</p></div></div></div>
+<div class="rc rh"><div class="ri">💀</div><div><div class="rt">Кассовый разрыв</div><div class="rx">Первые 2–4 месяца — убыточные почти у всех. Если все деньги ушли в запуск — разрыв закроет вас быстрее, чем плохой кофе.</div><div class="callout callout-err" style="margin-bottom:0"><p style="font-size:12px;color:var(--err);margin:0"><strong>Защита:</strong> подушка 2–3 мес. операционных расходов сверх инвестиций.</p></div></div></div>
+
+<h3 style="font-size:16px;font-weight:800;color:var(--wrn);margin:28px 0 14px">🟡 Серьёзные</h3>
+<div class="rc rm"><div class="ri">🏠</div><div><div class="rt">Арендное давление</div><div class="rx">Рынок недвижимости растёт. Арендодатели повышают ставки. В мегаполисах аренда растёт быстрее выручки кофеен. Переезд = потеря аудитории.</div></div></div>
+<div class="rc rm"><div class="ri">🏪</div><div><div class="rt">Конкуренция</div><div class="rx">В Алматы и Астане — приближение к насыщению. Сетевые игроки демпингуют. В регионах — пока свободнее, но и спрос ниже.</div></div></div>
+<div class="rc rm"><div class="ri">📊</div><div><div class="rt">Сезонность</div><div class="rx">Лето = –20–30% горячих напитков. Без холодного меню вы теряете треть на 3–4 мес. Постоянные расходы — 12 месяцев.</div></div></div>
+<div class="rc rm"><div class="ri">☕</div><div><div class="rt">Нестабильность рецепта</div><div class="rx">Без стандартизации каждый бариста варит «по-своему». Клиент получает разный продукт — и тихо уходит навсегда.</div><div class="callout callout-wrn" style="margin-bottom:0"><p style="font-size:12px;color:var(--wrn);margin:0"><strong>Защита:</strong> техкарты, весы, таймер, шкала помола — стандарт. Калибровка гриндера каждое утро.</p></div></div></div>
+<div class="rc rm"><div class="ri">🔧</div><div><div class="rt">Поломка машины</div><div class="rx">Машина встала = 0 выручки на 1–5 дней. В регионах быстрый сервис — редкость.</div></div></div>
+<div class="rc rm"><div class="ri">🍵</div><div><div class="rt">Чайная культура</div><div class="rx">В моногородах и на юге кофе — необязательная роскошь. Вы формируете рынок за свой счёт. Окупаемость дольше, аудитория уже.</div></div></div>
+
+<h3 style="font-size:16px;font-weight:800;color:var(--ok);margin:28px 0 14px">🟢 Управляемые</h3>
+<div class="rc rl"><div class="ri">⚖️</div><div><div class="rt">Регуляторные</div><div class="rx">СЭС, маркировка, касса — предсказуемы при подготовке (200–600K на старте).</div></div></div>
+<div class="rc rl"><div class="ri">📱</div><div><div class="rt">Маркетинг</div><div class="rx">Instagram, Google Maps, Яндекс — 3–5% выручки. Локальные инфлюенсеры в малых городах дешевле, чем кажется.</div></div></div>
+<div class="rc rl"><div class="ri">🧾</div><div><div class="rt">Налоги</div><div class="rx">Упрощёнка, патент, ТОО vs ИП — стандартные решения. Бухгалтер за 30–50K решит 90% вопросов.</div></div></div>
+
+<div class="quote">«Оптимист открывает кофейню. Пессимист считает её расходы.<br>Реалист делает и то, и другое — и именно он до сих пор работает.»</div>
+</div></section>
+
+<!-- REGIONS -->
+<section class="sec sec-warm" id="regions"><div class="ct">
+<div class="sec-lb">Регионы</div>
+<h2 class="sec-t">Где открывать: зарплата → средний чек → потенциал</h2>
+<p class="p">Зарплата в регионе = платёжеспособность клиента = потолок среднего чека. Данные БНС:</p>
+<div class="cd cd2" style="margin-bottom:24px">
+<div class="pr"><div class="prh"><span class="prn">Мангистауская</span><span class="prv">606 125 ₸</span></div><div class="prt"><div class="prf" style="width:100%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Атырауская</span><span class="prv">602 752 ₸</span></div><div class="prt"><div class="prf" style="width:99%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">г. Астана</span><span class="prv">569 647 ₸</span></div><div class="prt"><div class="prf" style="width:94%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Ұлытау</span><span class="prv">554 277 ₸</span></div><div class="prt"><div class="prf" style="width:91%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">г. Алматы</span><span class="prv">546 261 ₸</span></div><div class="prt"><div class="prf" style="width:90%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Карагандинская</span><span class="prv">410 314 ₸</span></div><div class="prt"><div class="prf" style="width:68%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Павлодарская</span><span class="prv">405 705 ₸</span></div><div class="prt"><div class="prf" style="width:67%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Актюбинская</span><span class="prv">401 215 ₸</span></div><div class="prt"><div class="prf" style="width:66%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">ВКО</span><span class="prv">400 007 ₸</span></div><div class="prt"><div class="prf" style="width:66%"></div></div></div>
+<div style="border-top:1px dashed var(--brd);margin:12px 0;padding-top:10px"><span style="font-size:11px;color:var(--t3)">▾ ниже средней по стране</span></div>
+<div class="pr"><div class="prh"><span class="prn">Костанайская</span><span class="prv">377 719 ₸</span></div><div class="prt"><div class="prf" style="width:62%;opacity:.6"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Абай</span><span class="prv">372 831 ₸</span></div><div class="prt"><div class="prf" style="width:62%;opacity:.6"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Акмолинская</span><span class="prv">366 749 ₸</span></div><div class="prt"><div class="prf" style="width:61%;opacity:.6"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">ЗКО</span><span class="prv">363 934 ₸</span></div><div class="prt"><div class="prf" style="width:60%;opacity:.6"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Кызылординская</span><span class="prv">353 237 ₸</span></div><div class="prt"><div class="prf" style="width:58%;opacity:.5"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Алматинская</span><span class="prv">343 625 ₸</span></div><div class="prt"><div class="prf" style="width:57%;opacity:.5"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">г. Шымкент</span><span class="prv">336 678 ₸</span></div><div class="prt"><div class="prf" style="width:56%;opacity:.5"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Жетісу</span><span class="prv">331 211 ₸</span></div><div class="prt"><div class="prf" style="width:55%;opacity:.5"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">СКО</span><span class="prv">317 302 ₸</span></div><div class="prt"><div class="prf" style="width:52%;opacity:.5"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Жамбылская</span><span class="prv">308 058 ₸</span></div><div class="prt"><div class="prf" style="width:51%;opacity:.4"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Туркестанская</span><span class="prv">288 690 ₸</span></div><div class="prt"><div class="prf" style="width:48%;opacity:.4"></div></div></div>
+<div style="font-size:10px;color:var(--t3);margin-top:10px;font-style:italic">Данные БНС РК</div>
+</div>
+
+<div class="cg cg3">
+<div class="cd cd2"><h4 style="font-size:14px;font-weight:700;margin-bottom:6px">🏙 Астана + Алматы</h4><p style="font-size:12px;color:var(--t2);text-align:justify">Макс. чек, макс. конкуренция. Нужен бренд или уникальный формат.</p></div>
+<div class="cd cd2"><h4 style="font-size:14px;font-weight:700;margin-bottom:6px">🏭 Актобе, Караганда, Павлодар, ЗКО</h4><p style="font-size:12px;color:var(--t2);text-align:justify">Крепкий средний класс, растущий спрос, низкая конкуренция. Окно возможностей.</p></div>
+<div class="cd cd2"><h4 style="font-size:14px;font-weight:700;margin-bottom:6px">🛢 Атырау, Мангистау</h4><p style="font-size:12px;color:var(--t2);text-align:justify">Высокие зарплаты, но компактный вахтовый рынок. «Дорого и камерно».</p></div>
+</div>
+</div></section>
+
+<!-- CTA TRANSITION -->
+<section class="sec sec-dark" style="border-bottom:none"><div class="ct">
+<div class="sec-lb">Что дальше</div>
+<h2 class="sec-t">От обзора — к вашим цифрам</h2>
+<p class="p">Вы прочитали общий обзор. Но общие цифры — это общие цифры. <strong>Ваша кофейня будет работать не «в среднем по стране», а в конкретном городе, на конкретной улице, с конкретным бюджетом.</strong></p>
+<p class="p">Следующий шаг — <em>индивидуальный расчёт</em>. Как минимум:</p>
+<div class="cg cg3" style="margin-bottom:24px">
+<div class="cd cd2" style="text-align:center"><div style="font-size:28px;margin-bottom:8px">📐</div><h3 style="font-size:15px;font-weight:700;margin-bottom:6px">Точка безубыточности</h3><p style="font-size:12px;color:var(--t2)">Сколько чашек/день, чтобы не уйти в минус?</p></div>
+<div class="cd cd2" style="text-align:center"><div style="font-size:28px;margin-bottom:8px">📊</div><h3 style="font-size:15px;font-weight:700;margin-bottom:6px">Период окупаемости</h3><p style="font-size:12px;color:var(--t2)">Через сколько месяцев вернутся инвестиции? При реалистичном сценарии.</p></div>
+<div class="cd cd2" style="text-align:center"><div style="font-size:28px;margin-bottom:8px">🧮</div><h3 style="font-size:15px;font-weight:700;margin-bottom:6px">Финмодель + бизнес-план</h3><p style="font-size:12px;color:var(--t2)">Полная модель: сезонность, рост цен, три сценария. Плюс бизнес-план для инвесторов или банка.</p></div>
+</div>
+<p class="p">Общий обзор помогает понять ландшафт. <strong>Но решение об инвестициях принимается на основе модели с вашими параметрами.</strong></p>
+</div></section>
+
+<!-- CTA -->
+<section class="cta" id="cta"><div class="ct">
+<div style="font-size:28px;font-weight:800;color:var(--ac2);letter-spacing:8px;margin-bottom:24px">ZEREK</div>
+<h2 class="cta-t">Рассчитаем экономику<br>вашей кофейни</h2>
+<p class="cta-d">ZEREK строит финансовые модели и бизнес-планы для кофеен и других бизнесов. С учётом города, формата, бюджета и реальных данных. Не шаблон — а расчёт под вас.</p>
+<a href="https://t.me/u777oxo07" target="_blank" class="cta-b">Запросить расчёт</a>
+<div style="margin-top:40px;max-width:560px;margin-left:auto;margin-right:auto">
+<p style="font-size:1.05rem;color:var(--ac2);font-weight:600;font-style:italic;line-height:1.7;text-align:center">«И помните: сильный бизнес строится не на надеждах, а на расчётах.»</p>
+<p style="font-size:12px;color:var(--t3);margin-top:8px;text-align:center">— Команда ZEREK</p>
+</div>
+</div></section>
+
+<!-- FOOTER -->
+<footer class="ft">
+<div style="font-size:20px;font-weight:800;color:var(--ac2);letter-spacing:6px;margin-bottom:12px">ZEREK</div>
+<p class="ft-t">© ZEREK Analytics · Данные: БНС РК</p>
+<p class="ft-t" style="margin-top:4px">Не является инвестиционной рекомендацией.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZEREK — Аптечный бизнес Казахстана</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root{
+--bg:#f5f8f5;--bg2:#eaf0ea;--bg3:#e0ebe0;--bg-card:#ffffff;--bg-card2:#f0f5f0;
+--brd:#c8d8c8;--brd2:#a8c4a8;
+--t1:#1a2e1a;--t2:#5a7060;--t3:#7a9480;
+--ac:#1a8a4a;--ac2:#28a85a;--ac3:#147038;--ac-light:#a8e0b8;
+--mint:#b8f0d0;--leaf:#2d6e3f;--pill:#e8f5ee;
+--ok:#22a85a;--wrn:#d4a020;--err:#c44040;--inf:#2878d8;
+--r:16px;--rs:10px
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--t1);font-family:'Inter',-apple-system,sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.ct{max-width:1100px;margin:0 auto;padding:0 24px}
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;background:linear-gradient(180deg,var(--bg) 0%,var(--bg3) 100%)}
+.hero-ct{position:relative;z-index:2;padding:60px 24px}
+.hero-badge{display:inline-block;padding:6px 20px;background:rgba(26,138,74,.08);border:1px solid rgba(26,138,74,.2);border-radius:100px;font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--ac);margin-bottom:28px}
+.hero h1{font-size:clamp(2.2rem,5vw,3.8rem);font-weight:800;line-height:1.1;letter-spacing:-1.5px;margin-bottom:20px;background:linear-gradient(135deg,var(--t1) 0%,var(--ac) 50%,var(--ac2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:clamp(.95rem,2vw,1.1rem);color:var(--t2);max-width:640px;margin:0 auto;font-weight:400;line-height:1.75}
+.nav{position:sticky;top:0;z-index:100;background:rgba(245,248,245,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--brd);padding:12px 0}
+.nav-in{display:flex;align-items:center;gap:20px;overflow-x:auto;scrollbar-width:none}.nav-in::-webkit-scrollbar{display:none}
+.nav-logo{font-size:15px;font-weight:800;color:var(--ac);letter-spacing:4px;flex-shrink:0;text-decoration:none}
+.nav-a{font-size:12px;color:var(--t3);text-decoration:none;white-space:nowrap;padding:6px 12px;border-radius:6px;transition:.2s;font-weight:500}
+.nav-a:hover{color:var(--ac);background:rgba(26,138,74,.06)}
+.sec{padding:72px 0;border-bottom:1px solid var(--brd)}
+.sec-w{background:var(--bg)}
+.sec-g{background:var(--bg2)}
+.sec-d{background:var(--bg3)}
+.sec-lb{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--ac);margin-bottom:14px}
+.sec-lb::before{content:'';width:20px;height:2px;background:var(--ac);border-radius:1px}
+.sec-t{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;letter-spacing:-.8px;margin-bottom:16px;line-height:1.2}
+.p{font-size:.95rem;color:var(--t2);text-align:justify;line-height:1.8;margin-bottom:20px}
+.p strong{color:var(--t1)}.p em{color:var(--ac);font-style:normal;font-weight:600}
+.cd{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:28px;transition:.3s;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.cd:hover{border-color:var(--brd2);box-shadow:0 4px 20px rgba(26,138,74,.08)}
+.cd2{background:var(--bg-card2);box-shadow:none}
+.cg{display:grid;gap:20px}
+.cg2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.cg3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.cg4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.cg5{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.sc{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.03)}
+.sv{font-size:1.4rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--ac);line-height:1.2}
+.sl{font-size:11px;color:var(--t2);margin-top:4px;line-height:1.4}
+.ss{font-size:9px;color:var(--t3);margin-top:6px;font-style:italic}
+.bg{display:inline-block;padding:3px 10px;border-radius:100px;font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.bg-d{background:rgba(40,120,216,.08);color:var(--inf)}.bg-i{background:rgba(26,138,74,.08);color:var(--ac)}.bg-r{background:rgba(196,64,64,.08);color:var(--err)}.bg-s{background:rgba(34,168,90,.08);color:var(--ok)}.bg-w{background:rgba(212,160,32,.08);color:var(--wrn)}
+.pr{margin-bottom:14px}.prh{display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px}
+.prn{color:var(--t1);font-weight:500}.prv{color:var(--ac);font-family:'JetBrains Mono',monospace;font-weight:600;font-size:12px}
+.prt{height:7px;background:rgba(26,138,74,.08);border-radius:4px;overflow:hidden}
+.prf{height:100%;border-radius:4px;background:linear-gradient(135deg,var(--ac2),var(--ac3));transition:width 1s}
+table.dt{width:100%;border-collapse:collapse;font-size:13px}
+.dt thead th{padding:11px 14px;text-align:left;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);border-bottom:2px solid var(--brd2);background:rgba(26,138,74,.03)}
+.dt td{padding:11px 14px;border-bottom:1px solid var(--brd);color:var(--t2)}.dt tr:hover td{background:rgba(26,138,74,.02);color:var(--t1)}
+.dt .n{font-family:'JetBrains Mono',monospace;font-weight:500;color:var(--t1)}.dt .hl{color:var(--ac);font-weight:600}
+.tw{overflow-x:auto;border-radius:var(--r);border:1px solid var(--brd)}
+.rc{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:22px 24px;display:flex;gap:16px;align-items:flex-start;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.03)}
+.ri{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.rh .ri{background:rgba(196,64,64,.06)}.rm .ri{background:rgba(212,160,32,.06)}.rl .ri{background:rgba(34,168,90,.06)}
+.rt{font-weight:700;font-size:15px;margin-bottom:6px}.rx{font-size:13px;color:var(--t2);text-align:justify;line-height:1.7}
+.callout{padding:20px 24px;border-radius:var(--rs);margin:20px 0}
+.callout-err{background:rgba(196,64,64,.04);border:1px solid rgba(196,64,64,.1);border-left:3px solid var(--err)}
+.callout-wrn{background:rgba(212,160,32,.04);border:1px solid rgba(212,160,32,.1);border-left:3px solid var(--wrn)}
+.callout-ok{background:rgba(34,168,90,.04);border:1px solid rgba(34,168,90,.1);border-left:3px solid var(--ok)}
+.callout-ac{background:rgba(26,138,74,.04);border:1px solid rgba(26,138,74,.1);border-left:3px solid var(--ac)}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(26,138,74,.05);border:1px solid var(--brd);border-radius:100px;font-size:12px;font-weight:500;color:var(--t2);margin:4px}
+.chip-d{width:6px;height:6px;border-radius:50%;background:var(--ac)}
+.tg{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.tc{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.quote{font-size:1.05rem;color:var(--ac);font-weight:600;font-style:italic;padding:20px 0;border-top:1px solid var(--brd);border-bottom:1px solid var(--brd);margin:28px 0;text-align:center;line-height:1.6}
+.cta{padding:100px 0;text-align:center;background:linear-gradient(180deg,var(--bg2) 0%,var(--bg3) 100%)}
+.cta-t{font-size:clamp(1.6rem,4vw,2.6rem);font-weight:800;letter-spacing:-1px;margin-bottom:16px}
+.cta-d{color:var(--t2);max-width:540px;margin:0 auto 32px;font-size:1rem;line-height:1.75}
+.cta-b{display:inline-block;padding:14px 40px;background:linear-gradient(135deg,var(--ac2),var(--ac3));color:#fff;font-weight:700;font-size:14px;letter-spacing:1px;text-transform:uppercase;border-radius:100px;text-decoration:none;transition:.3s}
+.cta-b:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(26,138,74,.25)}
+.ft{padding:40px 0;border-top:1px solid var(--brd);text-align:center;background:var(--bg)}
+.ft-t{font-size:12px;color:var(--t3)}
+@media(max-width:768px){.ct{padding:0 16px}.sec{padding:48px 0}.cd{padding:20px}.tc,.cg2,.cg3,.cg4,.cg5{grid-template-columns:1fr}.hero h1{font-size:2rem}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero" id="top"><div class="hero-ct">
+<div style="font-size:28px;font-weight:800;color:var(--ac);letter-spacing:8px;margin-bottom:28px">ZEREK</div>
+<div class="hero-badge">Отраслевой обзор</div>
+<h1>Аптечный бизнес<br>Казахстана</h1>
+<p class="hero-sub">Форматы, лицензирование, наценки, конкуренция с сетями, маркировка, кадры, скрытые расходы и риски — полный разбор для тех, кто хочет открыть аптеку. Спойлер: это один из самых зарегулированных бизнесов в стране.</p>
+</div></section>
+
+<!-- NAV -->
+<nav class="nav"><div class="ct nav-in">
+<a href="#top" class="nav-logo">ZEREK</a>
+<a href="#market" class="nav-a">Рынок</a>
+<a href="#chains" class="nav-a">Сети</a>
+<a href="#formats" class="nav-a">Форматы</a>
+<a href="#license" class="nav-a">Лицензия</a>
+<a href="#unit" class="nav-a">Экономика</a>
+<a href="#upsell" class="nav-a">Апсейл</a>
+<a href="#equipment" class="nav-a">Оборудование</a>
+<a href="#labor" class="nav-a">Кадры</a>
+<a href="#hidden" class="nav-a">Скрытые расходы</a>
+<a href="#risks" class="nav-a">Риски</a>
+<a href="#cta" class="nav-a">Расчёт</a>
+</div></nav>
+
+<!-- INTRO -->
+<section class="sec sec-g"><div class="ct">
+<div class="sec-lb">Зачем этот обзор</div>
+<h2 class="sec-t">Аптека — «вечный бизнес», который может разорить</h2>
+<p class="p">Логика кажется безупречной: <em>люди болеют всегда, лекарства нужны всегда, спрос не зависит от сезона</em>. В отличие от кофейни или автомойки, аптека работает на базовой человеческой потребности — здоровье. Звучит как идеальный бизнес.</p>
+<p class="p">А потом вы узнаёте, что для открытия нужна лицензия и фармацевтическое образование. Что наценки на лекарства из перечня ЖНВЛС регулируются государством. Что «Биосфера» с 448 аптеками закупает препараты дешевле вас на 15–25%. Что маркировка — обязательна и стоит денег. Что один просроченный препарат на полке — это штраф и приостановка лицензии. И что <strong>77% рынка уже принадлежит сетям</strong>.</p>
+<p class="p">Этот обзор — честная попытка собрать всё, что стоит знать до того, как вы подадите заявку на eLicense.</p>
+</div></section>
+
+<!-- MARKET -->
+<section class="sec sec-w" id="market"><div class="ct">
+<div class="sec-lb">Фармацевтический рынок</div>
+<h2 class="sec-t">8 774 аптеки. 1.5 триллиона тенге. И вы хотите войти</h2>
+<div class="cg cg4" style="margin-bottom:24px">
+<div class="sc"><div class="sv">8 774</div><div class="sl">аптек в РК</div><div class="ss">2025, +2.8% за год</div></div>
+<div class="sc"><div class="sv">~1.5T ₸</div><div class="sl">общий фарм рынок</div><div class="ss">2025, +13.1%</div></div>
+<div class="sc"><div class="sv">871B ₸</div><div class="sl">розничный рынок</div><div class="ss">2025, +17%</div></div>
+<div class="sc"><div class="sv">33K ₸</div><div class="sl">расходы на лекарства / чел.</div><div class="ss">на душу, год</div></div>
+</div>
+<p class="p">Розничный фармрынок — <em>871 млрд тенге</em> и растёт двузначными темпами. Но рост — инфляционный: цены растут, а количество проданных упаковок <strong>сокращается</strong>. Люди покупают меньше, но дороже. Это важный нюанс для бизнес-модели.</p>
+<div class="cg cg3" style="margin-bottom:20px">
+<div class="sc"><div class="sv">1 170</div><div class="sl">аптек в Алматы</div><div class="ss">5 на 10 000 населения</div></div>
+<div class="sc"><div class="sv">837</div><div class="sl">аптек в Астане</div><div class="ss">5 на 10 000</div></div>
+<div class="sc"><div class="sv">692</div><div class="sl">аптек в Шымкенте</div><div class="ss">5 на 10 000</div></div>
+</div>
+<p class="p">В крупных городах <em>5 аптек на 10 000 населения</em>. Это уже насыщение. В среднем по стране — 4. Новая аптека в Алматы конкурирует с 1 170 существующими. В региональном городе — шанс выше, но и спрос ниже.</p>
+</div></section>
+
+<!-- CHAINS -->
+<section class="sec sec-g" id="chains"><div class="ct">
+<div class="sec-lb">Сетевые гиганты</div>
+<h2 class="sec-t">77% рынка — у сетей. Вы — оставшиеся 23%</h2>
+<p class="p">Это, пожалуй, <strong>главный факт, который стоит осознать до входа на рынок</strong>. Сетевые аптеки контролируют 77% товарооборота. В Туркестанской области — 98%. Индивидуальным аптекам остаётся 23% рынка, и эта доля сокращается каждый год.</p>
+<div class="tw" style="margin-bottom:20px"><table class="dt"><thead><tr><th>Сеть</th><th>Аптеки</th><th>Особенность</th></tr></thead><tbody>
+<tr><td><strong>Биосфера</strong></td><td class="n hl">448+</td><td>Лидер. Связана с дистрибьютором «Аманат»</td></tr>
+<tr><td><strong>Зерде</strong></td><td class="n">344+</td><td>Рост +7% за год. Фитопроизводство</td></tr>
+<tr><td><strong>Аптека со склада</strong></td><td class="n">~300</td><td>Связана с дистрибьютором «Инкар»</td></tr>
+<tr><td><strong>Рауза-Аде</strong></td><td class="n">190+</td><td>+50 точек за 2025 год</td></tr>
+<tr><td><strong>Europharma</strong></td><td class="n">100+</td><td>Premium-формат. Группа «Aqniet»</td></tr>
+</tbody></table></div>
+<div class="callout callout-err"><p style="font-size:13px;color:var(--err);margin:0"><strong>Ключевое:</strong> большинство крупных сетей связаны с дистрибьюторами. Это значит, что они закупают напрямую, по ценам ниже рынка на 15–25%. Ваша индивидуальная аптека покупает у того же дистрибьютора — но дороже. Конкурировать ценой с сетью — невозможно. Нужно конкурировать сервисом, локацией и нишей.</p></div>
+</div></section>
+
+<!-- FORMATS -->
+<section class="sec sec-w" id="formats"><div class="ct">
+<div class="sec-lb">Форматы</div>
+<h2 class="sec-t">Четыре модели: от аптечного пункта до сети</h2>
+<div class="cg cg2" style="margin-bottom:28px">
+<div class="cd" style="border-top:3px solid var(--ok)"><div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-s">Вход</span><h3 style="font-size:17px;font-weight:700;margin-top:8px">💊 Аптечный пункт</h3></div><div style="text-align:right"><div style="font-size:20px;font-weight:800;font-family:'JetBrains Mono';color:var(--ok)">2–5M ₸</div><div style="font-size:10px;color:var(--t3)">стартовые вложения</div></div></div>
+<div style="margin-top:14px">
+<div class="pr"><div class="prh"><span class="prn">Площадь</span><span class="prv">от 15–30 м²</span></div><div class="prt"><div class="prf" style="width:15%;background:var(--ok)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Персонал</span><span class="prv">1–2 фармацевта</span></div><div class="prt"><div class="prf" style="width:15%;background:var(--ok)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Ассортимент</span><span class="prv">500–1 500 SKU</span></div><div class="prt"><div class="prf" style="width:20%;background:var(--ok)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Окупаемость</span><span class="prv">8–16 мес.</span></div><div class="prt"><div class="prf" style="width:40%;background:var(--ok)"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:10px;text-align:justify">Мини-формат в поликлинике, ТРЦ, жилом комплексе. Ограниченный ассортимент, но стабильный поток. Часто — первый шаг к полноценной аптеке. Рецептурные — с ограничениями.</p>
+</div>
+
+<div class="cd" style="border-top:3px solid var(--ac)"><div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-i">Классика</span><h3 style="font-size:17px;font-weight:700;margin-top:8px">🏥 Классическая аптека</h3></div><div style="text-align:right"><div style="font-size:20px;font-weight:800;font-family:'JetBrains Mono';color:var(--ac)">5–15M ₸</div><div style="font-size:10px;color:var(--t3)">стартовые вложения</div></div></div>
+<div style="margin-top:14px">
+<div class="pr"><div class="prh"><span class="prn">Площадь</span><span class="prv">от 30–80 м²</span></div><div class="prt"><div class="prf" style="width:40%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Персонал</span><span class="prv">2–4 фармацевта</span></div><div class="prt"><div class="prf" style="width:35%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Ассортимент</span><span class="prv">2 000–5 000 SKU</span></div><div class="prt"><div class="prf" style="width:50%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Окупаемость</span><span class="prv">12–24 мес.</span></div><div class="prt"><div class="prf" style="width:55%"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:10px;text-align:justify">Традиционный формат: витрины, кассы, полный ассортимент, рецептурный отдел. Требует полного набора лицензий, оборудования и персонала. Основная масса индивидуальных аптек работает в этом формате.</p>
+</div>
+
+<div class="cd" style="border-top:3px solid var(--inf)"><div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-d">Тренд</span><h3 style="font-size:17px;font-weight:700;margin-top:8px">🛒 Аптека открытого формата</h3></div><div style="text-align:right"><div style="font-size:20px;font-weight:800;font-family:'JetBrains Mono';color:var(--inf)">10–25M ₸</div><div style="font-size:10px;color:var(--t3)">стартовые вложения</div></div></div>
+<div style="margin-top:14px">
+<div class="pr"><div class="prh"><span class="prn">Площадь</span><span class="prv">60–150 м²</span></div><div class="prt"><div class="prf" style="width:60%;background:var(--inf)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Ассортимент</span><span class="prv">3 000–8 000 SKU</span></div><div class="prt"><div class="prf" style="width:70%;background:var(--inf)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Средний чек</span><span class="prv">выше на 30–50%</span></div><div class="prt"><div class="prf" style="width:60%;background:var(--inf)"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:10px;text-align:justify">Самообслуживание: клиент сам выбирает БАДы, косметику, товары для здоровья. Рецептурные — за стойкой. Europharma работает в этом формате. Выше средний чек, но выше и инвестиции в торговое оборудование и площадь.</p>
+</div>
+
+<div class="cd" style="border-top:3px solid var(--wrn)"><div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-w">Онлайн</span><h3 style="font-size:17px;font-weight:700;margin-top:8px">📱 Онлайн-аптека</h3></div><div style="text-align:right"><div style="font-size:20px;font-weight:800;font-family:'JetBrains Mono';color:var(--wrn)">3–10M ₸</div><div style="font-size:10px;color:var(--t3)">платформа + лицензия + склад</div></div></div>
+<div style="margin-top:14px">
+<div class="pr"><div class="prh"><span class="prn">Физический адрес</span><span class="prv">обязателен</span></div><div class="prt"><div class="prf" style="width:100%;background:var(--wrn)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Рецептурные онлайн</span><span class="prv" style="color:var(--err)">запрещены</span></div><div class="prt"><div class="prf" style="width:0%;background:var(--err)"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:10px;text-align:justify">Разрешена с 2020 года при наличии физического адреса и лицензии. Бронирование + самовывоз. Рецептурные препараты онлайн — <strong>запрещены</strong>. Растущий, но регулируемый сегмент.</p>
+</div>
+</div>
+</div></section>
+
+<!-- LICENSE -->
+<section class="sec sec-g" id="license"><div class="ct">
+<div class="sec-lb">Лицензирование</div>
+<h2 class="sec-t">Входной барьер: лицензия, образование, проверки</h2>
+<p class="p">Аптека — <strong>один из немногих бизнесов в Казахстане, где без лицензии нельзя начать вообще</strong>. Не «можно, но со штрафом» — а нельзя. Это сразу отсекает 90% «бизнесменов на салфетке».</p>
+<div class="cg cg2" style="margin-bottom:20px">
+<div class="cd"><h3 style="font-size:15px;font-weight:700;margin-bottom:10px">📋 Что нужно</h3>
+<p style="font-size:13px;color:var(--t2);text-align:justify;margin-bottom:8px">• <strong>Фармацевтическое образование</strong> (высшее или среднее) + стаж от 3 лет. Нет образования? Нанимайте заведующего с ним.</p>
+<p style="font-size:13px;color:var(--t2);text-align:justify;margin-bottom:8px">• <strong>Помещение от 30 м²</strong>: торговый зал ≥8 м², витрины ≥7 м², хранение ≥9 м², бытовые ≥6 м².</p>
+<p style="font-size:13px;color:var(--t2);text-align:justify;margin-bottom:8px">• <strong>Оборудование</strong>: холодильники с журналом температур, стеллажи, касса, сейф для сильнодействующих.</p>
+<p style="font-size:13px;color:var(--t2);text-align:justify">• <strong>Лицензионный сбор</strong>: 10 МРП (~43 250 ₸). Подача через eLicense.kz. Рассмотрение — 15 рабочих дней.</p>
+</div>
+<div class="cd"><h3 style="font-size:15px;font-weight:700;margin-bottom:10px">⚠️ Маркировка и контроль</h3>
+<p style="font-size:13px;color:var(--t2);text-align:justify;margin-bottom:8px"><strong>Обязательная маркировка</strong> лекарств действует. Каждая упаковка — отслеживается. Продажа без маркировки — штраф и приостановка.</p>
+<p style="font-size:13px;color:var(--t2);text-align:justify;margin-bottom:8px"><strong>Хранение</strong>: зонирование по температуре, влажности, типу препаратов. Карантинная зона — обязательна.</p>
+<p style="font-size:13px;color:var(--t2);text-align:justify"><strong>Проверки</strong>: Комитет медицинского и фармацевтического контроля может прийти в любой день. Несоответствие = приостановка лицензии.</p>
+</div>
+</div>
+<div class="callout callout-wrn"><p style="font-size:13px;color:var(--wrn);margin:0"><strong>Реальная стоимость входа:</strong> лицензия — 43K ₸. Но подготовка помещения, оборудование, стартовый запас лекарств, ПО для маркировки — от 4 до 15M ₸. Лицензия — это формальность. Реальный барьер — деньги, образование и терпение.</p></div>
+</div></section>
+
+<!-- UNIT ECONOMICS -->
+<section class="sec sec-w" id="unit"><div class="ct">
+<div class="sec-lb">Юнит-экономика</div>
+<h2 class="sec-t">Сколько зарабатывает аптека</h2>
+<div class="callout callout-ok" style="margin-top:0;margin-bottom:24px">
+<p style="font-size:14px;font-weight:700;color:var(--ok);margin-bottom:8px">📊 Бенчмарк: классическая аптека, город 400K+ ₸</p>
+<div class="cg cg5" style="margin-top:12px">
+<div class="sc"><div class="sv">80–150</div><div class="sl">чеков / день</div></div>
+<div class="sc"><div class="sv">3 500 ₸</div><div class="sl">средний чек</div></div>
+<div class="sc"><div class="sv">8–16M</div><div class="sl">выручка / мес</div></div>
+<div class="sc"><div class="sv">20–30%</div><div class="sl">валовая наценка</div></div>
+<div class="sc"><div class="sv" style="color:var(--ok)">5–12%</div><div class="sl">чистая прибыль</div></div>
+</div></div>
+
+<div class="cd" style="margin-bottom:24px">
+<h3 style="font-size:15px;font-weight:700;margin-bottom:16px">Куда уходит выручка (~10M ₸/мес)</h3>
+<div class="pr"><div class="prh"><span class="prn">💊 Закупка лекарств и товаров</span><span class="prv">65–75%</span></div><div class="prt"><div class="prf" style="width:70%;background:var(--leaf)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">👥 ФОТ (2–4 фармацевта)</span><span class="prv">10–15%</span></div><div class="prt"><div class="prf" style="width:13%;background:var(--inf)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">🏠 Аренда</span><span class="prv">5–12%</span></div><div class="prt"><div class="prf" style="width:9%;background:var(--wrn)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">⚡ Коммунальные + маркировка</span><span class="prv">2–4%</span></div><div class="prt"><div class="prf" style="width:3%;background:var(--t3)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">📢 Маркетинг + прочие</span><span class="prv">2–4%</span></div><div class="prt"><div class="prf" style="width:3%;background:var(--t3)"></div></div></div>
+</div>
+
+<p class="p"><strong>Ключевая цифра: 70% и выше уходит на закупку товара.</strong> Аптека — это прежде всего торговля, и маржа здесь тоньше, чем в кофейне или автомойке. На лекарствах из перечня ЖНВЛС наценка <em>регулируется государством</em> — вы не можете поставить цену «сколько хотите». На БАДы, косметику и товары для здоровья — свободная наценка, и именно там лежит прибыль.</p>
+
+<div class="callout callout-err"><p style="font-size:13px;color:var(--err);margin:0"><strong>Реальность:</strong> 5–12% чистой прибыли — при стабильном потоке. Первые месяцы — убытки (пока наберёте ассортимент и клиентскую базу). Сезонные всплески (ОРВИ, осень-зима) спасают, но межсезонье — тяжело.</p></div>
+</div></section>
+
+<!-- UPSELL -->
+<section class="sec sec-g" id="upsell"><div class="ct">
+<div class="sec-lb">Апсейл</div>
+<h2 class="sec-t">Где лежит прибыль: не в лекарствах</h2>
+<p class="p">Парадокс аптеки: <strong>лекарства приносят трафик, но не прибыль</strong>. Реальная маржа — в «нелекарственном» ассортименте. Клиент пришёл за парацетамолом — продайте ему витамины, крем и зубную пасту.</p>
+<div class="cg cg2">
+<div class="cd"><h3 style="font-size:15px;font-weight:700;margin-bottom:10px">💄 БАДы и витамины</h3><p style="font-size:13px;color:var(--t2);margin-bottom:10px">Наценка <em>40–80%</em>. Это «золотая жила» аптечного бизнеса. Витамин D, омега-3, магний — хиты продаж с высокой маржой. В сетях БАДы дают до 25% общей прибыли.</p><div class="tg"><span class="chip"><span class="chip-d"></span>Витамины: наценка 40–60%</span><span class="chip"><span class="chip-d"></span>БАДы: 50–80%</span></div></div>
+<div class="cd"><h3 style="font-size:15px;font-weight:700;margin-bottom:10px">🧴 Космецевтика</h3><p style="font-size:13px;color:var(--t2);margin-bottom:10px">Аптечная косметика (La Roche-Posay, Bioderma, CeraVe) — наценка <em>35–60%</em>. Клиент доверяет аптеке больше, чем магазину. Средний чек выше в 2–3 раза по сравнению с обычным лекарством.</p><div class="tg"><span class="chip"><span class="chip-d"></span>Кремы: ×1.5–2</span><span class="chip"><span class="chip-d"></span>Шампуни: ×1.5–2</span></div></div>
+<div class="cd"><h3 style="font-size:15px;font-weight:700;margin-bottom:10px">🩹 Медицинские изделия</h3><p style="font-size:13px;color:var(--t2);margin-bottom:10px">Тонометры, глюкометры, ингаляторы, бандажи — наценка <em>30–50%</em>. Товары не скоропортящиеся, без сроков годности. Хороший балансировщик ассортимента.</p><div class="tg"><span class="chip"><span class="chip-d"></span>Тонометры: ×1.5–2</span><span class="chip"><span class="chip-d"></span>Расходники: ×2–3</span></div></div>
+<div class="cd"><h3 style="font-size:15px;font-weight:700;margin-bottom:10px">👶 Детские и мама-товары</h3><p style="font-size:13px;color:var(--t2);margin-bottom:10px">Подгузники, детское питание, средства ухода — <em>стабильный повторный спрос</em>. Наценка 20–40%, но высокая частота покупок. Отлично работает в спальных районах.</p><div class="tg"><span class="chip"><span class="chip-d"></span>Подгузники: частота ×4–6/мес</span></div></div>
+</div>
+<div class="callout callout-ac"><p style="font-size:13px;color:var(--ac);margin:0"><strong>Правило:</strong> аптека, которая продаёт только лекарства — работает на дистрибьютора. БАДы, космецевтика и медизделия — то, что превращает «социальный проект» в бизнес.</p></div>
+</div></section>
+
+<!-- EQUIPMENT -->
+<section class="sec sec-w" id="equipment"><div class="ct">
+<div class="sec-lb">Оборудование</div>
+<h2 class="sec-t">Витрины, холодильники и ПО для маркировки</h2>
+<div class="tw" style="margin-bottom:20px"><table class="dt"><thead><tr><th>Оборудование</th><th>Бюджет</th><th>Оптимум</th><th>⚠</th></tr></thead><tbody>
+<tr><td>Витрины и стеллажи (комплект)</td><td class="n">500K–1.5M</td><td class="n hl">1.5–3M</td><td style="color:var(--err)">●●●●●</td></tr>
+<tr><td>Холодильники фармацевтические (2–8°C)</td><td class="n">200–400K</td><td class="n hl">500K–1M</td><td style="color:var(--err)">●●●●●</td></tr>
+<tr><td>Касса + ПО для маркировки</td><td class="n">150–300K</td><td class="n hl">400–800K</td><td style="color:var(--err)">●●●●●</td></tr>
+<tr><td>Сейф для сильнодействующих</td><td class="n">50–100K</td><td class="n">150–300K</td><td style="color:var(--err)">●●●●○</td></tr>
+<tr><td>Кондиционер + вентиляция</td><td class="n">100–200K</td><td class="n">300–500K</td><td style="color:var(--wrn)">●●●○○</td></tr>
+<tr><td>Термометры, гигрометры, журналы</td><td class="n">20–50K</td><td class="n">50–100K</td><td style="color:var(--err)">●●●●●</td></tr>
+<tr><td>Вывеска + навигация</td><td class="n">50–150K</td><td class="n">200–400K</td><td style="color:var(--wrn)">●●●○○</td></tr>
+</tbody></table></div>
+<p class="p"><strong>Нельзя экономить:</strong> холодильники (температурный режим контролируется инспекцией), кассовое ПО (маркировка обязательна), сейф (требование для рецептурных). <em>Дешёвый холодильник, который «гуляет» на 2 градуса — это испорченные инсулины и штраф от проверяющих.</em></p>
+</div></section>
+
+<!-- LABOR -->
+<section class="sec sec-g" id="labor"><div class="ct">
+<div class="sec-lb">Кадры</div>
+<h2 class="sec-t">Фармацевты: дефицит, зарплата, ответственность</h2>
+<p class="p">В аптеке <strong>без фармацевта нельзя работать вообще</strong>. Это не «было бы хорошо» — это требование лицензии. Минимум один специалист с фармацевтическим образованием и стажем от 3 лет. И найти его — непросто.</p>
+<div class="tc" style="margin-bottom:20px">
+<div class="cd"><h3 style="font-size:15px;font-weight:700;margin-bottom:12px">💰 Зарплатная вилка</h3>
+<div class="pr"><div class="prh"><span class="prn">Фармацевт (средн. образование)</span><span class="prv">200–350K ₸</span></div><div class="prt"><div class="prf" style="width:40%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Провизор (высшее)</span><span class="prv">300–500K ₸</span></div><div class="prt"><div class="prf" style="width:60%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Заведующий аптекой</span><span class="prv">400–700K ₸</span></div><div class="prt"><div class="prf" style="width:80%"></div></div></div>
+<p style="font-size:11px;color:var(--t3);margin-top:8px">+ переквалификация каждые 5 лет (обязательна)</p></div>
+<div class="cd"><h3 style="font-size:15px;font-weight:700;margin-bottom:12px">🚨 Риски с персоналом</h3>
+<p style="font-size:13px;color:var(--t2);text-align:justify;margin-bottom:8px"><strong>Дефицит специалистов.</strong> Фармацевтов с лицензией и опытом мало. Сети перекупают лучших.</p>
+<p style="font-size:13px;color:var(--t2);text-align:justify;margin-bottom:8px"><strong>Ошибка отпуска.</strong> Неправильный препарат, дозировка, взаимодействие — юридическая ответственность на аптеке.</p>
+<p style="font-size:13px;color:var(--t2);text-align:justify"><strong>Уход заведующего</strong> = аптека не может работать. Один человек — точка отказа всего бизнеса.</p></div>
+</div>
+</div></section>
+
+<!-- HIDDEN COSTS -->
+<section class="sec sec-w" id="hidden"><div class="ct">
+<div class="sec-lb">Скрытые расходы</div>
+<h2 class="sec-t">Чего нет в бизнес-плане аптеки</h2>
+<div class="cg cg2" style="margin-bottom:16px">
+<div class="cd"><div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div style="width:36px;height:36px;border-radius:10px;background:rgba(196,64,64,.06);display:flex;align-items:center;justify-content:center;font-size:16px">📦</div><div><h4 style="font-size:13px;font-weight:700">Замороженный товарный запас</h4><span class="bg bg-r">2–8M ₸ постоянно</span></div></div><p style="font-size:12px;color:var(--t2);text-align:justify">Лекарства на полках — это ваши деньги, которые «стоят». Широкий ассортимент = больше замороженного капитала. Узкий — теряете клиентов. Баланс — искусство.</p></div>
+<div class="cd"><div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div style="width:36px;height:36px;border-radius:10px;background:rgba(212,160,32,.06);display:flex;align-items:center;justify-content:center;font-size:16px">🗑</div><div><h4 style="font-size:13px;font-weight:700">Списания по сроку годности</h4><span class="bg bg-w">2–5% от запаса</span></div></div><p style="font-size:12px;color:var(--t2);text-align:justify">Просроченные лекарства = прямой убыток + утилизация (тоже стоит денег). Чем шире ассортимент, тем больше списаний. У сетей оборачиваемость выше — у вас нет.</p></div>
+<div class="cd"><div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div style="width:36px;height:36px;border-radius:10px;background:rgba(26,138,74,.06);display:flex;align-items:center;justify-content:center;font-size:16px">🏷</div><div><h4 style="font-size:13px;font-weight:700">Маркировка и ПО</h4><span class="bg bg-i">30–80K ₸/мес</span></div></div><p style="font-size:12px;color:var(--t2);text-align:justify">Подписка на ПО для маркировки, сканеры, обслуживание, обновления. Обязательно, без вариантов.</p></div>
+<div class="cd"><div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div style="width:36px;height:36px;border-radius:10px;background:rgba(40,120,216,.06);display:flex;align-items:center;justify-content:center;font-size:16px">📋</div><div><h4 style="font-size:13px;font-weight:700">Проверки и комплаенс</h4><span class="bg bg-d">50–200K ₸/год</span></div></div><p style="font-size:12px;color:var(--t2);text-align:justify">Переквалификация фармацевтов, обновление лицензии, ведение журналов, подготовка к проверкам — рутина, которая стоит времени и денег.</p></div>
+<div class="cd"><div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div style="width:36px;height:36px;border-radius:10px;background:rgba(196,64,64,.06);display:flex;align-items:center;justify-content:center;font-size:16px">❄️</div><div><h4 style="font-size:13px;font-weight:700">Холодовая цепь</h4><span class="bg bg-r">30–100K ₸/мес</span></div></div><p style="font-size:12px;color:var(--t2);text-align:justify">Электричество для фармацевтических холодильников 24/7. Перебой в подаче = испорченные инсулины, вакцины, биопрепараты = прямой убыток + ответственность.</p></div>
+<div class="cd"><div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div style="width:36px;height:36px;border-radius:10px;background:rgba(212,160,32,.06);display:flex;align-items:center;justify-content:center;font-size:16px">📉</div><div><h4 style="font-size:13px;font-weight:700">Дистрибьюторская зависимость</h4><span class="bg bg-w">–15–25% к цене</span></div></div><p style="font-size:12px;color:var(--t2);text-align:justify">Вы покупаете у дистрибьютора дороже, чем сетевая аптека, связанная с ним же. Разница — 15–25% на популярных позициях. Ваша наценка уже начинается с проигрыша.</p></div>
+</div>
+<div class="callout callout-err"><p style="font-size:13px;color:var(--err);margin:0"><strong>Итого скрытых: 10–20% от выручки.</strong> При валовой наценке 20–30% и скрытых 10–20% — чистая прибыль 5–12%. Один плохой месяц (низкий сезон + списания + поломка холодильника) — и вы в минусе.</p></div>
+</div></section>
+
+<!-- RISKS -->
+<section class="sec sec-g" id="risks"><div class="ct">
+<div class="sec-lb">Матрица рисков</div>
+<h2 class="sec-t">Всё, что может пойти не так</h2>
+
+<h3 style="font-size:16px;font-weight:800;color:var(--err);margin:24px 0 14px">🔴 Критические</h3>
+<div class="rc rh"><div class="ri">🏪</div><div><div class="rt">Сети задавят</div><div class="rx">77% рынка — у сетей. Они закупают дешевле, маркетинг дороже, точек больше. Если рядом с вами откроется «Биосфера» или «Зерде» — вы потеряете 30–50% потока за 2–3 месяца. Они могут себе позволить работать в минус на конкретной точке — вы нет.</div><div class="callout callout-err" style="margin-bottom:0"><p style="font-size:12px;color:var(--err);margin:0"><strong>Защита:</strong> ниша (premium-космецевтика, спецпрепараты), локация без сетей (новый ЖК, медцентр), сервис выше уровня сети, персональный подход.</p></div></div></div>
+<div class="rc rh"><div class="ri">📋</div><div><div class="rt">Потеря лицензии</div><div class="rx">Просроченный препарат на полке. Нарушение условий хранения. Отсутствие маркировки. Один акт проверки — приостановка лицензии. А без лицензии аптека — это просто помещение с полками.</div><div class="callout callout-err" style="margin-bottom:0"><p style="font-size:12px;color:var(--err);margin:0"><strong>Защита:</strong> автоматизация контроля сроков (ПО), ежедневный мониторинг температуры, чёткие процедуры приёмки товара.</p></div></div></div>
+<div class="rc rh"><div class="ri">👤</div><div><div class="rt">Уход заведующего</div><div class="rx">Заведующий с лицензией — единственный человек, без которого аптека не может работать. Если он ушёл — вы закрыты до момента найма нового. А найти фармацевта с лицензией и опытом — это не «разместить вакансию».</div></div></div>
+<div class="rc rh"><div class="ri">💰</div><div><div class="rt">Замороженный капитал</div><div class="rx">2–8M ₸ постоянно «стоят» на полках в виде товара. Если оборачиваемость упала — деньги заморожены, а аренду и зарплаты платить надо. Кассовый разрыв в аптеке наступает тихо, но быстро.</div></div></div>
+
+<h3 style="font-size:16px;font-weight:800;color:var(--wrn);margin:28px 0 14px">🟡 Серьёзные</h3>
+<div class="rc rm"><div class="ri">📈</div><div><div class="rt">Регулирование наценок</div><div class="rx">Государство регулирует наценки на ЖНВЛС. Если регулятор сожмёт маржу — вы не сможете компенсировать ростом цен. Особенно болезненно для аптек с узким ассортиментом.</div></div></div>
+<div class="rc rm"><div class="ri">📦</div><div><div class="rt">Списания и просрочка</div><div class="rx">2–5% запаса списывается по сроку годности. Для аптеки с запасом 5M ₸ — это 100–250K ₸ прямого убытка. Плюс утилизация.</div></div></div>
+<div class="rc rm"><div class="ri">💊</div><div><div class="rt">Сезонность спроса</div><div class="rx">ОРВИ-сезон (осень-зима) — пик. Лето — провал. Антибиотики, противовирусные, леденцы — 40% аптечных продаж приходятся на 4 зимних месяца. Остальные 8 — ровнее, но тоньше.</div></div></div>
+<div class="rc rm"><div class="ri">📱</div><div><div class="rt">Онлайн-конкуренция</div><div class="rx">Маркетплейсы, онлайн-аптеки, доставка — забирают долю. Пока рецептурные запрещены онлайн, но OTC и БАДы уже уходят в digital. Тренд будет усиливаться.</div></div></div>
+
+<h3 style="font-size:16px;font-weight:800;color:var(--ok);margin:28px 0 14px">🟢 Управляемые</h3>
+<div class="rc rl"><div class="ri">📱</div><div><div class="rt">Маркетинг</div><div class="rx">2ГИС, Google Maps, партнёрства с клиниками, карты лояльности. Аптечный маркетинг — дешевле, чем в HoReCa: клиент приходит по необходимости, а не по желанию.</div></div></div>
+<div class="rc rl"><div class="ri">🧾</div><div><div class="rt">Налоги</div><div class="rx">ИП/ТОО, стандартные схемы. Бухгалтерия сложнее, чем в кофейне (маркировка, НДС на отдельные группы), но решаемо.</div></div></div>
+<div class="rc rl"><div class="ri">📋</div><div><div class="rt">Стандартизация</div><div class="rx">Фармацевтические SOPы, чек-листы приёмки, контроль хранения — всё формализовано отраслью. Нужно просто следовать.</div></div></div>
+
+<div class="quote">«Оптимист открывает аптеку. Пессимист читает требования к лицензии.<br>Реалист делает и то, и другое — и именно он до сих пор работает.»</div>
+</div></section>
+
+<!-- CTA TRANSITION -->
+<section class="sec sec-w" style="border-bottom:none"><div class="ct">
+<div class="sec-lb">Что дальше</div>
+<h2 class="sec-t">От обзора — к вашим цифрам</h2>
+<p class="p">Аптека — <strong>один из самых стабильных бизнесов, но и один из самых зарегулированных</strong>. Общий обзор даёт ландшафт. Ваша аптека будет работать в конкретном городе, рядом с конкретными конкурентами, с конкретным ассортиментом. Следующий шаг:</p>
+<div class="cg cg3" style="margin-bottom:24px">
+<div class="cd" style="text-align:center"><div style="font-size:28px;margin-bottom:8px">📐</div><h3 style="font-size:15px;font-weight:700;margin-bottom:6px">Точка безубыточности</h3><p style="font-size:12px;color:var(--t2)">Сколько чеков/день нужно, чтобы не работать в минус?</p></div>
+<div class="cd" style="text-align:center"><div style="font-size:28px;margin-bottom:8px">📊</div><h3 style="font-size:15px;font-weight:700;margin-bottom:6px">Период окупаемости</h3><p style="font-size:12px;color:var(--t2)">Когда вернутся 5–15M ₸ инвестиций?</p></div>
+<div class="cd" style="text-align:center"><div style="font-size:28px;margin-bottom:8px">🧮</div><h3 style="font-size:15px;font-weight:700;margin-bottom:6px">Финмодель + бизнес-план</h3><p style="font-size:12px;color:var(--t2)">Полная модель: сезонность, списания, конкуренция, три сценария. Бизнес-план для банка.</p></div>
+</div>
+</div></section>
+
+<!-- CTA -->
+<section class="cta" id="cta"><div class="ct">
+<div style="font-size:28px;font-weight:800;color:var(--ac);letter-spacing:8px;margin-bottom:24px">ZEREK</div>
+<h2 class="cta-t">Рассчитаем экономику<br>вашей аптеки</h2>
+<p class="cta-d">ZEREK строит финансовые модели и бизнес-планы для аптек и других бизнесов. С учётом города, формата, конкурентного окружения и реальных данных.</p>
+<a href="https://t.me/u777oxo07" target="_blank" class="cta-b">Запросить расчёт</a>
+<div style="margin-top:40px;max-width:560px;margin-left:auto;margin-right:auto">
+<p style="font-size:1.05rem;color:var(--ac);font-weight:600;font-style:italic;line-height:1.7;text-align:center">«И помните: сильный бизнес строится не на надеждах, а на расчётах.»</p>
+<p style="font-size:12px;color:var(--t3);margin-top:8px;text-align:center">— Команда ZEREK</p>
+</div>
+</div></section>
+
+<!-- FOOTER -->
+<footer class="ft">
+<div style="font-size:20px;font-weight:800;color:var(--ac);letter-spacing:6px;margin-bottom:12px">ZEREK</div>
+<p class="ft-t">© ZEREK Analytics · Данные: БНС РК, Vi-ORTIS, PharmReviews</p>
+<p class="ft-t" style="margin-top:4px">Не является инвестиционной рекомендацией.</p>
+</footer>
+</body>
+</html>
