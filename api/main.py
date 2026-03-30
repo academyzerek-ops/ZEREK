@@ -11,7 +11,7 @@ import os
 import sys
 
 # Путь к движку и данным
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE_DIR)
 
 from engine import ZerekDB, run_quick_check, get_inflation_region
