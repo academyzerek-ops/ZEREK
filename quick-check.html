@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ZEREK Quick Check</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: rgba(108,99,255,0.2); }
+body { font-family: -apple-system, sans-serif; background: #0A0A0F; color: #F0F0FF; min-height: 100vh; padding-bottom: 40px; }
+.header { padding: 16px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #2A2A3D; }
+.logo { width: 36px; height: 36px; background: linear-gradient(135deg, #6C63FF, #00D4AA); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; color: #fff; }
+.progress { height: 3px; background: #1C1C28; }
+.progress-fill { height: 3px; background: linear-gradient(90deg, #6C63FF, #00D4AA); transition: width 0.4s; }
+.screen { display: none; padding: 20px; }
+.screen.active { display: block; }
+.step-lbl { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: #6C63FF; margin-bottom: 8px; }
+.step-ttl { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+.step-dsc { font-size: 14px; color: #8888AA; margin-bottom: 20px; line-height: 1.5; }
+button.card {
+  display: block; width: 100%;
+  background: #13131A; border: 2px solid #2A2A3D; border-radius: 14px;
+  padding: 16px; margin-bottom: 10px; text-align: left;
+  cursor: pointer; color: #F0F0FF;
+  font-family: -apple-system, sans-serif; font-size: 15px; font-weight: 600;
+  line-height: 1.3; position: relative;
+  -webkit-appearance: none; appearance: none;
+}
+button.card.sel { border-color: #6C63FF; background: rgba(108,99,255,0.12); }
+button.card .sub { font-size: 12px; color: #8888AA; font-weight: 400; margin-top: 3px; display: block; }
+button.card .ck { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; border-radius: 50%; border: 2px solid #2A2A3D; font-size: 11px; display: flex; align-items: center; justify-content: center; background: #13131A; }
+button.card.sel .ck { background: #6C63FF; border-color: #6C63FF; color: #fff; }
+.inp-lbl { font-size: 13px; font-weight: 600; color: #8888AA; margin-bottom: 8px; display: block; margin-top: 8px; }
+.inp { width: 100%; background: #13131A; border: 2px solid #2A2A3D; border-radius: 14px; padding: 14px 16px; font-size: 16px; color: #F0F0FF; outline: none; font-family: -apple-system, sans-serif; margin-bottom: 6px; }
+.inp:focus { border-color: #6C63FF; }
+.inp-hint { font-size: 12px; color: #8888AA; margin-bottom: 14px; }
+.range-lbl { display: flex; justify-content: space-between; font-size: 12px; color: #8888AA; margin-bottom: 8px; }
+input[type=range] { width: 100%; -webkit-appearance: none; height: 6px; border-radius: 3px; background: #1C1C28; outline: none; margin-bottom: 10px; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; border-radius: 50%; background: #6C63FF; }
+.range-val { text-align: center; font-size: 24px; font-weight: 800; color: #6C63FF; margin-bottom: 16px; }
+button.btn-main { display: block; width: 100%; padding: 16px; background: linear-gradient(135deg,#6C63FF,#8B5CF6); border: none; border-radius: 14px; font-size: 16px; font-weight: 700; color: #fff; cursor: pointer; font-family: -apple-system,sans-serif; margin-bottom: 10px; -webkit-appearance: none; }
+button.btn-main:disabled { opacity: 0.35; }
+button.btn-back { display: block; width: 100%; padding: 14px; background: transparent; border: 2px solid #2A2A3D; border-radius: 14px; font-size: 15px; font-weight: 600; color: #8888AA; cursor: pointer; font-family: -apple-system,sans-serif; -webkit-appearance: none; }
+.sum-card { background: #13131A; border: 1px solid #2A2A3D; border-radius: 14px; padding: 4px 16px; margin-bottom: 16px; }
+.sum-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #1C1C28; font-size: 14px; }
+.sum-row:last-child { border: none; }
+.sum-k { color: #8888AA; }
+.sum-v { font-weight: 600; text-align: right; max-width: 60%; }
+#loadScr { display: none; padding: 60px 20px; text-align: center; }
+#loadScr.active { display: block; }
+.spin { width: 50px; height: 50px; border: 3px solid #1C1C28; border-top-color: #6C63FF; border-radius: 50%; animation: sp 0.8s linear infinite; margin: 0 auto 20px; }
+@keyframes sp { to { transform: rotate(360deg); } }
+#repScr { display: none; padding: 20px; }
+#repScr.active { display: block; }
+.rep-hdr { text-align: center; padding: 20px 0; }
+.rep-badge { display: inline-block; padding: 6px 16px; background: rgba(0,212,170,0.15); border: 1px solid #00D4AA; border-radius: 20px; font-size: 12px; color: #00D4AA; font-weight: 600; margin-bottom: 12px; }
+.m-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.m-card { background: #13131A; border: 1px solid #2A2A3D; border-radius: 14px; padding: 14px; }
+.m-lbl { font-size: 11px; color: #8888AA; text-transform: uppercase; margin-bottom: 6px; }
+.m-val { font-size: 18px; font-weight: 800; }
+.m-val.g{color:#00D4AA}.m-val.r{color:#FF4D6A}.m-val.y{color:#FFB547}
+.sec-ttl { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #8888AA; margin: 18px 0 8px; }
+.risk { background: #13131A; border-left: 3px solid #FFB547; border-radius: 0 14px 14px 0; padding: 12px 14px; margin-bottom: 8px; font-size: 14px; line-height: 1.5; }
+.risk.g{border-left-color:#00D4AA}.risk.r{border-left-color:#FF4D6A}
+.cf-row { display: grid; grid-template-columns: 44px 34px 1fr 68px; gap: 6px; align-items: center; padding: 7px 0; border-bottom: 1px solid #1C1C28; font-size: 12px; }
+.cf-row:last-child{border:none}
+.cf-bar-w { height: 5px; background: #1C1C28; border-radius: 3px; overflow: hidden; }
+.cf-bar { height: 5px; border-radius: 3px; }
+.cta { background: rgba(108,99,255,0.1); border: 1px solid #6C63FF; border-radius: 14px; padding: 20px; text-align: center; margin: 20px 0; }
+.cta h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.cta p { font-size: 13px; color: #8888AA; margin-bottom: 16px; }
+.err { background: rgba(255,77,106,0.1); border: 1px solid #FF4D6A; border-radius: 14px; padding: 14px; color: #FF4D6A; font-size: 14px; margin-top: 12px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Z</div>
+  <div>
+    <div style="font-size:16px;font-weight:700">ZEREK Quick Check</div>
+    <div style="font-size:12px;color:#8888AA">Экспресс-оценка бизнес-идеи</div>
+  </div>
+</div>
+<div class="progress"><div class="progress-fill" id="pf" style="width:0%"></div></div>
+
+<!-- ШАГ 1: ГОРОД -->
+<div class="screen active" id="s1">
+  <div class="step-lbl">Шаг 1 из 6</div>
+  <div class="step-ttl">В каком городе?</div>
+  <div class="step-dsc">Выбери город где планируешь открыться</div>
+  <button class="card" id="c-ALA" onclick="pickCity('ALA','Алматы')">Алматы<span class="sub">2.35 млн чел.</span><span class="ck"></span></button>
+  <button class="card" id="c-AST" onclick="pickCity('AST','Астана')">Астана<span class="sub">1.64 млн чел.</span><span class="ck"></span></button>
+  <button class="card" id="c-SHY" onclick="pickCity('SHY','Шымкент')">Шымкент<span class="sub">1.29 млн чел.</span><span class="ck"></span></button>
+  <button class="card" id="c-AKT" onclick="pickCity('AKT','Актобе')">Актобе<span class="sub">599 тыс. чел.</span><span class="ck"></span></button>
+  <button class="card" id="c-ATY" onclick="pickCity('ATY','Атырау')">Атырау<span class="sub">431 тыс. чел.</span><span class="ck"></span></button>
+  <button class="card" id="c-URA" onclick="pickCity('URA','Уральск')">Уральск<span class="sub">372 тыс. чел.</span><span class="ck"></span></button>
+  <button class="card" id="c-TAR" onclick="pickCity('TAR','Тараз')">Тараз<span class="sub">487 тыс. чел.</span><span class="ck"></span></button>
+  <button class="card" id="c-PAV" onclick="pickCity('PAV','Павлодар')">Павлодар<span class="sub">370 тыс. чел.</span><span class="ck"></span></button>
+  <button class="card" id="c-OSK" onclick="pickCity('OSK','Усть-Каменогорск')">Усть-Каменогорск<span class="sub">381 тыс. чел.</span><span class="ck"></span></button>
+  <button class="card" id="c-KOS" onclick="pickCity('KOS','Костанай')">Костанай<span class="sub">277 тыс. чел.</span><span class="ck"></span></button>
+  <button class="btn-main" id="b1" onclick="go(2)" disabled>Продолжить →</button>
+</div>
+
+<!-- ШАГ 2: НИША -->
+<div class="screen" id="s2">
+  <div class="step-lbl">Шаг 2 из 6</div>
+  <div class="step-ttl">Какой бизнес?</div>
+  <div class="step-dsc">Выбери нишу которую хочешь проверить</div>
+  <button class="card" id="n-COFFEE" onclick="pickNiche('COFFEE','Кофейня')">☕ Кофейня<span class="sub">Кофе навынос / кафе</span><span class="ck"></span></button>
+  <button class="card" id="n-DONER" onclick="pickNiche('DONER','Донер')">🌯 Донер / Шаурма<span class="sub">Фастфуд</span><span class="ck"></span></button>
+  <button class="card" id="n-CARWASH" onclick="pickNiche('CARWASH','Автомойка')">🚗 Автомойка<span class="sub">Боксовая / ручная</span><span class="ck"></span></button>
+  <button class="card" id="n-CLEAN" onclick="pickNiche('CLEAN','Клининг')">🧹 Клининг<span class="sub">Уборка квартир / офисов</span><span class="ck"></span></button>
+  <button class="card" id="n-GROCERY" onclick="pickNiche('GROCERY','Продуктовый')">🛒 Продуктовый<span class="sub">Минимаркет у дома</span><span class="ck"></span></button>
+  <button class="card" id="n-PHARMA" onclick="pickNiche('PHARMA','Аптека')">💊 Аптека<span class="sub">Фармацевтика</span><span class="ck"></span></button>
+  <button class="card" id="n-BARBER" onclick="pickNiche('BARBER','Барбершоп')">✂️ Барбершоп<span class="sub">Мужские стрижки</span><span class="ck"></span></button>
+  <button class="btn-main" id="b2" onclick="go(3)" disabled>Продолжить →</button>
+  <button class="btn-back" onclick="go(1)">← Назад</button>
+</div>
+
+<!-- ШАГ 3: ФОРМАТ -->
+<div class="screen" id="s3">
+  <div class="step-lbl">Шаг 3 из 6</div>
+  <div class="step-ttl">Какой формат?</div>
+  <div class="step-dsc">Уточни масштаб и тип точки</div>
+  <div id="fmtList"></div>
+  <button class="btn-main" id="b3" onclick="go(4)" disabled>Продолжить →</button>
+  <button class="btn-back" onclick="go(2)">← Назад</button>
+</div>
+
+<!-- ШАГ 4: ЛОКАЦИЯ -->
+<div class="screen" id="s4">
+  <div class="step-lbl">Шаг 4 из 6</div>
+  <div class="step-ttl">Где будет точка?</div>
+  <div class="step-dsc">Выбери тип локации — влияет на аренду и трафик</div>
+  <button class="card" id="l-sp" onclick="pickLoc('Спальный район стрит','Спальный район')">Спальный район<span class="sub">Улица, жилой дом</span><span class="ck"></span></button>
+  <button class="card" id="l-ct" onclick="pickLoc('Центр стрит 1 лин','Центр города')">Центр города<span class="sub">1-я линия улицы</span><span class="ck"></span></button>
+  <button class="card" id="l-tc" onclick="pickLoc('ТЦ','Торговый центр')">Торговый центр<span class="sub">Островок / магазин в ТЦ</span><span class="ck"></span></button>
+  <button class="card" id="l-bx" onclick="pickLoc('Отдельное здание/бокс','Отдельный бокс')">Отдельный бокс / здание<span class="sub">Для мойки, цеха</span><span class="ck"></span></button>
+  <label class="inp-lbl">Площадь помещения (м²)</label>
+  <input class="inp" type="number" id="areaIn" placeholder="Например: 25" min="4" max="600" inputmode="numeric" oninput="chk4()">
+  <label class="inp-lbl">Аренда в месяц (₸) — необязательно</label>
+  <input class="inp" type="number" id="rentIn" placeholder="Оставь пустым — берём бенчмарк" inputmode="numeric">
+  <div class="inp-hint">Если не знаешь — используем рыночную медиану по городу</div>
+  <button class="btn-main" id="b4" onclick="go(5)" disabled>Продолжить →</button>
+  <button class="btn-back" onclick="go(3)">← Назад</button>
+</div>
+
+<!-- ШАГ 5: КАПИТАЛ -->
+<div class="screen" id="s5">
+  <div class="step-lbl">Шаг 5 из 6</div>
+  <div class="step-ttl">Сколько готов вложить?</div>
+  <div class="step-dsc">Стартовый капитал: оборудование, ремонт, запасы</div>
+  <div class="range-lbl"><span>500 тыс</span><span>30 млн ₸</span></div>
+  <input type="range" id="capR" min="500000" max="30000000" step="100000" value="3000000" oninput="updCap()">
+  <div class="range-val" id="capD">3 000 000 ₸</div>
+  <button class="card" id="cx-eco" onclick="pickCapex('эконом')">Эконом<span class="sub">Б/у оборудование, минимум</span><span class="ck"></span></button>
+  <button class="card sel" id="cx-std" onclick="pickCapex('стандарт')">Стандарт<span class="sub">Новое оборудование, средний ремонт</span><span class="ck">✓</span></button>
+  <button class="card" id="cx-prem" onclick="pickCapex('премиум')">Премиум<span class="sub">Топ оборудование, дизайн</span><span class="ck"></span></button>
+  <button class="btn-main" onclick="go(6)">Продолжить →</button>
+  <button class="btn-back" onclick="go(4)">← Назад</button>
+</div>
+
+<!-- ШАГ 6: ИТОГ -->
+<div class="screen" id="s6">
+  <div class="step-lbl">Шаг 6 из 6</div>
+  <div class="step-ttl">Проверь данные</div>
+  <div class="step-dsc">Убедись что всё верно перед расчётом</div>
+  <div class="sum-card">
+    <div class="sum-row"><span class="sum-k">Город</span><span class="sum-v" id="sm-city">—</span></div>
+    <div class="sum-row"><span class="sum-k">Ниша</span><span class="sum-v" id="sm-niche">—</span></div>
+    <div class="sum-row"><span class="sum-k">Формат</span><span class="sum-v" id="sm-fmt">—</span></div>
+    <div class="sum-row"><span class="sum-k">Локация</span><span class="sum-v" id="sm-loc">—</span></div>
+    <div class="sum-row"><span class="sum-k">Площадь</span><span class="sum-v" id="sm-area">—</span></div>
+    <div class="sum-row"><span class="sum-k">Капитал</span><span class="sum-v" id="sm-cap">—</span></div>
+    <div class="sum-row"><span class="sum-k">Уровень</span><span class="sum-v" id="sm-cx">—</span></div>
+  </div>
+  <button class="btn-main" onclick="calc()">🚀 Рассчитать</button>
+  <button class="btn-back" onclick="go(5)">← Изменить</button>
+  <div class="err" id="errBox" style="display:none"></div>
+</div>
+
+<!-- LOADING -->
+<div id="loadScr">
+  <div class="spin"></div>
+  <div style="font-size:20px;font-weight:700;margin-bottom:8px">Считаем экономику...</div>
+  <div style="font-size:14px;color:#8888AA">Анализируем данные БНС РК</div>
+</div>
+
+<!-- REPORT -->
+<div id="repScr">
+  <div class="rep-hdr">
+    <div class="rep-badge">✅ Quick Check готов</div>
+    <div style="font-size:20px;font-weight:800;margin-bottom:4px" id="rTtl"></div>
+    <div style="font-size:13px;color:#8888AA" id="rSub"></div>
+  </div>
+  <div class="m-grid">
+    <div class="m-card"><div class="m-lbl">Выручка / мес</div><div class="m-val" id="mRev">—</div></div>
+    <div class="m-card"><div class="m-lbl">Маржа</div><div class="m-val" id="mMrg">—</div></div>
+    <div class="m-card"><div class="m-lbl">Точка безубыточности</div><div class="m-val" id="mTB">—</div></div>
+    <div class="m-card"><div class="m-lbl">Окупаемость</div><div class="m-val" id="mPb">—</div></div>
+  </div>
+  <div class="sec-ttl">Стартовые вложения</div>
+  <div class="sum-card">
+    <div class="sum-row"><span class="sum-k">Нужно (CAPEX + депозит)</span><span class="sum-v" id="rCN">—</span></div>
+    <div class="sum-row"><span class="sum-k">Ваш капитал</span><span class="sum-v" id="rCC">—</span></div>
+    <div class="sum-row"><span class="sum-k">Статус</span><span class="sum-v" id="rCS">—</span></div>
+  </div>
+  <div class="sec-ttl">Cash Flow — 12 месяцев</div>
+  <div class="sum-card" style="padding:12px 14px"><div id="cfRows"></div></div>
+  <div class="sec-ttl">Риски</div>
+  <div id="riskDiv"></div>
+  <div class="sec-ttl">Рынок</div>
+  <div class="sum-card">
+    <div class="sum-row"><span class="sum-k">Население</span><span class="sum-v" id="rPop">—</span></div>
+    <div class="sum-row"><span class="sum-k">TAM (вся ниша)</span><span class="sum-v" id="rTam">—</span></div>
+    <div class="sum-row"><span class="sum-k">SAM (1 точка)</span><span class="sum-v" id="rSam">—</span></div>
+    <div class="sum-row"><span class="sum-k">Конкуренция</span><span class="sum-v" id="rCmp">—</span></div>
+  </div>
+  <div class="cta">
+    <h3>Нужна полная финмодель?</h3>
+    <p>Quick Check — экспресс-оценка. Для точного расчёта заказывай финансовую модель.</p>
+    <button class="btn-main" onclick="order()">Заказать финмодель</button>
+  </div>
+  <button class="btn-back" onclick="restart()" style="margin-bottom:24px">← Начать заново</button>
+</div>
+
+<script>
+const API = 'https://web-production-b3ede.up.railway.app';
+const D = { city:null,cityName:null,niche:null,nicheName:null,format:null,formatName:null,loc:null,locName:null,area:null,rent:null,capital:3000000,capex:'стандарт' };
+const FMTS = {
+  COFFEE:  [{v:'COFFEE_KIOSK',l:'Киоск / навынос',s:'4-15 м², улица'},{v:'COFFEE_ISLAND',l:'Островок в ТЦ',s:'15-35 м²'},{v:'COFFEE_FULL',l:'Полноценное кафе',s:'40-120 м²'}],
+  DONER:   [{v:'DONER_KIOSK',l:'Киоск / ларёк',s:'8-25 м²'},{v:'DONER_MINI',l:'Мини-кафе',s:'20-45 м²'},{v:'DONER_CAFE',l:'Кафе с посадкой',s:'40-100 м²'}],
+  CARWASH: [{v:'CARWASH_BOX1',l:'Боксовая 1 пост',s:'50-120 м²'},{v:'CARWASH_BOX2',l:'Боксовая 2-3 поста',s:'150-400 м²'}],
+  CLEAN:   [{v:'CLEAN_HOME',l:'Клининг квартир (B2C)',s:'Без торговой точки'},{v:'CLEAN_CORP',l:'Корпоративный (B2B)',s:'Офис'}],
+  GROCERY: [{v:'GROCERY_MINI',l:'Минимаркет у дома',s:'30-80 м²'},{v:'GROCERY_SPEC',l:'Специализированный',s:'20-60 м²'}],
+  PHARMA:  [{v:'PHARMA_STD',l:'Аптека стандарт',s:'30-80 м²'},{v:'PHARMA_MINI',l:'Аптечный пункт',s:'15-30 м²'}],
+  BARBER:  [{v:'BARBER_MINI',l:'Мини (2-3 кресла)',s:'20-40 м²'},{v:'BARBER_STD',l:'Стандарт (3-5 кресел)',s:'35-70 м²'},{v:'BARBER_PREMIUM',l:'Премиум (5+ кресел)',s:'60-130 м²'}],
+};
+let cur = 1;
+
+function fmt(n){ return n!=null ? Math.round(n).toLocaleString('ru-RU')+' ₸' : '—'; }
+function fmtN(n){ return n!=null ? Math.round(n).toLocaleString('ru-RU')+' чел.' : '—'; }
+
+function selCards(prefix, val) {
+  document.querySelectorAll('[id^="'+prefix+'"]').forEach(function(el){
+    el.classList.remove('sel');
+    var ck = el.querySelector('.ck'); if(ck) ck.textContent='';
+  });
+  var el = document.getElementById(prefix+val);
+  if(el){ el.classList.add('sel'); var ck=el.querySelector('.ck'); if(ck) ck.textContent='✓'; }
+}
+
+function pickCity(val, name){ D.city=val; D.cityName=name; selCards('c-',val); document.getElementById('b1').disabled=false; }
+function pickNiche(val, name){ D.niche=val; D.nicheName=name; selCards('n-',val); document.getElementById('b2').disabled=false; }
+function pickFmt(val, name){ D.format=val; D.formatName=name; selCards('f-',val); document.getElementById('b3').disabled=false; }
+function pickLoc(val, name){
+  D.loc=val; D.locName=name;
+  ['sp','ct','tc','bx'].forEach(function(k){ var el=document.getElementById('l-'+k); if(el){el.classList.remove('sel'); var ck=el.querySelector('.ck'); if(ck)ck.textContent='';} });
+  // Найдём нужную кнопку по data
+  var map={'Спальный район стрит':'sp','Центр стрит 1 лин':'ct','ТЦ':'tc','Отдельное здание/бокс':'bx'};
+  var k=map[val]; if(k){ var el=document.getElementById('l-'+k); if(el){el.classList.add('sel'); var ck=el.querySelector('.ck'); if(ck)ck.textContent='✓';} }
+  chk4();
+}
+function pickCapex(val){
+  D.capex=val;
+  ['eco','std','prem'].forEach(function(k){ var el=document.getElementById('cx-'+k); if(el){el.classList.remove('sel'); var ck=el.querySelector('.ck'); if(ck)ck.textContent='';} });
+  var map={'эконом':'eco','стандарт':'std','премиум':'prem'};
+  var k=map[val]; if(k){ var el=document.getElementById('cx-'+k); if(el){el.classList.add('sel'); var ck=el.querySelector('.ck'); if(ck)ck.textContent='✓';} }
+}
+
+function chk4(){
+  var a=parseFloat(document.getElementById('areaIn').value);
+  D.area=a>0?a:null;
+  document.getElementById('b4').disabled=!(D.loc&&D.area);
+}
+
+function updCap(){
+  var v=parseInt(document.getElementById('capR').value);
+  D.capital=v;
+  document.getElementById('capD').textContent=v.toLocaleString('ru-RU')+' ₸';
+}
+
+function buildFmts(){
+  var list=document.getElementById('fmtList'); list.innerHTML='';
+  D.format=null; D.formatName=null; document.getElementById('b3').disabled=true;
+  (FMTS[D.niche]||[]).forEach(function(f){
+    var btn=document.createElement('button');
+    btn.className='card'; btn.id='f-'+f.v;
+    btn.innerHTML=f.l+'<span class="sub">'+f.s+'</span><span class="ck"></span>';
+    btn.setAttribute('onclick','pickFmt("'+f.v+'","'+f.l+'")');
+    list.appendChild(btn);
+  });
+}
+
+function fillSum(){
+  document.getElementById('sm-city').textContent=D.cityName||'—';
+  document.getElementById('sm-niche').textContent=D.nicheName||'—';
+  document.getElementById('sm-fmt').textContent=D.formatName||'—';
+  document.getElementById('sm-loc').textContent=D.locName||'—';
+  document.getElementById('sm-area').textContent=D.area?D.area+' м²':'—';
+  document.getElementById('sm-cap').textContent=D.capital.toLocaleString('ru-RU')+' ₸';
+  document.getElementById('sm-cx').textContent=D.capex||'—';
+}
+
+function go(step){
+  if(cur===4){ D.area=parseFloat(document.getElementById('areaIn').value)||null; D.rent=parseInt(document.getElementById('rentIn').value)||null; }
+  if(step===3) buildFmts();
+  if(step===6) fillSum();
+  document.getElementById('s'+cur).classList.remove('active');
+  cur=step;
+  document.getElementById('s'+step).classList.add('active');
+  document.getElementById('pf').style.width=((step-1)/6*100)+'%';
+  window.scrollTo(0,0);
+}
+
+async function fetchWithRetry(url, options, retries) {
+  for(var i=0; i<=retries; i++){
+    try{
+      var controller = new AbortController();
+      var timeout = setTimeout(function(){ controller.abort(); }, 15000);
+      var res = await fetch(url, Object.assign({}, options, {signal: controller.signal}));
+      clearTimeout(timeout);
+      return res;
+    }catch(e){
+      if(i===retries) throw e;
+      // Ждём 2 секунды перед повтором
+      await new Promise(function(r){ setTimeout(r, 2000); });
+    }
+  }
+}
+
+async function calc(){
+  D.area=parseFloat(document.getElementById('areaIn').value)||D.area;
+  D.rent=parseInt(document.getElementById('rentIn').value)||null;
+  document.getElementById('errBox').style.display='none';
+  document.getElementById('s6').classList.remove('active');
+  document.getElementById('loadScr').classList.add('active');
+  document.getElementById('loadScr').querySelector('div:nth-child(2)').textContent='Подключаемся к серверу...';
+  document.getElementById('pf').style.width='95%';
+  window.scrollTo(0,0);
+  var body={city_id:D.city,niche_id:D.niche,format_id:D.format,area_m2:D.area,loc_type:D.loc,capital:D.capital,capex_level:D.capex};
+  if(D.rent) body.rent_override=D.rent;
+  try{
+    // Сначала будим сервер
+    try{ await fetchWithRetry(API+'/health', {method:'GET'}, 2); }catch(e){}
+    // Потом основной запрос
+    document.getElementById('loadScr').querySelector('div:nth-child(2)').textContent='Считаем экономику...';
+    var res=await fetchWithRetry(API+'/quick-check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}, 3);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    var json=await res.json();
+    document.getElementById('loadScr').classList.remove('active');
+    renderRep(json.result);
+  }catch(e){
+    document.getElementById('loadScr').classList.remove('active');
+    document.getElementById('s6').classList.add('active');
+    var eb=document.getElementById('errBox'); eb.style.display='block';
+    eb.textContent='⚠️ Не удалось подключиться к серверу. Попробуй ещё раз через 10 секунд. ('+e.message+')';
+  }
+}
+
+function renderRep(r){
+  document.getElementById('repScr').classList.add('active');
+  document.getElementById('pf').style.width='100%';
+  window.scrollTo(0,0);
+  var fin=r.financials,cap=r.capex,be=r.breakeven,pb=r.payback,mkt=r.market,tss=mkt.tam_sam_som,comp=mkt.competitors;
+  document.getElementById('rTtl').textContent=D.nicheName+' · '+D.cityName;
+  document.getElementById('rSub').textContent=D.formatName+' · '+D.locName;
+  var mg=fin['маржа_опер_pct'];
+  document.getElementById('mRev').textContent=fmt(fin['базовая_выручка_мес']);
+  document.getElementById('mMrg').textContent=mg+'%';
+  document.getElementById('mMrg').className='m-val '+(mg>=20?'g':mg>=10?'y':'r');
+  document.getElementById('mTB').textContent=fmt(be['тб_выручка']);
+  var pbM=pb['месяц'];
+  document.getElementById('mPb').textContent=pbM?pbM+' мес.':'Нет';
+  document.getElementById('mPb').className='m-val '+(!pbM?'r':pbM<=12?'g':'y');
+  var ok=cap['капитал_пользователя']>=cap['итого'];
+  document.getElementById('rCN').textContent=fmt(cap['итого']);
+  document.getElementById('rCC').textContent=fmt(cap['капитал_пользователя']);
+  document.getElementById('rCS').textContent=ok?'✅ Достаточно':'⚠️ Нужно больше';
+  document.getElementById('rCS').style.color=ok?'#00D4AA':'#FF4D6A';
+  var cfDiv=document.getElementById('cfRows'); cfDiv.innerHTML='';
+  var cf=r.cashflow||[],mx=Math.max.apply(null,cf.map(function(x){return Math.abs(x['нарастающий']);}));
+  cf.forEach(function(row){
+    var pos=row['нарастающий']>=0,w=Math.min(100,Math.abs(row['нарастающий'])/mx*100);
+    var div=document.createElement('div'); div.className='cf-row';
+    div.innerHTML='<span style="color:#8888AA">'+row['месяц']+' м.</span><span style="color:#8888AA">'+row['кал_месяц']+'</span><div class="cf-bar-w"><div class="cf-bar" style="width:'+w+'%;background:'+(pos?'#00D4AA':'#FF4D6A')+'"></div></div><span style="text-align:right;font-weight:600;color:'+(pos?'#00D4AA':'#FF4D6A')+'">'+(pos?'+':'')+(row['нарастающий']/1000000).toFixed(1)+'M</span>';
+    cfDiv.appendChild(div);
+  });
+  var rd=document.getElementById('riskDiv'); rd.innerHTML='';
+  var pat=r.risks['паттерн_закрытий'];
+  if(pat&&pat['Фраза для отчёта Quick Check']){var d=document.createElement('div');d.className='risk';d.textContent=pat['Фраза для отчёта Quick Check'];rd.appendChild(d);}
+  var zp=be['запас_прочности_%'],zd=document.createElement('div');
+  zd.className='risk '+(zp>=0?'g':'r');
+  zd.textContent=zp>=0?'✅ Запас над ТБ: +'+zp+'% трафика':'⚠️ Трафик ниже ТБ на '+Math.abs(zp)+'%';
+  rd.appendChild(zd);
+  if(!ok){var cd=document.createElement('div');cd.className='risk r';cd.textContent='⚠️ Не хватает '+fmt(cap['итого']-cap['капитал_пользователя'])+' до CAPEX';rd.appendChild(cd);}
+  document.getElementById('rPop').textContent=fmtN(mkt.population);
+  document.getElementById('rTam').textContent=fmtN(tss.tam);
+  document.getElementById('rSam').textContent=fmtN(tss.sam);
+  document.getElementById('rCmp').textContent=comp['сигнал']||'—';
+}
+
+function order(){ if(window.Telegram&&window.Telegram.WebApp) window.Telegram.WebApp.sendData(JSON.stringify({action:'order_finmodel',city:D.city,niche:D.niche})); }
+function restart(){ document.getElementById('repScr').classList.remove('active'); cur=1; document.getElementById('s1').classList.add('active'); document.getElementById('pf').style.width='0%'; window.scrollTo(0,0); }
+
+if(window.Telegram&&window.Telegram.WebApp){ window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); }
+</script>
+</body>
+</html>
