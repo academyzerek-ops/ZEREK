@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>ZEREK Quick Check</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070710;--sf:#0F0F1A;--sf2:#161625;--sf3:#1E1E30;--bd:rgba(255,255,255,.06);--tx:#ECEDFA;--tx2:#8F90A6;--tx3:#5D5E74;--ac:#7B6CF6;--ac2:#9E92FF;--acd:rgba(123,108,246,.1);--gn:#00D6A0;--gnd:rgba(0,214,160,.07);--am:#F5B731;--amd:rgba(245,183,49,.07);--rd:#F26B6B;--rdd:rgba(242,107,107,.07);--r:14px;--rs:10px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--tx);line-height:1.55;max-width:440px;margin:0 auto;min-height:100vh;-webkit-font-smoothing:antialiased}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}@keyframes sp{to{transform:rotate(360deg)}}
+.pb{position:fixed;top:0;left:0;right:0;height:3px;background:var(--sf);z-index:99;max-width:440px;margin:0 auto}.pf{height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));transition:width .4s}
+.hd{padding:14px 20px 6px;display:flex;justify-content:space-between;align-items:center;margin-top:3px;font-size:13px}.hd .a{color:var(--tx3)}.hd .b{color:var(--ac2);font-weight:600}
+.st{display:none;padding:0 20px 120px;animation:up .3s}.st.on{display:block}.st h2{font-size:20px;font-weight:700;margin:6px 0 2px;letter-spacing:-.3px}.sd{color:var(--tx2);font-size:13px;margin-bottom:14px}
+.note{background:var(--acd);border-left:3px solid var(--ac);padding:10px 14px;border-radius:0 8px 8px 0;margin:10px 0;font-size:12px;color:var(--tx2);line-height:1.5}
+.cd{display:flex;align-items:center;gap:12px;padding:13px 16px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);margin-bottom:7px;cursor:pointer;transition:border .2s,background .2s}.cd:active{transform:scale(.98)}.cd.on{border-color:var(--ac);background:var(--acd)}
+.cn{font-weight:600;font-size:14px}.cs{font-size:11px;color:var(--tx3);margin-top:1px}
+.cl{padding:13px 16px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);margin-bottom:7px;cursor:pointer;transition:border .2s,background .2s}.cl:active{transform:scale(.98)}.cl.on{border-color:var(--ac);background:var(--acd)}.cl .cn{font-weight:600;font-size:14px}.cl .cs{font-size:11px;color:var(--tx3);margin-top:3px;line-height:1.4}
+.fl{font-size:12px;color:var(--tx2);margin:14px 0 5px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.inp{width:100%;padding:11px 14px;background:var(--sf);border:1px solid var(--bd);border-radius:8px;color:var(--tx);font-family:inherit;font-size:14px;outline:none;-webkit-appearance:none}.inp:focus{border-color:var(--ac)}
+.hn{font-size:11px;color:var(--tx3);margin-top:3px}
+.cpd{font-size:26px;font-weight:700;text-align:center;margin:10px 0;color:var(--ac2)}.cpd span{font-size:15px;color:var(--tx3)}
+input[type=range]{width:100%;-webkit-appearance:none;height:5px;background:var(--sf2);border-radius:3px;outline:none;margin:8px 0}input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--ac);cursor:pointer}
+.rl{display:flex;justify-content:space-between;font-size:11px;color:var(--tx3)}
+.cc{background:var(--sf);border-radius:var(--r);padding:14px;margin:10px 0}.cr{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bd);font-size:13px}.cr:last-child{border:none}.ck{color:var(--tx3)}.cv{font-weight:600}
+.bb{position:fixed;bottom:0;left:0;right:0;padding:12px 20px;background:linear-gradient(transparent,var(--bg) 30%);max-width:440px;margin:0 auto;z-index:90}.br{display:flex;gap:10px}
+.bk{flex:0 0 46px;height:46px;background:var(--sf);border:1px solid var(--bd);border-radius:12px;color:var(--tx2);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:border .2s}.bk:active{border-color:var(--ac)}
+.bn{flex:1;height:46px;background:linear-gradient(135deg,var(--ac),var(--ac2));border:none;border-radius:12px;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;letter-spacing:.3px}.bn:disabled{opacity:.3;cursor:not-allowed}
+.ld{display:none;text-align:center;padding:80px 20px}.lr{width:44px;height:44px;border:3px solid var(--sf2);border-top-color:var(--ac);border-radius:50%;animation:sp .8s linear infinite;margin:0 auto 20px}.lt{font-size:17px;font-weight:700;margin-bottom:6px}.ls{font-size:12px;color:var(--tx3)}.lp{font-size:12px;color:var(--ac2);margin-top:14px}
+.rp{padding:10px 20px 40px}.rh{text-align:center;padding:18px 0;border-bottom:1px solid var(--bd);margin-bottom:14px}.rt{font-size:18px;font-weight:700;color:var(--ac2);letter-spacing:-.3px}.rsu{font-size:12px;color:var(--tx3);margin-top:3px}
+.rs{margin:18px 0}.rst{font-size:14px;font-weight:700;color:var(--ac);margin-bottom:6px;padding-bottom:4px;border-bottom:2px solid var(--acd)}.rsb{font-size:10px;color:var(--tx3);font-weight:400;margin-left:4px}
+.rc{background:var(--sf);border-radius:var(--rs);padding:12px;margin:6px 0}.rr{display:flex;justify-content:space-between;padding:4px 0;font-size:13px}.rk{color:var(--tx2)}.rv{font-weight:600}
+.tip{background:var(--gnd);border-left:3px solid var(--gn);padding:7px 12px;border-radius:0 8px 8px 0;font-size:12px;color:var(--gn);margin:5px 0;line-height:1.5}
+.wrn{background:var(--rdd);border-left:3px solid var(--rd);padding:7px 12px;border-radius:0 8px 8px 0;font-size:12px;color:var(--rd);margin:5px 0;line-height:1.5}
+.inf{background:var(--acd);border-left:3px solid var(--ac);padding:7px 12px;border-radius:0 8px 8px 0;font-size:12px;color:var(--tx2);margin:5px 0;line-height:1.5}
+.vrd{text-align:center;padding:14px;border-radius:var(--r);margin:12px 0;font-size:14px;font-weight:600;line-height:1.5}.vrd.green{background:var(--gnd);color:var(--gn);border:1px solid rgba(0,214,160,.15)}.vrd.yellow{background:var(--amd);color:var(--am);border:1px solid rgba(245,183,49,.15)}.vrd.red{background:var(--rdd);color:var(--rd);border:1px solid rgba(242,107,107,.15)}
+.rpd{display:flex;justify-content:space-between;padding:3px 0;font-size:12px;border-bottom:1px solid var(--bd)}
+.rf{text-align:center;padding:20px 0;margin-top:16px;border-top:1px solid var(--bd);font-size:11px;color:var(--tx3);line-height:1.8}
+.rbtn{display:inline-block;margin-top:10px;padding:9px 22px;background:var(--ac);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.cta{background:var(--sf);border:1px solid var(--ac);border-radius:var(--r);padding:16px;margin:14px 0;text-align:center}.cta p{font-size:12px;color:var(--tx2);margin:6px 0 10px;line-height:1.5}
+.cta a{display:inline-block;padding:9px 18px;background:var(--ac);color:#fff;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;margin:3px}
+.eb{background:var(--rdd);border:1px solid rgba(242,107,107,.15);border-radius:var(--r);padding:24px;text-align:center;margin:40px 20px}.eb h3{color:var(--rd);margin-bottom:6px}.eb p{color:var(--tx2);font-size:12px;margin-bottom:14px}
+</style>
+</head>
+<body>
+<div id="S">
+<div class="pb"><div class="pf" id="pf"></div></div>
+<div class="hd"><span class="a" id="sc"></span><span class="b" id="sn"></span></div>
+<div class="st on" id="s1"><h2>Город</h2><p class="sd">Где планируете открыть бизнес?</p><div id="CL"></div></div>
+<div class="st" id="s2"><h2>Сфера бизнеса</h2><p class="sd">Выберите направление</p><div id="NL"></div></div>
+<div class="st" id="s3"><h2>Формат</h2><p class="sd">Выберите конкретный формат</p><div id="FL"></div></div>
+<div class="st" id="s4"><h2>Класс</h2><p class="sd">Уровень вложений и оборудования</p><div class="note">От класса зависит размер инвестиций, качество оборудования и ожидаемая выручка.</div><div id="KL"></div></div>
+<div class="st" id="s5"><h2>Параметры</h2><p class="sd">Локация, площадь, роль</p>
+<div class="note">Тип локации влияет на аренду и поток клиентов. Не знаете аренду — оставьте пустым, рассчитаем по бенчмарку.</div>
+<div class="fl">Тип локации</div><select class="inp" id="loc"></select>
+<div class="fl">Площадь (м²)</div><input type="number" class="inp" id="ar" placeholder="Оставьте пустым — подставим типовую" min="1" max="1000">
+<div class="fl">Аренда ₸/мес</div><input type="number" class="inp" id="rn" placeholder="Оставьте пустым — рассчитаем" min="0" max="10000000"><div class="hn">Если не знаете — рассчитаем по средним ставкам</div>
+<div class="fl" style="margin-top:12px">Работаете сами?</div><div class="note">Если да — экономите 150-400 тыс ₸/мес на зарплате, но привязаны к точке.</div>
+<select class="inp" id="fw"><option value="0">Нет, нанимаю персонал</option><option value="1">Да, работаю сам</option></select>
+</div>
+<div class="st" id="s6"><h2>Бюджет</h2><p class="sd">Сколько готовы вложить?</p>
+<div class="note">Сравним с необходимыми инвестициями. Если не хватает — предложим варианты.</div>
+<div class="cpd" id="cpd">5 000 000 <span>₸</span></div>
+<input type="range" id="cps" min="500000" max="50000000" step="100000" value="5000000" oninput="uC()"><div class="rl"><span>500 тыс</span><span>50 млн ₸</span></div>
+</div>
+<div class="st" id="s7"><h2>Проверьте данные</h2><p class="sd">Всё верно?</p><div class="cc" id="cf"></div></div>
+<div class="bb"><div class="br"><button class="bk" id="bk" onclick="gB()" style="display:none">&larr;</button><button class="bn" id="bn" onclick="nX()" disabled>Далее</button></div></div>
+</div>
+<div class="ld" id="LD"><div class="lr"></div><div class="lt">Считаем ваш бизнес</div><div class="ls">Анализ рынка, инвестиции, риски</div><div class="lp" id="lp"></div></div>
+<div id="RP" style="display:none"></div>
+<script>
+var U='https://web-production-b3ede.up.railway.app',T=7,SN=['','Город','Ниша','Формат','Класс','Параметры','Бюджет','Проверка'];
+var D={s:1,ci:null,cn:null,ni:null,nn:null,fi:null,fn:null,cls:'Стандарт',lt:'',ar:null,ro:null,cap:5e6,fw:false,q:1,sm:new Date().getMonth()+1,cities:[],niches:[],fmts:[],clsL:[]};
+var CLD={'Эконом':'Б/у оборудование, минимальные вложения','Стандарт':'Новое оборудование среднего уровня','Бизнес':'Качественное оборудование, допуслуги','Премиум':'Топ-бренды, авторский подход'};
+function $(i){return document.getElementById(i)}
+function G(m,p,cb){var x=new XMLHttpRequest();x.open(m,U+p,true);x.setRequestHeader('Content-Type','application/json');x.onreadystatechange=function(){if(x.readyState===4){if(x.status===200)try{cb(null,JSON.parse(x.responseText))}catch(e){cb(e)}else cb(new Error('HTTP '+x.status))}};x.onerror=function(){cb(new Error('Сеть'))};x.send(m==='POST'?JSON.stringify(arguments[3]):null)}
+function P(p,b,cb){var x=new XMLHttpRequest();x.open('POST',U+p,true);x.setRequestHeader('Content-Type','application/json');x.onreadystatechange=function(){if(x.readyState===4){if(x.status===200)try{cb(null,JSON.parse(x.responseText))}catch(e){cb(e)}else cb(new Error(x.responseText.substring(0,200)))}};x.onerror=function(){cb(new Error('Сеть'))};x.send(JSON.stringify(b))}
+function F(n){if(n==null)return'—';return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ')}
+function FM(n){if(n==null)return'—';if(Math.abs(n)>=1e6)return(n/1e6).toFixed(1).replace('.0','')+' млн';if(Math.abs(n)>=1e3)return Math.round(n/1e3)+' тыс';return F(n)}
+function R(k,v){return'<div class="rr"><span class="rk">'+k+'</span><span class="rv">'+v+'</span></div>'}
+function V(o,k){var v=o[k];return v!=null?v:'—'}
+
+function init(){G('GET','/cities',function(e,r){if(e){$('CL').innerHTML='<div class="eb"><h3>Ошибка</h3><p>Не удалось загрузить</p><button class="rbtn" onclick="init()">Повторить</button></div>';return}D.cities=r.cities||[];rCi()});G('GET','/niches',function(e,r){if(!e&&r)D.niches=r.niches||[]});uP();uB()}
+function rCi(){var h='';for(var i=0;i<D.cities.length;i++){var c=D.cities[i],id=c.city_id||'',nm=c['\u0413\u043e\u0440\u043e\u0434']||id,pop=c['\u041d\u0430\u0441\u0435\u043b\u0435\u043d\u0438\u0435 \u0432\u0441\u0435\u0433\u043e (\u0447\u0435\u043b.)']||0;h+='<div class="cd" data-v="'+id+'" onclick="sel(this,\'CL\',\'ci\',\'cn\')"><div><div class="cn">'+nm+'</div><div class="cs">'+(pop?FM(pop)+' чел.':'')+'</div></div></div>'}$('CL').innerHTML=h}
+function rNi(){var h='';for(var i=0;i<D.niches.length;i++){var n=D.niches[i],id=n.niche_id||'',nm=n.name||id,ic=n.icon||'',cnt=n.formats_count;h+='<div class="cd" data-v="'+id+'" onclick="sel(this,\'NL\',\'ni\',\'nn\');D.fi=null;D.fn=null;lLoc()"><div><div class="cn">'+(ic?ic+' ':'')+nm+'</div>'+(cnt?'<div class="cs">'+cnt+' форматов</div>':'')+'</div></div>'}$('NL').innerHTML=h}
+function lFmt(){$('FL').innerHTML='<div style="text-align:center;padding:40px;color:var(--tx3)">Загрузка...</div>';G('GET','/formats/'+D.ni,function(e,r){if(e){$('FL').innerHTML='<div class="eb"><h3>Ошибка</h3></div>';return}D.fmts=r.formats||[];var h='';for(var i=0;i<D.fmts.length;i++){var f=D.fmts[i];h+='<div class="cd" data-v="'+f.format_id+'" onclick="sel(this,\'FL\',\'fi\',\'fn\');lCls()"><div><div class="cn">'+f.format_name+'</div></div></div>'}$('FL').innerHTML=h})}
+function lLoc(){G('GET','/locations/'+D.ni,function(e,r){var s=$('loc');s.innerHTML='';var l=(r&&r.locations)||[];if(!l.length){s.innerHTML='<option>Не определено</option>';return}for(var i=0;i<l.length;i++){var o=document.createElement('option');o.value=l[i].loc_id||l[i].loc_name;o.textContent=l[i].loc_name;s.appendChild(o)}D.lt=l[0].loc_id||l[0].loc_name})}
+function lCls(){G('GET','/classes/'+D.ni+'/'+D.fi,function(e,r){var c=(r&&r.classes)||['Стандарт'];D.clsL=c;if(c.length<=1){D.cls=c[0]||'Стандарт';return}var h='';for(var i=0;i<c.length;i++){var k=c[i],s=k==='Стандарт'?' on':'';h+='<div class="cl'+s+'" data-v="'+k+'" onclick="sC(this)"><div class="cn">'+k+'</div><div class="cs">'+(CLD[k]||'')+'</div></div>'}$('KL').innerHTML=h;if(c.indexOf(D.cls)<0)D.cls=c[0]})}
+function sel(el,cid,fk,nk){var a=document.querySelectorAll('#'+cid+' .cd');for(var i=0;i<a.length;i++)a[i].classList.remove('on');el.classList.add('on');D[fk]=el.dataset.v;if(nk)D[nk]=el.querySelector('.cn').textContent;uB()}
+function sC(el){var a=document.querySelectorAll('#KL .cl');for(var i=0;i<a.length;i++)a[i].classList.remove('on');el.classList.add('on');D.cls=el.dataset.v}
+function uC(){var v=parseInt($('cps').value);D.cap=v;$('cpd').innerHTML=F(v)+' <span>₸</span>'}
+function uP(){$('pf').style.width=(D.s/T*100)+'%';$('sc').textContent='Шаг '+D.s+'/'+T;$('sn').textContent=SN[D.s]||''}
+function uB(){var b=$('bn'),k=$('bk'),ok=false;if(D.s===1)ok=!!D.ci;else if(D.s===2)ok=!!D.ni;else if(D.s===3)ok=!!D.fi;else ok=true;b.disabled=!ok;k.style.display=D.s<=1?'none':'flex';b.textContent=D.s===T?'Рассчитать':'Далее'}
+function gS(n){var c=$('s'+D.s);if(c)c.classList.remove('on');D.s=n;if(n===2)rNi();if(n===3)lFmt();if(n===4&&D.clsL.length<=1){D.cls=D.clsL[0]||'Стандарт';gS(n+1);return}if(n===T)rCf();var x=$('s'+n);if(x)x.classList.add('on');uP();uB();window.scrollTo(0,0)}
+function nX(){if($('bn').disabled)return;if(D.s===5){var a=$('ar').value;D.ar=a?parseInt(a):0;var r=$('rn').value;D.ro=r?parseInt(r):null;D.fw=$('fw').value==='1';D.lt=$('loc').value}if(D.s===T){run();return}gS(D.s+1)}
+function gB(){if(D.s>1){var p=D.s-1;if(p===4&&D.clsL.length<=1)p=3;gS(p)}}
+function rCf(){var rows=[['Город',D.cn],['Ниша',D.nn],['Формат',D.fn],['Класс',D.cls],['Локация',D.lt],['Площадь',D.ar?D.ar+' м²':'авто'],['Аренда',D.ro?F(D.ro)+' ₸/мес':'по бенчмарку'],['Работаю сам',D.fw?'Да':'Нет'],['Бюджет',F(D.cap)+' ₸']];var h='';for(var i=0;i<rows.length;i++)h+='<div class="cr"><span class="ck">'+rows[i][0]+'</span><span class="cv">'+(rows[i][1]||'—')+'</span></div>';$('cf').innerHTML=h}
+function run(){$('S').style.display='none';$('LD').style.display='block';var st=['Загружаем данные','Анализируем рынок','Считаем инвестиции','Строим прогноз','Оцениваем риски','Готовим отчёт'],si=0,el=$('lp');el.textContent=st[0];var iv=setInterval(function(){si++;if(si<st.length)el.textContent=st[si]},1100);
+var b={city_id:D.ci,niche_id:D.ni,format_id:D.fi,cls:D.cls,area_m2:D.ar||0,loc_type:D.lt,capital:D.cap,qty:D.q,founder_works:D.fw,start_month:D.sm};if(D.ro)b.rent_override=D.ro;
+P('/quick-check',b,function(err,data){clearInterval(iv);if(err){$('LD').style.display='none';$('RP').style.display='block';$('RP').innerHTML='<div class="eb"><h3>Ошибка</h3><p>'+err.message.substring(0,300)+'</p><button class="rbtn" onclick="location.reload()">Заново</button></div>';return}setTimeout(function(){$('LD').style.display='none';$('RP').style.display='block';rR(data.result||data);window.scrollTo(0,0)},500)})}
+
+function rR(d){
+var i=d.input||{},cap=d.capex||{},sf=d.staff||{},fn=d.financials||{},be=d.breakeven||{},sc=d.scenarios||{},tx=d.tax||{},vd=d.verdict||{},pr=d.products||[],ins=d.insights||[],mk=d.marketing||[],al=d.alternatives||[],bk=cap.breakdown||{},h='';
+h+='<div class="rp"><div class="rh"><div class="rt">ZEREK Quick Check</div><div class="rsu">'+(i.format_name||i.format_id)+' &middot; '+(i.cls||'')+' &middot; '+(i.city_name||i.city_id)+'</div></div>';
+
+// 1 Продукты
+h+='<div class="rs"><div class="rst">1. На чём зарабатываете<span class="rsb">структура выручки</span></div><div class="rc">'+R('Средний чек',F(fn.check_med)+' ₸')+R('Клиентов в день',''+fn.traffic_med)+R('Маржа',Math.round((fn.margin_pct||0)*100)+'%')+'</div>';
+var co=pr.filter(function(p){return p.category==='core'}).slice(0,4),up=pr.filter(function(p){return p.category==='upsell'}).slice(0,4);
+if(co.length){h+='<div style="font-weight:600;margin:6px 0 3px;font-size:12px">Основные:</div>';co.forEach(function(p){h+='<div class="rpd"><span>'+p.product_name+'</span><span style="color:var(--gn)">'+(p.margin_pct?Math.round(p.margin_pct*100)+'%':'')+'</span></div>'})}
+if(up.length){h+='<div style="font-weight:600;margin:8px 0 3px;font-size:12px;color:var(--am)">Допродажи:</div>';up.forEach(function(p){h+='<div class="rpd"><span>'+p.product_name+'</span><span style="color:var(--am)">'+(p.upsell_check_pct?'+'+Math.round(p.upsell_check_pct*100)+'%':'')+'</span></div>'})}
+h+='</div>';
+
+// 2 Расходы
+h+='<div class="rs"><div class="rst">2. Ежемесячные расходы<span class="rsb">сколько тратите каждый месяц</span></div><div class="rc">'+R('ФОТ (зарплаты с налогами)',F(sf.fot_full_med)+' ₸')+R('Аренда',F(fn.rent_month)+' ₸')+R('Штат',sf.positions||'')+'</div>';
+if(fn.sez_month>0)h+='<div class="wrn">СЭЗ: '+F(fn.sez_month)+' ₸/мес (медкнижки, дезинсекция)</div>';
+h+='</div>';
+
+// 3 CAPEX
+h+='<div class="rs"><div class="rst">3. Стартовые вложения<span class="rsb">всё что нужно до открытия</span></div><div class="rc">';
+if(bk.equipment)h+=R('Оборудование',F(bk.equipment)+' ₸');if(bk.renovation)h+=R('Ремонт',F(bk.renovation)+' ₸');if(bk.furniture)h+=R('Мебель',F(bk.furniture)+' ₸');if(bk.first_stock)h+=R('Первый закуп',F(bk.first_stock)+' ₸');if(bk.permits_sez)h+=R('Разрешения',F(bk.permits_sez)+' ₸');if(bk.working_cap)h+=R('Оборотный капитал',F(bk.working_cap)+' ₸');
+h+='<div class="rr" style="border-top:1px solid var(--bd);margin-top:3px;padding-top:6px"><span class="rk" style="font-weight:700">ИТОГО</span><span class="rv" style="color:var(--ac)">'+F(cap.total)+' ₸</span></div></div>';
+if(cap.gap>=0)h+='<div class="tip">Бюджета достаточно. Запас: '+F(cap.gap)+' ₸ (~'+cap.reserve_months+' мес на операционные расходы)</div>';
+else h+='<div class="inf">'+cap.signal+'</div>';
+h+='</div>';
+
+// 4 ТБ
+h+='<div class="rs"><div class="rst">4. Точка безубыточности<span class="rsb">минимум продаж чтобы выйти в ноль</span></div><div class="rc">'+R('ТБ в деньгах',F(V(be,'тб_₸'))+' ₸/мес')+R('ТБ в клиентах',V(be,'тб_чеков_день')+' в день')+R('Запас прочности',V(be,'запас_прочности_%')+'%')+'</div>';
+var sp=V(be,'запас_прочности_%');if(sp!=='—'&&sp<15)h+='<div class="wrn">Низкий запас прочности — при снижении трафика на 15% бизнес уходит в минус</div>';
+h+='</div>';
+
+// 5 Сценарии
+h+='<div class="rs"><div class="rst">5. Три сценария<span class="rsb">прогноз на 12 месяцев</span></div>';
+['pess','base','opt'].forEach(function(k){var s=sc[k]||{},pb=s['\u043e\u043a\u0443\u043f\u0430\u0435\u043c\u043e\u0441\u0442\u044c']||{},lb=k==='pess'?'Пессимистичный':k==='opt'?'Оптимистичный':'Базовый',cl=k==='pess'?'var(--rd)':k==='opt'?'var(--gn)':'var(--ac2)';
+h+='<div class="rc" style="border-left:3px solid '+cl+'"><div style="font-weight:700;color:'+cl+';margin-bottom:2px;font-size:13px">'+lb+'</div>'+R('Трафик',V(s,'трафик_день')+'/день')+R('Прибыль',F(V(s,'прибыль_среднемес'))+' ₸/мес')+'<div style="font-size:11px;color:var(--tx3);margin-top:2px">'+(pb['\u0441\u0442\u0430\u0442\u0443\u0441']||'')+'</div></div>'});
+h+='</div>';
+
+// 6 Налоги
+h+='<div class="rs"><div class="rst">6. Налоги</div><div class="rc">'+R('Режим',tx.regime||'')+R('Ставка',(tx.rate_pct||4)+'%')+'</div></div>';
+
+// 7 Маркетинг
+h+='<div class="rs"><div class="rst">7. Как продвигать<span class="rsb">рекомендуемые каналы</span></div>';
+mk.filter(function(m){return m.priority==='\u043e\u0441\u043d\u043e\u0432\u043d\u043e\u0439'}).forEach(function(m){var ch=m.channel||'',ef=m.expected_effect||'',nt=m.notes||'';h+='<div class="rc" style="padding:9px 12px"><div style="font-weight:600;font-size:13px;color:var(--gn)">'+ch+'</div>';if(ef&&String(ef)!=='nan')h+='<div style="font-size:11px;color:var(--tx2);margin-top:2px">'+ef+'</div>';if(nt&&String(nt)!=='nan')h+='<div style="font-size:10px;color:var(--tx3);margin-top:1px">'+nt+'</div>';h+='</div>'});
+var sk=mk.filter(function(m){return m.priority==='\u043d\u0435_\u043d\u0443\u0436\u0435\u043d'});
+if(sk.length){h+='<div style="font-weight:600;margin:7px 0 3px;font-size:12px;color:var(--rd)">Не тратьте на:</div>';sk.forEach(function(m){h+='<div style="font-size:12px;color:var(--tx3);padding:2px 0">&times; '+(m.channel||'')+'</div>'})}
+h+='</div>';
+
+// 8 Советы
+var tips=ins.filter(function(x){return x.insight_type==='lifehack'});
+if(tips.length){h+='<div class="rs"><div class="rst">8. Полезные советы</div>';tips.slice(0,4).forEach(function(t){var tx2=t.insight_text;if(tx2&&String(tx2)!=='nan')h+='<div class="tip">'+tx2+'</div>'});h+='</div>'}
+
+// 9 ВЫВОДЫ — вердикт тут
+h+='<div class="rs"><div class="rst">9. Выводы и рекомендации</div>';
+h+='<div class="vrd '+vd.color+'">'+vd.text+'</div>';
+if(vd.reasons&&vd.reasons.length)vd.reasons.forEach(function(r){h+='<div class="inf">'+r+'</div>'});
+if(al.length){h+='<div style="font-weight:600;margin:7px 0 3px;font-size:12px">Что можно улучшить:</div>';al.forEach(function(a){h+='<div class="tip">'+a+'</div>'})}
+h+='</div>';
+
+// 10 Памятка рисков
+var ri=ins.filter(function(x){return x.insight_type==='risk'}),nb=ins.filter(function(x){return x.insight_type==='newbie_mistake'});
+if(ri.length||nb.length){h+='<div class="rs"><div class="rst" style="color:var(--tx2)">Памятка: обратите внимание</div>';
+ri.slice(0,4).forEach(function(r){var t=r.insight_text;if(t&&String(t)!=='nan')h+='<div class="wrn">'+t+'</div>'});
+if(nb.length){h+='<div style="font-weight:600;margin:7px 0 3px;font-size:12px;color:var(--tx2)">Ошибки новичков:</div>';nb.slice(0,3).forEach(function(n){var t=n.insight_text;if(t&&String(t)!=='nan')h+='<div class="inf">'+t+'</div>'})}
+h+='</div>'}
+
+// CTA
+h+='<div class="cta"><div style="font-weight:700;font-size:14px">Хотите точный расчёт?</div><p>Это экспресс-оценка. Для полноценного запуска рекомендуем финансовую модель (помесячно, кредиты, инфляция) или бизнес-план (документ для банка или госпрограммы).</p>';
+h+='<a href="https://t.me/zerekai_bot">Финансовая модель</a> <a href="https://t.me/zerekai_bot">Бизнес-план</a></div>';
+
+h+='<div class="rf">ZEREK &middot; Аналитика для предпринимателей<br>@zerekai_bot<br><br><button class="rbtn" onclick="location.reload()">Новый расчёт</button></div></div>';
+$('RP').innerHTML=h}
+
+init();
+</script>
+</body>
+</html>
