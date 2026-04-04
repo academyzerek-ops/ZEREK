@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>ZEREK Quick Check</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070710;--sf:#0F0F1A;--sf2:#161625;--sf3:#1E1E30;--bd:rgba(255,255,255,.06);--tx:#ECEDFA;--tx2:#8F90A6;--tx3:#5D5E74;--ac:#7B6CF6;--ac2:#9E92FF;--acd:rgba(123,108,246,.1);--gn:#00D6A0;--gnd:rgba(0,214,160,.07);--am:#F5B731;--amd:rgba(245,183,49,.07);--rd:#F26B6B;--rdd:rgba(242,107,107,.07);--bl:#4DA6FF;--bld:rgba(77,166,255,.07);--r:14px;--rs:10px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--tx);line-height:1.55;max-width:440px;margin:0 auto;min-height:100vh;-webkit-font-smoothing:antialiased}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}@keyframes sp{to{transform:rotate(360deg)}}
+.pb{position:fixed;top:0;left:0;right:0;height:3px;background:var(--sf);z-index:99;max-width:440px;margin:0 auto}.pf{height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));transition:width .4s}
+.hd{padding:14px 20px 6px;display:flex;justify-content:space-between;align-items:center;margin-top:3px;font-size:13px}.hd .a{color:var(--tx3)}.hd .b{color:var(--ac2);font-weight:600}
+.st{display:none;padding:0 20px 120px;animation:up .3s}.st.on{display:block}.st h2{font-size:20px;font-weight:700;margin:6px 0 2px;letter-spacing:-.3px}.sd{color:var(--tx2);font-size:13px;margin-bottom:14px}
+.note{background:var(--acd);border-left:3px solid var(--ac);padding:10px 14px;border-radius:0 8px 8px 0;margin:10px 0;font-size:12px;color:var(--tx2);line-height:1.5}
+.cd{display:flex;align-items:center;gap:12px;padding:13px 16px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);margin-bottom:7px;cursor:pointer;transition:border .2s,background .2s}.cd:active{transform:scale(.98)}.cd.on{border-color:var(--ac);background:var(--acd)}.cn{font-weight:600;font-size:14px}.cs{font-size:11px;color:var(--tx3);margin-top:1px}
+.cl{padding:13px 16px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);margin-bottom:7px;cursor:pointer;transition:border .2s,background .2s}.cl:active{transform:scale(.98)}.cl.on{border-color:var(--ac);background:var(--acd)}.cl .cn{font-weight:600;font-size:14px}.cl .cs{font-size:11px;color:var(--tx3);margin-top:3px;line-height:1.4}
+.fl{font-size:12px;color:var(--tx2);margin:14px 0 5px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.inp{width:100%;padding:11px 14px;background:var(--sf);border:1px solid var(--bd);border-radius:8px;color:var(--tx);font-family:inherit;font-size:14px;outline:none;-webkit-appearance:none}.inp:focus{border-color:var(--ac)}
+.hn{font-size:11px;color:var(--tx3);margin-top:3px}
+.cpd{font-size:26px;font-weight:700;text-align:center;margin:10px 0;color:var(--ac2)}.cpd span{font-size:15px;color:var(--tx3)}
+input[type=range]{width:100%;-webkit-appearance:none;height:5px;background:var(--sf2);border-radius:3px;outline:none;margin:8px 0}input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--ac);cursor:pointer}
+.rl{display:flex;justify-content:space-between;font-size:11px;color:var(--tx3)}
+.cc{background:var(--sf);border-radius:var(--r);padding:14px;margin:10px 0}.cr{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bd);font-size:13px}.cr:last-child{border:none}.ck{color:var(--tx3)}.cv{font-weight:600}
+.bb{position:fixed;bottom:0;left:0;right:0;padding:12px 20px;background:linear-gradient(transparent,var(--bg) 30%);max-width:440px;margin:0 auto;z-index:90}.br{display:flex;gap:10px}
+.bk{flex:0 0 46px;height:46px;background:var(--sf);border:1px solid var(--bd);border-radius:12px;color:var(--tx2);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit}.bk:active{border-color:var(--ac)}
+.bn{flex:1;height:46px;background:linear-gradient(135deg,var(--ac),var(--ac2));border:none;border-radius:12px;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center}.bn:disabled{opacity:.3;cursor:not-allowed}
+.ld{display:none;text-align:center;padding:80px 20px}.lr{width:44px;height:44px;border:3px solid var(--sf2);border-top-color:var(--ac);border-radius:50%;animation:sp .8s linear infinite;margin:0 auto 20px}.lt{font-size:17px;font-weight:700;margin-bottom:6px}.ls{font-size:12px;color:var(--tx3)}.lp{font-size:12px;color:var(--ac2);margin-top:14px}
+.rp{padding:10px 20px 40px}.rh{text-align:center;padding:18px 0;border-bottom:1px solid var(--bd);margin-bottom:14px}.rt{font-size:18px;font-weight:700;color:var(--ac2)}.rsu{font-size:12px;color:var(--tx3);margin-top:3px}
+.rs{margin:18px 0}.rst{font-size:14px;font-weight:700;color:var(--ac);margin-bottom:6px;padding-bottom:4px;border-bottom:2px solid var(--acd)}.rsb{font-size:10px;color:var(--tx3);font-weight:400;margin-left:4px}
+.rc{background:var(--sf);border-radius:var(--rs);padding:12px;margin:6px 0}.rr{display:flex;justify-content:space-between;padding:4px 0;font-size:13px}.rk{color:var(--tx2)}.rv{font-weight:600}
+.tip{background:var(--gnd);border-left:3px solid var(--gn);padding:7px 12px;border-radius:0 8px 8px 0;font-size:12px;color:var(--gn);margin:5px 0;line-height:1.5}
+.wrn{background:var(--rdd);border-left:3px solid var(--rd);padding:7px 12px;border-radius:0 8px 8px 0;font-size:12px;color:var(--rd);margin:5px 0;line-height:1.5}
+.inf{background:var(--acd);border-left:3px solid var(--ac);padding:7px 12px;border-radius:0 8px 8px 0;font-size:12px;color:var(--tx2);margin:5px 0;line-height:1.5}
+.vrd{text-align:center;padding:14px;border-radius:var(--r);margin:12px 0;font-size:14px;font-weight:500;line-height:1.5}.vrd.green{background:var(--gnd);color:var(--gn);border:1px solid rgba(0,214,160,.15)}.vrd.yellow{background:var(--amd);color:var(--am);border:1px solid rgba(245,183,49,.15)}.vrd.red{background:var(--rdd);color:var(--rd);border:1px solid rgba(242,107,107,.15)}
+.hi{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.hc{flex:1;min-width:70px;background:var(--sf);border-radius:8px;padding:8px;text-align:center;border:1px solid var(--bd)}.hc .hl{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.3px}.hc .hv{font-size:14px;font-weight:700;margin:2px 0}.hc .hd2{font-size:18px}.hc.green .hv{color:var(--gn)}.hc.yellow .hv{color:var(--am)}.hc.red .hv{color:var(--rd)}.hc.green .hd2{color:var(--gn)}.hc.yellow .hd2{color:var(--am)}.hc.red .hd2{color:var(--rd)}
+.pie{width:120px;height:120px;border-radius:50%;margin:10px auto;position:relative}
+.bar{height:6px;background:var(--sf2);border-radius:3px;margin:4px 0;overflow:hidden}.bar .fill{height:100%;border-radius:3px}
+.sc-card{background:var(--sf);border-radius:var(--rs);padding:12px;margin:6px 0;border-left:3px solid var(--tx3)}.sc-card.red{border-left-color:var(--rd)}.sc-card.blue{border-left-color:var(--bl)}.sc-card.green{border-left-color:var(--gn)}
+.sc-label{font-weight:700;font-size:13px;margin-bottom:4px}.sc-card.red .sc-label{color:var(--rd)}.sc-card.blue .sc-label{color:var(--bl)}.sc-card.green .sc-label{color:var(--gn)}
+.sc-mkt{font-size:11px;color:var(--tx3);margin-top:4px;padding-top:4px;border-top:1px solid var(--bd);line-height:1.4}
+.ch-item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bd);font-size:12px}.ch-ok{color:var(--gn)}.ch-no{color:var(--tx3)}
+.cta{background:var(--sf);border:1px solid var(--ac);border-radius:var(--r);padding:16px;margin:14px 0;text-align:center}.cta h3{font-size:14px;margin-bottom:4px}.cta p{font-size:12px;color:var(--tx2);margin:6px 0 10px;line-height:1.5}
+.cta a,.rbtn{display:inline-block;padding:9px 18px;background:var(--ac);color:#fff;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;margin:3px;border:none;cursor:pointer;font-family:inherit}
+.rf{text-align:center;padding:20px 0;margin-top:16px;border-top:1px solid var(--bd);font-size:11px;color:var(--tx3);line-height:1.8}
+.eb{background:var(--rdd);border:1px solid rgba(242,107,107,.15);border-radius:var(--r);padding:24px;text-align:center;margin:40px 20px}.eb h3{color:var(--rd);margin-bottom:6px}.eb p{color:var(--tx2);font-size:12px;margin-bottom:14px}
+</style>
+</head>
+<body>
+<div id="S">
+<div class="pb"><div class="pf" id="pf"></div></div>
+<div class="hd"><span class="a" id="sc"></span><span class="b" id="sn"></span></div>
+<div class="st on" id="s1"><h2>Город</h2><p class="sd">Где планируете открыть бизнес?</p><div id="CL"></div></div>
+<div class="st" id="s2"><h2>Сфера бизнеса</h2><p class="sd">Выберите направление</p><div id="NL"></div></div>
+<div class="st" id="s3"><h2>Формат</h2><p class="sd">Выберите конкретный формат</p><div id="FL"></div></div>
+<div class="st" id="s4"><h2>Класс</h2><p class="sd">Уровень вложений и оборудования</p><div class="note">От класса зависит размер инвестиций, качество оборудования и ожидаемая выручка.</div><div id="KL"></div></div>
+<div class="st" id="s5"><h2>Параметры</h2><p class="sd">Локация, площадь, роль</p>
+<div class="note">Тип локации влияет на аренду и поток клиентов.</div>
+<div class="fl">Тип локации</div><select class="inp" id="loc"></select>
+<div class="fl">Площадь (м²)</div><input type="number" class="inp" id="ar" placeholder="Оставьте пустым — подставим типовую" min="1" max="1000">
+<div class="fl">Аренда ₸/мес</div><input type="number" class="inp" id="rn" placeholder="Оставьте пустым — рассчитаем" min="0"><div class="hn">Если не знаете — рассчитаем по средним ставкам</div>
+<div class="fl" style="margin-top:12px">Работаете сами?</div>
+<select class="inp" id="fw"><option value="0">Нет, нанимаю персонал</option><option value="1">Да, работаю сам</option></select>
+</div>
+<div class="st" id="s6"><h2>Бюджет</h2><p class="sd">Сколько готовы вложить?</p>
+<div class="note">Сравним с необходимыми инвестициями.</div>
+<div class="cpd" id="cpd">5 000 000 <span>₸</span></div>
+<input type="range" id="cps" min="500000" max="50000000" step="100000" value="5000000" oninput="uC()"><div class="rl"><span>500 тыс</span><span>50 млн ₸</span></div>
+</div>
+<div class="st" id="s7"><h2>Проверьте данные</h2><p class="sd">Всё верно?</p><div class="cc" id="cf"></div></div>
+<div class="bb"><div class="br"><button class="bk" id="bk" onclick="gB()" style="display:none">&larr;</button><button class="bn" id="bn" onclick="nX()" disabled>Далее</button></div></div>
+</div>
+<div class="ld" id="LD"><div class="lr"></div><div class="lt">Считаем ваш бизнес</div><div class="ls">Анализ рынка, инвестиции, риски</div><div class="lp" id="lp"></div></div>
+<div id="RP" style="display:none"></div>
+<script>
+var U='https://web-production-b3ede.up.railway.app',T=7,SN=['','Город','Ниша','Формат','Класс','Параметры','Бюджет','Проверка'];
+var D={s:1,ci:null,cn:null,ni:null,nn:null,fi:null,fn:null,cls:'Стандарт',lt:'',ar:null,ro:null,cap:5e6,fw:false,q:1,sm:new Date().getMonth()+1,cities:[],niches:[],fmts:[],clsL:[]};
+var CLD={'Эконом':'Б/у оборудование, минимальные вложения','Стандарт':'Новое оборудование среднего уровня','Бизнес':'Качественное оборудование, допуслуги','Премиум':'Топ-бренды, авторский подход'};
+function $(i){return document.getElementById(i)}
+function G(m,p,cb){var x=new XMLHttpRequest();x.open(m,U+p,true);x.setRequestHeader('Content-Type','application/json');x.onreadystatechange=function(){if(x.readyState===4){if(x.status===200)try{cb(null,JSON.parse(x.responseText))}catch(e){cb(e)}else cb(new Error('HTTP '+x.status))}};x.onerror=function(){cb(new Error('Сеть'))};x.send()}
+function P(p,b,cb){var x=new XMLHttpRequest();x.open('POST',U+p,true);x.setRequestHeader('Content-Type','application/json');x.onreadystatechange=function(){if(x.readyState===4){if(x.status===200)try{cb(null,JSON.parse(x.responseText))}catch(e){cb(e)}else cb(new Error(x.responseText.substring(0,300)))}};x.onerror=function(){cb(new Error('Сеть'))};x.send(JSON.stringify(b))}
+function F(n){if(n==null)return'—';return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ')}
+function FM(n){if(n==null)return'—';if(Math.abs(n)>=1e6)return(n/1e6).toFixed(1).replace('.0','')+' млн';if(Math.abs(n)>=1e3)return Math.round(n/1e3)+' тыс';return F(n)}
+function R(k,v){return'<div class="rr"><span class="rk">'+k+'</span><span class="rv">'+v+'</span></div>'}
+function V(o,k){var v=o?o[k]:null;return v!=null?v:'—'}
+
+function init(){G('GET','/cities',function(e,r){if(e){$('CL').innerHTML='<div class="eb"><h3>Ошибка</h3><p>Не удалось загрузить</p><button class="rbtn" onclick="init()">Повторить</button></div>';return}D.cities=r.cities||[];rCi()});G('GET','/niches',function(e,r){if(!e&&r)D.niches=r.niches||[]});uP();uB()}
+function rCi(){var h='';for(var i=0;i<D.cities.length;i++){var c=D.cities[i],id=c.city_id||'',nm=c['\u0413\u043e\u0440\u043e\u0434']||id,pop=c['\u041d\u0430\u0441\u0435\u043b\u0435\u043d\u0438\u0435 \u0432\u0441\u0435\u0433\u043e (\u0447\u0435\u043b.)']||0;h+='<div class="cd" data-v="'+id+'" onclick="sel(this,\'CL\',\'ci\',\'cn\')"><div><div class="cn">'+nm+'</div>'+(pop?'<div class="cs">'+FM(pop)+' чел.</div>':'')+'</div></div>'}$('CL').innerHTML=h}
+function rNi(){var h='';for(var i=0;i<D.niches.length;i++){var n=D.niches[i],id=n.niche_id||'',nm=n.name||id,ic=n.icon||'',cnt=n.formats_count;h+='<div class="cd" data-v="'+id+'" onclick="sel(this,\'NL\',\'ni\',\'nn\');D.fi=null;D.fn=null;lLoc()"><div><div class="cn">'+(ic?ic+' ':'')+nm+'</div>'+(cnt?'<div class="cs">'+cnt+' форматов</div>':'')+'</div></div>'}$('NL').innerHTML=h}
+function lFmt(){$('FL').innerHTML='<div style="text-align:center;padding:40px;color:var(--tx3)">Загрузка...</div>';G('GET','/formats/'+D.ni,function(e,r){if(e){$('FL').innerHTML='<div class="eb"><h3>Ошибка</h3></div>';return}D.fmts=r.formats||[];var h='';for(var i=0;i<D.fmts.length;i++){var f=D.fmts[i];h+='<div class="cd" data-v="'+f.format_id+'" onclick="sel(this,\'FL\',\'fi\',\'fn\');lCls()"><div><div class="cn">'+f.format_name+'</div></div></div>'}$('FL').innerHTML=h})}
+function lLoc(){G('GET','/locations/'+D.ni,function(e,r){var s=$('loc');s.innerHTML='';var l=(r&&r.locations)||[];if(!l.length){s.innerHTML='<option>Не определено</option>';return}for(var i=0;i<l.length;i++){var o=document.createElement('option');o.value=l[i].loc_id||l[i].loc_name;o.textContent=l[i].loc_name;s.appendChild(o)}D.lt=l[0].loc_id||l[0].loc_name})}
+function lCls(){G('GET','/classes/'+D.ni+'/'+D.fi,function(e,r){var c=(r&&r.classes)||['Стандарт'];D.clsL=c;if(c.length<=1){D.cls=c[0]||'Стандарт';return}var h='';for(var i=0;i<c.length;i++){var k=c[i],s=k==='Стандарт'?' on':'';h+='<div class="cl'+s+'" data-v="'+k+'" onclick="sC(this)"><div class="cn">'+k+'</div><div class="cs">'+(CLD[k]||'')+'</div></div>'}$('KL').innerHTML=h;if(c.indexOf(D.cls)<0)D.cls=c[0]})}
+function sel(el,cid,fk,nk){var a=document.querySelectorAll('#'+cid+' .cd');for(var i=0;i<a.length;i++)a[i].classList.remove('on');el.classList.add('on');D[fk]=el.dataset.v;if(nk)D[nk]=el.querySelector('.cn').textContent;uB()}
+function sC(el){var a=document.querySelectorAll('#KL .cl');for(var i=0;i<a.length;i++)a[i].classList.remove('on');el.classList.add('on');D.cls=el.dataset.v}
+function uC(){var v=parseInt($('cps').value);D.cap=v;$('cpd').innerHTML=F(v)+' <span>₸</span>'}
+function uP(){$('pf').style.width=(D.s/T*100)+'%';$('sc').textContent='Шаг '+D.s+'/'+T;$('sn').textContent=SN[D.s]||''}
+function uB(){var b=$('bn'),k=$('bk'),ok=false;if(D.s===1)ok=!!D.ci;else if(D.s===2)ok=!!D.ni;else if(D.s===3)ok=!!D.fi;else ok=true;b.disabled=!ok;k.style.display=D.s<=1?'none':'flex';b.textContent=D.s===T?'Рассчитать':'Далее'}
+function gS(n){var c=$('s'+D.s);if(c)c.classList.remove('on');D.s=n;if(n===2)rNi();if(n===3)lFmt();if(n===4&&D.clsL.length<=1){D.cls=D.clsL[0]||'Стандарт';gS(n+1);return}if(n===T)rCf();var x=$('s'+n);if(x)x.classList.add('on');uP();uB();window.scrollTo(0,0)}
+function nX(){if($('bn').disabled)return;if(D.s===5){D.ar=$('ar').value?parseInt($('ar').value):0;D.ro=$('rn').value?parseInt($('rn').value):null;D.fw=$('fw').value==='1';D.lt=$('loc').value}if(D.s===T){run();return}gS(D.s+1)}
+function gB(){if(D.s>1){var p=D.s-1;if(p===4&&D.clsL.length<=1)p=3;gS(p)}}
+function rCf(){var rows=[['Город',D.cn],['Ниша',D.nn],['Формат',D.fn],['Класс',D.cls],['Локация',D.lt],['Площадь',D.ar?D.ar+' м²':'авто'],['Аренда',D.ro?F(D.ro)+' ₸/мес':'по бенчмарку'],['Работаю сам',D.fw?'Да':'Нет'],['Бюджет',F(D.cap)+' ₸']];var h='';for(var i=0;i<rows.length;i++)h+='<div class="cr"><span class="ck">'+rows[i][0]+'</span><span class="cv">'+(rows[i][1]||'—')+'</span></div>';$('cf').innerHTML=h}
+function run(){$('S').style.display='none';$('LD').style.display='block';var st=['Загружаем данные','Анализируем рынок','Считаем инвестиции','Строим прогноз','Оцениваем риски','Готовим отчёт'],si=0,el=$('lp');el.textContent=st[0];var iv=setInterval(function(){si++;if(si<st.length)el.textContent=st[si]},1100);
+var b={city_id:D.ci,niche_id:D.ni,format_id:D.fi,cls:D.cls,area_m2:D.ar||0,loc_type:D.lt,capital:D.cap,qty:D.q,founder_works:D.fw,start_month:D.sm};if(D.ro)b.rent_override=D.ro;
+P('/quick-check',b,function(err,data){clearInterval(iv);if(err){$('LD').style.display='none';$('RP').style.display='block';$('RP').innerHTML='<div class="eb"><h3>Ошибка</h3><p>'+err.message.substring(0,300)+'</p><button class="rbtn" onclick="location.reload()">Заново</button></div>';return}setTimeout(function(){$('LD').style.display='none';$('RP').style.display='block';rR(data.result||data);window.scrollTo(0,0)},500)})}
+
+function rR(d){
+var i=d.input||{},h=d.health||{},b1=d.block_1||{},b2=d.block_2||{},b3=d.block_3||{},b4=d.block_4||{},b5=d.block_5||{},b6=d.block_6||{},b7=d.block_7||{},b8=d.block_8||{},b9=d.block_9||{},b10=d.block_10||{},b11=d.block_11_season||{},b12=d.block_12_checklist||{};
+var o='';
+
+// Header
+o+='<div class="rp"><div class="rh"><div class="rt">ZEREK Quick Check</div><div class="rsu">'+(i.format_name||i.format_id||'')+' &middot; '+(i.cls||'')+' &middot; '+(i.city_name||i.city_id||'')+'</div></div>';
+
+// Health cards
+var hi=h.indicators||[];
+if(hi.length){o+='<div class="hi">';for(var x=0;x<hi.length;x++){var hh=hi[x];o+='<div class="hc '+hh.status+'"><div class="hl">'+hh.name+'</div><div class="hv">'+hh.value+'</div></div>'}o+='</div>'}
+
+// Block 1: Revenue
+o+='<div class="rs"><div class="rst">1. '+b1.title+'<span class="rsb">'+V(b1,'subtitle')+'</span></div>';
+o+='<div class="rc">'+R('Средний чек',F(b1.check_med)+' ₸')+R('Клиентов/день',''+b1.traffic_med)+R('Выручка/мес',F(b1.revenue_monthly)+' ₸')+'</div>';
+// Revenue structure pie
+var rs=b1.revenue_structure||[];
+if(rs.length){o+='<div style="margin:8px 0;font-size:12px;font-weight:600">Структура выручки:</div>';
+var colors=['var(--ac)','var(--gn)','var(--bl)','var(--am)','var(--rd)'];
+for(var x=0;x<rs.length;x++){var rsi=rs[x],cl=colors[x%colors.length];
+o+='<div style="display:flex;align-items:center;gap:8px;padding:3px 0;font-size:12px"><div style="width:10px;height:10px;border-radius:2px;background:'+cl+';flex-shrink:0"></div><span style="flex:1">'+rsi.name+'</span><span style="font-weight:600">'+rsi.share+'%</span></div>';
+o+='<div class="bar"><div class="fill" style="width:'+rsi.share+'%;background:'+cl+'"></div></div>'}}
+// Disclaimer
+if(b1.disclaimer)o+='<div class="inf">'+b1.disclaimer+'</div>';
+o+='</div>';
+
+// Block 2: Direct costs
+o+='<div class="rs"><div class="rst">2. '+b2.title+'<span class="rsb">'+V(b2,'subtitle')+'</span></div>';
+o+='<div class="rc">'+R('Себестоимость',b2.cogs_pct+'% от выручки')+R('Прямые расходы/мес',F(b2.cogs_monthly)+' ₸')+R('Валовая прибыль/мес',F(b2.gross_profit)+' ₸')+'</div>';
+if(b2.disclaimer)o+='<div class="inf">'+b2.disclaimer+'</div>';
+o+='</div>';
+
+// Block 3: Fixed costs
+o+='<div class="rs"><div class="rst">3. '+b3.title+'<span class="rsb">'+V(b3,'subtitle')+'</span></div><div class="rc">';
+var items=b3.items||[];for(var x=0;x<items.length;x++){var it=items[x];if(it.amount>0)o+=R(it.name+(it.note?' ('+it.note+')':''),F(it.amount)+' ₸')}
+o+='<div class="rr" style="border-top:1px solid var(--bd);margin-top:3px;padding-top:6px"><span class="rk" style="font-weight:700">ИТОГО</span><span class="rv" style="color:var(--ac)">'+F(b3.total)+' ₸/мес</span></div></div>';
+if(b3.disclaimer)o+='<div class="inf">'+b3.disclaimer+'</div>';
+o+='</div>';
+
+// Block 4: CAPEX
+o+='<div class="rs"><div class="rst">4. '+b4.title+'<span class="rsb">'+V(b4,'subtitle')+'</span></div><div class="rc">';
+var ci=b4.items||[];for(var x=0;x<ci.length;x++){var it=ci[x];o+=R(it.name,F(it.amount)+' ₸');if(it.note)o+='<div style="font-size:10px;color:var(--tx3);padding:0 0 4px;margin-top:-2px">'+it.note+'</div>'}
+o+='<div class="rr" style="border-top:1px solid var(--bd);margin-top:3px;padding-top:6px"><span class="rk" style="font-weight:700">ИТОГО</span><span class="rv" style="color:var(--ac)">'+F(b4.total)+' ₸</span></div></div>';
+o+='<div class="inf">'+V(b4,'budget_text')+'</div>';
+o+='</div>';
+
+// Block 5: Scenarios
+o+='<div class="rs"><div class="rst">5. '+b5.title+'<span class="rsb">'+V(b5,'subtitle')+'</span></div>';
+var scs=b5.scenarios||[];for(var x=0;x<scs.length;x++){var s=scs[x];
+o+='<div class="sc-card '+s.color+'"><div class="sc-label">'+s.label+'</div>';
+o+=R('Трафик',s.traffic+'/день')+R('Чек',F(s.check)+' ₸')+R('Прибыль/мес',F(s.profit_monthly)+' ₸');
+o+='<div style="font-size:11px;color:var(--tx3);margin-top:2px">'+V(s,'payback')+'</div>';
+o+='<div class="sc-mkt"><b>Маркетинг:</b> '+s.mkt_desc+'<br><b>Бюджет:</b> '+s.mkt_budget+'</div></div>'}
+if(b5.disclaimer)o+='<div class="inf">'+b5.disclaimer+'</div>';
+o+='</div>';
+
+// Block 6: Breakeven
+o+='<div class="rs"><div class="rst">6. '+b6.title+'<span class="rsb">'+V(b6,'subtitle')+'</span></div>';
+o+='<div class="rc">'+R('ТБ в деньгах',F(b6.tb_revenue)+' ₸/мес')+R('ТБ в клиентах',b6.tb_checks_day+' в день')+R('Запас прочности',b6.safety_margin+'%')+'</div>';
+if(b6.safety_margin<15)o+='<div class="wrn">Низкий запас прочности — снижение трафика на 15% приведёт к убыткам</div>';
+if(b6.disclaimer)o+='<div class="inf">'+b6.disclaimer+'</div>';
+o+='</div>';
+
+// Block 7: Taxes
+o+='<div class="rs"><div class="rst">7. '+b7.title+'</div><div class="rc">'+R('Режим',V(b7,'regime'))+R('Ставка',V(b7,'rate_pct')+'%')+'</div>';
+if(b7.text)o+='<div class="inf">'+b7.text+'</div>';
+o+='</div>';
+
+// Block 8: Marketing
+o+='<div class="rs"><div class="rst">8. '+b8.title+'</div>';
+var mc=b8.main||[];for(var x=0;x<mc.length;x++){var m=mc[x];
+o+='<div class="rc" style="padding:9px 12px"><div style="font-weight:600;font-size:13px;color:var(--gn)">'+m.channel+'</div>';
+if(m.effect&&String(m.effect)!=='null'&&String(m.effect)!=='nan')o+='<div style="font-size:11px;color:var(--tx2);margin-top:2px">'+m.effect+'</div>';
+if(m.budget_month>0)o+='<div style="font-size:10px;color:var(--tx3)">Бюджет: ~'+F(m.budget_month)+' ₸/мес</div>';
+o+='</div>'}
+var sk=b8.skip||[];if(sk.length){o+='<div style="font-weight:600;margin:7px 0 3px;font-size:12px;color:var(--rd)">Не тратьте на:</div>';for(var x=0;x<sk.length;x++)o+='<div style="font-size:12px;color:var(--tx3);padding:2px 0">&times; '+sk[x]+'</div>'}
+if(b8.disclaimer)o+='<div class="inf">'+b8.disclaimer+'</div>';
+o+='</div>';
+
+// Block 9: Tips
+o+='<div class="rs"><div class="rst">9. '+b9.title+'</div>';
+var ti=b9.income||[];if(ti.length){o+='<div style="font-weight:600;margin:4px 0;font-size:12px;color:var(--gn)">Как увеличить доход:</div>';for(var x=0;x<ti.length;x++)o+='<div class="tip">'+ti[x]+'</div>'}
+var tr=b9.risks||[];if(tr.length){o+='<div style="font-weight:600;margin:8px 0 4px;font-size:12px;color:var(--rd)">Риски:</div>';for(var x=0;x<tr.length;x++)o+='<div class="wrn">'+tr[x]+'</div>'}
+var te=b9.mistakes||[];if(te.length){o+='<div style="font-weight:600;margin:8px 0 4px;font-size:12px;color:var(--am)">Ошибки новичков:</div>';for(var x=0;x<te.length;x++)o+='<div class="inf">'+te[x]+'</div>'}
+o+='</div>';
+
+// Block 10: Verdict
+o+='<div class="rs"><div class="rst">10. '+b10.title+'</div>';
+o+='<div class="vrd '+V(b10,'verdict_color')+'">'+V(b10,'verdict_text')+'</div>';
+var rs2=b10.reasons||[];for(var x=0;x<rs2.length;x++)o+='<div class="inf">'+rs2[x]+'</div>';
+var al=b10.alternatives||[];for(var x=0;x<al.length;x++)o+='<div class="tip">'+al[x]+'</div>';
+var ns=b10.next_steps||[];if(ns.length){o+='<div style="font-weight:600;margin:8px 0 4px;font-size:12px">Следующие шаги:</div>';for(var x=0;x<ns.length;x++)o+='<div style="font-size:12px;color:var(--tx2);padding:3px 0">'+(x+1)+'. '+ns[x]+'</div>'}
+o+='</div>';
+
+// Block 11: Season
+var sd=b11.data||[];
+if(sd.length){o+='<div class="rs"><div class="rst">11. Сезонность</div><div class="rc">';
+var maxR=Math.max.apply(null,sd.map(function(s){return s.revenue||0}))||1;
+for(var x=0;x<sd.length;x++){var s=sd[x],w=Math.round((s.revenue||0)/maxR*100),c=s.profit>0?'var(--gn)':'var(--rd)';
+o+='<div style="display:flex;align-items:center;gap:6px;padding:2px 0;font-size:11px"><span style="width:30px;color:var(--tx3)">'+s.month+'</span><div class="bar" style="flex:1"><div class="fill" style="width:'+w+'%;background:'+c+'"></div></div><span style="width:55px;text-align:right;font-size:10px;color:var(--tx3)">'+FM(s.revenue)+'</span></div>'}
+o+='</div></div>'}
+
+// Block 12: Checklist
+var ck=b12.items||[];
+if(ck.length){o+='<div class="rs"><div class="rst">12. '+b12.title+'</div>';
+for(var x=0;x<ck.length;x++)o+='<div class="ch-item"><span>'+ck[x].item+'</span><span class="ch-no">&#9744;</span></div>';
+o+='</div>'}
+
+// CTA: Download QC Report
+o+='<div class="cta" id="cta_qc_dl"><h3>📄 Скачать отчёт</h3><p>Сохраните результаты Quick Check — красивый отчёт со всеми цифрами, графиками и рекомендациями.</p>';
+o+='<a href="#" onclick="dlQCReport();return false" class="rbtn" style="display:inline-block">Скачать отчёт Quick Check</a></div>';
+
+// CTA: Finmodel
+o+='<div class="cta" id="cta_fm"><h3>📊 Хотите точный расчёт?</h3>';
+o+='<p style="line-height:1.6">Финансовая модель на 3 года в Excel:<br>';
+o+='• Помесячный P&L и Cash Flow<br>';
+o+='• Ramp-up, сезонность, инфляция<br>';
+o+='• Кредитный модуль с графиком погашения<br>';
+o+='• Стресс-тест и точка безубыточности<br>';
+o+='• Все формулы открыты — можно менять параметры</p>';
+o+='<a href="index.html?mode=finmodel&city='+encodeURIComponent(D.ci)+'&niche='+encodeURIComponent(D.ni)+'&format='+encodeURIComponent(D.fi)+'&cls='+encodeURIComponent(D.cls)+'" class="rbtn" style="display:inline-block;margin-top:6px">Заполнить анкету для финансовой модели</a></div>';
+
+// CTA: Bizplan
+o+='<div class="cta"><h3>Нужен бизнес-план?</h3><p>Готовый документ для подачи в банк или на получение гранта. По требованиям финансовых организаций РК.</p><a href="https://t.me/zerekai_bot">Бизнес-план</a></div>';
+
+// CTA: Discuss
+o+='<div class="cta"><h3>Не всё понятно?</h3><p>Обсудите отчёт с AI-ассистентом: объяснит любой термин, поможет разобраться в цифрах.</p><a href="https://t.me/zerekai_bot">Обсудить проект</a></div>';
+
+// Footer
+o+='<div class="rf">ZEREK — аналитика для предпринимателей<br>@zerekai_bot<br><br><button class="rbtn" onclick="location.reload()">Новый расчёт</button></div></div>';
+
+$('RP').innerHTML=o;
+
+// Save report data for download
+window._qcReportData=d;
+}
+
+init();
+
+function dlQCReport(){
+var d=window._qcReportData;
+if(!d){alert('Данные не найдены');return}
+var btn=document.querySelector('#cta_qc_dl .rbtn');
+btn.textContent='Генерируем...';btn.style.opacity='0.5';
+
+var i=d.input||{},h=d.health||{},b1=d.block_1||{},b2=d.block_2||{},b3=d.block_3||{},b4=d.block_4||{},b5=d.block_5||{},b6=d.block_6||{},b7=d.block_7||{},b8=d.block_8||{},b9=d.block_9||{},b10=d.block_10||{},b11=d.block_11_season||{},b12=d.block_12_checklist||{};
+var hi=h.indicators||[],scs=b5.scenarios||[],today=new Date().toLocaleDateString('ru-RU');
+
+// CSS — полный GeoSafe стиль
+var css=':root{--ink:#1a1a2e;--ink-light:#3d3d5c;--ink-muted:#6b6b8a;--accent:#c8a55c;--accent-dark:#a8873c;--surface:#faf9f7;--surface-warm:#f5f1eb;--surface-card:#fff;--border:#e8e4dd;--border-light:#f0ede8;--red:#c0392b;--green:#27ae60;--blue:#2980b9;--orange:#e67e22}';
+css+='*{margin:0;padding:0;box-sizing:border-box}body{font-family:"Source Sans 3",sans-serif;color:var(--ink);background:var(--surface);line-height:1.7;font-size:15px}';
+css+='.page{max-width:920px;margin:0 auto;background:var(--surface-card);box-shadow:0 0 60px rgba(0,0,0,.06)}';
+css+='.cover{min-height:100vh;background:linear-gradient(165deg,#1a1a2e 0%,#16213e 40%,#0f3460 100%);color:#fff;display:flex;flex-direction:column;justify-content:space-between;padding:60px 70px;position:relative;overflow:hidden}';
+css+='.cover::before{content:"";position:absolute;top:-200px;right:-200px;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(200,165,92,.12) 0%,transparent 70%)}';
+css+='.cover-top{position:relative;z-index:1}.cover-logo{font-family:"Playfair Display",serif;font-size:14px;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}';
+css+='.cover-divider{width:60px;height:2px;background:var(--accent);margin:20px 0 40px}.cover-label{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.5)}';
+css+='.cover-middle{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:center}';
+css+='.cover-title{font-family:"Playfair Display",serif;font-size:42px;font-weight:700;line-height:1.15;margin-bottom:20px}.cover-title span{color:var(--accent)}';
+css+='.cover-subtitle{font-size:18px;font-weight:300;color:rgba(255,255,255,.7);max-width:550px;line-height:1.6}';
+css+='.cover-bottom{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:flex-end}';
+css+='.cover-meta{font-size:13px;color:rgba(255,255,255,.45);line-height:1.8}.cover-badge{background:rgba(200,165,92,.15);border:1px solid rgba(200,165,92,.3);border-radius:4px;padding:10px 18px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}';
+css+='.content{padding:60px 70px}h1{font-family:"Playfair Display",serif;font-size:28px;font-weight:700;color:var(--ink);margin-bottom:10px}';
+css+='h2{font-family:"Playfair Display",serif;font-size:20px;font-weight:600;color:var(--ink);margin:30px 0 8px}';
+css+='p{margin-bottom:14px;color:var(--ink-light)}mark{background:rgba(200,165,92,.2);padding:0 4px;border-radius:2px;color:var(--ink)}';
+css+='.sb{position:relative;margin-top:50px;border-top:2px solid var(--accent);padding-top:24px}.sb:first-of-type{margin-top:0}';
+css+='.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:20px 0}';
+css+='.kpi-card{background:var(--surface-card);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center}';
+css+='.kpi-value{font-family:"Playfair Display",serif;font-size:28px;font-weight:700;color:var(--ink)}.kpi-value.accent{color:var(--accent-dark)}.kpi-value.green{color:var(--green)}.kpi-value.blue{color:var(--blue)}';
+css+='.kpi-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--ink-muted);margin-top:4px}';
+css+='.an{background:var(--surface-warm);border-left:4px solid var(--accent);padding:16px 20px;margin:16px 0;border-radius:0 6px 6px 0;font-style:italic;color:var(--ink-muted);font-size:14px;line-height:1.7}.an strong{color:var(--ink);font-style:normal}';
+css+='.rec{background:linear-gradient(135deg,#f0faf5,#e8f8f0);border:1px solid #c3e6d5;border-radius:8px;padding:14px 18px;margin:14px 0;font-size:14px;color:#1a6b42}';
+css+='.risk{background:linear-gradient(135deg,#fff8f0,#fef5ec);border:1px solid #f0d8b8;border-radius:8px;padding:14px 18px;margin:14px 0;font-size:14px;color:#8b5e20}';
+css+='.dt{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px}.dt thead{background:var(--ink);color:#fff}';
+css+='.dt th{padding:10px 14px;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px}';
+css+='.dt td{padding:9px 14px;border-bottom:1px solid var(--border-light);color:var(--ink-light)}.dt .hl{background:rgba(200,165,92,.08)}';
+css+='.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:16px 0}.ic{background:var(--surface-warm);border-radius:10px;padding:18px}';
+css+='.ic h4{font-family:"Playfair Display",serif;font-size:15px;margin-bottom:6px}.ic p{font-size:13px;margin-bottom:0}';
+css+='.vrd{text-align:center;padding:18px;border-radius:10px;margin:16px 0;font-size:16px;font-weight:600}';
+css+='.vrd.green{background:#e8f8f0;color:#27ae60;border:1px solid #c3e6d5}.vrd.yellow{background:#fffbeb;color:#e67e22;border:1px solid #f0d8b8}.vrd.red{background:#fdf0f0;color:#c0392b;border:1px solid #f0c5c5}';
+css+='.ft{text-align:center;padding:24px;background:var(--surface-warm);font-size:12px;color:var(--ink-muted);border-top:1px solid var(--border)}';
+css+='@media print{body{background:#fff}.page{box-shadow:none}}';
+
+var html='<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">';
+html+='<title>ZEREK Quick Check — '+(i.format_name||'')+'</title>';
+html+='<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">';
+html+='<style>'+css+'</style></head><body><div class="page">';
+
+// COVER
+html+='<div class="cover"><div class="cover-top"><div class="cover-logo">ZEREK</div><div class="cover-divider"></div><div class="cover-label">Quick Check · Экспресс-оценка бизнеса</div></div>';
+html+='<div class="cover-middle"><div class="cover-title">'+(i.format_name||i.format_id||'')+'</div>';
+html+='<div class="cover-subtitle">'+(i.city_name||'')+' · '+(i.cls||'')+' · '+(i.loc_type||'')+'</div></div>';
+html+='<div class="cover-bottom"><div class="cover-meta">ZEREK · '+today+'<br>Капитал: '+F(i.capital)+' ₸</div><div class="cover-badge">Quick Check</div></div></div>';
+
+html+='<div class="content">';
+
+// 1. KPI
+html+='<div class="sb"><h1>Ключевые показатели</h1><div class="kpi-row">';
+for(var x=0;x<Math.min(hi.length,6);x++){html+='<div class="kpi-card"><div class="kpi-value accent">'+hi[x].value+'</div><div class="kpi-label">'+hi[x].name+'</div></div>'}
+html+='</div>';
+var vc=b10.verdict_color||'yellow';
+html+='<div class="vrd '+vc+'">'+(b10.verdict_text||'')+'</div></div>';
+
+// 2. Revenue
+html+='<div class="sb"><h1>1. '+(b1.title||'Выручка')+'</h1>';
+html+='<div class="kpi-row"><div class="kpi-card"><div class="kpi-value accent">'+F(b1.check_med)+'</div><div class="kpi-label">Средний чек ₸</div></div>';
+html+='<div class="kpi-card"><div class="kpi-value">'+(b1.traffic_med||'')+'</div><div class="kpi-label">Клиентов/день</div></div>';
+html+='<div class="kpi-card"><div class="kpi-value accent">'+F(b1.revenue_monthly)+'</div><div class="kpi-label">Выручка ₸/мес</div></div></div>';
+var rs=b1.revenue_structure||[];
+if(rs.length){html+='<table class="dt"><thead><tr><th>Продукт/услуга</th><th>Доля %</th></tr></thead><tbody>';for(var x=0;x<rs.length;x++)html+='<tr><td>'+rs[x].name+'</td><td><strong>'+rs[x].share+'%</strong></td></tr>';html+='</tbody></table>'}
+if(b1.disclaimer)html+='<div class="an"><strong>Дисклеймер:</strong> '+b1.disclaimer+'</div>';
+html+='</div>';
+
+// 3. Direct costs
+html+='<div class="sb"><h1>2. '+(b2.title||'Прямые расходы')+'</h1>';
+html+='<div class="kpi-row"><div class="kpi-card"><div class="kpi-value">'+(b2.cogs_pct||'')+'%</div><div class="kpi-label">Себестоимость</div></div>';
+html+='<div class="kpi-card"><div class="kpi-value accent">'+F(b2.cogs_monthly)+'</div><div class="kpi-label">Расходы ₸/мес</div></div>';
+html+='<div class="kpi-card"><div class="kpi-value green">'+F(b2.gross_profit)+'</div><div class="kpi-label">Валовая прибыль</div></div></div>';
+if(b2.disclaimer)html+='<div class="an"><strong>Примечание:</strong> '+b2.disclaimer+'</div>';
+html+='</div>';
+
+// 4. Fixed costs
+var fitems=b3.items||[];
+html+='<div class="sb"><h1>3. '+(b3.title||'Постоянные расходы')+'</h1>';
+html+='<table class="dt"><thead><tr><th>Статья</th><th>Сумма ₸/мес</th></tr></thead><tbody>';
+for(var x=0;x<fitems.length;x++){if(fitems[x].amount>0)html+='<tr><td>'+fitems[x].name+(fitems[x].note?' ('+fitems[x].note+')':'')+'</td><td><strong>'+F(fitems[x].amount)+'</strong></td></tr>'}
+html+='<tr class="hl"><td><strong>ИТОГО</strong></td><td><strong style="color:var(--accent-dark)">'+F(b3.total)+' ₸</strong></td></tr>';
+html+='</tbody></table>';
+if(b3.disclaimer)html+='<div class="an"><strong>Примечание:</strong> '+b3.disclaimer+'</div>';
+html+='</div>';
+
+// 5. CAPEX
+var citems=b4.items||[];
+html+='<div class="sb"><h1>4. '+(b4.title||'Инвестиции (CAPEX)')+'</h1>';
+html+='<table class="dt"><thead><tr><th>Статья</th><th>Сумма ₸</th></tr></thead><tbody>';
+for(var x=0;x<citems.length;x++){html+='<tr><td>'+citems[x].name+'</td><td><strong>'+F(citems[x].amount)+'</strong></td></tr>';if(citems[x].note)html+='<tr><td colspan="2" style="font-size:12px;color:var(--ink-muted);padding:2px 14px 8px">'+citems[x].note+'</td></tr>'}
+html+='<tr class="hl"><td><strong>ИТОГО</strong></td><td><strong style="color:var(--accent-dark)">'+F(b4.total)+' ₸</strong></td></tr>';
+html+='</tbody></table>';
+if(b4.budget_text)html+='<div class="an">'+b4.budget_text+'</div>';
+html+='</div>';
+
+// 6. Scenarios
+if(scs.length){
+html+='<div class="sb"><h1>5. '+(b5.title||'Сценарии')+'</h1>';
+html+='<table class="dt"><thead><tr><th>Сценарий</th><th>Трафик</th><th>Чек ₸</th><th>Прибыль/мес ₸</th></tr></thead><tbody>';
+for(var x=0;x<scs.length;x++){var s=scs[x],clr=s.color==='red'?'var(--red)':s.color==='green'?'var(--green)':'var(--blue)';
+html+='<tr><td><strong style="color:'+clr+'">'+s.label+'</strong></td><td>'+s.traffic+'/день</td><td>'+F(s.check)+'</td><td style="color:'+clr+';font-weight:700">'+F(s.profit_monthly)+'</td></tr>';
+if(s.mkt_desc)html+='<tr><td colspan="4" style="font-size:12px;color:var(--ink-muted);padding:2px 14px 6px"><strong>Маркетинг:</strong> '+s.mkt_desc+' ('+s.mkt_budget+')</td></tr>'}
+html+='</tbody></table>';
+if(b5.disclaimer)html+='<div class="an">'+b5.disclaimer+'</div>';
+html+='</div>'}
+
+// 7. Breakeven
+html+='<div class="sb"><h1>6. '+(b6.title||'Безубыточность')+'</h1>';
+html+='<div class="kpi-row"><div class="kpi-card"><div class="kpi-value accent">'+F(b6.tb_revenue)+'</div><div class="kpi-label">ТБ выручка ₸/мес</div></div>';
+html+='<div class="kpi-card"><div class="kpi-value">'+(b6.tb_checks_day||'')+'</div><div class="kpi-label">Мин. клиентов/день</div></div>';
+html+='<div class="kpi-card"><div class="kpi-value '+(b6.safety_margin<15?'':' green')+'">'+(b6.safety_margin||'')+'%</div><div class="kpi-label">Запас прочности</div></div></div>';
+if(b6.safety_margin<15)html+='<div class="risk"><strong>Внимание:</strong> Низкий запас прочности — снижение трафика на 15% приведёт к убыткам.</div>';
+html+='</div>';
+
+// 8. Tax
+html+='<div class="sb"><h1>7. '+(b7.title||'Налоги')+'</h1>';
+html+='<div class="kpi-row"><div class="kpi-card"><div class="kpi-value accent" style="font-size:20px">'+(b7.regime||'')+'</div><div class="kpi-label">Режим</div></div>';
+html+='<div class="kpi-card"><div class="kpi-value">'+(b7.rate_pct||'')+'%</div><div class="kpi-label">Ставка</div></div></div>';
+if(b7.text)html+='<div class="an"><strong>Пояснение:</strong> '+b7.text+'</div>';
+html+='</div>';
+
+// 9. Marketing
+var mch=b8.main||[],msk=b8.skip||[];
+if(mch.length){
+html+='<div class="sb"><h1>8. '+(b8.title||'Маркетинг')+'</h1>';
+html+='<table class="dt"><thead><tr><th>Канал</th><th>Бюджет ₸/мес</th></tr></thead><tbody>';
+for(var x=0;x<mch.length;x++){var m=mch[x];html+='<tr><td><strong>'+m.channel+'</strong>'+(m.effect&&String(m.effect)!=='null'?'<br><span style="font-size:12px;color:var(--ink-muted)">'+m.effect+'</span>':'')+'</td><td>'+F(m.budget_month)+'</td></tr>'}
+html+='</tbody></table>';
+if(msk.length){html+='<div class="risk"><strong>Не тратьте на:</strong><br>';for(var x=0;x<msk.length;x++)html+='• '+msk[x]+'<br>';html+='</div>'}
+html+='</div>'}
+
+// 10. Tips
+var ti=b9.income||[],tr=b9.risks||[],te=b9.mistakes||[];
+if(ti.length||tr.length||te.length){
+html+='<div class="sb"><h1>9. '+(b9.title||'Советы и риски')+'</h1>';
+if(ti.length){html+='<h2>Как увеличить доход</h2>';for(var x=0;x<ti.length;x++)html+='<div class="rec">✦ '+ti[x]+'</div>'}
+if(tr.length){html+='<h2>Риски</h2>';for(var x=0;x<tr.length;x++)html+='<div class="risk">⚠ '+tr[x]+'</div>'}
+if(te.length){html+='<h2>Ошибки новичков</h2>';for(var x=0;x<te.length;x++)html+='<div class="an">'+te[x]+'</div>'}
+html+='</div>'}
+
+// 11. Verdict
+var reasons=b10.reasons||[],alts=b10.alternatives||[],ns=b10.next_steps||[];
+html+='<div class="sb"><h1>10. '+(b10.title||'Итоговая оценка')+'</h1>';
+html+='<div class="vrd '+vc+'">'+(b10.verdict_text||'')+'</div>';
+if(reasons.length){html+='<div class="an"><strong>На что обратить внимание:</strong><br>';for(var x=0;x<reasons.length;x++)html+='• '+reasons[x]+'<br>';html+='</div>'}
+if(alts.length){html+='<h2>Альтернативы</h2>';for(var x=0;x<alts.length;x++)html+='<div class="rec">✦ '+alts[x]+'</div>'}
+if(ns.length){html+='<h2>Следующие шаги</h2>';for(var x=0;x<ns.length;x++)html+='<p><strong>'+(x+1)+'.</strong> '+ns[x]+'</p>'}
+html+='</div>';
+
+// 12. Season
+var sd=b11.data||[];
+if(sd.length){
+html+='<div class="sb"><h1>11. Сезонность</h1>';
+html+='<table class="dt"><thead><tr><th>Месяц</th><th>Выручка ₸</th><th>Прибыль ₸</th></tr></thead><tbody>';
+for(var x=0;x<sd.length;x++){var s=sd[x],pc=s.profit>0?'var(--green)':'var(--red)';html+='<tr><td>'+s.month+'</td><td>'+F(s.revenue)+'</td><td style="color:'+pc+';font-weight:600">'+F(s.profit)+'</td></tr>'}
+html+='</tbody></table></div>'}
+
+// 13. Checklist
+var ck=b12.items||[];
+if(ck.length){
+html+='<div class="sb"><h1>12. '+(b12.title||'Чеклист')+'</h1>';
+html+='<table class="dt"><thead><tr><th>Действие</th><th>Статус</th></tr></thead><tbody>';
+for(var x=0;x<ck.length;x++)html+='<tr><td>'+ck[x].item+'</td><td>☐</td></tr>';
+html+='</tbody></table></div>'}
+
+// CTA
+html+='<div class="sb" style="text-align:center;padding:30px 0"><h1>Следующий шаг</h1>';
+html+='<p>Quick Check — экспресс-оценка. Для детального планирования на 3 года — закажите <strong>Финансовую модель ZEREK</strong>.</p>';
+html+='<p style="color:var(--accent-dark);font-weight:600">@zerekai_bot · zerek.cc</p></div>';
+
+html+='</div>';
+html+='<div class="ft">ZEREK Quick Check — '+today+' — zerek.cc · @zerekai_bot · Все расчёты ориентировочные</div>';
+html+='</div></body></html>';
+
+// Download
+var blob=new Blob([html],{type:'text/html;charset=utf-8'});
+var url=window.URL.createObjectURL(blob);
+var a=document.createElement('a');a.href=url;
+a.download='ZEREK_QuickCheck_'+(i.format_id||'report')+'.html';
+a.target='_blank';
+document.body.appendChild(a);a.click();
+setTimeout(function(){window.URL.revokeObjectURL(url);a.remove()},1000);
+btn.textContent='Скачать отчёт Quick Check';btn.style.opacity='1';
+}
+</script>
+</body>
+</html>
