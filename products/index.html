@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>ZEREK</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070710;--sf:#0F0F1A;--sf2:#161625;--sf3:#1E1E30;--bd:rgba(255,255,255,.06);--tx:#ECEDFA;--tx2:#8F90A6;--tx3:#5D5E74;--ac:#7B6CF6;--ac2:#9E92FF;--acd:rgba(123,108,246,.1);--gn:#00D6A0;--gnd:rgba(0,214,160,.07);--am:#F5B731;--amd:rgba(245,183,49,.07);--rd:#F26B6B;--rdd:rgba(242,107,107,.07);--r:14px;--rs:10px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--tx);line-height:1.55;max-width:440px;margin:0 auto;min-height:100vh;-webkit-font-smoothing:antialiased}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sp{to{transform:rotate(360deg)}}
+.screen{display:none;animation:up .3s}.screen.on{display:block}
+.logo{text-align:center;padding:40px 20px 10px}.logo h1{font-size:28px;font-weight:800;letter-spacing:2px;color:var(--ac2)}.logo p{font-size:13px;color:var(--tx3);margin-top:4px}
+.products{padding:16px 20px}
+.prod{background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r);padding:20px;margin-bottom:12px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.prod:active{transform:scale(.98)}.prod:hover{border-color:var(--ac)}
+.prod .icon{font-size:28px;margin-bottom:8px}.prod .name{font-size:17px;font-weight:700;margin-bottom:4px}.prod .desc{font-size:12px;color:var(--tx2);line-height:1.5}
+.prod .price{position:absolute;top:16px;right:16px;background:var(--acd);color:var(--ac2);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px}
+.prod.soon{opacity:.5;pointer-events:none}.prod.soon .price{background:var(--sf2);color:var(--tx3)}
+.pb{position:fixed;top:0;left:0;right:0;height:3px;background:var(--sf);z-index:99;max-width:440px;margin:0 auto}.pf{height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));transition:width .4s}
+.hd{padding:14px 20px 6px;display:flex;justify-content:space-between;align-items:center;margin-top:3px;font-size:13px}.hd .a{color:var(--tx3)}.hd .b{color:var(--ac2);font-weight:600}
+.st{display:none;padding:0 20px 120px;animation:up .3s}.st.on{display:block}.st h2{font-size:18px;font-weight:700;margin:4px 0 2px}.sd{color:var(--tx2);font-size:12px;margin-bottom:12px}
+.note{background:var(--acd);border-left:3px solid var(--ac);padding:8px 12px;border-radius:0 8px 8px 0;margin:8px 0;font-size:11px;color:var(--tx2);line-height:1.5}
+.cd{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);margin-bottom:6px;cursor:pointer;transition:border .2s,background .2s}.cd:active{transform:scale(.98)}.cd.on{border-color:var(--ac);background:var(--acd)}.cn{font-weight:600;font-size:13px}.cs{font-size:11px;color:var(--tx3);margin-top:1px}
+.fl{font-size:11px;color:var(--tx2);margin:12px 0 4px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.inp{width:100%;padding:10px 12px;background:var(--sf);border:1px solid var(--bd);border-radius:8px;color:var(--tx);font-family:inherit;font-size:13px;outline:none;-webkit-appearance:none}.inp:focus{border-color:var(--ac)}
+.hn{font-size:10px;color:var(--tx3);margin-top:2px}
+.cpd{font-size:24px;font-weight:700;text-align:center;margin:8px 0;color:var(--ac2)}.cpd span{font-size:14px;color:var(--tx3)}
+input[type=range]{width:100%;-webkit-appearance:none;height:5px;background:var(--sf2);border-radius:3px;outline:none;margin:6px 0}input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--ac);cursor:pointer}
+.rl{display:flex;justify-content:space-between;font-size:10px;color:var(--tx3)}
+.cc{background:var(--sf);border-radius:var(--r);padding:12px;margin:8px 0}.cr{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--bd);font-size:12px}.cr:last-child{border:none}.ck{color:var(--tx3)}.cv{font-weight:600}
+.bb{position:fixed;bottom:0;left:0;right:0;padding:12px 20px;background:linear-gradient(transparent,var(--bg) 30%);max-width:440px;margin:0 auto;z-index:90}.br{display:flex;gap:10px}
+.bk{flex:0 0 44px;height:44px;background:var(--sf);border:1px solid var(--bd);border-radius:12px;color:var(--tx2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit}.bk:active{border-color:var(--ac)}
+.bn{flex:1;height:44px;background:linear-gradient(135deg,var(--ac),var(--ac2));border:none;border-radius:12px;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}.bn:disabled{opacity:.3;cursor:not-allowed}
+.ld{display:none;text-align:center;padding:80px 20px}.lr{width:44px;height:44px;border:3px solid var(--sf2);border-top-color:var(--ac);border-radius:50%;animation:sp .8s linear infinite;margin:0 auto 20px}.lt{font-size:16px;font-weight:700;margin-bottom:6px}.ls{font-size:12px;color:var(--tx3)}.lp{font-size:12px;color:var(--ac2);margin-top:12px}
+.result{display:none;padding:20px;text-align:center}
+.rbtn{display:inline-block;padding:12px 20px;background:var(--ac);color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;margin:6px 4px;border:none;cursor:pointer;font-family:inherit;width:100%}
+.rbtn.sec{background:var(--sf);border:1px solid var(--ac);color:var(--ac2)}
+.rbtn:disabled{opacity:.4}
+.rf{text-align:center;padding:20px;margin-top:16px;border-top:1px solid var(--bd);font-size:11px;color:var(--tx3);line-height:1.8}
+.eb{background:var(--rdd);border:1px solid rgba(242,107,107,.15);border-radius:var(--r);padding:20px;text-align:center;margin:20px}.eb h3{color:var(--rd);margin-bottom:6px}.eb p{color:var(--tx2);font-size:12px;margin-bottom:12px}
+.back-home{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--sf);border:1px solid var(--bd);border-radius:8px;color:var(--tx2);font-size:12px;cursor:pointer;margin:12px 20px;font-family:inherit;text-decoration:none}
+</style>
+</head>
+<body>
+
+<!-- ═══ SCREEN 0: PRODUCT SELECT ═══ -->
+<div class="screen on" id="home">
+<div class="logo"><h1>ZEREK</h1><p>Аналитика для предпринимателей</p></div>
+<div class="products">
+  <div class="prod" onclick="startQC()">
+    <div class="icon">⚡</div>
+    <div class="name">Quick Check</div>
+    <div class="desc">Экспресс-оценка бизнес-идеи за 2 минуты. Рынок, инвестиции, окупаемость, риски.</div>
+    <div class="price">3 000 ₸</div>
+  </div>
+  <div class="prod" onclick="startFM()">
+    <div class="icon">📊</div>
+    <div class="name">Финансовая модель</div>
+    <div class="desc">Детальный расчёт на 3 года. P&L, Cash Flow, стресс-тест, точка безубыточности. Excel + отчёт.</div>
+    <div class="price">9 000 ₸</div>
+  </div>
+  <div class="prod soon">
+    <div class="icon">📋</div>
+    <div class="name">Бизнес-план</div>
+    <div class="desc">Готовый документ для банка или гранта. По требованиям Даму, БРК, Атамекен.</div>
+    <div class="price">Скоро</div>
+  </div>
+</div>
+<div class="rf">ZEREK — @zerekai_bot · zerek.cc</div>
+</div>
+
+<!-- ═══ SCREEN 1: FINMODEL SURVEY ═══ -->
+<div class="screen" id="FM">
+<div class="pb"><div class="pf" id="fm_pf"></div></div>
+<div class="hd"><span class="a" id="fm_sc"></span><span class="b" id="fm_sn"></span></div>
+
+<!-- Step 1: City -->
+<div class="st on" id="fm_s1"><h2>Город</h2><p class="sd">Где планируете бизнес?</p><div id="fm_cities"></div></div>
+<!-- Step 2: Niche -->
+<div class="st" id="fm_s2"><h2>Сфера бизнеса</h2><p class="sd">Выберите направление</p><div id="fm_niches"></div></div>
+<!-- Step 3: Format -->
+<div class="st" id="fm_s3"><h2>Формат</h2><p class="sd">Конкретный формат бизнеса</p><div id="fm_formats"></div></div>
+<!-- Step 4: Class -->
+<div class="st" id="fm_s4"><h2>Класс</h2><p class="sd">Уровень вложений</p><div class="note">От класса зависит CAPEX, качество оборудования и ожидаемая выручка.</div><div id="fm_classes"></div></div>
+<!-- Step 5: Location -->
+<div class="st" id="fm_s5"><h2>Локация</h2><p class="sd">Тип помещения и аренда</p>
+<div class="fl">Тип локации</div><select class="inp" id="fm_loc"></select>
+<div class="fl">Аренда ₸/мес</div><input type="number" class="inp" id="fm_rent" placeholder="Оставьте пустым — рассчитаем"><div class="hn">Необязательно — подставим среднюю ставку</div>
+</div>
+<!-- Step 6: Entity + Tax -->
+<div class="st" id="fm_s6"><h2>Юридические параметры</h2><p class="sd">Форма собственности и налоги</p>
+<div class="fl">Форма собственности</div>
+<select class="inp" id="fm_entity"><option value="ИП">ИП (свободный вывод прибыли)</option><option value="ТОО">ТОО (дивиденды через 5% ИПН)</option></select>
+<div class="fl">Работаете сами?</div>
+<select class="inp" id="fm_founder"><option value="1">Да, работаю сам</option><option value="0">Нет, нанимаю управляющего</option></select>
+</div>
+<!-- Step 7: Staff -->
+<div class="st" id="fm_s7"><h2>Персонал</h2><p class="sd">Зарплаты и количество сотрудников</p>
+<div class="fl">Количество сотрудников</div><input type="number" class="inp" id="fm_hc" value="2" min="0" max="50"><div class="hn">Не считая вас, если работаете сами</div>
+<div class="fl">Средняя зарплата (gross) ₸</div><input type="number" class="inp" id="fm_fot" value="200000" min="85000"><div class="hn">На руки: минус ИПН 10%, ОПВ 10%, ВОСМС 2%</div>
+</div>
+<!-- Step 8: Revenue -->
+<div class="st" id="fm_s8"><h2>Выручка</h2><p class="sd">Средний чек и трафик</p>
+<div class="fl">Средний чек (вся покупка) ₸</div><input type="number" class="inp" id="fm_check" placeholder="Например: 1400" min="100">
+<div class="fl">Клиентов в день (на полной мощности)</div><input type="number" class="inp" id="fm_traffic" placeholder="Например: 70" min="1"><div class="hn">После ramp-up. В первые месяцы будет меньше</div>
+<div class="fl">Себестоимость (% от выручки)</div><input type="number" class="inp" id="fm_cogs" value="35" min="1" max="90"><div class="hn">Общепит: 30-40%, услуги: 5-15%, торговля: 60-75%</div>
+</div>
+<!-- Step 9: CAPEX -->
+<div class="st" id="fm_s9"><h2>Стартовые вложения</h2><p class="sd">Оборудование и первоначальные расходы</p>
+<div class="fl">CAPEX (оборудование + ремонт) ₸</div><input type="number" class="inp" id="fm_capex" placeholder="Например: 1500000" min="0">
+<div class="fl">Оборотный капитал (резерв) ₸</div><input type="number" class="inp" id="fm_wc" value="1000000" min="0"><div class="hn">На 2-3 мес. расходов до выхода в плюс</div>
+</div>
+<!-- Step 10: Credit -->
+<div class="st" id="fm_s10"><h2>Кредит</h2><p class="sd">Планируете ли привлечь заёмные средства?</p>
+<div class="fl">Сумма кредита ₸</div><input type="number" class="inp" id="fm_credit" value="0" min="0"><div class="hn">0 = без кредита</div>
+<div class="fl">Годовая ставка %</div><input type="number" class="inp" id="fm_rate" value="22" min="0" max="100">
+<div class="fl">Срок кредита, мес</div><input type="number" class="inp" id="fm_term" value="36" min="6" max="120">
+</div>
+<!-- Step 11: Confirm -->
+<div class="st" id="fm_s11"><h2>Проверьте данные</h2><p class="sd">Всё верно? Нажмите «Рассчитать»</p><div class="cc" id="fm_confirm"></div></div>
+
+<div class="bb"><div class="br"><button class="bk" id="fm_bk" onclick="fmBack()" style="display:none">&larr;</button><button class="bn" id="fm_bn" onclick="fmNext()" disabled>Далее</button></div></div>
+</div>
+
+<!-- ═══ LOADING ═══ -->
+<div class="ld" id="fm_LD"><div class="lr"></div><div class="lt">Строим финансовую модель</div><div class="ls">P&L, Cash Flow, стресс-тест, безубыточность</div><div class="lp" id="fm_lp"></div></div>
+
+<!-- ═══ RESULT ═══ -->
+<div class="result" id="fm_RES">
+<div style="padding:30px 0">
+  <div style="font-size:40px;margin-bottom:12px">✅</div>
+  <h2 style="font-size:18px;margin-bottom:6px">Финансовая модель готова</h2>
+  <p style="font-size:13px;color:var(--tx2);margin-bottom:20px;line-height:1.5" id="fm_res_sub"></p>
+  <button class="rbtn" id="fm_dl_xlsx" onclick="dlXlsx()">📊 Скачать Excel-модель</button>
+  <button class="rbtn sec" id="fm_dl_report" onclick="dlReport()">📄 Скачать отчёт (HTML)</button>
+  <div style="margin-top:20px"><a href="#" class="back-home" onclick="goHome();return false">← Вернуться на главную</a></div>
+</div>
+<div class="rf">ZEREK — @zerekai_bot · zerek.cc</div>
+</div>
+
+<script>
+var U='https://web-production-b3ede.up.railway.app';
+var FM_STEPS=11;
+var FM_NAMES=['','Город','Ниша','Формат','Класс','Локация','Юр. параметры','Персонал','Выручка','Инвестиции','Кредит','Проверка'];
+var FM={s:1,ci:null,cn:null,ni:null,nn:null,fi:null,fn:null,cls:'Стандарт',lt:'',cities:[],niches:[],fmts:[],clsL:[]};
+var FM_BLOB=null; // xlsx blob for download
+
+function $(i){return document.getElementById(i)}
+function F(n){if(n==null)return'—';return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ')}
+function show(id){var all=document.querySelectorAll('.screen');for(var i=0;i<all.length;i++)all[i].classList.remove('on');$(id).classList.add('on');$(id).style.display='block';window.scrollTo(0,0)}
+
+function G(m,p,cb){var x=new XMLHttpRequest();x.open(m,U+p,true);x.setRequestHeader('Content-Type','application/json');x.onreadystatechange=function(){if(x.readyState===4){if(x.status===200)try{cb(null,JSON.parse(x.responseText))}catch(e){cb(e)}else cb(new Error('HTTP '+x.status))}};x.onerror=function(){cb(new Error('Сеть'))};x.send()}
+
+function goHome(){show('home')}
+
+// ═══ QUICK CHECK — redirect to existing page ═══
+function startQC(){window.location.href='quick-check.html'}
+
+// ═══ FINMODEL ═══
+function startFM(){
+  show('FM');
+  // Load cities + niches
+  G('GET','/cities',function(e,r){if(!e){FM.cities=r.cities||[];rFmCities()}});
+  G('GET','/niches',function(e,r){if(!e){FM.niches=r.niches||[]}});
+  fmUP();fmUB();
+}
+
+function rFmCities(){
+  var h='';for(var i=0;i<FM.cities.length;i++){
+    var c=FM.cities[i],id=c.city_id||'',nm=c['\u0413\u043e\u0440\u043e\u0434']||id;
+    h+='<div class="cd" data-v="'+id+'" onclick="fmSel(this,\'fm_cities\',\'ci\',\'cn\')"><div><div class="cn">'+nm+'</div></div></div>';
+  }$('fm_cities').innerHTML=h;
+}
+function rFmNiches(){
+  var h='';for(var i=0;i<FM.niches.length;i++){
+    var n=FM.niches[i],id=n.niche_id||'',nm=n.name||id,ic=n.icon||'';
+    h+='<div class="cd" data-v="'+id+'" onclick="fmSel(this,\'fm_niches\',\'ni\',\'nn\');FM.fi=null"><div><div class="cn">'+(ic?ic+' ':'')+nm+'</div></div></div>';
+  }$('fm_niches').innerHTML=h;
+}
+function fmLoadFmt(){
+  $('fm_formats').innerHTML='<div style="padding:20px;color:var(--tx3);text-align:center">Загрузка...</div>';
+  G('GET','/formats/'+FM.ni,function(e,r){
+    if(e){$('fm_formats').innerHTML='Ошибка';return}
+    FM.fmts=r.formats||[];var h='';
+    for(var i=0;i<FM.fmts.length;i++){var f=FM.fmts[i];h+='<div class="cd" data-v="'+f.format_id+'" onclick="fmSel(this,\'fm_formats\',\'fi\',\'fn\');fmLoadCls()"><div><div class="cn">'+f.format_name+'</div></div></div>'}
+    $('fm_formats').innerHTML=h;
+  });
+}
+function fmLoadCls(){
+  G('GET','/classes/'+FM.ni+'/'+FM.fi,function(e,r){
+    var c=(r&&r.classes)||['Стандарт'];FM.clsL=c;
+    if(c.length<=1){FM.cls=c[0]||'Стандарт';return}
+    var h='';for(var i=0;i<c.length;i++){var k=c[i],s=k==='Стандарт'?' on':'';
+      h+='<div class="cd'+s+'" data-v="'+k+'" onclick="fmSel(this,\'fm_classes\',\'cls\')"><div><div class="cn">'+k+'</div></div></div>'}
+    $('fm_classes').innerHTML=h;
+  });
+}
+function fmLoadLoc(){
+  G('GET','/locations/'+FM.ni,function(e,r){
+    var s=$('fm_loc');s.innerHTML='';var l=(r&&r.locations)||[];
+    for(var i=0;i<l.length;i++){var o=document.createElement('option');o.value=l[i].loc_id||l[i].loc_name;o.textContent=l[i].loc_name;s.appendChild(o)}
+    if(l.length)FM.lt=l[0].loc_id||l[0].loc_name;
+  });
+}
+function fmSel(el,cid,fk,nk){
+  var a=document.querySelectorAll('#'+cid+' .cd');for(var i=0;i<a.length;i++)a[i].classList.remove('on');
+  el.classList.add('on');FM[fk]=el.dataset.v;if(nk)FM[nk]=el.querySelector('.cn').textContent;fmUB();
+}
+function fmUP(){$('fm_pf').style.width=(FM.s/FM_STEPS*100)+'%';$('fm_sc').textContent='Шаг '+FM.s+'/'+FM_STEPS;$('fm_sn').textContent=FM_NAMES[FM.s]||''}
+function fmUB(){
+  var b=$('fm_bn'),k=$('fm_bk'),ok=false;
+  if(FM.s===1)ok=!!FM.ci;else if(FM.s===2)ok=!!FM.ni;else if(FM.s===3)ok=!!FM.fi;else ok=true;
+  b.disabled=!ok;k.style.display=FM.s<=1?'none':'flex';b.textContent=FM.s===FM_STEPS?'Рассчитать':'Далее';
+}
+function fmGo(n){
+  var c=$('fm_s'+FM.s);if(c)c.classList.remove('on');FM.s=n;
+  if(n===2)rFmNiches();if(n===3)fmLoadFmt();
+  if(n===4&&FM.clsL.length<=1){FM.cls=FM.clsL[0]||'Стандарт';fmGo(n+1);return}
+  if(n===5)fmLoadLoc();if(n===FM_STEPS)fmConfirm();
+  var x=$('fm_s'+n);if(x)x.classList.add('on');fmUP();fmUB();window.scrollTo(0,0);
+}
+function fmNext(){if($('fm_bn').disabled)return;if(FM.s===5)FM.lt=$('fm_loc').value;if(FM.s===FM_STEPS){fmRun();return}fmGo(FM.s+1)}
+function fmBack(){if(FM.s>1){var p=FM.s-1;if(p===4&&FM.clsL.length<=1)p=3;fmGo(p)}}
+
+function fmConfirm(){
+  var rows=[
+    ['Город',FM.cn],['Ниша',FM.nn],['Формат',FM.fn],['Класс',FM.cls],['Локация',FM.lt],
+    ['Форма',el('fm_entity')],['Работает сам',el('fm_founder')==='1'?'Да':'Нет'],
+    ['Сотрудников',el('fm_hc')],['Зарплата gross',F(+el('fm_fot'))+' ₸'],
+    ['Средний чек',F(+el('fm_check'))+' ₸'],['Клиентов/день',el('fm_traffic')],
+    ['Себестоимость',el('fm_cogs')+'%'],
+    ['CAPEX',F(+el('fm_capex'))+' ₸'],['Оборотка',F(+el('fm_wc'))+' ₸'],
+    ['Кредит',+el('fm_credit')>0?F(+el('fm_credit'))+' ₸ ('+el('fm_rate')+'%, '+el('fm_term')+' мес)':'Нет'],
+  ];
+  var h='';for(var i=0;i<rows.length;i++)h+='<div class="cr"><span class="ck">'+rows[i][0]+'</span><span class="cv">'+(rows[i][1]||'—')+'</span></div>';
+  $('fm_confirm').innerHTML=h;
+}
+function el(id){return $(id)?$(id).value:''}
+
+function fmRun(){
+  $('FM').style.display='none';$('fm_LD').style.display='block';
+  var st=['Загружаем параметры','Считаем Quick Check','Строим P&L','Cash Flow','Стресс-тест','Готовим файл'],si=0,lp=$('fm_lp');
+  lp.textContent=st[0];var iv=setInterval(function(){si++;if(si<st.length)lp.textContent=st[si]},1200);
+
+  var b={
+    city_id:FM.ci,niche_id:FM.ni,format_id:FM.fi,cls:FM.cls,
+    loc_type:FM.lt,area_m2:0,capital:5000000,qty:1,
+    founder_works:el('fm_founder')==='1',start_month:new Date().getMonth()+1,
+    // Finmodel-specific params
+    entity_type:el('fm_entity'),
+    fot_gross:+el('fm_fot'),headcount:+el('fm_hc'),
+    check_med:+el('fm_check'),traffic_med:+el('fm_traffic'),
+    cogs_pct:(+el('fm_cogs'))/100,
+    capex:+el('fm_capex'),working_cap:+el('fm_wc'),
+    credit_amount:+el('fm_credit'),credit_rate:(+el('fm_rate'))/100,credit_term:+el('fm_term'),
+    niche_name:FM.nn,format_name:FM.fn
+  };
+  var rent=el('fm_rent');if(rent&&+rent>0)b.rent_override=+rent;
+
+  var x=new XMLHttpRequest();
+  x.open('POST',U+'/finmodel',true);
+  x.setRequestHeader('Content-Type','application/json');
+  x.responseType='blob';
+  x.onload=function(){
+    clearInterval(iv);
+    if(x.status===200){
+      FM_BLOB=x.response;
+      $('fm_LD').style.display='none';
+      $('fm_RES').style.display='block';
+      $('fm_res_sub').textContent=(FM.nn||'')+': '+(FM.fn||'')+' — '+(FM.cn||'');
+      window.scrollTo(0,0);
+    }else{
+      $('fm_LD').style.display='none';
+      $('fm_RES').style.display='block';
+      $('fm_RES').innerHTML='<div class="eb"><h3>Ошибка</h3><p>Не удалось сгенерировать модель</p><button class="rbtn" onclick="goHome()">На главную</button></div>';
+    }
+  };
+  x.onerror=function(){clearInterval(iv);$('fm_LD').style.display='none';$('fm_RES').style.display='block';$('fm_RES').innerHTML='<div class="eb"><h3>Ошибка сети</h3><button class="rbtn" onclick="goHome()">На главную</button></div>'};
+  x.send(JSON.stringify(b));
+}
+
+function dlXlsx(){
+  if(!FM_BLOB)return;
+  var url=window.URL.createObjectURL(FM_BLOB);
+  var a=document.createElement('a');a.href=url;
+  a.download='ZEREK_FinModel_'+FM.ni+'_'+FM.ci+'.xlsx';
+  document.body.appendChild(a);a.click();
+  window.URL.revokeObjectURL(url);a.remove();
+}
+function dlReport(){
+  alert('Отчёт по финмодели — скоро будет доступен');
+}
+</script>
+</body>
+</html>
