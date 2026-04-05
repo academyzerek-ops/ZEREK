@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Политика конфиденциальности — ZEREK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #06060B; --bg-card: #0E0E16; --text: #E8E6F0; --text-dim: #8B89A0;
+  --text-muted: #5C5A6E; --accent: #6C63FF; --success: #00D4AA;
+  --border: rgba(255,255,255,0.06); --radius: 16px;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text);
+  line-height: 1.7; -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 18px 0;
+  background: rgba(6,6,11,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
+}
+.nav { display: flex; align-items: center; justify-content: space-between; max-width: 760px; margin: 0 auto; padding: 0 24px; }
+.logo {
+  font-weight: 800; font-size: 22px; letter-spacing: 3px; text-transform: uppercase;
+  background: linear-gradient(135deg, var(--accent), var(--success));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none;
+}
+.back-link { color: var(--text-dim); text-decoration: none; font-size: 14px; }
+.back-link:hover { color: var(--text); }
+
+.page-content { padding: 140px 0 80px; }
+.page-content h1 {
+  font-size: 36px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 12px;
+}
+.page-content .updated {
+  font-size: 13px; color: var(--text-muted); margin-bottom: 40px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.page-content h2 {
+  font-size: 18px; font-weight: 700; margin-top: 36px; margin-bottom: 12px;
+}
+.page-content p {
+  font-size: 15px; color: var(--text-dim); margin-bottom: 14px; line-height: 1.8;
+}
+.page-content strong { color: var(--text); }
+
+footer {
+  border-top: 1px solid var(--border); padding: 32px 0; text-align: center;
+  font-size: 13px; color: var(--text-muted);
+}
+footer a { color: var(--text-dim); text-decoration: none; margin: 0 12px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a href="index.html" class="logo">ZEREK</a>
+    <a href="index.html" class="back-link">← Назад на главную</a>
+  </div>
+</header>
+
+<div class="page-content">
+<div class="container">
+
+<h1>Политика конфиденциальности</h1>
+<div class="updated">Обновлено: апрель 2026</div>
+
+<p>Настоящая Политика конфиденциальности описывает, как платформа ZEREK (далее — «Сервис», «мы») собирает, использует и защищает информацию пользователей.</p>
+
+<h2>1. Какие данные мы собираем</h2>
+<p>При использовании Сервиса мы можем получать следующие данные:</p>
+<p><strong>Данные анкеты Quick Check:</strong> город, ниша, формат бизнеса, площадь, капитал, уровень. Эти данные необходимы для формирования расчёта и не содержат персональных данных пользователя.</p>
+<p><strong>Данные Telegram:</strong> идентификатор пользователя Telegram (user_id), имя и фамилия (если указаны в профиле). Эти данные передаются автоматически при использовании Telegram Mini App.</p>
+<p>Мы <strong>не собираем</strong> номера телефонов, адреса электронной почты, паспортные данные, данные банковских карт или иные чувствительные персональные данные.</p>
+
+<h2>2. Как мы используем данные</h2>
+<p>Данные анкеты используются исключительно для формирования расчёта в рамках текущей сессии. Мы можем сохранять агрегированную и обезличенную статистику (например, какие ниши и города запрашиваются чаще) для улучшения продукта.</p>
+
+<h2>3. Передача данных третьим лицам</h2>
+<p>Мы <strong>не продаём, не передаём и не предоставляем</strong> персональные данные пользователей третьим лицам, за исключением случаев, предусмотренных законодательством Республики Казахстан.</p>
+
+<h2>4. Хранение данных</h2>
+<p>Данные анкеты обрабатываются на серверах и не хранятся после завершения расчёта. Серверная инфраструктура размещена на платформе Railway (США) с использованием шифрования передачи данных (HTTPS).</p>
+
+<h2>5. Защита данных</h2>
+<p>Мы принимаем разумные технические и организационные меры для защиты данных пользователей, включая шифрование соединения (TLS/SSL) и ограничение доступа к серверной инфраструктуре.</p>
+
+<h2>6. Права пользователя</h2>
+<p>Вы имеете право запросить информацию о хранимых данных, а также потребовать их удаление, обратившись к нам через Telegram-бот <a href="https://t.me/zerekai_bot" target="_blank" style="color: var(--accent);">@zerekai_bot</a>.</p>
+
+<h2>7. Файлы cookie</h2>
+<p>Основной интерфейс Сервиса работает в Telegram Mini App и не использует файлы cookie. Веб-сайт zerek.cc может использовать технические cookie для корректной работы страниц.</p>
+
+<h2>8. Изменения политики</h2>
+<p>Мы оставляем за собой право обновлять настоящую Политику. Актуальная версия всегда доступна на данной странице с указанием даты последнего обновления.</p>
+
+<h2>9. Контакты</h2>
+<p>По вопросам, связанным с конфиденциальностью, обращайтесь через Telegram-бот: <a href="https://t.me/zerekai_bot" target="_blank" style="color: var(--accent);">@zerekai_bot</a></p>
+
+</div>
+</div>
+
+<footer>
+  <div class="container">
+    &copy; 2026 ZEREK · Актобе, Казахстан
+    <br><a href="index.html">Главная</a><a href="about.html">О проекте</a><a href="https://t.me/zerekai_bot" target="_blank">Telegram</a>
+  </div>
+</footer>
+
+</body>
+</html>
