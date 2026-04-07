@@ -962,24 +962,54 @@ var NICHE_CATEGORIES = [
   { title: 'Услуги', ids: ['CLEAN','DRYCLEAN','TAILOR','REPAIR_PHONE','KINDERGARTEN','CYBERCLUB'] }
 ];
 var FORMAT_NAMES = {
-  'BARBER_SOLO': 'Соло-мастер', 'BARBER_MINI': 'Мини-барбершоп',
-  'BARBER_MEDIUM': 'Средний барбершоп', 'BARBER_LARGE': 'Большой барбершоп',
-  'COFFEE_VENDING': 'Кофе-вендинг', 'COFFEE_KIOSK': 'Кофе-киоск',
+  // Авто
+  'AUTO_FULL': 'Полный автосервис', 'AUTO_GARAGE': 'Гаражный автосервис',
+  'AUTO_SERVICE': 'Средний автосервис', 'AUTO_SPEC': 'Специализированный сервис',
+  'CARWASH_AUTO': 'Автоматическая мойка', 'CARWASH_MANUAL_L': 'Ручная мойка (большая)',
+  'CARWASH_MANUAL_S': 'Ручная мойка (малая)', 'CARWASH_SELF_BOX': 'Мойка самообслуживания (бокс)',
+  'CARWASH_SELF_OPEN': 'Мойка самообслуживания (открытая)',
+  'TIRE_FULL': 'Полный шиномонтаж', 'TIRE_MINI': 'Мини-шиномонтаж', 'TIRE_MOBILE': 'Мобильный шиномонтаж',
+  // Еда и напитки
+  'COFFEE_VENDING': 'Кофе-вендинг', 'COFFEE_KIOSK': 'Кофе-киоск', 'COFFEE_SELF': 'Кофе самообслуживания',
   'COFFEE_ISLAND': 'Кофе-остров (to go)', 'COFFEE_MOBILE': 'Кофе на колёсах',
-  'COFFEE_MINI': 'Мини-кофейня', 'COFFEE_MEDIUM': 'Средняя кофейня',
-  'COFFEE_LARGE': 'Большая кофейня', 'DONER_KIOSK': 'Донер-киоск',
-  'DONER_SMALL': 'Маленькая донерная', 'DONER_MEDIUM': 'Средняя донерная',
-  'DONER_LARGE': 'Большая донерная', 'CARWASH_SELF': 'Мойка самообслуживания',
-  'CARWASH_2POST': 'Мойка 2 поста', 'CARWASH_3POST': 'Мойка 3 поста',
-  'CARWASH_5POST': 'Мойка 5 постов', 'CARWASH_COMPLEX': 'Комплексная мойка',
-  'PIZZA_KIOSK': 'Пиццерия-киоск', 'PIZZA_SMALL': 'Маленькая пиццерия',
-  'PIZZA_MEDIUM': 'Средняя пиццерия', 'PIZZA_LARGE': 'Большая пиццерия',
-  'SUSHI_DELIVERY': 'Суши доставка', 'SUSHI_SMALL': 'Маленький суши-бар',
-  'SUSHI_MEDIUM': 'Средний суши-бар',
-  'FASTFOOD_KIOSK': 'Фастфуд-киоск', 'FASTFOOD_SMALL': 'Маленький фастфуд',
-  'FASTFOOD_MEDIUM': 'Средний фастфуд', 'FASTFOOD_LARGE': 'Большой фастфуд',
-  'CANTEEN_SMALL': 'Маленькая столовая', 'CANTEEN_MEDIUM': 'Средняя столовая',
-  'CANTEEN_LARGE': 'Большая столовая'
+  'COFFEE_MINI': 'Мини-кофейня', 'COFFEE_FULL': 'Полноформатная кофейня',
+  'BAKERY_ISLAND': 'Пекарня-остров', 'BAKERY_MINI': 'Мини-пекарня', 'BAKERY_CRAFT': 'Крафтовая пекарня',
+  'BAKERY_CAFE': 'Пекарня-кафе', 'BAKERY_CONFECT': 'Пекарня-кондитерская', 'BAKERY_PRODUCTION': 'Пекарня-производство',
+  'DONER_KIOSK': 'Донер-киоск', 'DONER_MINI': 'Мини-донерная',
+  'DONER_CAFE': 'Донер-кафе', 'DONER_DELIVERY': 'Донер с доставкой',
+  'PIZZA_TAKEAWAY': 'Пиццерия навынос', 'PIZZA_DELIVERY': 'Пиццерия с доставкой',
+  'PIZZA_CAFE': 'Пиццерия-кафе', 'PIZZA_COMBO': 'Пиццерия-комбо',
+  'SUSHI_DELIVERY': 'Суши с доставкой', 'SUSHI_BAR': 'Суши-бар', 'SUSHI_COMBO': 'Суши-комбо',
+  'FASTFOOD_KIOSK': 'Фастфуд-киоск', 'FASTFOOD_MINI': 'Мини-фастфуд',
+  'FASTFOOD_CAFE': 'Фастфуд-кафе', 'FASTFOOD_DARK': 'Фастфуд тёмная кухня',
+  'CANTEEN_OFFICE': 'Столовая при офисе', 'CANTEEN_CITY': 'Городская столовая', 'CANTEEN_CATERING': 'Кейтеринг-столовая',
+  'CONF_HOME': 'Кондитерская на дому', 'CONF_CABINET': 'Кондитерский кабинет', 'CONF_STUDIO': 'Кондитерская-студия',
+  'SEMI_HOME': 'Полуфабрикаты на дому', 'SEMI_MINI': 'Мини-цех полуфабрикатов', 'SEMI_FULL': 'Цех полуфабрикатов',
+  // Красота и здоровье
+  'BARBER_SOLO': 'Соло-барбер', 'BARBER_MINI': 'Мини-барбершоп', 'BARBER_FULL': 'Полный барбершоп',
+  'NAIL_HOME': 'Маникюр на дому', 'NAIL_RENT': 'Маникюр (аренда места)', 'NAIL_CABINET': 'Маникюрный кабинет', 'NAIL_STUDIO': 'Маникюрная студия',
+  'BROW_HOME': 'Брови на дому', 'BROW_RENT': 'Брови (аренда места)', 'BROW_CABINET': 'Бровный кабинет',
+  'LASH_HOME': 'Ресницы на дому', 'LASH_RENT': 'Ресницы (аренда места)', 'LASH_CABINET': 'Кабинет ресниц',
+  'SUGARING_HOME': 'Шугаринг на дому', 'SUGARING_RENT': 'Шугаринг (аренда места)', 'SUGARING_OWN': 'Свой кабинет шугаринга',
+  'MASSAGE_CABINET': 'Массажный кабинет', 'MASSAGE_STUDIO': 'Массажная студия',
+  'DENTAL_CABINET': 'Стоматологический кабинет', 'DENTAL_CLINIC': 'Стоматологическая клиника',
+  'FITNESS_STUDIO': 'Фитнес-студия', 'FITNESS_GYM': 'Тренажёрный зал',
+  'FITNESS_CROSSFIT': 'Кроссфит-зал', 'FITNESS_MMA': 'MMA / единоборства',
+  // Торговля
+  'GROCERY_MINI': 'Мини-маркет', 'GROCERY_MEDIUM': 'Средний магазин', 'GROCERY_SPEC': 'Специализированный магазин',
+  'PHARMA_MINI': 'Мини-аптека', 'PHARMA_STD': 'Стандартная аптека',
+  'FLOWERS_KIOSK': 'Цветочный киоск', 'FLOWERS_SHOP': 'Цветочный магазин', 'FLOWERS_STUDIO': 'Цветочная студия',
+  'FV_KIOSK': 'Овощной киоск', 'FV_SHOP': 'Овощной магазин', 'FV_WHOLESALE': 'Овощи оптом',
+  'WATER_VENDING': 'Вода (вендинг)', 'WATER_FILTER': 'Вода (фильтрация)', 'WATER_WELL': 'Водяная скважина',
+  'FURN_SOLO': 'Мебель (соло-мастер)', 'FURN_WORKSHOP': 'Мебельная мастерская', 'FURN_FACTORY': 'Мебельный цех',
+  'PVZ_SMALL': 'Маленький ПВЗ', 'PVZ_MULTI': 'Мульти-ПВЗ',
+  // Услуги
+  'CLEAN_SOLO': 'Клининг (соло)', 'CLEAN_TEAM': 'Клининг-бригада', 'CLEAN_COMPANY': 'Клининговая компания',
+  'DRY_POINT': 'Пункт приёма химчистки', 'DRY_MINI': 'Мини-химчистка', 'DRY_FULL': 'Полная химчистка',
+  'TAILOR_HOME': 'Ателье на дому', 'TAILOR_MINI': 'Мини-ателье', 'TAILOR_FULL': 'Полное ателье',
+  'REP_KIOSK': 'Ремонт телефонов (киоск)', 'REP_SHOP': 'Ремонт телефонов (магазин)',
+  'KINDER_HOME': 'Домашний детский сад', 'KINDER_MINI': 'Мини-детский сад', 'KINDER_FULL': 'Полный детский сад',
+  'CYBER_MINI': 'Мини-компьютерный клуб', 'CYBER_MEDIUM': 'Средний компьютерный клуб', 'CYBER_PREMIUM': 'Премиум-компьютерный клуб'
 };
 function fmtFormatId(id) {
   if (!id) return '';
