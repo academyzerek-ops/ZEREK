@@ -17,7 +17,6 @@
 .prod:active{transform:scale(.98)}.prod:hover{border-color:var(--ac)}
 .prod .icon{font-size:28px;margin-bottom:8px}.prod .name{font-size:17px;font-weight:700;margin-bottom:4px}.prod .desc{font-size:12px;color:var(--tx2);line-height:1.5}
 .prod .price{position:absolute;top:16px;right:16px;background:var(--acd);color:var(--ac2);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px}
-.prod.soon{opacity:.5;pointer-events:none}.prod.soon .price{background:var(--sf2);color:var(--tx3)}
 .pb{position:fixed;top:0;left:0;right:0;height:3px;background:var(--sf);z-index:99;max-width:440px;margin:0 auto}.pf{height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));transition:width .4s}
 .hd{padding:14px 20px 6px;display:flex;justify-content:space-between;align-items:center;margin-top:3px;font-size:13px}.hd .a{color:var(--tx3)}.hd .b{color:var(--ac2);font-weight:600}
 .st{display:none;padding:0 20px 120px;animation:up .3s}.st.on{display:block}.st h2{font-size:18px;font-weight:700;margin:4px 0 2px}.sd{color:var(--tx2);font-size:12px;margin-bottom:12px}
@@ -49,6 +48,12 @@ input[type=range]{width:100%;-webkit-appearance:none;height:5px;background:var(-
 <div class="screen on" id="home">
 <div class="logo"><h1>ZEREK</h1><p>Аналитика для предпринимателей</p></div>
 <div class="products">
+  <div class="prod" onclick="alert('Обзоры скоро будут доступны')">
+    <div class="icon">📊</div>
+    <div class="name">Обзор ниши</div>
+    <div class="desc">Подробный разбор: рынок, конкуренты, риски, цифры.</div>
+    <div class="price">Бесплатно</div>
+  </div>
   <div class="prod" onclick="startQC()">
     <div class="icon">⚡</div>
     <div class="name">Quick Check</div>
@@ -56,16 +61,16 @@ input[type=range]{width:100%;-webkit-appearance:none;height:5px;background:var(-
     <div class="price">3 000 ₸</div>
   </div>
   <div class="prod" onclick="startFM()">
-    <div class="icon">📊</div>
+    <div class="icon">📈</div>
     <div class="name">Финансовая модель</div>
-    <div class="desc">Детальный расчёт на 3 года. P&L, Cash Flow, стресс-тест, точка безубыточности. Excel + отчёт.</div>
+    <div class="desc">Детальный расчёт на 3 года. P&L, Cash Flow, стресс-тест. Excel + отчёт.</div>
     <div class="price">9 000 ₸</div>
   </div>
-  <div class="prod soon">
+  <div class="prod" onclick="alert('Бизнес-план скоро будет доступен')">
     <div class="icon">📋</div>
-    <div class="name">Бизнес-план</div>
-    <div class="desc">Готовый документ для банка или гранта. По требованиям Даму, БРК, Атамекен.</div>
-    <div class="price">Скоро</div>
+    <div class="name">Бизнес-план + Презентация</div>
+    <div class="desc">Готовый документ для банка или гранта. По требованиям Даму, БРК. Презентация в комплекте.</div>
+    <div class="price">15 000 ₸</div>
   </div>
 </div>
 <div class="rf">ZEREK — @zerekai_bot · zerek.cc</div>
