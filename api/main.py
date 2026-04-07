@@ -154,9 +154,53 @@ def get_survey(niche_id:str):
     return {"survey":clean(db.get_survey(niche_id))}
 
 
-# ── Финансовая модель (генерация xlsx) ──
+# ── Бизнес-план на грант 400 МРП ──
 
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
+
+class GrantBPReq(BaseModel):
+    fio: str; iin: str; phone: str; address: str
+    legal_status: str = "безработный"; legal_address: str = ""
+    experience_years: int = 0; family_status: str = ""
+    city_id: str; niche_id: str; format_id: str
+    project_name: str; location_description: str = ""
+    loc_type: str = "ТЦ"; own_funds: int = 0
+    grant_amount: int = 1730000; start_month: int = 1
+
+@app.post("/grant-bp")
+def grant_bp_endpoint(req: GrantBPReq):
+    """Генерирует заполненный бизнес-план на грант 400 МРП (.docx)."""
+    from grant_bp import generate_grant_bp
+    template = os.path.join(os.path.dirname(BASE_DIR), "templates", "bizplan", "grant_400mrp_template.docx")
+    if not os.path.exists(template):
+        template = os.path.join(DATA_DIR, "templates", "grant_400mrp_template.docx")
+    if not os.path.exists(template):
+        raise HTTPException(404, f"Шаблон БП не найден: {template}")
+    try:
+        docx_bytes = generate_grant_bp(
+            template_path=template,
+            fio=req.fio, iin=req.iin, phone=req.phone, address=req.address,
+            legal_status=req.legal_status, legal_address=req.legal_address or req.address,
+            experience_years=req.experience_years, family_status=req.family_status,
+            city_id=req.city_id, niche_id=req.niche_id, format_id=req.format_id,
+            project_name=req.project_name, location_description=req.location_description,
+            loc_type=req.loc_type, own_funds=req.own_funds,
+            grant_amount=req.grant_amount, start_month=req.start_month,
+        )
+        safe_name = req.fio.replace(" ", "_")[:30]
+        return Response(
+            content=docx_bytes,
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            headers={"Content-Disposition": f'attachment; filename="BP_Grant_{safe_name}_{req.city_id}.docx"'},
+        )
+    except FileNotFoundError as e:
+        raise HTTPException(404, str(e))
+    except Exception as e:
+        import traceback; d = traceback.format_exc(); print("GRANT-BP ERROR:", d)
+        raise HTTPException(500, str(e) + "\n" + d[-500:])
+
+
+# ── Финансовая модель (генерация xlsx) ──
 
 @app.post("/finmodel")
 def generate_finmodel_endpoint(req: FMReq):
