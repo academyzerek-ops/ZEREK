@@ -338,12 +338,12 @@ input[type="range"]::-moz-range-thumb {
   opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none;
 }
 .btn-back {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: none; border: none; color: var(--text3);
-  font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500;
-  cursor: pointer; padding: 8px 0; margin-bottom: 8px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  background: var(--surface2); border: 1px solid var(--border2); color: var(--text);
+  font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600;
+  cursor: pointer; padding: 12px; border-radius: 12px; width: 100%;
 }
-.btn-back:hover { color: var(--text2); }
+.btn-back:hover { background: var(--bg-elevated, var(--surface2)); color: var(--text); }
 
 /* Confirm summary */
 .confirm-card {
@@ -950,6 +950,20 @@ var NICHE_CATEGORIES = [
   { title: 'Торговля', ids: ['GROCERY','PHARMA','FLOWERS','FRUITSVEGS','WATER','FURNITURE','PVZ'] },
   { title: 'Услуги', ids: ['CLEAN','DRYCLEAN','TAILOR','REPAIR_PHONE','KINDERGARTEN','CYBERCLUB'] }
 ];
+var FORMAT_NAMES = {
+  'COFFEE_VENDING': 'Кофе-вендинг', 'COFFEE_KIOSK': 'Кофе-киоск',
+  'COFFEE_ISLAND': 'Кофе-остров', 'COFFEE_MOBILE': 'Кофе на колёсах',
+  'COFFEE_MINI': 'Мини-кофейня', 'COFFEE_MEDIUM': 'Средняя кофейня',
+  'COFFEE_LARGE': 'Большая кофейня', 'DONER_KIOSK': 'Донер-киоск',
+  'DONER_SMALL': 'Маленькая донерная', 'DONER_MEDIUM': 'Средняя донерная',
+  'DONER_LARGE': 'Большая донерная', 'CARWASH_SELF': 'Мойка самообслуж.',
+  'CARWASH_2POST': 'Мойка 2 поста', 'CARWASH_3POST': 'Мойка 3 поста',
+  'CARWASH_5POST': 'Мойка 5 постов', 'CARWASH_COMPLEX': 'Комплексная мойка'
+};
+function fmtFormatId(id) {
+  if (FORMAT_NAMES[id]) return FORMAT_NAMES[id];
+  return id.replace(/_/g, ' ').replace(/^./, function(c) { return c.toUpperCase(); });
+}
 var CITY_ICONS = {
   'astana': '🏛️', 'almaty': '🏔️', 'shymkent': '☀️', 'aktobe': '🏭',
   'karaganda': '⛏️', 'atyrau': '🛢️', 'pavlodar': '🌾', 'aktau': '🌊',
@@ -1133,9 +1147,9 @@ function loadFormats() {
     for (var i = 0; i < arr.length; i++) {
       var f = arr[i];
       var id = f.format_id || '';
-      var name = f['\u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435 \u0444\u043e\u0440\u043c\u0430\u0442\u0430'] || id;
+      var name = fmtFormatId(id);
       var area = f['\u041f\u043b\u043e\u0449\u0430\u0434\u044c \u0442\u0438\u043f\u043e\u0432\u0430\u044f (\u043c\u00b2)'] || '';
-      var sub = area ? (area + ' м² · ' + id) : id;
+      var sub = area ? (area + ' м² · ' + name) : name;
       html += '<div class="opt-card" data-id="'+id+'" onclick="selectFormat(this)">' +
         '<div class="opt-icon">📋</div>' +
         '<div class="opt-info"><div class="opt-name">'+name+'</div><div class="opt-sub">'+sub+'</div></div></div>';
@@ -1301,6 +1315,7 @@ function runCalculation() {
     capex_level: S.capex_level
   };
   if (S.rent_override) body.rent_override = S.rent_override;
+  console.log('[ZEREK] quick-check body:', JSON.stringify(body));
 
   apiPost('/quick-check', body, function(err, data) {
     clearInterval(interval);
