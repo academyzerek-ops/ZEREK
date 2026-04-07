@@ -687,6 +687,34 @@ input[type="range"]::-moz-range-thumb {
 .btn-pdf:hover { background: var(--surface3); border-color: var(--accent); }
 
 /* Disclaimer */
+.explain-box {
+  background: rgba(124,108,255,0.04); border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 16px 18px; margin: 16px 0; font-size: 13px; color: var(--text2); line-height: 1.75;
+}
+.explain-box strong { color: var(--text); font-weight: 600; }
+.explain-box .explain-title {
+  font-size: 12px; font-weight: 700; color: var(--accent2);
+  letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px;
+}
+.range-highlight {
+  background: linear-gradient(135deg, var(--accent-dim), rgba(0,228,160,0.06));
+  border: 1px solid var(--accent); border-radius: var(--radius);
+  padding: 18px 20px; text-align: center; margin: 16px 0;
+}
+.range-highlight .range-label {
+  font-size: 11px; color: var(--text3); font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px;
+}
+.range-highlight .range-value {
+  font-size: 22px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--text);
+}
+.btn-download {
+  width: 100%; padding: 15px; background: var(--surface2); color: var(--text);
+  border: 1px solid var(--border2); border-radius: 12px;
+  font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; margin-bottom: 12px;
+}
+.btn-download:hover { background: var(--accent-dim); border-color: var(--accent); }
 .disclaimer {
   margin: 0 20px; padding: 14px 16px;
   background: var(--surface); border: 1px solid var(--border);
@@ -1379,46 +1407,38 @@ function runCalculation() {
 function renderReport(d) {
   var inp = d.input || {};
   var health = d.health || {};
-  var b1 = d.block_1 || {};
-  var b2 = d.block_2 || {};
-  var b3 = d.block_3 || {};
-  var b4 = d.block_4 || {};
-  var b5 = d.block_5 || {};
-  var b6 = d.block_6 || {};
-  var b7 = d.block_7 || {};
-  var b8 = d.block_8 || {};
-  var b9 = d.block_9 || {};
+  var b1 = d.block_1 || {}, b2 = d.block_2 || {}, b3 = d.block_3 || {};
+  var b4 = d.block_4 || {}, b5 = d.block_5 || {}, b6 = d.block_6 || {};
+  var b7 = d.block_7 || {}, b8 = d.block_8 || {}, b9 = d.block_9 || {};
   var b10 = d.block_10 || {};
-  var b11 = d.block_11_season || {};
   var b12 = d.block_12_checklist || {};
 
   var today = new Date().toLocaleDateString('ru-RU');
   var scenarios = (b5.scenarios || []);
-  var scBase = scenarios[1] || {};
-  var scPess = scenarios[0] || {};
-  var scOpt = scenarios[2] || {};
+  var scPess = scenarios[0] || {}, scBase = scenarios[1] || {}, scOpt = scenarios[2] || {};
+  var heroNiche = NICHE_NAMES[inp.niche_id] || inp.niche_id || '';
+  var heroFormat = fmtFormatId(inp.format_id || '');
 
   var h = '';
 
-  // ===== HERO =====
-  var heroNiche = NICHE_NAMES[inp.niche_id] || inp.niche_id || '';
-  var heroFormat = fmtFormatId(inp.format_id || '');
+  // ═══ БЛОК 0: HERO + ПАРАМЕТРЫ ═══
   h += '<div class="hero fade-up">';
-  h += '<div class="hero-eyebrow">Экспресс-оценка бизнеса</div>';
+  h += '<div class="hero-eyebrow">Экспресс-оценка ZEREK</div>';
   h += '<h1>' + heroNiche + (heroFormat ? ' — ' + heroFormat : '') + '</h1>';
-  h += '<div class="hero-sub">' + (inp.city_name||'') + (inp.loc_type ? ' — ' + inp.loc_type : '') + '</div>';
+  h += '<div class="hero-sub">' + (inp.city_name||'') + (inp.loc_type ? ' · ' + inp.loc_type : '') + '</div>';
+  h += '<p style="font-size:11px;color:var(--text3);margin-top:12px;">На основе данных БНС РК и рыночных бенчмарков</p>';
   h += '</div>';
 
   // Summary strip
   h += '<div class="summary-strip fade-up">';
   h += '<div class="s-chip">📍 <strong>' + (inp.city_name||'') + '</strong></div>';
-  // capital chip removed — we show investment range instead
   h += '<div class="s-chip">📐 <strong>' + (inp.area_m2||'') + ' м²</strong></div>';
   h += '<div class="s-chip">🏬 <strong>' + (inp.loc_type||'') + '</strong></div>';
+  if (inp.cls) h += '<div class="s-chip">⚙️ <strong>' + inp.cls + '</strong></div>';
   h += '<div class="s-chip">📅 <strong>' + today + '</strong></div>';
   h += '</div>';
 
-  // ===== HEALTH INDICATORS =====
+  // ═══ ЗДОРОВЬЕ ПРОЕКТА ═══
   var indicators = (health.indicators || []);
   if (indicators.length) {
     h += '<div class="section fade-up">';
@@ -1432,125 +1452,155 @@ function renderReport(d) {
     h += '</div></div>';
   }
 
-  // ===== 01 ВЫРУЧКА =====
+  // ═══ БЛОК 1: ОБЗОР РЫНКА ═══
   h += '<div class="section fade-up">';
-  h += '<div class="section-tag"><span class="tag-num">01</span> ВЫРУЧКА</div>';
-  h += '<h2>' + (b1.title||'На чём зарабатываете') + '</h2>';
+  h += '<div class="section-tag"><span class="tag-num">01</span> ОБЗОР РЫНКА</div>';
+  h += '<h2>Рынок ' + heroNiche.toLowerCase() + ' в ' + (inp.city_name||'городе') + '</h2>';
   h += '<div class="card">';
-  h += '<div class="card-head">' + (b1.subtitle||'') + '</div>';
+  h += '<div class="card-head">Ключевые показатели</div>';
   h += '<div class="row"><span class="k">Средний чек</span><span class="v">' + fmt(b1.check_med) + ' ₸</span></div>';
-  h += '<div class="row"><span class="k">Трафик/день</span><span class="v">' + (b1.traffic_med||'') + ' кл.</span></div>';
-  h += '<div class="row"><span class="k">Выручка/мес (базовый)</span><span class="v tc-accent">' + fmtM(b1.revenue_monthly) + ' ₸</span></div>';
+  h += '<div class="row"><span class="k">Клиентов в день</span><span class="v">' + (b1.traffic_med||'—') + '</span></div>';
+  h += '<div class="row"><span class="k">Выручка в месяц (план)</span><span class="v tc-accent">' + fmtM(b1.revenue_monthly) + ' ₸</span></div>';
+  h += '<div class="row"><span class="k">Себестоимость</span><span class="v">' + (b2.cogs_pct||'') + '%</span></div>';
+  h += '<div class="row"><span class="k">Прибыльность (валовая)</span><span class="v tc-green">' + (b2.gross_margin_pct||'') + '%</span></div>';
   h += '</div>';
-  if (b1.disclaimer) {
-    var disc1 = b1.disclaimer.replace(/для класса «»/g, '').replace(/класса «» /g, '').replace(/  +/g, ' ');
-    h += '<p class="note">' + disc1 + '</p>';
-  }
-  h += '</div>';
+  h += '<div class="explain-box"><div class="explain-title">Что это значит?</div>';
+  h += '<p>Средний чек <strong>' + fmt(b1.check_med) + ' ₸</strong> — это типичная сумма одной покупки для вашего формата. ';
+  h += 'При <strong>' + (b1.traffic_med||0) + ' клиентах в день</strong> и 30 рабочих днях плановая выручка — <strong>' + fmtM(b1.revenue_monthly) + ' ₸/мес</strong>.</p>';
+  h += '<p>Из каждых 100 ₸ выручки <strong>' + (b2.cogs_pct||35) + ' ₸</strong> уходит на сырьё и товар. Остальные <strong>' + (b2.gross_margin_pct||65) + ' ₸</strong> — на аренду, зарплаты, налоги и прибыль.</p>';
+  h += '</div></div>';
 
-  // ===== 02 ПРЯМЫЕ РАСХОДЫ =====
+  // ═══ БЛОК 2: СКОЛЬКО НУЖНО ДЕНЕГ ═══
   h += '<div class="section fade-up">';
-  h += '<div class="section-tag"><span class="tag-num">02</span> ПРЯМЫЕ РАСХОДЫ</div>';
-  h += '<h2>' + (b2.title||'Прямые расходы') + '</h2>';
+  h += '<div class="section-tag"><span class="tag-num">02</span> СТАРТОВЫЕ ВЛОЖЕНИЯ</div>';
+  h += '<h2>Сколько нужно денег на старт</h2>';
   h += '<div class="card">';
-  h += '<div class="row"><span class="k">Себестоимость</span><span class="v">' + (b2.cogs_pct||'') + '% от выручки</span></div>';
-  h += '<div class="row"><span class="k">COGS / мес</span><span class="v">' + fmtM(b2.cogs_monthly) + ' ₸</span></div>';
-  h += '<div class="row"><span class="k">Валовая прибыль</span><span class="v tc-green">' + fmtM(b2.gross_profit) + ' ₸</span></div>';
-  h += '<div class="row"><span class="k">Валовая маржа</span><span class="v">' + (b2.gross_margin_pct||'') + '%</span></div>';
+  h += '<div class="card-head">Класс: ' + (inp.cls||'стандарт') + '</div>';
+  var items4 = b4.items || [];
+  for (var i = 0; i < items4.length; i++) {
+    var it = items4[i]; if (!it.amount) continue;
+    h += '<div class="row"><span class="k">' + (it.name||'') + (it.note ? ' <span style="font-size:10px;color:var(--text3);">(' + it.note + ')</span>' : '') + '</span><span class="v">' + fmt(it.amount) + ' ₸</span></div>';
+  }
+  h += '<div class="row row-total"><span class="k">Оборудование + ремонт</span><span class="v">' + fmt(b4.total) + ' ₸</span></div>';
   h += '</div>';
-  if (b2.disclaimer) h += '<p class="note">' + b2.disclaimer + '</p>';
+  var invMin = b4.investment_min || b4.total || 0;
+  var invMax = b4.investment_max || invMin;
+  h += '<div class="range-highlight"><div class="range-label">Потребуется на старт</div>';
+  h += '<div class="range-value">от ' + fmtM(invMin) + ' до ' + fmtM(invMax) + ' ₸</div>';
+  h += '<div style="font-size:11px;color:var(--text3);margin-top:6px;">Оборудование + ремонт + депозит + резерв 3 мес.</div></div>';
+  h += '<div class="explain-box"><div class="explain-title">Зачем нужен резерв?</div>';
+  h += '<p>Первые 2–4 месяца бизнес набирает обороты. Клиентов мало, а аренду и зарплаты платить нужно. <strong>Резерв — это деньги, которые не дадут вам закрыться</strong>, не дождавшись первых стабильных продаж.</p>';
+  h += '<p>Без резерва — самая частая причина закрытия бизнеса в первые полгода.</p>';
+  h += '</div>';
+  if (b4.budget_text) h += '<p class="note">' + b4.budget_text + '</p>';
   h += '</div>';
 
-  // ===== 03 ПОСТОЯННЫЕ РАСХОДЫ =====
+  // ═══ БЛОК 3: ЕЖЕМЕСЯЧНЫЕ РАСХОДЫ ═══
   h += '<div class="section fade-up">';
   h += '<div class="section-tag"><span class="tag-num">03</span> РАСХОДЫ</div>';
-  h += '<h2>' + (b3.title||'Постоянные расходы') + '</h2>';
+  h += '<h2>Постоянные расходы каждый месяц</h2>';
   h += '<div class="card">';
-  h += '<div class="card-head">' + (b3.subtitle||'Платите каждый месяц') + '</div>';
   var items3 = b3.items || [];
   for (var i = 0; i < items3.length; i++) {
     if (!items3[i].amount) continue;
     h += '<div class="row"><span class="k">' + (items3[i].name||'') + '</span><span class="v">' + fmt(items3[i].amount) + ' ₸</span></div>';
   }
-  h += '<div class="row row-total"><span class="k">ИТОГО / мес</span><span class="v">' + fmt(b3.total) + ' ₸</span></div>';
+  h += '<div class="row row-total"><span class="k">ИТОГО в месяц</span><span class="v">' + fmt(b3.total) + ' ₸</span></div>';
   h += '</div>';
-  if (b3.disclaimer) h += '<p class="note">' + b3.disclaimer + '</p>';
-  h += '</div>';
-
-  // ===== 04 CAPEX =====
-  h += '<div class="section fade-up">';
-  h += '<div class="section-tag"><span class="tag-num">04</span> ИНВЕСТИЦИИ</div>';
-  h += '<h2>' + (b4.title||'Стартовые вложения') + '</h2>';
-  h += '<div class="card">';
-  var items4 = b4.items || [];
-  for (var i = 0; i < items4.length; i++) {
-    var it = items4[i];
-    h += '<div class="row"><span class="k">' + (it.name||'') + (it.note ? ' <span style="font-size:10px;color:var(--text3);">(' + it.note + ')</span>' : '') + '</span><span class="v">' + fmt(it.amount) + ' ₸</span></div>';
-  }
-  h += '<div class="row row-total"><span class="k">ИТОГО</span><span class="v">' + fmt(b4.total) + ' ₸</span></div>';
-  h += '</div>';
-  var invMin = b4.investment_min || b4.total || 0;
-  var invMax = b4.investment_max || invMin;
-  h += '<div class="capex-vis">';
-  h += '<div style="font-size:12px;color:var(--text3);font-weight:600;letter-spacing:1px;text-transform:uppercase;">Потребуется инвестиций</div>';
-  h += '<div style="margin-top:8px;font-size:20px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--accent2);">от ' + fmtM(invMin) + ' до ' + fmtM(invMax) + ' ₸</div>';
-  h += '<div style="font-size:11px;color:var(--text3);margin-top:4px;">Оборудование + ремонт + депозит + резерв 3 мес.</div>';
-  h += '</div>';
-  if (b4.budget_text) h += '<p class="note">' + b4.budget_text + '</p>';
+  h += '<div class="explain-box"><div class="explain-title">Что это значит?</div>';
+  h += '<p>Это деньги, которые уходят <strong>каждый месяц</strong> — даже если клиентов мало. ';
+  h += 'Аренда + зарплаты + коммунальные = ваш минимум. ';
+  h += 'Именно поэтому так важна точка безубыточности (следующий блок).</p></div>';
   h += '</div>';
 
-  // ===== 05 СЦЕНАРИИ =====
+  // ═══ БЛОК 4: ВЫРУЧКА + БЕЗУБЫТОЧНОСТЬ ═══
   h += '<div class="section fade-up">';
-  h += '<div class="section-tag"><span class="tag-num">05</span> СЦЕНАРИИ</div>';
-  h += '<h2>' + (b5.title||'Три сценария') + '</h2>';
-  h += '<p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.55;">Прогноз на 12 месяцев с учётом маркетинга.</p>';
+  h += '<div class="section-tag"><span class="tag-num">04</span> ВЫРУЧКА</div>';
+  h += '<h2>Сколько нужно зарабатывать</h2>';
   h += '<div class="scenarios">';
   for (var i = 0; i < scenarios.length; i++) {
     var s = scenarios[i];
-    var cls = s.key === 'base' ? ' sc-base' : '';
+    var scCls = s.key === 'base' ? ' sc-base' : '';
     var lbl = s.key === 'pess' ? 'lbl-red' : s.key === 'opt' ? 'lbl-green' : 'lbl-accent';
     var tc = s.key === 'pess' ? 'tc-red' : s.key === 'opt' ? 'tc-green' : 'tc-accent';
-    h += '<div class="sc' + cls + '"><div class="sc-label ' + lbl + '">' + (s.label||'') + '</div>';
+    h += '<div class="sc' + scCls + '"><div class="sc-label ' + lbl + '">' + (s.label||'') + '</div>';
     h += '<div class="sc-big ' + tc + '">' + fmtM(s.profit_monthly) + '</div><div class="sc-unit">₸ прибыль/мес</div>';
     h += '<div class="sc-detail">' + (s.traffic||'') + ' кл/день<br>чек ' + fmt(s.check) + ' ₸</div></div>';
   }
   h += '</div>';
-  if (b5.disclaimer) h += '<p class="note">' + b5.disclaimer + '</p>';
-  h += '</div>';
-
-  // ===== 06 БЕЗУБЫТОЧНОСТЬ =====
-  h += '<div class="section fade-up">';
-  h += '<div class="section-tag"><span class="tag-num">06</span> БЕЗУБЫТОЧНОСТЬ</div>';
-  h += '<h2>' + (b6.title||'Точка безубыточности') + '</h2>';
+  // Breakeven
   var tbRev = b6.tb_revenue || 0;
+  var tbDay = b6.tb_checks_day || 0;
+  var safety = b6.safety_margin || 0;
   var baseRev = b1.revenue_monthly || 1;
   var pinPos = Math.min(90, Math.max(10, (tbRev / baseRev) * 100));
-  h += '<div class="meter"><div class="meter-labels"><span>0 ₸</span><span>Безубыточность</span><span>Базовая выр.</span></div>';
+  h += '<h3 style="font-size:15px;font-weight:700;margin:20px 0 10px;color:var(--text);">Точка безубыточности</h3>';
+  h += '<div class="meter"><div class="meter-labels"><span>0 ₸</span><span>Безубыточность</span><span>План</span></div>';
   h += '<div class="meter-track"><div class="meter-fill" style="width:100%;"><div class="meter-pin" style="left:'+pinPos+'%;"></div></div></div>';
   h += '<div class="meter-footer"><span style="font-size:12px;color:var(--text2);">ТБ: <strong style="color:var(--text);">' + fmtM(tbRev) + ' ₸/мес</strong></span>';
-  h += '<span style="font-size:12px;color:var(--green);font-weight:700;">Запас прочности: ' + (b6.safety_margin||0) + '%</span></div></div>';
-  h += '<div class="expert-tip"><div class="expert-avatar">📊</div><div class="expert-body"><div class="expert-name">Что это значит</div><div class="expert-text">';
-  h += 'Минимум <strong>' + (b6.tb_checks_day||0) + ' клиентов/день</strong> чтобы выйти в ноль.';
-  h += '</div></div></div>';
-  if (b6.disclaimer) h += '<p class="note">' + b6.disclaimer + '</p>';
-  h += '</div>';
-
-  // ===== 07 НАЛОГИ =====
-  h += '<div class="section fade-up">';
-  h += '<div class="section-tag"><span class="tag-num">07</span> НАЛОГИ</div>';
-  h += '<h2>' + (b7.title||'Налоги') + '</h2>';
-  h += '<div class="tax-box"><span class="tax-badge">Рекомендация</span>';
-  var taxTitle = 'УСН ' + (b7.rate_pct||3) + '%';
-  h += '<div class="tax-title">' + taxTitle + '</div>';
-  h += '<div class="tax-desc">' + (b7.text||'') + '</div>';
+  h += '<span style="font-size:12px;color:var(--green);font-weight:700;">Запас: ' + safety + '%</span></div></div>';
+  // Explain
+  var tbPerHour = Math.ceil(tbDay / 10);
+  h += '<div class="explain-box"><div class="explain-title">Что это значит?</div>';
+  h += '<p>Точка безубыточности — это <strong>минимум, при котором вы не теряете деньги</strong>.</p>';
+  h += '<p>Для вашего формата это <strong>' + tbDay + ' клиентов в день</strong> со средним чеком <strong>' + fmt(b1.check_med) + ' ₸</strong>. ';
+  if (tbPerHour > 0) h += 'Если работаете 10 часов — нужно <strong>' + tbPerHour + ' клиентов каждый час</strong>.';
+  h += '</p>';
+  if (safety > 0) {
+    h += '<p>В базовом сценарии вы выше этой точки на <strong>' + safety + '%</strong> — это хороший запас прочности.</p>';
+  } else {
+    h += '<p style="color:var(--warning);">В базовом сценарии вы ниже этой точки — проект рискует работать в убыток. Рассмотрите снижение аренды или другую локацию.</p>';
+  }
   h += '</div></div>';
 
-  // ===== 08 МАРКЕТИНГ =====
+  // ═══ БЛОК 5: ОКУПАЕМОСТЬ ═══
+  h += '<div class="section fade-up">';
+  h += '<div class="section-tag"><span class="tag-num">05</span> ОКУПАЕМОСТЬ</div>';
+  h += '<h2>Когда вернутся деньги</h2>';
+  h += '<div class="scenarios">';
+  var pbLabels = [['Пессимист.','lbl-red','tc-red'],['Базовый','lbl-accent','tc-accent'],['Оптимист.','lbl-green','tc-green']];
+  for (var i = 0; i < scenarios.length; i++) {
+    var s = scenarios[i]; var pl = pbLabels[i] || pbLabels[1];
+    var scCls2 = i === 1 ? ' sc-base' : '';
+    var pbText = s.payback || '—';
+    h += '<div class="sc' + scCls2 + '"><div class="sc-label ' + pl[0] + '">' + pl[0] + '</div>';
+    h += '<div class="sc-big ' + pl[2] + '">' + pbText + '</div><div class="sc-unit">месяцев</div></div>';
+  }
+  h += '</div>';
+  var basePb = scBase.payback;
+  h += '<div class="explain-box"><div class="explain-title">Что это значит?</div>';
+  h += '<p>Окупаемость — момент, когда суммарная прибыль покрывает стартовые вложения.</p>';
+  if (basePb && basePb <= 12) {
+    h += '<p>В базовом сценарии — <strong>' + basePb + ' месяцев</strong>. Это хороший показатель — бизнес окупается в первый год.</p>';
+  } else if (basePb && basePb <= 24) {
+    h += '<p>В базовом сценарии — <strong>' + basePb + ' месяцев</strong>. Бизнес окупается за 1–2 года — нормально, но нужен запас терпения и резерв.</p>';
+  } else if (basePb) {
+    h += '<p style="color:var(--warning);">Окупаемость больше 2 лет — сигнал пересмотреть формат или локацию.</p>';
+  }
+  var pessPb = scPess.payback;
+  if (!pessPb || pessPb === '—') {
+    h += '<p style="color:var(--text3);">В пессимистичном сценарии проект не окупается — при слабом трафике вы будете терять деньги.</p>';
+  }
+  h += '</div></div>';
+
+  // ═══ БЛОК 6: НАЛОГИ ═══
+  h += '<div class="section fade-up">';
+  h += '<div class="section-tag"><span class="tag-num">06</span> НАЛОГИ</div>';
+  h += '<h2>Какой налоговый режим выбрать</h2>';
+  h += '<div class="tax-box"><span class="tax-badge">Рекомендация</span>';
+  h += '<div class="tax-title">УСН ' + (b7.rate_pct||3) + '%</div>';
+  h += '<div class="tax-desc">' + (b7.text||'') + '</div>';
+  h += '</div>';
+  h += '<div class="explain-box"><div class="explain-title">Простыми словами</div>';
+  h += '<p>Упрощённая декларация (УД) — самый выгодный режим для малого бизнеса. Вы платите <strong>' + (b7.rate_pct||3) + '% от выручки</strong>, сдаёте декларацию раз в полгода. Никакого НДС, пока годовая выручка не превысит порог.</p>';
+  h += '</div></div>';
+
+  // ═══ БЛОК 7: МАРКЕТИНГ ═══
   var mainCh = b8.main || [];
   if (mainCh.length) {
     h += '<div class="section fade-up">';
-    h += '<div class="section-tag"><span class="tag-num">08</span> МАРКЕТИНГ</div>';
-    h += '<h2>' + (b8.title||'Как продвигать') + '</h2>';
+    h += '<div class="section-tag"><span class="tag-num">07</span> ПРОДВИЖЕНИЕ</div>';
+    h += '<h2>Как привлекать клиентов</h2>';
     h += '<div class="card">';
     for (var i = 0; i < mainCh.length; i++) {
       var ch = mainCh[i];
@@ -1561,22 +1611,22 @@ function renderReport(d) {
     h += '</div>';
   }
 
-  // ===== 09 СОВЕТЫ =====
+  // ═══ БЛОК 8: СОВЕТЫ ═══
   var tips = (b9.income||[]).concat(b9.risks||[]).concat(b9.mistakes||[]);
   if (tips.length) {
     h += '<div class="section fade-up">';
-    h += '<div class="section-tag"><span class="tag-num">09</span> СОВЕТЫ</div>';
-    h += '<h2>' + (b9.title||'Полезные советы') + '</h2>';
+    h += '<div class="section-tag"><span class="tag-num">08</span> СОВЕТЫ</div>';
+    h += '<h2>Полезные советы по нише</h2>';
     for (var i = 0; i < tips.length; i++) {
       if (tips[i]) h += '<div class="expert-tip" style="margin-bottom:8px;"><div class="expert-avatar">💡</div><div class="expert-body"><div class="expert-text">' + tips[i] + '</div></div></div>';
     }
     h += '</div>';
   }
 
-  // ===== 10 ИТОГОВАЯ ОЦЕНКА =====
+  // ═══ БЛОК 9: ИТОГОВАЯ ОЦЕНКА ═══
   h += '<div class="section fade-up">';
-  h += '<div class="section-tag"><span class="tag-num">10</span> ИТОГОВАЯ ОЦЕНКА</div>';
-  h += '<h2>' + (b10.title||'Выводы') + '</h2>';
+  h += '<div class="section-tag"><span class="tag-num">09</span> ЗАКЛЮЧЕНИЕ</div>';
+  h += '<h2>Наше заключение</h2>';
   var vc = b10.verdict_color || 'green';
   if (vc === 'yellow') vc = 'amber';
   var vEmoji = vc === 'green' ? '✅' : vc === 'amber' ? '⚠️' : '🔴';
@@ -1588,10 +1638,22 @@ function renderReport(d) {
     h += '<div class="verdict-sub">' + reasons.join('. ') + '</div>';
   }
   h += '</div>';
+  // Verdict explanation
+  h += '<div class="explain-box"><div class="explain-title">Что дальше?</div>';
+  if (vc === 'green') {
+    h += '<p>Ваш формат в ' + (inp.city_name||'городе') + ' имеет хорошие шансы. <strong>Ключевое условие</strong> — правильная локация с трафиком и контроль расходов в первые месяцы.</p>';
+  } else if (vc === 'amber') {
+    h += '<p>Формат рабочий, но есть существенные риски. Рекомендуем <strong>детальный расчёт с финансовой моделью</strong> перед инвестициями.</p>';
+  } else {
+    h += '<p>При текущих параметрах проект рискован. <strong>Рассмотрите другой формат, другую локацию или снижение расходов.</strong></p>';
+  }
+  h += '</div>';
+  // Alternatives
   var alts = b10.alternatives || [];
   if (alts.length) {
-    h += '<div class="expert-tip" style="margin:18px 0;"><div class="expert-avatar">💡</div><div class="expert-body"><div class="expert-name">Альтернативы</div><div class="expert-text">' + alts.join('<br>') + '</div></div></div>';
+    h += '<div class="expert-tip" style="margin:12px 0;"><div class="expert-avatar">💡</div><div class="expert-body"><div class="expert-name">Альтернативы</div><div class="expert-text">' + alts.join('<br>') + '</div></div></div>';
   }
+  // Next steps
   var nextSteps = b10.next_steps || [];
   if (nextSteps.length) {
     h += '<h3 style="font-size:14px;font-weight:600;margin:18px 0 10px;color:var(--text);">Следующие шаги</h3>';
@@ -1601,32 +1663,30 @@ function renderReport(d) {
   }
   h += '</div>';
 
-  // ===== 12 ЧЕКЛИСТ =====
+  // ═══ БЛОК 10: ЧЕКЛИСТ ═══
   var checkItems = (b12.items || []);
   if (checkItems.length) {
     h += '<div class="section fade-up">';
     h += '<div class="section-tag"><span class="tag-num">📋</span> ЧЕКЛИСТ</div>';
-    h += '<h2>' + (b12.title||'Что оформить') + '</h2>';
+    h += '<h2>Что оформить до открытия</h2>';
     for (var i = 0; i < checkItems.length; i++) {
       h += '<div class="check"><span style="color:var(--green);margin-right:8px;">✓</span><span>' + (checkItems[i].item||'') + '</span></div>';
     }
     h += '</div>';
   }
 
-  // ===== PDF BUTTON =====
-  h += '<div class="fade-up" style="padding:0 0 12px;"><button onclick="alert(\'PDF-отчёт скоро будет доступен\')" style="width:100%;padding:15px;background:var(--accent);color:white;border:none;border-radius:12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">📄 Скачать отчёт PDF</button></div>';
+  // ═══ КНОПКИ + CTA ═══
+  h += '<div class="fade-up" style="padding:0 20px 12px;"><button class="btn-download" onclick="alert(\'Скачивание отчёта скоро будет доступно\')">📥 Скачать подробный отчёт</button></div>';
 
-  // ===== CTA — ДВА ПРОДУКТА =====
-  h += '<div class="cta-finmodel fade-up"><h3>📈 Финансовая модель — 9 000 ₸</h3><p>Детальный расчёт на 36 месяцев. P&L, Cash Flow, стресс-тест. Excel + объяснение.</p>';
+  h += '<div class="cta-finmodel fade-up"><h3>📈 Хотите точнее? Финансовая модель — 9 000 ₸</h3><p>Детальный расчёт на 36 месяцев. P&L, Cash Flow, стресс-тест. Excel с объяснением каждой цифры.</p>';
   h += '<button class="btn-finmodel" onclick="alert(\'Финансовая модель скоро будет доступна\')">Получить финансовую модель</button></div>';
 
-  h += '<div class="cta-finmodel fade-up"><h3>📋 Бизнес-план + Презентация — 15 000 ₸</h3><p>Готовый документ для банка или гранта. По требованиям Даму, БРК, Атамекен. Презентация в комплекте.</p>';
+  h += '<div class="cta-finmodel fade-up"><h3>📋 Бизнес-план + Презентация — 15 000 ₸</h3><p>Готовый документ для банка или гранта. По требованиям Даму, БРК, Атамекен.</p>';
   h += '<button class="btn-finmodel" onclick="alert(\'Бизнес-план скоро будет доступен\')">Получить бизнес-план</button></div>';
 
-  h += '<div class="disclaimer fade-up" style="margin-bottom:12px;"><strong style="color:var(--text2);">Дисклеймер.</strong> Данный отчёт — экспресс-оценка на основе рыночных бенчмарков и статистических данных БНС РК. Цифры носят ориентировочный характер.</div>';
+  h += '<div class="disclaimer fade-up" style="margin-bottom:12px;"><strong style="color:var(--text2);">Дисклеймер.</strong> Данный отчёт — экспресс-оценка на основе рыночных бенчмарков и статистических данных БНС РК за 2026 год. Цифры носят ориентировочный характер и не являются гарантией результата.</div>';
 
-  // ===== НОВЫЙ РАСЧЁТ =====
-  h += '<div class="fade-up" style="margin-bottom:12px;"><button onclick="resetCalculation()" style="width:100%;padding:15px;background:var(--surface2);color:var(--text);border:1px solid var(--border2);border-radius:12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Новый расчёт</button></div>';
+  h += '<div class="fade-up" style="margin:0 20px 12px;"><button onclick="resetCalculation()" style="width:100%;padding:15px;background:var(--surface2);color:var(--text);border:1px solid var(--border2);border-radius:12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Новый расчёт</button></div>';
 
   h += '<div class="footer"><strong>ZEREK</strong><br>Финансовая аналитика для каждого предпринимателя<br><span style="color:var(--text3);">zerek.cc</span></div>';
 
