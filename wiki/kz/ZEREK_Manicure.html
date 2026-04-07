@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZEREK — Маникюрный салон: бизнес в Казахстане 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=Source+Sans+3:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root{
+--bg:#faf5f8;--bg2:#f4ecf0;--bg3:#ede3e8;--bg-card:#ffffff;--bg-card2:#f8f0f4;
+--brd:#dcc4d0;--brd2:#c8a8b8;
+--t1:#36202a;--t2:#6e4a58;--t3:#907068;--t4:#b09088;
+--ac:#c05080;--ac2:#d06090;--ac3:#a03868;--ac-light:#f0a0c0;--ac-bg:rgba(192,80,128,.06);
+--ok:#4a8a50;--ok-bg:rgba(74,138,80,.05);--ok-brd:rgba(74,138,80,.15);
+--wrn:#c89030;--wrn-bg:rgba(200,144,48,.05);--wrn-brd:rgba(200,144,48,.15);
+--err:#b84a3a;--err-bg:rgba(184,74,58,.04);--err-brd:rgba(184,74,58,.12);
+--inf:#4a7ab8;--inf-bg:rgba(74,122,184,.05);
+--r:14px;--rs:10px
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--t1);font-family:'Source Sans 3',-apple-system,sans-serif;line-height:1.75;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.ct{max-width:820px;margin:0 auto;padding:0 24px}
+.hero{min-height:80vh;display:flex;align-items:center;justify-content:center;text-align:center;background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);padding:60px 24px}
+.hero-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:var(--ac2);letter-spacing:6px;margin-bottom:24px}
+.hero-badge{display:inline-block;padding:5px 18px;background:var(--ac-bg);border:1px solid rgba(192,80,128,.2);border-radius:100px;font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--ac2);margin-bottom:24px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;letter-spacing:-1px;margin-bottom:18px;color:var(--t1)}
+.hero-sub{font-size:1rem;color:var(--t2);max-width:580px;margin:0 auto;line-height:1.8}
+.nav{position:sticky;top:0;z-index:100;background:rgba(250,245,248,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--brd);padding:10px 0}
+.nav-in{display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none;max-width:820px;margin:0 auto;padding:0 24px}.nav-in::-webkit-scrollbar{display:none}
+.nav-logo{font-family:'Playfair Display',serif;font-size:14px;font-weight:800;color:var(--ac2);letter-spacing:3px;flex-shrink:0;text-decoration:none;margin-right:12px}
+.nav-a{font-size:11px;color:var(--t3);text-decoration:none;white-space:nowrap;padding:5px 10px;border-radius:6px;transition:.2s;font-weight:500}.nav-a:hover{color:var(--ac2);background:var(--ac-bg)}
+.sec{padding:56px 0;border-bottom:1px solid var(--brd)}.sec-alt{background:var(--bg2)}
+.sec-lb{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--ac2);margin-bottom:12px}.sec-lb::before{content:'';width:18px;height:2px;background:var(--ac2);border-radius:1px}
+.sec-t{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,3vw,1.9rem);font-weight:700;letter-spacing:-.5px;margin-bottom:14px;line-height:1.25;color:var(--t1)}
+.p{font-size:.94rem;color:var(--t2);line-height:1.85;margin-bottom:16px}.p strong{color:var(--t1);font-weight:600}.p em{color:var(--ac2);font-style:normal;font-weight:600}
+.cd{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:24px;margin-bottom:16px;box-shadow:0 1px 8px rgba(0,0,0,.03)}.cd2{background:var(--bg-card2);box-shadow:none}
+.cg{display:grid;gap:16px}.cg2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}.cg3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}.cg4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.sc{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:18px;text-align:center}.sv{font-size:1.3rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--ac2);line-height:1.2}.sl{font-size:11px;color:var(--t2);margin-top:4px}
+.pr{margin-bottom:12px}.prh{display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px}.prn{color:var(--t1);font-weight:500}.prv{color:var(--ac2);font-family:'JetBrains Mono',monospace;font-weight:600;font-size:12px}.prt{height:6px;background:rgba(192,80,128,.08);border-radius:3px;overflow:hidden}.prf{height:100%;border-radius:3px;background:linear-gradient(135deg,var(--ac2),var(--ac3))}
+.callout{padding:18px 22px;border-radius:var(--rs);margin:18px 0;font-size:.9rem;line-height:1.75}
+.callout-ac{background:var(--ac-bg);border:1px solid rgba(192,80,128,.15);border-left:3px solid var(--ac)}.callout-ok{background:var(--ok-bg);border:1px solid var(--ok-brd);border-left:3px solid var(--ok)}.callout-wrn{background:var(--wrn-bg);border:1px solid var(--wrn-brd);border-left:3px solid var(--wrn)}.callout-err{background:var(--err-bg);border:1px solid var(--err-brd);border-left:3px solid var(--err)}
+.callout-title{font-weight:700;margin-bottom:6px;font-size:.92rem}
+.explain{background:var(--bg-card2);border:1px solid var(--brd);border-radius:var(--r);padding:20px 22px;margin:18px 0}.explain-q{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--t1);margin-bottom:8px}.explain-a{font-size:.9rem;color:var(--t2);line-height:1.8}
+.care{background:linear-gradient(135deg,rgba(192,80,128,.04),rgba(74,138,80,.03));border:1px solid rgba(192,80,128,.12);border-radius:var(--r);padding:22px 24px;margin:20px 0;position:relative}.care::before{content:'💬';position:absolute;top:-12px;left:20px;font-size:20px;background:var(--bg);padding:0 6px}.sec-alt .care::before{background:var(--bg2)}.care-text{font-size:.92rem;color:var(--t2);line-height:1.8;font-style:italic}.care-text strong{color:var(--t1);font-style:normal}
+.case{border-radius:var(--r);padding:22px 24px;margin-bottom:14px}.case-good{background:var(--ok-bg);border:1px solid var(--ok-brd);border-left:4px solid var(--ok)}.case-bad{background:var(--err-bg);border:1px solid var(--err-brd);border-left:4px solid var(--err)}.case-mid{background:var(--wrn-bg);border:1px solid var(--wrn-brd);border-left:4px solid var(--wrn)}.case-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}.case-good .case-label{color:var(--ok)}.case-bad .case-label{color:var(--err)}.case-mid .case-label{color:var(--wrn)}.case-title{font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;margin-bottom:8px;color:var(--t1)}.case-text{font-size:.88rem;color:var(--t2);line-height:1.8}
+.risk{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:22px 24px;margin-bottom:14px}.risk-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}.risk-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}.risk-crit .risk-icon{background:rgba(184,74,58,.08)}.risk-warn .risk-icon{background:rgba(200,144,48,.08)}.risk-name{font-weight:700;font-size:.95rem;color:var(--t1)}.risk-body{font-size:.88rem;color:var(--t2);line-height:1.8;margin-bottom:10px}.risk-math{background:var(--bg-card2);border:1px solid var(--brd);border-radius:var(--rs);padding:12px 16px;font-size:.85rem;color:var(--t2);margin:10px 0;font-family:'JetBrains Mono','Source Sans 3',monospace;line-height:1.7}.risk-fix{font-size:.86rem;color:var(--ok);font-weight:500;margin-top:8px}
+.mistake{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:20px 22px;margin-bottom:12px}.mistake-q{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--err);margin-bottom:6px}.mistake-a{font-size:.86rem;color:var(--t2);line-height:1.8}
+.funnel{display:flex;flex-direction:column;gap:0;margin:20px 0}.funnel-step{display:flex;align-items:center;gap:16px;padding:14px 20px;border-bottom:1px solid var(--brd)}.funnel-step:last-child{border-bottom:none}.funnel-num{font-family:'JetBrains Mono',monospace;font-size:1.8rem;font-weight:800;min-width:70px;text-align:center}.funnel-text{font-size:.88rem;color:var(--t2)}.funnel-step:nth-child(1) .funnel-num{color:var(--ok)}.funnel-step:nth-child(2) .funnel-num{color:var(--wrn)}.funnel-step:nth-child(3) .funnel-num{color:var(--ac2)}.funnel-step:nth-child(4) .funnel-num{color:var(--err)}
+.checklist{counter-reset:check}.check-item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--brd);align-items:flex-start}.check-item:last-child{border-bottom:none}.check-num{counter-increment:check;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;color:var(--ac2);min-width:24px;height:24px;display:flex;align-items:center;justify-content:center;background:var(--ac-bg);border-radius:6px;flex-shrink:0;margin-top:2px}.check-num::before{content:counter(check)}.check-text{font-size:.88rem;color:var(--t2);line-height:1.7}
+.gloss-item{padding:12px 0;border-bottom:1px solid var(--brd)}.gloss-item:last-child{border-bottom:none}.gloss-term{font-weight:700;color:var(--t1);font-size:.9rem;margin-bottom:2px}.gloss-def{font-size:.85rem;color:var(--t2);line-height:1.7}
+table.dt{width:100%;border-collapse:collapse;font-size:13px}.dt thead th{padding:10px 14px;text-align:left;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);border-bottom:2px solid var(--brd2);background:var(--ac-bg)}.dt td{padding:10px 14px;border-bottom:1px solid var(--brd);color:var(--t2)}.dt tr:hover td{background:var(--ac-bg);color:var(--t1)}.dt .n{font-family:'JetBrains Mono',monospace;font-weight:500;color:var(--t1)}.dt .hl{color:var(--ac2);font-weight:600}.tw{overflow-x:auto;border-radius:var(--r);border:1px solid var(--brd)}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:var(--ac-bg);border:1px solid var(--brd);border-radius:100px;font-size:11px;font-weight:500;color:var(--t2);margin:3px}.chip-d{width:5px;height:5px;border-radius:50%;background:var(--ac2)}.tg{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0}
+.bg{display:inline-block;padding:3px 10px;border-radius:100px;font-size:9px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}.bg-ok{background:rgba(74,138,80,.08);color:var(--ok)}.bg-wrn{background:rgba(200,144,48,.08);color:var(--wrn)}.bg-err{background:rgba(184,74,58,.08);color:var(--err)}.bg-inf{background:rgba(74,122,184,.08);color:var(--inf)}.bg-ac{background:var(--ac-bg);color:var(--ac2)}
+.signal{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--brd);align-items:flex-start}.signal:last-child{border-bottom:none}.signal-dot{width:8px;height:8px;border-radius:50%;background:var(--err);flex-shrink:0;margin-top:7px}.signal-text{font-size:.88rem;color:var(--t2);line-height:1.7}
+.cta-block{text-align:center;padding:48px 24px;background:linear-gradient(180deg,var(--bg2),var(--bg3));border-radius:var(--r);margin:24px 0}.cta-t{font-family:'Playfair Display',serif;font-size:clamp(1.3rem,3vw,1.8rem);font-weight:700;margin-bottom:10px;color:var(--t1)}.cta-d{color:var(--t2);font-size:.92rem;max-width:480px;margin:0 auto 20px;line-height:1.7}.cta-btn{display:inline-block;padding:12px 36px;background:linear-gradient(135deg,var(--ac2),var(--ac3));color:#fff;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;border-radius:100px;text-decoration:none;transition:.3s;border:none;cursor:pointer}.cta-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(192,80,128,.3)}.cta-price{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--ac2);margin-bottom:14px}
+.quote{font-family:'Playfair Display',serif;font-size:1rem;color:var(--ac2);font-weight:600;font-style:italic;padding:18px 0;border-top:1px solid var(--brd);border-bottom:1px solid var(--brd);margin:24px 0;text-align:center;line-height:1.7}
+.tc{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.ft{padding:36px 0;border-top:1px solid var(--brd);text-align:center;background:var(--bg)}.ft-t{font-size:11px;color:var(--t3)}
+@media(max-width:768px){.ct{padding:0 16px}.sec{padding:40px 0}.cd{padding:18px}.tc,.cg2,.cg3,.cg4{grid-template-columns:1fr}.hero{min-height:60vh;padding:40px 16px}.hero h1{font-size:1.8rem}.hero-sub{font-size:.9rem}.nav-in{gap:2px;padding:0 12px}.nav-a{font-size:10px;padding:4px 7px}.nav-logo{font-size:12px;letter-spacing:2px;margin-right:6px}.funnel-step{padding:10px 14px;gap:12px}.funnel-num{font-size:1.4rem;min-width:55px}.funnel-text{font-size:.82rem}.risk{padding:16px 18px}.risk-math{font-size:.78rem;padding:10px 12px}.risk-body{font-size:.84rem}.mistake{padding:16px 18px}.mistake-q{font-size:.88rem}.mistake-a{font-size:.82rem}.care{padding:18px 16px}.care::before{left:14px;font-size:16px}.care-text{font-size:.86rem}.explain{padding:16px 18px}.explain-q{font-size:.92rem}.explain-a{font-size:.85rem}.case{padding:16px 18px}.case-text{font-size:.84rem}.cta-block{padding:36px 16px}.cta-btn{padding:12px 28px;font-size:12px}.cta-price{font-size:1rem}.sc{padding:14px}.sv{font-size:1.1rem}.callout{padding:14px 16px}.tw{font-size:12px}.dt td,.dt thead th{padding:8px 10px;font-size:11px}.check-item{gap:10px;padding:10px 0}.check-text{font-size:.84rem}.gloss-item{padding:10px 0}.gloss-term{font-size:.86rem}.gloss-def{font-size:.82rem}.signal{gap:10px;padding:10px 0}.signal-text{font-size:.84rem}.p{font-size:.88rem}.sec-t{font-size:1.3rem}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero" id="top"><div>
+<div class="hero-logo">ZEREK</div>
+<div class="hero-badge">Бизнес-обзор 2026</div>
+<h1>Маникюрный салон<br>как бизнес в Казахстане</h1>
+<p class="hero-sub">Форматы, мастера, Instagram, расходники, стерилизация, аренда места и&nbsp;главное — почему «умею красить ногти» не&nbsp;равно «умею зарабатывать». Честный разбор для тех, кто думает о nail-бизнесе.</p>
+</div></section>
+
+<!-- NAV -->
+<nav class="nav"><div class="nav-in">
+<a href="#top" class="nav-logo">ZEREK</a>
+<a href="#why" class="nav-a">Зачем</a>
+<a href="#count" class="nav-a">Считать</a>
+<a href="#market" class="nav-a">Рынок</a>
+<a href="#formats" class="nav-a">Форматы</a>
+<a href="#money" class="nav-a">Экономика</a>
+<a href="#cases" class="nav-a">Кейсы</a>
+<a href="#extra" class="nav-a">Доход</a>
+<a href="#equip" class="nav-a">Железо</a>
+<a href="#staff" class="nav-a">Кадры</a>
+<a href="#hidden" class="nav-a">Скрытое</a>
+<a href="#risks" class="nav-a">Риски</a>
+<a href="#check" class="nav-a">Чек-лист</a>
+<a href="#cta" class="nav-a">Расчёт</a>
+</div></nav>
+
+<!-- БЛОК 1 -->
+<section class="sec" id="why"><div class="ct">
+<div class="sec-lb">Зачем этот обзор</div>
+<h2 class="sec-t">Маникюрный салон — не «просто красить ногти»</h2>
+<p class="p">Каждая вторая мастер маникюра хоть раз думала: <em>«Зачем работать на салон, если могу открыть свой?»</em> Клиентки есть, Instagram ведётся, руки — золотые. Что может пойти не так?</p>
+<p class="p">А потом начинается: аренда за помещение, которое нужно привести в порядок. Мастер, которую вы переманили, через 3 месяца уходит и забирает половину клиенток. Расходники (гель-лаки, пилки, фрезы) стоят больше, чем казалось. Стерилизатор нужен — это не обсуждается. А Instagram красивый — но клиентки приходят к мастеру, а не к салону.</p>
+<p class="p">Этот обзор — <strong>не курс по nail-дизайну</strong>. Это разбор экономики, рисков и подводных камней. Подготовлен командой ZEREK на основе данных БНС РК и рыночной аналитики.</p>
+<div class="care"><p class="care-text">Nail-бизнес — одна из самых доступных ниш для старта. Но <strong>«доступный вход» создаёт иллюзию лёгких денег</strong>. Тысячи мастеров работают на дому за 3 000–5 000 ₸ — и они ваши конкуренты. Чтобы салон зарабатывал больше, чем «мастер из квартиры» — нужна система, а не просто красивый маникюр.</p></div>
+</div></section>
+
+<!-- БЛОК 2 -->
+<section class="sec sec-alt" id="count"><div class="ct">
+<div class="sec-lb">Прежде чем вкладывать</div>
+<h2 class="sec-t">Почему нужно считать, даже если «клиентки уже есть»</h2>
+<p class="p">У вас 30 постоянных клиенток, каждая приходит раз в 2–3 недели. Кажется: открой салон — и заживём. Но ваши 30 клиенток — это ваш личный поток. А салон — это аренда, второе и третье рабочее место, расходники на всех мастеров, стерилизация, маркетинг. И 30 клиенток должны покрыть всё это.</p>
+<div class="explain">
+<div class="explain-q">Что значит «посчитать nail-салон»?</div>
+<div class="explain-a">Ответить на вопросы: <strong>1)</strong>&nbsp;сколько клиенток в день нужно на каждое рабочее место, чтобы покрыть расходы, <strong>2)</strong>&nbsp;реально ли загрузить 3–4 места на 60%+ в вашем районе, <strong>3)</strong>&nbsp;что будет, если мастер уйдёт и заберёт своих клиенток. Третий вопрос — самый болезненный, потому что в маникюре клиентки привязаны к мастеру ещё сильнее, чем в барбершопе.</div>
+</div>
+<div class="explain">
+<div class="explain-q">Надомный мастер vs салон — в чём разница экономики?</div>
+<div class="explain-a"><strong>Надомный мастер:</strong> расходы минимальны (материалы + амортизация оборудования), всё заработанное — ваше. Но потолок — 4–5 клиенток/день, нет роста. <strong>Салон:</strong> аренда + ФОТ + расходники на всех мастеров + маркетинг. Зато масштаб: 3–5 мест × 4–5 клиенток = 12–25 клиенток/день. Прибыль — 15–25% от оборота, если загрузка 60%+. <strong>Ключевой переход: от «я делаю» к «я управляю».</strong></div>
+</div>
+</div></section>
+
+<!-- БЛОК 3: РЫНОК -->
+<section class="sec" id="market"><div class="ct">
+<div class="sec-lb">Рынок</div>
+<h2 class="sec-t">Самый конкурентный beauty-сегмент в Казахстане</h2>
+<p class="p">Маникюр — <strong>самая низкопороговая beauty-ниша</strong>. Курсы за 50–100K ₸, стартовый набор за 150–300K — и можно начинать на дому. Именно поэтому конкуренция — колоссальная: тысячи надомных мастеров в каждом городе, десятки салонов в каждом районе.</p>
+
+<div class="cg cg3" style="margin-top:18px">
+<div class="cd cd2" style="border-left:3px solid var(--err)"><h4 style="font-size:13px;font-weight:700;color:var(--err);margin-bottom:5px">Главный конкурент — надомники</h4><p style="font-size:12px;color:var(--t2)">Мастер на дому берёт 3 000–5 000 ₸ за маникюр с покрытием. Ваш салон — 5 000–8 000 ₸. Клиентка не всегда понимает, за что доплачивать. Ваше преимущество — стерильность, атмосфера, выбор мастеров, время без ожидания.</p></div>
+<div class="cd cd2" style="border-left:3px solid var(--wrn)"><h4 style="font-size:13px;font-weight:700;color:var(--wrn);margin-bottom:5px">Instagram = витрина</h4><p style="font-size:12px;color:var(--t2)">В маникюре Instagram — главный канал привлечения. 70–80% новых клиенток приходят из соцсетей. Без контента (фото работ, Stories, Reels) вы невидимы. Но контент делает мастер — и если она уйдёт, фото уйдут с ней.</p></div>
+<div class="cd cd2" style="border-left:3px solid var(--ok)"><h4 style="font-size:13px;font-weight:700;color:var(--ok);margin-bottom:5px">Стабильный спрос</h4><p style="font-size:12px;color:var(--t2)">Маникюр — <em>регулярная</em> услуга. Клиентка приходит каждые 2–3 недели. Это не разовая покупка, а подписка. Базу из 50 постоянных клиенток можно конвертировать в стабильный доход. Если удержите.</p></div>
+</div>
+</div></section>
+
+<!-- БЛОК 4: ФОРМАТЫ -->
+<section class="sec sec-alt" id="formats"><div class="ct">
+<div class="sec-lb">Форматы</div>
+<h2 class="sec-t">От домашнего кабинета до beauty-студии</h2>
+
+<div class="cg cg2" style="margin-bottom:18px">
+<div class="cd" style="border-top:3px solid var(--ok)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-ok">Старт</span><h3 style="font-size:15px;font-weight:700;margin-top:6px">🏠 Кабинет на дому / 1 место</h3></div><div style="text-align:right"><div style="font-size:18px;font-weight:800;font-family:'JetBrains Mono';color:var(--ok)">200K–1M ₸</div><div style="font-size:10px;color:var(--t3)">старт</div></div></div>
+<div style="margin-top:12px">
+<div class="pr"><div class="prh"><span class="prn">Клиенток/день</span><span class="prv">3–5</span></div><div class="prt"><div class="prf" style="width:15%;background:var(--ok)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Доход/мес</span><span class="prv">200–450K ₸</span></div><div class="prt"><div class="prf" style="width:25%;background:var(--ok)"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:8px">Вы + стол + лампа + стерилизатор. Работаете на себя. Потолок — ваше время. Это не бизнес, а самозанятость. Но отличный способ набрать базу перед масштабированием.</p>
+</div>
+
+<div class="cd" style="border-top:3px solid var(--ac2)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-ac">Салон</span><h3 style="font-size:15px;font-weight:700;margin-top:6px">💅 Nail-студия (3–5 мест)</h3></div><div style="text-align:right"><div style="font-size:18px;font-weight:800;font-family:'JetBrains Mono';color:var(--ac2)">3–10M ₸</div><div style="font-size:10px;color:var(--t3)">старт</div></div></div>
+<div style="margin-top:12px">
+<div class="pr"><div class="prh"><span class="prn">Площадь</span><span class="prv">30–60 м²</span></div><div class="prt"><div class="prf" style="width:30%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Мастера</span><span class="prv">3–5 чел.</span></div><div class="prt"><div class="prf" style="width:30%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Средний чек</span><span class="prv">5 000–8 000 ₸</span></div><div class="prt"><div class="prf" style="width:40%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Окупаемость</span><span class="prv">6–14 мес.</span></div><div class="prt"><div class="prf" style="width:35%"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:8px">Основной формат. Маникюр + педикюр + возможно брови/ресницы. Уже бизнес: вы управляете, мастера работают. Оптимальный баланс масштаба и управляемости.</p>
+</div>
+
+<div class="cd" style="border-top:3px solid var(--wrn)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-wrn">Премиум</span><h3 style="font-size:15px;font-weight:700;margin-top:6px">✨ Beauty-студия (комплекс)</h3></div><div style="text-align:right"><div style="font-size:18px;font-weight:800;font-family:'JetBrains Mono';color:var(--wrn)">10–25M ₸</div><div style="font-size:10px;color:var(--t3)">старт</div></div></div>
+<div style="margin-top:12px">
+<div class="pr"><div class="prh"><span class="prn">Площадь</span><span class="prv">60–120 м²</span></div><div class="prt"><div class="prf" style="width:55%;background:var(--wrn)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Услуги</span><span class="prv">ногти + брови + ресницы + косметология</span></div><div class="prt"><div class="prf" style="width:60%;background:var(--wrn)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Окупаемость</span><span class="prv">12–24 мес.</span></div><div class="prt"><div class="prf" style="width:55%;background:var(--wrn)"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:8px">Полноценная beauty-студия: ногти, брови, ресницы, косметология, возможно волосы. Высокий средний чек, но: аренда дорогая, команда 8–15 чел., управление сложное. Работает в Алматы, Астане, Атырау — где есть аудитория на чек 10K+.</p>
+</div>
+</div>
+
+<div class="explain">
+<div class="explain-q">Какой формат выбрать?</div>
+<div class="explain-a">Вы мастер и хотите начать? → Кабинет/дом, набирайте базу. Есть 5–10M и команда? → Nail-студия на 3–4 места. Хотите масштабный beauty-бизнес? → 10M+ и готовность управлять 10+ людьми. <strong>Совет ZEREK:</strong> nail-студия на 3 места — золотая середина. Если одна мастер уйдёт — ещё два места работают, бизнес не умирает.</div>
+</div>
+</div></section>
+
+<!-- БЛОК 5: ЭКОНОМИКА -->
+<section class="sec" id="money"><div class="ct">
+<div class="sec-lb">Экономика</div>
+<h2 class="sec-t">Сколько зарабатывает одно рабочее место</h2>
+
+<div class="callout callout-ok" style="margin-top:0">
+<div class="callout-title" style="color:var(--ok)">📊 Бенчмарк: nail-студия, 4 места, город 300K+</div>
+<div class="cg cg4" style="margin-top:10px">
+<div class="sc"><div class="sv">3–5</div><div class="sl">клиенток / место / день</div></div>
+<div class="sc"><div class="sv">6 000 ₸</div><div class="sl">средний чек</div></div>
+<div class="sc"><div class="sv">2.2–3.6M</div><div class="sl">выручка / мес</div><div style="font-size:9px;color:var(--t3);margin-top:2px">на 4 места</div></div>
+<div class="sc"><div class="sv" style="color:var(--ok)">15–25%</div><div class="sl">чистая прибыль</div></div>
+</div>
+</div>
+
+<div class="cd" style="margin-top:18px">
+<h3 style="font-size:14px;font-weight:700;margin-bottom:14px">Куда уходит выручка (~2.8M ₸/мес на 4 места)</h3>
+<div class="pr"><div class="prh"><span class="prn">💅 Мастера (40–50% от услуги)</span><span class="prv">40–50%</span></div><div class="prt"><div class="prf" style="width:45%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">🧴 Расходники (гель-лаки, фрезы, пилки)</span><span class="prv">8–12%</span></div><div class="prt"><div class="prf" style="width:10%;background:var(--wrn)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">🏠 Аренда</span><span class="prv">12–18%</span></div><div class="prt"><div class="prf" style="width:15%;background:var(--inf)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">📢 Instagram + маркетинг</span><span class="prv">3–7%</span></div><div class="prt"><div class="prf" style="width:5%;background:var(--ac3)"></div></div></div>
+<div style="margin-top:14px;padding:12px 16px;background:var(--ok-bg);border:1px solid var(--ok-brd);border-radius:var(--rs);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+<span style="font-size:11px;color:var(--ok);font-weight:600;text-transform:uppercase;letter-spacing:1px">Чистая прибыль</span>
+<span style="font-size:22px;font-weight:800;font-family:'JetBrains Mono';color:var(--ok)">350–700K ₸/мес</span>
+</div>
+</div>
+
+<div class="explain">
+<div class="explain-q">Что это значит простыми словами?</div>
+<div class="explain-a">Маникюр с покрытием — <em>5 000–8 000 ₸</em>. Мастер получает 40–50% = 2 000–4 000 ₸. Расходники на одну клиентку: 300–600 ₸. Вам остаётся <strong>1 500–3 000 ₸ с одной клиентки</strong> после всех расходов. Чтобы зарабатывать 500K/мес — нужно 170–330 клиенток/мес на всю студию. Это 7–14 клиенток/день при 4 местах. Реалистично — но только при загрузке 60%+.</div>
+</div>
+</div></section>
+
+<!-- БЛОК 6: КЕЙСЫ -->
+<section class="sec sec-alt" id="cases"><div class="ct">
+<div class="sec-lb">Три сценария</div>
+<h2 class="sec-t">Как это выглядит на практике</h2>
+
+<div class="case case-good">
+<div class="case-label">🟢 Хороший старт</div>
+<div class="case-title">4 места, Атырау, ЖК нефтяников, рядом с ТРЦ</div>
+<div class="case-text">Мастер с 3-летним опытом. Вложила 6M ₸ (4M — ремонт и оборудование, 2M — подушка). Сама работает + 3 мастера на %. Район с высокой платёжеспособностью — средний чек 7 000 ₸. К 3-му месяцу — 4 клиентки/место/день. Выручка 2.7M. Прибыль ~500K/мес. Добавила брови и ресницы — чек вырос до 9 000 ₸. Окупаемость — 12 мес. <strong>Ключ: сама в деле, платёжеспособный район, допуслуги.</strong></div>
+</div>
+
+<div class="case case-bad">
+<div class="case-label">🔴 Типичная ошибка</div>
+<div class="case-title">5 мест, Алматы, подвал в центре</div>
+<div class="case-text">Вложила 8M — дизайнерский ремонт, модная мебель. Наняла 5 мастеров через Instagram. Через 3 мес. две ушли — забрали клиенток и выложили «мы теперь работаем по новому адресу». Два места пустуют. Аренда подвала — 350K. Выручка упала с 2.5M до 1.2M. Минус 300K/мес. <strong>Ошибка: вложила в интерьер, а не в удержание мастеров. И все клиентки были записаны на мастеров лично, а не на салон.</strong></div>
+</div>
+
+<div class="case case-mid">
+<div class="case-label">🟡 Ловушка середины</div>
+<div class="case-title">2 места, Уральск, первый этаж квартиры</div>
+<div class="case-text">Работает сама + 1 мастер. Чек 4 500 ₸ (район не премиальный). 3–4 клиентки/место/день. Выручка 1.6M, расходы 1.2M. Прибыль: <em>400K/мес</em>. Но это при 6 днях работы, по 8 часов. Отпуск = минус половина выручки. Нанять третьего мастера боится — «не хватит клиенток». <strong>Два года — и это не бизнес, а две самозанятые мастерицы, которые делят аренду.</strong></div>
+</div>
+
+<div class="care"><p class="care-text">В nail-бизнесе главная ловушка — <strong>«всё делаю сама + одна помощница»</strong>. Это не масштабируется. Переход к 3–4 местам с администратором — момент, когда самозанятость превращается в бизнес. Без этого перехода потолок — 400–500K, привязанные к вашему личному времени.</p></div>
+</div></section>
+
+<!-- БЛОК 7: ДОПРОДАЖИ -->
+<section class="sec" id="extra"><div class="ct">
+<div class="sec-lb">Допродажи</div>
+<h2 class="sec-t">На чём зарабатывать помимо маникюра</h2>
+<p class="p">Маникюр с покрытием — это трафик. <strong>Прибыль растёт на допуслугах.</strong> Клиентка уже сидит перед вами — предложите больше.</p>
+
+<div class="cg cg2">
+<div class="cd cd2"><h3 style="font-size:14px;font-weight:700;margin-bottom:8px">🦶 Педикюр</h3><p style="font-size:12px;color:var(--t2);margin-bottom:8px">+3 000–6 000 ₸ к чеку. 30–40% клиенток берут педикюр к маникюру. Нужно отдельное кресло (или совмещённое). Маржа — 60–70%.</p></div>
+<div class="cd cd2"><h3 style="font-size:14px;font-weight:700;margin-bottom:8px">✨ Дизайн ногтей</h3><p style="font-size:12px;color:var(--t2);margin-bottom:8px">+500–3 000 ₸ за дизайн. Стразы, втирка, аэрография. Себестоимость: 50–200 ₸. Наценка ×10–15. Самый дешёвый апсейл — нужны только навыки мастера.</p></div>
+<div class="cd cd2"><h3 style="font-size:14px;font-weight:700;margin-bottom:8px">👁 Брови и ресницы</h3><p style="font-size:12px;color:var(--t2);margin-bottom:8px">Отдельный мастер или обучение ваших. Ламинирование бровей — 5 000–8 000 ₸. Наращивание ресниц — 8 000–15 000 ₸. Высокий чек, отдельная аудитория, но нужны навыки.</p></div>
+<div class="cd cd2"><h3 style="font-size:14px;font-weight:700;margin-bottom:8px">🧴 Продажа уходовой косметики</h3><p style="font-size:12px;color:var(--t2);margin-bottom:8px">Масло для кутикулы, кремы, средства для укрепления. Наценка ×2–3. Клиентка пробует во время процедуры — покупает домой. 10–15% клиенток.</p></div>
+</div>
+
+<div class="callout callout-ac"><p style="font-size:.88rem;color:var(--t2);margin:0"><strong style="color:var(--ac2)">Правило:</strong> маникюр 5 000 ₸ → маникюр + дизайн + педикюр 12 000 ₸. Чек ×2.4 с одной клиентки. Это самый мощный рычаг прибыли в nail-бизнесе.</p></div>
+</div></section>
+
+<!-- БЛОК 8: ОБОРУДОВАНИЕ -->
+<section class="sec sec-alt" id="equip"><div class="ct">
+<div class="sec-lb">Оборудование</div>
+<h2 class="sec-t">Стол, лампа, фреза — и стерилизатор</h2>
+
+<div class="tw" style="margin-bottom:16px"><table class="dt"><thead><tr><th>Оборудование (на 1 место)</th><th>Бюджет</th><th>Оптимум</th><th>Критичность</th></tr></thead><tbody>
+<tr><td>Маникюрный стол</td><td class="n">40–80K</td><td class="n hl">100–200K</td><td style="color:var(--wrn)">●●●●○</td></tr>
+<tr><td>LED/UV лампа</td><td class="n">10–25K</td><td class="n hl">30–60K</td><td style="color:var(--err)">●●●●●</td></tr>
+<tr><td>Фрезер (аппарат для маникюра)</td><td class="n">30–60K</td><td class="n hl">80–150K</td><td style="color:var(--err)">●●●●●</td></tr>
+<tr><td>Вытяжка (пылесос для ногтей)</td><td class="n">15–30K</td><td class="n hl">40–80K</td><td style="color:var(--err)">●●●●○</td></tr>
+<tr><td>Стерилизатор (сухожар / автоклав)</td><td class="n">30–60K</td><td class="n hl">80–200K</td><td style="color:var(--err)">●●●●●</td></tr>
+<tr><td>Расходники (стартовый набор)</td><td class="n">80–150K</td><td class="n hl">200–400K</td><td style="color:var(--err)">●●●●○</td></tr>
+<tr><td>Кресло для клиентки</td><td class="n">30–60K</td><td class="n">80–150K</td><td style="color:var(--wrn)">●●●○○</td></tr>
+</tbody></table></div>
+
+<div class="callout callout-ac">
+<div class="callout-title" style="color:var(--ac2)">💡 Совет ZEREK</div>
+<p style="font-size:.88rem;color:var(--t2);margin:0"><strong>Стерилизация — не опция.</strong> Маникюр — это работа с кожей, кутикулой, иногда кровь. Без стерилизации инструментов — риск инфекций, гепатита, грибка. Один случай заражения = конец бизнеса + потенциальная ответственность. <em>Сухожар за 80K или автоклав за 150K — это не расход, а страховка жизни бизнеса.</em> Крафт-пакеты обязательны.</p>
+</div>
+</div></section>
+
+<!-- БЛОК 9: КАДРЫ -->
+<section class="sec" id="staff"><div class="ct">
+<div class="sec-lb">Кадры</div>
+<h2 class="sec-t">Мастера: главный актив и главная головная боль</h2>
+<p class="p">Как в барбершопе — <strong>клиентка привязана к мастеру</strong>, а не к салону. Если мастер уходит — 70–90% её клиенток уходят за ней. И в маникюре это ещё острее: клиентка доверяет мастеру свои руки, это интимный контакт.</p>
+
+<div class="tc">
+<div class="cd"><h3 style="font-size:14px;font-weight:700;margin-bottom:10px">💰 Заработок мастера</h3>
+<div class="pr"><div class="prh"><span class="prn">Начинающая</span><span class="prv">150–250K ₸</span></div><div class="prt"><div class="prf" style="width:25%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Опытная (1–3 года)</span><span class="prv">300–500K ₸</span></div><div class="prt"><div class="prf" style="width:50%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Топ-мастер</span><span class="prv">500–900K ₸</span></div><div class="prt"><div class="prf" style="width:75%"></div></div></div>
+<p style="font-size:10px;color:var(--t3);margin-top:6px">Обычно 40–50% от стоимости услуги</p></div>
+<div class="cd"><h3 style="font-size:14px;font-weight:700;margin-bottom:10px">🚨 Проблемы</h3>
+<p style="font-size:12px;color:var(--t2);margin-bottom:8px"><strong>Уход на дом.</strong> Опытная мастер набирает базу в вашем салоне — и уходит работать домой. Нет аренды = всё заработанное — её. Вы оплатили её обучение и раскрутку.</p>
+<p style="font-size:12px;color:var(--t2);margin-bottom:8px"><strong>Качество.</strong> Каждая мастер делает маникюр «по-своему». Без стандартов и контроля — нестабильный результат = нестабильные отзывы.</p>
+<p style="font-size:12px;color:var(--t2)"><strong>Переманивание.</strong> Конкурент предлагает 55% вместо 45%. Мастер уходит. Клиентки — за ней.</p>
+</div>
+</div>
+</div></section>
+
+<!-- БЛОК 11: СКРЫТЫЕ РАСХОДЫ -->
+<section class="sec sec-alt" id="hidden"><div class="ct">
+<div class="sec-lb">Скрытые расходы</div>
+<h2 class="sec-t">Деньги, которых нет в бизнес-плане</h2>
+
+<div class="cg cg2" style="margin-bottom:14px">
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">🧴 Расходники (гель-лаки, фрезы, пилки)</h4><span class="bg bg-wrn">8–12% от выручки</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Гель-лаки — 2 000–5 000 ₸/бутылка, 30–50 цветов в палитре. Фрезы изнашиваются. Пилки — одноразовые. При 4 местах — 200–350K/мес на расходники.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">📸 Instagram-контент</h4><span class="bg bg-ac">3–7% от выручки</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Фото работ, Reels, таргетированная реклама. Без контента — нет клиенток. Фотограф / SMM-менеджер или ваше время. 80–200K/мес.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">👤 Уход мастера</h4><span class="bg bg-err">потеря 30–50% выручки места</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Пустое место = 0 дохода. Поиск замены — 1–3 недели. Новая мастер без базы — загрузка 20–30% первый месяц.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">🔧 Обновление палитры</h4><span class="bg bg-wrn">50–100K каждый сезон</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Тренды меняются: весна — пастель, лето — неон, осень — бордо. Клиентки хотят актуальные цвета. Палитру нужно обновлять каждый сезон.</p></div>
+</div>
+</div></section>
+
+<!-- БЛОК 12: РИСКИ -->
+<section class="sec" id="risks"><div class="ct">
+<div class="sec-lb">Риски</div>
+<h2 class="sec-t">Почему закрываются nail-салоны</h2>
+
+<h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:24px 0 14px">Топ причин</h3>
+
+<div class="risk risk-crit">
+<div class="risk-head"><div class="risk-icon">👤</div><div><div class="risk-name">1. Уход мастера с клиентками</div><span class="bg bg-err">критический</span></div></div>
+<div class="risk-body">Мастер уходит (на дом, к конкуренту, открывает своё) — и 70–90% её клиенток уходят. Место пустует. Если из 4 мастеров ушли 2 — бизнес мёртв.</div>
+<div class="risk-math">Место приносило 700K/мес. Мастер ушла → 0 первый месяц, 200K второй (новая мастер набирает). Потери: 500K–1M за 2 мес.</div>
+<div class="risk-fix">✅ Защита: запись через салон (не лично к мастеру). CRM с номерами клиенток. Бонусы за стаж. Программа лояльности на салон.</div>
+</div>
+
+<div class="risk risk-crit">
+<div class="risk-head"><div class="risk-icon">💰</div><div><div class="risk-name">2. Конкуренция с надомниками</div><span class="bg bg-err">критический</span></div></div>
+<div class="risk-body">Мастер на дому берёт 3 000–4 000 ₸. Ваш салон — 5 000–7 000 ₸. Клиентка не всегда понимает разницу в стерильности и качестве. В регионах (Костанай, Тараз, Петропавловск) — особенно остро: готовность платить за «атмосферу» ниже.</div>
+<div class="risk-fix">✅ Защита: показывайте стерилизацию. Крафт-пакеты при клиентке. Фото работ. Отзывы. «Мы стерилизуем, надомный мастер — нет» — ваш главный аргумент.</div>
+</div>
+
+<div class="risk risk-warn">
+<div class="risk-head"><div class="risk-icon">🪑</div><div><div class="risk-name">3. Пустые места</div><span class="bg bg-wrn">серьёзный</span></div></div>
+<div class="risk-body">Загрузка места ниже 50% — убыточно. Аренда и расходники капают каждый день. Если из 4 мест 2 пустуют — вы работаете на аренду.</div>
+<div class="risk-fix">✅ Защита: начинайте с 3 мест. Лучше 3 загруженных на 70%, чем 5 на 40%. Масштабируйте по мере роста базы.</div>
+</div>
+
+<div class="risk risk-warn">
+<div class="risk-head"><div class="risk-icon">🦠</div><div><div class="risk-name">4. Инфекционный инцидент</div><span class="bg bg-wrn">серьёзный</span></div></div>
+<div class="risk-body">Грибок, инфекция кутикулы, аллергия на материал. Один случай = плохой отзыв + потеря 10–20 клиенток + потенциальная жалоба в СЭС. В соцсетях распространяется мгновенно.</div>
+<div class="risk-fix">✅ Защита: стерилизация обязательна. Одноразовые пилки. Тест на аллергию при первом визите. Крафт-пакеты вскрывать при клиентке.</div>
+</div>
+
+<!-- ПРОМЕЖУТОЧНЫЙ CTA -->
+<div class="cta-block" style="margin:28px 0">
+<div class="cta-t">Сколько клиенток нужно вашему салону?</div>
+<p class="cta-d">Quick Check рассчитает: при какой загрузке вы в плюсе, когда окупитесь, какие риски критичны.</p>
+<div class="cta-price">3 000 ₸</div>
+<a href="https://t.me/zerekai_bot" target="_blank" class="cta-btn">Проверить свою идею →</a>
+</div>
+
+<!-- ОШИБКИ -->
+<h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:28px 0 14px">Ошибки, которые не выглядят как ошибки</h3>
+
+<div class="mistake">
+<div class="mistake-q">«Сделаю красивый ремонт — клиентки сами придут»</div>
+<div class="mistake-a">Красивый ремонт привлекает на первый визит. Возвращает — мастер. Если маникюр посредственный в красивом интерьере — клиентка не вернётся. Лучше 2M на ремонт и 2M на подушку + хорошую мастер.</div>
+</div>
+
+<div class="mistake">
+<div class="mistake-q">«Не буду тратить на стерилизатор — сэкономлю 100K»</div>
+<div class="mistake-a">Один случай инфекции — потеря 20 клиенток × 6K × 12 визитов/год = 1.4M выручки. Стерилизатор за 100K — не расход, а страховка на 1.4M.</div>
+</div>
+
+<div class="mistake">
+<div class="mistake-q">«Переманю топ-мастера — она приведёт клиенток»</div>
+<div class="mistake-a">Приведёт. А через полгода уведёт — на дом или к конкуренту. Лучше растить своих: обучение за ваш счёт + контракт на 1 год + запись через салон.</div>
+</div>
+
+<div class="mistake">
+<div class="mistake-q">«Аренда места — пассивный доход»</div>
+<div class="mistake-a">Мастер платит 60–100K/мес за рабочее место. Но работает «на себя». Если уйдёт — место пустое, клиентки ушли, вы ничего не контролируете. Аренда места ≠ бизнес.</div>
+</div>
+
+<!-- СИГНАЛЫ -->
+<h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:28px 0 14px">Сигналы, что пора пересмотреть</h3>
+
+<div class="cd">
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Загрузка мест ниже 50% третий месяц подряд</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Мастер ушла и забрала 70%+ клиенток — не первый раз</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Средний чек падает — клиентки выбирают надомников дешевле</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Instagram не даёт заявок — стоимость привлечения выше прибыли</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Вы сами делаете маникюр 6/1 и не можете уехать в отпуск</div></div>
+</div>
+
+<div class="care"><p class="care-text">Nail-бизнес легко «закрыть» — оборудование компактное, можно продать или перевезти. Но <strong>часто лучше не закрыть, а переформатировать</strong>: сократить места, добавить услуги (брови, ресницы), сменить район, перейти на аренду мест вместо % или наоборот.</p></div>
+
+<div class="quote">«Оптимистка открывает nail-студию. Пессимистка считает, сколько мастериц уйдёт.<br>Реалистка строит систему, которая работает без звёздных мастеров.»</div>
+</div></section>
+
+<!-- БЛОК 14: ЧЕК-ЛИСТ -->
+<section class="sec sec-alt" id="check"><div class="ct">
+<div class="sec-lb">Самопроверка</div>
+<h2 class="sec-t">Готовы ли вы открыть nail-салон?</h2>
+
+<div class="cd">
+<div class="checklist">
+<div class="check-item"><div class="check-num"></div><div class="check-text">У вас есть 2+ мастера, готовых работать с первого дня?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">Вы знаете, сколько клиенток/день нужно на место, чтобы выйти в ноль?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">Ваш район готов платить 5 000+ ₸ за маникюр (а не только 3 000 надомнику)?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">У вас есть стерилизатор и вы знаете, как им пользоваться?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">У вас есть Instagram с 500+ подписчиками и контент-план?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">У вас есть система записи, где клиентка записывается в салон, а не к мастеру лично?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">У вас есть подушка на 3 мес. расходов сверх инвестиций?</div></div>
+</div>
+</div>
+
+<div class="care"><p class="care-text">Если на 3+ вопроса «нет» — начните с дома: наберите 30+ постоянных клиенток, поймите чек, район, спрос. <strong>Это бесплатный тест рынка.</strong> И только потом — салон.</p></div>
+</div></section>
+
+<!-- БЛОК 15: ГЛОССАРИЙ -->
+<section class="sec" id="glossary"><div class="ct">
+<div class="sec-lb">Словарь ZEREK</div>
+<h2 class="sec-t">Термины простым языком</h2>
+
+<div class="cd">
+<div class="gloss-item"><div class="gloss-term">Загрузка места</div><div class="gloss-def">Какой процент рабочего времени место занято клиенткой. 70% = хорошо. 50% = на грани. 30% = убыточно.</div></div>
+<div class="gloss-item"><div class="gloss-term">Средний чек</div><div class="gloss-def">Сколько платит одна клиентка за визит. Маникюр 5K + педикюр 4K + дизайн 1K = чек 10K ₸.</div></div>
+<div class="gloss-item"><div class="gloss-term">Аренда места</div><div class="gloss-def">Мастер платит 60–100K/мес за рабочее место и работает «на себя». Вы получаете аренду, но не контролируете клиенток, цены, качество.</div></div>
+<div class="gloss-item"><div class="gloss-term">Процент от услуги</div><div class="gloss-def">Мастер получает 40–50% от стоимости каждой услуги. Вы контролируете цены, запись, качество. Более управляемая модель.</div></div>
+<div class="gloss-item"><div class="gloss-term">Стерилизация</div><div class="gloss-def">Обработка инструментов (фрезы, ножницы, пушеры) для уничтожения бактерий и вирусов. Сухожар (сухое тепло 180°C) или автоклав (пар под давлением). Обязательна.</div></div>
+<div class="gloss-item"><div class="gloss-term">Крафт-пакет</div><div class="gloss-def">Бумажный пакет для стерильного хранения инструментов. Вскрывается при клиентке — подтверждает, что инструменты стерильны. Индикатор меняет цвет после стерилизации.</div></div>
+<div class="gloss-item"><div class="gloss-term">Точка безубыточности</div><div class="gloss-def">Сколько клиенток/день на все места нужно, чтобы покрыть расходы. Для 4 мест — обычно 8–12 клиенток/день.</div></div>
+</div>
+</div></section>
+
+<!-- БЛОК 16: CTA -->
+<section class="sec sec-alt" id="cta"><div class="ct">
+<div class="sec-lb">Что дальше</div>
+<h2 class="sec-t">От обзора — к вашим цифрам</h2>
+<p class="p"><strong>Ваш салон будет работать с конкретными мастерами, в конкретном районе, с конкретным чеком.</strong> Общие цифры — ландшафт. Решение — на основе модели.</p>
+
+<div class="cta-block" style="margin-bottom:20px">
+<div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:800;color:var(--ac2);letter-spacing:4px;margin-bottom:16px">ZEREK</div>
+<div class="cta-t">Проверьте свою идею за 5 минут</div>
+<p class="cta-d">Quick Check покажет: сколько клиенток/день нужно, когда окупитесь, какие риски в вашем городе.</p>
+<div class="cta-price">3 000 ₸</div>
+<a href="https://t.me/zerekai_bot" target="_blank" class="cta-btn">Проверить идею →</a>
+</div>
+
+<div class="cta-block" style="background:linear-gradient(135deg,rgba(192,80,128,.06),rgba(184,74,58,.03))">
+<div class="cta-t">Нужна полная финансовая модель?</div>
+<p class="cta-d">60 месяцев, три сценария, загрузка мест, текучесть мастеров, допуслуги — всё в одном файле.</p>
+<div class="cta-price">9 000 ₸</div>
+<a href="https://t.me/zerekai_bot" target="_blank" class="cta-btn">Получить финмодель →</a>
+</div>
+
+<div class="care" style="margin-top:20px"><p class="care-text">Мы не продаём мечту. Мы продаём расчёт. <strong>Лучше узнать правду за 3 000 ₸, чем за 10 000 000.</strong></p></div>
+</div></section>
+
+<!-- FOOTER -->
+<footer class="ft">
+<div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:800;color:var(--ac2);letter-spacing:5px;margin-bottom:10px">ZEREK</div>
+<p class="ft-t">© ZEREK Analytics · Данные: БНС РК, НБРК, 2ГИС, Крыша, OLX, аналитические отчёты, реальные прайсы</p>
+<p class="ft-t" style="margin-top:4px">Не является инвестиционной рекомендацией.</p>
+</footer>
+
+</body>
+</html>

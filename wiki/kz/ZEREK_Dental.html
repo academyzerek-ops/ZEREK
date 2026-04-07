@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZEREK — Стоматология: бизнес в Казахстане 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=Source+Sans+3:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root{
+--bg:#f5f8fa;--bg2:#eaf0f5;--bg3:#dfe8ef;--bg-card:#ffffff;--bg-card2:#eef3f8;
+--brd:#c4d4e0;--brd2:#a0b8cc;
+--t1:#1a2836;--t2:#3e5668;--t3:#5e7a90;--t4:#8eaab8;
+--ac:#0077b6;--ac2:#0096d0;--ac3:#005588;--ac-light:#80d0f0;--ac-bg:rgba(0,119,182,.05);
+--ok:#4a8a50;--ok-bg:rgba(74,138,80,.05);--ok-brd:rgba(74,138,80,.15);
+--wrn:#c89030;--wrn-bg:rgba(200,144,48,.05);--wrn-brd:rgba(200,144,48,.15);
+--err:#b84a3a;--err-bg:rgba(184,74,58,.04);--err-brd:rgba(184,74,58,.12);
+--inf:#4a7ab8;--inf-bg:rgba(74,122,184,.05);
+--r:14px;--rs:10px
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--t1);font-family:'Source Sans 3',-apple-system,sans-serif;line-height:1.75;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.ct{max-width:820px;margin:0 auto;padding:0 24px}
+.hero{min-height:80vh;display:flex;align-items:center;justify-content:center;text-align:center;background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);padding:60px 24px}
+.hero-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:var(--ac);letter-spacing:6px;margin-bottom:24px}
+.hero-badge{display:inline-block;padding:5px 18px;background:var(--ac-bg);border:1px solid rgba(0,119,182,.2);border-radius:100px;font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--ac);margin-bottom:24px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;letter-spacing:-1px;margin-bottom:18px;color:var(--t1)}
+.hero-sub{font-size:1rem;color:var(--t2);max-width:600px;margin:0 auto;line-height:1.8}
+.nav{position:sticky;top:0;z-index:100;background:rgba(245,248,250,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--brd);padding:10px 0}
+.nav-in{display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none;max-width:820px;margin:0 auto;padding:0 24px}.nav-in::-webkit-scrollbar{display:none}
+.nav-logo{font-family:'Playfair Display',serif;font-size:14px;font-weight:800;color:var(--ac);letter-spacing:3px;flex-shrink:0;text-decoration:none;margin-right:12px}
+.nav-a{font-size:11px;color:var(--t3);text-decoration:none;white-space:nowrap;padding:5px 10px;border-radius:6px;transition:.2s;font-weight:500}.nav-a:hover{color:var(--ac);background:var(--ac-bg)}
+.sec{padding:56px 0;border-bottom:1px solid var(--brd)}.sec-alt{background:var(--bg2)}
+.sec-lb{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--ac);margin-bottom:12px}.sec-lb::before{content:'';width:18px;height:2px;background:var(--ac);border-radius:1px}
+.sec-t{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,3vw,1.9rem);font-weight:700;letter-spacing:-.5px;margin-bottom:14px;line-height:1.25;color:var(--t1)}
+.p{font-size:.94rem;color:var(--t2);line-height:1.85;margin-bottom:16px}.p strong{color:var(--t1);font-weight:600}.p em{color:var(--ac);font-style:normal;font-weight:600}
+.cd{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:24px;margin-bottom:16px;box-shadow:0 1px 8px rgba(0,0,0,.03)}.cd2{background:var(--bg-card2);box-shadow:none}
+.cg{display:grid;gap:16px}.cg2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}.cg3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}.cg4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.sc{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:18px;text-align:center}.sv{font-size:1.3rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--ac);line-height:1.2}.sl{font-size:11px;color:var(--t2);margin-top:4px}.ss{font-size:9px;color:var(--t3);margin-top:4px;font-style:italic}
+.pr{margin-bottom:12px}.prh{display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px}.prn{color:var(--t1);font-weight:500}.prv{color:var(--ac);font-family:'JetBrains Mono',monospace;font-weight:600;font-size:12px}.prt{height:6px;background:rgba(0,119,182,.08);border-radius:3px;overflow:hidden}.prf{height:100%;border-radius:3px;background:linear-gradient(135deg,var(--ac2),var(--ac3))}
+.callout{padding:18px 22px;border-radius:var(--rs);margin:18px 0;font-size:.9rem;line-height:1.75}
+.callout-ac{background:var(--ac-bg);border:1px solid rgba(0,119,182,.15);border-left:3px solid var(--ac)}.callout-ok{background:var(--ok-bg);border:1px solid var(--ok-brd);border-left:3px solid var(--ok)}.callout-wrn{background:var(--wrn-bg);border:1px solid var(--wrn-brd);border-left:3px solid var(--wrn)}.callout-err{background:var(--err-bg);border:1px solid var(--err-brd);border-left:3px solid var(--err)}
+.callout-title{font-weight:700;margin-bottom:6px;font-size:.92rem}
+.explain{background:var(--bg-card2);border:1px solid var(--brd);border-radius:var(--r);padding:20px 22px;margin:18px 0}.explain-q{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--t1);margin-bottom:8px}.explain-a{font-size:.9rem;color:var(--t2);line-height:1.8}
+.care{background:linear-gradient(135deg,rgba(0,119,182,.04),rgba(74,138,80,.03));border:1px solid rgba(0,119,182,.12);border-radius:var(--r);padding:22px 24px;margin:20px 0;position:relative}.care::before{content:'💬';position:absolute;top:-12px;left:20px;font-size:20px;background:var(--bg);padding:0 6px}.sec-alt .care::before{background:var(--bg2)}.care-text{font-size:.92rem;color:var(--t2);line-height:1.8;font-style:italic}.care-text strong{color:var(--t1);font-style:normal}
+.case{border-radius:var(--r);padding:22px 24px;margin-bottom:14px}.case-good{background:var(--ok-bg);border:1px solid var(--ok-brd);border-left:4px solid var(--ok)}.case-bad{background:var(--err-bg);border:1px solid var(--err-brd);border-left:4px solid var(--err)}.case-mid{background:var(--wrn-bg);border:1px solid var(--wrn-brd);border-left:4px solid var(--wrn)}.case-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}.case-good .case-label{color:var(--ok)}.case-bad .case-label{color:var(--err)}.case-mid .case-label{color:var(--wrn)}.case-title{font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;margin-bottom:8px;color:var(--t1)}.case-text{font-size:.88rem;color:var(--t2);line-height:1.8}
+.risk{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:22px 24px;margin-bottom:14px}.risk-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}.risk-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}.risk-crit .risk-icon{background:rgba(184,74,58,.08)}.risk-warn .risk-icon{background:rgba(200,144,48,.08)}.risk-name{font-weight:700;font-size:.95rem;color:var(--t1)}.risk-body{font-size:.88rem;color:var(--t2);line-height:1.8;margin-bottom:10px}.risk-math{background:var(--bg-card2);border:1px solid var(--brd);border-radius:var(--rs);padding:12px 16px;font-size:.85rem;color:var(--t2);margin:10px 0;font-family:'JetBrains Mono','Source Sans 3',monospace;line-height:1.7}.risk-fix{font-size:.86rem;color:var(--ok);font-weight:500;margin-top:8px}
+.mistake{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:20px 22px;margin-bottom:12px}.mistake-q{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--err);margin-bottom:6px}.mistake-a{font-size:.86rem;color:var(--t2);line-height:1.8}
+.funnel{display:flex;flex-direction:column;gap:0;margin:20px 0}.funnel-step{display:flex;align-items:center;gap:16px;padding:14px 20px;border-bottom:1px solid var(--brd)}.funnel-step:last-child{border-bottom:none}.funnel-num{font-family:'JetBrains Mono',monospace;font-size:1.8rem;font-weight:800;min-width:70px;text-align:center}.funnel-text{font-size:.88rem;color:var(--t2)}.funnel-step:nth-child(1) .funnel-num{color:var(--ok)}.funnel-step:nth-child(2) .funnel-num{color:var(--wrn)}.funnel-step:nth-child(3) .funnel-num{color:var(--ac)}.funnel-step:nth-child(4) .funnel-num{color:var(--err)}
+.checklist{counter-reset:check}.check-item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--brd);align-items:flex-start}.check-item:last-child{border-bottom:none}.check-num{counter-increment:check;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;color:var(--ac);min-width:24px;height:24px;display:flex;align-items:center;justify-content:center;background:var(--ac-bg);border-radius:6px;flex-shrink:0;margin-top:2px}.check-num::before{content:counter(check)}.check-text{font-size:.88rem;color:var(--t2);line-height:1.7}
+.gloss-item{padding:12px 0;border-bottom:1px solid var(--brd)}.gloss-item:last-child{border-bottom:none}.gloss-term{font-weight:700;color:var(--t1);font-size:.9rem;margin-bottom:2px}.gloss-def{font-size:.85rem;color:var(--t2);line-height:1.7}
+table.dt{width:100%;border-collapse:collapse;font-size:13px}.dt thead th{padding:10px 14px;text-align:left;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);border-bottom:2px solid var(--brd2);background:var(--ac-bg)}.dt td{padding:10px 14px;border-bottom:1px solid var(--brd);color:var(--t2)}.dt tr:hover td{background:var(--ac-bg);color:var(--t1)}.dt .n{font-family:'JetBrains Mono',monospace;font-weight:500;color:var(--t1)}.dt .hl{color:var(--ac);font-weight:600}.tw{overflow-x:auto;border-radius:var(--r);border:1px solid var(--brd)}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:var(--ac-bg);border:1px solid var(--brd);border-radius:100px;font-size:11px;font-weight:500;color:var(--t2);margin:3px}.chip-d{width:5px;height:5px;border-radius:50%;background:var(--ac)}.tg{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0}
+.bg{display:inline-block;padding:3px 10px;border-radius:100px;font-size:9px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}.bg-ok{background:rgba(74,138,80,.08);color:var(--ok)}.bg-wrn{background:rgba(200,144,48,.08);color:var(--wrn)}.bg-err{background:rgba(184,74,58,.08);color:var(--err)}.bg-inf{background:rgba(74,122,184,.08);color:var(--inf)}.bg-ac{background:var(--ac-bg);color:var(--ac)}
+.signal{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--brd);align-items:flex-start}.signal:last-child{border-bottom:none}.signal-dot{width:8px;height:8px;border-radius:50%;background:var(--err);flex-shrink:0;margin-top:7px}.signal-text{font-size:.88rem;color:var(--t2);line-height:1.7}
+.cta-block{text-align:center;padding:48px 24px;background:linear-gradient(180deg,var(--bg2),var(--bg3));border-radius:var(--r);margin:24px 0}.cta-t{font-family:'Playfair Display',serif;font-size:clamp(1.3rem,3vw,1.8rem);font-weight:700;margin-bottom:10px;color:var(--t1)}.cta-d{color:var(--t2);font-size:.92rem;max-width:480px;margin:0 auto 20px;line-height:1.7}.cta-btn{display:inline-block;padding:12px 36px;background:linear-gradient(135deg,var(--ac2),var(--ac3));color:#fff;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;border-radius:100px;text-decoration:none;transition:.3s;border:none;cursor:pointer}.cta-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,119,182,.3)}.cta-price{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--ac);margin-bottom:14px}
+.quote{font-family:'Playfair Display',serif;font-size:1rem;color:var(--ac);font-weight:600;font-style:italic;padding:18px 0;border-top:1px solid var(--brd);border-bottom:1px solid var(--brd);margin:24px 0;text-align:center;line-height:1.7}
+.tc{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.ft{padding:36px 0;border-top:1px solid var(--brd);text-align:center;background:var(--bg)}.ft-t{font-size:11px;color:var(--t3)}
+@media(max-width:768px){.ct{padding:0 16px}.sec{padding:40px 0}.cd{padding:18px}.tc,.cg2,.cg3,.cg4{grid-template-columns:1fr}.hero{min-height:60vh;padding:40px 16px}.hero h1{font-size:1.8rem}.hero-sub{font-size:.9rem}.nav-in{gap:2px;padding:0 12px}.nav-a{font-size:10px;padding:4px 7px}.nav-logo{font-size:12px;letter-spacing:2px;margin-right:6px}.funnel-step{padding:10px 14px;gap:12px}.funnel-num{font-size:1.4rem;min-width:55px}.funnel-text{font-size:.82rem}.risk{padding:16px 18px}.risk-math{font-size:.78rem;padding:10px 12px}.risk-body{font-size:.84rem}.mistake{padding:16px 18px}.mistake-q{font-size:.88rem}.mistake-a{font-size:.82rem}.care{padding:18px 16px}.care::before{left:14px;font-size:16px}.care-text{font-size:.86rem}.explain{padding:16px 18px}.explain-q{font-size:.92rem}.explain-a{font-size:.85rem}.case{padding:16px 18px}.case-text{font-size:.84rem}.cta-block{padding:36px 16px}.cta-btn{padding:12px 28px;font-size:12px}.cta-price{font-size:1rem}.sc{padding:14px}.sv{font-size:1.1rem}.callout{padding:14px 16px}.tw{font-size:12px}.dt td,.dt thead th{padding:8px 10px;font-size:11px}.check-item{gap:10px;padding:10px 0}.check-text{font-size:.84rem}.gloss-item{padding:10px 0}.gloss-term{font-size:.86rem}.gloss-def{font-size:.82rem}.signal{gap:10px;padding:10px 0}.signal-text{font-size:.84rem}.p{font-size:.88rem}.sec-t{font-size:1.3rem}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero" id="top"><div>
+<div class="hero-logo">ZEREK</div>
+<div class="hero-badge">Бизнес-обзор 2026</div>
+<h1>Стоматология<br>как бизнес в Казахстане</h1>
+<p class="hero-sub">Лицензия, оборудование за миллионы, врачебная ответственность, специализации, кадровый дефицит и&nbsp;главное — почему «зубы болят у&nbsp;всех» не&nbsp;гарантирует прибыль. 5&nbsp;900 клиник уже работают. Входной билет&nbsp;— от&nbsp;25&nbsp;миллионов.</p>
+</div></section>
+
+<!-- NAV -->
+<nav class="nav"><div class="nav-in">
+<a href="#top" class="nav-logo">ZEREK</a>
+<a href="#why" class="nav-a">Зачем</a>
+<a href="#count" class="nav-a">Считать</a>
+<a href="#market" class="nav-a">Рынок</a>
+<a href="#license" class="nav-a">Лицензия</a>
+<a href="#formats" class="nav-a">Форматы</a>
+<a href="#equip" class="nav-a">Железо</a>
+<a href="#money" class="nav-a">Экономика</a>
+<a href="#cases" class="nav-a">Кейсы</a>
+<a href="#services" class="nav-a">Услуги</a>
+<a href="#staff" class="nav-a">Кадры</a>
+<a href="#hidden" class="nav-a">Скрытое</a>
+<a href="#risks" class="nav-a">Риски</a>
+<a href="#check" class="nav-a">Чек-лист</a>
+<a href="#cta" class="nav-a">Расчёт</a>
+</div></nav>
+
+<!-- БЛОК 1: ЗАЧЕМ -->
+<section class="sec" id="why"><div class="ct">
+<div class="sec-lb">Зачем этот обзор</div>
+<h2 class="sec-t">Стоматология — самый дорогой «простой» бизнес</h2>
+<p class="p">Логика кажется безупречной: <em>зубы болят у всех, лечение дорогое, спрос не зависит от сезона</em>. В отличие от кофейни, стоматология работает на базовой потребности — здоровье. Звучит как идеальный бизнес.</p>
+<p class="p">А потом вы узнаёте цены. Одна стоматологическая установка — <em>4–12 миллионов тенге</em>. Рентген-аппарат — ещё 3–8 миллионов. Автоклав для стерилизации — 1–3 миллиона. Ремонт помещения по санитарным нормам — от 5 миллионов. Лицензия занимает 2–4 месяца, и без врача с дипломом и стажем её не дадут. <strong>Входной билет — от 25 миллионов тенге на одно кресло.</strong></p>
+<p class="p">Этот обзор — попытка собрать всё, что стоит знать до того, как вы подпишете договор аренды помещения. Подготовлен командой ZEREK на основе данных БНС РК и рыночной аналитики.</p>
+<div class="care"><p class="care-text">Стоматология — это не просто бизнес. Это <strong>врачебная практика с юридической ответственностью</strong>. Ошибка стоматолога — это не «плохой кофе» и не «грязная машина». Это здоровье человека, потенциальный судебный иск и потеря лицензии. Цена ошибки здесь — максимальная из всех ниш.</p></div>
+</div></section>
+
+<!-- БЛОК 2: ЗАЧЕМ СЧИТАТЬ -->
+<section class="sec sec-alt" id="count"><div class="ct">
+<div class="sec-lb">Прежде чем вкладывать</div>
+<h2 class="sec-t">Почему нужно считать, даже если «зубы болят у всех»</h2>
+<p class="p">Спрос на стоматологию — стабильный. Но <strong>стабильный спрос при огромных инвестициях</strong> — это не гарантия прибыли. Одно кресло стоит 8–15M ₸ с оборудованием. Врач получает 400–800K/мес. Аренда помещения по медицинским нормам — дороже обычного офиса. Расходники — импортные, привязаны к курсу.</p>
+<div class="explain">
+<div class="explain-q">Что значит «посчитать стоматологию»?</div>
+<div class="explain-a">Ответить на вопросы: <strong>1)</strong>&nbsp;сколько пациентов в день нужно на каждое кресло, чтобы покрыть все расходы (включая кредит за оборудование), <strong>2)</strong>&nbsp;какая реальная загрузка кресла в вашем районе при существующей конкуренции, <strong>3)</strong>&nbsp;найдёте ли вы врача, который останется дольше года. Если на любой из трёх вопросов ответ «не знаю» — вы рискуете 25–60 миллионами.</div>
+</div>
+<div class="explain">
+<div class="explain-q">Могу ли я открыть стоматологию без медобразования?</div>
+<div class="explain-a"><strong>Да, но.</strong> Вы можете быть владельцем клиники без медицинского диплома — но в штате обязательно должен быть врач-стоматолог с высшим образованием, специализацией и стажем от 3 лет. Он подписывает документы на лицензию и несёт врачебную ответственность. Без врача — лицензию не дадут. Если врач уволится — клиника обязана прекратить приём до найма нового.</div>
+</div>
+</div></section>
+
+<!-- БЛОК 3: РЫНОК -->
+<section class="sec" id="market"><div class="ct">
+<div class="sec-lb">Рынок</div>
+<h2 class="sec-t">5 900 клиник, 210 млрд тенге и пенсионные деньги</h2>
+<div class="cg cg4" style="margin-bottom:18px">
+<div class="sc"><div class="sv">5 900</div><div class="sl">стоматологий в РК</div><div class="ss">январь 2025</div></div>
+<div class="sc"><div class="sv">~210B ₸</div><div class="sl">выручка отрасли</div><div class="ss">рост ×1.5 за год</div></div>
+<div class="sc"><div class="sv">+12%</div><div class="sl">новых клиник/год</div></div>
+<div class="sc"><div class="sv">50%</div><div class="sl">оформлены как ИП</div></div>
+</div>
+
+<p class="p">Стоматология в Казахстане растёт быстрее, чем любой другой сегмент частной медицины. Выручка отрасли за год выросла в 1.5 раза до <em>~210 млрд тенге</em>. Количество клиник — 5 900 и ежегодно прибавляется 12%.</p>
+
+<div class="callout callout-ac">
+<div class="callout-title" style="color:var(--ac)">🏦 Пенсионный фактор</div>
+<p style="font-size:.88rem;color:var(--t2);margin:0">Главный драйвер последних лет — <strong>возможность изъятия пенсионных накоплений на лечение зубов</strong>. Стоматология составляет 99% всех медицинских изъятий из ЕНПФ. Это создало мощный приток денег в отрасль. Но: власти обсуждают ограничение таких изъятий. Если правила изменятся — часть спроса исчезнет.</p>
+</div>
+
+<div class="explain">
+<div class="explain-q">Что это значит для вас?</div>
+<div class="explain-a">Рынок растёт, но +12% новых клиник в год — это <strong>усиливающаяся конкуренция</strong>. В Алматы уже более 1 000 стоматологий. В Астане — 500+. В каждом районе — 5–10 клиник в радиусе 1 км. Ваш вопрос — не «есть ли спрос?» (он есть), а «почему пациент придёт именно к вам?»</div>
+</div>
+</div></section>
+
+<!-- БЛОК: ЛИЦЕНЗИЯ -->
+<section class="sec sec-alt" id="license"><div class="ct">
+<div class="sec-lb">Лицензирование</div>
+<h2 class="sec-t">Без лицензии — ни одного пациента</h2>
+<p class="p">Стоматология — <strong>лицензируемая медицинская деятельность</strong>. Работа без лицензии — не штраф, а <strong>уголовная ответственность</strong> при причинении вреда здоровью. Лицензия выдаётся не на клинику, а на каждый вид деятельности отдельно.</p>
+
+<div class="cg cg2" style="margin-bottom:18px">
+<div class="cd cd2"><h3 style="font-size:14px;font-weight:700;margin-bottom:8px">📋 Виды деятельности (лицензируются отдельно)</h3>
+<div class="tg">
+<span class="chip"><span class="chip-d"></span>Терапия</span>
+<span class="chip"><span class="chip-d"></span>Хирургия</span>
+<span class="chip"><span class="chip-d"></span>Ортопедия</span>
+<span class="chip"><span class="chip-d"></span>Ортодонтия</span>
+<span class="chip"><span class="chip-d"></span>Детская стоматология</span>
+<span class="chip"><span class="chip-d"></span>Рентгенология</span>
+<span class="chip"><span class="chip-d"></span>Пародонтология</span>
+<span class="chip"><span class="chip-d"></span>Имплантология</span>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:8px">Каждый вид = отдельный врач с соответствующей специализацией + оборудование по стандарту оснащения. Больше видов = больше вложений, но и шире аудитория.</p>
+</div>
+<div class="cd cd2"><h3 style="font-size:14px;font-weight:700;margin-bottom:8px">📑 Что нужно для лицензии</h3>
+<p style="font-size:12px;color:var(--t2);margin-bottom:6px">• Помещение по санитарным нормам (от 14 м² на кресло, высота потолков от 2.4м, вентиляция, отдельная стерилизационная)</p>
+<p style="font-size:12px;color:var(--t2);margin-bottom:6px">• Врач с дипломом, специализацией, стажем от 3 лет</p>
+<p style="font-size:12px;color:var(--t2);margin-bottom:6px">• Сертифицированное оборудование с регистрацией</p>
+<p style="font-size:12px;color:var(--t2);margin-bottom:6px">• Договоры: утилизация мед.отходов, стерилизация, прачечная, ТО оборудования</p>
+<p style="font-size:12px;color:var(--t2);margin-bottom:6px">• Санитарно-эпидемиологическое заключение</p>
+<p style="font-size:12px;color:var(--t2)">• Срок получения: <strong>1.5–4 месяца</strong>. Всё это время — аренда капает, оборудование стоит, врач ждёт.</p>
+</div>
+</div>
+
+<div class="callout callout-err">
+<div class="callout-title" style="color:var(--err)">⚠️ Врачебная ответственность</div>
+<p style="font-size:.88rem;color:var(--t2);margin:0">Стоматология — единственная ниша в этом обзоре, где ошибка может привести к <strong>уголовному делу</strong>. Некачественное лечение, аллергическая реакция на анестезию, повреждение нерва при удалении — всё это потенциальные судебные иски. Страховка профессиональной ответственности — не опция, а необходимость.</p>
+</div>
+</div></section>
+
+<!-- БЛОК 4: ФОРМАТЫ -->
+<section class="sec" id="formats"><div class="ct">
+<div class="sec-lb">Форматы</div>
+<h2 class="sec-t">От кабинета до многопрофильной клиники</h2>
+
+<div class="cg cg2" style="margin-bottom:18px">
+<div class="cd" style="border-top:3px solid var(--ok)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-ok">Вход</span><h3 style="font-size:15px;font-weight:700;margin-top:6px">🦷 Кабинет (1 кресло)</h3></div><div style="text-align:right"><div style="font-size:18px;font-weight:800;font-family:'JetBrains Mono';color:var(--ok)">15–30M ₸</div><div style="font-size:10px;color:var(--t3)">старт</div></div></div>
+<div style="margin-top:12px">
+<div class="pr"><div class="prh"><span class="prn">Площадь</span><span class="prv">от 40 м²</span></div><div class="prt"><div class="prf" style="width:20%;background:var(--ok)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Специализации</span><span class="prv">1–2 вида</span></div><div class="prt"><div class="prf" style="width:15%;background:var(--ok)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Пациентов/день</span><span class="prv">5–8</span></div><div class="prt"><div class="prf" style="width:20%;background:var(--ok)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Окупаемость</span><span class="prv">12–24 мес.</span></div><div class="prt"><div class="prf" style="width:40%;background:var(--ok)"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:8px">Минимальный формат: терапия + возможно хирургия. Врач — часто владелец. ИП. Рентген — по договору с другой клиникой. Идеально для врача, который хочет работать на себя.</p>
+</div>
+
+<div class="cd" style="border-top:3px solid var(--ac)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-ac">Стандарт</span><h3 style="font-size:15px;font-weight:700;margin-top:6px">🏥 Клиника (2–3 кресла)</h3></div><div style="text-align:right"><div style="font-size:18px;font-weight:800;font-family:'JetBrains Mono';color:var(--ac)">30–60M ₸</div><div style="font-size:10px;color:var(--t3)">старт</div></div></div>
+<div style="margin-top:12px">
+<div class="pr"><div class="prh"><span class="prn">Площадь</span><span class="prv">80–150 м²</span></div><div class="prt"><div class="prf" style="width:45%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Специализации</span><span class="prv">3–5 видов</span></div><div class="prt"><div class="prf" style="width:40%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Пациентов/день</span><span class="prv">12–25</span></div><div class="prt"><div class="prf" style="width:45%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Окупаемость</span><span class="prv">18–36 мес.</span></div><div class="prt"><div class="prf" style="width:55%"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:8px">Оптимальный формат: терапия, хирургия, ортопедия, возможно ортодонтия. Свой рентген (радиовизиограф). Стерилизационная. Администратор. Можно закрыть 80% потребностей пациента.</p>
+</div>
+
+<div class="cd" style="border-top:3px solid var(--wrn)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-wrn">Масштаб</span><h3 style="font-size:15px;font-weight:700;margin-top:6px">🏢 Многопрофильная (5+ кресел)</h3></div><div style="text-align:right"><div style="font-size:18px;font-weight:800;font-family:'JetBrains Mono';color:var(--wrn)">60–150M ₸</div><div style="font-size:10px;color:var(--t3)">старт</div></div></div>
+<div style="margin-top:12px">
+<div class="pr"><div class="prh"><span class="prn">Площадь</span><span class="prv">150–300 м²</span></div><div class="prt"><div class="prf" style="width:70%;background:var(--wrn)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Специализации</span><span class="prv">5–8 видов</span></div><div class="prt"><div class="prf" style="width:65%;background:var(--wrn)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Окупаемость</span><span class="prv">24–48 мес.</span></div><div class="prt"><div class="prf" style="width:75%;background:var(--wrn)"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:8px">Полный цикл: от чистки до имплантации, свой КТ, зуботехническая лаборатория. Серьёзный бизнес с командой 10–20 человек. Но: огромный CAPEX, сложное управление, зависимость от 5+ врачей.</p>
+</div>
+</div>
+
+<div class="explain">
+<div class="explain-q">Какой формат выбрать?</div>
+<div class="explain-a">Вы сами врач и хотите работать на себя? → Кабинет, 1 кресло, ИП. Есть 40–60M и команда из 2–3 врачей? → Клиника на 2–3 кресла — оптимальный баланс. Хотите построить бренд? → 5+ кресел, но будьте готовы к 3–4 годам окупаемости. <strong>Совет ZEREK:</strong> клиника на 2 кресла с терапией, хирургией и ортопедией — закрывает 80% потребностей и окупается за 2–3 года при загрузке 60%+.</div>
+</div>
+</div></section>
+
+<!-- БЛОК: ОБОРУДОВАНИЕ -->
+<section class="sec sec-alt" id="equip"><div class="ct">
+<div class="sec-lb">Оборудование</div>
+<h2 class="sec-t">Самая дорогая часть: установка, рентген, стерилизация</h2>
+<p class="p">Оборудование — <strong>50–60% всех инвестиций</strong> в стоматологию. И здесь нет «бюджетного варианта» в привычном смысле. Дешёвая установка ломается чаще, расходники к ней дороже, а пациент чувствует разницу.</p>
+
+<div class="tw" style="margin-bottom:16px"><table class="dt"><thead><tr><th>Оборудование</th><th>Стоимость</th><th>Критичность</th><th>Примечание</th></tr></thead><tbody>
+<tr><td>Стоматологическая установка</td><td class="n hl">4–12M ₸</td><td style="color:var(--err)">●●●●●</td><td style="font-size:11px;color:var(--t3)">Сердце кабинета. Бренды: KaVo, Sirona, Planmeca</td></tr>
+<tr><td>Радиовизиограф (цифровой рентген)</td><td class="n hl">2–5M ₸</td><td style="color:var(--err)">●●●●●</td><td style="font-size:11px;color:var(--t3)">Без рентгена диагностика невозможна</td></tr>
+<tr><td>Ортопантомограф (панорамный)</td><td class="n">5–12M ₸</td><td style="color:var(--wrn)">●●●●○</td><td style="font-size:11px;color:var(--t3)">Для имплантации и ортодонтии</td></tr>
+<tr><td>КТ (конусно-лучевой)</td><td class="n">15–30M ₸</td><td style="color:var(--wrn)">●●●○○</td><td style="font-size:11px;color:var(--t3)">Для крупных клиник. Отдельная лицензия</td></tr>
+<tr><td>Автоклав (стерилизатор)</td><td class="n hl">1–3M ₸</td><td style="color:var(--err)">●●●●●</td><td style="font-size:11px;color:var(--t3)">Обязателен. Класс B — стандарт</td></tr>
+<tr><td>Компрессор стоматологический</td><td class="n">400K–1.5M</td><td style="color:var(--err)">●●●●●</td><td style="font-size:11px;color:var(--t3)">Безмасляный, медицинского класса</td></tr>
+<tr><td>Апекслокатор, скалер, фотополимеризатор</td><td class="n">300K–1.5M</td><td style="color:var(--err)">●●●●○</td><td style="font-size:11px;color:var(--t3)">Инструменты для каждого кресла</td></tr>
+<tr><td>Мебель медицинская + стерилизационная</td><td class="n">1–3M ₸</td><td style="color:var(--wrn)">●●●●○</td><td style="font-size:11px;color:var(--t3)">Металлические столы, шкафы по СанПиН</td></tr>
+<tr><td>ПО для клиники (CRM, учёт)</td><td class="n">200K–1M/год</td><td style="color:var(--wrn)">●●●○○</td><td style="font-size:11px;color:var(--t3)">Запись, медкарты, учёт расходников</td></tr>
+</tbody></table></div>
+
+<div class="callout callout-ac">
+<div class="callout-title" style="color:var(--ac)">💡 Совет ZEREK</div>
+<p style="font-size:.88rem;color:var(--t2);margin:0"><strong>Одно кресло «под ключ» = 8–15M ₸</strong> (установка + инструменты + доля стерилизационной + доля рентгена). Каждое следующее кресло — дешевле на 20–30%, потому что стерилизационная и рентген уже есть. Именно поэтому <strong>2 кресла выгоднее 1</strong>: общие расходы распределяются на больший поток. Но 1 кресло — минимальный вход для врача-одиночки.</p>
+</div>
+
+<div class="explain">
+<div class="explain-q">Можно ли взять б/у оборудование?</div>
+<div class="explain-a">Можно, но осторожно. Б/у установка за 2–3M вместо 8M — экономия огромная. Но: <strong>нужен сертификат и регистрация</strong> (для лицензии), гарантии нет, запчасти под старые модели — проблема, инспекция может не принять. Радиовизиограф и автоклав — лучше новые. Установку — можно б/у от проверенного бренда с документами.</div>
+</div>
+</div></section>
+
+<!-- БЛОК 5: ЭКОНОМИКА -->
+<section class="sec" id="money"><div class="ct">
+<div class="sec-lb">Экономика</div>
+<h2 class="sec-t">Сколько зарабатывает одно кресло</h2>
+
+<div class="callout callout-ok" style="margin-top:0">
+<div class="callout-title" style="color:var(--ok)">📊 Бенчмарк: клиника на 2 кресла, город 300K+, терапия + хирургия + ортопедия</div>
+<div class="cg cg4" style="margin-top:10px">
+<div class="sc"><div class="sv">6–10</div><div class="sl">пациентов / кресло / день</div></div>
+<div class="sc"><div class="sv">12 000 ₸</div><div class="sl">средний чек</div></div>
+<div class="sc"><div class="sv">4.3–7.2M</div><div class="sl">выручка / мес</div><div class="ss">на 2 кресла</div></div>
+<div class="sc"><div class="sv" style="color:var(--ok)">15–25%</div><div class="sl">чистая прибыль</div></div>
+</div>
+</div>
+
+<div class="cd" style="margin-top:18px">
+<h3 style="font-size:14px;font-weight:700;margin-bottom:14px">Куда уходит выручка (~6M ₸/мес на 2 кресла)</h3>
+<div class="pr"><div class="prh"><span class="prn">🦷 Расходные материалы</span><span class="prv">15–25%</span></div><div class="prt"><div class="prf" style="width:20%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">👨‍⚕️ ФОТ (врачи + ассистенты + админ)</span><span class="prv">30–40%</span></div><div class="prt"><div class="prf" style="width:35%;background:var(--inf)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">🏠 Аренда</span><span class="prv">10–18%</span></div><div class="prt"><div class="prf" style="width:14%;background:var(--wrn)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">🔧 ТО оборудования + амортизация</span><span class="prv">5–8%</span></div><div class="prt"><div class="prf" style="width:7%;background:var(--t4)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">📢 Маркетинг</span><span class="prv">3–7%</span></div><div class="prt"><div class="prf" style="width:5%;background:var(--ac3)"></div></div></div>
+<div style="margin-top:14px;padding:12px 16px;background:var(--ok-bg);border:1px solid var(--ok-brd);border-radius:var(--rs);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+<span style="font-size:11px;color:var(--ok);font-weight:600;text-transform:uppercase;letter-spacing:1px">Чистая прибыль</span>
+<span style="font-size:22px;font-weight:800;font-family:'JetBrains Mono';color:var(--ok)">900K–1.5M ₸/мес</span>
+</div>
+</div>
+
+<div class="explain">
+<div class="explain-q">Что это значит простыми словами?</div>
+<div class="explain-a">Средний чек в стоматологии — <strong>8 000–15 000 ₸</strong> за приём (от чистки 5K до имплантации 200K+). Но стоматология — бизнес с <strong>высокой дисперсией чека</strong>: один день — 3 чистки по 8K, другой — имплантация за 250K. Средние цифры «плавают» сильнее, чем в кофейне или магазине. Подушка и планирование — критичны.</div>
+</div>
+</div></section>
+
+<!-- БЛОК 6: КЕЙСЫ -->
+<section class="sec sec-alt" id="cases"><div class="ct">
+<div class="sec-lb">Три сценария</div>
+<h2 class="sec-t">Как это выглядит на практике</h2>
+
+<div class="case case-good">
+<div class="case-label">🟢 Хороший старт</div>
+<div class="case-title">2 кресла, Актау, спальный район, врач-владелец</div>
+<div class="case-text">Врач-стоматолог с 8-летним стажем. Вложила 35M ₸ (25M — оборудование и ремонт, 10M — подушка). Сама ведёт приём + наняла второго врача на %. Терапия, хирургия, ортопедия. Район — ЖК нефтяников, 8 000+ жителей, ближайшая клиника — 1.5 км. К 4-му месяцу — 7 пациентов/кресло/день. Выручка 5.5M. Прибыль ~1M/мес. Окупаемость — 24 мес. <strong>Ключ: сама врач, район без конкурентов, подушка на 10 мес.</strong></div>
+</div>
+
+<div class="case case-bad">
+<div class="case-label">🔴 Типичная ошибка</div>
+<div class="case-title">3 кресла, Алматы, бизнес-центр, владелец без медобразования</div>
+<div class="case-text">Инвестор вложил 55M ₸. Нанял 3 врачей: терапевт (450K), хирург (550K), ортодонт (600K). Помещение в БЦ — аренда 700K. Ремонт по санитарным нормам — 8M. Лицензия затянулась на 3.5 мес (аренда капала). Через 6 мес. ортодонт ушёл в свою клинику — забрал 40% пациентов. Загрузка упала до 40%. Выручка 3.8M при расходах 4.5M. Минус 700K/мес. <strong>Ошибка: зависимость от наёмных врачей без своей клиентской базы и без медобразования у владельца.</strong></div>
+</div>
+
+<div class="case case-mid">
+<div class="case-label">🟡 Ловушка середины</div>
+<div class="case-title">1 кресло, Тараз, первый этаж жилого дома</div>
+<div class="case-text">Врач открыл свой кабинет. Вложил 18M ₸. Работает сам, 6 дней в неделю, 6–7 пациентов/день. Выручка 2.2M, расходы 1.6M. Прибыль: <em>600K/мес</em>. Но это при условии, что он сам за установкой 48 часов в неделю. Отпуск = 0 выручки. Болезнь = 0 выручки. Ассистента нет — экономит 150K/мес. <strong>Через 3 года — профессиональное выгорание. Он зарабатывает больше, чем наёмный врач, но ценой здоровья и свободного времени.</strong></div>
+</div>
+
+<div class="care"><p class="care-text">Стоматология — один из немногих бизнесов, где <strong>профессиональное выгорание владельца</strong> — реальный и частый сценарий. Если вы и владелец, и единственный врач — вы не построили бизнес, вы создали рабочее место, от которого не можете уйти.</p></div>
+</div></section>
+
+<!-- БЛОК 7: УСЛУГИ И МАРЖИНАЛЬНОСТЬ -->
+<section class="sec" id="services"><div class="ct">
+<div class="sec-lb">Услуги</div>
+<h2 class="sec-t">Где прибыль: не в пломбах</h2>
+<p class="p">Как в аптеке лекарства = трафик, а прибыль = парафарма — так и в стоматологии: <strong>терапия приводит пациента, а ортопедия и имплантация делают деньги</strong>.</p>
+
+<div class="tw"><table class="dt"><thead><tr><th>Услуга</th><th>Средний чек</th><th>Маржа</th><th>Роль</th></tr></thead><tbody>
+<tr><td>Профчистка</td><td class="n">5 000–12 000 ₸</td><td class="n">60–70%</td><td style="color:var(--inf)">Трафик + лояльность</td></tr>
+<tr><td>Лечение кариеса (пломба)</td><td class="n">8 000–25 000 ₸</td><td class="n">50–65%</td><td style="color:var(--inf)">Основной поток</td></tr>
+<tr><td>Удаление зуба</td><td class="n">5 000–30 000 ₸</td><td class="n">55–70%</td><td style="color:var(--wrn)">Средняя маржа</td></tr>
+<tr><td>Коронка (металлокерамика)</td><td class="n hl">25 000–60 000 ₸</td><td class="n hl">40–55%</td><td style="color:var(--ok)">Прибыль</td></tr>
+<tr><td>Виниры</td><td class="n hl">40 000–100 000 ₸/шт</td><td class="n hl">45–60%</td><td style="color:var(--ok)">Высокая прибыль</td></tr>
+<tr><td>Имплантация (1 зуб)</td><td class="n hl">120 000–350 000 ₸</td><td class="n hl">35–50%</td><td style="color:var(--ok)">Главный доход</td></tr>
+<tr><td>Брекеты / элайнеры</td><td class="n hl">300 000–1 200 000 ₸</td><td class="n hl">30–45%</td><td style="color:var(--ok)">Долгосрочный доход</td></tr>
+<tr><td>Отбеливание</td><td class="n">20 000–60 000 ₸</td><td class="n">65–80%</td><td style="color:var(--ok)">Высокая маржа, эстетика</td></tr>
+</tbody></table></div>
+
+<div class="callout callout-ac"><p style="font-size:.88rem;color:var(--t2);margin:0"><strong style="color:var(--ac)">Правило:</strong> клиника, которая делает только терапию (пломбы + чистки) — зарабатывает 10–15% маржи. Добавьте ортопедию (коронки, виниры) и имплантацию — маржа растёт до 20–25%. Именно эти услуги окупают дорогое оборудование.</p></div>
+</div></section>
+
+<!-- БЛОК 9: КАДРЫ -->
+<section class="sec sec-alt" id="staff"><div class="ct">
+<div class="sec-lb">Кадры</div>
+<h2 class="sec-t">Врачи: дефицит, зарплаты и «звёздная болезнь»</h2>
+<p class="p"><strong>Без врача клиника не работает.</strong> Это не официант и не продавец — это специалист, от которого зависят лицензия, репутация и здоровье пациентов. И найти хорошего — сложнее, чем купить оборудование.</p>
+
+<div class="tc">
+<div class="cd"><h3 style="font-size:14px;font-weight:700;margin-bottom:10px">💰 Зарплатная вилка</h3>
+<div class="pr"><div class="prh"><span class="prn">Стоматолог-терапевт</span><span class="prv">350–550K ₸</span></div><div class="prt"><div class="prf" style="width:45%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Хирург</span><span class="prv">450–700K ₸</span></div><div class="prt"><div class="prf" style="width:55%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Ортопед</span><span class="prv">500–800K ₸</span></div><div class="prt"><div class="prf" style="width:65%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Имплантолог</span><span class="prv">600K–1.2M ₸</span></div><div class="prt"><div class="prf" style="width:80%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Ассистент</span><span class="prv">150–250K ₸</span></div><div class="prt"><div class="prf" style="width:25%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Администратор</span><span class="prv">180–300K ₸</span></div><div class="prt"><div class="prf" style="width:30%"></div></div></div>
+<p style="font-size:10px;color:var(--t3);margin-top:6px">Часто: фикс + 20–30% от выручки врача</p></div>
+<div class="cd"><h3 style="font-size:14px;font-weight:700;margin-bottom:10px">🚨 Проблемы</h3>
+<p style="font-size:12px;color:var(--t2);margin-bottom:8px"><strong>Дефицит.</strong> Хороших врачей мало. Сети перекупают. В регионах — ещё сложнее, чем в Алматы.</p>
+<p style="font-size:12px;color:var(--t2);margin-bottom:8px"><strong>Уход с пациентами.</strong> Как в барбершопе — пациент привязан к врачу. Уход хирурга = потеря всей хирургической выручки + часть пациентов уходит за ним.</p>
+<p style="font-size:12px;color:var(--t2);margin-bottom:8px"><strong>«Звёздность».</strong> Популярный имплантолог диктует условия: 35% вместо 25%, свободный график, свой ассистент. Вы зависите от него — и он это знает.</p>
+<p style="font-size:12px;color:var(--t2)"><strong>Ответственность.</strong> Ошибка врача = ваш судебный иск. Вы, как владелец, несёте солидарную ответственность за качество лечения.</p>
+</div>
+</div>
+</div></section>
+
+<!-- БЛОК 11: СКРЫТЫЕ РАСХОДЫ -->
+<section class="sec" id="hidden"><div class="ct">
+<div class="sec-lb">Скрытые расходы</div>
+<h2 class="sec-t">Деньги, которых нет в бизнес-плане</h2>
+
+<div class="cg cg2" style="margin-bottom:14px">
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">🔧 ТО и ремонт оборудования</h4><span class="bg bg-err">100–400K/мес</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Стоматологическая установка требует регулярного ТО: замена шлангов, фильтров, калибровка. Контракт на обслуживание — 300–800K/год на установку. Без ТО — поломка в разгар приёма.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">🧪 Расходники (импортные)</h4><span class="bg bg-wrn">15–25% от выручки</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Пломбировочные материалы, анестетики, имплантаты, боры, перчатки, маски. 80% — импорт, привязан к курсу доллара/евро. Подорожание валюты = рост себестоимости.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">🗑 Утилизация мед.отходов</h4><span class="bg bg-ac">30–80K/мес</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Медицинские отходы класса Б (кровь, ткани). Обязательный договор с лицензированной компанией. Нарушение — штраф и угроза лицензии.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">📋 Страховка ответственности</h4><span class="bg bg-wrn">200–600K/год</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Страхование профессиональной ответственности врачей. Не обязательна юридически, но без неё один иск может стоить миллионы.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">🦠 Стерилизация</h4><span class="bg bg-ac">расходники + время</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Крафт-пакеты, индикаторы, дезрастворы, обслуживание автоклава. Стерилизационный цикл — 40–60 мин. Нужен запас инструментов на 2–3 цикла, иначе простой между пациентами.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">🏗 Ожидание лицензии</h4><span class="bg bg-err">1.5–4 мес. × аренда</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Пока ждёте лицензию — помещение арендовано, оборудование установлено, врач на зарплате. При аренде 500K/мес — 750K–2M «на ожидание». Это инвестиция, которую многие не учитывают.</p></div>
+</div>
+</div></section>
+
+<!-- БЛОК 12: РИСКИ -->
+<section class="sec sec-alt" id="risks"><div class="ct">
+<div class="sec-lb">Риски</div>
+<h2 class="sec-t">Почему закрываются стоматологии</h2>
+
+<h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:24px 0 14px">Топ причин</h3>
+
+<div class="risk risk-crit">
+<div class="risk-head"><div class="risk-icon">👨‍⚕️</div><div><div class="risk-name">1. Уход ключевого врача</div><span class="bg bg-err">критический</span></div></div>
+<div class="risk-body">Врач уходит — и 50–80% его пациентов уходят за ним. Если это единственный хирург или ортопед — вы теряете целое направление. Если это единственный врач в ИП — <strong>клиника обязана закрыться</strong> до найма нового (а это 2–6 недель в регионе).</div>
+<div class="risk-math">Хирург приносил 2M/мес выручки. Ушёл → выручка направления: 0. Поиск замены: 4 недели. Потери: 2M + пациенты ушли навсегда.</div>
+<div class="risk-fix">✅ Защита: минимум 2 врача. Бренд клиники > бренд врача. CRM с базой пациентов на клинику. Контракт с обязательством отработки.</div>
+</div>
+
+<div class="risk risk-crit">
+<div class="risk-head"><div class="risk-icon">⚖️</div><div><div class="risk-name">2. Судебный иск от пациента</div><span class="bg bg-err">критический</span></div></div>
+<div class="risk-body">Некачественное лечение, аллергия на анестезию, повреждение нерва, перфорация корня — всё это реальные ситуации. Один иск может стоить <strong>5–15M ₸</strong> компенсации + потеря репутации + приостановка лицензии на время расследования.</div>
+<div class="risk-fix">✅ Защита: информированное согласие на каждую процедуру. Рентген ДО и ПОСЛЕ. Фото фиксация. Страховка профответственности. Чёткая медицинская документация.</div>
+</div>
+
+<div class="risk risk-crit">
+<div class="risk-head"><div class="risk-icon">📋</div><div><div class="risk-name">3. Проблемы с лицензией</div><span class="bg bg-err">критический</span></div></div>
+<div class="risk-body">Инспекция нашла нарушение — просроченный стерилизационный индикатор, температура в холодильнике для анестетиков «гуляет», нет журнала учёта рентгена. Приостановка лицензии = 0 выручки при тех же расходах.</div>
+<div class="risk-fix">✅ Защита: ежедневный чек-лист. Журналы в порядке. Автоклав с логированием циклов. Термометры с записью. Не «когда проверка» — а каждый день.</div>
+</div>
+
+<div class="risk risk-warn">
+<div class="risk-head"><div class="risk-icon">💰</div><div><div class="risk-name">4. Курс валют → рост расходников</div><span class="bg bg-wrn">серьёзный</span></div></div>
+<div class="risk-body">80% расходников — импорт. Тенге ослаб на 10% — себестоимость выросла на 8–10%. Повышать цены пациентам каждый квартал — терять их. Держать старые — терять маржу.</div>
+<div class="risk-fix">✅ Защита: запас расходников на 2–3 мес. Несколько поставщиков. Пересмотр прайса раз в полгода с объяснением пациентам.</div>
+</div>
+
+<div class="risk risk-warn">
+<div class="risk-head"><div class="risk-icon">🏦</div><div><div class="risk-name">5. Изменение правил пенсионных изъятий</div><span class="bg bg-wrn">серьёзный</span></div></div>
+<div class="risk-body">99% медицинских изъятий из ЕНПФ — стоматология. Если государство ограничит или усложнит процедуру — часть платёжеспособного спроса исчезнет. Клиники, построенные на «пенсионных деньгах», пострадают первыми.</div>
+<div class="risk-fix">✅ Защита: не строить экономику только на пенсионных пациентах. Диверсифицировать: рассрочка, ОСМС, корпоративные договоры.</div>
+</div>
+
+<div class="risk risk-warn">
+<div class="risk-head"><div class="risk-icon">🏪</div><div><div class="risk-name">6. Конкуренция в мегаполисах</div><span class="bg bg-wrn">серьёзный</span></div></div>
+<div class="risk-body">В Алматы — 1 000+ стоматологий. В Астане — 500+. Рост +12% в год = каждый год десятки новых клиник. Ценовая конкуренция, демпинг, «акции на имплантацию». Маржа сжимается.</div>
+<div class="risk-fix">✅ Защита: специализация (имплантология, ортодонтия, детская). Район без конкурентов. Бренд + репутация + отзывы.</div>
+</div>
+
+<!-- ПРОМЕЖУТОЧНЫЙ CTA -->
+<div class="cta-block" style="margin:28px 0">
+<div class="cta-t">Какие риски критичны для вашей клиники?</div>
+<p class="cta-d">Quick Check рассчитает экономику стоматологии — с учётом кресел, города, специализаций и конкуренции.</p>
+<div class="cta-price">3 000 ₸</div>
+<a href="https://t.me/zerekai_bot" target="_blank" class="cta-btn">Проверить свою идею →</a>
+</div>
+
+<!-- ОШИБКИ -->
+<h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:28px 0 14px">Ошибки, которые не выглядят как ошибки</h3>
+
+<div class="mistake">
+<div class="mistake-q">«Куплю самое дорогое оборудование — пациенты оценят»</div>
+<div class="mistake-a">Пациент не отличит установку за 5M от установки за 12M. Он оценит результат лечения, отношение врача и чистоту в кабинете. Переплата за бренд оборудования увеличивает окупаемость на 1–2 года, но не увеличивает поток.</div>
+</div>
+
+<div class="mistake">
+<div class="mistake-q">«Открою без ассистента — сэкономлю 200K/мес»</div>
+<div class="mistake-a">Врач без ассистента работает на 30–40% медленнее. При 6 пациентах/день — это минус 2 пациента = минус 24K/день = минус 500K/мес выручки. Экономия 200K обошлась в потерю 500K. Ассистент — не расход, а инвестиция в скорость.</div>
+</div>
+
+<div class="mistake">
+<div class="mistake-q">«Найму звёздного имплантолога — он приведёт пациентов»</div>
+<div class="mistake-a">Приведёт. Но при 35% от выручки и свободном графике — вы зарабатываете 10–15% с его работы, а он — 85%. И когда уйдёт — пациенты уйдут с ним. Лучше растить своих врачей и строить бренд клиники.</div>
+</div>
+
+<div class="mistake">
+<div class="mistake-q">«Только терапия для начала — остальное потом»</div>
+<div class="mistake-a">Терапия (пломбы, чистки) — средний чек 8–15K. Этого может не хватить для окупаемости оборудования за 25M+. Ортопедия и хирургия дают чеки 30–250K. Без них экономика «одного кресла» не сходится.</div>
+</div>
+
+<div class="mistake">
+<div class="mistake-q">«Лицензию получу за месяц»</div>
+<div class="mistake-a">Реальный срок — 1.5–4 месяца. За это время вы платите аренду (500K×3 = 1.5M), зарплату врачу (500K×3 = 1.5M), кредит за оборудование. Итого 3–5M «на ожидание». Закладывайте в бюджет.</div>
+</div>
+
+<!-- СИГНАЛЫ СТОП -->
+<h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:28px 0 14px">Сигналы, что пора пересмотреть</h3>
+
+<div class="cd">
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Загрузка кресел ниже 50% третий месяц подряд</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Ключевой врач ушёл и вы не можете найти замену 4+ недели</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Судебная претензия от пациента — даже если вы правы, это время и деньги</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Расходники подорожали на 20%, а повысить цены не можете — конкуренты демпингуют</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Вы сами за установкой 6/1 и не можете уехать в отпуск</div></div>
+</div>
+
+<div class="care"><p class="care-text">Стоматология — один из немногих бизнесов, который <strong>можно продать как работающий актив</strong>. Лицензия, оборудование, база пациентов, место — это реальная стоимость. Если экономика не сходится — продажа может вернуть 50–70% инвестиций. Это лучше, чем работать в минус.</p></div>
+
+<div class="quote">«Оптимист открывает стоматологию. Пессимист считает стоимость автоклава.<br>Реалист делает и то, и другое — и именно он лечит зубы через 5 лет.»</div>
+</div></section>
+
+<!-- БЛОК 14: ЧЕК-ЛИСТ -->
+<section class="sec" id="check"><div class="ct">
+<div class="sec-lb">Самопроверка</div>
+<h2 class="sec-t">Готовы ли вы открыть стоматологию?</h2>
+
+<div class="cd">
+<div class="checklist">
+<div class="check-item"><div class="check-num"></div><div class="check-text">У вас есть врач-стоматолог с дипломом и стажем от 3 лет (или вы сами врач)?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">У вас есть 25–60M ₸ (включая подушку на 6+ мес)?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">Помещение соответствует санитарным нормам (площадь, высота, вентиляция, отдельный вход)?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">Вы готовы ждать лицензию 2–4 месяца, оплачивая аренду и зарплаты?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">У вас минимум 2 специализации (терапия + хирургия или ортопедия)?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">В радиусе 1 км нет 5+ стоматологий?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">У вас есть план, если главный врач уволится?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">Вы понимаете врачебную ответственность и готовы к страхованию?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">Вы готовы к тому, что окупаемость — 2–4 года, а не 6 месяцев?</div></div>
+</div>
+</div>
+
+<div class="care"><p class="care-text">Стоматология — бизнес с самым высоким входным барьером из всех наших обзоров. Если вы дошли до этого чек-листа и на большинство вопросов ответили «да» — вы серьёзнее 95% тех, кто «думал открыть клинику». <strong>Следующий шаг — расчёт под ваши параметры.</strong></p></div>
+</div></section>
+
+<!-- БЛОК 15: ГЛОССАРИЙ -->
+<section class="sec sec-alt" id="glossary"><div class="ct">
+<div class="sec-lb">Словарь ZEREK</div>
+<h2 class="sec-t">Термины простым языком</h2>
+
+<div class="cd">
+<div class="gloss-item"><div class="gloss-term">Стоматологическая установка</div><div class="gloss-def">Основной рабочий инструмент: кресло пациента + бормашина + отсос + светильник + лоток для инструментов. Стоит 4–12M ₸. «Сердце» кабинета.</div></div>
+<div class="gloss-item"><div class="gloss-term">Радиовизиограф</div><div class="gloss-def">Цифровой рентген-аппарат для прицельных снимков одного-двух зубов. Стоит 2–5M ₸. Без него невозможна нормальная диагностика.</div></div>
+<div class="gloss-item"><div class="gloss-term">Ортопантомограф (ОПТГ)</div><div class="gloss-def">Панорамный рентген — снимок всей челюсти. Нужен для имплантации и ортодонтии. Стоит 5–12M ₸.</div></div>
+<div class="gloss-item"><div class="gloss-term">Автоклав</div><div class="gloss-def">Аппарат для стерилизации инструментов паром под давлением. Обязателен. Класс B — стандарт для стоматологии. Стоит 1–3M ₸.</div></div>
+<div class="gloss-item"><div class="gloss-term">Загрузка кресла</div><div class="gloss-def">Какой процент рабочего времени кресло занято пациентом. 70% = хорошо. 50% = на грани. Ниже — убыточно.</div></div>
+<div class="gloss-item"><div class="gloss-term">ЕНПФ</div><div class="gloss-def">Единый накопительный пенсионный фонд. Казахстанцы могут изымать накопления на лечение зубов — это 99% всех медицинских изъятий. Главный драйвер платёжеспособного спроса.</div></div>
+<div class="gloss-item"><div class="gloss-term">Средний чек</div><div class="gloss-def">Сколько платит один пациент за визит. Чистка — 8K. Пломба — 15K. Имплант — 200K. «Средний» чек = 8–15K при типовом потоке.</div></div>
+<div class="gloss-item"><div class="gloss-term">Информированное согласие</div><div class="gloss-def">Документ, который пациент подписывает перед лечением. Описывает процедуру, риски, альтернативы. Защищает врача и клинику в случае жалобы.</div></div>
+<div class="gloss-item"><div class="gloss-term">Мед.отходы класса Б</div><div class="gloss-def">Отходы, контактировавшие с кровью и тканями. Обязательная утилизация через лицензированную компанию. Нарушение — штраф и лицензия под вопросом.</div></div>
+</div>
+</div></section>
+
+<!-- БЛОК 16: CTA -->
+<section class="sec" id="cta"><div class="ct">
+<div class="sec-lb">Что дальше</div>
+<h2 class="sec-t">От обзора — к вашим цифрам</h2>
+<p class="p"><strong>Ваша клиника будет работать с конкретными врачами, конкретным оборудованием, в конкретном районе.</strong> Общие цифры — ландшафт. Решение — на основе модели с вашими параметрами.</p>
+
+<div class="cta-block" style="margin-bottom:20px">
+<div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:800;color:var(--ac);letter-spacing:4px;margin-bottom:16px">ZEREK</div>
+<div class="cta-t">Проверьте свою идею за 5 минут</div>
+<p class="cta-d">Quick Check покажет: при какой загрузке клиника окупится, сколько пациентов/день нужно, какие риски критичны в вашем городе.</p>
+<div class="cta-price">3 000 ₸</div>
+<a href="https://t.me/zerekai_bot" target="_blank" class="cta-btn">Проверить идею →</a>
+</div>
+
+<div class="cta-block" style="background:linear-gradient(135deg,rgba(0,119,182,.06),rgba(184,74,58,.03))">
+<div class="cta-t">Нужна полная финансовая модель?</div>
+<p class="cta-d">60 месяцев, три сценария, каждое кресло отдельно, рост расходников по курсу, окупаемость оборудования — всё в одном файле.</p>
+<div class="cta-price">9 000 ₸</div>
+<a href="https://t.me/zerekai_bot" target="_blank" class="cta-btn">Получить финмодель →</a>
+</div>
+
+<div class="care" style="margin-top:20px"><p class="care-text">Мы не продаём мечту. Мы продаём расчёт. <strong>Лучше узнать правду за 3 000 ₸, чем за 60 000 000.</strong></p></div>
+</div></section>
+
+<!-- FOOTER -->
+<footer class="ft">
+<div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:800;color:var(--ac);letter-spacing:5px;margin-bottom:10px">ZEREK</div>
+<p class="ft-t">© ZEREK Analytics · Данные: БНС РК, НБРК, 2ГИС, Крыша, OLX, аналитические отчёты, реальные прайсы</p>
+<p class="ft-t" style="margin-top:4px">Не является инвестиционной рекомендацией. Не является медицинской рекомендацией.</p>
+</footer>
+
+</body>
+</html>

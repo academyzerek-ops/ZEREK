@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZEREK — Компьютерный клуб: бизнес в Казахстане 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=Source+Sans+3:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root{
+--bg:#f0f0f6;--bg2:#e4e4f0;--bg3:#d8d8e8;--bg-card:#ffffff;--bg-card2:#eeeef6;
+--brd:#c0c0d4;--brd2:#a8a8c0;
+--t1:#1a1a2e;--t2:#3e3e5e;--t3:#606080;--t4:#8888a8;
+--ac:#7c3aed;--ac2:#8b5cf6;--ac3:#6d28d9;--ac-light:#c4b5fd;--ac-bg:rgba(124,58,237,.06);
+--ok:#4a8a50;--ok-bg:rgba(74,138,80,.05);--ok-brd:rgba(74,138,80,.15);
+--wrn:#c89030;--wrn-bg:rgba(200,144,48,.05);--wrn-brd:rgba(200,144,48,.15);
+--err:#b84a3a;--err-bg:rgba(184,74,58,.04);--err-brd:rgba(184,74,58,.12);
+--inf:#4a7ab8;--inf-bg:rgba(74,122,184,.05);
+--r:14px;--rs:10px
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--t1);font-family:'Source Sans 3',-apple-system,sans-serif;line-height:1.75;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.ct{max-width:820px;margin:0 auto;padding:0 24px}
+.hero{min-height:80vh;display:flex;align-items:center;justify-content:center;text-align:center;background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);padding:60px 24px}
+.hero-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:var(--ac2);letter-spacing:6px;margin-bottom:24px}
+.hero-badge{display:inline-block;padding:5px 18px;background:var(--ac-bg);border:1px solid rgba(124,58,237,.2);border-radius:100px;font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--ac2);margin-bottom:24px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;letter-spacing:-1px;margin-bottom:18px;color:var(--t1)}
+.hero-sub{font-size:1rem;color:var(--t2);max-width:580px;margin:0 auto;line-height:1.8}
+.nav{position:sticky;top:0;z-index:100;background:rgba(240,240,246,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--brd);padding:10px 0}
+.nav-in{display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none;max-width:820px;margin:0 auto;padding:0 24px}.nav-in::-webkit-scrollbar{display:none}
+.nav-logo{font-family:'Playfair Display',serif;font-size:14px;font-weight:800;color:var(--ac2);letter-spacing:3px;flex-shrink:0;text-decoration:none;margin-right:12px}
+.nav-a{font-size:11px;color:var(--t3);text-decoration:none;white-space:nowrap;padding:5px 10px;border-radius:6px;transition:.2s;font-weight:500}.nav-a:hover{color:var(--ac2);background:var(--ac-bg)}
+.sec{padding:56px 0;border-bottom:1px solid var(--brd)}.sec-alt{background:var(--bg2)}
+.sec-lb{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--ac2);margin-bottom:12px}.sec-lb::before{content:'';width:18px;height:2px;background:var(--ac2);border-radius:1px}
+.sec-t{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,3vw,1.9rem);font-weight:700;letter-spacing:-.5px;margin-bottom:14px;line-height:1.25;color:var(--t1)}
+.p{font-size:.94rem;color:var(--t2);line-height:1.85;margin-bottom:16px}.p strong{color:var(--t1);font-weight:600}.p em{color:var(--ac2);font-style:normal;font-weight:600}
+.cd{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:24px;margin-bottom:16px;box-shadow:0 1px 8px rgba(0,0,0,.03)}.cd2{background:var(--bg-card2);box-shadow:none}
+.cg{display:grid;gap:16px}.cg2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}.cg3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}.cg4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.sc{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:18px;text-align:center}.sv{font-size:1.3rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--ac2);line-height:1.2}.sl{font-size:11px;color:var(--t2);margin-top:4px}
+.pr{margin-bottom:12px}.prh{display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px}.prn{color:var(--t1);font-weight:500}.prv{color:var(--ac2);font-family:'JetBrains Mono',monospace;font-weight:600;font-size:12px}.prt{height:6px;background:rgba(124,58,237,.08);border-radius:3px;overflow:hidden}.prf{height:100%;border-radius:3px;background:linear-gradient(135deg,var(--ac2),var(--ac3))}
+.callout{padding:18px 22px;border-radius:var(--rs);margin:18px 0;font-size:.9rem;line-height:1.75}
+.callout-ac{background:var(--ac-bg);border:1px solid rgba(124,58,237,.15);border-left:3px solid var(--ac)}.callout-ok{background:var(--ok-bg);border:1px solid var(--ok-brd);border-left:3px solid var(--ok)}.callout-wrn{background:var(--wrn-bg);border:1px solid var(--wrn-brd);border-left:3px solid var(--wrn)}.callout-err{background:var(--err-bg);border:1px solid var(--err-brd);border-left:3px solid var(--err)}
+.callout-title{font-weight:700;margin-bottom:6px;font-size:.92rem}
+.explain{background:var(--bg-card2);border:1px solid var(--brd);border-radius:var(--r);padding:20px 22px;margin:18px 0}.explain-q{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--t1);margin-bottom:8px}.explain-a{font-size:.9rem;color:var(--t2);line-height:1.8}
+.care{background:linear-gradient(135deg,rgba(124,58,237,.04),rgba(74,138,80,.03));border:1px solid rgba(124,58,237,.12);border-radius:var(--r);padding:22px 24px;margin:20px 0;position:relative}.care::before{content:'💬';position:absolute;top:-12px;left:20px;font-size:20px;background:var(--bg);padding:0 6px}.sec-alt .care::before{background:var(--bg2)}.care-text{font-size:.92rem;color:var(--t2);line-height:1.8;font-style:italic}.care-text strong{color:var(--t1);font-style:normal}
+.case{border-radius:var(--r);padding:22px 24px;margin-bottom:14px}.case-good{background:var(--ok-bg);border:1px solid var(--ok-brd);border-left:4px solid var(--ok)}.case-bad{background:var(--err-bg);border:1px solid var(--err-brd);border-left:4px solid var(--err)}.case-mid{background:var(--wrn-bg);border:1px solid var(--wrn-brd);border-left:4px solid var(--wrn)}.case-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}.case-good .case-label{color:var(--ok)}.case-bad .case-label{color:var(--err)}.case-mid .case-label{color:var(--wrn)}.case-title{font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;margin-bottom:8px;color:var(--t1)}.case-text{font-size:.88rem;color:var(--t2);line-height:1.8}
+.risk{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:22px 24px;margin-bottom:14px}.risk-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}.risk-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}.risk-crit .risk-icon{background:rgba(184,74,58,.08)}.risk-warn .risk-icon{background:rgba(200,144,48,.08)}.risk-name{font-weight:700;font-size:.95rem;color:var(--t1)}.risk-body{font-size:.88rem;color:var(--t2);line-height:1.8;margin-bottom:10px}.risk-math{background:var(--bg-card2);border:1px solid var(--brd);border-radius:var(--rs);padding:12px 16px;font-size:.85rem;color:var(--t2);margin:10px 0;font-family:'JetBrains Mono','Source Sans 3',monospace;line-height:1.7}.risk-fix{font-size:.86rem;color:var(--ok);font-weight:500;margin-top:8px}
+.mistake{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:20px 22px;margin-bottom:12px}.mistake-q{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--err);margin-bottom:6px}.mistake-a{font-size:.86rem;color:var(--t2);line-height:1.8}
+.funnel{display:flex;flex-direction:column;gap:0;margin:20px 0}.funnel-step{display:flex;align-items:center;gap:16px;padding:14px 20px;border-bottom:1px solid var(--brd)}.funnel-step:last-child{border-bottom:none}.funnel-num{font-family:'JetBrains Mono',monospace;font-size:1.8rem;font-weight:800;min-width:70px;text-align:center}.funnel-text{font-size:.88rem;color:var(--t2)}.funnel-step:nth-child(1) .funnel-num{color:var(--ok)}.funnel-step:nth-child(2) .funnel-num{color:var(--wrn)}.funnel-step:nth-child(3) .funnel-num{color:var(--ac2)}.funnel-step:nth-child(4) .funnel-num{color:var(--err)}
+.checklist{counter-reset:check}.check-item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--brd);align-items:flex-start}.check-item:last-child{border-bottom:none}.check-num{counter-increment:check;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;color:var(--ac2);min-width:24px;height:24px;display:flex;align-items:center;justify-content:center;background:var(--ac-bg);border-radius:6px;flex-shrink:0;margin-top:2px}.check-num::before{content:counter(check)}.check-text{font-size:.88rem;color:var(--t2);line-height:1.7}
+.gloss-item{padding:12px 0;border-bottom:1px solid var(--brd)}.gloss-item:last-child{border-bottom:none}.gloss-term{font-weight:700;color:var(--t1);font-size:.9rem;margin-bottom:2px}.gloss-def{font-size:.85rem;color:var(--t2);line-height:1.7}
+table.dt{width:100%;border-collapse:collapse;font-size:13px}.dt thead th{padding:10px 14px;text-align:left;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);border-bottom:2px solid var(--brd2);background:var(--ac-bg)}.dt td{padding:10px 14px;border-bottom:1px solid var(--brd);color:var(--t2)}.dt tr:hover td{background:var(--ac-bg);color:var(--t1)}.dt .n{font-family:'JetBrains Mono',monospace;font-weight:500;color:var(--t1)}.dt .hl{color:var(--ac2);font-weight:600}.tw{overflow-x:auto;border-radius:var(--r);border:1px solid var(--brd)}
+.signal{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--brd);align-items:flex-start}.signal:last-child{border-bottom:none}.signal-dot{width:8px;height:8px;border-radius:50%;background:var(--err);flex-shrink:0;margin-top:7px}.signal-text{font-size:.88rem;color:var(--t2);line-height:1.7}
+.cta-block{text-align:center;padding:48px 24px;background:linear-gradient(180deg,var(--bg2),var(--bg3));border-radius:var(--r);margin:24px 0}.cta-t{font-family:'Playfair Display',serif;font-size:clamp(1.3rem,3vw,1.8rem);font-weight:700;margin-bottom:10px;color:var(--t1)}.cta-d{color:var(--t2);font-size:.92rem;max-width:480px;margin:0 auto 20px;line-height:1.7}.cta-btn{display:inline-block;padding:12px 36px;background:linear-gradient(135deg,var(--ac2),var(--ac3));color:#fff;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;border-radius:100px;text-decoration:none;transition:.3s;border:none;cursor:pointer}.cta-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(124,58,237,.3)}.cta-price{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--ac2);margin-bottom:14px}
+.bg{display:inline-block;padding:3px 10px;border-radius:100px;font-size:9px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}.bg-ok{background:rgba(74,138,80,.08);color:var(--ok)}.bg-wrn{background:rgba(200,144,48,.08);color:var(--wrn)}.bg-err{background:rgba(184,74,58,.08);color:var(--err)}.bg-inf{background:rgba(74,122,184,.08);color:var(--inf)}.bg-ac{background:var(--ac-bg);color:var(--ac2)}
+.ft{padding:36px 0;border-top:1px solid var(--brd);text-align:center;background:var(--bg)}.ft-t{font-size:11px;color:var(--t3)}
+@media(max-width:768px){.ct{padding:0 16px}.sec{padding:40px 0}.cd{padding:18px}.cg2,.cg3,.cg4{grid-template-columns:1fr}.hero{min-height:60vh;padding:40px 16px}.hero h1{font-size:1.8rem}.hero-sub{font-size:.9rem}.nav-in{gap:2px;padding:0 12px}.nav-a{font-size:10px;padding:4px 7px}.nav-logo{font-size:12px;letter-spacing:2px;margin-right:6px}.funnel-step{padding:10px 14px;gap:12px}.funnel-num{font-size:1.4rem;min-width:55px}.risk{padding:16px 18px}.risk-math{font-size:.78rem;padding:10px 12px}.care{padding:18px 16px}.care::before{left:14px;font-size:16px}.explain{padding:16px 18px}.case{padding:16px 18px}.case-text{font-size:.84rem}.cta-block{padding:36px 16px}.cta-btn{padding:12px 28px;font-size:12px}.sc{padding:14px}.sv{font-size:1.1rem}.callout{padding:14px 16px}.tw{font-size:12px}.dt td,.dt thead th{padding:8px 10px;font-size:11px}.check-item{gap:10px;padding:10px 0}.p{font-size:.88rem}.sec-t{font-size:1.3rem}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero" id="top"><div>
+<div class="hero-logo">ZEREK</div>
+<div class="hero-badge">Бизнес-обзор 2026</div>
+<h1>Компьютерный клуб<br>как бизнес в Казахстане</h1>
+<p class="hero-sub">1 600 клубов на&nbsp;20 млн человек, «клубный бум», киберспорт — официальный вид спорта, и&nbsp;железо, которое устаревает за&nbsp;2&nbsp;года. Разбираем, кто зарабатывает на&nbsp;геймерах, а&nbsp;кто — кормит энергетиков.</p>
+</div></section>
+
+<!-- NAV -->
+<nav class="nav"><div class="nav-in">
+<a href="#top" class="nav-logo">ZEREK</a>
+<a href="#why" class="nav-a">Зачем</a>
+<a href="#count" class="nav-a">Считать</a>
+<a href="#market" class="nav-a">Рынок</a>
+<a href="#formats" class="nav-a">Форматы</a>
+<a href="#money" class="nav-a">Экономика</a>
+<a href="#cases" class="nav-a">Кейсы</a>
+<a href="#equip" class="nav-a">Железо</a>
+<a href="#hidden" class="nav-a">Скрытое</a>
+<a href="#risks" class="nav-a">Риски</a>
+<a href="#check" class="nav-a">Чек-лист</a>
+<a href="#cta" class="nav-a">Расчёт</a>
+</div></nav>
+
+<!-- БЛОК 1 -->
+<section class="sec" id="why"><div class="ct">
+<div class="sec-lb">Зачем этот обзор</div>
+<h2 class="sec-t">Компьютерный клуб — не «поставил ПК и зарабатываю»</h2>
+<p class="p">Казахстан переживает <em>клубный бум</em>. Количество компьютерных клубов выросло до ~1 600 — это один клуб на каждые 12 500 жителей. Для сравнения: в России ~3 500 клубов на 147 млн, то есть один на 42 000. Казахстан — <strong>один из самых насыщенных рынков компьютерных клубов в мире</strong> относительно населения.</p>
+<p class="p">Звучит как возможность? Скорее как предупреждение. Чем больше клубов — тем жёстче конкуренция за ту же аудиторию: школьников и студентов 14–25 лет с ограниченным бюджетом. И при этом <strong>железо, которое стоит миллионы, устаревает за 2–3 года</strong>.</p>
+<p class="p">Этот обзор — разбор экономики, рисков и операционной реальности. Подготовлен командой ZEREK на основе рыночных данных.</p>
+<div class="care"><p class="care-text">Компьютерный клуб — это <strong>инфраструктурный бизнес</strong>: вы продаёте не товар, а время за компьютером. Каждый час простоя каждого ПК — прямой убыток. А ваша аудитория — подростки и студенты, которые считают каждые 500 ₸. Чтобы зарабатывать — нужна безупречная загрузка и жёсткий контроль расходов.</p></div>
+</div></section>
+
+<!-- БЛОК 2 -->
+<section class="sec sec-alt" id="count"><div class="ct">
+<div class="sec-lb">Ликбез</div>
+<h2 class="sec-t">Почему нужно считать, даже если «все играют»</h2>
+<p class="p">Ключевая метрика компьютерного клуба — <strong>загрузка</strong> (utilisation). Это процент часов, когда ваши ПК реально заняты и приносят деньги, от общего количества рабочих часов. Если у вас 30 ПК и клуб работает 16 часов — это 480 машино-часов в день. Если реально занято 240 — загрузка 50%.</p>
+
+<div class="explain">
+<div class="explain-q">Что значит «посчитать компьютерный клуб»?</div>
+<div class="explain-a">Ответить: при какой средней загрузке вы покрываете все расходы? Обычно break-even — это 35–45% загрузки. Ниже — убыток, выше — прибыль. Разница между 40% и 60% загрузки — это разница между нулём и 500K ₸ прибыли. Каждый процент загрузки критичен.</div>
+</div>
+
+<p class="p">Вот почему «все играют» — не аргумент. Играют — да. Но играют ли они <strong>у вас</strong>? Или у конкурента через дорогу, который поставил RTX 4070 и берёт на 200 ₸/час дешевле? Или дома — потому что купили ПК в рассрочку через Kaspi?</p>
+
+<div class="callout callout-wrn">
+<div class="callout-title">Главный враг компьютерного клуба — домашний ПК</div>
+С каждым годом хороший игровой ПК становится доступнее. Kaspi рассрочка на 24 месяца — 30 000 ₸/мес за игровой комплект. Для студента, который играет 3–4 часа в день, домашний ПК окупается за 8–10 месяцев. Ваш клуб должен давать то, чего нет дома: <strong>атмосферу, компанию, турниры, железо топ-уровня</strong>.
+</div>
+</div></section>
+
+<!-- БЛОК 3 -->
+<section class="sec" id="market"><div class="ct">
+<div class="sec-lb">Рынок</div>
+<h2 class="sec-t">Клубный бум: 1 600 заведений и государственная поддержка</h2>
+
+<div class="cg cg4" style="margin-bottom:24px">
+<div class="sc"><div class="sv">~1 600</div><div class="sl">компьютерных клубов<br>в Казахстане</div></div>
+<div class="sc"><div class="sv">611</div><div class="sl">клубов на платформе<br>LANGAME (каталог)</div></div>
+<div class="sc"><div class="sv">5 млн</div><div class="sl">прогноз аудитории<br>киберспорта КЗ к 2026</div></div>
+<div class="sc"><div class="sv">600–1500 ₸</div><div class="sl">средняя цена<br>за час в КЗ</div></div>
+</div>
+
+<p class="p"><strong>Казахстан — уникальный рынок.</strong> Правительство утвердило Концепцию развития киберспорта на 2025–2029 годы. Киберспорт признан официальным видом спорта. В Астане проходят международные турниры (PGL CS2, Games of the Future 2026). Это создаёт <em>культурный фон</em>, который поддерживает спрос на компьютерные клубы.</p>
+
+<p class="p">Но есть и обратная сторона: <strong>рынок перенасыщен в крупных городах</strong>. В Алматы и Астане плотность клубов уже выше, чем в Москве. Новые клубы открываются в ЖК, торговых центрах, цоколях — и каждый забирает часть аудитории у существующих. В регионах (Семей, Тараз, Кызылорда) — ещё есть пространство, но и платёжеспособность ниже.</p>
+
+<div class="care"><p class="care-text">Обратите внимание: <strong>Colizeum — глобальная сеть с 616 клубами</strong> — активно присутствует в КЗ. Их модель: франшиза, стандартизация, турниры. Конкурировать с ними «в лоб» — значит конкурировать с машиной. Ваш козырь — <strong>локальность, атмосфера, комьюнити</strong>.</p></div>
+
+<div class="cd" style="margin-top:20px">
+<p class="p" style="margin-bottom:12px"><strong>Конкурентная среда:</strong></p>
+<div class="pr"><div class="prh"><span class="prn">Сетевые (Colizeum, T-Arena, ArenaGame)</span><span class="prv bg-err">Высокая</span></div><div class="prt"><div class="prf" style="width:80%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Независимые клубы в районе</span><span class="prv bg-wrn">Средняя–Высокая</span></div><div class="prt"><div class="prf" style="width:65%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Домашние ПК (Kaspi рассрочка)</span><span class="prv bg-wrn">Растущая</span></div><div class="prt"><div class="prf" style="width:55%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Мобильный гейминг (PUBG Mobile)</span><span class="prv bg-inf">Непрямая</span></div><div class="prt"><div class="prf" style="width:40%"></div></div></div>
+</div>
+
+</div></section>
+
+<!-- БЛОК 4 -->
+<section class="sec sec-alt" id="formats"><div class="ct">
+<div class="sec-lb">Форматы</div>
+<h2 class="sec-t">Три модели — от мини-клуба до арены</h2>
+
+<div class="cg cg2">
+<div class="cd">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><span style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.05rem">Мини-клуб (15–25 ПК)</span><span class="bg bg-ok">Порог входа: средний</span></div>
+<p class="p" style="margin-bottom:8px">60–100 м². Бюджетный сегмент: RTX 3060–4060, 144Hz мониторы. Основная аудитория — школьники, студенты. Цена: 500–800 ₸/час. Район: спальный, рядом со школой/колледжем.</p>
+<div class="callout callout-ac" style="margin:8px 0"><strong>Вход:</strong> 10–18 млн ₸ &nbsp;|&nbsp; <strong>Аренда:</strong> 150–300K ₸ &nbsp;|&nbsp; <strong>Штат:</strong> 2–3 чел.</div>
+<p style="font-size:.82rem;color:var(--t3)">Самый массовый формат. Быстрая окупаемость при хорошей локации (8–14 мес). Но: низкий чек, ценочувствительная аудитория, быстро устаревает железо.</p>
+</div>
+
+<div class="cd">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><span style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.05rem">Арена (30–60 ПК)</span><span class="bg bg-wrn">Порог входа: высокий</span></div>
+<p class="p" style="margin-bottom:8px">120–250 м². Mid-to-high: RTX 4070–4080, 240Hz, удобные кресла, зоны (стандарт + VIP + PS). Турниры, стримы. Цена: 800–1 500 ₸/час.</p>
+<div class="callout callout-ac" style="margin:8px 0"><strong>Вход:</strong> 25–50 млн ₸ &nbsp;|&nbsp; <strong>Аренда:</strong> 300–600K ₸ &nbsp;|&nbsp; <strong>Штат:</strong> 4–7 чел.</div>
+<p style="font-size:.82rem;color:var(--t3)">Более высокий чек, но и более требовательная аудитория. Нужны турниры, атмосфера, бар/снеки. Конкурирует с Colizeum напрямую. Окупаемость: 12–20 мес.</p>
+</div>
+
+<div class="cd">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><span style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.05rem">Премиум / лаунж</span><span class="bg bg-err">Порог входа: очень высокий</span></div>
+<p class="p" style="margin-bottom:8px">150–300 м². Топовое железо (RTX 4090), дизайнерский интерьер, кухня/бар, VIP-комнаты. Аудитория 20–35 лет с доходом. Цена: 1 500–3 000 ₸/час.</p>
+<div class="callout callout-ac" style="margin:8px 0"><strong>Вход:</strong> 50–100+ млн ₸ &nbsp;|&nbsp; <strong>Аренда:</strong> 500K–1M ₸ &nbsp;|&nbsp; <strong>Штат:</strong> 5–10 чел.</div>
+<p style="font-size:.82rem;color:var(--t3)">Реалистичен только в Алматы и Астане. Пример: ХАН.exe в Астане (этнический стиль, бешбармак, лаунж-зона). Узкий сегмент, высокий средний чек, но и высокие постоянные расходы.</p>
+</div>
+</div>
+
+<div class="care"><p class="care-text">Самая частая ошибка: открыть <strong>«середину»</strong> — 30 ПК средней мощности без чёткого позиционирования. Не достаточно дёшево для школьников, не достаточно круто для геймеров 20+. Результат — <strong>ни один сегмент не ваш</strong>. Выбирайте полюс: либо дёшево и массово, либо дорого и уникально.</p></div>
+
+</div></section>
+
+<!-- БЛОК 5 -->
+<section class="sec" id="money"><div class="ct">
+<div class="sec-lb">Юнит-экономика</div>
+<h2 class="sec-t">Сколько зарабатывает компьютерный клуб</h2>
+
+<p class="p">Разберём экономику <strong>мини-клуба на 20 ПК</strong> — самого распространённого формата.</p>
+
+<div class="cd" style="margin-bottom:20px">
+<p style="font-family:'Playfair Display',serif;font-weight:700;margin-bottom:14px">Базовый расчёт: мини-клуб, Тараз, 20 ПК</p>
+<div class="funnel">
+<div class="funnel-step"><div class="funnel-num">50%</div><div class="funnel-text"><strong>Средняя загрузка</strong> — из 320 машино-часов/день (20 ПК × 16 ч) реально занято 160. Пик: вечер (70–80%), утро (20–30%).</div></div>
+<div class="funnel-step"><div class="funnel-num">600 ₸</div><div class="funnel-text"><strong>Средняя цена за час</strong> — стандарт 500 ₸, VIP-места 800 ₸, ночной тариф 400 ₸. Средневзвешенное ≈ 600 ₸.</div></div>
+<div class="funnel-step"><div class="funnel-num">2.9M ₸</div><div class="funnel-text"><strong>Месячная выручка</strong> — 160 часов/день × 600 ₸ × 30 дней = 2.88M. Плюс снеки/напитки: +200K.</div></div>
+<div class="funnel-step"><div class="funnel-num">500–800K</div><div class="funnel-text"><strong>Чистая прибыль</strong> — при аренде 180K, ФОТ 250K, электричестве 120K, интернете 40K, амортизации 150K.</div></div>
+</div>
+</div>
+
+<div class="tw" style="margin-bottom:20px">
+<table class="dt">
+<thead><tr><th>Статья</th><th>Сумма/мес</th><th>% от выручки</th><th>Комментарий</th></tr></thead>
+<tbody>
+<tr><td>Выручка (аренда ПК)</td><td class="n">2 880 000 ₸</td><td class="hl">93%</td><td>160 маш-часов/день × 600 ₸ × 30</td></tr>
+<tr><td>Доп. доход (снеки, напитки)</td><td class="n">200 000 ₸</td><td>7%</td><td>Чай, энергетики, снеки, лапша</td></tr>
+<tr><td><strong>Итого выручка</strong></td><td class="n"><strong>3 080 000 ₸</strong></td><td class="hl"><strong>100%</strong></td><td></td></tr>
+<tr><td>Аренда</td><td class="n">180 000 ₸</td><td>6%</td><td>80 м², цоколь, Тараз</td></tr>
+<tr><td>ФОТ</td><td class="n">250 000 ₸</td><td>8%</td><td>2 админа посменно + уборщица</td></tr>
+<tr><td>Электричество</td><td class="n">120 000 ₸</td><td>4%</td><td>20 ПК × ~300 Вт × 16 ч × 30 дн</td></tr>
+<tr><td>Интернет</td><td class="n">40 000 ₸</td><td>1%</td><td>Корпоративный, 500+ Мбит</td></tr>
+<tr><td>Лицензии ПО</td><td class="n">30 000 ₸</td><td>1%</td><td>Windows, управление (SmartShell/SENET)</td></tr>
+<tr><td>Амортизация ПК</td><td class="n">150 000 ₸</td><td>5%</td><td>Замена/апгрейд через 2.5–3 года</td></tr>
+<tr><td>Снеки (закупка)</td><td class="n">80 000 ₸</td><td>3%</td><td>Маржа на снеках ~60%</td></tr>
+<tr><td>Налоги (УСН 2%)</td><td class="n">61 600 ₸</td><td>2%</td><td>Тараз, ставка 2%</td></tr>
+<tr><td>Ремонт, расходники</td><td class="n">40 000 ₸</td><td>1%</td><td>Мыши, клавиатуры, наушники</td></tr>
+<tr><td><strong>Итого расходов</strong></td><td class="n"><strong>951 600 ₸</strong></td><td><strong>31%</strong></td><td></td></tr>
+<tr style="background:var(--ok-bg)"><td><strong>Чистая прибыль</strong></td><td class="n"><strong>≈ 2 128 000 ₸</strong></td><td class="hl"><strong>69%</strong></td><td>При загрузке 50% — оптимистичный</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout callout-err">
+<div class="callout-title">Реалистичная поправка: загрузка решает всё</div>
+При загрузке 50% — прибыль ~2.1M. При 35% (реально для нового клуба первые 3 мес) — выручка 2.0M, прибыль ~1.0M. При 25% — <strong>прибыль ~300K, на грани</strong>. А ещё не забывайте: <strong>инвестиция 12–18 млн ₸ должна окупиться</strong>. При чистой прибыли 1M/мес окупаемость = 12–18 мес. При 500K — уже 24–36 мес. А через 3 года нужен апгрейд.
+</div>
+
+<div class="cta-block" style="margin:28px 0">
+<div class="cta-t">Какая загрузка реалистична в вашем городе?</div>
+<p class="cta-d">Quick Check рассчитает: break-even по загрузке, окупаемость с учётом амортизации, сценарии по районам.</p>
+<div class="cta-price">3 000 ₸</div>
+<a href="https://t.me/zerekai_bot" target="_blank" class="cta-btn">Проверить свою идею →</a>
+</div>
+
+</div></section>
+
+<!-- БЛОК 6 -->
+<section class="sec sec-alt" id="cases"><div class="ct">
+<div class="sec-lb">Кейсы</div>
+<h2 class="sec-t">Как это выглядит на практике</h2>
+
+<div class="case case-good">
+<div class="case-label">Удачный старт</div>
+<div class="case-title">Кызылорда — мини-клуб 20 ПК рядом с колледжем</div>
+<p class="case-text">Вложил 11 млн ₸: 20 ПК (RTX 3060, б/у мониторы 144Hz), минимальный ремонт. Аренда цоколя — 100K ₸/мес. Рядом — колледж и общежитие. Запустился за 3 недели. <strong>Ключевое:</strong> ценовая война — поставил 400 ₸/час (ниже конкурентов на 150 ₸). Загрузка с первого месяца — 55%. Через 10 месяцев вернул вложения. Сейчас чистыми 800K–1.2M/мес. Планирует второй клуб.</p>
+</div>
+
+<div class="case case-bad">
+<div class="case-label">Ошибка</div>
+<div class="case-title">Астана — арена 45 ПК в ТРЦ</div>
+<p class="case-text">Инвестор вложил 40 млн ₸: топовое железо, дизайн, VIP-зоны, PS5. Аренда в ТРЦ — 700K ₸/мес. Проблема: аудитория ТРЦ — семьи и шопперы, а не геймеры. Загрузка днём — 15–20%, вечером — 40%. Средняя — 28%. <strong>При 28% загрузке выручка не покрывает расходы.</strong> Закрылся через 14 месяцев. Оборудование продал за 35% от цены. Ошибка: формат для геймеров, локация для шопперов.</p>
+</div>
+
+<div class="case case-mid">
+<div class="case-label">Урок</div>
+<div class="case-title">Актобе — 25 ПК + турниры + комьюнити</div>
+<p class="case-text">Молодой предприниматель, сам геймер. 15 млн ₸ вложений. Помимо аренды ПК — <strong>еженедельные турниры по CS2 с призовым фондом 50K ₸</strong> (спонсируют локальные бренды). Telegram-канал на 2 000 подписчиков. Комьюнити = лояльность. Загрузка: 55–65%. Проблема: <strong>турниры требуют времени и организации</strong> — 10–15 часов/неделю работы владельца бесплатно. Прибыль: 1.0–1.5M, но если перестанет делать турниры — загрузка упадёт.</p>
+</div>
+
+<!-- СПЕЦИАЛЬНЫЙ БЛОК: УРАЛЬСК -->
+<div class="cd" style="margin-top:24px;border:2px solid var(--ac);border-left:5px solid var(--ac)">
+<p style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.1rem;margin-bottom:14px;color:var(--ac2)">📍 Разбор: а что с Уральском?</p>
+
+<p class="p">Уральск (ЗКО, ~400 тыс. чел.) — <strong>один из самых перенасыщенных рынков компьютерных клубов в Казахстане</strong>. По данным справочников, в городе работает порядка 30–38 клубов и игровых заведений. Это 1 клуб на ~10 500 жителей — плотнее, чем в среднем по стране.</p>
+
+<p class="p"><strong>Крупные игроки уже на месте:</strong> Colizeum (67 ПК, 7 PS5, от 800 ₸/ч), X-STREAM (70+ ПК, 6 зон, круглосуточно), BAZA, Pingwin, LEVEL, GameON и другие. Центр города и основные проспекты — закрыты.</p>
+
+<div class="callout callout-wrn" style="margin:14px 0">
+<div class="callout-title">Честный расчёт: мини-клуб 20 ПК в спальном районе Уральска</div>
+<strong>Вложения:</strong> 12 млн ₸ (ПК, ремонт, мебель, периферия)<br>
+<strong>Аренда:</strong> 150K ₸/мес (цоколь в спальном микрорайоне, не центр)<br>
+<strong>Цена:</strong> 500–600 ₸/час (ниже X-STREAM и Colizeum)<br>
+<strong>Загрузка при хорошей локации (рядом школа/колледж):</strong> 40–50%<br>
+<strong>Выручка:</strong> 20 ПК × 16 ч × 45% × 550 ₸ × 30 дн ≈ <strong>2.4M ₸/мес</strong><br>
+<strong>Расходы:</strong> аренда 150K + ФОТ 200K + электричество 100K + интернет 35K + амортизация 120K + прочее 80K ≈ <strong>685K</strong><br>
+<strong>Чистая прибыль:</strong> ~700K–900K ₸/мес при 45% загрузке<br>
+<strong>Окупаемость:</strong> 14–17 месяцев
+</div>
+
+<p class="p"><strong>Вердикт:</strong> заработать в Уральске <em>можно</em>, но при трёх обязательных условиях:</p>
+<p class="p" style="margin-bottom:4px">1. <strong>Район без крупных конкурентов</strong> — не проспект Абая и не мкр Астана (там Colizeum). Искать: новые ЖК, мкр Самал, район вокзала, окраины с колледжами.</p>
+<p class="p" style="margin-bottom:4px">2. <strong>Мини-формат с низкой ценой</strong> — не пытаться конкурировать с X-STREAM по железу. Ваш козырь: дешевле (500 ₸ vs 800 ₸), ближе к дому, «свой клуб для района».</p>
+<p class="p" style="margin-bottom:4px">3. <strong>Комьюнити</strong> — еженедельные турниры, Telegram-канал, скидки постоянным. Без привязки к месту — клиент уйдёт ради 100 ₸ экономии.</p>
+
+<div class="callout callout-err" style="margin:14px 0">
+<div class="callout-title">Сценарий, при котором НЕ стоит открывать</div>
+Если в радиусе 500 м от вашей локации уже есть 2+ клуба — <strong>не открывайте</strong>. При загрузке 25–30% (а это реально при плотной конкуренции) прибыль будет 100–300K, окупаемость растянется на 3+ года, а через 2.5 года нужен апгрейд железа на 5M ₸. Математика не сходится.
+</div>
+</div>
+</div></section>
+
+<!-- БЛОК 7 -->
+<section class="sec" id="equip"><div class="ct">
+<div class="sec-lb">Железо</div>
+<h2 class="sec-t">ПК, периферия, мебель — 60–70% бюджета</h2>
+
+<div class="tw" style="margin-bottom:20px">
+<table class="dt">
+<thead><tr><th>Компонент</th><th>Бюджет (1 ПК)</th><th>Средний (1 ПК)</th><th>Топ (1 ПК)</th></tr></thead>
+<tbody>
+<tr><td>Системный блок</td><td class="n">350–450K ₸</td><td class="n">500–700K</td><td class="n">800K–1.2M</td></tr>
+<tr><td>Монитор (144/240Hz)</td><td class="n">80–120K</td><td class="n">130–200K</td><td class="n">200–350K</td></tr>
+<tr><td>Периферия (мышь+клава+наушники)</td><td class="n">25–40K</td><td class="n">40–70K</td><td class="n">70–120K</td></tr>
+<tr><td>Кресло</td><td class="n">30–50K</td><td class="n">60–100K</td><td class="n">100–200K</td></tr>
+<tr><td>Стол + кабель-менеджмент</td><td class="n">20–40K</td><td class="n">40–80K</td><td class="n">80–150K</td></tr>
+<tr style="background:var(--ac-bg)"><td><strong>Итого за 1 место</strong></td><td class="n"><strong>505–700K ₸</strong></td><td class="n"><strong>770K–1.15M</strong></td><td class="n"><strong>1.25–2M</strong></td></tr>
+<tr style="background:var(--wrn-bg)"><td><strong>× 20 мест</strong></td><td class="n"><strong>10–14M ₸</strong></td><td class="n"><strong>15–23M</strong></td><td class="n"><strong>25–40M</strong></td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout callout-err">
+<div class="callout-title">Амортизация — скрытый убийца прибыли</div>
+Видеокарта RTX 4060 сегодня стоит ~250K ₸. Через 2.5 года она будет «вчерашней» — игроки захотят 5070/5080. Замена 20 видеокарт = 5+ млн ₸. Если не откладывать на амортизацию (100–200K ₸/мес) — через 3 года клуб устареет и загрузка упадёт.
+</div>
+
+<div class="explain">
+<div class="explain-q">Новое vs б/у железо?</div>
+<div class="explain-a">Б/У ПК (1–2 года) экономят 30–40%. Но: нет гарантии, неизвестный износ, а для клуба нужна <strong>однородность</strong> — если 5 из 20 ПК с разной производительностью, клиенты жалуются. Рабочая стратегия: новые видеокарты + б/у корпуса, БП, RAM. Или целиком б/у, но из одной партии.</div>
+</div>
+
+</div></section>
+
+<!-- БЛОК 8 -->
+<section class="sec sec-alt" id="hidden"><div class="ct">
+<div class="sec-lb">Скрытые расходы</div>
+<h2 class="sec-t">Деньги, которых нет в калькуляторе</h2>
+
+<div class="cd">
+<div class="signal"><div class="signal-dot"></div><div class="signal-text"><strong>Электричество.</strong> 20 ПК × 300–500 Вт × 16 часов × 30 дней = 2 880–4 800 кВт·ч. При тарифе ~25–35 ₸/кВт·ч — это 80 000–170 000 ₸/мес. В КЗ электричество дороже, чем в России.</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text"><strong>Интернет.</strong> Нужен корпоративный тариф 500+ Мбит с гарантированной полосой. Домашний тариф не подходит — лагает при 20 одновременных сессиях. Стоимость: 30–60K ₸/мес.</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text"><strong>Замена периферии.</strong> Мыши живут 4–6 мес в клубных условиях (агрессивный гейминг). Наушники — 3–6 мес. Клавиатуры — 8–12 мес. Бюджет: 30–60K ₸/мес на 20 ПК.</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text"><strong>ПО и лицензии.</strong> Windows Pro (если не OEM), система управления (SmartShell 15–25K/мес, SENET аналогично), антивирус, Steam/Game Center. Суммарно: 20–40K ₸/мес.</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text"><strong>Кондиционирование.</strong> 20 ПК в закрытом помещении = серьёзный нагрев. Без кондиционера — невыносимо через 2 часа. Установка: 300K–800K ₸, обслуживание: 5–10K/мес.</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text"><strong>Порча и кражи.</strong> Наушники ломают, мыши «уходят», кресла режут. Камеры (100–200K ₸ установка) и залоговая система (ID-карта при входе) — необходимость, а не опция.</div></div>
+</div>
+</div></section>
+
+<!-- БЛОК 9 -->
+<section class="sec" id="risks"><div class="ct">
+<div class="sec-lb">Риски</div>
+<h2 class="sec-t">Почему закрываются компьютерные клубы</h2>
+
+<div class="risk risk-crit">
+<div class="risk-head"><div class="risk-icon">🖥️</div><div class="risk-name">Устаревание железа за 2–3 года</div></div>
+<div class="risk-body">Новое поколение видеокарт выходит каждые 18–24 месяца. Геймеры быстро замечают разницу. Клуб с RTX 3060 проигрывает клубу с RTX 4070 через дорогу. Если не обновляться — загрузка падает на 20–30% в течение года.</div>
+<div class="risk-math">20 видеокарт × 250K ₸ = 5 000 000 ₸ каждые 2.5–3 года<br>Это 140–170K ₸/мес амортизации — которую нужно откладывать</div>
+<div class="risk-fix">Защита: фонд амортизации с первого дня. Апгрейд поэтапно (10 ПК в этом квартале, 10 — в следующем). Продавать б/у комплектующие — они ещё ликвидны.</div>
+</div>
+
+<div class="risk risk-crit">
+<div class="risk-head"><div class="risk-icon">📍</div><div class="risk-name">Новый конкурент в радиусе 500 м</div></div>
+<div class="risk-body">При 1 600 клубах в стране — вероятность появления конкурента рядом высока. Особенно если ваш район показал себя прибыльным. Новый клуб с новым железом и вводной акцией «первый час бесплатно» — забирает 30% вашей аудитории за месяц.</div>
+<div class="risk-fix">Защита: комьюнити, турниры, лояльность. Клиент, который «свой» в вашем клубе — не уйдёт ради 100 ₸ экономии. Строить бренд, а не просто сдавать ПК в аренду.</div>
+</div>
+
+<div class="risk risk-warn">
+<div class="risk-head"><div class="risk-icon">👦</div><div class="risk-name">Аудитория 14–20 лет — низкая платёжеспособность</div></div>
+<div class="risk-body">70–80% посетителей компьютерных клубов — школьники и студенты. Их бюджет на развлечения — 5 000–15 000 ₸/мес. Они чувствительны к цене и легко уходят к конкуренту, где дешевле на 100 ₸.</div>
+<div class="risk-fix">Защита: дополнительные потоки дохода (снеки с маржой 60%, турниры со спонсорами, аренда для корпоративов). Или ориентация на 20+ аудиторию (премиум-формат).</div>
+</div>
+
+<div class="risk risk-warn">
+<div class="risk-head"><div class="risk-icon">⚡</div><div class="risk-name">Рост тарифов на электроэнергию</div></div>
+<div class="risk-body">Электричество в КЗ дорожает. Для клуба с 20 ПК каждое повышение тарифа на 5 ₸/кВт·ч — это +15–25K ₸/мес к расходам. При низкой загрузке это критично.</div>
+<div class="risk-fix">Защита: энергоэффективные комплектующие (AMD vs Intel по потреблению). Контроль «холостого хода» — ПК без клиента должен уходить в спящий режим.</div>
+</div>
+
+<h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:28px 0 14px">Ошибки, которые не выглядят как ошибки</h3>
+
+<div class="mistake">
+<div class="mistake-q">«Поставлю самое топовое железо — клиенты будут в очереди»</div>
+<div class="mistake-a">RTX 4090 стоит в 3 раза дороже RTX 4060, а разницу в CS2 или Valorant большинство геймеров <strong>не заметят</strong> (обе дают 300+ FPS на 1080p). Топовое железо оправдано только в премиум-формате с ценой 1 500+ ₸/час. Для массового клуба — это переплата, которая удлиняет окупаемость на год.</div>
+</div>
+
+<div class="mistake">
+<div class="mistake-q">«Компьютерный клуб работает сам — поставил админа и забыл»</div>
+<div class="mistake-a">Админ без контроля: не чистит ПК (пыль = перегрев = поломки), не следит за периферией (воруют), не продаёт снеки, не строит комьюнити. <strong>Клуб без вовлечённого владельца деградирует за 3–6 месяцев.</strong> Камеры, учёт, еженедельная проверка — обязательны.</div>
+</div>
+
+<div class="mistake">
+<div class="mistake-q">«Открою в ТРЦ — там трафик»</div>
+<div class="mistake-a">Трафик ТРЦ ≠ трафик клуба. Геймеры приходят целенаправленно, а не «по дороге». Аренда в ТРЦ — 2–3× дороже цоколя. Лучшая локация: рядом с университетом, колледжем, общежитием или в спальном районе с молодёжью.</div>
+</div>
+
+</div></section>
+
+<!-- БЛОК 10 -->
+<section class="sec sec-alt" id="check"><div class="ct">
+<div class="sec-lb">Чек-лист</div>
+<h2 class="sec-t">Готовы ли вы открыть компьютерный клуб?</h2>
+
+<div class="cd">
+<div class="checklist">
+<div class="check-item"><div class="check-num"></div><div class="check-text"><strong>Проверили плотность</strong> — сколько клубов в радиусе 1 км? В 2ГИС и Google Maps. Если 3+ — район перенасыщен.</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text"><strong>Определили ЦА</strong> — школьники (бюджет, 400–600 ₸/ч), студенты (средне, 600–1000 ₸/ч), или взрослые геймеры (1000+ ₸/ч)? От этого зависит всё: железо, цена, локация.</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text"><strong>Рассчитали break-even</strong> — при какой загрузке вы в нуле? (Обычно 30–40% для мини-клуба)</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text"><strong>Заложили амортизацию</strong> — 100–200K ₸/мес в фонд обновления железа. Без этого через 3 года — мёртвый клуб.</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text"><strong>Решили вопрос с электричеством</strong> — мощности помещения хватает? 20 ПК + кондиционер + свет = 8–12 кВт минимум.</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text"><strong>Есть план привлечения</strong> — Telegram-канал, турниры, партнёрства с колледжами. «Просто открыться» — не стратегия.</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text"><strong>Понимаете аудиторию</strong> — вы сами геймер или хотя бы понимаете, чего хотят геймеры? Если нет — наймите того, кто понимает.</div></div>
+</div>
+</div>
+
+</div></section>
+
+<!-- БЛОК 11 -->
+<section class="sec" id="glossary"><div class="ct">
+<div class="sec-lb">Словарь</div>
+<h2 class="sec-t">Термины простым языком</h2>
+<div class="cd">
+<div class="gloss-item"><div class="gloss-term">Загрузка (utilisation)</div><div class="gloss-def">Процент времени, когда ваши ПК реально заняты. 50% загрузки при 20 ПК и 16 часах работы = 160 оплаченных машино-часов в день. Главная метрика прибыльности клуба.</div></div>
+<div class="gloss-item"><div class="gloss-term">Машино-час</div><div class="gloss-def">Один час работы одного ПК. Если у вас 20 ПК и клуб работает 16 часов — у вас 320 машино-часов в день. Каждый незанятый — упущенная выручка.</div></div>
+<div class="gloss-item"><div class="gloss-term">Амортизация</div><div class="gloss-def">Постепенное «обесценивание» оборудования. ПК за 500K ₸ через 3 года стоит 150–200K. Разница — 300–350K — это и есть амортизация. Её нужно откладывать ежемесячно, чтобы через 3 года было на что обновлять.</div></div>
+<div class="gloss-item"><div class="gloss-term">RTX 3060/4060/4070/4080</div><div class="gloss-def">Модели видеокарт NVIDIA. Чем выше число — тем мощнее и дороже. 3060 — бюджетный гейминг, 4060–4070 — средний (оптимально для клуба), 4080–4090 — топ (только для премиум).</div></div>
+<div class="gloss-item"><div class="gloss-term">LAN (Local Area Network)</div><div class="gloss-def">Локальная сеть. В контексте клубов: LAN-турнир — это турнир, где все игроки физически сидят в одном зале. Это главное, что отличает клуб от «играть дома»: атмосфера, энергия, шум.</div></div>
+</div>
+</div></section>
+
+<!-- БЛОК 12 -->
+<section class="sec sec-alt" id="cta"><div class="ct">
+<div class="sec-lb">Следующий шаг</div>
+<h2 class="sec-t">От обзора — к вашим цифрам</h2>
+<p class="p">Рынок клубов в КЗ — один из самых динамичных. Но <strong>ваш</strong> результат зависит от города, района, формата и железа. Quick Check рассчитает: при какой загрузке окупитесь, сколько стоит каждый простаивающий ПК и когда нужен апгрейд.</p>
+
+<div class="cta-block" style="margin-bottom:20px">
+<div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:800;color:var(--ac2);letter-spacing:4px;margin-bottom:16px">ZEREK</div>
+<div class="cta-t">Проверьте свою идею за 5 минут</div>
+<p class="cta-d">Quick Check покажет: при какой загрузке ваш клуб зарабатывает, сколько «стоит» каждый простаивающий ПК, когда вернутся инвестиции.</p>
+<div class="cta-price">3 000 ₸</div>
+<a href="https://t.me/zerekai_bot" target="_blank" class="cta-btn">Проверить идею →</a>
+</div>
+
+<div class="cta-block" style="background:linear-gradient(135deg,rgba(124,58,237,.06),rgba(184,74,58,.03))">
+<div class="cta-t">Нужна полная финансовая модель?</div>
+<p class="cta-d">60 месяцев, три сценария, амортизация, загрузка по часам, апгрейд-план — всё в одном файле.</p>
+<div class="cta-price">9 000 ₸</div>
+<a href="https://t.me/zerekai_bot" target="_blank" class="cta-btn">Получить финмодель →</a>
+</div>
+
+<div class="care" style="margin-top:20px"><p class="care-text">Мы не продаём мечту. Мы продаём расчёт. <strong>Лучше узнать правду за 3 000 ₸, чем за 15 000 000.</strong></p></div>
+</div></section>
+
+<footer class="ft"><div class="ct">
+<p class="ft-t">ZEREK © 2026 — AI-платформа бизнес-аналитики для предпринимателей Казахстана<br>Данные: БНС РК, LANGAME, SENET, рыночная аналитика. Не является инвестиционной рекомендацией.</p>
+</div></footer>
+
+</body>
+</html>

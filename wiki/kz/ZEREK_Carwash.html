@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZEREK — Автомойка: бизнес в Казахстане 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=Source+Sans+3:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root{
+--bg:#f7f9fa;--bg2:#edf1f4;--bg3:#e2e8ed;--bg-card:#ffffff;--bg-card2:#f0f4f7;
+--brd:#cdd6de;--brd2:#b0bcc8;
+--t1:#1e2a36;--t2:#4a5e6e;--t3:#6e8494;--t4:#8ea0b0;
+--ac:#3078b8;--ac2:#4090d0;--ac3:#205898;--ac-light:#a0c8e8;--ac-bg:rgba(48,120,184,.06);
+--ok:#4a8a50;--ok-bg:rgba(74,138,80,.05);--ok-brd:rgba(74,138,80,.15);
+--wrn:#c89030;--wrn-bg:rgba(200,144,48,.05);--wrn-brd:rgba(200,144,48,.15);
+--err:#b84a3a;--err-bg:rgba(184,74,58,.04);--err-brd:rgba(184,74,58,.12);
+--inf:#4a7ab8;--inf-bg:rgba(74,122,184,.05);
+--r:14px;--rs:10px
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--t1);font-family:'Source Sans 3',-apple-system,sans-serif;line-height:1.75;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.ct{max-width:820px;margin:0 auto;padding:0 24px}
+.hero{min-height:80vh;display:flex;align-items:center;justify-content:center;text-align:center;background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);padding:60px 24px}
+.hero-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:var(--ac2);letter-spacing:6px;margin-bottom:24px}
+.hero-badge{display:inline-block;padding:5px 18px;background:var(--ac-bg);border:1px solid rgba(48,120,184,.2);border-radius:100px;font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--ac2);margin-bottom:24px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;letter-spacing:-1px;margin-bottom:18px;color:var(--t1)}
+.hero-sub{font-size:1rem;color:var(--t2);max-width:580px;margin:0 auto;line-height:1.8}
+.nav{position:sticky;top:0;z-index:100;background:rgba(247,249,250,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--brd);padding:10px 0}
+.nav-in{display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none;max-width:820px;margin:0 auto;padding:0 24px}.nav-in::-webkit-scrollbar{display:none}
+.nav-logo{font-family:'Playfair Display',serif;font-size:14px;font-weight:800;color:var(--ac2);letter-spacing:3px;flex-shrink:0;text-decoration:none;margin-right:12px}
+.nav-a{font-size:11px;color:var(--t3);text-decoration:none;white-space:nowrap;padding:5px 10px;border-radius:6px;transition:.2s;font-weight:500}
+.nav-a:hover{color:var(--ac2);background:var(--ac-bg)}
+.sec{padding:56px 0;border-bottom:1px solid var(--brd)}.sec-alt{background:var(--bg2)}
+.sec-lb{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--ac2);margin-bottom:12px}
+.sec-lb::before{content:'';width:18px;height:2px;background:var(--ac2);border-radius:1px}
+.sec-t{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,3vw,1.9rem);font-weight:700;letter-spacing:-.5px;margin-bottom:14px;line-height:1.25;color:var(--t1)}
+.p{font-size:.94rem;color:var(--t2);line-height:1.85;margin-bottom:16px}.p strong{color:var(--t1);font-weight:600}.p em{color:var(--ac2);font-style:normal;font-weight:600}
+.cd{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:24px;margin-bottom:16px;box-shadow:0 1px 8px rgba(0,0,0,.03)}.cd2{background:var(--bg-card2);box-shadow:none}
+.cg{display:grid;gap:16px}.cg2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}.cg3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}.cg4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.sc{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:18px;text-align:center}.sv{font-size:1.3rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--ac2);line-height:1.2}.sl{font-size:11px;color:var(--t2);margin-top:4px}.ss{font-size:9px;color:var(--t3);margin-top:4px;font-style:italic}
+.pr{margin-bottom:12px}.prh{display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px}.prn{color:var(--t1);font-weight:500}.prv{color:var(--ac2);font-family:'JetBrains Mono',monospace;font-weight:600;font-size:12px}.prt{height:6px;background:rgba(48,120,184,.1);border-radius:3px;overflow:hidden}.prf{height:100%;border-radius:3px;background:linear-gradient(135deg,var(--ac2),var(--ac3))}
+.callout{padding:18px 22px;border-radius:var(--rs);margin:18px 0;font-size:.9rem;line-height:1.75}
+.callout-ac{background:var(--ac-bg);border:1px solid rgba(48,120,184,.15);border-left:3px solid var(--ac)}.callout-ok{background:var(--ok-bg);border:1px solid var(--ok-brd);border-left:3px solid var(--ok)}.callout-wrn{background:var(--wrn-bg);border:1px solid var(--wrn-brd);border-left:3px solid var(--wrn)}.callout-err{background:var(--err-bg);border:1px solid var(--err-brd);border-left:3px solid var(--err)}
+.callout-title{font-weight:700;margin-bottom:6px;font-size:.92rem}
+.explain{background:var(--bg-card2);border:1px solid var(--brd);border-radius:var(--r);padding:20px 22px;margin:18px 0}.explain-q{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--t1);margin-bottom:8px}.explain-a{font-size:.9rem;color:var(--t2);line-height:1.8}
+.care{background:linear-gradient(135deg,rgba(48,120,184,.04),rgba(74,138,80,.03));border:1px solid rgba(48,120,184,.12);border-radius:var(--r);padding:22px 24px;margin:20px 0;position:relative}.care::before{content:'💬';position:absolute;top:-12px;left:20px;font-size:20px;background:var(--bg);padding:0 6px}.sec-alt .care::before{background:var(--bg2)}.care-text{font-size:.92rem;color:var(--t2);line-height:1.8;font-style:italic}.care-text strong{color:var(--t1);font-style:normal}
+.case{border-radius:var(--r);padding:22px 24px;margin-bottom:14px}.case-good{background:var(--ok-bg);border:1px solid var(--ok-brd);border-left:4px solid var(--ok)}.case-bad{background:var(--err-bg);border:1px solid var(--err-brd);border-left:4px solid var(--err)}.case-mid{background:var(--wrn-bg);border:1px solid var(--wrn-brd);border-left:4px solid var(--wrn)}.case-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}.case-good .case-label{color:var(--ok)}.case-bad .case-label{color:var(--err)}.case-mid .case-label{color:var(--wrn)}.case-title{font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;margin-bottom:8px;color:var(--t1)}.case-text{font-size:.88rem;color:var(--t2);line-height:1.8}
+.risk{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:22px 24px;margin-bottom:14px}.risk-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}.risk-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}.risk-crit .risk-icon{background:rgba(184,74,58,.08)}.risk-warn .risk-icon{background:rgba(200,144,48,.08)}.risk-name{font-weight:700;font-size:.95rem;color:var(--t1)}.risk-body{font-size:.88rem;color:var(--t2);line-height:1.8;margin-bottom:10px}.risk-math{background:var(--bg-card2);border:1px solid var(--brd);border-radius:var(--rs);padding:12px 16px;font-size:.85rem;color:var(--t2);margin:10px 0;font-family:'JetBrains Mono','Source Sans 3',monospace;line-height:1.7}.risk-fix{font-size:.86rem;color:var(--ok);font-weight:500;margin-top:8px}
+.mistake{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:20px 22px;margin-bottom:12px}.mistake-q{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--err);margin-bottom:6px}.mistake-a{font-size:.86rem;color:var(--t2);line-height:1.8}
+.funnel{display:flex;flex-direction:column;gap:0;margin:20px 0}.funnel-step{display:flex;align-items:center;gap:16px;padding:14px 20px;border-bottom:1px solid var(--brd)}.funnel-step:last-child{border-bottom:none}.funnel-num{font-family:'JetBrains Mono',monospace;font-size:1.8rem;font-weight:800;min-width:70px;text-align:center}.funnel-text{font-size:.88rem;color:var(--t2)}.funnel-step:nth-child(1) .funnel-num{color:var(--ok)}.funnel-step:nth-child(2) .funnel-num{color:var(--wrn)}.funnel-step:nth-child(3) .funnel-num{color:var(--ac2)}.funnel-step:nth-child(4) .funnel-num{color:var(--err)}
+.checklist{counter-reset:check}.check-item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--brd);align-items:flex-start}.check-item:last-child{border-bottom:none}.check-num{counter-increment:check;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;color:var(--ac2);min-width:24px;height:24px;display:flex;align-items:center;justify-content:center;background:var(--ac-bg);border-radius:6px;flex-shrink:0;margin-top:2px}.check-num::before{content:counter(check)}.check-text{font-size:.88rem;color:var(--t2);line-height:1.7}
+.gloss-item{padding:12px 0;border-bottom:1px solid var(--brd)}.gloss-item:last-child{border-bottom:none}.gloss-term{font-weight:700;color:var(--t1);font-size:.9rem;margin-bottom:2px}.gloss-def{font-size:.85rem;color:var(--t2);line-height:1.7}
+table.dt{width:100%;border-collapse:collapse;font-size:13px}.dt thead th{padding:10px 14px;text-align:left;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);border-bottom:2px solid var(--brd2);background:var(--ac-bg)}.dt td{padding:10px 14px;border-bottom:1px solid var(--brd);color:var(--t2)}.dt tr:hover td{background:var(--ac-bg);color:var(--t1)}.dt .n{font-family:'JetBrains Mono',monospace;font-weight:500;color:var(--t1)}.dt .hl{color:var(--ac2);font-weight:600}.tw{overflow-x:auto;border-radius:var(--r);border:1px solid var(--brd)}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:var(--ac-bg);border:1px solid var(--brd);border-radius:100px;font-size:11px;font-weight:500;color:var(--t2);margin:3px}.chip-d{width:5px;height:5px;border-radius:50%;background:var(--ac2)}.tg{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0}
+.bg{display:inline-block;padding:3px 10px;border-radius:100px;font-size:9px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}.bg-ok{background:rgba(74,138,80,.08);color:var(--ok)}.bg-wrn{background:rgba(200,144,48,.08);color:var(--wrn)}.bg-err{background:rgba(184,74,58,.08);color:var(--err)}.bg-inf{background:rgba(74,122,184,.08);color:var(--inf)}.bg-ac{background:var(--ac-bg);color:var(--ac2)}
+.signal{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--brd);align-items:flex-start}.signal:last-child{border-bottom:none}.signal-dot{width:8px;height:8px;border-radius:50%;background:var(--err);flex-shrink:0;margin-top:7px}.signal-text{font-size:.88rem;color:var(--t2);line-height:1.7}
+.cta-block{text-align:center;padding:48px 24px;background:linear-gradient(180deg,var(--bg2),var(--bg3));border-radius:var(--r);margin:24px 0}.cta-t{font-family:'Playfair Display',serif;font-size:clamp(1.3rem,3vw,1.8rem);font-weight:700;margin-bottom:10px;color:var(--t1)}.cta-d{color:var(--t2);font-size:.92rem;max-width:480px;margin:0 auto 20px;line-height:1.7}.cta-btn{display:inline-block;padding:12px 36px;background:linear-gradient(135deg,var(--ac2),var(--ac3));color:#fff;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;border-radius:100px;text-decoration:none;transition:.3s;border:none;cursor:pointer}.cta-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(48,120,184,.3)}.cta-price{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--ac2);margin-bottom:14px}
+.quote{font-family:'Playfair Display',serif;font-size:1rem;color:var(--ac2);font-weight:600;font-style:italic;padding:18px 0;border-top:1px solid var(--brd);border-bottom:1px solid var(--brd);margin:24px 0;text-align:center;line-height:1.7}
+.tc{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.ft{padding:36px 0;border-top:1px solid var(--brd);text-align:center;background:var(--bg)}.ft-t{font-size:11px;color:var(--t3)}
+@media(max-width:768px){.ct{padding:0 16px}.sec{padding:40px 0}.cd{padding:18px}.tc,.cg2,.cg3,.cg4{grid-template-columns:1fr}.hero{min-height:60vh;padding:40px 16px}.hero h1{font-size:1.8rem}.hero-sub{font-size:.9rem}.nav-in{gap:2px;padding:0 12px}.nav-a{font-size:10px;padding:4px 7px}.nav-logo{font-size:12px;letter-spacing:2px;margin-right:6px}.funnel-step{padding:10px 14px;gap:12px}.funnel-num{font-size:1.4rem;min-width:55px}.funnel-text{font-size:.82rem}.risk{padding:16px 18px}.risk-math{font-size:.78rem;padding:10px 12px}.risk-body{font-size:.84rem}.mistake{padding:16px 18px}.mistake-q{font-size:.88rem}.mistake-a{font-size:.82rem}.care{padding:18px 16px}.care::before{left:14px;font-size:16px}.care-text{font-size:.86rem}.explain{padding:16px 18px}.explain-q{font-size:.92rem}.explain-a{font-size:.85rem}.case{padding:16px 18px}.case-text{font-size:.84rem}.cta-block{padding:36px 16px}.cta-btn{padding:12px 28px;font-size:12px}.cta-price{font-size:1rem}.sc{padding:14px}.sv{font-size:1.1rem}.callout{padding:14px 16px}.tw{font-size:12px}.dt td,.dt thead th{padding:8px 10px;font-size:11px}.check-item{gap:10px;padding:10px 0}.check-text{font-size:.84rem}.gloss-item{padding:10px 0}.gloss-term{font-size:.86rem}.gloss-def{font-size:.82rem}.signal{gap:10px;padding:10px 0}.signal-text{font-size:.84rem}.p{font-size:.88rem}.sec-t{font-size:1.3rem}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero" id="top"><div>
+<div class="hero-logo">ZEREK</div>
+<div class="hero-badge">Бизнес-обзор 2026</div>
+<h1>Автомойка<br>как бизнес в Казахстане</h1>
+<p class="hero-sub">Форматы, боксы, вода, мойщики, сезонность и&nbsp;главное — почему «машин много, мыть надо» — это не бизнес-план. Честный разбор для тех, кто думает вложить деньги в автомойку.</p>
+</div></section>
+
+<!-- NAV -->
+<nav class="nav"><div class="nav-in">
+<a href="#top" class="nav-logo">ZEREK</a>
+<a href="#why" class="nav-a">Зачем</a>
+<a href="#count" class="nav-a">Считать</a>
+<a href="#market" class="nav-a">Рынок</a>
+<a href="#formats" class="nav-a">Форматы</a>
+<a href="#money" class="nav-a">Экономика</a>
+<a href="#cases" class="nav-a">Кейсы</a>
+<a href="#extra" class="nav-a">Доход</a>
+<a href="#equip" class="nav-a">Железо</a>
+<a href="#staff" class="nav-a">Кадры</a>
+<a href="#hidden" class="nav-a">Скрытое</a>
+<a href="#risks" class="nav-a">Риски</a>
+<a href="#regions" class="nav-a">Регионы</a>
+<a href="#check" class="nav-a">Чек-лист</a>
+<a href="#cta" class="nav-a">Расчёт</a>
+</div></nav>
+
+<!-- БЛОК 1: ЗАЧЕМ -->
+<section class="sec" id="why"><div class="ct">
+<div class="sec-lb">Зачем этот обзор</div>
+<h2 class="sec-t">Автомойка — «простой бизнес», который разоряет</h2>
+<p class="p">Автомойка входит в тройку самых популярных бизнес-идей в Казахстане. Логика кажется железной: <em>машин много, мыть их надо, вода дешёвая — что может пойти не так?</em> Примерно всё.</p>
+<p class="p">Неправильная локация, слабый поток зимой, война цен с соседней мойкой, текучесть мойщиков, коммунальные счета, которые «не ожидали» — и через год вы продаёте оборудование за треть цены.</p>
+<p class="p">Этот обзор — <strong>не бизнес-курс и не мотивация</strong>. Это попытка собрать реальные цифры, риски и подводные камни. Подготовлен командой ZEREK на основе данных БНС РК, статистики автопарка и рыночных данных.</p>
+<div class="care"><p class="care-text">Мы не отговариваем вас открывать автомойку. Мы хотим, чтобы вы открыли её <strong>правильно</strong> — с нужным количеством боксов, в нужном месте, с реалистичным бюджетом. Потому что «машин много» — это не бизнес-план.</p></div>
+</div></section>
+
+<!-- БЛОК 2: ЗАЧЕМ СЧИТАТЬ -->
+<section class="sec sec-alt" id="count"><div class="ct">
+<div class="sec-lb">Прежде чем вкладывать</div>
+<h2 class="sec-t">Почему нужно считать ДО того, как арендовать бокс</h2>
+<p class="p">Автомойка кажется «простой»: бокс, вода, мойщик. Но у неё жёсткий физический потолок — <strong>один бокс = 8–15 машин в день</strong> (при 40–60 мин на авто). Это не кофейня, где можно увеличить поток. Ваш потолок — количество боксов × время работы.</p>
+<div class="explain">
+<div class="explain-q">Что значит «посчитать бизнес автомойки»?</div>
+<div class="explain-a">Ответить на три вопроса: <strong>1)</strong>&nbsp;сколько стоит запустить N боксов, <strong>2)</strong>&nbsp;сколько машин в день нужно мыть, чтобы покрыть все расходы, <strong>3)</strong>&nbsp;реально ли столько машин на этой конкретной улице. Если ответ на третий вопрос «не знаю» — вы рискуете миллионами.</div>
+</div>
+<div class="explain">
+<div class="explain-q">Точка безубыточности — что это?</div>
+<div class="explain-a">Количество машин в день, при котором доходы покрывают все расходы. Для мойки на 2 бокса это обычно 12–18 машин/день. Меньше — вы теряете деньги. А зимой поток падает на 30–50%.</div>
+</div>
+</div></section>
+
+<!-- БЛОК 3: РЫНОК -->
+<section class="sec" id="market"><div class="ct">
+<div class="sec-lb">Рынок</div>
+<h2 class="sec-t">6.7 миллионов машин — и все они пачкаются</h2>
+<div class="cg cg4" style="margin-bottom:18px">
+<div class="sc"><div class="sv">6.7M</div><div class="sl">автопарк РК</div><div class="ss">2026</div></div>
+<div class="sc"><div class="sv">235K</div><div class="sl">новых авто/год</div><div class="ss">+14% к 2024</div></div>
+<div class="sc"><div class="sv">42%</div><div class="sl">авто старше 20 лет</div></div>
+<div class="sc"><div class="sv">27%</div><div class="sl">авто 3–10 лет</div><div class="ss">ваша ЦА</div></div>
+</div>
+<p class="p">Автопарк огромный и растущий. Но <strong>42% — машины старше 20 лет</strong>. Их владельцы моют реже и выбирают самый дешёвый вариант. Ваш реальный клиент — владелец машины 3–10 лет (27% парка), который ценит состояние кузова.</p>
+
+<div class="callout callout-ok">
+<div class="callout-title" style="color:var(--ok)">🌍 Климат работает на вас</div>
+<p style="font-size:.88rem;color:var(--t2);margin:0">Казахстан — это пыль, степной ветер и грязь после дождя. Машина пачкается быстро и постоянно. Весной — реагенты и песок после зимы. Летом — пыль и насекомые. Осенью — грязь. Климат буквально создан для автомоек. Плюс: <strong>мыть машину самостоятельно во дворе — штраф</strong>. Это запрещено экологическим законодательством. То есть у клиента нет легальной альтернативы — только мойка.</p>
+</div>
+
+<div class="explain">
+<div class="explain-q">Что это значит для вас?</div>
+<div class="explain-a">Спрос есть объективно — климат и закон на вашей стороне. Но не все 6.7 млн машин — ваши клиенты. Реальный рынок — владельцы свежих авто, которые готовы платить 3 000–5 000 ₸. В вашем городе таких — тысячи, не миллионы. И все соседние мойки тоже на них рассчитывают.</div>
+</div>
+
+<div class="callout callout-wrn">
+<div class="callout-title" style="color:var(--wrn)">⚠️ Главная особенность спроса: волны</div>
+<p style="font-size:.88rem;color:var(--t2);margin:0">Поток на автомойке — <strong>не равномерный</strong>. Когда погода стабильная (хорошая или плохая) — клиентов мало: в солнце «и так чисто», в дождь «всё равно испачкается». А вот <strong>после дождя или снега</strong> — резкий наплыв: все хотят помыться одновременно. Вы либо справляетесь с волной (и зарабатываете за 2 дня недельную норму), либо теряете клиентов в очереди. Организация и скорость обработки в пиковые дни — ключевой фактор прибыли.</p>
+</div>
+</div></section>
+
+<!-- БЛОК 4: ФОРМАТЫ -->
+<section class="sec sec-alt" id="formats"><div class="ct">
+<div class="sec-lb">Форматы</div>
+<h2 class="sec-t">Четыре модели: от терминала до тоннеля</h2>
+<div class="cg cg2" style="margin-bottom:18px">
+
+<div class="cd" style="border-top:3px solid var(--inf)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-inf">Автомат</span><h3 style="font-size:15px;font-weight:700;margin-top:6px">🪙 Терминальная самомойка (открытая)</h3></div><div style="text-align:right"><div style="font-size:18px;font-weight:800;font-family:'JetBrains Mono';color:var(--inf)">15–40M ₸</div><div style="font-size:10px;color:var(--t3)">за 5–8 постов</div></div></div>
+<div style="margin-top:12px">
+<div class="pr"><div class="prh"><span class="prn">Средний чек</span><span class="prv">800–1 500 ₸</span></div><div class="prt"><div class="prf" style="width:15%;background:var(--inf)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Персонал</span><span class="prv">0–1 чел.</span></div><div class="prt"><div class="prf" style="width:8%;background:var(--inf)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Минимум постов</span><span class="prv">5+ шт.</span></div><div class="prt"><div class="prf" style="width:35%;background:var(--inf)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Окупаемость</span><span class="prv">14–30 мес.</span></div><div class="prt"><div class="prf" style="width:55%;background:var(--inf)"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:8px">Открытые посты с терминалами оплаты. Клиент моет сам. Персонала почти нет — но CAPEX серьёзный: ставить меньше 5 постов не имеет смысла (экономика не сходится). Главный минус — <strong>зимой не работает</strong>: на открытом воздухе при –15°C мыть машину невозможно. В северных регионах КЗ это 4–5 месяцев простоя. Зато летом — высокая пропускная способность и минимальные расходы на ФОТ.</p>
+</div>
+
+<div class="cd" style="border-top:3px solid var(--ac2)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-ac">Классика</span><h3 style="font-size:15px;font-weight:700;margin-top:6px">🧽 Ручная (1–2 бокса)</h3></div><div style="text-align:right"><div style="font-size:18px;font-weight:800;font-family:'JetBrains Mono';color:var(--ac2)">5–15M ₸</div><div style="font-size:10px;color:var(--t3)">старт</div></div></div>
+<div style="margin-top:12px">
+<div class="pr"><div class="prh"><span class="prn">Средний чек</span><span class="prv">2 500–4 500 ₸</span></div><div class="prt"><div class="prf" style="width:35%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Персонал</span><span class="prv">2–4 чел.</span></div><div class="prt"><div class="prf" style="width:25%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Окупаемость</span><span class="prv">8–18 мес.</span></div><div class="prt"><div class="prf" style="width:40%"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:8px">Самый распространённый формат. 8–15 авто/день на бокс. Сильная зависимость от мойщиков. Оптимальный старт для одиночного предпринимателя.</p>
+</div>
+
+<div class="cd" style="border-top:3px solid var(--wrn)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-wrn">Масштаб</span><h3 style="font-size:15px;font-weight:700;margin-top:6px">🏗 Ручная (3–5 боксов)</h3></div><div style="text-align:right"><div style="font-size:18px;font-weight:800;font-family:'JetBrains Mono';color:var(--wrn)">15–40M ₸</div><div style="font-size:10px;color:var(--t3)">старт</div></div></div>
+<div style="margin-top:12px">
+<div class="pr"><div class="prh"><span class="prn">Средний чек</span><span class="prv">3 000–5 500 ₸</span></div><div class="prt"><div class="prf" style="width:45%;background:var(--wrn)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Персонал</span><span class="prv">5–12 чел.</span></div><div class="prt"><div class="prf" style="width:50%;background:var(--wrn)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Окупаемость</span><span class="prv">14–30 мес.</span></div><div class="prt"><div class="prf" style="width:60%;background:var(--wrn)"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:8px">Полноценный бизнес: зона ожидания, допуслуги, бренд. Но: ФОТ большой, управление сложное, коммунальные серьёзные. Нужна система.</p>
+</div>
+
+<div class="cd" style="border-top:3px solid var(--err)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-err">Премиум</span><h3 style="font-size:15px;font-weight:700;margin-top:6px">🔄 Тоннельная / портальная</h3></div><div style="text-align:right"><div style="font-size:18px;font-weight:800;font-family:'JetBrains Mono';color:var(--err)">50–150M ₸</div><div style="font-size:10px;color:var(--t3)">старт</div></div></div>
+<div style="margin-top:12px">
+<div class="pr"><div class="prh"><span class="prn">Пропускная способность</span><span class="prv">40–100 авто/день</span></div><div class="prt"><div class="prf" style="width:80%;background:var(--err)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Окупаемость</span><span class="prv">24–48 мес.</span></div><div class="prt"><div class="prf" style="width:85%;background:var(--err)"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:8px">Автоматическая мойка. Огромный CAPEX, сервис оборудования = импорт запчастей. Имеет смысл только при трафике 50+ авто/день. Для крупных городов.</p>
+</div>
+</div>
+
+<div class="explain">
+<div class="explain-q">Какой формат выбрать?</div>
+<div class="explain-a">Бюджет до 15M? → Ручная на 1–2 бокса — классический старт. Есть 20–40M? → 3–5 боксов с допуслугами. Хотите бизнес без персонала? → Терминальная самомойка, но нужно 15–40M и 5+ постов (иначе не окупится), плюс зимой простой. Тоннель — только если трафик 50+ авто/день подтверждён. <strong>Совет ZEREK:</strong> для первого бизнеса — ручная на 2 бокса. Один — потолок слишком низкий; три — рано без опыта.</div>
+</div>
+</div></section>
+
+<!-- БЛОК 5: ЭКОНОМИКА -->
+<section class="sec" id="money"><div class="ct">
+<div class="sec-lb">Экономика</div>
+<h2 class="sec-t">Сколько зарабатывает один бокс</h2>
+
+<div class="callout callout-ok" style="margin-top:0">
+<div class="callout-title" style="color:var(--ok)">📊 Бенчмарк: ручная мойка, 2 бокса, город 400K+</div>
+<div class="cg cg4" style="margin-top:10px">
+<div class="sc"><div class="sv">10–12</div><div class="sl">авто/бокс/день</div></div>
+<div class="sc"><div class="sv">3 500 ₸</div><div class="sl">средний чек</div></div>
+<div class="sc"><div class="sv">2.1–2.5M</div><div class="sl">выручка / мес</div><div class="ss">на 2 бокса</div></div>
+<div class="sc"><div class="sv" style="color:var(--ok)">15–25%</div><div class="sl">чистая прибыль</div></div>
+</div>
+</div>
+
+<div class="cd" style="margin-top:18px">
+<h3 style="font-size:14px;font-weight:700;margin-bottom:14px">Куда уходит выручка (~2.3M ₸/мес на 2 бокса)</h3>
+<div class="pr"><div class="prh"><span class="prn">👥 Мойщики (сдельно 40–50%)</span><span class="prv">40–50%</span></div><div class="prt"><div class="prf" style="width:45%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">🏠 Аренда бокса</span><span class="prv">10–18%</span></div><div class="prt"><div class="prf" style="width:14%;background:var(--wrn)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">💧 Вода + электричество</span><span class="prv">8–15%</span></div><div class="prt"><div class="prf" style="width:12%;background:var(--inf)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">🧴 Химия + расходники</span><span class="prv">5–8%</span></div><div class="prt"><div class="prf" style="width:7%;background:var(--t4)"></div></div></div>
+<div style="margin-top:14px;padding:12px 16px;background:var(--ok-bg);border:1px solid var(--ok-brd);border-radius:var(--rs);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+<span style="font-size:11px;color:var(--ok);font-weight:600;text-transform:uppercase;letter-spacing:1px">Чистая прибыль</span>
+<span style="font-size:22px;font-weight:800;font-family:'JetBrains Mono';color:var(--ok)">350K–600K ₸/мес</span>
+</div>
+</div>
+
+<div class="explain">
+<div class="explain-q">Что это значит простыми словами?</div>
+<div class="explain-a">Главная статья расходов автомойки — <strong>мойщики</strong>. Они забирают 40–50% от чека. Это не зарплата «на руки» — это их доля. При чеке 3 500 ₸ мойщик получает ~1 500–1 750 ₸ с каждой машины. Вам остаётся 350–600K/мес с двух боксов. Это при хорошем раскладе и стабильном потоке.</div>
+</div>
+
+<div class="callout callout-err">
+<div class="callout-title" style="color:var(--err)">Зимний фактор</div>
+<p style="font-size:.88rem;color:var(--t2);margin:0">В северных регионах КЗ зима = –30–50% потока на 4–5 месяцев. Расходы (аренда, коммунальные) — те же 12 месяцев. Если вы считали окупаемость по летнему потоку — пересчитайте с учётом зимы.</p>
+</div>
+</div></section>
+
+<!-- БЛОК 6: КЕЙСЫ -->
+<section class="sec sec-alt" id="cases"><div class="ct">
+<div class="sec-lb">Три сценария</div>
+<h2 class="sec-t">Как это выглядит на практике</h2>
+
+<div class="case case-good">
+<div class="case-label">🟢 Хороший старт</div>
+<div class="case-title">2 бокса, Алматы, рядом с ЖК и выездом на проспект</div>
+<div class="case-text">Вложил 12M ₸ (9M — запуск, 3M — подушка). Локация с видимостью с дороги, парковка удобная. Первый месяц — 6 авто/бокс/день. Третий — 10. Лето — 14. Добавил полировку и химчистку салона — средний чек вырос с 3 000 до 4 500 ₸. Окупаемость — 14 месяцев. Чистая прибыль летом: ~600K, зимой: ~250K. <strong>В среднем ~450K/мес — не роскошь, но рабочий бизнес.</strong></div>
+</div>
+
+<div class="case case-bad">
+<div class="case-label">🔴 Типичная ошибка</div>
+<div class="case-title">1 бокс, Астана, промзона за объездной</div>
+<div class="case-text">Вложил 6M — всё что было. Бокс дешёвый, но далеко от жилых массивов. Нет случайного трафика — только «кто знает». 4–5 машин/день. Выручка 450K при расходах 650K (аренда + мойщик + коммунальные). Минус 200K/мес. Зимой — 2–3 машины/день. Через 4 месяца — закрытие. <strong>Потеряно 6M + 800K убытков. Главная ошибка: сэкономил на локации.</strong></div>
+</div>
+
+<div class="case case-mid">
+<div class="case-label">🟡 Ловушка середины</div>
+<div class="case-title">2 бокса, Караганда, спальный район</div>
+<div class="case-text">Вложил 10M ₸. Место нормальное, но не на трафике — только местные. 7–8 машин/бокс летом, 4–5 зимой. Выручка в среднем 1.6M/мес. Расходы 1.3M. Прибыль: <em>300K/мес</em>. Предприниматель сам контролирует мойщиков, сам закупает химию, сам разруливает конфликты с клиентами. Окупаемость — 33 месяца. <strong>Формально работает. Фактически — он купил себе работу прораба за 300K.</strong></div>
+</div>
+
+<div class="care"><p class="care-text">Автомойка — бизнес с физическим потолком. Вы не можете «ускорить» мойку машины. Единственные рычаги — количество боксов, допуслуги и средний чек. Если все три ограничены — вы в ловушке.</p></div>
+</div></section>
+
+<!-- БЛОК 7: ДОПРОДАЖИ -->
+<section class="sec" id="extra"><div class="ct">
+<div class="sec-lb">Допродажи</div>
+<h2 class="sec-t">Кузов + салон = база. Прибыль — на допуслугах</h2>
+<p class="p">Мойка кузова и уборка салона (пылесос + протирка) — это <strong>базовая услуга</strong>, за которую клиент и приезжает. Средний чек 3 000–5 000 ₸. Но <strong>маржинальность делается на дополнительных услугах</strong>. Клиент уже здесь, машина уже на подъёмнике — предложите больше.</p>
+
+<div class="cg cg2">
+<div class="cd cd2"><h3 style="font-size:14px;font-weight:700;margin-bottom:8px">🔧 Мойка двигателя</h3><p style="font-size:12px;color:var(--t2);margin-bottom:8px">Цена: 3 000–6 000 ₸. Себестоимость: 500–1 000 ₸ (химия + время). Наценка ×4–6. Делается за 15–20 минут. Рекомендуется 1–2 раза в год — хороший сезонный апсейл весной.</p><div class="tg"><span class="chip"><span class="chip-d"></span>Двигатель: ×4–6</span></div></div>
+<div class="cd cd2"><h3 style="font-size:14px;font-weight:700;margin-bottom:8px">⬛ Чернение шин и пластика</h3><p style="font-size:12px;color:var(--t2);margin-bottom:8px">Цена: 1 000–2 500 ₸. Себестоимость: 100–300 ₸. Наценка ×5–10. Визуальный эффект — сразу видно. Клиент доволен, вы заработали на 5 минут работы. Идеальный «мягкий» апсейл.</p><div class="tg"><span class="chip"><span class="chip-d"></span>Чернение: ×5–10</span></div></div>
+<div class="cd cd2"><h3 style="font-size:14px;font-weight:700;margin-bottom:8px">🌧 Антидождь (кузов и стёкла)</h3><p style="font-size:12px;color:var(--t2);margin-bottom:8px">Цена: 3 000–8 000 ₸. Себестоимость: 500–1 500 ₸. Гидрофобное покрытие — вода скатывается, грязь меньше прилипает. Хорошо продаётся осенью и весной. Эффект — 2–4 недели.</p><div class="tg"><span class="chip"><span class="chip-d"></span>Антидождь: ×4–6</span></div></div>
+<div class="cd cd2"><h3 style="font-size:14px;font-weight:700;margin-bottom:8px">🧴 Полироль кожи / приборной панели</h3><p style="font-size:12px;color:var(--t2);margin-bottom:8px">Цена: 2 000–5 000 ₸. Себестоимость: 300–800 ₸. Кондиционер для кожаных сидений, полироль для пластика. Машина «пахнет новой» — клиенты это ценят. Хорошо идёт с владельцами авто 0–5 лет.</p><div class="tg"><span class="chip"><span class="chip-d"></span>Кожа: ×4–6</span><span class="chip"><span class="chip-d"></span>Панель: ×5–8</span></div></div>
+<div class="cd cd2"><h3 style="font-size:14px;font-weight:700;margin-bottom:8px">🧼 Сухой пар</h3><p style="font-size:12px;color:var(--t2);margin-bottom:8px">Цена: 5 000–12 000 ₸. Парогенератор обрабатывает салон — убивает запахи, бактерии, клещей. Высокий чек, но нужен парогенератор (~200–500K). Окупается за 30–50 заказов.</p><div class="tg"><span class="chip"><span class="chip-d"></span>Сухой пар: ×3–5</span></div></div>
+<div class="cd cd2"><h3 style="font-size:14px;font-weight:700;margin-bottom:8px">✨ Воск / керамика / полировка</h3><p style="font-size:12px;color:var(--t2);margin-bottom:8px">Воск: 2 000–5 000 ₸. Полировка: 15 000–40 000 ₸. Керамика: 30 000–80 000 ₸. Высокий чек, но нужны навыки и дорогие составы. 2–3 полировки/нед = +150–300K/мес чистыми.</p><div class="tg"><span class="chip"><span class="chip-d"></span>Воск: ×3–5</span><span class="chip"><span class="chip-d"></span>Полировка: ×4–8</span></div></div>
+</div>
+
+<div class="callout callout-ac"><p style="font-size:.88rem;color:var(--t2);margin:0"><strong style="color:var(--ac2)">Правило:</strong> автомойка, которая делает только кузов+салон — отдаёт 50% мойщику и зарабатывает минимум. Допуслуги (чернение, антидождь, двигатель, пар) увеличивают средний чек на 30–80% при минимальных затратах. Именно на них строится прибыль.</p></div>
+</div></section>
+
+<!-- БЛОК 8: ОБОРУДОВАНИЕ -->
+<section class="sec sec-alt" id="equip"><div class="ct">
+<div class="sec-lb">Оборудование</div>
+<h2 class="sec-t">Вода, давление, химия — на чём не экономить</h2>
+
+<div class="tw" style="margin-bottom:16px"><table class="dt"><thead><tr><th>Оборудование</th><th>Бюджет</th><th>Оптимум</th><th>Критичность</th></tr></thead><tbody>
+<tr><td>АВД (аппарат высокого давления)</td><td class="n">200–400K</td><td class="n hl">600K–1.2M</td><td style="color:var(--err)">●●●●●</td></tr>
+<tr><td>Пылесос промышленный</td><td class="n">80–150K</td><td class="n hl">200–400K</td><td style="color:var(--wrn)">●●●●○</td></tr>
+<tr><td>Система очистки воды</td><td class="n">200–500K</td><td class="n hl">600K–1.5M</td><td style="color:var(--err)">●●●●●</td></tr>
+<tr><td>Химия (стартовый запас)</td><td class="n">50–100K</td><td class="n">100–200K</td><td style="color:var(--err)">●●●●○</td></tr>
+<tr><td>Освещение бокса</td><td class="n">50–100K</td><td class="n">100–200K</td><td style="color:var(--wrn)">●●●○○</td></tr>
+<tr><td>Обогрев бокса (зима)</td><td class="n">100–300K</td><td class="n">300–600K</td><td style="color:var(--err)">●●●●●</td></tr>
+</tbody></table></div>
+
+<div class="callout callout-ac">
+<div class="callout-title" style="color:var(--ac2)">💡 Совет ZEREK</div>
+<p style="font-size:.88rem;color:var(--t2);margin:0"><strong>Нельзя экономить:</strong> АВД и химия. Дешёвый аппарат не даёт нужного давления — мойщик тратит вдвое больше времени, вы теряете 3–5 машин/день. Дешёвая химия оставляет разводы — клиент не вернётся. <em>АВД за 800K окупается быстрее, чем потеря 5 клиентов в день из-за медленной мойки.</em></p>
+</div>
+</div></section>
+
+<!-- БЛОК 9: КАДРЫ -->
+<section class="sec" id="staff"><div class="ct">
+<div class="sec-lb">Кадры</div>
+<h2 class="sec-t">Мойщики: самая больная тема</h2>
+<p class="p">Мойщик — физически тяжёлая работа с низким статусом. Оплата сдельная: <em>40–50% от чека</em>. При 15 авто/день и чеке 3 500 ₸ — это 25 000–30 000 ₸/день, 550–750K/мес. Звучит нормально? Но работать нужно стоя, в воде, на холоде зимой и в жаре летом.</p>
+
+<div class="tc">
+<div class="cd"><h3 style="font-size:14px;font-weight:700;margin-bottom:10px">💰 Заработок мойщика</h3>
+<div class="pr"><div class="prh"><span class="prn">Слабый день (5 авто)</span><span class="prv">8–12K ₸</span></div><div class="prt"><div class="prf" style="width:20%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Средний день (10 авто)</span><span class="prv">17–25K ₸</span></div><div class="prt"><div class="prf" style="width:45%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Хороший день (15 авто)</span><span class="prv">25–35K ₸</span></div><div class="prt"><div class="prf" style="width:65%"></div></div></div>
+<p style="font-size:10px;color:var(--t3);margin-top:6px">Сдельная оплата 40–50% от чека</p></div>
+<div class="cd"><h3 style="font-size:14px;font-weight:700;margin-bottom:10px">🚨 Реальность</h3>
+<p style="font-size:12px;color:var(--t2);margin-bottom:8px"><strong>Текучесть катастрофическая.</strong> Средний срок работы — 2–4 месяца. Уходят в стройку, доставку, такси.</p>
+<p style="font-size:12px;color:var(--t2);margin-bottom:8px"><strong>Качество нестабильно.</strong> Новый мойщик = царапины, разводы, жалобы клиентов.</p>
+<p style="font-size:12px;color:var(--t2)"><strong>Зимой уходят первыми.</strong> Работа на морозе — мало кто выдерживает. Именно когда людей не хватает — их нет.</p>
+</div>
+</div>
+</div></section>
+
+<!-- БЛОК 11: СКРЫТЫЕ РАСХОДЫ -->
+<section class="sec sec-alt" id="hidden"><div class="ct">
+<div class="sec-lb">Скрытые расходы</div>
+<h2 class="sec-t">Деньги, которых нет в бизнес-плане</h2>
+
+<div class="cg cg2" style="margin-bottom:14px">
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">💧 Водоотведение</h4><span class="bg bg-err">50–200K/мес</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Грязная вода с химией не сливается в канализацию просто так. Нужны отстойники, жироуловители. Без них — штрафы экологической инспекции.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">🔧 Ремонт АВД</h4><span class="bg bg-wrn">30–80K/мес</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Уплотнители, шланги, форсунки. АВД работает по 8–12 часов/день. Износ быстрый. Запчасти на импортные модели — не всегда в наличии.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">🌡 Отопление бокса</h4><span class="bg bg-err">80–200K/мес зимой</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Вода замерзает. Бокс без отопления зимой — не работает. Газ, электро-обогрев, тёплый пол — всё стоит серьёзных денег. В Астане и на севере — критично.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">🚗 Страховые случаи</h4><span class="bg bg-wrn">0–300K/случай</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Мойщик поцарапал бампер, сломал зеркало, повредил антенну. 1–2 случая в квартал — норма. Без камеры и акта — платите из своего кармана.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">📋 Экология и СЭС</h4><span class="bg bg-ac">100–400K разово</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Разрешение на водопользование, утилизация отходов, экологическая экспертиза. Штрафы — серьёзные.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">👥 Текучесть</h4><span class="bg bg-wrn">20–50K за уход</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Каждый новый мойщик — 1 неделя адаптации, риск повреждений, потеря качества. При 4–6 уходах/год — 100–300K.</p></div>
+</div>
+
+<div class="explain">
+<div class="explain-q">Посчитайте на пальцах</div>
+<div class="explain-a">Мойщики (45%) + аренда (15%) + вода/электро (12%) + химия (6%) + скрытые (10–15%) = <strong>88–93% от выручки</strong>. Вам остаётся 7–12%. При выручке 2.3M — это 160–275K. А зимой, когда поток –40%, эти 7% превращаются в минус.</div>
+</div>
+</div></section>
+
+<!-- БЛОК 12: РИСКИ -->
+<section class="sec" id="risks"><div class="ct">
+<div class="sec-lb">Риски и закрытия</div>
+<h2 class="sec-t">Почему закрываются автомойки</h2>
+
+<h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:24px 0 14px">Статистика выживаемости</h3>
+<div class="cd" style="margin-bottom:18px">
+<div class="funnel">
+<div class="funnel-step"><div class="funnel-num">100</div><div class="funnel-text"><strong>Открылось 100 автомоек.</strong></div></div>
+<div class="funnel-step"><div class="funnel-num">60</div><div class="funnel-text"><strong>Через 1 год</strong> — 60. Зима убила 20, локация — ещё 20.</div></div>
+<div class="funnel-step"><div class="funnel-num">30</div><div class="funnel-text"><strong>Через 3 года</strong> — 30. Коммунальные, конкуренция, износ оборудования.</div></div>
+<div class="funnel-step"><div class="funnel-num">18</div><div class="funnel-text"><strong>Через 5 лет</strong> — 18. Те, кто выбрал правильную локацию и считал.</div></div>
+</div>
+</div>
+
+<div class="care"><p class="care-text">Автомойка — бизнес с двойной сезонностью: зимой падает поток, а расходы на отопление растут. Это делает её одним из самых сезонно-уязвимых бизнесов в КЗ. <strong>Подготовка = выживание.</strong></p></div>
+
+<h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:28px 0 14px">Топ причин закрытия автомоек</h3>
+
+<div class="risk risk-crit">
+<div class="risk-head"><div class="risk-icon">❄️</div><div><div class="risk-name">1. Зимний провал</div><span class="bg bg-err">критический</span></div></div>
+<div class="risk-body">В Астане, Караганде, Павлодаре, Костанае зима — 4–5 месяцев с морозами до –30°C. Поток падает на 30–50%. А расходы на отопление бокса растут на 80–200K/мес. Двойной удар: меньше доходов, больше расходов.</div>
+<div class="risk-math">Лето: 12 авто/бокс × 2 бокса × 3 500 ₸ = 2.5M/мес. Зима: 6 авто × 2 × 3 500 = 1.3M. Минус отопление +150K. Разница: –1.35M/мес.</div>
+<div class="risk-fix">✅ Защита: подушка на зиму обязательна. Утеплённый бокс. Акции зимой. Диверсификация (химчистка салона не зависит от погоды).</div>
+</div>
+
+<div class="risk risk-crit">
+<div class="risk-head"><div class="risk-icon">📍</div><div><div class="risk-name">2. Провал локации</div><span class="bg bg-err">критический</span></div></div>
+<div class="risk-body">Автомойка на задворках без видимости с дороги = пустые боксы. В отличие от кофейни, сюда не «заходят мимо» — сюда заезжают. Нужна видимость, удобный заезд, парковка.</div>
+<div class="risk-fix">✅ Защита: точка должна быть видна с проезжей части. Удобный заезд/выезд. Рядом с ЖК, АЗС, ТРЦ.</div>
+</div>
+
+<div class="risk risk-crit">
+<div class="risk-head"><div class="risk-icon">👥</div><div><div class="risk-name">3. Кадровый кризис</div><span class="bg bg-err">критический</span></div></div>
+<div class="risk-body">Нет мойщика = нет выручки. Мойщики уходят в среднем через 2–4 месяца. Зимой — ещё быстрее. Каждый уход = неделя без дохода с бокса + риск повреждений от новичка.</div>
+<div class="risk-math">Бокс без мойщика 5 дней = потеря 12 авто × 3 500 ₸ × 5 = 210K ₸. Плюс повреждение авто новичком = 50–200K.</div>
+<div class="risk-fix">✅ Защита: оплата выше рынка. Бонусы за стаж. Тёплый бокс зимой. Камеры для защиты от претензий.</div>
+</div>
+
+<div class="risk risk-warn">
+<div class="risk-head"><div class="risk-icon">⚔️</div><div><div class="risk-name">4. Ценовая война</div><span class="bg bg-wrn">серьёзный</span></div></div>
+<div class="risk-body">Конкурент через дорогу снизил цену на 500 ₸. Вы в ответ. Через полгода оба моют за себестоимость. А клиенту всё равно — едет к тому, кто ближе.</div>
+<div class="risk-fix">✅ Защита: конкурируйте качеством и допуслугами, не ценой. Программа лояльности, 10-я мойка бесплатно.</div>
+</div>
+
+<div class="risk risk-warn">
+<div class="risk-head"><div class="risk-icon">💧</div><div><div class="risk-name">5. Коммунальные расходы</div><span class="bg bg-wrn">серьёзный</span></div></div>
+<div class="risk-body">Вода + электричество + отопление = 8–15% выручки летом и 15–25% зимой. Тарифы растут. В Астане зимние коммунальные могут достигать 300–400K/мес на 2 бокса.</div>
+</div>
+
+<!-- ПРОМЕЖУТОЧНЫЙ CTA -->
+<div class="cta-block" style="margin:28px 0">
+<div class="cta-t">Какие риски критичны для вашего города?</div>
+<p class="cta-d">Quick Check рассчитает экономику вашей автомойки — с учётом количества боксов, города, сезонности и бюджета.</p>
+<div class="cta-price">3 000 ₸</div>
+<a href="https://t.me/zerekai_bot" target="_blank" class="cta-btn">Проверить свою идею →</a>
+</div>
+
+<!-- ОШИБКИ -->
+<h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:28px 0 14px">Ошибки, которые не выглядят как ошибки</h3>
+
+<div class="mistake">
+<div class="mistake-q">«Один бокс для начала — потом расширюсь»</div>
+<div class="mistake-a">Один бокс — это потолок 15 машин/день. При чеке 3 500 ₸ и сдельной оплате мойщика — ваша прибыль 150–250K/мес максимум. Минус зима. С одного бокса невозможно окупить даже скромные инвестиции за разумный срок.</div>
+</div>
+
+<div class="mistake">
+<div class="mistake-q">«Летом отобью — зимой переживу»</div>
+<div class="mistake-a">Зима в Казахстане — 4–5 месяцев. Это не «пережить пару недель». Это треть года с –30–50% потока и +50–100% расходов на отопление. Если вы не заложили зиму в расчёт — вы заложили банкротство.</div>
+</div>
+
+<div class="mistake">
+<div class="mistake-q">«Сэкономлю на боксе — возьму гараж на окраине»</div>
+<div class="mistake-a">Гараж без видимости с дороги = нулевой случайный трафик. Вы будете зависеть только от «своих» клиентов и 2ГИС. При этом аренда нормального бокса с видимостью стоит на 50–100K больше — а приносит в 3 раза больше клиентов.</div>
+</div>
+
+<div class="mistake">
+<div class="mistake-q">«Мойщики сами разберутся — я буду управлять»</div>
+<div class="mistake-a">Без контроля мойщик экономит на химии, сокращает время мойки, берёт деньги мимо кассы. Камеры + чек-лист + контроль расхода химии — не «микроменеджмент», а выживание бизнеса.</div>
+</div>
+
+<!-- СИГНАЛЫ СТОП -->
+<h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:28px 0 14px">Сигналы, что пора остановиться</h3>
+
+<div class="cd">
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Третий месяц подряд поток ниже точки безубыточности</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Подушка закончилась — платите аренду из личных денег</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Мойщики увольняются быстрее, чем вы находите новых</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Зимой боксы стоят пустыми по 4–5 часов в день</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Конкурент открылся ближе к трафику и забрал ваших клиентов</div></div>
+</div>
+
+<div class="care"><p class="care-text">Закрыть бизнес вовремя — не поражение. Оборудование автомойки можно продать за 40–60% стоимости. <strong>Лучше вернуть 4 миллиона из 10, чем потерять все 10.</strong></p></div>
+
+<div class="quote">«Оптимист открывает автомойку. Пессимист считает зимние коммунальные.<br>Реалист делает и то, и другое — и именно он до сих пор работает.»</div>
+</div></section>
+
+<!-- БЛОК 13: РЕГИОНЫ -->
+<section class="sec sec-alt" id="regions"><div class="ct">
+<div class="sec-lb">Регионы</div>
+<h2 class="sec-t">Где открывать: авто × зарплата × климат</h2>
+<p class="p">Для автомойки важны три фактора: <strong>количество авто</strong> (трафик), <strong>зарплата</strong> (готовность платить) и <strong>климат</strong> (сезонность).</p>
+
+<div class="cg cg3">
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px;color:var(--ok)">🏙 Лучшие рынки</h4><p style="font-size:12px;color:var(--t2)"><strong>Алматы</strong> — макс. авто + мягкая зима + высокая з/п. <strong>Шымкент</strong> — быстрый рост + тёплый климат. <strong>Атырау</strong> — высокая з/п + мягкий климат.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px;color:var(--wrn)">⚠️ Средние</h4><p style="font-size:12px;color:var(--t2)"><strong>Караганда, Актобе</strong> — нормальный спрос, но зима 4–5 мес. Нужен утеплённый бокс и подушка на холодный сезон.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px;color:var(--err)">❄️ Сложные</h4><p style="font-size:12px;color:var(--t2)"><strong>Астана, Костанай, Павлодар, СКО</strong> — суровая зима + высокие коммунальные. Работает только с утеплённым боксом и серьёзной подушкой.</p></div>
+</div>
+</div></section>
+
+<!-- БЛОК 14: ЧЕК-ЛИСТ -->
+<section class="sec" id="check"><div class="ct">
+<div class="sec-lb">Самопроверка</div>
+<h2 class="sec-t">Готовы ли вы открыть автомойку?</h2>
+
+<div class="cd">
+<div class="checklist">
+<div class="check-item"><div class="check-num"></div><div class="check-text">У вас есть подушка на 4–5 зимних месяцев <strong>сверх</strong> инвестиций?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">Вы знаете, сколько машин в день нужно мыть, чтобы выйти в ноль?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">Потенциальная точка видна с проезжей части и имеет удобный заезд?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">Вы посчитали стоимость отопления бокса зимой в вашем городе?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">У вас есть план, если мойщик уйдёт в первый месяц?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">Вы знаете стоимость системы водоочистки и экологических требований?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">Вы готовы к тому, что зимой прибыль может быть нулевой или минусовой?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">У вас минимум 2 бокса (1 бокс — потолок слишком низкий)?</div></div>
+</div>
+</div>
+
+<div class="care"><p class="care-text">Если на 3+ вопроса ответ «нет» — вы ещё не готовы вкладывать. Но вы <strong>уже готовы считать</strong>. Следующий шаг — не аренда бокса, а финансовая модель.</p></div>
+</div></section>
+
+<!-- БЛОК 15: ГЛОССАРИЙ -->
+<section class="sec sec-alt" id="glossary"><div class="ct">
+<div class="sec-lb">Словарь ZEREK</div>
+<h2 class="sec-t">Термины простым языком</h2>
+
+<div class="cd">
+<div class="gloss-item"><div class="gloss-term">Точка безубыточности</div><div class="gloss-def">Сколько машин/день нужно мыть, чтобы доходы покрывали расходы. Меньше — теряете деньги.</div></div>
+<div class="gloss-item"><div class="gloss-term">Средний чек</div><div class="gloss-def">Сколько в среднем платит один клиент: мойка кузова + допуслуги. Не цена базовой мойки, а вся сумма.</div></div>
+<div class="gloss-item"><div class="gloss-term">АВД (аппарат высокого давления)</div><div class="gloss-def">Главный инструмент автомойки. «Керхер» — это бренд, АВД — общее название. Давление 150–200 бар для профессиональной мойки.</div></div>
+<div class="gloss-item"><div class="gloss-term">Сдельная оплата</div><div class="gloss-def">Мойщик получает процент от каждой машины (40–50% от чека), а не фиксированную зарплату. Больше помыл — больше заработал.</div></div>
+<div class="gloss-item"><div class="gloss-term">Сезонность</div><div class="gloss-def">Зависимость потока от времени года. Летом — пик, зимой — спад 30–50%. Расходы при этом не падают, а растут (отопление).</div></div>
+<div class="gloss-item"><div class="gloss-term">Пропускная способность</div><div class="gloss-def">Максимум машин, который физически может помыть один бокс за день. Обычно 8–15 при ручной мойке (40–60 мин на авто).</div></div>
+<div class="gloss-item"><div class="gloss-term">Кассовый разрыв</div><div class="gloss-def">Когда нужно платить (аренда, коммунальные), а выручки не хватает. Зимой — главная причина закрытий.</div></div>
+<div class="gloss-item"><div class="gloss-term">Окупаемость</div><div class="gloss-def">Через сколько месяцев прибыль покроет вложенные инвестиции. Для автомойки на 2 бокса — обычно 12–24 мес.</div></div>
+</div>
+</div></section>
+
+<!-- БЛОК 16: CTA -->
+<section class="sec" id="cta"><div class="ct">
+<div class="sec-lb">Что дальше</div>
+<h2 class="sec-t">От обзора — к вашим цифрам</h2>
+<p class="p"><strong>Ваша автомойка будет работать в конкретном городе, с конкретным климатом, количеством боксов и бюджетом.</strong> Общие цифры — ландшафт. Решение — на основе вашей модели.</p>
+
+<div class="cta-block" style="margin-bottom:20px">
+<div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:800;color:var(--ac2);letter-spacing:4px;margin-bottom:16px">ZEREK</div>
+<div class="cta-t">Проверьте свою идею за 5 минут</div>
+<p class="cta-d">Quick Check покажет: сколько машин/день вам нужно, когда окупится, выживет ли ваша мойка зимой.</p>
+<div class="cta-price">3 000 ₸</div>
+<a href="https://t.me/zerekai_bot" target="_blank" class="cta-btn">Проверить идею →</a>
+</div>
+
+<div class="cta-block" style="background:linear-gradient(135deg,rgba(48,120,184,.06),rgba(184,74,58,.03))">
+<div class="cta-t">Нужна полная финансовая модель?</div>
+<p class="cta-d">60 месяцев расчётов, сезонность помесячно, три сценария, отопление зимой — всё в одном файле.</p>
+<div class="cta-price">9 000 ₸</div>
+<a href="https://t.me/zerekai_bot" target="_blank" class="cta-btn">Получить финмодель →</a>
+</div>
+
+<div class="care" style="margin-top:20px"><p class="care-text">Мы не продаём мечту. Мы продаём расчёт. <strong>Лучше узнать правду за 3 000 ₸, чем за 15 000 000.</strong></p></div>
+</div></section>
+
+<!-- FOOTER -->
+<footer class="ft">
+<div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:800;color:var(--ac2);letter-spacing:5px;margin-bottom:10px">ZEREK</div>
+<p class="ft-t">© ZEREK Analytics · Данные: БНС РК, НБРК, 2ГИС, Крыша, OLX, аналитические отчёты, реальные прайсы</p>
+<p class="ft-t" style="margin-top:4px">Не является инвестиционной рекомендацией.</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZEREK — Барбершоп: бизнес в Казахстане 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=Source+Sans+3:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root{
+--bg:#f8f6f4;--bg2:#f0ece6;--bg3:#e6e0d8;--bg-card:#ffffff;--bg-card2:#f4f0ec;
+--brd:#d0c4b8;--brd2:#b8a898;
+--t1:#2a2220;--t2:#5e4e44;--t3:#7e6e64;--t4:#a09488;
+--ac:#1a1a1a;--ac2:#333333;--ac3:#0a0a0a;--ac-light:#888;--ac-bg:rgba(26,26,26,.05);
+--gold:#c8a050;--gold-bg:rgba(200,160,80,.08);
+--ok:#4a8a50;--ok-bg:rgba(74,138,80,.05);--ok-brd:rgba(74,138,80,.15);
+--wrn:#c89030;--wrn-bg:rgba(200,144,48,.05);--wrn-brd:rgba(200,144,48,.15);
+--err:#b84a3a;--err-bg:rgba(184,74,58,.04);--err-brd:rgba(184,74,58,.12);
+--inf:#4a7ab8;--inf-bg:rgba(74,122,184,.05);
+--r:14px;--rs:10px
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--t1);font-family:'Source Sans 3',-apple-system,sans-serif;line-height:1.75;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.ct{max-width:820px;margin:0 auto;padding:0 24px}
+.hero{min-height:80vh;display:flex;align-items:center;justify-content:center;text-align:center;background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);padding:60px 24px}
+.hero-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:var(--gold);letter-spacing:6px;margin-bottom:24px}
+.hero-badge{display:inline-block;padding:5px 18px;background:var(--gold-bg);border:1px solid rgba(200,160,80,.2);border-radius:100px;font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:24px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;letter-spacing:-1px;margin-bottom:18px;color:var(--t1)}
+.hero-sub{font-size:1rem;color:var(--t2);max-width:580px;margin:0 auto;line-height:1.8}
+.nav{position:sticky;top:0;z-index:100;background:rgba(248,246,244,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--brd);padding:10px 0}
+.nav-in{display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none;max-width:820px;margin:0 auto;padding:0 24px}.nav-in::-webkit-scrollbar{display:none}
+.nav-logo{font-family:'Playfair Display',serif;font-size:14px;font-weight:800;color:var(--gold);letter-spacing:3px;flex-shrink:0;text-decoration:none;margin-right:12px}
+.nav-a{font-size:11px;color:var(--t3);text-decoration:none;white-space:nowrap;padding:5px 10px;border-radius:6px;transition:.2s;font-weight:500}.nav-a:hover{color:var(--gold);background:var(--gold-bg)}
+.sec{padding:56px 0;border-bottom:1px solid var(--brd)}.sec-alt{background:var(--bg2)}
+.sec-lb{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}.sec-lb::before{content:'';width:18px;height:2px;background:var(--gold);border-radius:1px}
+.sec-t{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,3vw,1.9rem);font-weight:700;letter-spacing:-.5px;margin-bottom:14px;line-height:1.25;color:var(--t1)}
+.p{font-size:.94rem;color:var(--t2);line-height:1.85;margin-bottom:16px}.p strong{color:var(--t1);font-weight:600}.p em{color:var(--gold);font-style:normal;font-weight:600}
+.cd{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:24px;margin-bottom:16px;box-shadow:0 1px 8px rgba(0,0,0,.03)}.cd2{background:var(--bg-card2);box-shadow:none}
+.cg{display:grid;gap:16px}.cg2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}.cg3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}.cg4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.sc{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:18px;text-align:center}.sv{font-size:1.3rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--gold);line-height:1.2}.sl{font-size:11px;color:var(--t2);margin-top:4px}
+.pr{margin-bottom:12px}.prh{display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px}.prn{color:var(--t1);font-weight:500}.prv{color:var(--gold);font-family:'JetBrains Mono',monospace;font-weight:600;font-size:12px}.prt{height:6px;background:rgba(200,160,80,.1);border-radius:3px;overflow:hidden}.prf{height:100%;border-radius:3px;background:linear-gradient(135deg,var(--gold),#a07830)}
+.callout{padding:18px 22px;border-radius:var(--rs);margin:18px 0;font-size:.9rem;line-height:1.75}
+.callout-ac{background:var(--gold-bg);border:1px solid rgba(200,160,80,.15);border-left:3px solid var(--gold)}.callout-ok{background:var(--ok-bg);border:1px solid var(--ok-brd);border-left:3px solid var(--ok)}.callout-wrn{background:var(--wrn-bg);border:1px solid var(--wrn-brd);border-left:3px solid var(--wrn)}.callout-err{background:var(--err-bg);border:1px solid var(--err-brd);border-left:3px solid var(--err)}
+.callout-title{font-weight:700;margin-bottom:6px;font-size:.92rem}
+.explain{background:var(--bg-card2);border:1px solid var(--brd);border-radius:var(--r);padding:20px 22px;margin:18px 0}.explain-q{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--t1);margin-bottom:8px}.explain-a{font-size:.9rem;color:var(--t2);line-height:1.8}
+.care{background:linear-gradient(135deg,rgba(200,160,80,.04),rgba(74,138,80,.03));border:1px solid rgba(200,160,80,.12);border-radius:var(--r);padding:22px 24px;margin:20px 0;position:relative}.care::before{content:'💬';position:absolute;top:-12px;left:20px;font-size:20px;background:var(--bg);padding:0 6px}.sec-alt .care::before{background:var(--bg2)}.care-text{font-size:.92rem;color:var(--t2);line-height:1.8;font-style:italic}.care-text strong{color:var(--t1);font-style:normal}
+.case{border-radius:var(--r);padding:22px 24px;margin-bottom:14px}.case-good{background:var(--ok-bg);border:1px solid var(--ok-brd);border-left:4px solid var(--ok)}.case-bad{background:var(--err-bg);border:1px solid var(--err-brd);border-left:4px solid var(--err)}.case-mid{background:var(--wrn-bg);border:1px solid var(--wrn-brd);border-left:4px solid var(--wrn)}.case-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}.case-good .case-label{color:var(--ok)}.case-bad .case-label{color:var(--err)}.case-mid .case-label{color:var(--wrn)}.case-title{font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;margin-bottom:8px;color:var(--t1)}.case-text{font-size:.88rem;color:var(--t2);line-height:1.8}
+.risk{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:22px 24px;margin-bottom:14px}.risk-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}.risk-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}.risk-crit .risk-icon{background:rgba(184,74,58,.08)}.risk-warn .risk-icon{background:rgba(200,144,48,.08)}.risk-name{font-weight:700;font-size:.95rem;color:var(--t1)}.risk-body{font-size:.88rem;color:var(--t2);line-height:1.8;margin-bottom:10px}.risk-math{background:var(--bg-card2);border:1px solid var(--brd);border-radius:var(--rs);padding:12px 16px;font-size:.85rem;color:var(--t2);margin:10px 0;font-family:'JetBrains Mono','Source Sans 3',monospace;line-height:1.7}.risk-fix{font-size:.86rem;color:var(--ok);font-weight:500;margin-top:8px}
+.mistake{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:20px 22px;margin-bottom:12px}.mistake-q{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--err);margin-bottom:6px}.mistake-a{font-size:.86rem;color:var(--t2);line-height:1.8}
+.funnel{display:flex;flex-direction:column;gap:0;margin:20px 0}.funnel-step{display:flex;align-items:center;gap:16px;padding:14px 20px;border-bottom:1px solid var(--brd)}.funnel-step:last-child{border-bottom:none}.funnel-num{font-family:'JetBrains Mono',monospace;font-size:1.8rem;font-weight:800;min-width:70px;text-align:center}.funnel-text{font-size:.88rem;color:var(--t2)}.funnel-step:nth-child(1) .funnel-num{color:var(--ok)}.funnel-step:nth-child(2) .funnel-num{color:var(--wrn)}.funnel-step:nth-child(3) .funnel-num{color:var(--gold)}.funnel-step:nth-child(4) .funnel-num{color:var(--err)}
+.checklist{counter-reset:check}.check-item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--brd);align-items:flex-start}.check-item:last-child{border-bottom:none}.check-num{counter-increment:check;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;color:var(--gold);min-width:24px;height:24px;display:flex;align-items:center;justify-content:center;background:var(--gold-bg);border-radius:6px;flex-shrink:0;margin-top:2px}.check-num::before{content:counter(check)}.check-text{font-size:.88rem;color:var(--t2);line-height:1.7}
+.gloss-item{padding:12px 0;border-bottom:1px solid var(--brd)}.gloss-item:last-child{border-bottom:none}.gloss-term{font-weight:700;color:var(--t1);font-size:.9rem;margin-bottom:2px}.gloss-def{font-size:.85rem;color:var(--t2);line-height:1.7}
+table.dt{width:100%;border-collapse:collapse;font-size:13px}.dt thead th{padding:10px 14px;text-align:left;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);border-bottom:2px solid var(--brd2);background:var(--gold-bg)}.dt td{padding:10px 14px;border-bottom:1px solid var(--brd);color:var(--t2)}.dt tr:hover td{background:var(--gold-bg);color:var(--t1)}.dt .n{font-family:'JetBrains Mono',monospace;font-weight:500;color:var(--t1)}.dt .hl{color:var(--gold);font-weight:600}.tw{overflow-x:auto;border-radius:var(--r);border:1px solid var(--brd)}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:var(--gold-bg);border:1px solid var(--brd);border-radius:100px;font-size:11px;font-weight:500;color:var(--t2);margin:3px}.chip-d{width:5px;height:5px;border-radius:50%;background:var(--gold)}.tg{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0}
+.bg{display:inline-block;padding:3px 10px;border-radius:100px;font-size:9px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}.bg-ok{background:rgba(74,138,80,.08);color:var(--ok)}.bg-wrn{background:rgba(200,144,48,.08);color:var(--wrn)}.bg-err{background:rgba(184,74,58,.08);color:var(--err)}.bg-inf{background:rgba(74,122,184,.08);color:var(--inf)}.bg-ac{background:var(--gold-bg);color:var(--gold)}
+.signal{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--brd);align-items:flex-start}.signal:last-child{border-bottom:none}.signal-dot{width:8px;height:8px;border-radius:50%;background:var(--err);flex-shrink:0;margin-top:7px}.signal-text{font-size:.88rem;color:var(--t2);line-height:1.7}
+.cta-block{text-align:center;padding:48px 24px;background:linear-gradient(180deg,var(--bg2),var(--bg3));border-radius:var(--r);margin:24px 0}.cta-t{font-family:'Playfair Display',serif;font-size:clamp(1.3rem,3vw,1.8rem);font-weight:700;margin-bottom:10px;color:var(--t1)}.cta-d{color:var(--t2);font-size:.92rem;max-width:480px;margin:0 auto 20px;line-height:1.7}.cta-btn{display:inline-block;padding:12px 36px;background:linear-gradient(135deg,var(--gold),#a07830);color:#fff;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;border-radius:100px;text-decoration:none;transition:.3s;border:none;cursor:pointer}.cta-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(200,160,80,.3)}.cta-price{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--gold);margin-bottom:14px}
+.quote{font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold);font-weight:600;font-style:italic;padding:18px 0;border-top:1px solid var(--brd);border-bottom:1px solid var(--brd);margin:24px 0;text-align:center;line-height:1.7}
+.tc{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.ft{padding:36px 0;border-top:1px solid var(--brd);text-align:center;background:var(--bg)}.ft-t{font-size:11px;color:var(--t3)}
+@media(max-width:768px){.ct{padding:0 16px}.sec{padding:40px 0}.cd{padding:18px}.tc,.cg2,.cg3,.cg4{grid-template-columns:1fr}.hero{min-height:60vh;padding:40px 16px}.hero h1{font-size:1.8rem}.hero-sub{font-size:.9rem}.nav-in{gap:2px;padding:0 12px}.nav-a{font-size:10px;padding:4px 7px}.nav-logo{font-size:12px;letter-spacing:2px;margin-right:6px}.funnel-step{padding:10px 14px;gap:12px}.funnel-num{font-size:1.4rem;min-width:55px}.funnel-text{font-size:.82rem}.risk{padding:16px 18px}.risk-math{font-size:.78rem;padding:10px 12px}.risk-body{font-size:.84rem}.mistake{padding:16px 18px}.mistake-q{font-size:.88rem}.mistake-a{font-size:.82rem}.care{padding:18px 16px}.care::before{left:14px;font-size:16px}.care-text{font-size:.86rem}.explain{padding:16px 18px}.explain-q{font-size:.92rem}.explain-a{font-size:.85rem}.case{padding:16px 18px}.case-text{font-size:.84rem}.cta-block{padding:36px 16px}.cta-btn{padding:12px 28px;font-size:12px}.cta-price{font-size:1rem}.sc{padding:14px}.sv{font-size:1.1rem}.callout{padding:14px 16px}.tw{font-size:12px}.dt td,.dt thead th{padding:8px 10px;font-size:11px}.check-item{gap:10px;padding:10px 0}.check-text{font-size:.84rem}.gloss-item{padding:10px 0}.gloss-term{font-size:.86rem}.gloss-def{font-size:.82rem}.signal{gap:10px;padding:10px 0}.signal-text{font-size:.84rem}.p{font-size:.88rem}.sec-t{font-size:1.3rem}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero" id="top"><div>
+<div class="hero-logo">ZEREK</div>
+<div class="hero-badge">Бизнес-обзор 2026</div>
+<h1>Барбершоп<br>как бизнес в Казахстане</h1>
+<p class="hero-sub">Форматы, кресла, мастера, аренда кресла vs зарплата, атмосфера, повторные клиенты и&nbsp;главное — почему «умею стричь» не&nbsp;равно «умею зарабатывать». Честный разбор мужской парикмахерской.</p>
+</div></section>
+
+<!-- NAV -->
+<nav class="nav"><div class="nav-in">
+<a href="#top" class="nav-logo">ZEREK</a>
+<a href="#why" class="nav-a">Зачем</a>
+<a href="#count" class="nav-a">Считать</a>
+<a href="#market" class="nav-a">Рынок</a>
+<a href="#formats" class="nav-a">Форматы</a>
+<a href="#money" class="nav-a">Экономика</a>
+<a href="#cases" class="nav-a">Кейсы</a>
+<a href="#extra" class="nav-a">Доход</a>
+<a href="#equip" class="nav-a">Железо</a>
+<a href="#staff" class="nav-a">Кадры</a>
+<a href="#hidden" class="nav-a">Скрытое</a>
+<a href="#risks" class="nav-a">Риски</a>
+<a href="#check" class="nav-a">Чек-лист</a>
+<a href="#cta" class="nav-a">Расчёт</a>
+</div></nav>
+
+<!-- БЛОК 1 -->
+<section class="sec" id="why"><div class="ct">
+<div class="sec-lb">Зачем этот обзор</div>
+<h2 class="sec-t">Барбершоп — не «просто стрижка»</h2>
+<p class="p">Каждый второй парикмахер хоть раз думал: <em>«Зачем работать на хозяина, если могу открыть своё?»</em> Клиенты есть, руки есть, инстаграм красивый — что может пойти не так?</p>
+<p class="p">А потом начинается: аренда 400K/мес за помещение, которое ещё нужно отремонтировать за 3–5 миллионов. Мастер, которого вы переманили, через 4 месяца уходит и забирает клиентов. Второе кресло пустует, потому что «район не тот». А Instagram показывает красивые fade, но не показывает P&L.</p>
+<p class="p">Этот обзор — <strong>не курс по барберингу</strong>. Это разбор экономики, рисков и подводных камней барбершопа как бизнеса. Подготовлен командой ZEREK на основе данных БНС РК и рыночной аналитики.</p>
+<div class="care"><p class="care-text">Стричь и управлять бизнесом — два разных навыка. Лучший барбер города может открыть худший барбершоп города. Мы хотим, чтобы вы были хороши в обоих — <strong>или хотя бы понимали, где ваши слабые места.</strong></p></div>
+</div></section>
+
+<!-- БЛОК 2 -->
+<section class="sec sec-alt" id="count"><div class="ct">
+<div class="sec-lb">Прежде чем вкладывать</div>
+<h2 class="sec-t">Почему нужно считать, даже если «клиенты уже есть»</h2>
+<p class="p">У вас 50 постоянных клиентов, каждый стрижётся раз в 3–4 недели. Кажется: открой своё — и все придут. Но: клиенты привязаны <strong>к вам лично</strong>, а не к месту. А бизнес — это место, аренда, ремонт, второе кресло, расходники. И ваши 50 клиентов должны покрывать всё это.</p>
+<div class="explain">
+<div class="explain-q">Что значит «посчитать барбершоп»?</div>
+<div class="explain-a">Ответить на три вопроса: <strong>1)</strong>&nbsp;сколько стрижек в день нужно на каждое кресло, чтобы покрыть аренду, ФОТ и расходники, <strong>2)</strong>&nbsp;реалистично ли загрузить 2–3 кресла на 60–70% в вашем районе, <strong>3)</strong>&nbsp;что произойдёт с экономикой, если мастер уйдёт и заберёт клиентов. Если на третий вопрос нет ответа — вы рискуете миллионами.</div>
+</div>
+<div class="explain">
+<div class="explain-q">Аренда кресла vs зарплата — в чём разница?</div>
+<div class="explain-a"><strong>Зарплата:</strong> мастер получает фикс + % от стрижки (обычно 40–50%). Вы контролируете расписание, цены, клиентскую базу. <strong>Аренда кресла:</strong> мастер платит вам 80–150K/мес за рабочее место и работает «на себя». Вы получаете стабильную аренду, но не контролируете ничего — ни цены, ни качество, ни клиентов. Если он уйдёт — кресло пустое, а клиенты ушли с ним.</div>
+</div>
+</div></section>
+
+<!-- БЛОК 3: РЫНОК -->
+<section class="sec" id="market"><div class="ct">
+<div class="sec-lb">Рынок</div>
+<h2 class="sec-t">Барберинг в Казахстане — бум, который уже проходит</h2>
+<p class="p">Волна барбершопов накрыла Казахстан в 2018–2022. В каждом ТРЦ, на каждой улице — «мужская стрижка, борода, атмосфера». Рынок вырос в 3–4 раза за 5 лет. Но в 2026 году <strong>бум превратился в насыщение</strong>.</p>
+
+<div class="cg cg3" style="margin-top:18px">
+<div class="cd cd2" style="border-left:3px solid var(--ok)"><h4 style="font-size:13px;font-weight:700;color:var(--ok);margin-bottom:5px">Где ещё есть место</h4><p style="font-size:12px;color:var(--t2)">Спальные районы новых ЖК в Актау, Атырау, Уральске — мужское население растёт, барбершопов мало. Формат «у дома» работает.</p></div>
+<div class="cd cd2" style="border-left:3px solid var(--wrn)"><h4 style="font-size:13px;font-weight:700;color:var(--wrn);margin-bottom:5px">Насыщение</h4><p style="font-size:12px;color:var(--t2)">Алматы, Астана, Караганда — конкуренция жёсткая. Нужен уникальный формат, локация или мастер-звезда. «Ещё один барбершоп» — не аргумент.</p></div>
+<div class="cd cd2" style="border-left:3px solid var(--err)"><h4 style="font-size:13px;font-weight:700;color:var(--err);margin-bottom:5px">Перенасыщение</h4><p style="font-size:12px;color:var(--t2)">Центры мегаполисов, ТРЦ — аренда высокая, барбершопов 5+ на квартал. Ценовая война. Маржа сжимается.</p></div>
+</div>
+
+<div class="explain">
+<div class="explain-q">Что это значит для вас?</div>
+<div class="explain-a">Если вы в Алматы или Астане — вам нужен <strong>ответ на вопрос «почему клиент придёт именно к вам»</strong>. Не «потому что тут барбершоп», а потому что конкретный мастер, конкретная атмосфера, конкретная локация. В Павлодаре, Семее, Актау — пока проще, но окно закрывается.</div>
+</div>
+</div></section>
+
+<!-- БЛОК 4: ФОРМАТЫ -->
+<section class="sec sec-alt" id="formats"><div class="ct">
+<div class="sec-lb">Форматы</div>
+<h2 class="sec-t">Три модели: от одного кресла до премиум-студии</h2>
+
+<div class="cg cg2" style="margin-bottom:18px">
+<div class="cd" style="border-top:3px solid var(--ok)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-ok">Вход</span><h3 style="font-size:15px;font-weight:700;margin-top:6px">💈 Мини (1–2 кресла)</h3></div><div style="text-align:right"><div style="font-size:18px;font-weight:800;font-family:'JetBrains Mono';color:var(--ok)">2–5M ₸</div><div style="font-size:10px;color:var(--t3)">старт</div></div></div>
+<div style="margin-top:12px">
+<div class="pr"><div class="prh"><span class="prn">Площадь</span><span class="prv">15–30 м²</span></div><div class="prt"><div class="prf" style="width:15%;background:var(--ok)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Мастера</span><span class="prv">1–2 чел.</span></div><div class="prt"><div class="prf" style="width:15%;background:var(--ok)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Средний чек</span><span class="prv">2 500–4 000 ₸</span></div><div class="prt"><div class="prf" style="width:30%;background:var(--ok)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Окупаемость</span><span class="prv">4–10 мес.</span></div><div class="prt"><div class="prf" style="width:30%;background:var(--ok)"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:8px">Вы + возможно напарник. Минимальный ремонт, компактное помещение. Часто — вы сами мастер и владелец. Низкий порог, но потолок ограничен вашим временем.</p>
+</div>
+
+<div class="cd" style="border-top:3px solid var(--gold)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-ac">Стандарт</span><h3 style="font-size:15px;font-weight:700;margin-top:6px">✂️ Барбершоп (3–5 кресел)</h3></div><div style="text-align:right"><div style="font-size:18px;font-weight:800;font-family:'JetBrains Mono';color:var(--gold)">5–15M ₸</div><div style="font-size:10px;color:var(--t3)">старт</div></div></div>
+<div style="margin-top:12px">
+<div class="pr"><div class="prh"><span class="prn">Площадь</span><span class="prv">40–80 м²</span></div><div class="prt"><div class="prf" style="width:40%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Мастера</span><span class="prv">3–5 чел.</span></div><div class="prt"><div class="prf" style="width:35%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Средний чек</span><span class="prv">3 500–6 000 ₸</span></div><div class="prt"><div class="prf" style="width:45%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Окупаемость</span><span class="prv">8–18 мес.</span></div><div class="prt"><div class="prf" style="width:45%"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:8px">Полноценный барбершоп: атмосфера, бренд, команда. Уже нужен управляющий (или вы не стрижёте, а управляете). Оптимальный формат для построения бизнеса, а не самозанятости.</p>
+</div>
+
+<div class="cd" style="border-top:3px solid var(--wrn)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-wrn">Премиум</span><h3 style="font-size:15px;font-weight:700;margin-top:6px">👑 Премиум-студия (5+ кресел)</h3></div><div style="text-align:right"><div style="font-size:18px;font-weight:800;font-family:'JetBrains Mono';color:var(--wrn)">15–35M ₸</div><div style="font-size:10px;color:var(--t3)">старт</div></div></div>
+<div style="margin-top:12px">
+<div class="pr"><div class="prh"><span class="prn">Площадь</span><span class="prv">80–150 м²</span></div><div class="prt"><div class="prf" style="width:60%;background:var(--wrn)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Средний чек</span><span class="prv">5 000–12 000 ₸</span></div><div class="prt"><div class="prf" style="width:65%;background:var(--wrn)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Окупаемость</span><span class="prv">14–30 мес.</span></div><div class="prt"><div class="prf" style="width:65%;background:var(--wrn)"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:8px">Дизайнерский интерьер, топовые мастера, доп. услуги (бар, виски, уход за бородой). Работает только в Алматы/Астане/Атырау — где есть аудитория за чек 8 000+ ₸. В регионах premium не живёт.</p>
+</div>
+</div>
+
+<div class="explain">
+<div class="explain-q">Какой формат выбрать?</div>
+<div class="explain-a">Вы сами мастер и хотите начать? → Мини, 1–2 кресла, проверяйте спрос. Есть 8–15M и команда? → Стандарт, 3–5 кресел. Хотите премиум? → Только в мегаполисе, 15M+ и готовность ждать 2 года. <strong>Совет ZEREK:</strong> стандарт на 3 кресла — золотая середина. Достаточно для дохода, управляемый масштаб, есть запас при уходе одного мастера.</div>
+</div>
+</div></section>
+
+<!-- БЛОК 5: ЭКОНОМИКА -->
+<section class="sec" id="money"><div class="ct">
+<div class="sec-lb">Экономика</div>
+<h2 class="sec-t">Сколько зарабатывает одно кресло</h2>
+
+<div class="callout callout-ok" style="margin-top:0">
+<div class="callout-title" style="color:var(--ok)">📊 Бенчмарк: стандартный барбершоп, 3 кресла, город 300K+</div>
+<div class="cg cg4" style="margin-top:10px">
+<div class="sc"><div class="sv">6–10</div><div class="sl">стрижек / кресло / день</div></div>
+<div class="sc"><div class="sv">4 000 ₸</div><div class="sl">средний чек</div></div>
+<div class="sc"><div class="sv">2.2–3.6M</div><div class="sl">выручка / мес</div><div style="font-size:9px;color:var(--t3);margin-top:2px">на 3 кресла</div></div>
+<div class="sc"><div class="sv" style="color:var(--ok)">15–25%</div><div class="sl">чистая прибыль</div></div>
+</div>
+</div>
+
+<div class="cd" style="margin-top:18px">
+<h3 style="font-size:14px;font-weight:700;margin-bottom:14px">Куда уходит выручка (~3M ₸/мес на 3 кресла)</h3>
+<div class="pr"><div class="prh"><span class="prn">✂️ Мастера (40–50% от стрижки)</span><span class="prv">40–50%</span></div><div class="prt"><div class="prf" style="width:45%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">🏠 Аренда</span><span class="prv">15–22%</span></div><div class="prt"><div class="prf" style="width:18%;background:var(--wrn)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">🧴 Расходники (косметика, лезвия)</span><span class="prv">5–8%</span></div><div class="prt"><div class="prf" style="width:7%;background:var(--inf)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">📢 Маркетинг</span><span class="prv">3–5%</span></div><div class="prt"><div class="prf" style="width:4%;background:var(--t4)"></div></div></div>
+<div style="margin-top:14px;padding:12px 16px;background:var(--ok-bg);border:1px solid var(--ok-brd);border-radius:var(--rs);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+<span style="font-size:11px;color:var(--ok);font-weight:600;text-transform:uppercase;letter-spacing:1px">Чистая прибыль</span>
+<span style="font-size:22px;font-weight:800;font-family:'JetBrains Mono';color:var(--ok)">450K–750K ₸/мес</span>
+</div>
+</div>
+
+<div class="explain">
+<div class="explain-q">Что это значит простыми словами?</div>
+<div class="explain-a">Главная статья — <strong>мастера забирают 40–50% от каждой стрижки</strong>. При чеке 4 000 ₸ мастер получает 1 600–2 000 ₸. Хороший мастер с полной загрузкой зарабатывает 500–800K/мес. Это больше, чем вы как владелец — если у вас 3 кресла и расходы на аренду. Именно поэтому многие владельцы сами стригут — но тогда это не бизнес, а самозанятость с арендой.</div>
+</div>
+</div></section>
+
+<!-- БЛОК 6: КЕЙСЫ -->
+<section class="sec sec-alt" id="cases"><div class="ct">
+<div class="sec-lb">Три сценария</div>
+<h2 class="sec-t">Как это выглядит на практике</h2>
+
+<div class="case case-good">
+<div class="case-label">🟢 Хороший старт</div>
+<div class="case-title">3 кресла, Атырау, спальный район, рядом с ТРЦ</div>
+<div class="case-text">Вложил 8M ₸ (6M — ремонт и оборудование, 2M — подушка). Сам стрижёт + 2 мастера на %. Район нефтяников — мужчины с деньгами, стригутся каждые 2–3 недели. Средний чек 4 500 ₸ (стрижка + борода). К 3-му месяцу — 8 клиентов/кресло/день. Выручка 3.2M. Прибыль ~600K/мес. Окупаемость — 13 мес. <strong>Ключ: правильный район, мужская аудитория с деньгами, сам в деле.</strong></div>
+</div>
+
+<div class="case case-bad">
+<div class="case-label">🔴 Типичная ошибка</div>
+<div class="case-title">4 кресла, Алматы, подвал в центре</div>
+<div class="case-text">Вложил 12M — дизайнерский ремонт, кожаные кресла, виски-бар. Мастеров нашёл через Instagram — переманил из других барбершопов. Через 4 месяца двое ушли обратно, забрав клиентов. Два кресла пустуют. Выручка упала с 2.8M до 1.4M. Аренда подвала в центре — 500K. Минус 400K/мес. <strong>Ошибка: вложил в интерьер, а не в удержание мастеров. Интерьер не стрижёт.</strong></div>
+</div>
+
+<div class="case case-mid">
+<div class="case-label">🟡 Ловушка середины</div>
+<div class="case-title">2 кресла, Семей, первый этаж жилого дома</div>
+<div class="case-text">Вложил 4M ₸. Стрижёт сам + 1 мастер. Средний чек 2 500 ₸ (район не премиальный). 5–6 клиентов/кресло/день. Выручка 1.5M, расходы 1.1M. Прибыль: <em>400K/мес</em>. Но это при условии, что он сам стрижёт 6 дней в неделю по 8 часов. Если заболеет или уедет — половина выручки исчезает. <strong>Он не владелец бизнеса — он мастер, который ещё и платит аренду.</strong></div>
+</div>
+
+<div class="care"><p class="care-text">В барбершопе главный актив — не кресла и не интерьер. <strong>Главный актив — мастера и их клиентская база.</strong> Если мастер уходит — клиенты уходят с ним. Это фундаментальный риск, которого нет в кофейне или магазине.</p></div>
+</div></section>
+
+<!-- БЛОК 7: ДОПРОДАЖИ -->
+<section class="sec" id="extra"><div class="ct">
+<div class="sec-lb">Допродажи</div>
+<h2 class="sec-t">На чём зарабатывать помимо стрижки</h2>
+<p class="p">Стрижка — это трафик. <strong>Прибыль растёт на допуслугах и продукции.</strong> Клиент уже сидит в кресле — предложите больше.</p>
+
+<div class="cg cg2">
+<div class="cd cd2"><h3 style="font-size:14px;font-weight:700;margin-bottom:8px">🧔 Борода (стрижка, моделирование)</h3><p style="font-size:12px;color:var(--t2);margin-bottom:8px">+1 500–3 000 ₸ к чеку. Себестоимость: 200–500 ₸ (лезвие + масло). Наценка ×5–8. 40–60% клиентов берут бороду к стрижке.</p><div class="tg"><span class="chip"><span class="chip-d"></span>Борода: ×5–8</span></div></div>
+<div class="cd cd2"><h3 style="font-size:14px;font-weight:700;margin-bottom:8px">🧴 Уходовая косметика</h3><p style="font-size:12px;color:var(--t2);margin-bottom:8px">Воск, помада, масло для бороды, шампунь. Наценка ×2–3. Клиент попробовал в кресле — покупает домой. 10–15% клиентов. Витрина у зеркала — бесплатная полка продаж.</p><div class="tg"><span class="chip"><span class="chip-d"></span>Масло: ×2–3</span><span class="chip"><span class="chip-d"></span>Воск: ×2–3</span></div></div>
+<div class="cd cd2"><h3 style="font-size:14px;font-weight:700;margin-bottom:8px">💆 Камуфляж седины / окрашивание</h3><p style="font-size:12px;color:var(--t2);margin-bottom:8px">+2 000–5 000 ₸. Растущий спрос у мужчин 35+. Себестоимость: 500–1 000 ₸. Требует навыка, но маржа отличная.</p></div>
+<div class="cd cd2"><h3 style="font-size:14px;font-weight:700;margin-bottom:8px">👃 Воск для носа/ушей, уход за бровями</h3><p style="font-size:12px;color:var(--t2);margin-bottom:8px">+500–1 500 ₸. Мелочь — но при 200+ клиентах/мес это +100–300K выручки. «К стрижке — воск для носа?» — 30% соглашаются.</p></div>
+</div>
+
+<div class="callout callout-ac"><p style="font-size:.88rem;color:var(--t2);margin:0"><strong style="color:var(--gold)">Правило:</strong> стрижка 3 500 ₸ → стрижка + борода + воск 6 500 ₸. Чек вырос на 85% без дополнительного клиента. Это самый дешёвый рост выручки.</p></div>
+</div></section>
+
+<!-- БЛОК 8: ОБОРУДОВАНИЕ -->
+<section class="sec sec-alt" id="equip"><div class="ct">
+<div class="sec-lb">Оборудование</div>
+<h2 class="sec-t">Кресло, машинка, зеркало — на чём не экономить</h2>
+
+<div class="tw" style="margin-bottom:16px"><table class="dt"><thead><tr><th>Оборудование</th><th>Бюджет</th><th>Оптимум</th><th>Критичность</th></tr></thead><tbody>
+<tr><td>Барберское кресло</td><td class="n">150–300K</td><td class="n hl">400–800K</td><td style="color:var(--err)">●●●●●</td></tr>
+<tr><td>Машинка для стрижки (×2)</td><td class="n">40–80K</td><td class="n hl">100–200K</td><td style="color:var(--err)">●●●●●</td></tr>
+<tr><td>Триммер</td><td class="n">20–40K</td><td class="n hl">50–100K</td><td style="color:var(--err)">●●●●○</td></tr>
+<tr><td>Зеркало + освещение</td><td class="n">30–60K</td><td class="n">80–150K</td><td style="color:var(--wrn)">●●●●○</td></tr>
+<tr><td>Мойка для головы</td><td class="n">80–150K</td><td class="n">200–400K</td><td style="color:var(--wrn)">●●●○○</td></tr>
+<tr><td>Стерилизатор, расходники</td><td class="n">20–40K</td><td class="n">50–80K</td><td style="color:var(--err)">●●●●●</td></tr>
+</tbody></table></div>
+
+<div class="callout callout-ac">
+<div class="callout-title" style="color:var(--gold)">💡 Совет ZEREK</div>
+<p style="font-size:.88rem;color:var(--t2);margin:0"><strong>Нельзя экономить:</strong> кресло и машинка. Клиент сидит в кресле 30–40 минут — если оно скрипит и шатается, впечатление убито. Дешёвая машинка «дёргает» волосы — клиент не вернётся. <em>Кресло за 500K служит 5–7 лет и «продаёт» каждый день. Ремонт интерьера — нет.</em></p>
+</div>
+</div></section>
+
+<!-- БЛОК 9: КАДРЫ -->
+<section class="sec" id="staff"><div class="ct">
+<div class="sec-lb">Кадры</div>
+<h2 class="sec-t">Мастера: главный актив и главный риск</h2>
+<p class="p">В барбершопе <strong>мастер = бизнес</strong>. Клиент приходит не в помещение, а к человеку. Если мастер уйдёт — 70–90% его клиентов уйдут с ним. Это фундаментально отличает барбершоп от кофейни или магазина.</p>
+
+<div class="tc">
+<div class="cd"><h3 style="font-size:14px;font-weight:700;margin-bottom:10px">💰 Заработок мастера</h3>
+<div class="pr"><div class="prh"><span class="prn">Начинающий</span><span class="prv">200–350K ₸</span></div><div class="prt"><div class="prf" style="width:30%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Опытный (1–3 года)</span><span class="prv">400–650K ₸</span></div><div class="prt"><div class="prf" style="width:55%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Топ-мастер</span><span class="prv">700K–1.2M ₸</span></div><div class="prt"><div class="prf" style="width:85%"></div></div></div>
+<p style="font-size:10px;color:var(--t3);margin-top:6px">Обычно 40–50% от выручки кресла</p></div>
+<div class="cd"><h3 style="font-size:14px;font-weight:700;margin-bottom:10px">🚨 Главные проблемы</h3>
+<p style="font-size:12px;color:var(--t2);margin-bottom:8px"><strong>Уход с клиентами.</strong> Мастер наработал базу в вашем кресле — и ушёл «к себе» или к конкуренту. 70–90% его клиентов — за ним.</p>
+<p style="font-size:12px;color:var(--t2);margin-bottom:8px"><strong>Переманивание.</strong> Конкурент предлагает 55% вместо ваших 45%. Мастер уходит за 10% — и забирает выручку целого кресла.</p>
+<p style="font-size:12px;color:var(--t2)"><strong>«Звёздная болезнь».</strong> Популярный мастер начинает диктовать условия: график, цены, процент. Вы зависите от него больше, чем он от вас.</p>
+</div>
+</div>
+</div></section>
+
+<!-- БЛОК 11: СКРЫТЫЕ РАСХОДЫ -->
+<section class="sec sec-alt" id="hidden"><div class="ct">
+<div class="sec-lb">Скрытые расходы</div>
+<h2 class="sec-t">Деньги, которых нет в бизнес-плане</h2>
+
+<div class="cg cg2" style="margin-bottom:14px">
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">🏗 Ремонт помещения</h4><span class="bg bg-err">1.5–5M разово</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Барбершоп продаёт атмосферу. Голые стены не работают. Ремонт, мебель, декор, освещение — это не «дополнительно», это обязательно. И обновлять нужно каждые 3–4 года.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">🧴 Расходники</h4><span class="bg bg-wrn">5–8% от выручки</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Лезвия, масла, шампуни, воск, одноразовые воротнички, дезинфекция. 150–250K/мес при 3 креслах. Профессиональная косметика стоит в 3–5 раз дороже бытовой.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">👤 Уход мастера</h4><span class="bg bg-err">потеря 30–50% выручки кресла</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Пустое кресло = 0 выручки. Поиск замены — 2–4 недели. Новый мастер без базы — загрузка 30–40% первый месяц. Итого потери: 200–500K за один уход.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">📢 Instagram и маркетинг</h4><span class="bg bg-wrn">3–5% от выручки</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Фото работ, Stories, Reels, таргет. Барбершоп без Instagram в 2026 — невидимка. Нужен контент-мейкер или ваше время (которое = деньги).</p></div>
+</div>
+</div></section>
+
+<!-- БЛОК 12: РИСКИ -->
+<section class="sec" id="risks"><div class="ct">
+<div class="sec-lb">Риски и закрытия</div>
+<h2 class="sec-t">Почему закрываются барбершопы</h2>
+
+<h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:24px 0 14px">Топ причин</h3>
+
+<div class="risk risk-crit">
+<div class="risk-head"><div class="risk-icon">👤</div><div><div class="risk-name">1. Уход мастера с клиентами</div><span class="bg bg-err">критический</span></div></div>
+<div class="risk-body">Мастер уходит — и 70–90% его клиентов уходят за ним. Кресло пустеет. Вы платите аренду за пустое место. Если ушли 2 из 3 мастеров — бизнес мёртв.</div>
+<div class="risk-math">Кресло приносило 1M/мес. Мастер ушёл → выручка кресла: 0 первый месяц, 300K второй (новый мастер набирает базу). Потери: 700K–1M за 2 месяца. С одного кресла.</div>
+<div class="risk-fix">✅ Защита: система бронирования на бренд (не на мастера). CRM с номерами клиентов. Бонусы за стаж. Программа лояльности на заведение, не на человека.</div>
+</div>
+
+<div class="risk risk-crit">
+<div class="risk-head"><div class="risk-icon">📍</div><div><div class="risk-name">2. Неправильная локация / район</div><span class="bg bg-err">критический</span></div></div>
+<div class="risk-body">Барбершоп в женском спальном районе или рядом с 5 конкурентами. Мужской трафик — не везде одинаковый. Рядом с офисами, БЦ, спортзалами, ТРЦ — работает. В тихом дворе — нет.</div>
+<div class="risk-fix">✅ Защита: считайте мужской трафик отдельно. Рядом с фитнес-центром, БЦ, университетом — идеально. Рядом с детским садом — нет.</div>
+</div>
+
+<div class="risk risk-crit">
+<div class="risk-head"><div class="risk-icon">⚔️</div><div><div class="risk-name">3. Перенасыщение рынка</div><span class="bg bg-err">критический</span></div></div>
+<div class="risk-body">В Алматы и Астане барбершопов больше, чем спрос может переварить. Ценовая война: стрижка за 2 000 ₸ «чтобы хоть кто-то пришёл». При такой цене маржа — 0.</div>
+<div class="risk-fix">✅ Защита: не конкурируйте ценой. Уникальный мастер, атмосфера, локация, программа лояльности — всё, что нельзя скопировать снижением цены.</div>
+</div>
+
+<div class="risk risk-warn">
+<div class="risk-head"><div class="risk-icon">🪑</div><div><div class="risk-name">4. Пустые кресла</div><span class="bg bg-wrn">серьёзный</span></div></div>
+<div class="risk-body">Загрузка кресла ниже 50% — кресло убыточно. Аренда, свет, расходники капают 30 дней в месяц. Если из 4 кресел 2 пустуют — вы работаете на аренду, а не на себя.</div>
+<div class="risk-fix">✅ Защита: начинайте с меньшего количества кресел. Лучше 3 загруженных на 70%, чем 5 загруженных на 40%.</div>
+</div>
+
+<!-- ПРОМЕЖУТОЧНЫЙ CTA -->
+<div class="cta-block" style="margin:28px 0">
+<div class="cta-t">Сколько стрижек в день нужно вашему барбершопу?</div>
+<p class="cta-d">Quick Check рассчитает: при какой загрузке вы в плюсе, когда окупитесь, какие риски критичны.</p>
+<div class="cta-price">3 000 ₸</div>
+<a href="https://t.me/zerekai_bot" target="_blank" class="cta-btn">Проверить свою идею →</a>
+</div>
+
+<!-- ОШИБКИ -->
+<h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:28px 0 14px">Ошибки, которые не выглядят как ошибки</h3>
+
+<div class="mistake">
+<div class="mistake-q">«Вложу 5M в интерьер — клиенты сами придут»</div>
+<div class="mistake-a">Красивый интерьер привлекает на первый визит. Возвращает — мастер. Если стрижка посредственная в красивом интерьере — клиент не вернётся. Лучше 2M на ремонт и 3M на подушку + хорошего мастера.</div>
+</div>
+
+<div class="mistake">
+<div class="mistake-q">«Переманю топ-мастера — он приведёт клиентов»</div>
+<div class="mistake-a">Приведёт. А через полгода уведёт — к себе или к следующему, кто предложит больше. Вы заплатите за его «приход» ремонтом и раскруткой, а он уйдёт бесплатно. Лучше растить своих.</div>
+</div>
+
+<div class="mistake">
+<div class="mistake-q">«Открою в центре — там трафик»</div>
+<div class="mistake-a">В центре — трафик, но и аренда 500K+ за 50 м². И 10 конкурентов в радиусе 300 метров. Спальный район с ЖК на 1 000 квартир и без барбершопа — часто выгоднее центра.</div>
+</div>
+
+<div class="mistake">
+<div class="mistake-q">«Аренда кресла — пассивный доход»</div>
+<div class="mistake-a">Мастер платит 100K/мес за кресло. Но он работает «на себя» — свои цены, свои клиенты, свой график. Если уйдёт — кресло пустое, клиенты ушли, а вы не контролировали ни качество, ни базу. Аренда кресла — не бизнес, а субаренда.</div>
+</div>
+
+<!-- СИГНАЛЫ СТОП -->
+<h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:28px 0 14px">Сигналы, что пора пересмотреть</h3>
+
+<div class="cd">
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Загрузка кресел ниже 50% третий месяц подряд</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Мастер ушёл и забрал 70%+ клиентов — и это не первый раз</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Вы сами стрижёте 6/1 и зарабатываете столько же, сколько наёмный мастер</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Конкуренты демпингуют — стрижка за 2 000 ₸ стала нормой в вашем районе</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Платите аренду из личных денег, а не из выручки</div></div>
+</div>
+
+<div class="care"><p class="care-text">В барбершопе «закрыть» = продать оборудование за 30–40% стоимости. Но <strong>лучшее решение часто — не закрыть, а переформатировать</strong>: сократить кресла, сменить модель (аренда → процент или наоборот), найти другой район.</p></div>
+
+<div class="quote">«Оптимист открывает барбершоп. Пессимист считает, сколько мастеров уйдёт.<br>Реалист строит систему, которая работает без звёздных мастеров.»</div>
+</div></section>
+
+<!-- БЛОК 14: ЧЕК-ЛИСТ -->
+<section class="sec sec-alt" id="check"><div class="ct">
+<div class="sec-lb">Самопроверка</div>
+<h2 class="sec-t">Готовы ли вы открыть барбершоп?</h2>
+
+<div class="cd">
+<div class="checklist">
+<div class="check-item"><div class="check-num"></div><div class="check-text">У вас есть 2+ мастера, готовых работать с первого дня (или вы сами мастер)?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">Вы знаете, сколько стрижек/день нужно на кресло, чтобы выйти в ноль?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">В вашем районе нет 3+ барбершопов в радиусе 300м?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">У вас есть план удержания мастеров (не только процент, но и условия)?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">У вас есть система бронирования, где клиент записывается в заведение, а не к мастеру лично?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">У вас есть подушка на 3 мес. расходов сверх инвестиций?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">Вы понимаете разницу между «я стригу» и «я управляю бизнесом»?</div></div>
+</div>
+</div>
+
+<div class="care"><p class="care-text">Если на 3+ вопроса «нет» — начните с мини-формата: 1–2 кресла, сами стрижёте, набираете базу. <strong>Это бесплатный тест</strong> — поймёте район, клиентов, экономику. И только потом — масштаб.</p></div>
+</div></section>
+
+<!-- БЛОК 15: ГЛОССАРИЙ -->
+<section class="sec" id="glossary"><div class="ct">
+<div class="sec-lb">Словарь ZEREK</div>
+<h2 class="sec-t">Термины простым языком</h2>
+
+<div class="cd">
+<div class="gloss-item"><div class="gloss-term">Загрузка кресла</div><div class="gloss-def">Какой процент рабочего времени кресло занято клиентом. 70% = хорошо. 50% = на грани. 30% = убыточно.</div></div>
+<div class="gloss-item"><div class="gloss-term">Аренда кресла</div><div class="gloss-def">Мастер платит фиксированную сумму (80–150K/мес) за рабочее место и работает «на себя». Вы получаете аренду, но не контролируете клиентов, цены и качество.</div></div>
+<div class="gloss-item"><div class="gloss-term">Процент от стрижки</div><div class="gloss-def">Мастер получает 40–50% от каждой стрижки. Вы контролируете цены, расписание, клиентскую базу. Более управляемая модель.</div></div>
+<div class="gloss-item"><div class="gloss-term">Средний чек</div><div class="gloss-def">Сколько платит клиент за визит. Стрижка 3 500 + борода 2 000 + воск 500 = чек 6 000 ₸.</div></div>
+<div class="gloss-item"><div class="gloss-term">Клиентская база</div><div class="gloss-def">Список постоянных клиентов с контактами. В барбершопе она «привязана» к мастеру — если он уйдёт, база уйдёт с ним. CRM-система привязывает базу к заведению.</div></div>
+<div class="gloss-item"><div class="gloss-term">Точка безубыточности</div><div class="gloss-def">Сколько стрижек/день на все кресла нужно, чтобы покрыть расходы. Для 3 кресел — обычно 12–18 стрижек/день.</div></div>
+<div class="gloss-item"><div class="gloss-term">Окупаемость</div><div class="gloss-def">Через сколько месяцев прибыль покроет вложения. Для стандартного барбершопа — 8–18 мес.</div></div>
+</div>
+</div></section>
+
+<!-- БЛОК 16: CTA -->
+<section class="sec sec-alt" id="cta"><div class="ct">
+<div class="sec-lb">Что дальше</div>
+<h2 class="sec-t">От обзора — к вашим цифрам</h2>
+<p class="p"><strong>Ваш барбершоп будет работать с конкретными мастерами, в конкретном районе, с конкретным чеком.</strong> Общие цифры — ландшафт. Решение — на основе вашей модели.</p>
+
+<div class="cta-block" style="margin-bottom:20px">
+<div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:800;color:var(--gold);letter-spacing:4px;margin-bottom:16px">ZEREK</div>
+<div class="cta-t">Проверьте свою идею за 5 минут</div>
+<p class="cta-d">Quick Check покажет: сколько стрижек/день нужно, когда окупитесь, какие риски в вашем городе.</p>
+<div class="cta-price">3 000 ₸</div>
+<a href="https://t.me/zerekai_bot" target="_blank" class="cta-btn">Проверить идею →</a>
+</div>
+
+<div class="cta-block" style="background:linear-gradient(135deg,rgba(200,160,80,.06),rgba(184,74,58,.03))">
+<div class="cta-t">Нужна полная финансовая модель?</div>
+<p class="cta-d">60 месяцев, три сценария, загрузка кресел, текучесть мастеров, рост чека — всё в одном файле.</p>
+<div class="cta-price">9 000 ₸</div>
+<a href="https://t.me/zerekai_bot" target="_blank" class="cta-btn">Получить финмодель →</a>
+</div>
+
+<div class="care" style="margin-top:20px"><p class="care-text">Мы не продаём мечту. Мы продаём расчёт. <strong>Лучше узнать правду за 3 000 ₸, чем за 12 000 000.</strong></p></div>
+</div></section>
+
+<!-- FOOTER -->
+<footer class="ft">
+<div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:800;color:var(--gold);letter-spacing:5px;margin-bottom:10px">ZEREK</div>
+<p class="ft-t">© ZEREK Analytics · Данные: БНС РК, НБРК, 2ГИС, Крыша, OLX, аналитические отчёты, реальные прайсы</p>
+<p class="ft-t" style="margin-top:4px">Не является инвестиционной рекомендацией.</p>
+</footer>
+
+</body>
+</html>

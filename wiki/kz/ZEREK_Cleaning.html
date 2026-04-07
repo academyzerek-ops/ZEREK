@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZEREK — Клининг: бизнес в Казахстане 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=Source+Sans+3:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root{
+--bg:#f7faf8;--bg2:#edf4f0;--bg3:#e2ede6;--bg-card:#ffffff;--bg-card2:#f0f6f2;
+--brd:#c4d8cc;--brd2:#a0c0ac;
+--t1:#1e2e24;--t2:#4a6654;--t3:#6e8a78;--t4:#8eaa98;
+--ac:#2e8b57;--ac2:#38a068;--ac3:#1e6e40;--ac-light:#90d8b0;--ac-bg:rgba(46,139,87,.06);
+--ok:#4a8a50;--ok-bg:rgba(74,138,80,.05);--ok-brd:rgba(74,138,80,.15);
+--wrn:#c89030;--wrn-bg:rgba(200,144,48,.05);--wrn-brd:rgba(200,144,48,.15);
+--err:#b84a3a;--err-bg:rgba(184,74,58,.04);--err-brd:rgba(184,74,58,.12);
+--inf:#4a7ab8;--inf-bg:rgba(74,122,184,.05);
+--r:14px;--rs:10px
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--t1);font-family:'Source Sans 3',-apple-system,sans-serif;line-height:1.75;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.ct{max-width:820px;margin:0 auto;padding:0 24px}
+.hero{min-height:80vh;display:flex;align-items:center;justify-content:center;text-align:center;background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);padding:60px 24px}
+.hero-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:var(--ac2);letter-spacing:6px;margin-bottom:24px}
+.hero-badge{display:inline-block;padding:5px 18px;background:var(--ac-bg);border:1px solid rgba(46,139,87,.2);border-radius:100px;font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--ac2);margin-bottom:24px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;letter-spacing:-1px;margin-bottom:18px;color:var(--t1)}
+.hero-sub{font-size:1rem;color:var(--t2);max-width:580px;margin:0 auto;line-height:1.8}
+.nav{position:sticky;top:0;z-index:100;background:rgba(247,250,248,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--brd);padding:10px 0}
+.nav-in{display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none;max-width:820px;margin:0 auto;padding:0 24px}.nav-in::-webkit-scrollbar{display:none}
+.nav-logo{font-family:'Playfair Display',serif;font-size:14px;font-weight:800;color:var(--ac2);letter-spacing:3px;flex-shrink:0;text-decoration:none;margin-right:12px}
+.nav-a{font-size:11px;color:var(--t3);text-decoration:none;white-space:nowrap;padding:5px 10px;border-radius:6px;transition:.2s;font-weight:500}.nav-a:hover{color:var(--ac2);background:var(--ac-bg)}
+.sec{padding:56px 0;border-bottom:1px solid var(--brd)}.sec-alt{background:var(--bg2)}
+.sec-lb{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--ac2);margin-bottom:12px}.sec-lb::before{content:'';width:18px;height:2px;background:var(--ac2);border-radius:1px}
+.sec-t{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,3vw,1.9rem);font-weight:700;letter-spacing:-.5px;margin-bottom:14px;line-height:1.25;color:var(--t1)}
+.p{font-size:.94rem;color:var(--t2);line-height:1.85;margin-bottom:16px}.p strong{color:var(--t1);font-weight:600}.p em{color:var(--ac2);font-style:normal;font-weight:600}
+.cd{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:24px;margin-bottom:16px;box-shadow:0 1px 8px rgba(0,0,0,.03)}.cd2{background:var(--bg-card2);box-shadow:none}
+.cg{display:grid;gap:16px}.cg2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}.cg3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}.cg4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.sc{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:18px;text-align:center}.sv{font-size:1.3rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--ac2);line-height:1.2}.sl{font-size:11px;color:var(--t2);margin-top:4px}.ss{font-size:9px;color:var(--t3);margin-top:4px;font-style:italic}
+.pr{margin-bottom:12px}.prh{display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px}.prn{color:var(--t1);font-weight:500}.prv{color:var(--ac2);font-family:'JetBrains Mono',monospace;font-weight:600;font-size:12px}.prt{height:6px;background:rgba(46,139,87,.1);border-radius:3px;overflow:hidden}.prf{height:100%;border-radius:3px;background:linear-gradient(135deg,var(--ac2),var(--ac3))}
+.callout{padding:18px 22px;border-radius:var(--rs);margin:18px 0;font-size:.9rem;line-height:1.75}
+.callout-ac{background:var(--ac-bg);border:1px solid rgba(46,139,87,.15);border-left:3px solid var(--ac)}.callout-ok{background:var(--ok-bg);border:1px solid var(--ok-brd);border-left:3px solid var(--ok)}.callout-wrn{background:var(--wrn-bg);border:1px solid var(--wrn-brd);border-left:3px solid var(--wrn)}.callout-err{background:var(--err-bg);border:1px solid var(--err-brd);border-left:3px solid var(--err)}
+.callout-title{font-weight:700;margin-bottom:6px;font-size:.92rem}
+.explain{background:var(--bg-card2);border:1px solid var(--brd);border-radius:var(--r);padding:20px 22px;margin:18px 0}.explain-q{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--t1);margin-bottom:8px}.explain-a{font-size:.9rem;color:var(--t2);line-height:1.8}
+.care{background:linear-gradient(135deg,rgba(46,139,87,.04),rgba(74,138,80,.03));border:1px solid rgba(46,139,87,.12);border-radius:var(--r);padding:22px 24px;margin:20px 0;position:relative}.care::before{content:'💬';position:absolute;top:-12px;left:20px;font-size:20px;background:var(--bg);padding:0 6px}.sec-alt .care::before{background:var(--bg2)}.care-text{font-size:.92rem;color:var(--t2);line-height:1.8;font-style:italic}.care-text strong{color:var(--t1);font-style:normal}
+.case{border-radius:var(--r);padding:22px 24px;margin-bottom:14px}.case-good{background:var(--ok-bg);border:1px solid var(--ok-brd);border-left:4px solid var(--ok)}.case-bad{background:var(--err-bg);border:1px solid var(--err-brd);border-left:4px solid var(--err)}.case-mid{background:var(--wrn-bg);border:1px solid var(--wrn-brd);border-left:4px solid var(--wrn)}.case-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}.case-good .case-label{color:var(--ok)}.case-bad .case-label{color:var(--err)}.case-mid .case-label{color:var(--wrn)}.case-title{font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;margin-bottom:8px;color:var(--t1)}.case-text{font-size:.88rem;color:var(--t2);line-height:1.8}
+.risk{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:22px 24px;margin-bottom:14px}.risk-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}.risk-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}.risk-crit .risk-icon{background:rgba(184,74,58,.08)}.risk-warn .risk-icon{background:rgba(200,144,48,.08)}.risk-name{font-weight:700;font-size:.95rem;color:var(--t1)}.risk-body{font-size:.88rem;color:var(--t2);line-height:1.8;margin-bottom:10px}.risk-math{background:var(--bg-card2);border:1px solid var(--brd);border-radius:var(--rs);padding:12px 16px;font-size:.85rem;color:var(--t2);margin:10px 0;font-family:'JetBrains Mono','Source Sans 3',monospace;line-height:1.7}.risk-fix{font-size:.86rem;color:var(--ok);font-weight:500;margin-top:8px}
+.mistake{background:var(--bg-card);border:1px solid var(--brd);border-radius:var(--r);padding:20px 22px;margin-bottom:12px}.mistake-q{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--err);margin-bottom:6px}.mistake-a{font-size:.86rem;color:var(--t2);line-height:1.8}
+.funnel{display:flex;flex-direction:column;gap:0;margin:20px 0}.funnel-step{display:flex;align-items:center;gap:16px;padding:14px 20px;border-bottom:1px solid var(--brd)}.funnel-step:last-child{border-bottom:none}.funnel-num{font-family:'JetBrains Mono',monospace;font-size:1.8rem;font-weight:800;min-width:70px;text-align:center}.funnel-text{font-size:.88rem;color:var(--t2)}.funnel-step:nth-child(1) .funnel-num{color:var(--ok)}.funnel-step:nth-child(2) .funnel-num{color:var(--wrn)}.funnel-step:nth-child(3) .funnel-num{color:var(--ac2)}.funnel-step:nth-child(4) .funnel-num{color:var(--err)}
+.checklist{counter-reset:check}.check-item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--brd);align-items:flex-start}.check-item:last-child{border-bottom:none}.check-num{counter-increment:check;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;color:var(--ac2);min-width:24px;height:24px;display:flex;align-items:center;justify-content:center;background:var(--ac-bg);border-radius:6px;flex-shrink:0;margin-top:2px}.check-num::before{content:counter(check)}.check-text{font-size:.88rem;color:var(--t2);line-height:1.7}
+.gloss-item{padding:12px 0;border-bottom:1px solid var(--brd)}.gloss-item:last-child{border-bottom:none}.gloss-term{font-weight:700;color:var(--t1);font-size:.9rem;margin-bottom:2px}.gloss-def{font-size:.85rem;color:var(--t2);line-height:1.7}
+table.dt{width:100%;border-collapse:collapse;font-size:13px}.dt thead th{padding:10px 14px;text-align:left;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);border-bottom:2px solid var(--brd2);background:var(--ac-bg)}.dt td{padding:10px 14px;border-bottom:1px solid var(--brd);color:var(--t2)}.dt tr:hover td{background:var(--ac-bg);color:var(--t1)}.dt .n{font-family:'JetBrains Mono',monospace;font-weight:500;color:var(--t1)}.dt .hl{color:var(--ac2);font-weight:600}.tw{overflow-x:auto;border-radius:var(--r);border:1px solid var(--brd)}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:var(--ac-bg);border:1px solid var(--brd);border-radius:100px;font-size:11px;font-weight:500;color:var(--t2);margin:3px}.chip-d{width:5px;height:5px;border-radius:50%;background:var(--ac2)}.tg{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0}
+.bg{display:inline-block;padding:3px 10px;border-radius:100px;font-size:9px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}.bg-ok{background:rgba(74,138,80,.08);color:var(--ok)}.bg-wrn{background:rgba(200,144,48,.08);color:var(--wrn)}.bg-err{background:rgba(184,74,58,.08);color:var(--err)}.bg-inf{background:rgba(74,122,184,.08);color:var(--inf)}.bg-ac{background:var(--ac-bg);color:var(--ac2)}
+.signal{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--brd);align-items:flex-start}.signal:last-child{border-bottom:none}.signal-dot{width:8px;height:8px;border-radius:50%;background:var(--err);flex-shrink:0;margin-top:7px}.signal-text{font-size:.88rem;color:var(--t2);line-height:1.7}
+.cta-block{text-align:center;padding:48px 24px;background:linear-gradient(180deg,var(--bg2),var(--bg3));border-radius:var(--r);margin:24px 0}.cta-t{font-family:'Playfair Display',serif;font-size:clamp(1.3rem,3vw,1.8rem);font-weight:700;margin-bottom:10px;color:var(--t1)}.cta-d{color:var(--t2);font-size:.92rem;max-width:480px;margin:0 auto 20px;line-height:1.7}.cta-btn{display:inline-block;padding:12px 36px;background:linear-gradient(135deg,var(--ac2),var(--ac3));color:#fff;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;border-radius:100px;text-decoration:none;transition:.3s;border:none;cursor:pointer}.cta-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(46,139,87,.3)}.cta-price{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--ac2);margin-bottom:14px}
+.quote{font-family:'Playfair Display',serif;font-size:1rem;color:var(--ac2);font-weight:600;font-style:italic;padding:18px 0;border-top:1px solid var(--brd);border-bottom:1px solid var(--brd);margin:24px 0;text-align:center;line-height:1.7}
+.tc{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.ft{padding:36px 0;border-top:1px solid var(--brd);text-align:center;background:var(--bg)}.ft-t{font-size:11px;color:var(--t3)}
+@media(max-width:768px){.ct{padding:0 16px}.sec{padding:40px 0}.cd{padding:18px}.tc,.cg2,.cg3,.cg4{grid-template-columns:1fr}.hero{min-height:60vh;padding:40px 16px}.hero h1{font-size:1.8rem}.hero-sub{font-size:.9rem}.nav-in{gap:2px;padding:0 12px}.nav-a{font-size:10px;padding:4px 7px}.nav-logo{font-size:12px;letter-spacing:2px;margin-right:6px}.funnel-step{padding:10px 14px;gap:12px}.funnel-num{font-size:1.4rem;min-width:55px}.funnel-text{font-size:.82rem}.risk{padding:16px 18px}.risk-math{font-size:.78rem;padding:10px 12px}.risk-body{font-size:.84rem}.mistake{padding:16px 18px}.mistake-q{font-size:.88rem}.mistake-a{font-size:.82rem}.care{padding:18px 16px}.care::before{left:14px;font-size:16px}.care-text{font-size:.86rem}.explain{padding:16px 18px}.explain-q{font-size:.92rem}.explain-a{font-size:.85rem}.case{padding:16px 18px}.case-text{font-size:.84rem}.cta-block{padding:36px 16px}.cta-btn{padding:12px 28px;font-size:12px}.cta-price{font-size:1rem}.sc{padding:14px}.sv{font-size:1.1rem}.callout{padding:14px 16px}.tw{font-size:12px}.dt td,.dt thead th{padding:8px 10px;font-size:11px}.check-item{gap:10px;padding:10px 0}.check-text{font-size:.84rem}.gloss-item{padding:10px 0}.gloss-term{font-size:.86rem}.gloss-def{font-size:.82rem}.signal{gap:10px;padding:10px 0}.signal-text{font-size:.84rem}.p{font-size:.88rem}.sec-t{font-size:1.3rem}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero" id="top"><div>
+<div class="hero-logo">ZEREK</div>
+<div class="hero-badge">Бизнес-обзор 2026</div>
+<h1>Клининг<br>как бизнес в Казахстане</h1>
+<p class="hero-sub">Форматы, экономика одной уборки, оборудование, клинеры, репутация и&nbsp;главное — почему «взять тряпку и пойти зарабатывать» не&nbsp;работает. Честный разбор для тех, кто думает о клининговом бизнесе.</p>
+</div></section>
+
+<!-- NAV -->
+<nav class="nav"><div class="nav-in">
+<a href="#top" class="nav-logo">ZEREK</a>
+<a href="#why" class="nav-a">Зачем</a>
+<a href="#count" class="nav-a">Считать</a>
+<a href="#market" class="nav-a">Рынок</a>
+<a href="#formats" class="nav-a">Форматы</a>
+<a href="#money" class="nav-a">Экономика</a>
+<a href="#cases" class="nav-a">Кейсы</a>
+<a href="#extra" class="nav-a">Доход</a>
+<a href="#equip" class="nav-a">Железо</a>
+<a href="#staff" class="nav-a">Кадры</a>
+<a href="#hidden" class="nav-a">Скрытое</a>
+<a href="#risks" class="nav-a">Риски</a>
+<a href="#regions" class="nav-a">Регионы</a>
+<a href="#check" class="nav-a">Чек-лист</a>
+<a href="#cta" class="nav-a">Расчёт</a>
+</div></nav>
+
+<!-- БЛОК 1: ЗАЧЕМ -->
+<section class="sec" id="why"><div class="ct">
+<div class="sec-lb">Зачем этот обзор</div>
+<h2 class="sec-t">Клининг — это не «просто уборка»</h2>
+<p class="p">Звучит просто: взял тряпку, ведро, пылесос — и пошёл зарабатывать. <em>Порог входа минимальный, спрос вечный, конкуренция — ерунда.</em> Так думает каждый второй начинающий предприниматель.</p>
+<p class="p">А потом оказывается: клиент не готов платить «нормальную» цену. Сотрудники уходят после второй уборки. Химия для мрамора стоит как бутылка вина. А один неудачный отзыв в 2ГИС убивает поток на месяц.</p>
+<p class="p">Этот обзор — попытка собрать <strong>всё, что стоит знать до того, как вы купите первый пароочиститель</strong>. Подготовлен командой ZEREK на основе данных БНС РК и рыночной аналитики.</p>
+<div class="care"><p class="care-text">Клининг — один из немногих бизнесов, где можно реально начать с нуля. Но «начать с нуля» и «построить бизнес» — разные вещи. Мы хотим, чтобы вы прошли от первого ко второму — <strong>а не застряли на уровне «сам мою за 10 000 ₸».</strong></p></div>
+</div></section>
+
+<!-- БЛОК 2: ЗАЧЕМ СЧИТАТЬ -->
+<section class="sec sec-alt" id="count"><div class="ct">
+<div class="sec-lb">Прежде чем начинать</div>
+<h2 class="sec-t">Почему нужно считать, даже если «вход — ноль»</h2>
+<p class="p">Кажется, что клининг — бизнес без стартовых вложений. Пылесос есть, тряпки есть — можно начинать. Но разница между «убираю сам за 10K» и «управляю командой с оборотом 3M/мес» — в расчётах, а не в тряпках.</p>
+<div class="explain">
+<div class="explain-q">Что значит «посчитать клининговый бизнес»?</div>
+<div class="explain-a">Ответить на три вопроса: <strong>1)</strong>&nbsp;сколько стоит час моей / моей команды работы с учётом всех расходов, <strong>2)</strong>&nbsp;сколько уборок в месяц нужно делать, чтобы покрыть ФОТ + оборудование + транспорт + маркетинг, <strong>3)</strong>&nbsp;готов ли мой город платить столько, сколько я хочу зарабатывать. Третий вопрос — самый болезненный.</div>
+</div>
+<div class="explain">
+<div class="explain-q">Почему «дешёвый вход» обманчив?</div>
+<div class="explain-a">Вы начинаете с минимальным оборудованием — но клиент хочет качество как у профи. Вы берёте недорого — но после вычета химии, транспорта и времени зарабатываете 2 000 ₸/час. Это меньше, чем курьер. <strong>Дешёвый вход создаёт иллюзию бизнеса — но без расчётов это просто подработка.</strong></div>
+</div>
+</div></section>
+
+<!-- БЛОК 3: РЫНОК -->
+<section class="sec" id="market"><div class="ct">
+<div class="sec-lb">Рынок</div>
+<h2 class="sec-t">Казахстан только привыкает платить за чистоту</h2>
+<p class="p"><strong>Культура профессионального клининга в Казахстане — на стадии формирования.</strong> Большинство домохозяйств убираются сами или нанимают «тётю по объявлению» за 5 000–10 000 ₸. Идея платить 25 000–50 000 ₸ за профессиональную уборку — всё ещё воспринимается как роскошь.</p>
+<p class="p">При этом <em>рынок B2B-клининга</em> (офисы, ТРЦ, медучреждения) — уже вполне зрелый. Бизнес понимает, что уборка — это гигиена, репутация и комплаенс. Именно корпоративный сегмент тянет рынок вверх.</p>
+
+<div class="cg cg3" style="margin-top:18px">
+<div class="cd cd2" style="border-left:3px solid var(--ok)"><h4 style="font-size:13px;font-weight:700;color:var(--ok);margin-bottom:5px">B2B — зрелый рынок</h4><p style="font-size:12px;color:var(--t2)">Офисы, ТРЦ, медцентры, гостиницы. Контракты на 6–12 мес. Стабильный доход, но вход через тендеры и связи.</p></div>
+<div class="cd cd2" style="border-left:3px solid var(--wrn)"><h4 style="font-size:13px;font-weight:700;color:var(--wrn);margin-bottom:5px">B2C — формирующийся</h4><p style="font-size:12px;color:var(--t2)">Квартиры, дома. Спрос растёт в Алматы/Астане, но в регионах — «тётя» по-прежнему дешевле. Сезонность: весна и осень — пики.</p></div>
+<div class="cd cd2" style="border-left:3px solid var(--inf)"><h4 style="font-size:13px;font-weight:700;color:var(--inf);margin-bottom:5px">Специализация</h4><p style="font-size:12px;color:var(--t2)">Уборка после ремонта, химчистка мебели, мойка фасадов. Высокий чек, низкая конкуренция, но нужно оборудование и навыки.</p></div>
+</div>
+
+<div class="explain">
+<div class="explain-q">Что это значит для вас?</div>
+<div class="explain-a">Если вы начинаете с B2C (квартиры) — готовьтесь к тому, что клиенты будут сравнивать вас с «тётей за 8 000 ₸». Ваше преимущество — качество, гарантия, профессиональная химия. Но объяснять это нужно каждому клиенту. Если хотите стабильный доход — идите в B2B, но там вход сложнее.</div>
+</div>
+</div></section>
+
+<!-- БЛОК 4: ФОРМАТЫ -->
+<section class="sec sec-alt" id="formats"><div class="ct">
+<div class="sec-lb">Форматы</div>
+<h2 class="sec-t">От одиночки с пылесосом до корпоративного контракта</h2>
+
+<div class="cg cg2" style="margin-bottom:18px">
+<div class="cd" style="border-top:3px solid var(--ok)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-ok">Вход</span><h3 style="font-size:15px;font-weight:700;margin-top:6px">🧹 Одиночка / микро</h3></div><div style="text-align:right"><div style="font-size:18px;font-weight:800;font-family:'JetBrains Mono';color:var(--ok)">100–500K ₸</div><div style="font-size:10px;color:var(--t3)">старт</div></div></div>
+<div style="margin-top:12px">
+<div class="pr"><div class="prh"><span class="prn">Команда</span><span class="prv">1 чел. (вы)</span></div><div class="prt"><div class="prf" style="width:8%;background:var(--ok)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Доход/мес</span><span class="prv">200–500K ₸</span></div><div class="prt"><div class="prf" style="width:20%;background:var(--ok)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Средний чек</span><span class="prv">15–30K ₸</span></div><div class="prt"><div class="prf" style="width:25%;background:var(--ok)"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:8px">Вы + пылесос + химия. 15–25 уборок/мес. Потолок — ваше время. Это не бизнес, а самозанятость. Но отличный способ проверить спрос и набрать первых клиентов.</p>
+</div>
+
+<div class="cd" style="border-top:3px solid var(--ac2)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-ac">Команда</span><h3 style="font-size:15px;font-weight:700;margin-top:6px">👥 Бригада B2C</h3></div><div style="text-align:right"><div style="font-size:18px;font-weight:800;font-family:'JetBrains Mono';color:var(--ac2)">1–5M ₸</div><div style="font-size:10px;color:var(--t3)">старт</div></div></div>
+<div style="margin-top:12px">
+<div class="pr"><div class="prh"><span class="prn">Команда</span><span class="prv">3–8 чел.</span></div><div class="prt"><div class="prf" style="width:30%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Оборот/мес</span><span class="prv">1–3M ₸</span></div><div class="prt"><div class="prf" style="width:40%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Чистая прибыль</span><span class="prv">15–25%</span></div><div class="prt"><div class="prf" style="width:20%"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:8px">Вы управляете, клинеры убирают. Нужен маркетинг, логистика, контроль качества. Уже бизнес — но ФОТ и текучесть кадров становятся главной болью.</p>
+</div>
+
+<div class="cd" style="border-top:3px solid var(--inf)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-inf">Контракт</span><h3 style="font-size:15px;font-weight:700;margin-top:6px">🏢 B2B-клининг</h3></div><div style="text-align:right"><div style="font-size:18px;font-weight:800;font-family:'JetBrains Mono';color:var(--inf)">3–15M ₸</div><div style="font-size:10px;color:var(--t3)">старт</div></div></div>
+<div style="margin-top:12px">
+<div class="pr"><div class="prh"><span class="prn">Команда</span><span class="prv">5–20 чел.</span></div><div class="prt"><div class="prf" style="width:50%;background:var(--inf)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Контракт/мес</span><span class="prv">300K–3M ₸</span></div><div class="prt"><div class="prf" style="width:55%;background:var(--inf)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Чистая прибыль</span><span class="prv">10–18%</span></div><div class="prt"><div class="prf" style="width:15%;background:var(--inf)"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:8px">Офисы, ТРЦ, бизнес-центры. Стабильные ежемесячные контракты. Но: вход через тендеры, авансовые закупки оборудования, маржа ниже. Зато предсказуемость.</p>
+</div>
+
+<div class="cd" style="border-top:3px solid var(--wrn)">
+<div style="display:flex;justify-content:space-between;align-items:start"><div><span class="bg bg-wrn">Спец</span><h3 style="font-size:15px;font-weight:700;margin-top:6px">⚡ Специализированный</h3></div><div style="text-align:right"><div style="font-size:18px;font-weight:800;font-family:'JetBrains Mono';color:var(--wrn)">2–10M ₸</div><div style="font-size:10px;color:var(--t3)">старт</div></div></div>
+<div style="margin-top:12px">
+<div class="pr"><div class="prh"><span class="prn">Средний чек</span><span class="prv">30–150K ₸</span></div><div class="prt"><div class="prf" style="width:50%;background:var(--wrn)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Чистая прибыль</span><span class="prv">20–35%</span></div><div class="prt"><div class="prf" style="width:30%;background:var(--wrn)"></div></div></div>
+</div>
+<p style="font-size:12px;color:var(--t2);margin-top:8px">Уборка после ремонта, химчистка мебели/ковров, мойка фасадов, промышленный альпинизм. Высокая маржа, но нужно спецоборудование и обученные люди. Низкая конкуренция.</p>
+</div>
+</div>
+
+<div class="explain">
+<div class="explain-q">Какой формат выбрать?</div>
+<div class="explain-a">Нет денег — начните одиночкой, проверьте спрос. Есть 2–5M — собирайте бригаду B2C. Есть связи с бизнесом — идите в B2B. Хотите максимальную маржу — специализация (после ремонта, химчистка). <strong>Совет ZEREK:</strong> лучший старт — одиночка → набрали 15+ постоянных клиентов → наняли первого клинера → масштаб.</div>
+</div>
+</div></section>
+
+<!-- БЛОК 5: ЭКОНОМИКА -->
+<section class="sec" id="money"><div class="ct">
+<div class="sec-lb">Экономика</div>
+<h2 class="sec-t">Сколько зарабатывает одна уборка</h2>
+
+<div class="callout callout-ok" style="margin-top:0">
+<div class="callout-title" style="color:var(--ok)">📊 Бенчмарк: бригада B2C, 4 клинера, город 400K+</div>
+<div class="cg cg4" style="margin-top:10px">
+<div class="sc"><div class="sv">60–90</div><div class="sl">уборок / мес</div></div>
+<div class="sc"><div class="sv">22 000 ₸</div><div class="sl">средний чек</div></div>
+<div class="sc"><div class="sv">1.3–2M</div><div class="sl">выручка / мес</div></div>
+<div class="sc"><div class="sv" style="color:var(--ok)">15–25%</div><div class="sl">чистая прибыль</div></div>
+</div>
+</div>
+
+<div class="cd" style="margin-top:18px">
+<h3 style="font-size:14px;font-weight:700;margin-bottom:14px">Куда уходит выручка (~1.5M ₸/мес)</h3>
+<div class="pr"><div class="prh"><span class="prn">👥 ФОТ клинеров</span><span class="prv">40–50%</span></div><div class="prt"><div class="prf" style="width:45%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">🧴 Химия + расходники</span><span class="prv">8–12%</span></div><div class="prt"><div class="prf" style="width:10%;background:var(--wrn)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">🚗 Транспорт</span><span class="prv">5–10%</span></div><div class="prt"><div class="prf" style="width:8%;background:var(--inf)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">📢 Маркетинг</span><span class="prv">5–10%</span></div><div class="prt"><div class="prf" style="width:8%;background:var(--ac3)"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">🔧 Амортизация оборудования</span><span class="prv">3–5%</span></div><div class="prt"><div class="prf" style="width:4%;background:var(--t4)"></div></div></div>
+<div style="margin-top:14px;padding:12px 16px;background:var(--ok-bg);border:1px solid var(--ok-brd);border-radius:var(--rs);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+<span style="font-size:11px;color:var(--ok);font-weight:600;text-transform:uppercase;letter-spacing:1px">Чистая прибыль</span>
+<span style="font-size:22px;font-weight:800;font-family:'JetBrains Mono';color:var(--ok)">200–400K ₸/мес</span>
+</div>
+</div>
+
+<div class="explain">
+<div class="explain-q">Что это значит простыми словами?</div>
+<div class="explain-a">Одна уборка квартиры стоит 15 000–30 000 ₸. Клинер получает 7 000–12 000 ₸ (50%). Химия, транспорт, маркетинг — ещё 3 000–5 000 ₸. Вам остаётся <strong>3 000–8 000 ₸ с одной уборки</strong>. Чтобы зарабатывать 300K/мес — нужно 40–100 уборок. Это 2–5 уборок каждый рабочий день, командой.</div>
+</div>
+</div></section>
+
+<!-- БЛОК 6: КЕЙСЫ -->
+<section class="sec sec-alt" id="cases"><div class="ct">
+<div class="sec-lb">Три сценария</div>
+<h2 class="sec-t">Как это выглядит на практике</h2>
+
+<div class="case case-good">
+<div class="case-label">🟢 Хороший старт</div>
+<div class="case-title">Бригада B2C, 4 клинера, Алматы</div>
+<div class="case-text">Начала сама — 3 месяца убирала по 3–4 квартиры/нед. Набрала базу 20 постоянных клиентов. Вложила 1.5M ₸ в профессиональное оборудование. Наняла 3 клинеров. Чек — 22K. К 6-му месяцу — 70 уборок/мес, выручка 1.5M. Прибыль ~300K/мес. Через год — добавила химчистку мебели (чек 35–50K), прибыль выросла до 500K. <strong>Ключ: начала сама, поняла клиента, потом масштабировала.</strong></div>
+</div>
+
+<div class="case case-bad">
+<div class="case-label">🔴 Типичная ошибка</div>
+<div class="case-title">Сразу команда 6 чел., Астана, без базы клиентов</div>
+<div class="case-text">Вложил 3M — оборудование, форма, машина. Нанял 6 клинеров сразу. Заказов — 15–20/мес. ФОТ: 600K. Выручка: 400K. Минус 200K/мес + расход подушки. Клинеры сидят без работы и уходят. Через 3 месяца — 2 человека ушли, оборудование простаивает. Через 5 — закрытие. <strong>Ошибка: масштабировал до того, как появилась клиентская база.</strong></div>
+</div>
+
+<div class="case case-mid">
+<div class="case-label">🟡 Ловушка середины</div>
+<div class="case-title">Одиночка, Караганда, 2 года работы</div>
+<div class="case-text">Убирает сама, 4–5 квартир/нед. Чек 15K. Выручка ~280K/мес. Минус химия (30K), транспорт (20K), маркетинг (10K). Чистыми: <em>220K/мес</em>. Работает 6 дней в неделю, физически тяжело, отпуск = нет дохода. Нанять клинера боится — «клиенты привыкли ко мне». <strong>Два года — и это не бизнес, а физически тяжёлая самозанятость без потолка роста.</strong></div>
+</div>
+
+<div class="care"><p class="care-text">Клининг — один из немногих бизнесов, где вы можете застрять на этапе «всё делаю сам» навсегда. Ключевой переход: <strong>от «я убираю» к «я управляю»</strong>. Без этого перехода — это работа, а не бизнес.</p></div>
+</div></section>
+
+<!-- БЛОК 7: ДОПРОДАЖИ -->
+<section class="sec" id="extra"><div class="ct">
+<div class="sec-lb">Допродажи</div>
+<h2 class="sec-t">На чём зарабатывать помимо базовой уборки</h2>
+<p class="p">Базовая уборка — это трафик и репутация. Но <strong>маржа делается на дополнительных услугах</strong>. Клиент уже впустил вас в дом — доверие есть. Предложите больше.</p>
+
+<div class="cg cg2">
+<div class="cd cd2"><h3 style="font-size:14px;font-weight:700;margin-bottom:8px">🛋 Химчистка мебели</h3><p style="font-size:12px;color:var(--t2);margin-bottom:8px">Диван — 10 000–25 000 ₸. Себестоимость: 2 000–4 000 ₸. Наценка ×3–6. Нужен экстрактор (~300–600K), но он окупается за 15–20 заказов.</p><div class="tg"><span class="chip"><span class="chip-d"></span>Диван: ×3–5</span><span class="chip"><span class="chip-d"></span>Матрас: ×4–6</span></div></div>
+<div class="cd cd2"><h3 style="font-size:14px;font-weight:700;margin-bottom:8px">🧹 Генеральная уборка</h3><p style="font-size:12px;color:var(--t2);margin-bottom:8px">Чек 35 000–80 000 ₸ вместо 20K за обычную. Дольше, но маржинальнее. Сезонный пик — весна (после зимы) и осень (перед праздниками).</p></div>
+<div class="cd cd2"><h3 style="font-size:14px;font-weight:700;margin-bottom:8px">🏗 После ремонта</h3><p style="font-size:12px;color:var(--t2);margin-bottom:8px">Чек 50 000–150 000 ₸. Тяжёлая работа, но конкуренция ниже. Партнёрство с ремонтными бригадами — стабильный поток. Нужно спецоборудование.</p></div>
+<div class="cd cd2"><h3 style="font-size:14px;font-weight:700;margin-bottom:8px">🪟 Мойка окон / фасадов</h3><p style="font-size:12px;color:var(--t2);margin-bottom:8px">Окна: 1 000–3 000 ₸/шт. В квартире 5–8 окон = 10 000–20 000 ₸ допом к уборке. Фасады — отдельная ниша с чеком 200K+, но нужен допуск и оборудование.</p></div>
+</div>
+
+<div class="callout callout-ac"><p style="font-size:.88rem;color:var(--t2);margin:0"><strong style="color:var(--ac2)">Правило:</strong> клининговая компания, которая делает только базовую уборку — зарабатывает 15–20% маржи. С допуслугами (химчистка, после ремонта) — 25–35%. Разница — в оборудовании и навыках, а не в количестве уборок.</p></div>
+</div></section>
+
+<!-- БЛОК 8: ОБОРУДОВАНИЕ -->
+<section class="sec sec-alt" id="equip"><div class="ct">
+<div class="sec-lb">Оборудование</div>
+<h2 class="sec-t">Инструменты: на чём не экономить</h2>
+<p class="p">Хороший клинер с плохим оборудованием — это плохой клинер. Дешёвый пылесос, тряпки, которые размазывают грязь, химия с разводами — это <strong>ваша репутация</strong>.</p>
+
+<div class="tw" style="margin-bottom:16px"><table class="dt"><thead><tr><th>Оборудование</th><th>Бюджет</th><th>Оптимум</th><th>Критичность</th></tr></thead><tbody>
+<tr><td>Профессиональный пылесос</td><td class="n">80–150K</td><td class="n hl">200–400K</td><td style="color:var(--err)">●●●●●</td></tr>
+<tr><td>Пароочиститель</td><td class="n">60–120K</td><td class="n hl">150–350K</td><td style="color:var(--wrn)">●●●●○</td></tr>
+<tr><td>Экстрактор (химчистка)</td><td class="n">200–400K</td><td class="n hl">400–700K</td><td style="color:var(--err)">●●●●●</td></tr>
+<tr><td>Химия (стартовый набор)</td><td class="n">30–60K</td><td class="n hl">80–150K</td><td style="color:var(--err)">●●●●○</td></tr>
+<tr><td>Микрофибра, мопы, щётки</td><td class="n">20–40K</td><td class="n">50–100K</td><td style="color:var(--wrn)">●●●●○</td></tr>
+<tr><td>Стремянка + инвентарь</td><td class="n">15–30K</td><td class="n">30–60K</td><td style="color:var(--wrn)">●●●○○</td></tr>
+</tbody></table></div>
+
+<div class="callout callout-ac">
+<div class="callout-title" style="color:var(--ac2)">💡 Совет ZEREK</div>
+<p style="font-size:.88rem;color:var(--t2);margin:0"><strong>Три вещи, на которых нельзя экономить:</strong> пылесос (дешёвый не всасывает — клиент увидит пыль), химия (дешёвая оставляет разводы и пятна — клиент не вернётся), микрофибра (дешёвая размазывает грязь). <em>Профпылесос за 300K окупается за 15 уборок, а репутация — бесценна.</em></p>
+</div>
+</div></section>
+
+<!-- БЛОК 9: КАДРЫ -->
+<section class="sec" id="staff"><div class="ct">
+<div class="sec-lb">Кадры</div>
+<h2 class="sec-t">Клинеры: найти сложно, потерять — легко</h2>
+<p class="p">Уборка — физически тяжёлая работа с низким престижем. Вы конкурируете за людей с продавцами, курьерами, фастфудом. Курьер Glovo зарабатывает сопоставимо — но без мытья чужих унитазов.</p>
+
+<div class="tc">
+<div class="cd"><h3 style="font-size:14px;font-weight:700;margin-bottom:10px">💰 Заработок клинера</h3>
+<div class="pr"><div class="prh"><span class="prn">Начинающий</span><span class="prv">150–220K ₸</span></div><div class="prt"><div class="prf" style="width:30%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Опытный</span><span class="prv">250–400K ₸</span></div><div class="prt"><div class="prf" style="width:50%"></div></div></div>
+<div class="pr"><div class="prh"><span class="prn">Специалист (химчистка)</span><span class="prv">350–550K ₸</span></div><div class="prt"><div class="prf" style="width:70%"></div></div></div>
+<p style="font-size:10px;color:var(--t3);margin-top:6px">Обычно сдельно: 40–50% от чека уборки</p></div>
+<div class="cd"><h3 style="font-size:14px;font-weight:700;margin-bottom:10px">🚨 Проблемы</h3>
+<p style="font-size:12px;color:var(--t2);margin-bottom:8px"><strong>Доверие.</strong> Клинер работает в чужом доме. Одна пропажа — даже мнимая — убивает репутацию всей компании.</p>
+<p style="font-size:12px;color:var(--t2);margin-bottom:8px"><strong>Текучесть.</strong> 3–6 месяцев средний срок. Уходят на «более чистую» работу в прямом и переносном смысле.</p>
+<p style="font-size:12px;color:var(--t2)"><strong>Качество.</strong> Каждый убирает «по-своему». Без чек-листа и контроля — нестабильный результат.</p>
+</div>
+</div>
+</div></section>
+
+<!-- БЛОК 11: СКРЫТЫЕ РАСХОДЫ -->
+<section class="sec sec-alt" id="hidden"><div class="ct">
+<div class="sec-lb">Скрытые расходы</div>
+<h2 class="sec-t">Деньги, которых нет в смете</h2>
+
+<div class="cg cg2" style="margin-bottom:14px">
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">🚗 Транспорт</h4><span class="bg bg-wrn">5–10% от выручки</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Оборудование, химию и клинеров нужно доставить. Бензин, такси, аренда машины — ощутимая статья при 3–5 уборках/день в разных районах.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">🧴 Расход химии</h4><span class="bg bg-ac">8–12% от выручки</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Профессиональная химия стоит 3 000–8 000 ₸/литр. На одну уборку уходит 200–500 мл разных средств. При 60 уборках/мес — 100–180K только на химию.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">💔 Порча имущества</h4><span class="bg bg-err">0–200K/случай</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Разбили вазу, поцарапали паркет, залили ламинат. 1–2 случая в квартал. Без страховки — платите из прибыли. С клиентом ≠ всегда договоритесь.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">⭐ Маркетинг и отзывы</h4><span class="bg bg-wrn">5–10% от выручки</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Instagram, 2ГИС, Яндекс — без рекламы клиенты не придут. Один плохой отзыв = –10–20 потенциальных клиентов. Управление репутацией — это время и деньги.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">👥 Текучесть</h4><span class="bg bg-wrn">30–60K за уход</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Обучение 1–2 нед., проверка доверия, форма, период адаптации. При 3–4 уходах/год — 100–250K потерь.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px">🔧 Износ оборудования</h4><span class="bg bg-ac">3–5% от выручки</span><p style="font-size:12px;color:var(--t2);margin-top:6px">Пылесос при ежедневном использовании живёт 1–2 года. Экстрактор — 2–3. Микрофибра — 2–3 месяца. Постоянная замена.</p></div>
+</div>
+</div></section>
+
+<!-- БЛОК 12: РИСКИ -->
+<section class="sec" id="risks"><div class="ct">
+<div class="sec-lb">Риски и закрытия</div>
+<h2 class="sec-t">Почему клининговые компании закрываются</h2>
+
+<h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:24px 0 14px">Главная особенность клининга</h3>
+<p class="p">В отличие от кофейни или автомойки, у клининга нет «физического якоря» — нет точки, куда приходят клиенты. <strong>Ваш бизнес = ваша репутация.</strong> Один плохой отзыв в 2ГИС может убить поток на месяц. Один случай пропажи вещей у клиента — конец компании.</p>
+
+<div class="care"><p class="care-text">В клининге нет «средней» репутации. Вы либо <strong>отличные</strong> (5 звёзд, сарафанное радио работает) — либо <strong>мёртвые</strong> (3.5 звезды, клиенты уходят к конкуренту). Середины нет.</p></div>
+
+<h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:28px 0 14px">Топ причин закрытия</h3>
+
+<div class="risk risk-crit">
+<div class="risk-head"><div class="risk-icon">⭐</div><div><div class="risk-name">1. Убийственный отзыв</div><span class="bg bg-err">критический</span></div></div>
+<div class="risk-body">Один детальный негативный отзыв в 2ГИС или Google с фотографиями = –30–50% новых заявок на месяц. В клининге люди выбирают по отзывам больше, чем в любой другой нише — потому что впускают вас в свой дом.</div>
+<div class="risk-math">Рейтинг упал с 4.8 до 4.2 → конверсия из просмотра в заявку падает с 15% до 5% → при 500 просмотрах/мес: было 75 заявок, стало 25. Минус 50 заявок × 22K = –1.1M выручки.</div>
+<div class="risk-fix">✅ Защита: фото ДО/ПОСЛЕ каждой уборки. Чек-лист сдачи. Обратная связь через 2 часа. Быстрая компенсация при проблеме.</div>
+</div>
+
+<div class="risk risk-crit">
+<div class="risk-head"><div class="risk-icon">🔑</div><div><div class="risk-name">2. Проблема доверия</div><span class="bg bg-err">критический</span></div></div>
+<div class="risk-body">Клинер украл. Или клиент <em>думает</em>, что украл. Результат одинаковый — скандал, отзыв, потеря клиентской базы. В клининге вы работаете в чужом доме, среди чужих вещей. Порог подозрения — минимальный.</div>
+<div class="risk-fix">✅ Защита: камеры (если клиент разрешает). Работа в парах. Проверка сотрудников. Договор с описанием ответственности. Страховка.</div>
+</div>
+
+<div class="risk risk-crit">
+<div class="risk-head"><div class="risk-icon">👥</div><div><div class="risk-name">3. Текучесть клинеров</div><span class="bg bg-err">критический</span></div></div>
+<div class="risk-body">Клинер ушёл = вы либо убираете сами, либо отменяете заказы. Отмена = потеря клиента навсегда. Текучесть 3–6 мес. Зимой хуже — никто не хочет таскать оборудование по морозу.</div>
+<div class="risk-fix">✅ Защита: оплата выше рынка на 10–15%. Бонусы за стаж и отзывы. Нормальный график. Запасной клинер «на подхвате».</div>
+</div>
+
+<div class="risk risk-warn">
+<div class="risk-head"><div class="risk-icon">💰</div><div><div class="risk-name">4. Ценовая конкуренция с «тётями»</div><span class="bg bg-wrn">серьёзный</span></div></div>
+<div class="risk-body">Вы берёте 25K за уборку. «Тётя» по объявлению — 8K. Клиент не всегда понимает разницу. Объяснять — долго. Снижать цену — убивать маржу. В регионах проблема острее, чем в Алматы.</div>
+<div class="risk-fix">✅ Защита: демонстрируйте разницу. Фото до/после. Профессиональная химия. Гарантия переделки. Страховка имущества.</div>
+</div>
+
+<div class="risk risk-warn">
+<div class="risk-head"><div class="risk-icon">📊</div><div><div class="risk-name">5. Сезонность</div><span class="bg bg-wrn">серьёзный</span></div></div>
+<div class="risk-body">Пики: весна (генеральная после зимы), осень (перед праздниками), лето (перед/после отпуска). Спады: январь, февраль. Разница — до 40% между пиком и спадом.</div>
+<div class="risk-fix">✅ Защита: B2B-контракты сглаживают сезонность. Подписки на регулярную уборку. Спецпредложения в низкий сезон.</div>
+</div>
+
+<!-- ПРОМЕЖУТОЧНЫЙ CTA -->
+<div class="cta-block" style="margin:28px 0">
+<div class="cta-t">Сколько вам нужно уборок, чтобы выйти в плюс?</div>
+<p class="cta-d">Quick Check рассчитает экономику вашего клининга — с учётом города, формата, команды и расходов.</p>
+<div class="cta-price">3 000 ₸</div>
+<a href="https://t.me/zerekai_bot" target="_blank" class="cta-btn">Проверить свою идею →</a>
+</div>
+
+<!-- ОШИБКИ -->
+<h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:28px 0 14px">Ошибки, которые не выглядят как ошибки</h3>
+
+<div class="mistake">
+<div class="mistake-q">«Начну дёшево — потом подниму цены»</div>
+<div class="mistake-a">Клиенты, пришедшие на «дёшево», уйдут при повышении. Вы привлечёте аудиторию, которая не готова платить за качество. Лучше начать с нормальной цены и меньшим потоком — но правильной аудиторией.</div>
+</div>
+
+<div class="mistake">
+<div class="mistake-q">«Химию куплю самую дешёвую — клиент не заметит»</div>
+<div class="mistake-a">Заметит. Разводы на стекле, запах хлорки, пятна на мебели — это не экономия, а антиреклама. Один клиент расскажет трём, что «убрали плохо». Профхимия стоит в 2–3 раза дороже — и приносит в 5 раз больше повторных заказов.</div>
+</div>
+
+<div class="mistake">
+<div class="mistake-q">«Набрал 5 клинеров — бизнес пойдёт»</div>
+<div class="mistake-a">Без клиентской базы 5 клинеров = 5 зарплат без заказов. Сначала — поток заказов (маркетинг, 2ГИС, Instagram, сарафан). Потом — найм под объём. Не наоборот.</div>
+</div>
+
+<div class="mistake">
+<div class="mistake-q">«Не буду тратить на маркетинг — сарафанное радио всё сделает»</div>
+<div class="mistake-a">Сарафан работает — но через 6–12 месяцев. Первые полгода без рекламы в Instagram и 2ГИС — вы невидимы. 50–100K/мес на маркетинг в первый год — не роскошь, а выживание.</div>
+</div>
+
+<!-- СИГНАЛЫ СТОП -->
+<h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin:28px 0 14px">Сигналы, что пора пересмотреть</h3>
+
+<div class="cd">
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Рейтинг ниже 4.5 в 2ГИС / Google и продолжает падать</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Клинеры уходят быстрее, чем вы находите новых</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Убираете сами больше половины заказов — даже через год</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Средний чек падает — клиенты торгуются и вы уступаете</div></div>
+<div class="signal"><div class="signal-dot"></div><div class="signal-text">Маркетинг не даёт заявок — стоимость привлечения клиента выше прибыли с уборки</div></div>
+</div>
+
+<div class="care"><p class="care-text">В клининге «закрыть бизнес» проще, чем в кафе — нет аренды, нет тяжёлого оборудования. Но <strong>лучше пересмотреть модель</strong>: сменить формат (B2C → B2B), добавить специализацию, поменять ценовую политику — чем просто сдаться.</p></div>
+
+<div class="quote">«Оптимист открывает клининг. Пессимист читает отзывы конкурентов.<br>Реалист делает и то, и другое — и именно он имеет 5 звёзд.»</div>
+</div></section>
+
+<!-- БЛОК 13: РЕГИОНЫ -->
+<section class="sec sec-alt" id="regions"><div class="ct">
+<div class="sec-lb">Регионы</div>
+<h2 class="sec-t">Где запускать: зарплата → готовность платить</h2>
+<p class="p">Клининг привязан к <strong>платёжеспособности и культурной готовности</strong> платить за уборку. В регионах с низкими зарплатами «тётя за 5K» — непобедимый конкурент.</p>
+
+<div class="cg cg3">
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px;color:var(--ok)">🏙 Лучшие рынки</h4><p style="font-size:12px;color:var(--t2)"><strong>Алматы, Астана</strong> — высокая з/п, сформированный спрос, готовность платить 20–30K за уборку. Конкуренция есть, но рынок растёт.</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px;color:var(--wrn)">⚠️ Растущие</h4><p style="font-size:12px;color:var(--t2)"><strong>Атырау, Мангистау</strong> — высокая з/п, но компактный рынок. <strong>Караганда, Актобе</strong> — спрос формируется, чеки ниже (15–20K).</p></div>
+<div class="cd cd2"><h4 style="font-size:13px;font-weight:700;margin-bottom:4px;color:var(--err)">❌ Сложные</h4><p style="font-size:12px;color:var(--t2)"><strong>Юг, моногорода</strong> — культура профессионального клининга не сформирована. «Тётя» = непобедимый конкурент. B2B — единственный шанс.</p></div>
+</div>
+</div></section>
+
+<!-- БЛОК 14: ЧЕК-ЛИСТ -->
+<section class="sec" id="check"><div class="ct">
+<div class="sec-lb">Самопроверка</div>
+<h2 class="sec-t">Готовы ли вы запустить клининг?</h2>
+
+<div class="cd">
+<div class="checklist">
+<div class="check-item"><div class="check-num"></div><div class="check-text">Вы попробовали убирать сами и получили хотя бы 10 заказов?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">Вы знаете, сколько уборок/мес нужно делать, чтобы покрыть все расходы?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">Ваш город готов платить 20K+ за уборку (а не только 8K «тёте»)?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">У вас есть бюджет на профессиональное оборудование (хотя бы 300–500K)?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">У вас есть план маркетинга на первые 3 месяца (Instagram, 2ГИС)?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">Вы готовы к тому, что первый клинер уйдёт через 2–3 месяца?</div></div>
+<div class="check-item"><div class="check-num"></div><div class="check-text">Вы понимаете разницу между «я убираю» и «я управляю бизнесом»?</div></div>
+</div>
+</div>
+
+<div class="care"><p class="care-text">Если на 3+ вопроса «нет» — начните с себя: 10–15 уборок самостоятельно, поймите клиента, наберите отзывы. <strong>Это бесплатный тест рынка.</strong> И только потом — инвестиции в команду.</p></div>
+</div></section>
+
+<!-- БЛОК 15: ГЛОССАРИЙ -->
+<section class="sec sec-alt" id="glossary"><div class="ct">
+<div class="sec-lb">Словарь ZEREK</div>
+<h2 class="sec-t">Термины простым языком</h2>
+
+<div class="cd">
+<div class="gloss-item"><div class="gloss-term">Точка безубыточности</div><div class="gloss-def">Сколько уборок/мес нужно делать, чтобы доходы покрыли все расходы. Меньше — теряете деньги.</div></div>
+<div class="gloss-item"><div class="gloss-term">Средний чек</div><div class="gloss-def">Сколько платит один клиент за визит. Базовая уборка + мойка окон + химчистка дивана = один чек.</div></div>
+<div class="gloss-item"><div class="gloss-term">B2C</div><div class="gloss-def">Business-to-Consumer — работа с частными клиентами (квартиры, дома). Чеки 15–50K, но нужен постоянный поток заявок.</div></div>
+<div class="gloss-item"><div class="gloss-term">B2B</div><div class="gloss-def">Business-to-Business — работа с бизнесом (офисы, ТРЦ). Контракты на 6–12 мес, стабильный доход, но вход через тендеры.</div></div>
+<div class="gloss-item"><div class="gloss-term">Экстрактор</div><div class="gloss-def">Машина для химчистки мебели и ковров. Подаёт раствор и тут же вытягивает грязную воду. Стоит 300–700K, окупается за 15–25 заказов.</div></div>
+<div class="gloss-item"><div class="gloss-term">Конверсия</div><div class="gloss-def">Какой процент тех, кто увидел ваш профиль (в 2ГИС, Instagram), стал клиентом. Рейтинг 4.8 = конверсия 10–15%. Рейтинг 4.0 = конверсия 2–5%.</div></div>
+<div class="gloss-item"><div class="gloss-term">Сарафанное радио</div><div class="gloss-def">Когда клиенты рекомендуют вас друзьям. Бесплатный канал привлечения, но работает только после 6–12 мес. хорошей работы.</div></div>
+<div class="gloss-item"><div class="gloss-term">ФОТ (фонд оплаты труда)</div><div class="gloss-def">Все расходы на сотрудников. В клининге обычно сдельно: 40–50% от чека уходит клинеру.</div></div>
+</div>
+</div></section>
+
+<!-- БЛОК 16: CTA -->
+<section class="sec" id="cta"><div class="ct">
+<div class="sec-lb">Что дальше</div>
+<h2 class="sec-t">От обзора — к вашим цифрам</h2>
+<p class="p"><strong>Ваш клининг будет работать в конкретном городе, с конкретной командой, конкретными ценами и конкретной репутацией.</strong> Общие цифры — ландшафт. Решение — на основе вашей модели.</p>
+
+<div class="cta-block" style="margin-bottom:20px">
+<div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:800;color:var(--ac2);letter-spacing:4px;margin-bottom:16px">ZEREK</div>
+<div class="cta-t">Проверьте свою идею за 5 минут</div>
+<p class="cta-d">Quick Check покажет: сколько уборок/мес вам нужно, какой формат оптимален, когда окупятся вложения.</p>
+<div class="cta-price">3 000 ₸</div>
+<a href="https://t.me/zerekai_bot" target="_blank" class="cta-btn">Проверить идею →</a>
+</div>
+
+<div class="cta-block" style="background:linear-gradient(135deg,rgba(46,139,87,.06),rgba(184,74,58,.03))">
+<div class="cta-t">Нужна полная финансовая модель?</div>
+<p class="cta-d">60 месяцев расчётов, три сценария, B2C и B2B отдельно, сезонность, рост команды — всё в одном файле.</p>
+<div class="cta-price">9 000 ₸</div>
+<a href="https://t.me/zerekai_bot" target="_blank" class="cta-btn">Получить финмодель →</a>
+</div>
+
+<div class="care" style="margin-top:20px"><p class="care-text">Мы не продаём мечту. Мы продаём расчёт. <strong>Лучше узнать правду за 3 000 ₸, чем за 5 000 000.</strong></p></div>
+</div></section>
+
+<!-- FOOTER -->
+<footer class="ft">
+<div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:800;color:var(--ac2);letter-spacing:5px;margin-bottom:10px">ZEREK</div>
+<p class="ft-t">© ZEREK Analytics · Данные: БНС РК, НБРК, 2ГИС, Крыша, OLX, аналитические отчёты, реальные прайсы</p>
+<p class="ft-t" style="margin-top:4px">Не является инвестиционной рекомендацией.</p>
+</footer>
+
+</body>
+</html>
