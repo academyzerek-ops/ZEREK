@@ -246,6 +246,7 @@ var WIKI_FILES={
   'PIZZA':'ZEREK_Pizza.html','TIRE':'ZEREK_TireService.html'
 };
 var WK={step:1,catIdx:null};
+var WIKI_BASE='https://academyzerek-ops.github.io/ZEREK/wiki/kz/';
 
 function startWiki(){
   show('WIKI');WK.step=1;WK.catIdx=null;
@@ -270,13 +271,24 @@ function wkSelCat(idx){
     var name=NICHE_NAMES[id]||id,ic=NICHE_ICONS[id]||'';
     h+='<div class="cd" onclick="wkOpen(\''+id+'\')"><div><div class="cn">'+(ic?ic+' ':'')+name+'</div><div class="cs">Бесплатный обзор</div></div></div>';
   }
-  // Back button
+  // Ниши без обзора — показать как "скоро"
+  for(var j=0;j<cat.ids.length;j++){
+    var id=cat.ids[j];if(WIKI_FILES[id])continue;
+    var name=NICHE_NAMES[id]||id,ic=NICHE_ICONS[id]||'';
+    h+='<div class="cd" style="opacity:.4;cursor:default;"><div><div class="cn">'+(ic?ic+' ':'')+name+'</div><div class="cs">Скоро</div></div></div>';
+  }
   h+='<div style="margin-top:16px;"><a href="#" onclick="startWiki();return false" class="back-home">← Все категории</a></div>';
   $('wk_niches').innerHTML=h;
   window.scrollTo(0,0);
 }
 function wkOpen(nicheId){
-  window.location.href='../wiki/kz/'+WIKI_FILES[nicheId];
+  var url=WIKI_BASE+WIKI_FILES[nicheId];
+  // In Telegram Mini App — open in internal browser
+  if(window.Telegram&&window.Telegram.WebApp){
+    window.Telegram.WebApp.openLink(url);
+  } else {
+    window.open(url,'_blank');
+  }
 }
 
 // ═══ QUICK CHECK — redirect to existing page ═══
