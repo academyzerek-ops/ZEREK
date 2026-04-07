@@ -756,11 +756,21 @@ input[type="range"]::-moz-range-thumb {
       </div>
     </div>
 
-    <!-- STEP 2: Niche -->
+    <!-- STEP 2: Category -->
     <div class="step" id="step-2">
       <div class="step-label">Шаг 2</div>
+      <h2>Категория бизнеса</h2>
+      <p class="step-desc">Выберите направление</p>
+      <div class="options-grid" id="category-list">
+        <!-- Filled dynamically -->
+      </div>
+    </div>
+
+    <!-- STEP 2b: Niche -->
+    <div class="step" id="step-2b">
+      <div class="step-label">Шаг 2</div>
       <h2>Выберите нишу</h2>
-      <p class="step-desc">Какой бизнес хотите запустить?</p>
+      <p class="step-desc" id="niche-step-desc">Какой бизнес хотите запустить?</p>
       <div class="options-grid" id="niche-list">
         <!-- Filled dynamically -->
       </div>
@@ -905,8 +915,9 @@ var API = 'https://web-production-b3ede.up.railway.app';
    STATE
    ============================================ */
 var S = {
-  step: 1,
+  step: 0,
   city_id: null, city_name: null,
+  category_idx: null, category_name: null,
   niche_id: null, niche_name: null,
   format_id: null, format_name: null,
   loc_type: 'ТЦ',
@@ -970,7 +981,9 @@ var CITY_ICONS = {
   'semey': '📚', 'kostanay': '🌿'
 };
 
-var STEP_NAMES = ['', 'Город', 'Ниша', 'Формат', 'Локация', 'Капитал', 'Подтверждение'];
+var STEPS = ['step-1','step-2','step-2b','step-3','step-4','step-5','step-6'];
+var STEP_LABELS = ['Город','Категория','Ниша','Формат','Локация','Капитал','Подтверждение'];
+var CATEGORY_ICONS = {'Еда и напитки':'🍽️','Красота и здоровье':'💅','Авто':'🚗','Торговля':'🛒','Услуги':'🔧'};
 
 /* ============================================
    API HELPERS — XMLHttpRequest for Telegram iOS
@@ -1072,51 +1085,54 @@ function selectCity(el) {
 }
 
 /* ============================================
-   NICHES
+   CATEGORIES & NICHES (2-step selection)
    ============================================ */
-function renderNiches() {
+function renderCategories() {
+  var html = '';
+  for (var i = 0; i < NICHE_CATEGORIES.length; i++) {
+    var cat = NICHE_CATEGORIES[i];
+    var icon = CATEGORY_ICONS[cat.title] || '📁';
+    var count = 0;
+    for (var j = 0; j < cat.ids.length; j++) {
+      for (var k = 0; k < S.niches.length; k++) {
+        if (S.niches[k].niche_id === cat.ids[j]) { count++; break; }
+      }
+    }
+    html += '<div class="opt-card" data-idx="'+i+'" onclick="selectCategory(this)">' +
+      '<div class="opt-icon">'+icon+'</div>' +
+      '<div class="opt-info"><div class="opt-name">'+cat.title+'</div><div class="opt-sub">'+count+' направлений</div></div></div>';
+  }
+  document.getElementById('category-list').innerHTML = html;
+}
+
+function selectCategory(el) {
+  selectCard(el, 'category-list');
+  S.category_idx = parseInt(el.getAttribute('data-idx'));
+  S.category_name = el.querySelector('.opt-name').textContent;
+  // Reset niche when category changes
+  S.niche_id = null; S.niche_name = null;
+  S.format_id = null; S.format_name = null;
+  updateBtn();
+}
+
+function renderNichesForCategory() {
+  if (S.category_idx === null) return;
+  var cat = NICHE_CATEGORIES[S.category_idx];
+  document.getElementById('niche-step-desc').textContent = cat.title + ' — выберите конкретный бизнес';
   var nicheMap = {};
   for (var i = 0; i < S.niches.length; i++) {
-    var n = S.niches[i];
-    nicheMap[n.niche_id] = n;
+    nicheMap[S.niches[i].niche_id] = S.niches[i];
   }
   var html = '';
-  for (var c = 0; c < NICHE_CATEGORIES.length; c++) {
-    var cat = NICHE_CATEGORIES[c];
-    var cards = '';
-    for (var j = 0; j < cat.ids.length; j++) {
-      var id = cat.ids[j];
-      var n = nicheMap[id];
-      if (!n) continue;
-      var name = NICHE_NAMES[id] || n['\u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435'] || id;
-      var icon = NICHE_ICONS[id] || '\uD83D\uDCBC';
-      cards += '<div class="opt-card" data-id="'+id+'" onclick="selectNiche(this)">' +
-        '<div class="opt-icon">'+icon+'</div>' +
-        '<div class="opt-info"><div class="opt-name">'+name+'</div><div class="opt-sub">'+name+'</div></div></div>';
-    }
-    if (cards) {
-      html += '<div class="niche-category"><div class="niche-category-title">'+cat.title+'</div>' +
-        '<div class="options-grid-inner">'+cards+'</div></div>';
-    }
-  }
-  var placed = {};
-  for (var c = 0; c < NICHE_CATEGORIES.length; c++) {
-    for (var j = 0; j < NICHE_CATEGORIES[c].ids.length; j++) placed[NICHE_CATEGORIES[c].ids[j]] = true;
-  }
-  var extra = '';
-  for (var id in nicheMap) {
-    if (!placed[id]) {
-      var n = nicheMap[id];
-      var name = NICHE_NAMES[id] || n['\u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435'] || id;
-      var icon = NICHE_ICONS[id] || '\uD83D\uDCBC';
-      extra += '<div class="opt-card" data-id="'+id+'" onclick="selectNiche(this)">' +
-        '<div class="opt-icon">'+icon+'</div>' +
-        '<div class="opt-info"><div class="opt-name">'+name+'</div><div class="opt-sub">'+name+'</div></div></div>';
-    }
-  }
-  if (extra) {
-    html += '<div class="niche-category"><div class="niche-category-title">Другое</div>' +
-      '<div class="options-grid-inner">'+extra+'</div></div>';
+  for (var j = 0; j < cat.ids.length; j++) {
+    var id = cat.ids[j];
+    var n = nicheMap[id];
+    if (!n) continue;
+    var name = NICHE_NAMES[id] || n['\u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435'] || id;
+    var icon = NICHE_ICONS[id] || '\uD83D\uDCBC';
+    html += '<div class="opt-card" data-id="'+id+'" onclick="selectNiche(this)">' +
+      '<div class="opt-icon">'+icon+'</div>' +
+      '<div class="opt-info"><div class="opt-name">'+name+'</div><div class="opt-sub">'+name+'</div></div></div>';
   }
   document.getElementById('niche-list').innerHTML = html;
 }
@@ -1197,30 +1213,32 @@ function selectCard(el, containerId) {
 }
 
 /* ============================================
-   NAVIGATION
+   NAVIGATION (step index 0..6 into STEPS array)
    ============================================ */
+function stepId() { return STEPS[S.step]; }
+
 function updateProgress() {
-  var pct = (S.step / 6 * 100);
+  var pct = ((S.step + 1) / STEPS.length * 100);
   document.getElementById('progress-fill').style.width = pct + '%';
-  document.getElementById('step-counter').textContent = 'Шаг ' + S.step + ' из 6';
-  document.getElementById('step-name').textContent = STEP_NAMES[S.step];
+  document.getElementById('step-counter').textContent = 'Шаг ' + (S.step + 1) + ' из ' + STEPS.length;
+  document.getElementById('step-name').textContent = STEP_LABELS[S.step] || '';
 }
 
 function updateBtn() {
   var btn = document.getElementById('btn-main');
   var backBtn = document.getElementById('btn-back');
+  var sid = stepId();
   var ok = false;
-  if (S.step === 1) ok = !!S.city_id;
-  else if (S.step === 2) ok = !!S.niche_id;
-  else if (S.step === 3) ok = !!S.format_id;
-  else if (S.step === 4) ok = true; // area can default
-  else if (S.step === 5) ok = true;
-  else if (S.step === 6) ok = true;
+  if (sid === 'step-1') ok = !!S.city_id;
+  else if (sid === 'step-2') ok = (S.category_idx !== null);
+  else if (sid === 'step-2b') ok = !!S.niche_id;
+  else if (sid === 'step-3') ok = !!S.format_id;
+  else ok = true;
   btn.disabled = !ok;
 
-  backBtn.style.display = (S.step > 1) ? '' : 'none';
+  backBtn.style.display = (S.step > 0) ? '' : 'none';
 
-  if (S.step === 6) {
+  if (sid === 'step-6') {
     btn.innerHTML = 'Рассчитать <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
   } else {
     btn.innerHTML = 'Далее <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
@@ -1228,17 +1246,17 @@ function updateBtn() {
 }
 
 function goStep(n) {
-  // Hide current
-  var cur = document.getElementById('step-' + S.step);
+  var cur = document.getElementById(stepId());
   if (cur) cur.classList.remove('active');
   S.step = n;
+  var sid = stepId();
   // Special load logic
-  if (n === 2 && S.niches.length > 0) renderNiches();
-  if (n === 3) loadFormats();
-  if (n === 6) renderConfirm();
-  // Show new
-  var next = document.getElementById('step-' + n);
-  if (next) { next.classList.add('active'); }
+  if (sid === 'step-2') renderCategories();
+  if (sid === 'step-2b') renderNichesForCategory();
+  if (sid === 'step-3') loadFormats();
+  if (sid === 'step-6') renderConfirm();
+  var next = document.getElementById(sid);
+  if (next) next.classList.add('active');
   updateProgress();
   updateBtn();
   window.scrollTo(0, 0);
@@ -1246,25 +1264,23 @@ function goStep(n) {
 
 function handleNext() {
   if (document.getElementById('btn-main').disabled) return;
-
-  // Gather step 4 data
-  if (S.step === 4) {
+  var sid = stepId();
+  // Gather step 4 (location) data
+  if (sid === 'step-4') {
     var areaVal = document.getElementById('area-input').value;
-    S.area_m2 = areaVal ? parseInt(areaVal) : 20; // default 20
+    S.area_m2 = areaVal ? parseInt(areaVal) : 20;
     var rentVal = document.getElementById('rent-input').value;
     S.rent_override = rentVal ? parseInt(rentVal) : null;
   }
-
-  if (S.step === 6) {
+  if (sid === 'step-6') {
     runCalculation();
     return;
   }
-
   goStep(S.step + 1);
 }
 
 function goBack() {
-  if (S.step > 1) goStep(S.step - 1);
+  if (S.step > 0) goStep(S.step - 1);
 }
 
 /* Render confirm summary */
@@ -1348,36 +1364,36 @@ function runCalculation() {
 }
 
 /* ============================================
-   RENDER REPORT — v2 Design
+   RENDER REPORT — v4 (matches render_report_v4 API)
    ============================================ */
 function renderReport(d) {
   var inp = d.input || {};
-  var mkt = d.market || {};
-  var loc = d.location || {};
-  var capex = d.capex || {};
-  var staff = d.staff || {};
-  var opex = d.opex || {};
-  var sc = d.scenarios || {};
-  var be = d.breakeven || {};
-  var pb = d.payback || {};
-  var cf = d.cashflow || [];
-  var tax = d.tax || {};
-  var verdict = d.verdict || {};
-  var risks = d.risks || {};
-  var fin = d.financials || {};
-  var macro = d.macro || {};
-  var cb = mkt.consumer_behavior || {};
-  var tss = mkt.tam_sam_som || {};
-  var comp = mkt.competitors || risks['\u043a\u043e\u043d\u043a\u0443\u0440\u0435\u043d\u0442\u044b'] || {};
+  var health = d.health || {};
+  var b1 = d.block_1 || {};
+  var b2 = d.block_2 || {};
+  var b3 = d.block_3 || {};
+  var b4 = d.block_4 || {};
+  var b5 = d.block_5 || {};
+  var b6 = d.block_6 || {};
+  var b7 = d.block_7 || {};
+  var b8 = d.block_8 || {};
+  var b9 = d.block_9 || {};
+  var b10 = d.block_10 || {};
+  var b11 = d.block_11_season || {};
+  var b12 = d.block_12_checklist || {};
 
   var today = new Date().toLocaleDateString('ru-RU');
+  var scenarios = (b5.scenarios || []);
+  var scBase = scenarios[1] || {};
+  var scPess = scenarios[0] || {};
+  var scOpt = scenarios[2] || {};
 
   var h = '';
 
   // ===== HERO =====
   h += '<div class="hero fade-up">';
   h += '<div class="hero-eyebrow">Экспресс-оценка бизнеса</div>';
-  h += '<h1>' + (inp.format_id || '') + '</h1>';
+  h += '<h1>' + (NICHE_NAMES[inp.niche_id] || inp.format_id || '') + ' — ' + (fmtFormatId(inp.format_id||'')) + '</h1>';
   h += '<div class="hero-sub">' + (inp.city_name||'') + ' — ' + (inp.loc_type||'') + '</div>';
   h += '</div>';
 
@@ -1390,225 +1406,204 @@ function renderReport(d) {
   h += '<div class="s-chip">📅 <strong>' + today + '</strong></div>';
   h += '</div>';
 
-  // ===== 01 ОБЗОР РЫНКА =====
+  // ===== HEALTH INDICATORS =====
+  var indicators = (health.indicators || []);
+  if (indicators.length) {
+    h += '<div class="section fade-up">';
+    h += '<div class="section-tag"><span class="tag-num">⚡</span> ЗДОРОВЬЕ ПРОЕКТА</div>';
+    h += '<div class="card">';
+    for (var i = 0; i < indicators.length; i++) {
+      var ind = indicators[i];
+      var ic = ind.status === 'green' ? '🟢' : ind.status === 'yellow' ? '🟡' : '🔴';
+      h += '<div class="row"><span class="k">' + ic + ' ' + (ind.name||'') + '</span><span class="v">' + (ind.value||'') + '</span></div>';
+    }
+    h += '</div></div>';
+  }
+
+  // ===== 01 ВЫРУЧКА =====
   h += '<div class="section fade-up">';
-  h += '<div class="section-tag"><span class="tag-num">01</span> ОБЗОР РЫНКА</div>';
-  h += '<h2>Рынок в ' + (inp.city_name||'') + '</h2>';
-  h += '<p style="font-size:13.5px;color:var(--text2);margin-bottom:18px;line-height:1.6;">';
-  h += 'Население — <strong style="color:var(--text)">' + fmt(mkt.population) + ' чел.</strong> ';
-  if (mkt.working_age) h += 'Трудоспособное — <strong style="color:var(--text)">' + fmt(mkt.working_age) + '</strong>. ';
-  if (mkt.growth_rate) h += 'Рост населения: <strong style="color:var(--text)">' + mkt.growth_rate + '%</strong>.';
-  h += '</p>';
-
-  // TAM/SAM/SOM
-  if (tss.tam) {
-    h += '<h3 style="font-size:14px;font-weight:600;margin-bottom:8px;color:var(--text);">Целевая аудитория</h3>';
-    h += '<div class="funnel">';
-    h += '<div class="funnel-item funnel-l1"><div><div class="funnel-abbr">TAM <span style="font-weight:400;font-size:10px;letter-spacing:0;text-transform:none;color:var(--text3);">— ' + (tss.tam_label||'весь рынок') + '</span></div></div><div class="funnel-val tc-accent">' + fmt(tss.tam) + '</div></div>';
-    h += '<div class="funnel-item funnel-l2"><div><div class="funnel-abbr">SAM <span style="font-weight:400;font-size:10px;letter-spacing:0;text-transform:none;color:var(--text3);">— ' + (tss.sam_label||'доступный') + '</span></div></div><div class="funnel-val tc-accent">' + fmt(tss.sam) + '</div></div>';
-    h += '<div class="funnel-item funnel-l3"><div><div class="funnel-abbr">SOM <span style="font-weight:400;font-size:10px;letter-spacing:0;text-transform:none;color:var(--text3);">— ' + (tss.som_label||'реалистичный') + '</span></div></div><div class="funnel-val tc-accent">' + fmt(tss.som) + '</div></div>';
-    h += '</div>';
-  }
-
-  // Конкуренция
-  if (comp['\u043a\u043e\u043b_\u0432\u043e'] || comp['\u0443\u0440\u043e\u0432\u0435\u043d\u044c']) {
-    h += '<div class="card" style="margin-top:12px;">';
-    h += '<div class="card-head">Конкуренция</div>';
-    if (comp['\u043a\u043e\u043b_\u0432\u043e']) h += '<div class="row"><span class="k">Заведений в городе</span><span class="v">' + comp['\u043a\u043e\u043b_\u0432\u043e'] + '</span></div>';
-    if (comp['\u043b\u0438\u0434\u0435\u0440\u044b']) h += '<div class="row"><span class="k">Лидеры</span><span class="v" style="font-family:var(--sans);font-size:11px;">' + comp['\u043b\u0438\u0434\u0435\u0440\u044b'] + '</span></div>';
-    if (comp['\u0441\u0438\u0433\u043d\u0430\u043b']) h += '<div class="row"><span class="k">Статус</span><span class="v" style="font-family:var(--sans);font-size:11px;">' + comp['\u0441\u0438\u0433\u043d\u0430\u043b'] + '</span></div>';
-    h += '</div>';
-  }
-
-  // Consumer behavior
-  if (cb['\u0421\u0440\u0435\u0434\u043d\u0438\u0439 \u0447\u0435\u043a (\u20b8)']) {
-    h += '<div class="expert-tip"><div class="expert-avatar">👤</div><div class="expert-body"><div class="expert-name">Поведение клиентов</div><div class="expert-text">';
-    h += 'Средний чек — <strong>' + fmt(cb['\u0421\u0440\u0435\u0434\u043d\u0438\u0439 \u0447\u0435\u043a (\u20b8)']) + ' ₸</strong>. ';
-    h += 'Частота: <strong>' + (cb['\u0427\u0430\u0441\u0442\u043e\u0442\u0430 \u0432\u0438\u0437\u0438\u0442\u0430']||'') + '</strong>. ';
-    h += 'Пиковые часы: <strong>' + (cb['\u041f\u0438\u043a\u043e\u0432\u044b\u0435 \u0447\u0430\u0441\u044b']||'') + '</strong>. ';
-    h += 'Повторные клиенты: <strong>' + (cb['\u0414\u043e\u043b\u044f \u043f\u043e\u0432\u0442\u043e\u0440\u043d\u044b\u0445 \u043a\u043b\u0438\u0435\u043d\u0442\u043e\u0432 %']||'') + '</strong>.';
-    h += '</div></div></div>';
-  }
+  h += '<div class="section-tag"><span class="tag-num">01</span> ВЫРУЧКА</div>';
+  h += '<h2>' + (b1.title||'На чём зарабатываете') + '</h2>';
+  h += '<div class="card">';
+  h += '<div class="card-head">' + (b1.subtitle||'') + '</div>';
+  h += '<div class="row"><span class="k">Средний чек</span><span class="v">' + fmt(b1.check_med) + ' ₸</span></div>';
+  h += '<div class="row"><span class="k">Трафик/день</span><span class="v">' + (b1.traffic_med||'') + ' кл.</span></div>';
+  h += '<div class="row"><span class="k">Выручка/мес (базовый)</span><span class="v tc-accent">' + fmtM(b1.revenue_monthly) + ' ₸</span></div>';
+  h += '</div>';
+  if (b1.disclaimer) h += '<p class="note">' + b1.disclaimer + '</p>';
   h += '</div>';
 
-  // ===== 02 ЛОКАЦИЯ =====
+  // ===== 02 ПРЯМЫЕ РАСХОДЫ =====
   h += '<div class="section fade-up">';
-  h += '<div class="section-tag"><span class="tag-num">02</span> ЛОКАЦИЯ</div>';
-  h += '<h2>Локация и аренда</h2>';
+  h += '<div class="section-tag"><span class="tag-num">02</span> ПРЯМЫЕ РАСХОДЫ</div>';
+  h += '<h2>' + (b2.title||'Прямые расходы') + '</h2>';
   h += '<div class="card">';
-  h += '<div class="card-head">Параметры</div>';
-  h += '<div class="row"><span class="k">Тип локации</span><span class="v">' + (inp.loc_type||'') + '</span></div>';
-  h += '<div class="row"><span class="k">Площадь</span><span class="v">' + (inp.area_m2||'') + ' м²</span></div>';
-  h += '<div class="row"><span class="k">Аренда</span><span class="v">' + fmt(loc.rent_month) + ' ₸/мес</span></div>';
-  h += '<div class="row"><span class="k">Ставка за м²</span><span class="v">' + fmt(loc.rent_per_m2) + ' ₸</span></div>';
-  h += '<div class="row"><span class="k">Депозит</span><span class="v">' + fmt(loc.deposit) + ' ₸</span></div>';
-  h += '</div></div>';
-
-  // ===== 03 CAPEX =====
-  h += '<div class="section fade-up">';
-  h += '<div class="section-tag"><span class="tag-num">03</span> ИНВЕСТИЦИИ</div>';
-  h += '<h2>Стартовые вложения (CAPEX)</h2>';
-  h += '<div class="card">';
-  h += '<div class="card-head">Расчёт — уровень «' + (capex['\u0443\u0440\u043e\u0432\u0435\u043d\u044c']||inp.capex_level||'стандарт') + '»</div>';
-  h += '<div class="row"><span class="k">Оборудование и ремонт</span><span class="v">' + fmt(capex['\u043e\u0431\u043e\u0440\u0443\u0434\u043e\u0432\u0430\u043d\u0438\u0435_\u0438_\u0440\u0435\u043c\u043e\u043d\u0442']) + ' ₸</span></div>';
-  h += '<div class="row"><span class="k">Депозит аренды</span><span class="v">' + fmt(capex['\u0434\u0435\u043f\u043e\u0437\u0438\u0442_\u0430\u0440\u0435\u043d\u0434\u044b']) + ' ₸</span></div>';
-  h += '<div class="row row-total"><span class="k">ИТОГО</span><span class="v">' + fmt(capex['\u0438\u0442\u043e\u0433\u043e']) + ' ₸</span></div>';
+  h += '<div class="row"><span class="k">Себестоимость</span><span class="v">' + (b2.cogs_pct||'') + '% от выручки</span></div>';
+  h += '<div class="row"><span class="k">COGS / мес</span><span class="v">' + fmtM(b2.cogs_monthly) + ' ₸</span></div>';
+  h += '<div class="row"><span class="k">Валовая прибыль</span><span class="v tc-green">' + fmtM(b2.gross_profit) + ' ₸</span></div>';
+  h += '<div class="row"><span class="k">Валовая маржа</span><span class="v">' + (b2.gross_margin_pct||'') + '%</span></div>';
+  h += '</div>';
+  if (b2.disclaimer) h += '<p class="note">' + b2.disclaimer + '</p>';
   h += '</div>';
 
-  // CAPEX visual
-  var capOk = capex['\u0440\u0430\u0437\u043d\u0438\u0446\u0430'] >= 0;
+  // ===== 03 ПОСТОЯННЫЕ РАСХОДЫ =====
+  h += '<div class="section fade-up">';
+  h += '<div class="section-tag"><span class="tag-num">03</span> РАСХОДЫ</div>';
+  h += '<h2>' + (b3.title||'Постоянные расходы') + '</h2>';
+  h += '<div class="card">';
+  h += '<div class="card-head">' + (b3.subtitle||'Платите каждый месяц') + '</div>';
+  var items3 = b3.items || [];
+  for (var i = 0; i < items3.length; i++) {
+    h += '<div class="row"><span class="k">' + (items3[i].name||'') + '</span><span class="v">' + fmt(items3[i].amount) + ' ₸</span></div>';
+  }
+  h += '<div class="row row-total"><span class="k">ИТОГО / мес</span><span class="v">' + fmt(b3.total) + ' ₸</span></div>';
+  h += '</div>';
+  if (b3.disclaimer) h += '<p class="note">' + b3.disclaimer + '</p>';
+  h += '</div>';
+
+  // ===== 04 CAPEX =====
+  h += '<div class="section fade-up">';
+  h += '<div class="section-tag"><span class="tag-num">04</span> ИНВЕСТИЦИИ</div>';
+  h += '<h2>' + (b4.title||'Стартовые вложения') + '</h2>';
+  h += '<div class="card">';
+  var items4 = b4.items || [];
+  for (var i = 0; i < items4.length; i++) {
+    var it = items4[i];
+    h += '<div class="row"><span class="k">' + (it.name||'') + (it.note ? ' <span style="font-size:10px;color:var(--text3);">(' + it.note + ')</span>' : '') + '</span><span class="v">' + fmt(it.amount) + ' ₸</span></div>';
+  }
+  h += '<div class="row row-total"><span class="k">ИТОГО</span><span class="v">' + fmt(b4.total) + ' ₸</span></div>';
+  h += '</div>';
+  var capOk = (b4.gap||0) >= 0;
   h += '<div class="capex-vis">';
   h += '<div style="font-size:12px;color:var(--text3);font-weight:600;letter-spacing:1px;text-transform:uppercase;">Капитал vs Инвестиции</div>';
   h += '<div class="capex-vs" style="margin-top:12px;">';
-  h += '<span style="font-size:12px;color:var(--text3);">Нужно: <strong style="color:var(--text);">' + fmtM(capex['\u0438\u0442\u043e\u0433\u043e']) + ' ₸</strong></span>';
-  h += '<span style="font-size:12px;color:' + (capOk?'var(--green)':'var(--red)') + ';font-weight:700;">Ваш капитал: ' + fmtM(inp.capital) + ' ₸</span>';
-  h += '</div>';
-  h += '<div class="capex-result">';
-  h += '<span style="color:' + (capOk?'var(--green)':'var(--red)') + ';font-weight:700;">' + (capex['\u0441\u0438\u0433\u043d\u0430\u043b']||'') + '</span><br>';
-  h += '<span style="font-size:12px;color:var(--text2);">Запас: ' + fmt(capex['\u0440\u0430\u0437\u043d\u0438\u0446\u0430']) + ' ₸ (~' + (capex['\u0437\u0430\u043f\u0430\u0441_\u043c\u0435\u0441\u044f\u0446\u0435\u0432']||0) + ' мес. расходов)</span>';
+  h += '<span style="font-size:12px;color:var(--text3);">Нужно: <strong style="color:var(--text);">' + fmtM(b4.total) + ' ₸</strong></span>';
+  h += '<span style="font-size:12px;color:' + (capOk?'var(--green)':'var(--red)') + ';font-weight:700;">Ваш капитал: ' + fmtM(b4.budget) + ' ₸</span>';
   h += '</div></div>';
-
-  // Варианты
-  if (capex['\u0432\u0441\u0435_\u0443\u0440\u043e\u0432\u043d\u0438']) {
-    var lv = capex['\u0432\u0441\u0435_\u0443\u0440\u043e\u0432\u043d\u0438'];
-    h += '<div class="card" style="border-color:var(--amber-border);">';
-    h += '<div class="card-head" style="color:var(--amber);">⚡ Варианты комплектации</div>';
-    h += '<div class="row"><span class="k">🟢 Эконом</span><span class="v">' + fmt(lv['\u044d\u043a\u043e\u043d\u043e\u043c']) + ' ₸</span></div>';
-    h += '<div class="row"><span class="k">🔵 Стандарт</span><span class="v tc-accent" style="font-weight:800;">' + fmt(lv['\u0441\u0442\u0430\u043d\u0434\u0430\u0440\u0442']) + ' ₸</span></div>';
-    h += '<div class="row"><span class="k">🟡 Премиум</span><span class="v">' + fmt(lv['\u043f\u0440\u0435\u043c\u0438\u0443\u043c']) + ' ₸</span></div>';
-    h += '</div>';
-  }
+  if (b4.budget_text) h += '<p class="note">' + b4.budget_text + '</p>';
   h += '</div>';
 
-  // ===== 04 РАСХОДЫ =====
+  // ===== 05 СЦЕНАРИИ =====
   h += '<div class="section fade-up">';
-  h += '<div class="section-tag"><span class="tag-num">04</span> РАСХОДЫ</div>';
-  h += '<h2>Ежемесячные расходы</h2>';
-  h += '<div class="card">';
-  h += '<div class="card-head">OPEX (при полной загрузке)</div>';
-  h += '<div class="row"><span class="k">Аренда</span><span class="v">' + fmt(opex['\u0430\u0440\u0435\u043d\u0434\u0430']) + ' ₸</span></div>';
-  h += '<div class="row"><span class="k">ФОТ с налогами</span><span class="v">' + fmt(opex['\u0444\u043e\u0442']) + ' ₸</span></div>';
-  h += '<div class="row"><span class="k">Расходники</span><span class="v">~' + Math.round((opex.benchmarks||{}).consumables_pct*100||25) + '%</span></div>';
-  h += '<div class="row"><span class="k">Маркетинг</span><span class="v">~' + Math.round((opex.benchmarks||{}).marketing_pct*100||3) + '% + ' + fmt((opex.benchmarks||{}).marketing_fixed_kzt||0) + ' ₸</span></div>';
-  h += '<div class="row"><span class="k">Упаковка</span><span class="v">~' + Math.round((opex.benchmarks||{}).packaging_pct*100||4) + '%</span></div>';
-  h += '<div class="row"><span class="k">ПО и касса</span><span class="v">' + fmt((opex.benchmarks||{}).software_kzt||0) + ' ₸</span></div>';
-  h += '</div>';
-  if (opex['\u0440\u043e\u0441\u0442_opex_\u043f\u0440\u043e\u0433\u043d\u043e\u0437_%']) {
-    h += '<p class="note">Прогноз роста OPEX: +' + opex['\u0440\u043e\u0441\u0442_opex_\u043f\u0440\u043e\u0433\u043d\u043e\u0437_%'] + '% в год (инфляция + рост зарплат)</p>';
-  }
-  h += '</div>';
-
-  // ===== 05 ВЫРУЧКА + СЦЕНАРИИ =====
-  h += '<div class="section fade-up">';
-  h += '<div class="section-tag"><span class="tag-num">05</span> ВЫРУЧКА</div>';
-  h += '<h2>Прогноз выручки</h2>';
-  h += '<p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.55;">Три сценария на основе бенчмарков по трафику и среднему чеку.</p>';
-
+  h += '<div class="section-tag"><span class="tag-num">05</span> СЦЕНАРИИ</div>';
+  h += '<h2>' + (b5.title||'Три сценария') + '</h2>';
+  h += '<p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.55;">Прогноз на 12 месяцев с учётом маркетинга.</p>';
   h += '<div class="scenarios">';
-  h += '<div class="sc"><div class="sc-label lbl-red">Пессимист.</div><div class="sc-big tc-red">' + fmtM(sc.pess['\u0432\u044b\u0440\u0443\u0447\u043a\u0430_\u043c\u0435\u0441']) + '</div><div class="sc-unit">₸ / мес</div><div class="sc-detail">' + (sc.pess['\u0442\u0440\u0430\u0444\u0438\u043a_\u0434\u0435\u043d\u044c']||'') + ' кл/день<br>чек ' + fmt(sc.pess['\u0447\u0435\u043a']) + ' ₸</div></div>';
-  h += '<div class="sc sc-base"><div class="sc-label lbl-accent">Базовый</div><div class="sc-big tc-accent">' + fmtM(sc.base['\u0432\u044b\u0440\u0443\u0447\u043a\u0430_\u043c\u0435\u0441']) + '</div><div class="sc-unit">₸ / мес</div><div class="sc-detail">' + (sc.base['\u0442\u0440\u0430\u0444\u0438\u043a_\u0434\u0435\u043d\u044c']||'') + ' кл/день<br>чек ' + fmt(sc.base['\u0447\u0435\u043a']) + ' ₸</div></div>';
-  h += '<div class="sc"><div class="sc-label lbl-green">Оптимист.</div><div class="sc-big tc-green">' + fmtM(sc.opt['\u0432\u044b\u0440\u0443\u0447\u043a\u0430_\u043c\u0435\u0441']) + '</div><div class="sc-unit">₸ / мес</div><div class="sc-detail">' + (sc.opt['\u0442\u0440\u0430\u0444\u0438\u043a_\u0434\u0435\u043d\u044c']||'') + ' кл/день<br>чек ' + fmt(sc.opt['\u0447\u0435\u043a']) + ' ₸</div></div>';
+  for (var i = 0; i < scenarios.length; i++) {
+    var s = scenarios[i];
+    var cls = s.key === 'base' ? ' sc-base' : '';
+    var lbl = s.key === 'pess' ? 'lbl-red' : s.key === 'opt' ? 'lbl-green' : 'lbl-accent';
+    var tc = s.key === 'pess' ? 'tc-red' : s.key === 'opt' ? 'tc-green' : 'tc-accent';
+    h += '<div class="sc' + cls + '"><div class="sc-label ' + lbl + '">' + (s.label||'') + '</div>';
+    h += '<div class="sc-big ' + tc + '">' + fmtM(s.profit_monthly) + '</div><div class="sc-unit">₸ прибыль/мес</div>';
+    h += '<div class="sc-detail">' + (s.traffic||'') + ' кл/день<br>чек ' + fmt(s.check) + ' ₸</div></div>';
+  }
+  h += '</div>';
+  if (b5.disclaimer) h += '<p class="note">' + b5.disclaimer + '</p>';
   h += '</div>';
 
-  // Breakeven
-  h += '<h3 style="font-size:14px;font-weight:600;margin:20px 0 10px;color:var(--text);">Точка безубыточности</h3>';
-  var pinPos = Math.min(90, Math.max(10, (be['\u0442\u0431_\u0432\u044b\u0440\u0443\u0447\u043a\u0430'] / (sc.base['\u0432\u044b\u0440\u0443\u0447\u043a\u0430_\u043c\u0435\u0441']||1)) * 100));
+  // ===== 06 БЕЗУБЫТОЧНОСТЬ =====
+  h += '<div class="section fade-up">';
+  h += '<div class="section-tag"><span class="tag-num">06</span> БЕЗУБЫТОЧНОСТЬ</div>';
+  h += '<h2>' + (b6.title||'Точка безубыточности') + '</h2>';
+  var tbRev = b6.tb_revenue || 0;
+  var baseRev = b1.revenue_monthly || 1;
+  var pinPos = Math.min(90, Math.max(10, (tbRev / baseRev) * 100));
   h += '<div class="meter"><div class="meter-labels"><span>0 ₸</span><span>Безубыточность</span><span>Базовая выр.</span></div>';
   h += '<div class="meter-track"><div class="meter-fill" style="width:100%;"><div class="meter-pin" style="left:'+pinPos+'%;"></div></div></div>';
-  h += '<div class="meter-footer"><span style="font-size:12px;color:var(--text2);">ТБ: <strong style="color:var(--text);">' + fmtM(be['\u0442\u0431_\u0432\u044b\u0440\u0443\u0447\u043a\u0430']) + ' ₸/мес</strong></span>';
-  h += '<span style="font-size:12px;color:var(--green);font-weight:700;">Запас прочности: ' + (be['\u0437\u0430\u043f\u0430\u0441_\u043f\u0440\u043e\u0447\u043d\u043e\u0441\u0442\u0438_%']||0) + '%</span></div></div>';
-
+  h += '<div class="meter-footer"><span style="font-size:12px;color:var(--text2);">ТБ: <strong style="color:var(--text);">' + fmtM(tbRev) + ' ₸/мес</strong></span>';
+  h += '<span style="font-size:12px;color:var(--green);font-weight:700;">Запас прочности: ' + (b6.safety_margin||0) + '%</span></div></div>';
   h += '<div class="expert-tip"><div class="expert-avatar">📊</div><div class="expert-body"><div class="expert-name">Что это значит</div><div class="expert-text">';
-  h += 'Чтобы не работать в убыток, нужно минимум <strong>' + Math.round(be['\u0442\u0431_\u0435\u0434\u0438\u043d\u0438\u0446_\u0434\u0435\u043d\u044c']||0) + ' продаж в день</strong>. ';
-  h += 'В базовом сценарии — ' + (sc.base['\u0442\u0440\u0430\u0444\u0438\u043a_\u0434\u0435\u043d\u044c']||0) + '. Запас прочности <strong>' + (be['\u0437\u0430\u043f\u0430\u0441_\u043f\u0440\u043e\u0447\u043d\u043e\u0441\u0442\u0438_%']||0) + '%</strong> — хороший показатель.';
+  h += 'Минимум <strong>' + (b6.tb_checks_day||0) + ' клиентов/день</strong> чтобы выйти в ноль.';
   h += '</div></div></div>';
+  if (b6.disclaimer) h += '<p class="note">' + b6.disclaimer + '</p>';
   h += '</div>';
 
-  // ===== 06 ОКУПАЕМОСТЬ =====
+  // ===== 07 НАЛОГИ =====
   h += '<div class="section fade-up">';
-  h += '<div class="section-tag"><span class="tag-num">06</span> ОКУПАЕМОСТЬ</div>';
-  h += '<h2>Срок возврата инвестиций</h2>';
-  h += '<div class="scenarios">';
-  h += '<div class="sc"><div class="sc-label lbl-red">Пессимист.</div><div class="sc-big tc-red">' + (pb.pess['\u043c\u0435\u0441\u044f\u0446']||'—') + '</div><div class="sc-unit">месяцев</div></div>';
-  h += '<div class="sc sc-base"><div class="sc-label lbl-accent">Базовый</div><div class="sc-big tc-accent">' + (pb.base['\u043c\u0435\u0441\u044f\u0446']||'—') + '</div><div class="sc-unit">месяцев</div></div>';
-  h += '<div class="sc"><div class="sc-label lbl-green">Оптимист.</div><div class="sc-big tc-green">' + (pb.opt['\u043c\u0435\u0441\u044f\u0446']||'—') + '</div><div class="sc-unit">месяцев</div></div>';
-  h += '</div>';
-  h += '<div class="expert-tip"><div class="expert-avatar">⏱️</div><div class="expert-body"><div class="expert-name">Как это читать</div><div class="expert-text">';
-  h += (pb.base['\u0441\u0442\u0430\u0442\u0443\u0441']||'') + ' Первые месяцы — период разгона. ';
-  if (pb.pess['\u043c\u0435\u0441\u044f\u0446'] === null) h += 'В пессимистичном сценарии проект не окупается — нужна оптимизация расходов или локация с бо́льшим трафиком.';
-  h += '</div></div></div>';
-  h += '</div>';
-
-  // ===== 07 ФИНАНСЫ ГОД =====
-  h += '<div class="section fade-up">';
-  h += '<div class="section-tag"><span class="tag-num">07</span> ФИНАНСЫ</div>';
-  h += '<h2>Итоги первого года</h2>';
-  h += '<div class="card">';
-  h += '<div class="card-head">Базовый сценарий · 12 месяцев</div>';
-  h += '<div class="row"><span class="k">Выручка за год</span><span class="v">' + fmtM(fin['\u0432\u044b\u0440\u0443\u0447\u043a\u0430_\u0433\u043e\u04341']) + ' ₸</span></div>';
-  h += '<div class="row"><span class="k">Прибыль за год</span><span class="v tc-green">' + fmtM(fin['\u043f\u0440\u0438\u0431\u044b\u043b\u044c_\u0433\u043e\u04341']) + ' ₸</span></div>';
-  h += '<div class="row"><span class="k">Средний чек</span><span class="v">' + fmt(fin['\u0447\u0435\u043a']) + ' ₸</span></div>';
-  h += '<div class="row"><span class="k">Трафик/день</span><span class="v">' + (fin['\u0442\u0440\u0430\u0444\u0438\u043a_\u0434\u0435\u043d\u044c']||'') + '</span></div>';
-  h += '<div class="row"><span class="k">Операционная маржа</span><span class="v">' + (fin['\u043c\u0430\u0440\u0436\u0430_\u043e\u043f\u0435\u0440_pct']||'') + '%</span></div>';
+  h += '<div class="section-tag"><span class="tag-num">07</span> НАЛОГИ</div>';
+  h += '<h2>' + (b7.title||'Налоги') + '</h2>';
+  h += '<div class="tax-box"><span class="tax-badge">Рекомендация</span>';
+  h += '<div class="tax-title">' + (b7.regime||'') + ' — ' + (b7.rate_pct||'') + '%</div>';
+  h += '<div class="tax-desc">' + (b7.text||'') + '</div>';
   h += '</div></div>';
 
-  // ===== 08 НАЛОГИ =====
-  h += '<div class="section fade-up">';
-  h += '<div class="section-tag"><span class="tag-num">08</span> НАЛОГИ</div>';
-  h += '<h2>Налоговый режим</h2>';
-  h += '<div class="tax-box"><span class="tax-badge">Рекомендация</span>';
-  h += '<div class="tax-title">' + (tax['\u0440\u0435\u043a\u043e\u043c\u0435\u043d\u0434\u0430\u0446\u0438\u044f']||'') + '</div>';
-  h += '<div class="tax-desc">' + (tax['\u043e\u0431\u044a\u044f\u0441\u043d\u0435\u043d\u0438\u0435']||'') + '</div>';
-  h += '</div>';
-  if (tax['\u043d\u0430\u043b\u043e\u0433_\u043f\u0440\u0438\u043c\u0435\u0440\u043d\u044b\u0439_\u0433\u043e\u0434']) {
-    h += '<div class="card"><div class="card-head">Ориентир</div>';
-    h += '<div class="row"><span class="k">Налог за год (примерно)</span><span class="v">~' + fmtM(tax['\u043d\u0430\u043b\u043e\u0433_\u043f\u0440\u0438\u043c\u0435\u0440\u043d\u044b\u0439_\u0433\u043e\u0434']) + ' ₸</span></div>';
-    h += '<div class="row"><span class="k">Порог НДС</span><span class="v">' + fmtM(tax['\u043f\u043e\u0440\u043e\u0433_\u043d\u0434\u0441']) + ' ₸</span></div>';
+  // ===== 08 МАРКЕТИНГ =====
+  var mainCh = b8.main || [];
+  if (mainCh.length) {
+    h += '<div class="section fade-up">';
+    h += '<div class="section-tag"><span class="tag-num">08</span> МАРКЕТИНГ</div>';
+    h += '<h2>' + (b8.title||'Как продвигать') + '</h2>';
+    h += '<div class="card">';
+    for (var i = 0; i < mainCh.length; i++) {
+      var ch = mainCh[i];
+      h += '<div class="row"><span class="k">' + (ch.channel||'') + '</span><span class="v">' + (ch.effect||'') + '</span></div>';
+    }
+    h += '</div>';
+    if (b8.disclaimer) h += '<p class="note">' + b8.disclaimer + '</p>';
     h += '</div>';
   }
-  h += '</div>';
 
-  // ===== 09 ИТОГОВАЯ ОЦЕНКА =====
+  // ===== 09 СОВЕТЫ =====
+  var tips = (b9.income||[]).concat(b9.risks||[]).concat(b9.mistakes||[]);
+  if (tips.length) {
+    h += '<div class="section fade-up">';
+    h += '<div class="section-tag"><span class="tag-num">09</span> СОВЕТЫ</div>';
+    h += '<h2>' + (b9.title||'Полезные советы') + '</h2>';
+    for (var i = 0; i < tips.length; i++) {
+      if (tips[i]) h += '<div class="expert-tip" style="margin-bottom:8px;"><div class="expert-avatar">💡</div><div class="expert-body"><div class="expert-text">' + tips[i] + '</div></div></div>';
+    }
+    h += '</div>';
+  }
+
+  // ===== 10 ИТОГОВАЯ ОЦЕНКА =====
   h += '<div class="section fade-up">';
-  h += '<div class="section-tag"><span class="tag-num">09</span> ИТОГОВАЯ ОЦЕНКА</div>';
-  h += '<h2>Заключение и рекомендации</h2>';
-
-  var vc = verdict.color || 'green';
+  h += '<div class="section-tag"><span class="tag-num">10</span> ИТОГОВАЯ ОЦЕНКА</div>';
+  h += '<h2>' + (b10.title||'Выводы') + '</h2>';
+  var vc = b10.verdict_color || 'green';
+  if (vc === 'yellow') vc = 'amber';
+  var vEmoji = vc === 'green' ? '✅' : vc === 'amber' ? '⚠️' : '🔴';
   h += '<div class="verdict-card v-' + vc + '">';
-  h += '<div class="verdict-icon">' + (verdict.emoji||'') + '</div>';
-  h += '<div class="verdict-title">' + (verdict.text||'') + '</div>';
-  if (verdict.reasons && verdict.reasons.length) {
-    h += '<div class="verdict-sub">' + verdict.reasons.join('. ') + '</div>';
+  h += '<div class="verdict-icon">' + vEmoji + '</div>';
+  h += '<div class="verdict-title">' + (b10.verdict_text||'') + '</div>';
+  var reasons = b10.reasons || [];
+  if (reasons.length) {
+    h += '<div class="verdict-sub">' + reasons.join('. ') + '</div>';
   }
   h += '</div>';
-
-  // Паттерн закрытий
-  var fp = risks['\u043f\u0430\u0442\u0442\u0435\u0440\u043d_\u0437\u0430\u043a\u0440\u044b\u0442\u0438\u0439'];
-  if (fp) {
-    h += '<div class="expert-tip" style="margin:18px 0;"><div class="expert-avatar">⚠️</div><div class="expert-body"><div class="expert-name">Риски по нише</div><div class="expert-text">';
-    h += (fp['\u0424\u0440\u0430\u0437\u0430 \u0434\u043b\u044f \u043e\u0442\u0447\u0451\u0442\u0430 Quick Check']||'');
-    h += '</div></div></div>';
+  var alts = b10.alternatives || [];
+  if (alts.length) {
+    h += '<div class="expert-tip" style="margin:18px 0;"><div class="expert-avatar">💡</div><div class="expert-body"><div class="expert-name">Альтернативы</div><div class="expert-text">' + alts.join('<br>') + '</div></div></div>';
   }
-
-  // Разрешения — чеклист
-  var perms = risks['\u0440\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u0438\u044f'] || [];
-  if (perms.length) {
-    h += '<h3 style="font-size:14px;font-weight:600;margin:24px 0 12px;color:var(--text);">Чеклист: документы и разрешения</h3>';
-    for (var i = 0; i < perms.length; i++) {
-      var p = perms[i];
-      h += '<div class="check"><div class="check-box" onclick="this.classList.toggle(\'checked\')"></div><span>' + (p['\u0414\u043e\u043a\u0443\u043c\u0435\u043d\u0442 / \u0440\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u0438\u0435']||'') + ' <span style="color:var(--text3);font-size:11px;">(' + (p['\u0413\u0434\u0435 \u043f\u043e\u043b\u0443\u0447\u0430\u0442\u044c']||'') + ', ' + (p['\u0421\u0440\u043e\u043a \u043f\u043e\u043b\u0443\u0447\u0435\u043d\u0438\u044f']||'') + ')</span></span></div>';
+  var nextSteps = b10.next_steps || [];
+  if (nextSteps.length) {
+    h += '<h3 style="font-size:14px;font-weight:600;margin:18px 0 10px;color:var(--text);">Следующие шаги</h3>';
+    for (var i = 0; i < nextSteps.length; i++) {
+      h += '<div class="check"><div class="check-box" onclick="this.classList.toggle(\'checked\')"></div><span>' + nextSteps[i] + '</span></div>';
     }
   }
   h += '</div>';
 
+  // ===== 12 ЧЕКЛИСТ =====
+  var checkItems = (b12.items || []);
+  if (checkItems.length) {
+    h += '<div class="section fade-up">';
+    h += '<div class="section-tag"><span class="tag-num">📋</span> ЧЕКЛИСТ</div>';
+    h += '<h2>' + (b12.title||'Что оформить') + '</h2>';
+    for (var i = 0; i < checkItems.length; i++) {
+      h += '<div class="check"><div class="check-box" onclick="this.classList.toggle(\'checked\')"></div><span>' + (checkItems[i].item||'') + '</span></div>';
+    }
+    h += '</div>';
+  }
+
   // ===== CTA =====
-  h += '<div class="cta-chat fade-up"><h3>💬 Есть вопросы по отчёту?</h3><p>Обсудите результаты с AI-консультантом ZEREK. Он знает ваш формат, город и цифры из этого отчёта.</p>';
+  h += '<div class="cta-chat fade-up"><h3>💬 Есть вопросы по отчёту?</h3><p>Обсудите результаты с AI-консультантом ZEREK.</p>';
   h += '<button class="btn-chat" onclick="alert(\'AI-чат скоро будет доступен\')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Обсудить с AI-консультантом</button></div>';
 
-  h += '<div class="cta-finmodel fade-up"><h3>📈 Хотите точнее? Финансовое моделирование</h3><p>Интерактивная модель на 60 месяцев с вашими параметрами.</p>';
+  h += '<div class="cta-finmodel fade-up"><h3>📈 Хотите точнее?</h3><p>Финансовая модель на 60 месяцев с вашими параметрами.</p>';
   h += '<button class="btn-finmodel" onclick="alert(\'Финансовое моделирование скоро будет доступно\')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg> Получить финансовую модель</button></div>';
 
-  h += '<div class="disclaimer fade-up" style="margin-bottom:16px;"><strong style="color:var(--text2);">Дисклеймер.</strong> Данный отчёт — экспресс-оценка на основе рыночных бенчмарков и статистических данных БНС РК. Цифры носят ориентировочный характер. Для точного планирования рекомендуем финансовое моделирование.</div>';
+  h += '<div class="disclaimer fade-up" style="margin-bottom:16px;"><strong style="color:var(--text2);">Дисклеймер.</strong> Данный отчёт — экспресс-оценка на основе рыночных бенчмарков и статистических данных БНС РК. Цифры носят ориентировочный характер.</div>';
 
   h += '<div class="footer"><strong>ZEREK</strong><br>Финансовая аналитика для каждого предпринимателя<br><span style="color:var(--text3);">zerek.cc</span></div>';
 
@@ -1637,7 +1632,7 @@ function initTelegram() {
       }
       // Back button
       tg.BackButton.onClick(function() {
-        if (S.step > 1) {
+        if (S.step > 0) {
           goBack();
         }
       });
