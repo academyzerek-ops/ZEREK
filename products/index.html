@@ -289,8 +289,10 @@ function startQC(){window.location.href='quick-check.html'}
 
 // ═══ FINMODEL ═══
 function startFM(){
+  window.location.href='finmodel.html';
+  return;
+  // Legacy code below — kept for reference
   show('FM');
-  // Load cities + niches
   G('GET','/cities',function(e,r){if(!e){FM.cities=r.cities||[];rFmCities()}});
   G('GET','/niches',function(e,r){if(!e){FM.niches=r.niches||[]}});
   fmUP();fmUB();
