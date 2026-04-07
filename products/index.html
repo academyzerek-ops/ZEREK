@@ -56,8 +56,8 @@ input[type=range]{width:100%;-webkit-appearance:none;height:5px;background:var(-
   </div>
   <div class="prod" onclick="startQC()">
     <div class="icon">⚡</div>
-    <div class="name">Quick Check</div>
-    <div class="desc">Экспресс-оценка бизнес-идеи за 2 минуты. Рынок, инвестиции, окупаемость, риски.</div>
+    <div class="name">Экспресс-оценка</div>
+    <div class="desc">Оценка бизнес-идеи за 2 минуты. Рынок, инвестиции, окупаемость, риски.</div>
     <div class="price">3 000 ₸</div>
   </div>
   <div class="prod" onclick="startFM()">
@@ -394,7 +394,7 @@ function el(id){return $(id)?$(id).value:''}
 
 function fmRun(){
   $('FM').style.display='none';$('fm_LD').style.display='block';
-  var st=['Загружаем параметры','Считаем Quick Check','Строим P&L','Cash Flow','Стресс-тест','Готовим файл'],si=0,lp=$('fm_lp');
+  var st=['Загружаем параметры','Считаем экспресс-оценку','Строим P&L','Cash Flow','Стресс-тест','Готовим файл'],si=0,lp=$('fm_lp');
   lp.textContent=st[0];var iv=setInterval(function(){si++;if(si<st.length)lp.textContent=st[si]},1200);
 
   var b={
