@@ -483,7 +483,7 @@ def run_quick_check_v3(
     cls: str,               # Эконом/Стандарт/Бизнес/Премиум
     area_m2: float,
     loc_type: str,
-    capital: int,
+    capital: int = 0,
     qty: int = 1,           # кол-во боксов/точек
     founder_works: bool = False,  # учредитель сам работает?
     rent_override: int = None,
@@ -541,15 +541,20 @@ def run_quick_check_v3(
     deposit = rent_month_total * deposit_months
     capex_total = capex_med + deposit
 
-    # ── Капитал ──
-    capital_gap = capital - capex_total
-    if capital_gap >= 0:
-        capital_signal = "Капитала достаточно"
-    else:
-        capital_signal = f"При выбранном классе и формате стартовые вложения составляют {capex_total:,} ₸. Ваш бюджет {capital:,} ₸ — рассмотрите снижение класса оборудования или формат с меньшими вложениями."
-
+    # ── Капитал / инвестиции ──
     fot_med = _safe_int(staff.get('fot_net_med'), 0)
-    reserve_months = round(capital_gap / (fot_med + rent_month_total), 1) if capital_gap > 0 and (fot_med + rent_month_total) > 0 else 0
+    reserve_3m = int((fot_med + rent_month_total) * 3)
+    if capital > 0:
+        capital_gap = capital - capex_total
+        if capital_gap >= 0:
+            capital_signal = "Капитала достаточно"
+        else:
+            capital_signal = f"Стартовые вложения {capex_total:,} ₸, ваш бюджет {capital:,} ₸."
+        reserve_months = round(capital_gap / (fot_med + rent_month_total), 1) if capital_gap > 0 and (fot_med + rent_month_total) > 0 else 0
+    else:
+        capital_gap = 0
+        capital_signal = ""
+        reserve_months = 0
 
     # ── Если учредитель сам работает — корректировка ФОТ ──
     staff_adjusted = dict(staff)
@@ -590,8 +595,9 @@ def run_quick_check_v3(
 
     # ── Вердикт ──
     score = 0; reasons = []
-    if capital_gap >= 0: score += 2
-    else: score -= 2; reasons.append("Бюджет может быть недостаточен для выбранного класса — рассмотрите снижение уровня вложений")
+    if capital > 0:
+        if capital_gap >= 0: score += 2
+        else: score -= 2; reasons.append("Бюджет может быть недостаточен для выбранного класса — рассмотрите снижение уровня вложений")
 
     safety = breakeven.get("запас_прочности_%", 0)
     if safety >= 30: score += 2
@@ -671,6 +677,11 @@ def run_quick_check_v3(
                 "first_stock": _safe_int(capex_data.get('first_stock')) * qty,
                 "permits_sez": _safe_int(capex_data.get('permits_sez')) * qty,
                 "working_cap": _safe_int(capex_data.get('working_cap_3m')) * qty,
+            },
+            "investment_range": {
+                "min": capex_total,
+                "max": capex_total + reserve_3m,
+                "note": "Оборудование, ремонт, депозит аренды + резерв 3 мес.",
             },
         },
 

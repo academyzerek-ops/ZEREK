@@ -313,6 +313,7 @@ input[type="range"]::-moz-range-thumb {
 .lvl-btn.selected { border-color: var(--accent); background: var(--accent-dim); }
 .lvl-btn .lvl-icon { font-size: 18px; margin-bottom: 2px; }
 .lvl-btn .lvl-name { font-size: 11px; font-weight: 600; }
+.lvl-btn .lvl-hint { font-size: 9px; color: var(--text3); margin-top: 2px; line-height: 1.3; }
 
 /* Bottom button */
 .btn-bottom {
@@ -823,44 +824,29 @@ input[type="range"]::-moz-range-thumb {
     <!-- STEP 5: Capital -->
     <div class="step" id="step-5">
       <div class="step-label">Шаг 5</div>
-      <h2>Стартовый капитал</h2>
-      <p class="step-desc">Сколько готовы вложить?</p>
+      <h2>Класс оснащения</h2>
+      <p class="step-desc">Влияет на стоимость оборудования и ремонта</p>
 
-      <div class="slider-wrap">
-        <div class="slider-value" id="capital-display">5 000 000 <span>₸</span></div>
-        <input type="range" id="capital-slider" min="500000" max="30000000" step="100000" value="5000000" oninput="updateCapital()">
-        <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text3); margin-top:4px;">
-          <span>500 тыс.</span>
-          <span>30 млн ₸</span>
-        </div>
-      </div>
-
-      <div class="field-label" style="margin-top:20px; margin-bottom:8px;">Уровень оснащения</div>
       <div class="level-toggles">
         <div class="lvl-btn" data-level="эконом" onclick="selectLevel(this)">
           <div class="lvl-icon">🟢</div>
           <div class="lvl-name">Эконом</div>
+          <div class="lvl-hint">Б/у оборудование, минимальный ремонт</div>
         </div>
         <div class="lvl-btn selected" data-level="стандарт" onclick="selectLevel(this)">
           <div class="lvl-icon">🔵</div>
           <div class="lvl-name">Стандарт</div>
+          <div class="lvl-hint">Новое оборудование среднего класса</div>
         </div>
         <div class="lvl-btn" data-level="премиум" onclick="selectLevel(this)">
           <div class="lvl-icon">🟡</div>
           <div class="lvl-name">Премиум</div>
+          <div class="lvl-hint">Топ-бренды, дизайнерский ремонт</div>
         </div>
       </div>
-      <div style="padding-bottom:80px;"></div>
-    </div>
 
-    <!-- STEP 6: Confirm -->
-    <div class="step" id="step-6">
-      <div class="step-label">Шаг 6</div>
-      <h2>Всё верно?</h2>
-      <p class="step-desc">Проверьте данные перед расчётом</p>
-
-      <div class="confirm-card" id="confirm-summary">
-        <!-- Filled dynamically -->
+      <div class="confirm-card" id="confirm-summary" style="margin-top:20px;">
+        <!-- Mini summary filled dynamically -->
       </div>
 
       <div class="expert-tip" style="margin-top:16px;">
@@ -868,8 +854,7 @@ input[type="range"]::-moz-range-thumb {
         <div class="expert-body">
           <div class="expert-name">Что произойдёт</div>
           <div class="expert-text">
-            Мы рассчитаем CAPEX, ежемесячные расходы, выручку, точку безубыточности, окупаемость и риски — всё за <strong>5–10 секунд</strong>. 
-            Данные основаны на реальной статистике БНС РК и рыночных бенчмарках.
+            Мы рассчитаем инвестиции, расходы, выручку, точку безубыточности, окупаемость и риски — всё за <strong>5–10 секунд</strong>.
           </div>
         </div>
       </div>
@@ -925,7 +910,6 @@ var S = {
   loc_type: 'ТЦ',
   area_m2: null,
   rent_override: null,
-  capital: 5000000,
   capex_level: 'стандарт',
   start_month: new Date().getMonth() + 1,
   // cache
@@ -1016,8 +1000,8 @@ var CITY_ICONS = {
   'semey': '📚', 'kostanay': '🌿'
 };
 
-var STEPS = ['step-1','step-2','step-2b','step-3','step-4','step-5','step-6'];
-var STEP_LABELS = ['Город','Категория','Ниша','Формат','Локация','Капитал','Подтверждение'];
+var STEPS = ['step-1','step-2','step-2b','step-3','step-4','step-5'];
+var STEP_LABELS = ['Город','Категория','Ниша','Формат','Локация','Класс оснащения'];
 var CATEGORY_ICONS = {'Еда и напитки':'🍽️','Красота и здоровье':'💅','Авто':'🚗','Торговля':'🛒','Услуги':'🔧'};
 
 /* ============================================
@@ -1225,12 +1209,6 @@ function selectLoc(el) {
   S.loc_type = el.getAttribute('data-loc');
 }
 
-function updateCapital() {
-  var val = parseInt(document.getElementById('capital-slider').value);
-  S.capital = val;
-  document.getElementById('capital-display').innerHTML = fmt(val) + ' <span>₸</span>';
-}
-
 function selectLevel(el) {
   document.querySelectorAll('.lvl-btn').forEach(function(e) { e.classList.remove('selected'); });
   el.classList.add('selected');
@@ -1273,7 +1251,7 @@ function updateBtn() {
 
   backBtn.style.display = (S.step > 0) ? '' : 'none';
 
-  if (sid === 'step-6') {
+  if (sid === 'step-5') {
     btn.innerHTML = 'Рассчитать <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
   } else {
     btn.innerHTML = 'Далее <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
@@ -1289,7 +1267,7 @@ function goStep(n) {
   if (sid === 'step-2') renderCategories();
   if (sid === 'step-2b') renderNichesForCategory();
   if (sid === 'step-3') loadFormats();
-  if (sid === 'step-6') renderConfirm();
+  if (sid === 'step-5') renderConfirm();
   var next = document.getElementById(sid);
   if (next) next.classList.add('active');
   updateProgress();
@@ -1307,7 +1285,7 @@ function handleNext() {
     var rentVal = document.getElementById('rent-input').value;
     S.rent_override = rentVal ? parseInt(rentVal) : null;
   }
-  if (sid === 'step-6') {
+  if (sid === 'step-5') {
     runCalculation();
     return;
   }
@@ -1326,10 +1304,8 @@ function renderConfirm() {
     ['Формат', S.format_name || '—'],
     ['Локация', S.loc_type],
     ['Площадь', (S.area_m2 || document.getElementById('area-input').value || '~20') + ' м²'],
-    ['Аренда', S.rent_override ? fmt(S.rent_override) + ' ₸/мес' : 'По бенчмарку'],
-    ['Капитал', fmt(S.capital) + ' ₸'],
-    ['Оснащение', S.capex_level]
   ];
+  if (S.rent_override) rows.push(['Аренда', fmt(S.rent_override) + ' ₸/мес']);
   var html = '';
   rows.forEach(function(r) {
     html += '<div class="confirm-row"><span class="ck">' + r[0] + '</span><span class="cv">' + r[1] + '</span></div>';
@@ -1371,7 +1347,6 @@ function runCalculation() {
     format_id: String(S.format_id),
     area_m2: areaVal,
     loc_type: S.loc_type || '',
-    capital: S.capital || 5000000,
     start_month: S.start_month || (new Date().getMonth() + 1),
     capex_level: S.capex_level || 'стандарт'
   };
@@ -1437,7 +1412,7 @@ function renderReport(d) {
   // Summary strip
   h += '<div class="summary-strip fade-up">';
   h += '<div class="s-chip">📍 <strong>' + (inp.city_name||'') + '</strong></div>';
-  h += '<div class="s-chip">💰 <strong>' + fmt(inp.capital) + ' ₸</strong></div>';
+  // capital chip removed — we show investment range instead
   h += '<div class="s-chip">📐 <strong>' + (inp.area_m2||'') + ' м²</strong></div>';
   h += '<div class="s-chip">🏬 <strong>' + (inp.loc_type||'') + '</strong></div>';
   h += '<div class="s-chip">📅 <strong>' + today + '</strong></div>';
@@ -1514,13 +1489,13 @@ function renderReport(d) {
   }
   h += '<div class="row row-total"><span class="k">ИТОГО</span><span class="v">' + fmt(b4.total) + ' ₸</span></div>';
   h += '</div>';
-  var capOk = (b4.gap||0) >= 0;
+  var invMin = b4.investment_min || b4.total || 0;
+  var invMax = b4.investment_max || invMin;
   h += '<div class="capex-vis">';
-  h += '<div style="font-size:12px;color:var(--text3);font-weight:600;letter-spacing:1px;text-transform:uppercase;">Капитал vs Инвестиции</div>';
-  h += '<div class="capex-vs" style="margin-top:12px;">';
-  h += '<span style="font-size:12px;color:var(--text3);">Нужно: <strong style="color:var(--text);">' + fmtM(b4.total) + ' ₸</strong></span>';
-  h += '<span style="font-size:12px;color:' + (capOk?'var(--green)':'var(--red)') + ';font-weight:700;">Ваш капитал: ' + fmtM(b4.budget) + ' ₸</span>';
-  h += '</div></div>';
+  h += '<div style="font-size:12px;color:var(--text3);font-weight:600;letter-spacing:1px;text-transform:uppercase;">Потребуется инвестиций</div>';
+  h += '<div style="margin-top:8px;font-size:20px;font-weight:800;font-family:\'JetBrains Mono\',monospace;color:var(--accent2);">от ' + fmtM(invMin) + ' до ' + fmtM(invMax) + ' ₸</div>';
+  h += '<div style="font-size:11px;color:var(--text3);margin-top:4px;">Оборудование + ремонт + депозит + резерв 3 мес.</div>';
+  h += '</div>';
   if (b4.budget_text) h += '<p class="note">' + b4.budget_text + '</p>';
   h += '</div>';
 
@@ -1677,7 +1652,7 @@ function resetCalculation() {
   S.niche_id = null; S.niche_name = null;
   S.format_id = null; S.format_name = null;
   S.area_m2 = null; S.rent_override = null;
-  S.capital = 5000000; S.capex_level = 'стандарт';
+  S.capex_level = 'стандарт';
   // Re-show step 1
   var allSteps = document.querySelectorAll('.step');
   for (var i = 0; i < allSteps.length; i++) allSteps[i].classList.remove('active');

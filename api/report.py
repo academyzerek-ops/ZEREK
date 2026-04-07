@@ -64,8 +64,9 @@ def render_report_v4(result: dict) -> dict:
 
     # CAPEX
     bk = cap.get("breakdown", {})
-    capital = inp.get("capital", 0); capex_total = cap.get("total", 0)
-    gap = capital - capex_total
+    capital = inp.get("capital", 0) or 0; capex_total = cap.get("total", 0)
+    inv_range = cap.get("investment_range", {})
+    gap = capital - capex_total if capital > 0 else 0
 
     eq_notes = {
         'COFFEE':'Кофемашина, кофемолка, холодильная витрина, блендер',
@@ -111,10 +112,14 @@ def render_report_v4(result: dict) -> dict:
     if bk.get("permits_sez"): capex_items.append({"name":"Разрешения и СЭЗ","amount":bk["permits_sez"]})
     if bk.get("working_cap"): capex_items.append({"name":"Оборотный капитал","amount":bk["working_cap"]})
 
-    if gap >= 0:
-        budget_txt = f"Ваш бюджет {fmt(capital)} ₸ покрывает стартовые вложения {fmt(capex_total)} ₸. Остаток {fmt(gap)} ₸ рекомендуем сохранить как резерв на первые 2-3 месяца."
+    inv_min = inv_range.get("min", capex_total)
+    inv_max = inv_range.get("max", capex_total)
+    if capital > 0 and gap >= 0:
+        budget_txt = f"Ваш бюджет {fmt(capital)} ₸ покрывает стартовые вложения {fmt(capex_total)} ₸. Остаток {fmt(gap)} ₸ рекомендуем сохранить как резерв."
+    elif capital > 0:
+        budget_txt = f"Стартовые вложения {fmt(capex_total)} ₸, ваш бюджет {fmt(capital)} ₸. Рассмотрите снижение класса или формат с меньшими вложениями."
     else:
-        budget_txt = f"Стартовые вложения составляют {fmt(capex_total)} ₸. Ваш бюджет {fmt(capital)} ₸. Рекомендуем рассмотреть: снижение класса, поиск б/у оборудования или привлечение доп. финансирования."
+        budget_txt = f"Потребуется инвестиций: от {fmt(inv_min)} до {fmt(inv_max)} ₸ (оборудование, ремонт, депозит аренды + резерв 3 мес.)."
 
     # Сценарии
     sc_descs = {
@@ -152,7 +157,10 @@ def render_report_v4(result: dict) -> dict:
     health.append({"name":"Конкуренция","status":"green" if cl<=2 else "yellow" if cl<=3 else "red","value":["","Низкая","Низкая","Средняя","Высокая","Очень высокая"][min(cl,5)]})
     sp = be.get("запас_прочности_%",0)
     health.append({"name":"Запас прочности","status":"green" if sp>=30 else "yellow" if sp>=10 else "red","value":f"{sp}%"})
-    health.append({"name":"Капитал","status":"green" if gap>=0 else "red","value":"Достаточно" if gap>=0 else f"Нехватка {fmt(abs(gap))} ₸"})
+    if capital > 0:
+        health.append({"name":"Капитал","status":"green" if gap>=0 else "red","value":"Достаточно" if gap>=0 else f"Нехватка {fmt(abs(gap))} ₸"})
+    else:
+        health.append({"name":"Инвестиции","status":"yellow","value":f"от {fmt(inv_min)} ₸"})
 
     # Сезонность
     season = [{"month":c.get("кал_месяц",""),"revenue":c.get("выручка",0),"profit":c.get("прибыль",0)} for c in cf[:12]]
@@ -195,6 +203,7 @@ def render_report_v4(result: dict) -> dict:
             "title":"Стартовые вложения","subtitle":"До открытия",
             "items":capex_items,"total":capex_total,"budget":capital,"gap":gap,
             "budget_text":budget_txt,"reserve_months":cap.get("reserve_months",0),
+            "investment_min":inv_min,"investment_max":inv_max,
         },
         "block_5": {
             "title":"Три сценария","subtitle":"Прогноз на 12 месяцев",

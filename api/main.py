@@ -39,14 +39,14 @@ except Exception as e:
 
 class QCReq(BaseModel):
     city_id: str; niche_id: str; format_id: str; cls: str = "Стандарт"
-    area_m2: float = 0; loc_type: str = ""; capital: int = 5000000
+    area_m2: float = 0; loc_type: str = ""; capital: Optional[int] = 0
     qty: int = 1; founder_works: bool = False
     rent_override: Optional[int] = None; start_month: int = 4
 
 class FMReq(BaseModel):
     """Запрос на генерацию финмодели — все параметры из анкеты."""
     city_id: str; niche_id: str; format_id: str; cls: str = "Стандарт"
-    area_m2: float = 0; loc_type: str = ""; capital: int = 5000000
+    area_m2: float = 0; loc_type: str = ""; capital: Optional[int] = 0
     qty: int = 1; founder_works: bool = False
     rent_override: Optional[int] = None; start_month: int = 4
     # Finmodel-specific
@@ -125,7 +125,7 @@ def quick_check(req: QCReq):
     try:
         result = run_quick_check_v3(db=db, city_id=req.city_id, niche_id=req.niche_id,
             format_id=req.format_id, cls=req.cls, area_m2=req.area_m2, loc_type=req.loc_type,
-            capital=req.capital, qty=req.qty, founder_works=req.founder_works,
+            capital=req.capital or 0, qty=req.qty, founder_works=req.founder_works,
             rent_override=req.rent_override, start_month=req.start_month)
         report = render_report_v4(result)
         return {"status":"ok","result":clean(report)}
@@ -210,7 +210,7 @@ def generate_finmodel_endpoint(req: FMReq):
         # 1. Quick Check для базовых данных (рынок, налоги и т.д.)
         result = run_quick_check_v3(db=db, city_id=req.city_id, niche_id=req.niche_id,
             format_id=req.format_id, cls=req.cls, area_m2=req.area_m2, loc_type=req.loc_type,
-            capital=req.capital, qty=req.qty, founder_works=req.founder_works,
+            capital=req.capital or 0, qty=req.qty, founder_works=req.founder_works,
             rent_override=req.rent_override, start_month=req.start_month)
         
         # 2. Собираем параметры из анкеты (приоритет) + fallback на QC
