@@ -149,8 +149,8 @@ input[type=range]{width:100%;-webkit-appearance:none;height:5px;background:var(-
   <div style="font-size:40px;margin-bottom:12px">✅</div>
   <h2 style="font-size:18px;margin-bottom:6px">Финансовая модель готова</h2>
   <p style="font-size:13px;color:var(--tx2);margin-bottom:20px;line-height:1.5" id="fm_res_sub"></p>
-  <button class="rbtn" id="fm_dl_xlsx" onclick="dlXlsx()">📊 Скачать Excel-модель</button>
-  <button class="rbtn sec" id="fm_dl_report" onclick="dlReport()">📄 Скачать отчёт (HTML)</button>
+  <a class="rbtn" id="fm_dl_link" href="#" download style="display:block;text-align:center;text-decoration:none;">📊 Скачать Excel-модель</a>
+  <button class="rbtn sec" id="fm_dl_report" onclick="openReport()">📄 Открыть отчёт</button>
   <div style="margin-top:20px"><a href="#" class="back-home" onclick="goHome();return false">← Вернуться на главную</a></div>
 </div>
 <div class="rf">ZEREK — @zerekai_bot · zerek.cc</div>
@@ -420,9 +420,14 @@ function fmRun(){
     clearInterval(iv);
     if(x.status===200){
       FM_BLOB=x.response;
+      // Create download URL for the blob
+      var dlUrl=window.URL.createObjectURL(FM_BLOB);
+      var dlLink=$('fm_dl_link');
+      dlLink.href=dlUrl;
+      dlLink.download='ZEREK_FinModel_'+FM.ni+'_'+FM.ci+'.xlsx';
       $('fm_LD').style.display='none';
       $('fm_RES').style.display='block';
-      $('fm_res_sub').textContent=(FM.nn||'')+': '+(FM.fn||'')+' — '+(FM.cn||'');
+      $('fm_res_sub').textContent=(NICHE_NAMES[FM.ni]||FM.nn||'')+': '+(fmtFmt(FM.fi)||FM.fn||'')+' — '+(FM.cn||'');
       window.scrollTo(0,0);
     }else{
       $('fm_LD').style.display='none';
@@ -434,16 +439,30 @@ function fmRun(){
   x.send(JSON.stringify(b));
 }
 
-function dlXlsx(){
-  if(!FM_BLOB)return;
-  var url=window.URL.createObjectURL(FM_BLOB);
-  var a=document.createElement('a');a.href=url;
-  a.download='ZEREK_FinModel_'+FM.ni+'_'+FM.ci+'.xlsx';
-  document.body.appendChild(a);a.click();
-  window.URL.revokeObjectURL(url);a.remove();
-}
-function dlReport(){
-  alert('Отчёт по финмодели — скоро будет доступен');
+function openReport(){
+  // Run quick-check to get the report data, then show it
+  if(!FM.ci||!FM.ni||!FM.fi){alert('Данные не заполнены');return}
+  var b={
+    city_id:FM.ci,niche_id:FM.ni,format_id:FM.fi,cls:FM.cls,
+    loc_type:FM.lt,area_m2:0,capital:5000000,qty:1,start_month:new Date().getMonth()+1
+  };
+  var x=new XMLHttpRequest();
+  x.open('POST',U+'/quick-check',true);
+  x.setRequestHeader('Content-Type','application/json');
+  x.onreadystatechange=function(){
+    if(x.readyState===4){
+      if(x.status===200){
+        try{
+          var data=JSON.parse(x.responseText);
+          var result=data.result||data;
+          // Open quick-check with report data
+          var params='?city_id='+FM.ci+'&niche_id='+FM.ni+'&format_id='+FM.fi;
+          window.location.href='quick-check.html'+params;
+        }catch(e){alert('Ошибка разбора отчёта')}
+      }else{alert('Ошибка получения отчёта: HTTP '+x.status)}
+    }
+  };
+  x.send(JSON.stringify(b));
 }
 </script>
 </body>
