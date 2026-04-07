@@ -156,7 +156,7 @@ def get_survey(niche_id:str):
 
 # ── Бизнес-план на грант 400 МРП ──
 
-from fastapi.responses import FileResponse, Response
+from fastapi.responses import FileResponse, Response, HTMLResponse
 
 class GrantBPReq(BaseModel):
     fio: str; iin: str; phone: str; address: str
@@ -271,3 +271,15 @@ def generate_finmodel_endpoint(req: FMReq):
     except Exception as e:
         import traceback; d=traceback.format_exc(); print("ОШИБКА finmodel:", d)
         raise HTTPException(500, str(e) + "\n" + d[-500:])
+
+
+@app.post("/finmodel/report")
+def finmodel_html_report(data: dict):
+    """Генерирует HTML-отчёт по финансовой модели."""
+    from finmodel_report import render_finmodel_report
+    try:
+        html = render_finmodel_report(data)
+        return HTMLResponse(content=html)
+    except Exception as e:
+        import traceback; d=traceback.format_exc(); print("FINMODEL REPORT ERROR:", d)
+        raise HTTPException(500, str(e))
