@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>О проекте — ZEREK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#06060B;--bg-card:#0E0E16;--text:#E8E6F0;--text-dim:#8B89A0;--text-muted:#5C5A6E;--accent:#6C63FF;--success:#00D4AA;--border:rgba(255,255,255,0.06);--radius:16px}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
+.container{max-width:760px;margin:0 auto;padding:0 24px}
+header{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;background:rgba(6,6,11,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav{display:flex;align-items:center;justify-content:space-between;max-width:760px;margin:0 auto;padding:0 24px}
+.logo{font-weight:800;font-size:22px;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(135deg,var(--accent),var(--success));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}
+.back-link{color:var(--text-dim);text-decoration:none;font-size:14px;transition:color .2s}
+.back-link:hover{color:var(--text)}
+.page-content{padding:140px 0 80px}
+.page-content h1{font-size:36px;font-weight:800;letter-spacing:-.5px;margin-bottom:32px}
+.page-content h2{font-size:20px;font-weight:700;margin-top:40px;margin-bottom:12px;color:var(--accent)}
+.page-content p{font-size:16px;color:var(--text-dim);margin-bottom:16px;line-height:1.8}
+.page-content strong{color:var(--text)}
+.page-content ul{list-style:none;margin-bottom:16px}
+.page-content ul li{font-size:15px;color:var(--text-dim);padding:6px 0 6px 20px;position:relative}
+.page-content ul li::before{content:'→';position:absolute;left:0;color:var(--success)}
+.highlight-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px 28px;margin:24px 0}
+.highlight-box p{color:var(--text);margin-bottom:0}
+footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:13px;color:var(--text-muted)}
+footer a{color:var(--text-dim);text-decoration:none;margin:0 12px}
+</style>
+</head>
+<body>
+<header><div class="nav"><a href="index.html" class="logo">ZEREK</a><a href="index.html" class="back-link">← Назад на главную</a></div></header>
+<div class="page-content"><div class="container"><h1>О проекте ZEREK</h1><p>ZEREK — это платформа бизнес-аналитики для предпринимателей Казахстана. Мы помогаем проверить бизнес-идею и получить финансовую модель за минуты, а не за недели консалтинга.</p><h2>Зачем это нужно</h2><p>Каждый год в Казахстане тысячи людей открывают бизнес — кофейни, барбершопы, магазины, клининг. Большинство принимает решение на эмоциях: «друг открыл — и у него получилось». Без расчётов. Без понимания реальных цифр по рынку.</p><p><strong>Результат предсказуем:</strong> до 60% малых бизнесов закрываются в первые 2 года. Не потому что идея плохая — а потому что никто не считал.</p><h2>Как работает ZEREK</h2><p>Каждый продукт ZEREK — это не шаблон из интернета и не «экспертная» оценка из воздуха. Это расчётный движок на Python, который обрабатывает реальные данные:</p><ul><li><strong>20+ баз данных</strong> — демография, зарплаты, аренда, конкуренты, налоги, поведение потребителей</li><li><strong>Данные БНС РК и НБРК</strong> — Бюро национальной статистики и Национальный банк, актуальные на 2026 год</li><li><strong>Ставки маслихатов</strong> — налоговые режимы по каждому городу</li><li><strong>Реальные кейсы</strong> — паттерны закрытий, ошибки предпринимателей, подводные камни</li></ul><div class="highlight-box"><p>Мы не мотивируем «идти и запускать». Мы предупреждаем о рисках. Если цифры говорят, что бизнес не окупится — мы так и скажем. Лучше сохранить деньги, чем потерять всё на красивой идее.</p></div><h2>Технологии</h2><p>Расчётный движок написан на <strong>Python 3.12 + FastAPI</strong>. Серверная часть развёрнута на Railway. Пользовательский интерфейс — Telegram Mini App. Формулы и логика заложены финансовыми консультантами с реальным опытом.</p><h2>Кто за этим стоит</h2><p>ZEREK создан финансовыми консультантами с опытом в государственных структурах, Big&nbsp;4 и корпоративных финансах. За проектом стоит глубокая экспертиза в финансовом моделировании, управленческом учёте, юнит-экономике и оценке инвестиционных проектов.</p><h2>Контакты</h2><p>Telegram-бот: <a href="https://t.me/zerekai_bot" target="_blank" style="color:var(--accent);">@zerekai_bot</a></p></div></div>
+<footer><div class="container">&copy; 2026 ZEREK · Казахстан<br><a href="index.html">Главная</a><a href="privacy.html">Конфиденциальность</a><a href="https://t.me/zerekai_bot" target="_blank">Telegram</a></div></footer>
+</body>
+</html>
