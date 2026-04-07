@@ -252,9 +252,9 @@ def generate_finmodel_endpoint(req: FMReq):
         
         # 3. Генерируем финмодель
         from gen_finmodel import generate_finmodel
-        template = os.path.join(DATA_DIR, 'templates', 'finmodel_template.xlsx')
+        template = os.path.join(os.path.dirname(BASE_DIR), 'templates', 'finmodel', 'finmodel_template.xlsx')
         if not os.path.exists(template):
-            template = os.path.join(DATA_DIR, 'finmodel_template.xlsx')
+            template = os.path.join(DATA_DIR, 'templates', 'finmodel_template.xlsx')
         if not os.path.exists(template):
             raise HTTPException(404, f"Шаблон не найден: {template}")
         
