@@ -321,7 +321,20 @@ def fmt(n):
 
 def set_cell(table, row, col, text):
     """Заполняет ячейку таблицы, сохраняя форматирование."""
-    cell = table.rows[row].cells[col]
+    try:
+        cell = table.rows[row].cells[col]
+    except (IndexError, KeyError):
+        # Merged cells — try accessing via XML
+        try:
+            tr = table.rows[row]._tr
+            tcs = tr.findall('.//{http://schemas.openxmlformats.org/wordprocessingml/2006/main}tc')
+            if col < len(tcs):
+                from docx.table import _Cell
+                cell = _Cell(tcs[col], table)
+            else:
+                return
+        except Exception:
+            return
     for p in cell.paragraphs:
         for r in p.runs:
             r.text = ""
