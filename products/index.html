@@ -88,7 +88,7 @@ input[type=range]{width:100%;-webkit-appearance:none;height:5px;background:var(-
 <!-- ═══ SCREEN 1: FINMODEL SURVEY ═══ -->
 <div class="screen" id="FM">
 <div class="pb"><div class="pf" id="fm_pf"></div></div>
-<div class="hd"><span class="a" id="fm_sc"></span><span class="b" id="fm_sn"></span></div>
+<div class="hd"><span class="a"><a href="#" onclick="if(FM.s<=1){goHome()}else{fmBack()};return false" style="color:var(--tx3);text-decoration:none;font-size:13px;">← Назад</a></span><span class="b" id="fm_sn"></span></div>
 
 <!-- Step 1: City -->
 <div class="st on" id="fm_s1"><h2>Город</h2><p class="sd">Где планируете бизнес?</p><div id="fm_cities"></div></div>
@@ -149,7 +149,7 @@ input[type=range]{width:100%;-webkit-appearance:none;height:5px;background:var(-
   <div style="font-size:40px;margin-bottom:12px">✅</div>
   <h2 style="font-size:18px;margin-bottom:6px">Финансовая модель готова</h2>
   <p style="font-size:13px;color:var(--tx2);margin-bottom:20px;line-height:1.5" id="fm_res_sub"></p>
-  <a class="rbtn" id="fm_dl_link" href="#" download style="display:block;text-align:center;text-decoration:none;">📊 Скачать Excel-модель</a>
+  <button class="rbtn" id="fm_dl_xlsx" onclick="dlXlsx()">📊 Скачать Excel-модель</button>
   <button class="rbtn sec" id="fm_dl_report" onclick="openReport()">📄 Открыть отчёт</button>
   <div style="margin-top:20px"><a href="#" class="back-home" onclick="goHome();return false">← Вернуться на главную</a></div>
 </div>
@@ -354,7 +354,7 @@ function fmSel(el,cid,fk,nk){
   var a=document.querySelectorAll('#'+cid+' .cd');for(var i=0;i<a.length;i++)a[i].classList.remove('on');
   el.classList.add('on');FM[fk]=el.dataset.v;if(nk)FM[nk]=el.querySelector('.cn').textContent;fmUB();
 }
-function fmUP(){$('fm_pf').style.width=(FM.s/FM_STEPS*100)+'%';$('fm_sc').textContent='Шаг '+FM.s+'/'+FM_STEPS;$('fm_sn').textContent=FM_NAMES[FM.s]||''}
+function fmUP(){$('fm_pf').style.width=(FM.s/FM_STEPS*100)+'%';$('fm_sn').textContent='Шаг '+FM.s+'/'+FM_STEPS+' · '+(FM_NAMES[FM.s]||'')}
 function fmUB(){
   var b=$('fm_bn'),k=$('fm_bk'),ok=false;
   if(FM.s===1)ok=!!FM.ci;
@@ -420,11 +420,6 @@ function fmRun(){
     clearInterval(iv);
     if(x.status===200){
       FM_BLOB=x.response;
-      // Create download URL for the blob
-      var dlUrl=window.URL.createObjectURL(FM_BLOB);
-      var dlLink=$('fm_dl_link');
-      dlLink.href=dlUrl;
-      dlLink.download='ZEREK_FinModel_'+FM.ni+'_'+FM.ci+'.xlsx';
       $('fm_LD').style.display='none';
       $('fm_RES').style.display='block';
       $('fm_res_sub').textContent=(NICHE_NAMES[FM.ni]||FM.nn||'')+': '+(fmtFmt(FM.fi)||FM.fn||'')+' — '+(FM.cn||'');
@@ -439,30 +434,16 @@ function fmRun(){
   x.send(JSON.stringify(b));
 }
 
+function dlXlsx(){
+  if(!FM_BLOB){alert('Файл ещё не готов');return}
+  var url=window.URL.createObjectURL(FM_BLOB);
+  var a=document.createElement('a');
+  a.href=url;a.download='ZEREK_FinModel_'+FM.ni+'_'+FM.ci+'.xlsx';
+  a.style.display='none';document.body.appendChild(a);a.click();
+  setTimeout(function(){window.URL.revokeObjectURL(url);a.remove()},100);
+}
 function openReport(){
-  // Run quick-check to get the report data, then show it
-  if(!FM.ci||!FM.ni||!FM.fi){alert('Данные не заполнены');return}
-  var b={
-    city_id:FM.ci,niche_id:FM.ni,format_id:FM.fi,cls:FM.cls,
-    loc_type:FM.lt,area_m2:0,capital:5000000,qty:1,start_month:new Date().getMonth()+1
-  };
-  var x=new XMLHttpRequest();
-  x.open('POST',U+'/quick-check',true);
-  x.setRequestHeader('Content-Type','application/json');
-  x.onreadystatechange=function(){
-    if(x.readyState===4){
-      if(x.status===200){
-        try{
-          var data=JSON.parse(x.responseText);
-          var result=data.result||data;
-          // Open quick-check with report data
-          var params='?city_id='+FM.ci+'&niche_id='+FM.ni+'&format_id='+FM.fi;
-          window.location.href='quick-check.html'+params;
-        }catch(e){alert('Ошибка разбора отчёта')}
-      }else{alert('Ошибка получения отчёта: HTTP '+x.status)}
-    }
-  };
-  x.send(JSON.stringify(b));
+  alert('HTML-отчёт по финмодели скоро будет доступен');
 }
 </script>
 </body>
