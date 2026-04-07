@@ -83,48 +83,50 @@ input[type=range]{width:100%;-webkit-appearance:none;height:5px;background:var(-
 
 <!-- Step 1: City -->
 <div class="st on" id="fm_s1"><h2>Город</h2><p class="sd">Где планируете бизнес?</p><div id="fm_cities"></div></div>
-<!-- Step 2: Niche -->
-<div class="st" id="fm_s2"><h2>Сфера бизнеса</h2><p class="sd">Выберите направление</p><div id="fm_niches"></div></div>
-<!-- Step 3: Format -->
-<div class="st" id="fm_s3"><h2>Формат</h2><p class="sd">Конкретный формат бизнеса</p><div id="fm_formats"></div></div>
-<!-- Step 4: Class -->
-<div class="st" id="fm_s4"><h2>Класс</h2><p class="sd">Уровень вложений</p><div class="note">От класса зависит CAPEX, качество оборудования и ожидаемая выручка.</div><div id="fm_classes"></div></div>
-<!-- Step 5: Location -->
-<div class="st" id="fm_s5"><h2>Локация</h2><p class="sd">Тип помещения и аренда</p>
+<!-- Step 2: Category -->
+<div class="st" id="fm_s2"><h2>Категория бизнеса</h2><p class="sd">Выберите направление</p><div id="fm_cats"></div></div>
+<!-- Step 3: Niche -->
+<div class="st" id="fm_s3"><h2>Ниша</h2><p class="sd" id="fm_niche_desc">Выберите конкретный бизнес</p><div id="fm_niches"></div></div>
+<!-- Step 4: Format -->
+<div class="st" id="fm_s4"><h2>Формат</h2><p class="sd">Конкретный формат бизнеса</p><div id="fm_formats"></div></div>
+<!-- Step 5: Class -->
+<div class="st" id="fm_s5"><h2>Класс</h2><p class="sd">Уровень вложений</p><div class="note">От класса зависит CAPEX, качество оборудования и ожидаемая выручка.</div><div id="fm_classes"></div></div>
+<!-- Step 6: Location -->
+<div class="st" id="fm_s6"><h2>Локация</h2><p class="sd">Тип помещения и аренда</p>
 <div class="fl">Тип локации</div><select class="inp" id="fm_loc"></select>
 <div class="fl">Аренда ₸/мес</div><input type="number" class="inp" id="fm_rent" placeholder="Оставьте пустым — рассчитаем"><div class="hn">Необязательно — подставим среднюю ставку</div>
 </div>
-<!-- Step 6: Entity + Tax -->
-<div class="st" id="fm_s6"><h2>Юридические параметры</h2><p class="sd">Форма собственности и налоги</p>
+<!-- Step 7: Entity + Tax -->
+<div class="st" id="fm_s7"><h2>Юридические параметры</h2><p class="sd">Форма собственности и налоги</p>
 <div class="fl">Форма собственности</div>
 <select class="inp" id="fm_entity"><option value="ИП">ИП (свободный вывод прибыли)</option><option value="ТОО">ТОО (дивиденды через 5% ИПН)</option></select>
 <div class="fl">Работаете сами?</div>
 <select class="inp" id="fm_founder"><option value="1">Да, работаю сам</option><option value="0">Нет, нанимаю управляющего</option></select>
 </div>
-<!-- Step 7: Staff -->
-<div class="st" id="fm_s7"><h2>Персонал</h2><p class="sd">Зарплаты и количество сотрудников</p>
+<!-- Step 8: Staff -->
+<div class="st" id="fm_s8"><h2>Персонал</h2><p class="sd">Зарплаты и количество сотрудников</p>
 <div class="fl">Количество сотрудников</div><input type="number" class="inp" id="fm_hc" value="2" min="0" max="50"><div class="hn">Не считая вас, если работаете сами</div>
 <div class="fl">Средняя зарплата (gross) ₸</div><input type="number" class="inp" id="fm_fot" value="200000" min="85000"><div class="hn">На руки: минус ИПН 10%, ОПВ 10%, ВОСМС 2%</div>
 </div>
-<!-- Step 8: Revenue -->
-<div class="st" id="fm_s8"><h2>Выручка</h2><p class="sd">Средний чек и трафик</p>
+<!-- Step 9: Revenue -->
+<div class="st" id="fm_s9"><h2>Выручка</h2><p class="sd">Средний чек и трафик</p>
 <div class="fl">Средний чек (вся покупка) ₸</div><input type="number" class="inp" id="fm_check" placeholder="Например: 1400" min="100">
 <div class="fl">Клиентов в день (на полной мощности)</div><input type="number" class="inp" id="fm_traffic" placeholder="Например: 70" min="1"><div class="hn">После ramp-up. В первые месяцы будет меньше</div>
 <div class="fl">Себестоимость (% от выручки)</div><input type="number" class="inp" id="fm_cogs" value="35" min="1" max="90"><div class="hn">Общепит: 30-40%, услуги: 5-15%, торговля: 60-75%</div>
 </div>
-<!-- Step 9: CAPEX -->
-<div class="st" id="fm_s9"><h2>Стартовые вложения</h2><p class="sd">Оборудование и первоначальные расходы</p>
+<!-- Step 10: CAPEX -->
+<div class="st" id="fm_s10"><h2>Стартовые вложения</h2><p class="sd">Оборудование и первоначальные расходы</p>
 <div class="fl">CAPEX (оборудование + ремонт) ₸</div><input type="number" class="inp" id="fm_capex" placeholder="Например: 1500000" min="0">
 <div class="fl">Оборотный капитал (резерв) ₸</div><input type="number" class="inp" id="fm_wc" value="1000000" min="0"><div class="hn">На 2-3 мес. расходов до выхода в плюс</div>
 </div>
-<!-- Step 10: Credit -->
-<div class="st" id="fm_s10"><h2>Кредит</h2><p class="sd">Планируете ли привлечь заёмные средства?</p>
+<!-- Step 11: Credit -->
+<div class="st" id="fm_s11"><h2>Кредит</h2><p class="sd">Планируете ли привлечь заёмные средства?</p>
 <div class="fl">Сумма кредита ₸</div><input type="number" class="inp" id="fm_credit" value="0" min="0"><div class="hn">0 = без кредита</div>
 <div class="fl">Годовая ставка %</div><input type="number" class="inp" id="fm_rate" value="22" min="0" max="100">
 <div class="fl">Срок кредита, мес</div><input type="number" class="inp" id="fm_term" value="36" min="6" max="120">
 </div>
-<!-- Step 11: Confirm -->
-<div class="st" id="fm_s11"><h2>Проверьте данные</h2><p class="sd">Всё верно? Нажмите «Рассчитать»</p><div class="cc" id="fm_confirm"></div></div>
+<!-- Step 12: Confirm -->
+<div class="st" id="fm_s12"><h2>Проверьте данные</h2><p class="sd">Всё верно? Нажмите «Рассчитать»</p><div class="cc" id="fm_confirm"></div></div>
 
 <div class="bb"><div class="br"><button class="bk" id="fm_bk" onclick="fmBack()" style="display:none">&larr;</button><button class="bn" id="fm_bn" onclick="fmNext()" disabled>Далее</button></div></div>
 </div>
@@ -147,10 +149,76 @@ input[type=range]{width:100%;-webkit-appearance:none;height:5px;background:var(-
 
 <script>
 var U='https://web-production-b3ede.up.railway.app';
-var FM_STEPS=11;
-var FM_NAMES=['','Город','Ниша','Формат','Класс','Локация','Юр. параметры','Персонал','Выручка','Инвестиции','Кредит','Проверка'];
-var FM={s:1,ci:null,cn:null,ni:null,nn:null,fi:null,fn:null,cls:'Стандарт',lt:'',cities:[],niches:[],fmts:[],clsL:[]};
-var FM_BLOB=null; // xlsx blob for download
+var FM_STEPS=12;
+var FM_NAMES=['','Город','Категория','Ниша','Формат','Класс','Локация','Юр. параметры','Персонал','Выручка','Инвестиции','Кредит','Проверка'];
+var FM={s:1,ci:null,cn:null,catIdx:null,ni:null,nn:null,fi:null,fn:null,cls:'Стандарт',lt:'',cities:[],niches:[],fmts:[],clsL:[]};
+var FM_BLOB=null;
+
+var NICHE_NAMES={
+  'AUTOSERVICE':'Автосервис','BAKERY':'Пекарня','BARBER':'Барбершоп','BROW':'Брови',
+  'CANTEEN':'Столовая','CARWASH':'Автомойка','CLEAN':'Клининг','COFFEE':'Кофейня',
+  'CONFECTION':'Кондитерская','CYBERCLUB':'Компьютерный клуб','DENTAL':'Стоматология',
+  'DONER':'Донерная','DRYCLEAN':'Химчистка','FASTFOOD':'Фастфуд','FITNESS':'Фитнес',
+  'FLOWERS':'Цветы','FRUITSVEGS':'Овощи и фрукты','FURNITURE':'Мебель','GROCERY':'Продукты',
+  'KINDERGARTEN':'Детский сад','LASH':'Ресницы','MASSAGE':'Массаж','NAIL':'Маникюр',
+  'PHARMA':'Аптека','PIZZA':'Пиццерия','PVZ':'ПВЗ','REPAIR_PHONE':'Ремонт телефонов',
+  'SEMIFOOD':'Полуфабрикаты','SUGARING':'Шугаринг','SUSHI':'Суши','TAILOR':'Ателье',
+  'TIRE':'Шиномонтаж','WATER':'Вода'
+};
+var NICHE_ICONS={
+  'COFFEE':'☕','DONER':'🌯','CARWASH':'🚗','CLEAN':'🧹','GROCERY':'🛒','PHARMA':'💊',
+  'BARBER':'💈','BAKERY':'🥐','PIZZA':'🍕','SUSHI':'🍣','FASTFOOD':'🍔','CANTEEN':'🍽️',
+  'CONFECTION':'🎂','SEMIFOOD':'🥟','NAIL':'💅','BROW':'✨','LASH':'👁️','SUGARING':'🌸',
+  'MASSAGE':'💆','DENTAL':'🦷','FITNESS':'💪','AUTOSERVICE':'🔧','TIRE':'🛞','FLOWERS':'💐',
+  'FRUITSVEGS':'🍎','WATER':'💧','FURNITURE':'🪑','PVZ':'📦','DRYCLEAN':'👔','TAILOR':'🧵',
+  'REPAIR_PHONE':'📱','KINDERGARTEN':'👶','CYBERCLUB':'🎮'
+};
+var NICHE_CATEGORIES=[
+  {title:'Еда и напитки',icon:'🍽️',ids:['COFFEE','BAKERY','DONER','PIZZA','SUSHI','FASTFOOD','CANTEEN','CONFECTION','SEMIFOOD']},
+  {title:'Красота и здоровье',icon:'💅',ids:['BARBER','NAIL','BROW','LASH','SUGARING','MASSAGE','DENTAL','FITNESS']},
+  {title:'Авто',icon:'🚗',ids:['CARWASH','AUTOSERVICE','TIRE']},
+  {title:'Торговля',icon:'🛒',ids:['GROCERY','PHARMA','FLOWERS','FRUITSVEGS','WATER','FURNITURE','PVZ']},
+  {title:'Услуги',icon:'🔧',ids:['CLEAN','DRYCLEAN','TAILOR','REPAIR_PHONE','KINDERGARTEN','CYBERCLUB']}
+];
+var FORMAT_NAMES={
+  'AUTO_FULL':'Полный автосервис','AUTO_GARAGE':'Гаражный автосервис','AUTO_SERVICE':'Средний автосервис','AUTO_SPEC':'Специализированный сервис',
+  'CARWASH_AUTO':'Автоматическая мойка','CARWASH_MANUAL_L':'Ручная мойка (большая)','CARWASH_MANUAL_S':'Ручная мойка (малая)',
+  'CARWASH_SELF_BOX':'Мойка самообслуживания (бокс)','CARWASH_SELF_OPEN':'Мойка самообслуживания (открытая)',
+  'TIRE_FULL':'Полный шиномонтаж','TIRE_MINI':'Мини-шиномонтаж','TIRE_MOBILE':'Мобильный шиномонтаж',
+  'COFFEE_VENDING':'Кофе-вендинг','COFFEE_KIOSK':'Кофе-киоск','COFFEE_SELF':'Кофе самообслуживания',
+  'COFFEE_ISLAND':'Кофе-остров (to go)','COFFEE_MOBILE':'Кофе на колёсах','COFFEE_MINI':'Мини-кофейня','COFFEE_FULL':'Полноформатная кофейня',
+  'BAKERY_ISLAND':'Пекарня-остров','BAKERY_MINI':'Мини-пекарня','BAKERY_CRAFT':'Крафтовая пекарня',
+  'BAKERY_CAFE':'Пекарня-кафе','BAKERY_CONFECT':'Пекарня-кондитерская','BAKERY_PRODUCTION':'Пекарня-производство',
+  'DONER_KIOSK':'Донер-киоск','DONER_MINI':'Мини-донерная','DONER_CAFE':'Донер-кафе','DONER_DELIVERY':'Донер с доставкой',
+  'PIZZA_TAKEAWAY':'Пиццерия навынос','PIZZA_DELIVERY':'Пиццерия с доставкой','PIZZA_CAFE':'Пиццерия-кафе','PIZZA_COMBO':'Пиццерия-комбо',
+  'SUSHI_DELIVERY':'Суши с доставкой','SUSHI_BAR':'Суши-бар','SUSHI_COMBO':'Суши-комбо',
+  'FASTFOOD_KIOSK':'Фастфуд-киоск','FASTFOOD_MINI':'Мини-фастфуд','FASTFOOD_CAFE':'Фастфуд-кафе','FASTFOOD_DARK':'Фастфуд тёмная кухня',
+  'CANTEEN_OFFICE':'Столовая при офисе','CANTEEN_CITY':'Городская столовая','CANTEEN_CATERING':'Кейтеринг-столовая',
+  'CONF_HOME':'Кондитерская на дому','CONF_CABINET':'Кондитерский кабинет','CONF_STUDIO':'Кондитерская-студия',
+  'SEMI_HOME':'Полуфабрикаты на дому','SEMI_MINI':'Мини-цех полуфабрикатов','SEMI_FULL':'Цех полуфабрикатов',
+  'BARBER_SOLO':'Соло-барбер','BARBER_MINI':'Мини-барбершоп','BARBER_FULL':'Полный барбершоп',
+  'NAIL_HOME':'Маникюр на дому','NAIL_RENT':'Маникюр (аренда места)','NAIL_CABINET':'Маникюрный кабинет','NAIL_STUDIO':'Маникюрная студия',
+  'BROW_HOME':'Брови на дому','BROW_RENT':'Брови (аренда места)','BROW_CABINET':'Бровный кабинет',
+  'LASH_HOME':'Ресницы на дому','LASH_RENT':'Ресницы (аренда места)','LASH_CABINET':'Кабинет ресниц',
+  'SUGARING_HOME':'Шугаринг на дому','SUGARING_RENT':'Шугаринг (аренда места)','SUGARING_OWN':'Свой кабинет шугаринга',
+  'MASSAGE_CABINET':'Массажный кабинет','MASSAGE_STUDIO':'Массажная студия',
+  'DENTAL_CABINET':'Стоматологический кабинет','DENTAL_CLINIC':'Стоматологическая клиника',
+  'FITNESS_STUDIO':'Фитнес-студия','FITNESS_GYM':'Тренажёрный зал','FITNESS_CROSSFIT':'Кроссфит-зал','FITNESS_MMA':'MMA / единоборства',
+  'GROCERY_MINI':'Мини-маркет','GROCERY_MEDIUM':'Средний магазин','GROCERY_SPEC':'Специализированный магазин',
+  'PHARMA_MINI':'Мини-аптека','PHARMA_STD':'Стандартная аптека',
+  'FLOWERS_KIOSK':'Цветочный киоск','FLOWERS_SHOP':'Цветочный магазин','FLOWERS_STUDIO':'Цветочная студия',
+  'FV_KIOSK':'Овощной киоск','FV_SHOP':'Овощной магазин','FV_WHOLESALE':'Овощи оптом',
+  'WATER_VENDING':'Вода (вендинг)','WATER_FILTER':'Вода (фильтрация)','WATER_WELL':'Водяная скважина',
+  'FURN_SOLO':'Мебель (соло-мастер)','FURN_WORKSHOP':'Мебельная мастерская','FURN_FACTORY':'Мебельный цех',
+  'PVZ_SMALL':'Маленький ПВЗ','PVZ_MULTI':'Мульти-ПВЗ',
+  'CLEAN_SOLO':'Клининг (соло)','CLEAN_TEAM':'Клининг-бригада','CLEAN_COMPANY':'Клининговая компания',
+  'DRY_POINT':'Пункт приёма химчистки','DRY_MINI':'Мини-химчистка','DRY_FULL':'Полная химчистка',
+  'TAILOR_HOME':'Ателье на дому','TAILOR_MINI':'Мини-ателье','TAILOR_FULL':'Полное ателье',
+  'REP_KIOSK':'Ремонт телефонов (киоск)','REP_SHOP':'Ремонт телефонов (магазин)',
+  'KINDER_HOME':'Домашний детский сад','KINDER_MINI':'Мини-детский сад','KINDER_FULL':'Полный детский сад',
+  'CYBER_MINI':'Мини-компьютерный клуб','CYBER_MEDIUM':'Средний компьютерный клуб','CYBER_PREMIUM':'Премиум-компьютерный клуб'
+};
+function fmtFmt(id){return FORMAT_NAMES[id]||id}
 
 function $(i){return document.getElementById(i)}
 function F(n){if(n==null)return'—';return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ')}
@@ -178,10 +246,27 @@ function rFmCities(){
     h+='<div class="cd" data-v="'+id+'" onclick="fmSel(this,\'fm_cities\',\'ci\',\'cn\')"><div><div class="cn">'+nm+'</div></div></div>';
   }$('fm_cities').innerHTML=h;
 }
-function rFmNiches(){
-  var h='';for(var i=0;i<FM.niches.length;i++){
-    var n=FM.niches[i],id=n.niche_id||'',nm=n.name||id,ic=n.icon||'';
-    h+='<div class="cd" data-v="'+id+'" onclick="fmSel(this,\'fm_niches\',\'ni\',\'nn\');FM.fi=null"><div><div class="cn">'+(ic?ic+' ':'')+nm+'</div></div></div>';
+function rFmCategories(){
+  var nm={};for(var i=0;i<FM.niches.length;i++)nm[FM.niches[i].niche_id]=true;
+  var h='';for(var i=0;i<NICHE_CATEGORIES.length;i++){
+    var cat=NICHE_CATEGORIES[i],cnt=0;
+    for(var j=0;j<cat.ids.length;j++)if(nm[cat.ids[j]])cnt++;
+    h+='<div class="cd" data-v="'+i+'" onclick="fmSelCat(this)"><div><div class="cn">'+cat.icon+' '+cat.title+'</div><div class="cs">'+cnt+' направлений</div></div></div>';
+  }$('fm_cats').innerHTML=h;
+}
+function fmSelCat(el){
+  var a=document.querySelectorAll('#fm_cats .cd');for(var i=0;i<a.length;i++)a[i].classList.remove('on');
+  el.classList.add('on');FM.catIdx=parseInt(el.dataset.v);FM.ni=null;FM.nn=null;FM.fi=null;FM.fn=null;fmUB();
+}
+function rFmNichesForCat(){
+  if(FM.catIdx==null)return;
+  var cat=NICHE_CATEGORIES[FM.catIdx],nm={};
+  for(var i=0;i<FM.niches.length;i++)nm[FM.niches[i].niche_id]=FM.niches[i];
+  $('fm_niche_desc').textContent=cat.title+' — выберите бизнес';
+  var h='';for(var j=0;j<cat.ids.length;j++){
+    var id=cat.ids[j],n=nm[id];if(!n)continue;
+    var name=NICHE_NAMES[id]||id,ic=NICHE_ICONS[id]||'';
+    h+='<div class="cd" data-v="'+id+'" onclick="fmSel(this,\'fm_niches\',\'ni\',\'nn\');FM.fi=null;FM.fn=null"><div><div class="cn">'+(ic?ic+' ':'')+name+'</div></div></div>';
   }$('fm_niches').innerHTML=h;
 }
 function fmLoadFmt(){
@@ -189,7 +274,7 @@ function fmLoadFmt(){
   G('GET','/formats/'+FM.ni,function(e,r){
     if(e){$('fm_formats').innerHTML='Ошибка';return}
     FM.fmts=r.formats||[];var h='';
-    for(var i=0;i<FM.fmts.length;i++){var f=FM.fmts[i];h+='<div class="cd" data-v="'+f.format_id+'" onclick="fmSel(this,\'fm_formats\',\'fi\',\'fn\');fmLoadCls()"><div><div class="cn">'+f.format_name+'</div></div></div>'}
+    for(var i=0;i<FM.fmts.length;i++){var f=FM.fmts[i];var name=fmtFmt(f.format_id)||f.format_name;h+='<div class="cd" data-v="'+f.format_id+'" onclick="fmSel(this,\'fm_formats\',\'fi\',\'fn\');fmLoadCls()"><div><div class="cn">'+name+'</div></div></div>'}
     $('fm_formats').innerHTML=h;
   });
 }
@@ -216,22 +301,29 @@ function fmSel(el,cid,fk,nk){
 function fmUP(){$('fm_pf').style.width=(FM.s/FM_STEPS*100)+'%';$('fm_sc').textContent='Шаг '+FM.s+'/'+FM_STEPS;$('fm_sn').textContent=FM_NAMES[FM.s]||''}
 function fmUB(){
   var b=$('fm_bn'),k=$('fm_bk'),ok=false;
-  if(FM.s===1)ok=!!FM.ci;else if(FM.s===2)ok=!!FM.ni;else if(FM.s===3)ok=!!FM.fi;else ok=true;
+  if(FM.s===1)ok=!!FM.ci;
+  else if(FM.s===2)ok=(FM.catIdx!=null);
+  else if(FM.s===3)ok=!!FM.ni;
+  else if(FM.s===4)ok=!!FM.fi;
+  else ok=true;
   b.disabled=!ok;k.style.display=FM.s<=1?'none':'flex';b.textContent=FM.s===FM_STEPS?'Рассчитать':'Далее';
 }
 function fmGo(n){
   var c=$('fm_s'+FM.s);if(c)c.classList.remove('on');FM.s=n;
-  if(n===2)rFmNiches();if(n===3)fmLoadFmt();
-  if(n===4&&FM.clsL.length<=1){FM.cls=FM.clsL[0]||'Стандарт';fmGo(n+1);return}
-  if(n===5)fmLoadLoc();if(n===FM_STEPS)fmConfirm();
+  if(n===2)rFmCategories();
+  if(n===3)rFmNichesForCat();
+  if(n===4)fmLoadFmt();
+  if(n===5&&FM.clsL.length<=1){FM.cls=FM.clsL[0]||'Стандарт';fmGo(n+1);return}
+  if(n===6)fmLoadLoc();
+  if(n===FM_STEPS)fmConfirm();
   var x=$('fm_s'+n);if(x)x.classList.add('on');fmUP();fmUB();window.scrollTo(0,0);
 }
-function fmNext(){if($('fm_bn').disabled)return;if(FM.s===5)FM.lt=$('fm_loc').value;if(FM.s===FM_STEPS){fmRun();return}fmGo(FM.s+1)}
-function fmBack(){if(FM.s>1){var p=FM.s-1;if(p===4&&FM.clsL.length<=1)p=3;fmGo(p)}}
+function fmNext(){if($('fm_bn').disabled)return;if(FM.s===6)FM.lt=$('fm_loc').value;if(FM.s===FM_STEPS){fmRun();return}fmGo(FM.s+1)}
+function fmBack(){if(FM.s>1){var p=FM.s-1;if(p===5&&FM.clsL.length<=1)p=4;fmGo(p)}}
 
 function fmConfirm(){
   var rows=[
-    ['Город',FM.cn],['Ниша',FM.nn],['Формат',FM.fn],['Класс',FM.cls],['Локация',FM.lt],
+    ['Город',FM.cn],['Ниша',NICHE_NAMES[FM.ni]||FM.nn],['Формат',fmtFmt(FM.fi)||FM.fn],['Класс',FM.cls],['Локация',FM.lt],
     ['Форма',el('fm_entity')],['Работает сам',el('fm_founder')==='1'?'Да':'Нет'],
     ['Сотрудников',el('fm_hc')],['Зарплата gross',F(+el('fm_fot'))+' ₸'],
     ['Средний чек',F(+el('fm_check'))+' ₸'],['Клиентов/день',el('fm_traffic')],
