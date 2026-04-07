@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ZEREK — Бизнес-план на грант 400 МРП</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#06060C;--surface:#12121E;--surface2:#1A1A2A;--text:#E8E6F0;--text2:#9B99AE;--text3:#5C5A6E;--accent:#7C6CFF;--accent2:#9E8FFF;--accent-dim:rgba(124,108,255,0.08);--green:#00E4A0;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.10);--radius:16px;--radius-sm:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;max-width:440px;margin:0 auto;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.zerek-back{position:fixed;top:12px;left:12px;z-index:9999;display:inline-flex;align-items:center;gap:4px;padding:6px 12px;background:rgba(0,0,0,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);border-radius:20px;color:rgba(255,255,255,.85);font-family:-apple-system,sans-serif;font-size:12px;font-weight:500;text-decoration:none;cursor:pointer}.zerek-back:hover{background:rgba(0,0,0,.6)}
+.topbar{padding:48px 20px 0}.topbar-badge{display:inline-block;font-size:11px;font-weight:700;color:var(--accent2);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.progress-bar{height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;margin-bottom:6px}.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .4s}
+.progress-info{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:16px}
+.step{display:none;padding:0 20px 100px;animation:fadeUp .4s}.step.active{display:block}
+.step-label{font-size:10px;font-weight:700;color:var(--accent2);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.step h2{font-size:22px;font-weight:800;margin-bottom:4px}.step-desc{font-size:13px;color:var(--text2);margin-bottom:16px}
+.options-grid{display:flex;flex-direction:column;gap:8px}
+.opt-card{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s}
+.opt-card:hover,.opt-card.selected{border-color:var(--accent);background:var(--accent-dim)}
+.opt-card .opt-icon{width:40px;height:40px;border-radius:12px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.opt-card.selected .opt-icon{background:var(--accent)}.opt-card .opt-name{font-size:14px;font-weight:600}.opt-card .opt-sub{font-size:11.5px;color:var(--text3);margin-top:1px}
+.field-group{margin-bottom:16px}.field-label{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.field-input{width:100%;padding:12px 14px;background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:inherit;font-size:14px;outline:none;-webkit-appearance:none}.field-input:focus{border-color:var(--accent)}
+.field-hint{font-size:11px;color:var(--text3);margin-top:4px}
+.loc-toggles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.loc-toggle{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius-sm);padding:14px;text-align:center;cursor:pointer;transition:all .2s}
+.loc-toggle.selected{border-color:var(--accent);background:var(--accent-dim)}.lt-icon{font-size:24px;margin-bottom:4px}.lt-label{font-size:11px;font-weight:600}
+.confirm-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+.confirm-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}.confirm-row:last-child{border:none}.ck{color:var(--text3)}.cv{font-weight:600}
+.btn-bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;padding:12px 20px 28px;background:linear-gradient(0deg,var(--bg) 60%,transparent);z-index:50;display:flex;flex-direction:column;gap:4px}
+.btn-back{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;padding:12px;border-radius:12px;width:100%}
+.btn-next{width:100%;padding:15px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}.btn-next:disabled{opacity:.4;cursor:not-allowed}
+#loading-screen{display:none;text-align:center;padding:80px 20px}.loader-ring{width:44px;height:44px;border:3px solid var(--surface2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 20px}@keyframes spin{to{transform:rotate(360deg)}}
+.loading-title{font-size:18px;font-weight:700;margin-bottom:8px}.loading-sub{font-size:13px;color:var(--text2)}
+#result-screen{display:none;padding:20px;text-align:center}
+.btn-result{display:block;width:100%;padding:14px;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px;text-align:center;text-decoration:none}
+.btn-primary{background:var(--accent);color:white;border:none}.btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border2)}
+.info-box{background:var(--accent-dim);border-left:3px solid var(--accent);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:14px 16px;margin:16px 0;font-size:13px;color:var(--text2);line-height:1.6}
+</style>
+</head>
+<body>
+<a class="zerek-back" href="index.html" onclick="if(window.history.length>1){history.back();return false;}">← Назад</a>
+
+<div id="survey-screen">
+<div class="topbar">
+  <div class="topbar-badge">Бизнес-план · Грант 400 МРП</div>
+  <div class="progress-bar"><div class="progress-fill" id="pf" style="width:12%"></div></div>
+  <div class="progress-info"><span id="sc">Шаг 1 из 8</span><span id="sn">Город</span></div>
+</div>
+
+<!-- S1: City -->
+<div class="step active" id="s1"><div class="step-label">Шаг 1</div><h2>Выберите город</h2><p class="step-desc">Где планируете открыть бизнес?</p><div class="options-grid" id="city-list"></div></div>
+
+<!-- S2: Category -->
+<div class="step" id="s2"><div class="step-label">Шаг 2</div><h2>Категория бизнеса</h2><p class="step-desc">Выберите направление</p><div class="options-grid" id="cat-list"></div></div>
+
+<!-- S2b: Niche -->
+<div class="step" id="s2b"><div class="step-label">Шаг 2</div><h2>Выберите нишу</h2><p class="step-desc" id="niche-desc">Какой бизнес?</p><div class="options-grid" id="niche-list"></div></div>
+
+<!-- S3: Format -->
+<div class="step" id="s3"><div class="step-label">Шаг 3</div><h2>Формат бизнеса</h2><p class="step-desc">Конкретный формат</p><div class="options-grid" id="fmt-list"></div></div>
+
+<!-- S4: Location -->
+<div class="step" id="s4"><div class="step-label">Шаг 4</div><h2>Локация</h2><p class="step-desc">Где будет ваша точка?</p>
+  <div class="field-group"><div class="field-label">Название проекта</div><input class="field-input" id="inp-name" placeholder='Например: Кофейня «Бодрое утро»'></div>
+  <div class="field-group"><div class="field-label">Описание локации</div><input class="field-input" id="inp-loc" placeholder="ТЦ Мега Актобе, 1 этаж"></div>
+  <div class="field-label">Тип локации</div>
+  <div class="loc-toggles">
+    <div class="loc-toggle selected" data-v="ТЦ" onclick="selLoc(this)"><div class="lt-icon">🏬</div><div class="lt-label">ТЦ</div></div>
+    <div class="loc-toggle" data-v="улица" onclick="selLoc(this)"><div class="lt-icon">🏪</div><div class="lt-label">Улица</div></div>
+  </div>
+</div>
+
+<!-- S5: Personal -->
+<div class="step" id="s5"><div class="step-label">Шаг 5</div><h2>Персональные данные</h2><p class="step-desc">Для заполнения бизнес-плана</p>
+  <div class="field-group"><div class="field-label">ФИО полностью</div><input class="field-input" id="inp-fio" placeholder="Иванов Иван Иванович"></div>
+  <div class="field-group"><div class="field-label">ИИН (12 цифр)</div><input class="field-input" id="inp-iin" placeholder="123456789012" maxlength="12" inputmode="numeric"></div>
+  <div class="field-group"><div class="field-label">Телефон</div><input class="field-input" id="inp-phone" placeholder="+7 701 123 4567" type="tel"></div>
+  <div class="field-group"><div class="field-label">Адрес проживания</div><input class="field-input" id="inp-addr" placeholder="г. Актобе, ул. Абая 15, кв. 3"></div>
+</div>
+
+<!-- S6: Status -->
+<div class="step" id="s6"><div class="step-label">Шаг 6</div><h2>Статус и опыт</h2><p class="step-desc">Для анкеты гранта</p>
+  <div class="field-label">Организационно-правовой статус</div>
+  <div class="loc-toggles" style="margin-bottom:16px;">
+    <div class="loc-toggle selected" data-s="безработный" onclick="selStatus(this)"><div class="lt-icon">👤</div><div class="lt-label">Безработный</div></div>
+    <div class="loc-toggle" data-s="ИП" onclick="selStatus(this)"><div class="lt-icon">📋</div><div class="lt-label">ИП</div></div>
+  </div>
+  <div class="field-group"><div class="field-label">Опыт предпринимательства (лет)</div><input class="field-input" id="inp-exp" type="number" value="0" min="0" max="50"></div>
+  <div class="field-group"><div class="field-label">Семейное положение</div><input class="field-input" id="inp-family" placeholder="женат, 3 детей"></div>
+  <div class="field-group"><div class="field-label">Собственные средства (₸)</div><input class="field-input" id="inp-own" type="number" value="0" min="0" placeholder="0 если нет"><div class="field-hint">Если есть свои деньги помимо гранта</div></div>
+  <div class="info-box">Грант 400 МРП = <strong>1 730 000 ₸</strong> (2026). Если стартовые вложения больше — разница покрывается собственными средствами.</div>
+</div>
+
+<!-- S7: Confirm -->
+<div class="step" id="s7"><div class="step-label">Шаг 7</div><h2>Проверьте данные</h2><p class="step-desc">Всё верно? Нажмите «Сформировать»</p>
+  <div class="confirm-card" id="confirm"></div>
+  <div class="info-box">Мы сформируем заполненный бизнес-план в формате .docx, который можно загрузить на Business.enbek.kz для получения гранта.</div>
+</div>
+
+<div class="btn-bottom">
+  <button class="btn-back" id="btn-back" onclick="goBack()" style="display:none;">← Назад</button>
+  <button class="btn-next" id="btn-main" onclick="handleNext()" disabled>Далее</button>
+</div>
+</div>
+
+<div id="loading-screen"><div class="loader-ring"></div><div class="loading-title">Формируем бизнес-план</div><div class="loading-sub">Подставляем данные, считаем прибыль, заполняем таблицы</div></div>
+<div id="result-screen"></div>
+
+<script>
+var API='https://web-production-b3ede.up.railway.app';
+var P={step:0,city_id:null,city_name:null,cat_idx:null,niche_id:null,niche_name:null,format_id:null,format_name:null,loc_type:'ТЦ',project_name:'',loc_desc:'',fio:'',iin:'',phone:'',address:'',legal_status:'безработный',exp:0,family:'',own_funds:0,cities:[],niches:[]};
+var STEPS=['s1','s2','s2b','s3','s4','s5','s6','s7'];
+var LABELS=['Город','Категория','Ниша','Формат','Локация','Данные','Статус','Подтверждение'];
+var NICHE_NAMES={'AUTOSERVICE':'Автосервис','BAKERY':'Пекарня','BARBER':'Барбершоп','BROW':'Брови','CANTEEN':'Столовая','CARWASH':'Автомойка','CLEAN':'Клининг','COFFEE':'Кофейня','CONFECTION':'Кондитерская','CYBERCLUB':'Компьютерный клуб','DENTAL':'Стоматология','DONER':'Донерная','DRYCLEAN':'Химчистка','FASTFOOD':'Фастфуд','FITNESS':'Фитнес','FLOWERS':'Цветы','FRUITSVEGS':'Овощи и фрукты','FURNITURE':'Мебель','GROCERY':'Продукты','KINDERGARTEN':'Детский сад','LASH':'Ресницы','MASSAGE':'Массаж','NAIL':'Маникюр','PHARMA':'Аптека','PIZZA':'Пиццерия','PVZ':'ПВЗ','REPAIR_PHONE':'Ремонт телефонов','SEMIFOOD':'Полуфабрикаты','SUGARING':'Шугаринг','SUSHI':'Суши','TAILOR':'Ателье','TIRE':'Шиномонтаж','WATER':'Вода'};
+var NICHE_ICONS={'COFFEE':'☕','DONER':'🌯','CARWASH':'🚗','CLEAN':'🧹','GROCERY':'🛒','PHARMA':'💊','BARBER':'💈','BAKERY':'🥐','PIZZA':'🍕','SUSHI':'🍣','FASTFOOD':'🍔','CANTEEN':'🍽️','CONFECTION':'🎂','SEMIFOOD':'🥟','NAIL':'💅','BROW':'✨','LASH':'👁️','SUGARING':'🌸','MASSAGE':'💆','DENTAL':'🦷','FITNESS':'💪','AUTOSERVICE':'🔧','TIRE':'🛞','FLOWERS':'💐','FRUITSVEGS':'🍎','WATER':'💧','FURNITURE':'🪑','PVZ':'📦','DRYCLEAN':'👔','TAILOR':'🧵','REPAIR_PHONE':'📱','KINDERGARTEN':'👶','CYBERCLUB':'🎮'};
+var CATS=[{title:'Еда и напитки',icon:'🍽️',ids:['COFFEE','BAKERY','DONER','PIZZA','SUSHI','FASTFOOD','CANTEEN','CONFECTION','SEMIFOOD']},{title:'Красота и здоровье',icon:'💅',ids:['BARBER','NAIL','BROW','LASH','SUGARING','MASSAGE','DENTAL','FITNESS']},{title:'Авто',icon:'🚗',ids:['CARWASH','AUTOSERVICE','TIRE']},{title:'Торговля',icon:'🛒',ids:['GROCERY','PHARMA','FLOWERS','FRUITSVEGS','WATER','FURNITURE','PVZ']},{title:'Услуги',icon:'🔧',ids:['CLEAN','DRYCLEAN','TAILOR','REPAIR_PHONE','KINDERGARTEN','CYBERCLUB']}];
+var FORMAT_NAMES={'AUTO_FULL':'Полный автоцентр','AUTO_GARAGE':'Гаражный','AUTO_SERVICE':'СТО 2-4 поста','BAKERY_CAFE':'Кафе-пекарня','BAKERY_MINI':'Мини-пекарня to-go','BARBER_MINI':'Мини-барбершоп','BARBER_SOLO':'Аренда кресла','CARWASH_MANUAL_S':'Ручная мойка 1-2 бокса','CLEAN_SOLO':'Самозанятый','CLEAN_TEAM':'Бригада','COFFEE_KIOSK':'Кофе с собой','COFFEE_ISLAND':'Островок ТЦ/БЦ','COFFEE_MINI':'Мини-кофейня','DONER_KIOSK':'Киоск / ларёк','DONER_MINI':'Мини-кафе','GROCERY_MINI':'Мини-маркет','NAIL_HOME':'На дому','NAIL_CABINET':'Свой кабинет','PHARMA_MINI':'Аптечный пункт','PIZZA_DELIVERY':'Доставка пиццы','TIRE_MINI':'Мини-шиномонтаж'};
+var CITY_ICONS={'astana':'🏛️','almaty':'🏔️','shymkent':'☀️','aktobe':'🏭','karaganda':'⛏️','atyrau':'🛢️','pavlodar':'🌾','aktau':'🌊','semey':'📚','kostanay':'🌿'};
+
+function $(id){return document.getElementById(id)}
+function fmt(n){if(n==null)return'—';return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ')}
+function fmtFmt(id){return FORMAT_NAMES[id]||id}
+function sid(){return STEPS[P.step]}
+function sel(el,cid){document.querySelectorAll('#'+cid+' .opt-card').forEach(function(e){e.classList.remove('selected')});el.classList.add('selected')}
+function apiGet(p,cb){var x=new XMLHttpRequest();x.open('GET',API+p,true);x.onreadystatechange=function(){if(x.readyState===4){if(x.status===200)try{cb(null,JSON.parse(x.responseText))}catch(e){cb(e)}else cb(new Error('HTTP '+x.status))}};x.onerror=function(){cb(new Error('Network'))};x.send()}
+
+function init(){
+  apiGet('/cities',function(e,r){if(!e&&r){P.cities=r.cities||[];renderCities()}});
+  apiGet('/niches',function(e,r){if(!e&&r){P.niches=r.niches||r}});
+}
+function renderCities(){var h='';for(var i=0;i<P.cities.length;i++){var c=P.cities[i],id=(c.city_id!=null)?String(c.city_id):'',nm=c['\u0413\u043e\u0440\u043e\u0434']||id,ic=CITY_ICONS[id]||'📍',pop=c['\u041d\u0430\u0441\u0435\u043b\u0435\u043d\u0438\u0435 \u0432\u0441\u0435\u0433\u043e (\u0447\u0435\u043b.)']||0;h+='<div class="opt-card" data-id="'+id+'" onclick="selCity(this)"><div class="opt-icon">'+ic+'</div><div class="opt-info"><div class="opt-name">'+nm+'</div>'+(pop?'<div class="opt-sub">'+fmt(pop)+' чел.</div>':'')+'</div></div>'}$('city-list').innerHTML=h}
+function selCity(el){sel(el,'city-list');P.city_id=el.getAttribute('data-id');P.city_name=el.querySelector('.opt-name').textContent;updateBtn()}
+function renderCats(){var nm={};for(var i=0;i<P.niches.length;i++)nm[P.niches[i].niche_id]=true;var h='';for(var i=0;i<CATS.length;i++){var c=CATS[i],cnt=0;for(var j=0;j<c.ids.length;j++)if(nm[c.ids[j]])cnt++;h+='<div class="opt-card" data-i="'+i+'" onclick="selCat(this)"><div class="opt-icon">'+c.icon+'</div><div class="opt-info"><div class="opt-name">'+c.title+'</div><div class="opt-sub">'+cnt+' направлений</div></div></div>'}$('cat-list').innerHTML=h}
+function selCat(el){sel(el,'cat-list');P.cat_idx=parseInt(el.getAttribute('data-i'));P.niche_id=null;P.niche_name=null;P.format_id=null;updateBtn()}
+function renderNiches(){if(P.cat_idx===null)return;var c=CATS[P.cat_idx];$('niche-desc').textContent=c.title;var nm={};for(var i=0;i<P.niches.length;i++)nm[P.niches[i].niche_id]=P.niches[i];var h='';for(var j=0;j<c.ids.length;j++){var id=c.ids[j],n=nm[id];if(!n)continue;h+='<div class="opt-card" data-id="'+id+'" onclick="selNiche(this)"><div class="opt-icon">'+(NICHE_ICONS[id]||'💼')+'</div><div class="opt-info"><div class="opt-name">'+(NICHE_NAMES[id]||id)+'</div></div></div>'}$('niche-list').innerHTML=h}
+function selNiche(el){sel(el,'niche-list');P.niche_id=el.getAttribute('data-id');P.niche_name=el.querySelector('.opt-name').textContent;P.format_id=null;updateBtn()}
+function loadFmts(){$('fmt-list').innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">Загрузка...</div>';apiGet('/formats/'+P.niche_id,function(e,r){if(e||!r)return;var a=r.formats||r,h='';for(var i=0;i<a.length;i++){var f=a[i],id=f.format_id||'',nm=fmtFmt(id)||f.format_name||id;h+='<div class="opt-card" data-id="'+id+'" onclick="selFmt(this)"><div class="opt-icon">📋</div><div class="opt-info"><div class="opt-name">'+nm+'</div></div></div>'}$('fmt-list').innerHTML=h})}
+function selFmt(el){sel(el,'fmt-list');P.format_id=el.getAttribute('data-id');P.format_name=el.querySelector('.opt-name').textContent;updateBtn()}
+function selLoc(el){document.querySelectorAll('.loc-toggle[data-v]').forEach(function(e){e.classList.remove('selected')});el.classList.add('selected');P.loc_type=el.getAttribute('data-v')}
+function selStatus(el){document.querySelectorAll('.loc-toggle[data-s]').forEach(function(e){e.classList.remove('selected')});el.classList.add('selected');P.legal_status=el.getAttribute('data-s')}
+
+function updateProgress(){$('pf').style.width=((P.step+1)/STEPS.length*100)+'%';$('sc').textContent='Шаг '+(P.step+1)+' из '+STEPS.length;$('sn').textContent=LABELS[P.step]||''}
+function updateBtn(){var btn=$('btn-main'),back=$('btn-back'),s=sid(),ok=false;
+  if(s==='s1')ok=!!P.city_id;else if(s==='s2')ok=(P.cat_idx!==null);else if(s==='s2b')ok=!!P.niche_id;else if(s==='s3')ok=!!P.format_id;
+  else if(s==='s4')ok=true;else if(s==='s5')ok=!!($('inp-fio')&&$('inp-fio').value.trim());else ok=true;
+  btn.disabled=!ok;back.style.display=(P.step>0)?'':'none';
+  btn.textContent=(s==='s7')?'Сформировать бизнес-план':'Далее'}
+function goStep(n){var c=$(sid());if(c)c.classList.remove('active');P.step=n;var s=sid();
+  if(s==='s2')renderCats();if(s==='s2b')renderNiches();if(s==='s3')loadFmts();if(s==='s7')renderConfirm();
+  var nx=$(s);if(nx)nx.classList.add('active');updateProgress();updateBtn();window.scrollTo(0,0)}
+function handleNext(){if($('btn-main').disabled)return;var s=sid();
+  if(s==='s4'){P.project_name=$('inp-name').value||((P.niche_name||'')+' «'+P.format_name+'»');P.loc_desc=$('inp-loc').value||''}
+  if(s==='s5'){P.fio=$('inp-fio').value;P.iin=$('inp-iin').value;P.phone=$('inp-phone').value;P.address=$('inp-addr').value}
+  if(s==='s6'){P.exp=parseInt($('inp-exp').value)||0;P.family=$('inp-family').value;P.own_funds=parseInt($('inp-own').value)||0}
+  if(s==='s7'){runGenerate();return}goStep(P.step+1)}
+function goBack(){if(P.step>0)goStep(P.step-1)}
+
+function renderConfirm(){var rows=[['Город',P.city_name],['Ниша',P.niche_name],['Формат',P.format_name],['Проект',P.project_name],['Локация',P.loc_desc||P.loc_type],['ФИО',P.fio],['ИИН',P.iin],['Телефон',P.phone],['Статус',P.legal_status],['Грант','1 730 000 ₸']];
+  if(P.own_funds>0)rows.push(['Собственные',fmt(P.own_funds)+' ₸']);
+  var h='';for(var i=0;i<rows.length;i++)h+='<div class="confirm-row"><span class="ck">'+rows[i][0]+'</span><span class="cv">'+(rows[i][1]||'—')+'</span></div>';$('confirm').innerHTML=h}
+
+function runGenerate(){
+  $('survey-screen').style.display='none';$('loading-screen').style.display='block';
+  var body={fio:P.fio,iin:P.iin,phone:P.phone,address:P.address,legal_status:P.legal_status,legal_address:P.address,experience_years:P.exp,family_status:P.family,city_id:String(P.city_id),niche_id:String(P.niche_id),format_id:String(P.format_id),project_name:P.project_name,location_description:P.loc_desc,loc_type:P.loc_type,own_funds:P.own_funds,grant_amount:1730000,start_month:new Date().getMonth()+1};
+  var x=new XMLHttpRequest();x.open('POST',API+'/grant-bp',true);
+  x.setRequestHeader('Content-Type','application/json');x.responseType='blob';
+  x.onload=function(){
+    $('loading-screen').style.display='none';$('result-screen').style.display='block';
+    if(x.status===200){
+      var blob=x.response;var url=window.URL.createObjectURL(blob);
+      var safe=P.fio.replace(/\s/g,'_').substring(0,30);
+      $('result-screen').innerHTML='<div style="padding:30px 0;"><p style="font-size:48px;margin-bottom:16px;">✅</p><h2 style="font-size:20px;font-weight:800;margin-bottom:8px;">Бизнес-план готов!</h2><p style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.6;">'+P.project_name+' · '+P.city_name+'<br>Грант 400 МРП (1 730 000 ₸)</p><a class="btn-result btn-primary" href="'+url+'" download="BP_Grant_'+safe+'_'+P.city_id+'.docx">📥 Скачать бизнес-план (.docx)</a><p style="font-size:12px;color:var(--text3);margin-top:16px;line-height:1.6;">Загрузите файл на Business.enbek.kz в разделе «Бизнес-план».</p><div style="margin-top:20px;"><a href="index.html" style="color:var(--text3);font-size:13px;">← На главную</a></div></div>';
+    }else{
+      $('result-screen').innerHTML='<div style="padding:40px;"><p style="font-size:40px;">❌</p><h2>Ошибка</h2><p style="color:var(--text2);margin:12px 0;">Не удалось сформировать бизнес-план</p><button class="btn-result btn-primary" onclick="location.reload()">Попробовать снова</button></div>';
+    }
+    window.scrollTo(0,0);
+  };
+  x.onerror=function(){$('loading-screen').style.display='none';$('result-screen').style.display='block';$('result-screen').innerHTML='<div style="padding:40px;"><p style="font-size:40px;">❌</p><h2>Ошибка сети</h2><button class="btn-result btn-primary" onclick="location.reload()">Повторить</button></div>'};
+  x.send(JSON.stringify(body));
+}
+
+// Telegram
+try{if(window.Telegram&&window.Telegram.WebApp){var tg=window.Telegram.WebApp;tg.ready();tg.expand();tg.MainButton.hide();tg.BackButton.onClick(function(){if(P.step>0)goBack()})}}catch(e){}
+// Attach input listeners for validation
+['inp-fio','inp-iin','inp-phone','inp-addr'].forEach(function(id){var el=$(id);if(el)el.addEventListener('input',updateBtn)});
+init();
+</script>
+</body>
+</html>
