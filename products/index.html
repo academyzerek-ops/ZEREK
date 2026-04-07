@@ -48,7 +48,7 @@ input[type=range]{width:100%;-webkit-appearance:none;height:5px;background:var(-
 <div class="screen on" id="home">
 <div class="logo"><h1>ZEREK</h1><p>Аналитика для предпринимателей</p></div>
 <div class="products">
-  <div class="prod" onclick="alert('Обзоры скоро будут доступны')">
+  <div class="prod" onclick="startWiki()">
     <div class="icon">📊</div>
     <div class="name">Обзор ниши</div>
     <div class="desc">Подробный разбор: рынок, конкуренты, риски, цифры.</div>
@@ -74,6 +74,15 @@ input[type=range]{width:100%;-webkit-appearance:none;height:5px;background:var(-
   </div>
 </div>
 <div class="rf">ZEREK — @zerekai_bot · zerek.cc</div>
+</div>
+
+<!-- ═══ SCREEN: WIKI ═══ -->
+<div class="screen" id="WIKI">
+<div class="hd"><span class="a"><a href="#" onclick="goHome();return false" style="color:var(--tx3);text-decoration:none;">← Назад</a></span><span class="b">Обзор ниши</span></div>
+<!-- Wiki step 1: Category -->
+<div class="st on" id="wk_s1"><h2>Категория бизнеса</h2><p class="sd">Выберите направление</p><div id="wk_cats"></div></div>
+<!-- Wiki step 2: Niche -->
+<div class="st" id="wk_s2"><h2>Выберите нишу</h2><p class="sd" id="wk_niche_desc">Доступные обзоры</p><div id="wk_niches"></div></div>
 </div>
 
 <!-- ═══ SCREEN 1: FINMODEL SURVEY ═══ -->
@@ -227,6 +236,48 @@ function show(id){var all=document.querySelectorAll('.screen');for(var i=0;i<all
 function G(m,p,cb){var x=new XMLHttpRequest();x.open(m,U+p,true);x.setRequestHeader('Content-Type','application/json');x.onreadystatechange=function(){if(x.readyState===4){if(x.status===200)try{cb(null,JSON.parse(x.responseText))}catch(e){cb(e)}else cb(new Error('HTTP '+x.status))}};x.onerror=function(){cb(new Error('Сеть'))};x.send()}
 
 function goHome(){show('home')}
+
+// ═══ WIKI — niche reviews ═══
+var WIKI_FILES={
+  'BAKERY':'ZEREK_Bakery.html','BARBER':'ZEREK_Barber.html','CARWASH':'ZEREK_Carwash.html',
+  'CLEAN':'ZEREK_Cleaning.html','COFFEE':'ZEREK_Coffee.html','CYBERCLUB':'ZEREK_CyberClub.html',
+  'DENTAL':'ZEREK_Dental.html','DONER':'ZEREK_Doner.html','FURNITURE':'ZEREK_Furniture.html',
+  'GROCERY':'ZEREK_Grocery.html','NAIL':'ZEREK_Manicure.html','PHARMA':'ZEREK_Pharmacy.html',
+  'PIZZA':'ZEREK_Pizza.html','TIRE':'ZEREK_TireService.html'
+};
+var WK={step:1,catIdx:null};
+
+function startWiki(){
+  show('WIKI');WK.step=1;WK.catIdx=null;
+  $('wk_s1').classList.add('on');$('wk_s2').classList.remove('on');
+  rWkCats();
+}
+function rWkCats(){
+  var h='';for(var i=0;i<NICHE_CATEGORIES.length;i++){
+    var cat=NICHE_CATEGORIES[i],cnt=0;
+    for(var j=0;j<cat.ids.length;j++)if(WIKI_FILES[cat.ids[j]])cnt++;
+    if(!cnt)continue;
+    h+='<div class="cd" data-v="'+i+'" onclick="wkSelCat('+i+')"><div><div class="cn">'+cat.icon+' '+cat.title+'</div><div class="cs">'+cnt+' обзоров</div></div></div>';
+  }$('wk_cats').innerHTML=h;
+}
+function wkSelCat(idx){
+  WK.catIdx=idx;WK.step=2;
+  $('wk_s1').classList.remove('on');$('wk_s2').classList.add('on');
+  var cat=NICHE_CATEGORIES[idx];
+  $('wk_niche_desc').textContent=cat.title;
+  var h='';for(var j=0;j<cat.ids.length;j++){
+    var id=cat.ids[j];if(!WIKI_FILES[id])continue;
+    var name=NICHE_NAMES[id]||id,ic=NICHE_ICONS[id]||'';
+    h+='<div class="cd" onclick="wkOpen(\''+id+'\')"><div><div class="cn">'+(ic?ic+' ':'')+name+'</div><div class="cs">Бесплатный обзор</div></div></div>';
+  }
+  // Back button
+  h+='<div style="margin-top:16px;"><a href="#" onclick="startWiki();return false" class="back-home">← Все категории</a></div>';
+  $('wk_niches').innerHTML=h;
+  window.scrollTo(0,0);
+}
+function wkOpen(nicheId){
+  window.location.href='../wiki/kz/'+WIKI_FILES[nicheId];
+}
 
 // ═══ QUICK CHECK — redirect to existing page ═══
 function startQC(){window.location.href='quick-check.html'}
