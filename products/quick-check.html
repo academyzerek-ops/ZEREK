@@ -1290,6 +1290,16 @@ function renderConfirm() {
    CALCULATION
    ============================================ */
 function runCalculation() {
+  // Validate required fields before sending
+  if (!S.city_id || !S.niche_id || !S.format_id) {
+    var missing = [];
+    if (!S.city_id) missing.push('город');
+    if (!S.niche_id) missing.push('ниша');
+    if (!S.format_id) missing.push('формат');
+    alert('Не выбрано: ' + missing.join(', ') + '. Вернитесь и выберите.');
+    return;
+  }
+
   // Show loading
   document.getElementById('survey-screen').style.display = 'none';
   document.getElementById('loading-screen').style.display = 'block';
@@ -1305,14 +1315,14 @@ function runCalculation() {
   var areaVal = S.area_m2 || parseInt(document.getElementById('area-input').value) || 20;
 
   var body = {
-    city_id: S.city_id,
-    niche_id: S.niche_id,
-    format_id: S.format_id,
+    city_id: String(S.city_id),
+    niche_id: String(S.niche_id),
+    format_id: String(S.format_id),
     area_m2: areaVal,
-    loc_type: S.loc_type,
-    capital: S.capital,
-    start_month: S.start_month,
-    capex_level: S.capex_level
+    loc_type: S.loc_type || '',
+    capital: S.capital || 5000000,
+    start_month: S.start_month || (new Date().getMonth() + 1),
+    capex_level: S.capex_level || 'стандарт'
   };
   if (S.rent_override) body.rent_override = S.rent_override;
   console.log('[ZEREK] quick-check body:', JSON.stringify(body));
