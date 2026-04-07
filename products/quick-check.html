@@ -163,6 +163,15 @@ body {
 }
 
 /* Option cards */
+.niche-category { margin-bottom: 16px; }
+.niche-category-title {
+  font-size: 13px; font-weight: 700; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  margin-bottom: 8px; padding-left: 4px;
+}
+.niche-category .options-grid-inner {
+  display: flex; flex-direction: column; gap: 8px;
+}
 .options-grid {
   display: flex; flex-direction: column; gap: 8px;
   flex: 1; overflow-y: auto;
@@ -312,6 +321,7 @@ input[type="range"]::-moz-range-thumb {
   padding: 12px 20px 28px;
   background: linear-gradient(0deg, var(--bg) 60%, transparent);
   z-index: 50;
+  display: flex; flex-direction: column; align-items: stretch; gap: 4px;
 }
 .btn-next {
   width: 100%; padding: 15px;
@@ -854,8 +864,12 @@ input[type="range"]::-moz-range-thumb {
       <div style="padding-bottom:80px;"></div>
     </div>
 
-    <!-- Bottom button -->
+    <!-- Bottom buttons -->
     <div class="btn-bottom">
+      <button class="btn-back" id="btn-back" onclick="goBack()" style="display:none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Назад
+      </button>
       <button class="btn-next" id="btn-main" onclick="handleNext()">
         Далее
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -907,8 +921,35 @@ var S = {
 
 var NICHE_ICONS = {
   'COFFEE': '☕', 'DONER': '🌯', 'CARWASH': '🚗', 'CLEAN': '🧹',
-  'GROCERY': '🛒', 'PHARMA': '💊', 'BARBER': '💈'
+  'GROCERY': '🛒', 'PHARMA': '💊', 'BARBER': '💈', 'BAKERY': '🥐',
+  'PIZZA': '🍕', 'SUSHI': '🍣', 'FASTFOOD': '🍔', 'CANTEEN': '🍽️',
+  'CONFECTION': '🎂', 'SEMIFOOD': '🥟', 'NAIL': '💅', 'BROW': '✨',
+  'LASH': '👁️', 'SUGARING': '🌸', 'MASSAGE': '💆', 'DENTAL': '🦷',
+  'FITNESS': '💪', 'AUTOSERVICE': '🔧', 'TIRE': '🛞', 'FLOWERS': '💐',
+  'FRUITSVEGS': '🍎', 'WATER': '💧', 'FURNITURE': '🪑', 'PVZ': '📦',
+  'DRYCLEAN': '👔', 'TAILOR': '🧵', 'REPAIR_PHONE': '📱',
+  'KINDERGARTEN': '👶', 'CYBERCLUB': '🎮'
 };
+var NICHE_NAMES = {
+  'AUTOSERVICE': 'Автосервис', 'BAKERY': 'Пекарня', 'BARBER': 'Барбершоп',
+  'BROW': 'Брови', 'CANTEEN': 'Столовая', 'CARWASH': 'Автомойка',
+  'CLEAN': 'Клининг', 'COFFEE': 'Кофейня', 'CONFECTION': 'Кондитерская',
+  'CYBERCLUB': 'Компьютерный клуб', 'DENTAL': 'Стоматология', 'DONER': 'Донерная',
+  'DRYCLEAN': 'Химчистка', 'FASTFOOD': 'Фастфуд', 'FITNESS': 'Фитнес',
+  'FLOWERS': 'Цветы', 'FRUITSVEGS': 'Овощи и фрукты', 'FURNITURE': 'Мебель',
+  'GROCERY': 'Продукты', 'KINDERGARTEN': 'Детский сад', 'LASH': 'Ресницы',
+  'MASSAGE': 'Массаж', 'NAIL': 'Маникюр', 'PHARMA': 'Аптека',
+  'PIZZA': 'Пиццерия', 'PVZ': 'ПВЗ', 'REPAIR_PHONE': 'Ремонт телефонов',
+  'SEMIFOOD': 'Полуфабрикаты', 'SUGARING': 'Шугаринг', 'SUSHI': 'Суши',
+  'TAILOR': 'Ателье', 'TIRE': 'Шиномонтаж', 'WATER': 'Вода'
+};
+var NICHE_CATEGORIES = [
+  { title: 'Еда и напитки', ids: ['COFFEE','BAKERY','DONER','PIZZA','SUSHI','FASTFOOD','CANTEEN','CONFECTION','SEMIFOOD'] },
+  { title: 'Красота и здоровье', ids: ['BARBER','NAIL','BROW','LASH','SUGARING','MASSAGE','DENTAL','FITNESS'] },
+  { title: 'Авто', ids: ['CARWASH','AUTOSERVICE','TIRE'] },
+  { title: 'Торговля', ids: ['GROCERY','PHARMA','FLOWERS','FRUITSVEGS','WATER','FURNITURE','PVZ'] },
+  { title: 'Услуги', ids: ['CLEAN','DRYCLEAN','TAILOR','REPAIR_PHONE','KINDERGARTEN','CYBERCLUB'] }
+];
 var CITY_ICONS = {
   'astana': '🏛️', 'almaty': '🏔️', 'shymkent': '☀️', 'aktobe': '🏭',
   'karaganda': '⛏️', 'atyrau': '🛢️', 'pavlodar': '🌾', 'aktau': '🌊',
@@ -997,7 +1038,7 @@ function renderCities(arr) {
   var html = '';
   for (var i = 0; i < arr.length; i++) {
     var c = arr[i];
-    var id = c.city_id || '';
+    var id = (c.city_id != null) ? String(c.city_id) : '';
     var name = c['\u0413\u043e\u0440\u043e\u0434'] || id;
     var pop = c['\u041d\u0430\u0441\u0435\u043b\u0435\u043d\u0438\u0435 \u0432\u0441\u0435\u0433\u043e (\u0447\u0435\u043b.)'] || 0;
     var icon = CITY_ICONS[id] || '\uD83D\uDCCD';
@@ -1020,15 +1061,48 @@ function selectCity(el) {
    NICHES
    ============================================ */
 function renderNiches() {
-  var html = '';
+  var nicheMap = {};
   for (var i = 0; i < S.niches.length; i++) {
     var n = S.niches[i];
-    var id = n.niche_id || '';
-    var name = n['\u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435'] || id;
-    var icon = NICHE_ICONS[id] || '\uD83D\uDCBC';
-    html += '<div class="opt-card" data-id="'+id+'" onclick="selectNiche(this)">' +
-      '<div class="opt-icon">'+icon+'</div>' +
-      '<div class="opt-info"><div class="opt-name">'+name+'</div><div class="opt-sub">'+id+'</div></div></div>';
+    nicheMap[n.niche_id] = n;
+  }
+  var html = '';
+  for (var c = 0; c < NICHE_CATEGORIES.length; c++) {
+    var cat = NICHE_CATEGORIES[c];
+    var cards = '';
+    for (var j = 0; j < cat.ids.length; j++) {
+      var id = cat.ids[j];
+      var n = nicheMap[id];
+      if (!n) continue;
+      var name = NICHE_NAMES[id] || n['\u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435'] || id;
+      var icon = NICHE_ICONS[id] || '\uD83D\uDCBC';
+      cards += '<div class="opt-card" data-id="'+id+'" onclick="selectNiche(this)">' +
+        '<div class="opt-icon">'+icon+'</div>' +
+        '<div class="opt-info"><div class="opt-name">'+name+'</div><div class="opt-sub">'+name+'</div></div></div>';
+    }
+    if (cards) {
+      html += '<div class="niche-category"><div class="niche-category-title">'+cat.title+'</div>' +
+        '<div class="options-grid-inner">'+cards+'</div></div>';
+    }
+  }
+  var placed = {};
+  for (var c = 0; c < NICHE_CATEGORIES.length; c++) {
+    for (var j = 0; j < NICHE_CATEGORIES[c].ids.length; j++) placed[NICHE_CATEGORIES[c].ids[j]] = true;
+  }
+  var extra = '';
+  for (var id in nicheMap) {
+    if (!placed[id]) {
+      var n = nicheMap[id];
+      var name = NICHE_NAMES[id] || n['\u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435'] || id;
+      var icon = NICHE_ICONS[id] || '\uD83D\uDCBC';
+      extra += '<div class="opt-card" data-id="'+id+'" onclick="selectNiche(this)">' +
+        '<div class="opt-icon">'+icon+'</div>' +
+        '<div class="opt-info"><div class="opt-name">'+name+'</div><div class="opt-sub">'+name+'</div></div></div>';
+    }
+  }
+  if (extra) {
+    html += '<div class="niche-category"><div class="niche-category-title">Другое</div>' +
+      '<div class="options-grid-inner">'+extra+'</div></div>';
   }
   document.getElementById('niche-list').innerHTML = html;
 }
@@ -1120,6 +1194,7 @@ function updateProgress() {
 
 function updateBtn() {
   var btn = document.getElementById('btn-main');
+  var backBtn = document.getElementById('btn-back');
   var ok = false;
   if (S.step === 1) ok = !!S.city_id;
   else if (S.step === 2) ok = !!S.niche_id;
@@ -1128,6 +1203,8 @@ function updateBtn() {
   else if (S.step === 5) ok = true;
   else if (S.step === 6) ok = true;
   btn.disabled = !ok;
+
+  backBtn.style.display = (S.step > 1) ? '' : 'none';
 
   if (S.step === 6) {
     btn.innerHTML = 'Рассчитать <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
