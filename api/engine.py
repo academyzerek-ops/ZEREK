@@ -10,7 +10,7 @@ import os
 import glob
 from typing import Optional
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "kz")
 FORMATS_DIR = os.path.join(DATA_DIR, "niches")
 
 SEASON_LABELS = ["Янв","Фев","Мар","Апр","Май","Июн","Июл","Авг","Сен","Окт","Ноя","Дек"]

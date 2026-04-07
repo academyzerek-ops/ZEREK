@@ -30,7 +30,7 @@ def clean(obj):
 app = FastAPI(title="ZEREK API", version="3.1.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
-DATA_DIR = os.path.join(os.path.dirname(BASE_DIR), "data") if not os.path.exists(os.path.join(BASE_DIR, "data")) else os.path.join(BASE_DIR, "data")
+DATA_DIR = os.path.join(os.path.dirname(BASE_DIR), "data", "kz")
 db = None; db_error = None
 try:
     db = ZerekDB(data_dir=DATA_DIR)
