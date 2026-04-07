@@ -246,7 +246,6 @@ var WIKI_FILES={
   'PIZZA':'ZEREK_Pizza.html','TIRE':'ZEREK_TireService.html'
 };
 var WK={step:1,catIdx:null};
-var WIKI_BASE='https://academyzerek-ops.github.io/ZEREK/wiki/kz/';
 
 function startWiki(){
   show('WIKI');WK.step=1;WK.catIdx=null;
@@ -282,13 +281,7 @@ function wkSelCat(idx){
   window.scrollTo(0,0);
 }
 function wkOpen(nicheId){
-  var url=WIKI_BASE+WIKI_FILES[nicheId];
-  // In Telegram Mini App — open in internal browser
-  if(window.Telegram&&window.Telegram.WebApp){
-    window.Telegram.WebApp.openLink(url);
-  } else {
-    window.open(url,'_blank');
-  }
+  window.location.href='../wiki/kz/'+WIKI_FILES[nicheId];
 }
 
 // ═══ QUICK CHECK — redirect to existing page ═══
