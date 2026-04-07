@@ -167,6 +167,7 @@ function renderConfirm(){var rows=[['Город',P.city_name],['Ниша',P.nich
 function runGenerate(){
   $('survey-screen').style.display='none';$('loading-screen').style.display='block';
   var body={fio:P.fio,iin:P.iin,phone:P.phone,address:P.address,legal_status:P.legal_status,legal_address:P.address,experience_years:P.exp,family_status:P.family,city_id:String(P.city_id),niche_id:String(P.niche_id),format_id:String(P.format_id),project_name:P.project_name,location_description:P.loc_desc,loc_type:P.loc_type,own_funds:P.own_funds,grant_amount:1730000,start_month:new Date().getMonth()+1};
+  console.log('[ZEREK] grant-bp body:', JSON.stringify(body));
   var x=new XMLHttpRequest();x.open('POST',API+'/grant-bp',true);
   x.setRequestHeader('Content-Type','application/json');x.responseType='blob';
   x.onload=function(){
@@ -176,7 +177,11 @@ function runGenerate(){
       var safe=P.fio.replace(/\s/g,'_').substring(0,30);
       $('result-screen').innerHTML='<div style="padding:30px 0;"><p style="font-size:48px;margin-bottom:16px;">✅</p><h2 style="font-size:20px;font-weight:800;margin-bottom:8px;">Бизнес-план готов!</h2><p style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.6;">'+P.project_name+' · '+P.city_name+'<br>Грант 400 МРП (1 730 000 ₸)</p><a class="btn-result btn-primary" href="'+url+'" download="BP_Grant_'+safe+'_'+P.city_id+'.docx">📥 Скачать бизнес-план (.docx)</a><p style="font-size:12px;color:var(--text3);margin-top:16px;line-height:1.6;">Загрузите файл на Business.enbek.kz в разделе «Бизнес-план».</p><div style="margin-top:20px;"><a href="index.html" style="color:var(--text3);font-size:13px;">← На главную</a></div></div>';
     }else{
-      $('result-screen').innerHTML='<div style="padding:40px;"><p style="font-size:40px;">❌</p><h2>Ошибка</h2><p style="color:var(--text2);margin:12px 0;">Не удалось сформировать бизнес-план</p><button class="btn-result btn-primary" onclick="location.reload()">Попробовать снова</button></div>';
+      // Read error message from blob response
+      var reader=new FileReader();reader.onload=function(){
+        var errMsg='';try{var j=JSON.parse(reader.result);errMsg=j.detail||j.message||''}catch(e){errMsg=reader.result||''}
+        $('result-screen').innerHTML='<div style="padding:40px;"><p style="font-size:40px;">❌</p><h2>Ошибка ('+x.status+')</h2><p style="color:var(--text2);margin:12px 0;font-size:12px;word-break:break-all;">'+errMsg.substring(0,300)+'</p><button class="btn-result btn-primary" onclick="location.reload()">Попробовать снова</button></div>';
+      };reader.readAsText(x.response);
     }
     window.scrollTo(0,0);
   };

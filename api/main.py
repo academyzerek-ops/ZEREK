@@ -187,11 +187,11 @@ def grant_bp_endpoint(req: GrantBPReq):
             loc_type=req.loc_type, own_funds=req.own_funds,
             grant_amount=req.grant_amount, start_month=req.start_month,
         )
-        safe_name = req.fio.replace(" ", "_")[:30]
+        fname = f"BP_Grant_{req.city_id}_{req.niche_id}.docx"
         return Response(
             content=docx_bytes,
             media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            headers={"Content-Disposition": f'attachment; filename="BP_Grant_{safe_name}_{req.city_id}.docx"'},
+            headers={"Content-Disposition": f'attachment; filename="{fname}"'},
         )
     except FileNotFoundError as e:
         raise HTTPException(404, str(e))
