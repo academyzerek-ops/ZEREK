@@ -6,7 +6,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
-import os, sys, math
+import os, sys, math, uuid, time
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE_DIR)
@@ -158,6 +158,32 @@ def get_survey(niche_id:str):
 
 from fastapi.responses import FileResponse, Response, HTMLResponse
 
+# ── Временное хранилище файлов для скачивания ──
+_file_store = {}  # token → {bytes, filename, media_type, ts}
+
+def _store_file(content: bytes, filename: str, media_type: str) -> str:
+    """Сохраняет файл и возвращает токен для скачивания."""
+    # Очистка файлов старше 30 мин
+    now = time.time()
+    expired = [k for k, v in _file_store.items() if now - v['ts'] > 1800]
+    for k in expired:
+        del _file_store[k]
+    token = uuid.uuid4().hex
+    _file_store[token] = {'bytes': content, 'filename': filename, 'media_type': media_type, 'ts': now}
+    return token
+
+@app.get("/download/{token}")
+def download_file(token: str):
+    """Скачивание файла по токену (GET — работает в Telegram WebView)."""
+    f = _file_store.get(token)
+    if not f:
+        raise HTTPException(404, "Файл не найден или истёк срок (30 мин)")
+    return Response(
+        content=f['bytes'],
+        media_type=f['media_type'],
+        headers={"Content-Disposition": f'attachment; filename="{f["filename"]}"'},
+    )
+
 class GrantBPReq(BaseModel):
     fio: str; iin: str; phone: str; address: str
     legal_status: str = "безработный"; legal_address: str = ""
@@ -188,11 +214,8 @@ def grant_bp_endpoint(req: GrantBPReq):
             grant_amount=req.grant_amount, start_month=req.start_month,
         )
         fname = f"BP_Grant_{req.city_id}_{req.niche_id}.docx"
-        return Response(
-            content=docx_bytes,
-            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            headers={"Content-Disposition": f'attachment; filename="{fname}"'},
-        )
+        token = _store_file(docx_bytes, fname, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+        return {"status": "ok", "token": token, "filename": fname}
     except FileNotFoundError as e:
         raise HTTPException(404, str(e))
     except Exception as e:
@@ -260,12 +283,12 @@ def generate_finmodel_endpoint(req: FMReq):
         
         output = os.path.join('/tmp', f'ZEREK_FinModel_{req.niche_id}_{req.city_id}.xlsx')
         generate_finmodel(template, params, output_path=output)
-        
-        return FileResponse(
-            output,
-            media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            filename=f'ZEREK_FinModel_{req.niche_id}_{req.city_id}.xlsx'
-        )
+
+        with open(output, 'rb') as fh:
+            xlsx_bytes = fh.read()
+        fname = f'ZEREK_FinModel_{req.niche_id}_{req.city_id}.xlsx'
+        token = _store_file(xlsx_bytes, fname, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        return {"status": "ok", "token": token, "filename": fname}
     except HTTPException:
         raise
     except Exception as e:

@@ -169,26 +169,19 @@ function runGenerate(){
   var body={fio:P.fio,iin:P.iin,phone:P.phone,address:P.address,legal_status:P.legal_status,legal_address:P.address,experience_years:P.exp,family_status:P.family,city_id:String(P.city_id),niche_id:String(P.niche_id),format_id:String(P.format_id),project_name:P.project_name,location_description:P.loc_desc,loc_type:P.loc_type,own_funds:P.own_funds,grant_amount:1730000,start_month:new Date().getMonth()+1};
   console.log('[ZEREK] grant-bp body:', JSON.stringify(body));
   var x=new XMLHttpRequest();x.open('POST',API+'/grant-bp',true);
-  x.setRequestHeader('Content-Type','application/json');x.responseType='blob';
+  x.setRequestHeader('Content-Type','application/json');
   x.onload=function(){
     $('loading-screen').style.display='none';$('result-screen').style.display='block';
     if(x.status===200){
-      var blob=x.response;
-      var fname='BP_Grant_'+P.city_id+'_'+P.niche_id+'.docx';
-      // Auto-download immediately
-      var url=window.URL.createObjectURL(blob);
-      var a=document.createElement('a');a.href=url;a.download=fname;a.style.display='none';
-      document.body.appendChild(a);a.click();
-      setTimeout(function(){window.URL.revokeObjectURL(url);a.remove()},200);
-      // Store blob for re-download
-      window._bpBlob=blob;window._bpFname=fname;
-      $('result-screen').innerHTML='<div style="padding:40px 20px;text-align:center;"><p style="font-size:48px;margin-bottom:16px;">✅</p><h2 style="font-size:20px;font-weight:800;margin-bottom:8px;color:var(--text);">Бизнес-план готов!</h2><p style="font-size:14px;color:var(--text2);margin-bottom:8px;">'+P.project_name+'</p><p style="font-size:13px;color:var(--text3);margin-bottom:24px;">'+P.city_name+' · Грант 400 МРП (1 730 000 ₸)</p><p style="font-size:13px;color:var(--green);margin-bottom:24px;">Файл скачивается автоматически</p><button class="btn-result btn-secondary" onclick="redownloadBP()">📥 Скачать ещё раз</button><p style="font-size:12px;color:var(--text3);margin-top:20px;line-height:1.6;">Загрузите файл на <strong>Business.enbek.kz</strong><br>в разделе «Бизнес-план»</p><div style="margin-top:24px;"><a href="index.html" style="color:var(--accent2);font-size:13px;text-decoration:none;">← На главную</a></div></div>';
+      var r=JSON.parse(x.responseText);
+      window._bpDownloadUrl=API+'/download/'+r.token;
+      window._bpFname=r.filename;
+      // Auto-download via redirect
+      triggerDownload(window._bpDownloadUrl);
+      $('result-screen').innerHTML='<div style="padding:40px 20px;text-align:center;"><p style="font-size:48px;margin-bottom:16px;">✅</p><h2 style="font-size:20px;font-weight:800;margin-bottom:8px;color:var(--text);">Бизнес-план готов!</h2><p style="font-size:14px;color:var(--text2);margin-bottom:8px;">'+P.project_name+'</p><p style="font-size:13px;color:var(--text3);margin-bottom:24px;">'+P.city_name+' · Грант 400 МРП (1 730 000 ₸)</p><p style="font-size:13px;color:var(--green);margin-bottom:24px;">Файл скачивается автоматически</p><button class="btn-result btn-secondary" onclick="triggerDownload(window._bpDownloadUrl)">📥 Скачать ещё раз</button><p style="font-size:12px;color:var(--text3);margin-top:20px;line-height:1.6;">Загрузите файл на <strong>Business.enbek.kz</strong><br>в разделе «Бизнес-план»</p><div style="margin-top:24px;"><a href="index.html" style="color:var(--accent2);font-size:13px;text-decoration:none;">← На главную</a></div></div>';
     }else{
-      // Read error message from blob response
-      var reader=new FileReader();reader.onload=function(){
-        var errMsg='';try{var j=JSON.parse(reader.result);errMsg=j.detail||j.message||''}catch(e){errMsg=reader.result||''}
-        $('result-screen').innerHTML='<div style="padding:40px;"><p style="font-size:40px;">❌</p><h2>Ошибка ('+x.status+')</h2><p style="color:var(--text2);margin:12px 0;font-size:12px;word-break:break-all;">'+errMsg.substring(0,300)+'</p><button class="btn-result btn-primary" onclick="location.reload()">Попробовать снова</button></div>';
-      };reader.readAsText(x.response);
+      var errMsg='';try{var j=JSON.parse(x.responseText);errMsg=j.detail||j.message||''}catch(e){errMsg=x.responseText||''}
+      $('result-screen').innerHTML='<div style="padding:40px;"><p style="font-size:40px;">❌</p><h2>Ошибка ('+x.status+')</h2><p style="color:var(--text2);margin:12px 0;font-size:12px;word-break:break-all;">'+errMsg.substring(0,300)+'</p><button class="btn-result btn-primary" onclick="location.reload()">Попробовать снова</button></div>';
     }
     window.scrollTo(0,0);
   };
@@ -196,12 +189,12 @@ function runGenerate(){
   x.send(JSON.stringify(body));
 }
 
-function redownloadBP(){
-  if(!window._bpBlob){alert('Файл не найден. Попробуйте заново.');return}
-  var url=window.URL.createObjectURL(window._bpBlob);
-  var a=document.createElement('a');a.href=url;a.download=window._bpFname||'BP_Grant.docx';
-  a.style.display='none';document.body.appendChild(a);a.click();
-  setTimeout(function(){window.URL.revokeObjectURL(url);a.remove()},200);
+function triggerDownload(url){
+  if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.openLink){
+    window.Telegram.WebApp.openLink(url);
+  }else{
+    window.open(url,'_blank');
+  }
 }
 
 // Telegram

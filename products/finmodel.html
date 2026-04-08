@@ -446,14 +446,16 @@ function runCalculation(){
   var x=new XMLHttpRequest();
   x.open('POST',API+'/finmodel',true);
   x.setRequestHeader('Content-Type','application/json');
-  x.responseType='blob';
   x.onload=function(){
     clearInterval(iv);
     if(x.status===200){
-      var blob=x.response;
+      var r=JSON.parse(x.responseText);
+      window._fmDownloadUrl=API+'/download/'+r.token;
       $('loading-screen').style.display='none';
       $('result-screen').style.display='block';
-      renderResult(blob);
+      renderResult(window._fmDownloadUrl);
+      // Auto-download
+      triggerDownload(window._fmDownloadUrl);
       window.scrollTo(0,0);
     }else{
       $('loading-screen').style.display='none';
@@ -465,20 +467,25 @@ function runCalculation(){
   x.send(JSON.stringify(body));
 }
 
-function renderResult(blob){
-  var url=window.URL.createObjectURL(blob);
+function triggerDownload(url){
+  if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.openLink){
+    window.Telegram.WebApp.openLink(url);
+  }else{
+    window.open(url,'_blank');
+  }
+}
+
+function renderResult(downloadUrl){
   var h='<div style="padding:30px 0;">';
   h+='<div class="result-icon">🎯</div>';
   h+='<div class="result-title">Финансовая модель готова!</div>';
   h+='<div class="result-sub">'+(S.niche_name||'')+' · '+(S.format_name||'')+' · '+(S.city_name||'')+'</div>';
-  // Mini dashboard placeholder
   h+='<div class="kpi-grid">';
   h+='<div class="kpi-card"><div class="kpi-val">'+S.horizon+'</div><div class="kpi-label">Месяцев</div></div>';
   h+='<div class="kpi-card"><div class="kpi-val">14</div><div class="kpi-label">Листов Excel</div></div>';
   h+='</div>';
-  // Download button
-  h+='<a class="btn-result btn-primary" href="'+url+'" download="ZEREK_FinModel_'+S.niche_id+'_'+S.city_id+'.xlsx">📥 Скачать Excel-модель</a>';
-  h+='<button class="btn-result btn-secondary" onclick="alert(\'HTML-отчёт скоро будет доступен\')">📊 Скачать аналитический отчёт</button>';
+  h+='<button class="btn-result btn-primary" onclick="triggerDownload(window._fmDownloadUrl)">📥 Скачать Excel-модель</button>';
+  h+='<p style="font-size:13px;color:var(--green);margin-top:8px;margin-bottom:16px;">Файл скачивается автоматически</p>';
   h+='<p style="font-size:12px;color:var(--text3);margin-top:16px;line-height:1.6;">Excel содержит 14 листов с формулами. Меняйте жёлтые ячейки — модель пересчитается автоматически.</p>';
   h+='<div style="margin-top:20px;"><a href="index.html" style="color:var(--text3);font-size:13px;">← Вернуться на главную</a></div>';
   h+='</div>';
