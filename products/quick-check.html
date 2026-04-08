@@ -1346,6 +1346,11 @@ function goBack() {
 
 function zerekBack() {
   if (S.step > 0) { goBack(); return false; }
+  // If came from wiki review, go back to it
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('ref') === 'wiki' && window.history.length > 1) {
+    history.back(); return false;
+  }
   location.href = 'index.html'; return false;
 }
 
@@ -1709,6 +1714,12 @@ function renderReport(d) {
   h += '<div class="cta-finmodel fade-up"><h3>📋 Бизнес-план + Презентация — 15 000 ₸</h3><p>Готовый документ для банка или гранта. По требованиям Даму, БРК, Атамекен.</p>';
   h += '<button class="btn-finmodel" onclick="goToProduct(\'bizplan.html\')">Получить бизнес-план</button></div>';
 
+  // Wiki review link (only if review exists for this niche)
+  if (WIKI_MAP[S.niche_id]) {
+    h += '<div class="cta-finmodel fade-up" style="background:var(--surface);border:1px solid var(--border2);"><h3>📖 Подробный обзор ниши</h3><p>Рынок, конкуренты, реальные кейсы, риски, оборудование, персонал — бесплатный разбор от ZEREK.</p>';
+    h += '<button class="btn-finmodel" onclick="openWikiReview()">Читать обзор →</button></div>';
+  }
+
   h += '<div class="disclaimer fade-up" style="margin-bottom:12px;"><strong style="color:var(--text2);">Дисклеймер.</strong> Данный отчёт — экспресс-оценка на основе рыночных бенчмарков и статистических данных БНС РК за 2026 год. Цифры носят ориентировочный характер и не являются гарантией результата.</div>';
 
   h += '<div class="fade-up" style="margin:0 20px 12px;"><button onclick="resetCalculation()" style="width:100%;padding:15px;background:var(--surface2);color:var(--text);border:1px solid var(--border2);border-radius:12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Новый расчёт</button></div>';
@@ -1727,6 +1738,34 @@ function renderReport(d) {
 /* ============================================
    CROSS-PRODUCT NAVIGATION
    ============================================ */
+var WIKI_MAP = {
+  'COFFEE': '/ZEREK/wiki/kz/ZEREK_Coffee.html',
+  'DONER': '/ZEREK/wiki/kz/ZEREK_Doner.html',
+  'CARWASH': '/ZEREK/wiki/kz/ZEREK_Carwash.html',
+  'CLEAN': '/ZEREK/wiki/kz/ZEREK_Cleaning.html',
+  'GROCERY': '/ZEREK/wiki/kz/ZEREK_Grocery.html',
+  'PHARMA': '/ZEREK/wiki/kz/ZEREK_Pharmacy.html',
+  'BARBER': '/ZEREK/wiki/kz/ZEREK_Barber.html',
+  'DENTAL': '/ZEREK/wiki/kz/ZEREK_Dental.html',
+  'NAIL': '/ZEREK/wiki/kz/ZEREK_Manicure.html',
+  'BAKERY': '/ZEREK/wiki/kz/ZEREK_Bakery.html',
+  'PIZZA': '/ZEREK/wiki/kz/ZEREK_Pizza.html',
+  'TIRE': '/ZEREK/wiki/kz/ZEREK_TireService.html',
+  'FURNITURE': '/ZEREK/wiki/kz/ZEREK_Furniture.html',
+  'CYBERCLUB': '/ZEREK/wiki/kz/ZEREK_CyberClub.html',
+};
+
+function openWikiReview() {
+  var path = WIKI_MAP[S.niche_id];
+  if (!path) return;
+  var url = 'https://academyzerek-ops.github.io' + path;
+  if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
+    window.Telegram.WebApp.openLink(url);
+  } else {
+    window.open(url, '_blank');
+  }
+}
+
 function goToProduct(page) {
   var data = {
     city_id: S.city_id, city_name: S.city_name,
