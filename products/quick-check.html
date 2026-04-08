@@ -1089,12 +1089,46 @@ function init() {
     var arr = resp.cities || resp;
     S.cities = arr;
     renderCities(arr);
+    tryNichePrefill();
   });
   apiGet('/niches', function(err, resp) {
     if (!err && resp) {
       S.niches = resp.niches || resp;
+      tryNichePrefill();
     }
   });
+}
+
+/* Pre-select niche from URL ?niche=COFFEE */
+var _nichePrefillDone = false;
+function tryNichePrefill() {
+  if (_nichePrefillDone || !S.cities.length || !S.niches.length) return;
+  var params = new URLSearchParams(window.location.search);
+  var nicheParam = params.get('niche');
+  if (!nicheParam) return;
+  _nichePrefillDone = true;
+  // Find niche in loaded data
+  var found = null;
+  for (var i = 0; i < S.niches.length; i++) {
+    if (S.niches[i].niche_id === nicheParam) { found = S.niches[i]; break; }
+  }
+  if (!found) return;
+  S.niche_id = nicheParam;
+  S.niche_name = NICHE_NAMES[nicheParam] || nicheParam;
+  // Find category
+  for (var i = 0; i < NICHE_CATEGORIES.length; i++) {
+    if (NICHE_CATEGORIES[i].ids.indexOf(nicheParam) !== -1) {
+      S.category_idx = i;
+      S.category_name = NICHE_CATEGORIES[i].title;
+      break;
+    }
+  }
+  // Show banner and jump to city step (user still needs to pick city)
+  var b = document.createElement('div');
+  b.style.cssText = 'position:fixed;top:44px;left:50%;transform:translateX(-50%);z-index:9998;background:rgba(124,108,255,0.15);border:1px solid rgba(124,108,255,0.3);border-radius:12px;padding:8px 16px;font-size:12px;color:var(--accent2);backdrop-filter:blur(8px);white-space:nowrap;';
+  b.textContent = 'Ниша: ' + S.niche_name + ' — выберите город';
+  document.body.appendChild(b);
+  setTimeout(function() { b.remove(); }, 4000);
 }
 
 function renderCities(arr) {
