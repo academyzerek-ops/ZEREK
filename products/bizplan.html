@@ -32,7 +32,6 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);line
 .confirm-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:16px;margin-bottom:12px}
 .confirm-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}.confirm-row:last-child{border:none}.ck{color:var(--text3)}.cv{font-weight:600}
 .btn-bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;padding:12px 20px 28px;background:linear-gradient(0deg,var(--bg) 60%,transparent);z-index:50;display:flex;flex-direction:column;gap:4px}
-.btn-back{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;padding:12px;border-radius:12px;width:100%}
 .btn-next{width:100%;padding:15px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}.btn-next:disabled{opacity:.4;cursor:not-allowed}
 #loading-screen{display:none;text-align:center;padding:80px 20px}.loader-ring{width:44px;height:44px;border:3px solid var(--surface2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 20px}@keyframes spin{to{transform:rotate(360deg)}}
 .loading-title{font-size:18px;font-weight:700;margin-bottom:8px}.loading-sub{font-size:13px;color:var(--text2)}
@@ -43,7 +42,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);line
 </style>
 </head>
 <body>
-<a class="zerek-back" href="index.html" onclick="if(window.history.length>1){history.back();return false;}">← Назад</a>
+<a class="zerek-back" id="zerek-back" href="index.html" onclick="return zerekBack()">← Назад</a>
 
 <div id="survey-screen">
 <div class="topbar">
@@ -103,7 +102,6 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);line
 </div>
 
 <div class="btn-bottom">
-  <button class="btn-back" id="btn-back" onclick="goBack()" style="display:none;">← Назад</button>
   <button class="btn-next" id="btn-main" onclick="handleNext()" disabled>Далее</button>
 </div>
 </div>
@@ -145,10 +143,10 @@ function selLoc(el){document.querySelectorAll('.loc-toggle[data-v]').forEach(fun
 function selStatus(el){document.querySelectorAll('.loc-toggle[data-s]').forEach(function(e){e.classList.remove('selected')});el.classList.add('selected');P.legal_status=el.getAttribute('data-s')}
 
 function updateProgress(){$('pf').style.width=((P.step+1)/STEPS.length*100)+'%';$('sc').textContent='Шаг '+(P.step+1)+' из '+STEPS.length;$('sn').textContent=LABELS[P.step]||''}
-function updateBtn(){var btn=$('btn-main'),back=$('btn-back'),s=sid(),ok=false;
+function updateBtn(){var btn=$('btn-main'),s=sid(),ok=false;
   if(s==='s1')ok=!!P.city_id;else if(s==='s2')ok=(P.cat_idx!==null);else if(s==='s2b')ok=!!P.niche_id;else if(s==='s3')ok=!!P.format_id;
   else if(s==='s4')ok=true;else if(s==='s5')ok=!!($('inp-fio')&&$('inp-fio').value.trim());else ok=true;
-  btn.disabled=!ok;back.style.display=(P.step>0)?'':'none';
+  btn.disabled=!ok;
   btn.textContent=(s==='s7')?'Сформировать бизнес-план':'Далее'}
 function goStep(n){var c=$(sid());if(c)c.classList.remove('active');P.step=n;var s=sid();
   if(s==='s2')renderCats();if(s==='s2b')renderNiches();if(s==='s3')loadFmts();if(s==='s7')renderConfirm();
@@ -159,6 +157,7 @@ function handleNext(){if($('btn-main').disabled)return;var s=sid();
   if(s==='s6'){P.exp=parseInt($('inp-exp').value)||0;P.family=$('inp-family').value;P.own_funds=parseInt($('inp-own').value)||0}
   if(s==='s7'){runGenerate();return}goStep(P.step+1)}
 function goBack(){if(P.step>0)goStep(P.step-1)}
+function zerekBack(){if(P.step>0){goBack();return false}location.href='index.html';return false}
 
 function renderConfirm(){var rows=[['Город',P.city_name],['Ниша',P.niche_name],['Формат',P.format_name],['Проект',P.project_name],['Локация',P.loc_desc||P.loc_type],['ФИО',P.fio],['ИИН',P.iin],['Телефон',P.phone],['Статус',P.legal_status],['Грант','1 730 000 ₸']];
   if(P.own_funds>0)rows.push(['Собственные',fmt(P.own_funds)+' ₸']);

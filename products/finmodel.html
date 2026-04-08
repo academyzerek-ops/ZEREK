@@ -101,7 +101,6 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:22px;
 
 /* Bottom bar */
 .btn-bottom { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:440px; padding:12px 20px 28px; background:linear-gradient(0deg,var(--bg) 60%,transparent); z-index:50; display:flex; flex-direction:column; align-items:stretch; gap:4px; }
-.btn-back { display:flex; align-items:center; justify-content:center; gap:6px; background:var(--surface2); border:1px solid var(--border2); color:var(--text); font-family:'Outfit',sans-serif; font-size:14px; font-weight:600; cursor:pointer; padding:12px; border-radius:12px; width:100%; }
 .btn-next { width:100%; padding:15px; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:white; border:none; border-radius:var(--radius-sm); font-family:'Outfit',sans-serif; font-size:14px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all .2s; }
 .btn-next:disabled { opacity:.4; cursor:not-allowed; }
 
@@ -129,7 +128,7 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:22px;
 </style>
 </head>
 <body>
-<a class="zerek-back" href="index.html" onclick="if(window.history.length>1){history.back();return false;}">← Назад</a>
+<a class="zerek-back" id="zerek-back" href="index.html" onclick="return zerekBack()">← Назад</a>
 
 <!-- ═══ SURVEY ═══ -->
 <div id="survey-screen">
@@ -231,7 +230,6 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:22px;
   </div>
 
   <div class="btn-bottom">
-    <button class="btn-back" id="btn-back" onclick="goBack()" style="display:none;">← Назад</button>
     <button class="btn-next" id="btn-main" onclick="handleNext()" disabled>Далее</button>
   </div>
 </div>
@@ -372,13 +370,13 @@ function updateProgress(){
   $('step-name').textContent=STEP_LABELS[S.step]||'';
 }
 function updateBtn(){
-  var btn=$('btn-main'),back=$('btn-back'),sid=stepId(),ok=false;
+  var btn=$('btn-main'),sid=stepId(),ok=false;
   if(sid==='step-1')ok=!!S.city_id;
   else if(sid==='step-2')ok=(S.cat_idx!==null);
   else if(sid==='step-2b')ok=!!S.niche_id;
   else if(sid==='step-3')ok=!!S.format_id;
   else ok=true;
-  btn.disabled=!ok;back.style.display=(S.step>0)?'':'none';
+  btn.disabled=!ok;
   if(sid==='step-11'){btn.textContent='Рассчитать'}else{btn.textContent='Далее'}
 }
 function goStep(n){
@@ -404,6 +402,7 @@ function handleNext(){
   goStep(S.step+1);
 }
 function goBack(){if(S.step>0){var p=S.step-1;goStep(p)}}
+function zerekBack(){if(S.step>0){goBack();return false}location.href='index.html';return false}
 
 function renderConfirm(){
   var rows=[
