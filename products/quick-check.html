@@ -1667,13 +1667,13 @@ function renderReport(d) {
   }
 
   // ═══ КНОПКИ + CTA ═══
-  h += '<div class="fade-up" style="padding:0 20px 12px;"><button class="btn-download" onclick="alert(\'Скачивание отчёта скоро будет доступно\')">📥 Скачать подробный отчёт</button></div>';
+  h += '<div class="fade-up" style="padding:0 20px 12px;"><button class="btn-download" onclick="downloadReport()">📥 Скачать подробный отчёт</button></div>';
 
   h += '<div class="cta-finmodel fade-up"><h3>📈 Хотите точнее? Финансовая модель — 9 000 ₸</h3><p>Детальный расчёт на 36 месяцев. P&L, Cash Flow, стресс-тест. Excel с объяснением каждой цифры.</p>';
-  h += '<button class="btn-finmodel" onclick="alert(\'Финансовая модель скоро будет доступна\')">Получить финансовую модель</button></div>';
+  h += '<button class="btn-finmodel" onclick="goToProduct(\'finmodel.html\')">Получить финансовую модель</button></div>';
 
   h += '<div class="cta-finmodel fade-up"><h3>📋 Бизнес-план + Презентация — 15 000 ₸</h3><p>Готовый документ для банка или гранта. По требованиям Даму, БРК, Атамекен.</p>';
-  h += '<button class="btn-finmodel" onclick="alert(\'Бизнес-план скоро будет доступен\')">Получить бизнес-план</button></div>';
+  h += '<button class="btn-finmodel" onclick="goToProduct(\'bizplan.html\')">Получить бизнес-план</button></div>';
 
   h += '<div class="disclaimer fade-up" style="margin-bottom:12px;"><strong style="color:var(--text2);">Дисклеймер.</strong> Данный отчёт — экспресс-оценка на основе рыночных бенчмарков и статистических данных БНС РК за 2026 год. Цифры носят ориентировочный характер и не являются гарантией результата.</div>';
 
@@ -1688,6 +1688,35 @@ function renderReport(d) {
       el.style.animationDelay = (i * 0.1) + 's';
     });
   }, 50);
+}
+
+/* ============================================
+   CROSS-PRODUCT NAVIGATION
+   ============================================ */
+function goToProduct(page) {
+  var data = {
+    city_id: S.city_id, city_name: S.city_name,
+    niche_id: S.niche_id, niche_name: S.niche_name,
+    format_id: S.format_id, format_name: S.format_name,
+    loc_type: S.loc_type, area_m2: S.area_m2,
+    rent_override: S.rent_override, capex_level: S.capex_level,
+    ts: Date.now()
+  };
+  try { localStorage.setItem('zerek_prefill', JSON.stringify(data)); } catch(e) {}
+  window.location.href = page;
+}
+
+function downloadReport() {
+  var el = document.getElementById('report-screen');
+  if (!el) return;
+  var styles = '';
+  document.querySelectorAll('style').forEach(function(s) { styles += s.outerHTML; });
+  var html = '<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ZEREK — Экспресс-оценка: ' + (S.niche_name||'') + '</title>' + styles + '</head><body style="background:#06060C;color:#EEEEF4;font-family:Outfit,sans-serif;max-width:440px;margin:0 auto;">' + el.innerHTML + '</body></html>';
+  var blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a'); a.href = url; a.download = 'ZEREK_Express_' + (S.niche_id||'report') + '_' + (S.city_id||'') + '.html';
+  a.style.display = 'none'; document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 200);
 }
 
 /* ============================================

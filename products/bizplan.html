@@ -128,8 +128,38 @@ function sel(el,cid){document.querySelectorAll('#'+cid+' .opt-card').forEach(fun
 function apiGet(p,cb){var x=new XMLHttpRequest();x.open('GET',API+p,true);x.onreadystatechange=function(){if(x.readyState===4){if(x.status===200)try{cb(null,JSON.parse(x.responseText))}catch(e){cb(e)}else cb(new Error('HTTP '+x.status))}};x.onerror=function(){cb(new Error('Network'))};x.send()}
 
 function init(){
-  apiGet('/cities',function(e,r){if(!e&&r){P.cities=r.cities||[];renderCities()}});
-  apiGet('/niches',function(e,r){if(!e&&r){P.niches=r.niches||r}});
+  apiGet('/cities',function(e,r){if(!e&&r){P.cities=r.cities||[];renderCities();tryPrefill()}});
+  apiGet('/niches',function(e,r){if(!e&&r){P.niches=r.niches||r;tryPrefill()}});
+}
+
+var _prefillDone=false;
+function tryPrefill(){
+  if(_prefillDone||!P.cities.length||!P.niches.length)return;
+  try{
+    var raw=localStorage.getItem('zerek_prefill');if(!raw)return;
+    var d=JSON.parse(raw);
+    if(Date.now()-d.ts>1800000)return;
+    localStorage.removeItem('zerek_prefill');
+    _prefillDone=true;
+    if(d.city_id){P.city_id=d.city_id;P.city_name=d.city_name||d.city_id}
+    if(d.niche_id){P.niche_id=d.niche_id;P.niche_name=d.niche_name||NICHE_NAMES[d.niche_id]||d.niche_id}
+    if(d.format_id){P.format_id=d.format_id;P.format_name=d.format_name||fmtFmt(d.format_id)}
+    if(d.loc_type)P.loc_type=d.loc_type;
+    for(var i=0;i<CATS.length;i++){
+      if(CATS[i].ids.indexOf(d.niche_id)!==-1){P.cat_idx=i;break}
+    }
+    if(P.format_id){goStep(3);showPrefillBanner()}
+    else if(P.niche_id){goStep(2);showPrefillBanner()}
+    else if(P.city_id){goStep(1);showPrefillBanner()}
+  }catch(e){}
+}
+
+function showPrefillBanner(){
+  var b=document.createElement('div');
+  b.style.cssText='position:fixed;top:44px;left:50%;transform:translateX(-50%);z-index:9998;background:rgba(0,228,160,0.15);border:1px solid rgba(0,228,160,0.3);border-radius:12px;padding:8px 16px;font-size:12px;color:#00E4A0;backdrop-filter:blur(8px);';
+  b.textContent='Данные из экспресс-оценки подставлены';
+  document.body.appendChild(b);
+  setTimeout(function(){b.remove()},3000);
 }
 function renderCities(){var h='';for(var i=0;i<P.cities.length;i++){var c=P.cities[i],id=(c.city_id!=null)?String(c.city_id):'',nm=c['\u0413\u043e\u0440\u043e\u0434']||id,ic=CITY_ICONS[id]||'📍',pop=c['\u041d\u0430\u0441\u0435\u043b\u0435\u043d\u0438\u0435 \u0432\u0441\u0435\u0433\u043e (\u0447\u0435\u043b.)']||0;h+='<div class="opt-card" data-id="'+id+'" onclick="selCity(this)"><div class="opt-icon">'+ic+'</div><div class="opt-info"><div class="opt-name">'+nm+'</div>'+(pop?'<div class="opt-sub">'+fmt(pop)+' чел.</div>':'')+'</div></div>'}$('city-list').innerHTML=h}
 function selCity(el){sel(el,'city-list');P.city_id=el.getAttribute('data-id');P.city_name=el.querySelector('.opt-name').textContent;updateBtn()}

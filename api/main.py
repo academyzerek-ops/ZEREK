@@ -225,6 +225,140 @@ def grant_bp_endpoint(req: GrantBPReq):
 
 # ── Финансовая модель (генерация xlsx) ──
 
+def _compute_finmodel_data(params: dict) -> dict:
+    """Вычисляет месячные P&L/CF из параметров (зеркало Excel-формул)."""
+    from datetime import datetime
+    seasonality = [0.85, 0.85, 0.90, 1.00, 1.05, 1.10, 1.10, 1.05, 1.00, 0.95, 0.95, 1.20]
+    horizon = params.get('horizon', 36)
+    check0 = params.get('check_med', 1400)
+    traffic0 = params.get('traffic_med', 70)
+    work_days = params.get('work_days', 30)
+    tg = params.get('traffic_growth', 0.07)
+    cg = params.get('check_growth', 0.08)
+    cogs_pct = params.get('cogs_pct', 0.35)
+    loss_pct = params.get('loss_pct', 0.03)
+    rent = params.get('rent', 70000)
+    fot = params.get('fot_gross', 200000) * params.get('headcount', 2)
+    utilities = params.get('utilities', 15000)
+    marketing = params.get('marketing', 50000)
+    consumables = params.get('consumables', 3500)
+    software = params.get('software', 5000)
+    other = params.get('other', 10000)
+    capex = params.get('capex', 1500000)
+    deposit = rent * params.get('deposit_months', 2)
+    working_cap = params.get('working_cap', 1000000)
+    amort_monthly = capex / (params.get('amort_years', 7) * 12)
+    tax_rate = params.get('tax_rate', 0.03)
+    credit_amt = params.get('credit_amount', 0)
+    credit_rate = params.get('credit_rate', 0.22)
+    credit_term = params.get('credit_term', 36)
+    wacc = params.get('wacc', 0.20)
+    # Credit annuity
+    credit_pmt = 0
+    if credit_amt > 0 and credit_term > 0:
+        mr = credit_rate / 12
+        if mr > 0:
+            credit_pmt = credit_amt * mr / (1 - (1 + mr) ** -credit_term)
+        else:
+            credit_pmt = credit_amt / credit_term
+    total_investment = capex + deposit + working_cap
+    fixed_opex = rent + fot + utilities + marketing + consumables + software + other
+    pl_monthly = []
+    cf_monthly = []
+    cumulative_profit = 0
+    cumulative_cf = -total_investment
+    payback_month = None
+    for m in range(horizon):
+        year_factor = (1 + tg) ** (m // 12) * (1 + cg) ** (m // 12)
+        s_idx = m % 12
+        check_m = check0 * (1 + cg) ** (m / 12)
+        traffic_m = traffic0 * (1 + tg) ** (m / 12)
+        season_coef = seasonality[s_idx]
+        revenue = check_m * traffic_m * work_days * season_coef
+        cogs = revenue * cogs_pct
+        loss = revenue * loss_pct
+        gross = revenue - cogs - loss
+        opex = fixed_opex
+        ebitda = gross - opex
+        depreciation = amort_monthly
+        ebt = ebitda - depreciation
+        tax = max(0, revenue * tax_rate)
+        net_profit = ebt - tax
+        cumulative_profit += net_profit
+        # Cash flow
+        cf_ops = net_profit + depreciation
+        cf_inv = -total_investment if m == 0 else 0
+        cf_fin = -credit_pmt if credit_amt > 0 and m < credit_term else 0
+        cf_net = cf_ops + cf_inv + cf_fin
+        cumulative_cf += cf_ops + cf_fin  # exclude initial invest double-count
+        if m == 0:
+            cumulative_cf = -total_investment + cf_ops + cf_fin
+        if payback_month is None and cumulative_cf >= 0:
+            payback_month = m + 1
+        pl_monthly.append({
+            'month': m + 1, 'revenue': round(revenue), 'cogs': round(cogs),
+            'gross_profit': round(gross), 'opex': round(opex), 'ebitda': round(ebitda),
+            'net_profit': round(net_profit), 'cumulative': round(cumulative_profit)
+        })
+        cf_monthly.append({
+            'month': m + 1, 'operating': round(cf_ops), 'investing': round(cf_inv),
+            'financing': round(cf_fin), 'net': round(cf_net), 'cumulative': round(cumulative_cf)
+        })
+    # Dashboard KPIs
+    profit_y1 = sum(p['net_profit'] for p in pl_monthly[:12])
+    profit_y2 = sum(p['net_profit'] for p in pl_monthly[12:24]) if horizon > 12 else 0
+    profit_y3 = sum(p['net_profit'] for p in pl_monthly[24:36]) if horizon > 24 else 0
+    total_profit = sum(p['net_profit'] for p in pl_monthly)
+    roi = (total_profit / total_investment * 100) if total_investment > 0 else 0
+    # NPV
+    npv = -total_investment
+    for m, p in enumerate(pl_monthly):
+        npv += p['net_profit'] / (1 + wacc / 12) ** (m + 1)
+    # IRR approximation
+    irr = (total_profit / total_investment / (horizon / 12) * 100) if total_investment > 0 else 0
+    # Breakeven
+    be_revenue = fixed_opex / (1 - cogs_pct - loss_pct) if (1 - cogs_pct - loss_pct) > 0 else 0
+    return {
+        'input': {
+            'business_name': params.get('business_name', 'Бизнес'),
+            'city': params.get('city', ''),
+            'horizon_months': horizon,
+            'start_date': datetime.now().strftime('%Y'),
+        },
+        'capex': {
+            'equipment': capex, 'deposit': deposit,
+            'working_capital': working_cap, 'total': total_investment,
+        },
+        'dashboard': {
+            'npv': round(npv), 'irr': round(irr),
+            'roi': round(roi), 'payback_months': payback_month,
+            'profit_year1': round(profit_y1), 'profit_year2': round(profit_y2),
+            'profit_year3': round(profit_y3),
+            'revenue_month1': pl_monthly[0]['revenue'] if pl_monthly else 0,
+            'breakeven_revenue': round(be_revenue),
+        },
+        'pl_monthly': pl_monthly,
+        'cashflow_monthly': cf_monthly,
+        'seasonality': seasonality,
+        'opex_breakdown': {
+            'rent': rent, 'fot': fot, 'utilities': utilities,
+            'marketing': marketing, 'consumables': consumables,
+            'software': software, 'other': other,
+        },
+        'staff': [{'role': 'Сотрудник', 'count': params.get('headcount', 2), 'salary': params.get('fot_gross', 200000)}],
+        'risks': [
+            {'name': 'Снижение трафика на 30%', 'impact': 'Убыток в первый год'},
+            {'name': 'Рост аренды на 20%', 'impact': 'Снижение маржи'},
+            {'name': 'Сезонный спад', 'impact': 'Кассовый разрыв зимой'},
+        ],
+        'recommendations': [
+            'Контролируйте юнит-экономику ежемесячно',
+            'Формируйте резерв минимум на 3 месяца',
+            'Оптимизируйте маркетинг по ROI каналов',
+        ],
+    }
+
+
 @app.post("/finmodel")
 def generate_finmodel_endpoint(req: FMReq):
     """Генерирует xlsx финмодель из шаблона + данные из анкеты."""
@@ -235,11 +369,11 @@ def generate_finmodel_endpoint(req: FMReq):
             format_id=req.format_id, cls=req.cls, area_m2=req.area_m2, loc_type=req.loc_type,
             capital=req.capital or 0, qty=req.qty, founder_works=req.founder_works,
             rent_override=req.rent_override, start_month=req.start_month)
-        
+
         # 2. Собираем параметры из анкеты (приоритет) + fallback на QC
         fin = result.get('financials', {})
         tx = result.get('tax', {})
-        
+
         params = {
             'entity_type': req.entity_type,
             'tax_regime': tx.get('regime', 'УСН'),
@@ -272,15 +406,15 @@ def generate_finmodel_endpoint(req: FMReq):
             'business_name': (req.niche_name + ': ' + req.format_name) if req.niche_name else req.format_id,
             'city': result.get('input', {}).get('city_name', req.city_id),
         }
-        
-        # 3. Генерируем финмодель
+
+        # 3. Генерируем финмодель (xlsx)
         from gen_finmodel import generate_finmodel
         template = os.path.join(os.path.dirname(BASE_DIR), 'templates', 'finmodel', 'finmodel_template.xlsx')
         if not os.path.exists(template):
             template = os.path.join(DATA_DIR, 'templates', 'finmodel_template.xlsx')
         if not os.path.exists(template):
             raise HTTPException(404, f"Шаблон не найден: {template}")
-        
+
         output = os.path.join('/tmp', f'ZEREK_FinModel_{req.niche_id}_{req.city_id}.xlsx')
         generate_finmodel(template, params, output_path=output)
 
@@ -288,7 +422,19 @@ def generate_finmodel_endpoint(req: FMReq):
             xlsx_bytes = fh.read()
         fname = f'ZEREK_FinModel_{req.niche_id}_{req.city_id}.xlsx'
         token = _store_file(xlsx_bytes, fname, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        return {"status": "ok", "token": token, "filename": fname}
+
+        # 4. Генерируем HTML-отчёт
+        report_token = None
+        try:
+            from finmodel_report import render_finmodel_report
+            report_data = _compute_finmodel_data(params)
+            report_html = render_finmodel_report(report_data)
+            report_fname = f'ZEREK_FinReport_{req.niche_id}_{req.city_id}.html'
+            report_token = _store_file(report_html.encode('utf-8'), report_fname, 'text/html; charset=utf-8')
+        except Exception as re:
+            print(f"WARN: finmodel report failed: {re}")
+
+        return {"status": "ok", "token": token, "filename": fname, "report_token": report_token}
     except HTTPException:
         raise
     except Exception as e:

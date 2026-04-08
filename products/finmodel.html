@@ -294,8 +294,44 @@ function selCard(el,cid){document.querySelectorAll('#'+cid+' .opt-card').forEach
 
 /* ═══ INIT ═══ */
 function init(){
-  apiGet('/cities',function(e,r){if(!e&&r){S.cities=r.cities||[];renderCities()}});
-  apiGet('/niches',function(e,r){if(!e&&r){S.niches=r.niches||r}});
+  apiGet('/cities',function(e,r){if(!e&&r){S.cities=r.cities||[];renderCities();tryPrefill()}});
+  apiGet('/niches',function(e,r){if(!e&&r){S.niches=r.niches||r;tryPrefill()}});
+}
+
+var _prefillDone=false;
+function tryPrefill(){
+  if(_prefillDone||!S.cities.length||!S.niches.length)return;
+  try{
+    var raw=localStorage.getItem('zerek_prefill');if(!raw)return;
+    var d=JSON.parse(raw);
+    // Only use if fresh (<30 min)
+    if(Date.now()-d.ts>1800000)return;
+    localStorage.removeItem('zerek_prefill');
+    _prefillDone=true;
+    if(d.city_id){S.city_id=d.city_id;S.city_name=d.city_name||d.city_id}
+    if(d.niche_id){S.niche_id=d.niche_id;S.niche_name=d.niche_name||NICHE_NAMES[d.niche_id]||d.niche_id}
+    if(d.format_id){S.format_id=d.format_id;S.format_name=d.format_name||FORMAT_NAMES[d.format_id]||d.format_id}
+    if(d.loc_type)S.loc_type=d.loc_type;
+    if(d.area_m2)S.area_m2=d.area_m2;
+    if(d.rent_override)S.rent_override=d.rent_override;
+    if(d.capex_level)S.capex_level=d.capex_level;
+    // Find category for niche
+    for(var i=0;i<NICHE_CATEGORIES.length;i++){
+      if(NICHE_CATEGORIES[i].ids.indexOf(d.niche_id)!==-1){S.cat_idx=i;break}
+    }
+    // Jump to step after format (step-4 = location)
+    if(S.format_id){goStep(3);showPrefillBanner()}
+    else if(S.niche_id){goStep(2);showPrefillBanner()}
+    else if(S.city_id){goStep(1);showPrefillBanner()}
+  }catch(e){}
+}
+
+function showPrefillBanner(){
+  var b=document.createElement('div');
+  b.style.cssText='position:fixed;top:44px;left:50%;transform:translateX(-50%);z-index:9998;background:rgba(0,228,160,0.15);border:1px solid rgba(0,228,160,0.3);border-radius:12px;padding:8px 16px;font-size:12px;color:#00E4A0;backdrop-filter:blur(8px);';
+  b.textContent='Данные из экспресс-оценки подставлены';
+  document.body.appendChild(b);
+  setTimeout(function(){b.remove()},3000);
 }
 
 function renderCities(){
@@ -450,9 +486,10 @@ function runCalculation(){
     if(x.status===200){
       var r=JSON.parse(x.responseText);
       window._fmDownloadUrl=API+'/download/'+r.token;
+      window._fmReportUrl=r.report_token?(API+'/download/'+r.report_token):null;
       $('loading-screen').style.display='none';
       $('result-screen').style.display='block';
-      renderResult(window._fmDownloadUrl);
+      renderResult(window._fmDownloadUrl,window._fmReportUrl);
       // Auto-download
       triggerDownload(window._fmDownloadUrl);
       window.scrollTo(0,0);
@@ -474,7 +511,7 @@ function triggerDownload(url){
   }
 }
 
-function renderResult(downloadUrl){
+function renderResult(downloadUrl,reportUrl){
   var h='<div style="padding:30px 0;">';
   h+='<div class="result-icon">🎯</div>';
   h+='<div class="result-title">Финансовая модель готова!</div>';
@@ -484,11 +521,26 @@ function renderResult(downloadUrl){
   h+='<div class="kpi-card"><div class="kpi-val">14</div><div class="kpi-label">Листов Excel</div></div>';
   h+='</div>';
   h+='<button class="btn-result btn-primary" onclick="triggerDownload(window._fmDownloadUrl)">📥 Скачать Excel-модель</button>';
+  if(reportUrl){
+    h+='<button class="btn-result btn-secondary" onclick="triggerDownload(window._fmReportUrl)">📊 Скачать аналитический отчёт</button>';
+  }
   h+='<p style="font-size:13px;color:var(--green);margin-top:8px;margin-bottom:16px;">Файл скачивается автоматически</p>';
   h+='<p style="font-size:12px;color:var(--text3);margin-top:16px;line-height:1.6;">Excel содержит 14 листов с формулами. Меняйте жёлтые ячейки — модель пересчитается автоматически.</p>';
+  // Cross-product link to bizplan
+  h+='<div style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:16px;margin-top:20px;text-align:left;">';
+  h+='<div style="font-size:14px;font-weight:700;margin-bottom:4px;">📋 Нужен бизнес-план?</div>';
+  h+='<div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Готовый документ для гранта 400 МРП (Бастау Бизнес)</div>';
+  h+='<button class="btn-result btn-secondary" onclick="goToBizplan()" style="margin:0;">Получить бизнес-план</button>';
+  h+='</div>';
   h+='<div style="margin-top:20px;"><a href="index.html" style="color:var(--text3);font-size:13px;">← Вернуться на главную</a></div>';
   h+='</div>';
   $('result-screen').innerHTML=h;
+}
+
+function goToBizplan(){
+  var data={city_id:S.city_id,city_name:S.city_name,niche_id:S.niche_id,niche_name:S.niche_name,format_id:S.format_id,format_name:S.format_name,loc_type:S.loc_type,area_m2:S.area_m2,ts:Date.now()};
+  try{localStorage.setItem('zerek_prefill',JSON.stringify(data))}catch(e){}
+  window.location.href='bizplan.html';
 }
 
 /* ═══ TELEGRAM ═══ */
