@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>ZEREK · Академия · Торговец воздухом (История IKEA)</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06060C;--s1:#111119;--s2:#1A1A28;--s3:#222236;
+  --b1:rgba(255,255,255,0.05);--b2:rgba(255,255,255,0.09);
+  --t1:#EEEEF4;--t2:#9898AD;--t3:#6A6A80;
+  --ac:#7C6CFF;--ac2:#9B8FFF;--acd:rgba(124,108,255,0.10);
+  --am:#FFBE4D;--amd:rgba(255,190,77,0.08);--amb:rgba(255,190,77,0.15);
+  --gr:#00E4A0;--grd:rgba(0,228,160,0.08);
+  --r:16px;--rs:10px;
+  --sb:env(safe-area-inset-bottom,0px);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7;-webkit-font-smoothing:antialiased;max-width:440px;margin:0 auto;min-height:100vh;overflow-x:hidden}
+
+.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:12px;padding:10px 16px;background:rgba(6,6,12,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--b1)}
+.nav-back{width:32px;height:32px;border-radius:50%;background:var(--s2);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.nav-back:active{transform:scale(0.9)}
+.nav-back svg{width:16px;height:16px;color:var(--t1)}
+.nav-info{flex:1;min-width:0}
+.nav-track{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--am);margin-bottom:1px}
+.nav-title{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--t2)}
+.nav-progress{width:48px;display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0}
+.nav-pg-text{font-size:9px;font-weight:700;color:var(--t3);font-family:'JetBrains Mono',monospace}
+.nav-pg-bar{width:48px;height:3px;background:var(--s2);border-radius:2px;overflow:hidden}
+.nav-pg-fill{height:100%;background:var(--am);border-radius:2px;transition:width .3s}
+
+.hero{position:relative;padding:28px 20px 24px;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-60px;right:-40px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,var(--amb),transparent 70%);pointer-events:none}
+.hero-module{font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--am);margin-bottom:6px}
+.hero-ch{font-size:11px;color:var(--t3);margin-bottom:10px;font-weight:500}
+.hero h1{font-size:24px;font-weight:900;line-height:1.2;margin-bottom:10px}
+.hero h1 em{font-style:normal;color:var(--am)}
+.hero-lead{font-size:14px;color:var(--t2);line-height:1.65;font-family:'Lora',serif;font-style:italic}
+
+.content{padding:0 20px}
+
+.scene{margin:20px 0;background:var(--s1);border:1px solid var(--b2);border-radius:var(--r);overflow:hidden}
+.scene-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--b1)}
+.scene-emoji{font-size:22px;flex-shrink:0}
+.scene-label{font-size:13.5px;font-weight:700}
+.scene-body{padding:16px}
+.scene-body p{font-size:13.5px;color:var(--t2);line-height:1.7;margin-bottom:12px}
+.scene-body p:last-child{margin-bottom:0}
+.scene-body strong{color:var(--t1);font-weight:600}
+.scene-body em{color:var(--am);font-style:italic;font-family:'Lora',serif}
+
+.quote{margin:20px 0;padding:16px 18px;border-left:3px solid var(--am);background:var(--amd);border-radius:0 var(--rs) var(--rs) 0}
+.quote p{font-size:14px;font-weight:600;line-height:1.55;color:var(--t1)}
+.quote .qsrc{font-size:11px;color:var(--t3);margin-top:6px;font-weight:400}
+
+.biz{margin:24px 0;background:linear-gradient(135deg,rgba(124,108,255,0.06),rgba(0,228,160,0.04));border:1px solid rgba(124,108,255,0.12);border-radius:var(--r);padding:18px}
+.biz-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.biz-icon{font-size:20px}
+.biz-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac2)}
+.biz p{font-size:13.5px;color:var(--t2);line-height:1.7;margin-bottom:10px}
+.biz p:last-child{margin-bottom:0}
+.biz strong{color:var(--t1)}
+.biz-key{font-size:14px;font-weight:700;color:var(--gr);margin-bottom:6px}
+
+.txt{font-size:13.5px;color:var(--t2);line-height:1.7;margin:14px 0}
+.txt strong{color:var(--t1);font-weight:600}
+.txt em{color:var(--am);font-style:italic;font-family:'Lora',serif}
+
+.sep{display:flex;align-items:center;justify-content:center;padding:20px 0}
+.sep-dot{width:4px;height:4px;border-radius:50%;background:var(--s3);margin:0 4px}
+
+.bot-nav{position:sticky;bottom:0;display:flex;align-items:stretch;gap:8px;padding:12px 20px 16px;background:linear-gradient(0deg,var(--bg) 80%,transparent);padding-bottom:calc(16px + var(--sb))}
+.bn-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:13px 12px;border-radius:var(--rs);border:none;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.bn-btn:active{transform:scale(0.96)}
+.bn-prev{background:var(--s2);color:var(--t2);border:1px solid var(--b2)}
+.bn-next{background:var(--am);color:#06060C}
+.bn-btn svg{width:16px;height:16px;flex-shrink:0}
+.bn-btn.disabled{opacity:0.3;pointer-events:none}
+
+@keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.a{animation:fu .5s ease-out both}
+.d1{animation-delay:.08s}.d2{animation-delay:.16s}.d3{animation-delay:.24s}.d4{animation-delay:.32s}.d5{animation-delay:.4s}.d6{animation-delay:.48s}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <button class="nav-back" onclick="goBack()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <div class="nav-info">
+    <div class="nav-track">Startup · Модуль 2</div>
+    <div class="nav-title">Визионер</div>
+  </div>
+  <div class="nav-progress">
+    <div class="nav-pg-text">4/5</div>
+    <div class="nav-pg-bar"><div class="nav-pg-fill" style="width:80%"></div></div>
+  </div>
+</div>
+
+<div class="hero a">
+  <div class="hero-module">Модуль 2. Визионер</div>
+  <div class="hero-ch">Глава 4 из 5</div>
+  <h1>Торговец воздухом (История IKEA)</h1>
+  <div class="hero-lead">Вступление: Ты когда-нибудь смотрел на грузовики, которые едут по трассе? Огромные фуры везут товары. Но знаешь, что они везут на самом деле? В 90% случаев они везут ВОЗДУХ. Пустоту. Когда везут собра</div>
+</div>
+
+<div class="content">
+
+  <p class="txt a d1">Вступление: Ты когда-нибудь смотрел на грузовики, которые едут по трассе? Огромные фуры везут товары. Но знаешь, что они везут на самом деле? В 90% случаев они везут ВОЗДУХ. Пустоту. Когда везут собранный шкаф, внутри него — пустота. Между ножками стульев — пустота. Мы платим за бензин, за водителя, за амортизацию, чтобы просто перевозить воздух с места на место. Один шведский парень понял это раньше всех. И эта мысль сделала его богаче королей.</p>
+
+  <div class="scene a d2">
+    <div class="scene-head"><div class="scene-emoji">🪑</div><div class="scene-label">Сцена 1. Стол, который не лезет. Швеция, 1956 год. Ингвар Кампрад (основатель IKEA) и его друг пытаются запихнуть новый стол в багажник маленькой машины. Они потеют, толкают, матерятся. Стол не лезет. Ножки мешают. Гилис (друг) психует: — Да пошло оно всё! Давай отпилим эти проклятые ножки, а дома прикрутим! Дзинь! 💡 В голове Ингвара зажглась лампочка.</div></div>
+    <div class="scene-body">
+      
+    </div>
+  </div>
+
+  <div class="sep"><div class="sep-dot"></div><div class="sep-dot"></div><div class="sep-dot"></div></div>
+
+  <div class="scene a d3">
+    <div class="scene-head"><div class="scene-emoji">📦</div><div class="scene-label">Сцена 2. Война с пустотой. Ингвар посмотрел на своих конкурентов. Они продавали готовую, собранную мебель. Это было «дорого и богато». Ингвар сказал:</div></div>
+    <div class="scene-body">
+      <p>«Мы объявляем войну воздуху. Мы больше никогда не будем его перевозить».</p>
+      <p>Он приказал дизайнерам: — Делайте что хотите, но любая мебель должна влезать в плоскую коробку. Как пицца. Пусть покупатель собирает её сам.</p>
+    </div>
+  </div>
+
+  <div class="sep"><div class="sep-dot"></div><div class="sep-dot"></div><div class="sep-dot"></div></div>
+
+  <div class="scene a d4">
+    <div class="scene-head"><div class="scene-emoji">💰</div><div class="scene-label">Сцена 3. Магия плоской коробки. Конкуренты смеялись: «Ты хочешь заставить клиентов работать? Собирать шкаф отверткой? Они уйдут к нам!». Но Ингвар победил с помощью калькулятора:</div></div>
+    <div class="scene-body">
+      <p>В один грузовик IKEA влезало в 10 раз больше столов, чем у конкурентов. (Пока те гнали 10 фур, Ингвар гнал одну).</p>
+      <p>Склады стали занимать меньше места.</p>
+      <p>Из-за экономии на логистике он смог снизить цены в 2-3 раза.</p>
+      <p>Люди простили необходимость сборки, когда увидели цену. IKEA захватила мир, просто перестав возить воздух.</p>
+    </div>
+  </div>
+
+  <div class="sep"><div class="sep-dot"></div><div class="sep-dot"></div><div class="sep-dot"></div></div>
+
+  <div class="biz a d5">
+    <div class="biz-head"><div class="biz-icon">🧠</div><div class="biz-label">🧠 БИЗНЕС-РАЗБОР</div></div>
+  <p>Оптимизируй невидимое. Деньги теряются не в товаре, а в процессах. Логистика, упаковка, хранение.</p>
+  <p>Сделай недостаток фишкой. Сборка мебели — это геморрой? Нет, IKEA сделала из этого «Игру для взрослых» (LEGO для больших). Ты чувствуешь гордость, когда собрал стол сам.</p>
+  </div>
+
+  <div class="sep"><div class="sep-dot"></div><div class="sep-dot"></div><div class="sep-dot"></div></div>
+
+</div>
+
+<div class="bot-nav">
+  <button class="bn-btn bn-prev" onclick="window.location.href='m2-ch03.html'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    Назад
+  </button>
+  <button class="bn-btn bn-next" onclick="window.location.href='m2-ch05.html'">
+    Глава 5
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 6 15 12 9 18"/></svg>
+  </button>
+</div>
+
+<script>
+!function(){try{var t=Telegram.WebApp;t.ready();t.expand();t.requestFullscreen&&t.requestFullscreen();t.disableVerticalSwipes&&t.disableVerticalSwipes();t.setHeaderColor&&t.setHeaderColor('#06060C');t.setBackgroundColor&&t.setBackgroundColor('#06060C')}catch(e){}}();
+function goBack(){try{window.history.back()}catch(e){window.location.href='../../../products/index.html'}}
+</script>
+</body>
+</html>
