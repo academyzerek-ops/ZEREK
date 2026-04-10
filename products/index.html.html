@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>ZEREK</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06060C;--s1:#111119;--s2:#1A1A28;--s3:#222236;
+  --b1:rgba(255,255,255,0.05);--b2:rgba(255,255,255,0.09);
+  --t1:#EEEEF4;--t2:#9898AD;--t3:#6A6A80;
+  --ac:#7C6CFF;--ac2:#9B8FFF;--acd:rgba(124,108,255,0.10);--acg:rgba(124,108,255,0.20);
+  --gr:#00E4A0;--grd:rgba(0,228,160,0.08);
+  --am:#FFBE4D;--amd:rgba(255,190,77,0.08);
+  --rd:#FF6B6B;--rdd:rgba(255,107,107,0.08);
+  --cy:#4DD4E6;--cyd:rgba(77,212,230,0.08);
+  --r:16px;--rs:10px;
+  --sb:env(safe-area-inset-bottom,0px);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);line-height:1.6;-webkit-font-smoothing:antialiased}
+
+.app{max-width:440px;margin:0 auto;height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+
+/* ── HEADER ── */
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;background:rgba(6,6,12,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--b1);z-index:100;flex-shrink:0}
+.h-logo{display:flex;align-items:center;gap:9px}
+.h-mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--ac),#5B4FD9);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:#fff;letter-spacing:1px}
+.h-name{font-weight:900;font-size:17px;letter-spacing:3px;background:linear-gradient(135deg,var(--ac2),var(--gr));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+/* ── SCREENS ── */
+.screens{flex:1;overflow:hidden;position:relative}
+.scr{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;opacity:0;transform:translateY(6px);transition:opacity .28s,transform .28s;pointer-events:none;padding-bottom:20px}
+.scr.on{opacity:1;transform:translateY(0);pointer-events:auto}
+.scr::-webkit-scrollbar{width:0}
+
+/* ── TABS ── */
+.tabs{display:flex;background:rgba(10,10,18,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--b1);padding-bottom:var(--sb);flex-shrink:0;z-index:100}
+.tb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:7px 0 5px;cursor:pointer;gap:2px;position:relative;transition:all .15s}
+.tb::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:0;height:2px;background:var(--ac);border-radius:0 0 2px 2px;transition:width .25s}
+.tb.on::before{width:20px}
+.tb svg{width:20px;height:20px;color:var(--t3);transition:color .2s}
+.tb.on svg{color:var(--ac)}
+.tb-l{font-size:9.5px;font-weight:600;color:var(--t3);transition:color .2s;letter-spacing:.2px}
+.tb.on .tb-l{color:var(--ac2)}
+.tb:active{transform:scale(0.9)}
+
+/* ── ANIM ── */
+@keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.a{animation:fu .5s ease-out both}
+.d1{animation-delay:.06s}.d2{animation-delay:.12s}.d3{animation-delay:.18s}.d4{animation-delay:.24s}.d5{animation-delay:.3s}.d6{animation-delay:.36s}.d7{animation-delay:.42s}.d8{animation-delay:.48s}
+
+/* ═════════════════════════════════════════
+   HOME — LANDING PAGE
+   ═════════════════════════════════════════ */
+
+/* Hero */
+.hero{position:relative;padding:32px 20px 24px;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-100px;right:-80px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,var(--acg),transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-60px;left:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(0,228,160,0.06),transparent 70%);pointer-events:none}
+
+.hero-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:var(--acd);border:1px solid rgba(124,108,255,0.15);border-radius:20px;font-size:10px;font-weight:700;color:var(--ac2);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px}
+.hero-badge-dot{width:5px;height:5px;border-radius:50%;background:var(--gr);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.hero h1{font-size:26px;font-weight:900;line-height:1.2;margin-bottom:10px}
+.hero h1 em{font-style:normal;background:linear-gradient(135deg,var(--ac2),var(--gr));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-p{font-size:14px;color:var(--t2);line-height:1.6;max-width:340px}
+
+/* Mission block */
+.mission{margin:4px 20px 0;padding:18px;background:var(--s1);border:1px solid var(--b2);border-radius:var(--r);position:relative;overflow:hidden}
+.mission::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--ac),var(--gr),var(--am))}
+.mission-q{font-size:15px;font-weight:600;line-height:1.55;margin-bottom:6px;font-style:italic;color:var(--t1)}
+.mission-a{font-size:12px;color:var(--t3);line-height:1.5}
+
+/* Path — user journey */
+.path-title{padding:24px 20px 12px;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--t3)}
+
+.path{margin:0 20px;position:relative}
+.path::before{content:'';position:absolute;left:19px;top:24px;bottom:24px;width:1px;background:var(--b2)}
+
+.path-step{display:flex;gap:14px;padding:12px 0;position:relative;cursor:pointer}
+.path-step:active{opacity:.7}
+.path-num{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;position:relative;z-index:2}
+.ps-body{flex:1;padding-top:6px}
+.ps-t{font-size:14.5px;font-weight:700;margin-bottom:2px}
+.ps-d{font-size:12px;color:var(--t3);line-height:1.45}
+.ps-arr{color:var(--t3);align-self:center;flex-shrink:0}
+.ps-arr svg{width:16px;height:16px}
+
+.ps1 .path-num{background:var(--cyd);color:var(--cy)}
+.ps2 .path-num{background:var(--acd);color:var(--ac2)}
+.ps3 .path-num{background:var(--grd);color:var(--gr)}
+
+/* Bottom tagline */
+.tagline{margin:20px 20px 0;text-align:center;font-size:11.5px;color:var(--t3);line-height:1.5}
+.tagline strong{color:var(--t2)}
+
+/* ═════════════════════════════════════════
+   NICHES SCREEN
+   ═════════════════════════════════════════ */
+.nv-hdr{padding:18px 20px 10px}
+.nv-hdr h2{font-size:19px;font-weight:800;margin-bottom:3px}
+.nv-hdr p{font-size:12.5px;color:var(--t2)}
+.sb{margin:0 20px 14px;position:relative}
+.sb input{width:100%;background:var(--s1);border:1px solid var(--b2);border-radius:var(--rs);padding:10px 14px 10px 38px;color:var(--t1);font-family:'Outfit',sans-serif;font-size:13.5px;outline:none;transition:border-color .2s}
+.sb input:focus{border-color:var(--ac)}
+.sb input::placeholder{color:var(--t3)}
+.sb svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--t3)}
+.cp{display:flex;gap:7px;padding:0 20px;overflow-x:auto;scrollbar-width:none;margin-bottom:14px}
+.cp::-webkit-scrollbar{display:none}
+.cp-p{flex-shrink:0;padding:6px 13px;background:var(--s1);border:1px solid var(--b2);border-radius:20px;font-size:11.5px;font-weight:600;color:var(--t2);cursor:pointer;transition:all .2s;white-space:nowrap}
+.cp-p.on{background:var(--acd);border-color:var(--ac);color:var(--ac2)}
+.nv-list{padding:0 20px;display:flex;flex-direction:column;gap:9px}
+.nc{background:var(--s1);border:1px solid var(--b2);border-radius:var(--r);display:flex;overflow:hidden;cursor:pointer;transition:all .15s}
+.nc:active{transform:scale(0.98)}
+.nc-thumb{width:72px;flex-shrink:0;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:26px}
+.nc-info{padding:11px 13px;flex:1;min-width:0}
+.nc-cat{font-size:8.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ac2);margin-bottom:2px}
+.nc-name{font-size:13.5px;font-weight:700;line-height:1.25;margin-bottom:3px}
+.nc-meta{font-size:10.5px;color:var(--t3);line-height:1.3}
+.nc-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;margin-top:4px}
+.bg-g{background:var(--grd);color:var(--gr)}.bg-a{background:var(--amd);color:var(--am)}.bg-r{background:var(--rdd);color:var(--rd)}
+
+/* ═════════════════════════════════════════
+   ACADEMY
+   ═════════════════════════════════════════ */
+.ac-hdr{padding:18px 20px 6px}
+.ac-hdr h2{font-size:19px;font-weight:800;margin-bottom:3px}
+.ac-hdr p{font-size:12.5px;color:var(--t2);line-height:1.5}
+
+.ac-trk{margin:14px 20px 12px;background:var(--s1);border:1px solid var(--b2);border-radius:var(--r);overflow:hidden;position:relative}
+.ac-top{padding:18px 16px 14px;position:relative}
+.ac-accent{position:absolute;top:0;left:0;right:0;height:3px}
+.ac-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:4px;margin-bottom:10px}
+.ac-title{font-size:17px;font-weight:800;margin-bottom:4px}
+.ac-desc{font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:12px}
+.ac-meta{display:flex;gap:14px}
+.ac-m{font-size:11px;color:var(--t3);display:flex;align-items:center;gap:4px}
+.ac-m svg{width:13px;height:13px}
+.ac-chs{border-top:1px solid var(--b1)}
+.ac-ch{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--b1);cursor:pointer;transition:background .12s}
+.ac-ch:last-child{border-bottom:none}
+.ac-ch:active{background:var(--s2)}
+.ac-ch-n{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;flex-shrink:0;font-family:'JetBrains Mono',monospace}
+.ac-ch-b{flex:1;min-width:0}
+.ac-ch-t{font-size:12.5px;font-weight:600;line-height:1.3}
+.ac-ch-d{font-size:10px;color:var(--t3);margin-top:1px}
+.ac-ch-a{color:var(--t3);flex-shrink:0}
+.ac-ch-a svg{width:14px;height:14px}
+
+.trk-jr .ac-accent{background:var(--cy)}.trk-jr .ac-badge{background:var(--cyd);color:var(--cy)}.trk-jr .ac-ch-n{background:var(--cyd);color:var(--cy)}
+.trk-st .ac-accent{background:var(--am)}.trk-st .ac-badge{background:var(--amd);color:var(--am)}.trk-st .ac-ch-n{background:var(--amd);color:var(--am)}
+
+/* ═════════════════════════════════════════
+   ABOUT
+   ═════════════════════════════════════════ */
+.ab-hero{text-align:center;padding:28px 20px 20px;background:linear-gradient(160deg,rgba(124,108,255,0.04) 0%,transparent 60%)}
+.ab-icon{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--ac),#5B4FD9);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-weight:900;font-size:20px;color:#fff;letter-spacing:2px}
+.ab-hero h2{font-size:20px;font-weight:800;margin-bottom:6px}
+.ab-hero p{font-size:12.5px;color:var(--t2);line-height:1.55;max-width:300px;margin:0 auto}
+
+.ab-s{padding:0 20px;margin-bottom:16px}
+.ab-s h3{font-size:13px;font-weight:700;margin-bottom:9px;display:flex;align-items:center;gap:7px}
+.ab-s h3 span{font-size:15px}
+.ab-c{background:var(--s1);border:1px solid var(--b2);border-radius:var(--r);padding:14px 16px}
+.ab-r{display:flex;align-items:flex-start;gap:11px;padding:9px 0;border-bottom:1px solid var(--b1)}
+.ab-r:last-child{border-bottom:none}
+.ab-ri{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.ab-ri-p{background:var(--acd)}.ab-ri-d{background:var(--grd)}.ab-ri-c{background:var(--amd)}.ab-ri-m{background:var(--cyd)}
+.ab-rt{flex:1}
+.ab-rn{font-size:12.5px;font-weight:600;margin-bottom:1px}
+.ab-rd{font-size:10.5px;color:var(--t3);line-height:1.45}
+
+.ab-shield{background:var(--s1);border:1px solid var(--b2);border-radius:var(--r);padding:16px;display:flex;gap:12px;align-items:flex-start}
+.ab-shield-i{font-size:22px;flex-shrink:0;margin-top:2px}
+.ab-shield-t{font-size:13px;font-weight:700;margin-bottom:3px}
+.ab-shield-d{font-size:11px;color:var(--t3);line-height:1.5}
+
+.ab-foot{text-align:center;padding:16px 20px 8px;font-size:10.5px;color:var(--t3)}
+
+/* ═════════════════════════════════════════
+   DETAIL OVERLAY
+   ═════════════════════════════════════════ */
+.ov{position:fixed;inset:0;background:var(--bg);z-index:200;opacity:0;transform:translateY(100%);transition:opacity .3s,transform .3s;overflow-y:auto;-webkit-overflow-scrolling:touch;max-width:440px;margin:0 auto}
+.ov.open{opacity:1;transform:translateY(0)}
+.ov-h{display:flex;align-items:center;gap:12px;padding:12px 18px;background:rgba(6,6,12,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--b1);position:sticky;top:0;z-index:10}
+.ov-back{width:30px;height:30px;border-radius:50%;background:var(--s2);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.ov-back svg{width:16px;height:16px;color:var(--t1)}
+.ov-t{font-size:14px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ov-hero{width:100%;height:170px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:52px}
+.ov-body{padding:18px 20px}
+.ov-cat{font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac2);margin-bottom:10px}
+.ov-body h2{font-size:19px;font-weight:800;margin-bottom:5px}
+.ov-txt{font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:14px}
+.ov-facts{display:flex;flex-direction:column;gap:7px;margin-bottom:18px}
+.ov-f{display:flex;align-items:center;gap:10px;background:var(--s1);border:1px solid var(--b2);border-radius:var(--rs);padding:10px 12px}
+.ov-fi{font-size:14px;flex-shrink:0;color:var(--ac2)}
+.ov-ft{font-size:12px;color:var(--t2);line-height:1.4}
+.ov-ft strong{color:var(--t1)}
+.ov-nums{background:var(--s1);border:1px solid var(--b2);border-radius:var(--r);padding:12px;margin-bottom:14px}
+.ov-nr{display:flex;justify-content:space-between;padding:4px 0}
+.ov-nr span:first-child{font-size:12px;color:var(--t2)}
+.ov-nr span:last-child{font-size:12.5px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.ov-cta{position:sticky;bottom:0;padding:10px 20px 18px;background:linear-gradient(0deg,var(--bg) 70%,transparent)}
+.ov-cta button{width:100%;padding:13px;background:var(--ac);color:#fff;border:none;border-radius:var(--rs);font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer}
+.ov-cta button:active{transform:scale(0.97)}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="hdr">
+    <div class="h-logo"><div class="h-mark">Z</div><div class="h-name">ZEREK</div></div>
+  </div>
+
+  <div class="screens">
+
+    <!-- ═══════ HOME ═══════ -->
+    <div class="scr on" id="s-home">
+
+      <div class="hero a">
+        <div class="hero-badge"><div class="hero-badge-dot"></div> Казахстан · 2026</div>
+        <h1>Бизнес начинается<br>с <em>правильных цифр</em></h1>
+        <div class="hero-p">ZEREK — платформа, которая учит, показывает и считает. Чтобы вы открывали бизнес с открытыми глазами, а не с розовыми очками.</div>
+      </div>
+
+      <div class="mission a d2">
+        <div class="mission-q">«Мы не мотивируем открывать бизнес. Мы помогаем понять — стоит ли его открывать.»</div>
+        <div class="mission-a">Реальные цифры, реальные риски, реальные кейсы. Без «успешного успеха» — только экономика и факты.</div>
+      </div>
+
+      <div class="path-title a d3">Ваш путь в ZEREK</div>
+
+      <div class="path a d4">
+        <div class="path-step ps1" onclick="go('academy')">
+          <div class="path-num">📖</div>
+          <div class="ps-body">
+            <div class="ps-t">Академия</div>
+            <div class="ps-d">Финансовая грамотность и бизнес-мышление. Два уровня: для подростков и для стартаперов</div>
+          </div>
+          <div class="ps-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+
+        <div class="path-step ps2" onclick="go('niches')">
+          <div class="path-num">🔍</div>
+          <div class="ps-body">
+            <div class="ps-t">Аналитика ниш</div>
+            <div class="ps-d">Детальный разбор бизнесов: вложения, выручка, окупаемость, риски — по реальным данным и кейсам</div>
+          </div>
+          <div class="ps-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+
+        <div class="path-step ps3" onclick="launchQC()">
+          <div class="path-num">📊</div>
+          <div class="ps-body">
+            <div class="ps-t">Расчёты</div>
+            <div class="ps-d">Экспресс-оценка, финансовая модель на 60 месяцев, бизнес-план для грантов — под ваш город и нишу</div>
+          </div>
+          <div class="ps-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+      </div>
+
+      <div class="tagline a d5">
+        <strong>Акцент на защите от потери денег.</strong><br>
+        Три сценария всегда. Пессимистичный — первый.
+      </div>
+
+    </div>
+
+    <!-- ═══════ NICHES ═══════ -->
+    <div class="scr" id="s-niches">
+      <div class="nv-hdr a">
+        <h2>Аналитика ниш</h2>
+        <p>Каждая ниша — вложения, риски, окупаемость и реальные кейсы</p>
+      </div>
+      <div class="sb a d1">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" placeholder="Поиск..." id="sIn" oninput="renderN()">
+      </div>
+      <div class="cp a d2" id="cpEl"></div>
+      <div class="nv-list a d3" id="nList"></div>
+    </div>
+
+    <!-- ═══════ ACADEMY ═══════ -->
+    <div class="scr" id="s-academy">
+      <div class="ac-hdr a">
+        <h2>Академия</h2>
+        <p>Обучение финансовой грамотности и предпринимательству. Практика, кейсы мировых компаний, задания.</p>
+      </div>
+
+      <div class="ac-trk trk-jr a d1">
+        <div class="ac-top">
+          <div class="ac-accent"></div>
+          <div class="ac-badge">Junior</div>
+          <div class="ac-title">Фундамент</div>
+          <div class="ac-desc">Финансовая грамотность для подростков. Деньги, бюджет, экономическое мышление — через задачи и реальные примеры.</div>
+          <div class="ac-meta">
+            <div class="ac-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>3 модуля</div>
+            <div class="ac-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>12–15 лет</div>
+          </div>
+        </div>
+        <div class="ac-chs" id="jrCh"></div>
+      </div>
+
+      <div class="ac-trk trk-st a d2">
+        <div class="ac-top">
+          <div class="ac-accent"></div>
+          <div class="ac-badge">Startup</div>
+          <div class="ac-title">Архитектор бизнеса</div>
+          <div class="ac-desc">Бизнес-мышление для начинающих предпринимателей. От идеи до финансовой модели — на кейсах мировых компаний.</div>
+          <div class="ac-meta">
+            <div class="ac-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>4 модуля</div>
+            <div class="ac-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>16+</div>
+          </div>
+        </div>
+        <div class="ac-chs" id="stCh"></div>
+      </div>
+    </div>
+
+    <!-- ═══════ ABOUT ═══════ -->
+    <div class="scr" id="s-about">
+      <div class="ab-hero a">
+        <div class="ab-icon">Z</div>
+        <h2>О проекте</h2>
+        <p>Финансовая аналитика для предпринимателей Казахстана</p>
+      </div>
+
+      <div class="ab-s a d1">
+        <h3><span>💼</span> Экспертиза</h3>
+        <div class="ab-c">
+          <div class="ab-r">
+            <div class="ab-ri ab-ri-p">📐</div>
+            <div class="ab-rt"><div class="ab-rn">Финансовый консалтинг</div><div class="ab-rd">Финансовое моделирование, управленческий учёт, юнит-экономика. Реальный опыт работы с бизнесами МСБ</div></div>
+          </div>
+          <div class="ab-r">
+            <div class="ab-ri ab-ri-p">🧠</div>
+            <div class="ab-rt"><div class="ab-rn">AI-аналитика</div><div class="ab-rd">Алгоритмы расчёта верифицированы экспертами. Не генеративный текст — реальные формулы и проверенные данные</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ab-s a d2">
+        <h3><span>📚</span> База знаний</h3>
+        <div class="ab-c">
+          <div class="ab-r">
+            <div class="ab-ri ab-ri-d">📊</div>
+            <div class="ab-rt"><div class="ab-rn">Государственная статистика</div><div class="ab-rd">Официальные данные по экономике, ценам, населению и бизнес-среде Казахстана</div></div>
+          </div>
+          <div class="ab-r">
+            <div class="ab-ri ab-ri-d">⚖️</div>
+            <div class="ab-rt"><div class="ab-rn">Законодательная база</div><div class="ab-rd">Налоговый и Трудовой кодексы РК, нормативные акты, ставки налогов 2026 года</div></div>
+          </div>
+          <div class="ab-r">
+            <div class="ab-ri ab-ri-d">🏪</div>
+            <div class="ab-rt"><div class="ab-rn">Рыночная аналитика</div><div class="ab-rd">Мониторинг цен, аренды и конкурентной среды по городам Казахстана</div></div>
+          </div>
+          <div class="ab-r">
+            <div class="ab-ri ab-ri-d">📋</div>
+            <div class="ab-rt"><div class="ab-rn">Опыт предпринимателей</div><div class="ab-rd">Реальные кейсы бизнесов — успехи, ошибки, причины закрытий</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ab-s a d3">
+        <h3><span>🔒</span> Конфиденциальность</h3>
+        <div class="ab-shield">
+          <div class="ab-shield-i">🛡️</div>
+          <div>
+            <div class="ab-shield-t">Ваши данные защищены</div>
+            <div class="ab-shield-d">ZEREK не хранит персональные данные. Расчёты не связываются с вашей личностью. Данные не передаются третьим лицам и удаляются после сессии.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ab-s a d4">
+        <h3><span>📐</span> Методология</h3>
+        <div class="ab-c">
+          <div class="ab-r">
+            <div class="ab-ri ab-ri-m">🎯</div>
+            <div class="ab-rt"><div class="ab-rn">Три сценария всегда</div><div class="ab-rd">Пессимистичный, базовый, оптимистичный. Акцент на рисках и реализме</div></div>
+          </div>
+          <div class="ab-r">
+            <div class="ab-ri ab-ri-m">🏙️</div>
+            <div class="ab-rt"><div class="ab-rn">Привязка к вашему городу</div><div class="ab-rd">Цены, аренда, трафик и налоги — конкретно по вашему городу, а не усреднённо</div></div>
+          </div>
+          <div class="ab-r">
+            <div class="ab-ri ab-ri-m">📅</div>
+            <div class="ab-rt"><div class="ab-rn">Актуальные данные</div><div class="ab-rd">Налоговые ставки, аренда, цены обновляются регулярно</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ab-foot a d5">ZEREK · zerek.cc · 2026</div>
+    </div>
+
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tb on" onclick="go('home')" data-t="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="tb-l">Главная</span>
+    </div>
+    <div class="tb" onclick="go('niches')" data-t="niches">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      <span class="tb-l">Ниши</span>
+    </div>
+    <div class="tb" onclick="go('academy')" data-t="academy">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"/></svg>
+      <span class="tb-l">Академия</span>
+    </div>
+    <div class="tb" onclick="go('about')" data-t="about">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+      <span class="tb-l">О нас</span>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY -->
+<div class="ov" id="ov">
+  <div class="ov-h">
+    <button class="ov-back" onclick="closeOV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="ov-t" id="ovT"></div>
+  </div>
+  <div id="ovC"></div>
+</div>
+
+<script>
+!function(){try{var t=Telegram.WebApp;t.ready();t.expand();t.requestFullscreen&&t.requestFullscreen();t.disableVerticalSwipes&&t.disableVerticalSwipes();t.MainButton.hide();t.setHeaderColor&&t.setHeaderColor('#06060C');t.setBackgroundColor&&t.setBackgroundColor('#06060C')}catch(e){}}();
+
+var cur='home';
+function go(t){
+  if(t===cur)return;
+  var os=document.getElementById('s-'+cur);if(os)os.classList.remove('on');
+  var ot=document.querySelector('.tb[data-t="'+cur+'"]');if(ot)ot.classList.remove('on');
+  cur=t;
+  var ns=document.getElementById('s-'+t);if(ns){ns.classList.add('on');ns.scrollTop=0}
+  var nt=document.querySelector('.tb[data-t="'+t+'"]');if(nt)nt.classList.add('on');
+  try{Telegram.WebApp.HapticFeedback.impactOccurred('light')}catch(e){}
+}
+
+var D=[
+  {n:'Барбершоп',e:'💈',c:'svc',cn:'Услуги',inv:'3.5–6 млн ₸',pb:'6–10 мес',r:'g',rl:'Низкий',d:'Мужская парикмахерская — стабильный микробизнес. Низкий входной билет, регулярный спрос, понятная юнит-экономика.',f:['Средний чек: 3 000–5 000 ₸','Аренда: 150–350 тыс ₸/мес','2–4 кресла оптимально','Окупаемость: 6–10 месяцев']},
+  {n:'Кофейня',e:'☕',c:'food',cn:'Общепит',inv:'5–10 млн ₸',pb:'8–14 мес',r:'a',rl:'Средний',d:'Популярный, но конкурентный формат. Ключ: локация, трафик и контроль себестоимости.',f:['Средний чек: 1 500–3 000 ₸','Маржинальность кофе: 65–75%','Аренда: от 400 тыс ₸','Без еды прибыль ограничена']},
+  {n:'Пекарня',e:'🧁',c:'food',cn:'Общепит',inv:'4–8 млн ₸',pb:'8–12 мес',r:'a',rl:'Средний',d:'Стабильный бизнес с ежедневным спросом. Ассортимент, свежесть, локация на трафике.',f:['Средний чек: 800–1 500 ₸','Маржа на выпечку: 55–65%','Пекарь — от 250 тыс ₸','Работа с 6–7 утра']},
+  {n:'Цветочный магазин',e:'🌸',c:'ret',cn:'Ритейл',inv:'2.5–5 млн ₸',pb:'5–8 мес',r:'a',rl:'Средний',d:'Сезонный бизнес с пиками на праздники. Списание — главный враг маржи.',f:['Списание: 15–25%','Пик: 8 марта = 20% выручки за год','Маржа: 100–200% на букет','Холодильная витрина обязательна']},
+  {n:'Маникюрный салон',e:'💅',c:'svc',cn:'Услуги',inv:'2–4 млн ₸',pb:'4–7 мес',r:'g',rl:'Низкий',d:'Регулярная услуга с высокой частотой возврата. Компактный формат, быстрая окупаемость.',f:['Средний чек: 4 000–7 000 ₸','2–4 мастера оптимально','Расходка: 15–20% от чека','Возврат клиента: каждые 2–3 недели']},
+  {n:'Прачечная',e:'👔',c:'svc',cn:'Услуги',inv:'3–7 млн ₸',pb:'10–18 мес',r:'a',rl:'Средний',d:'Растущий формат самообслуживания. Ключ: ЖК с арендным жильём или студенты рядом.',f:['Средний чек: 1 500–3 000 ₸','Оборудование — основная инвестиция','Минимум персонала','Может работать без оператора']},
+  {n:'Аптека',e:'💊',c:'ret',cn:'Ритейл',inv:'5–12 млн ₸',pb:'12–18 мес',r:'a',rl:'Средний',d:'Стабильный ежедневный спрос, но лицензия и фармацевт обязательны.',f:['Лицензия обязательна','Фармацевт — от 300 тыс ₸','Наценка регулируется государством','Конкуренция с сетевыми аптеками']},
+  {n:'Автосервис / СТО',e:'🔧',c:'svc',cn:'Услуги',inv:'5–15 млн ₸',pb:'8–14 мес',r:'a',rl:'Средний',d:'Стабильный спрос. Дефицит квалифицированных механиков — главный вызов.',f:['Средний чек: 15–40 тыс ₸','Подъёмник: от 1.5 млн ₸','Механики — ключевой актив','Топ марки: Toyota, Hyundai, Lada']},
+  {n:'Салон красоты',e:'✨',c:'svc',cn:'Услуги',inv:'4–10 млн ₸',pb:'8–14 мес',r:'a',rl:'Средний',d:'Полноформатный салон. Высокая конкуренция, но ёмкий рынок.',f:['Средний чек: 5 000–12 000 ₸','3–6 мастеров','Аренда: от 300 тыс ₸','Мастера часто уходят']},
+  {n:'Продуктовый магазин',e:'🛒',c:'ret',cn:'Ритейл',inv:'3–8 млн ₸',pb:'10–16 мес',r:'a',rl:'Средний',d:'«У дома» — ежедневный трафик, но низкая маржа и конкуренция с сетями.',f:['Наценка: 15–25%','Работа 7/7','Холодильники: от 2 млн ₸','Конкуренция с сетями']},
+  {n:'Репетиторский центр',e:'📚',c:'edu',cn:'Обучение',inv:'2–5 млн ₸',pb:'5–10 мес',r:'g',rl:'Низкий',d:'ЕНТ, языки — стабильный спрос. Педагоги — главная ценность.',f:['Чек: 15–30 тыс ₸/мес','Сезон: сентябрь–май','Площадь: 40–60 м²','Педагоги решают всё']},
+  {n:'Детский центр',e:'🧒',c:'edu',cn:'Обучение',inv:'3–7 млн ₸',pb:'8–14 мес',r:'a',rl:'Средний',d:'Развивающие занятия 2–7 лет. Растущий рынок, нужны педагоги и программы.',f:['Абонемент: 20–40 тыс ₸/мес','Лицензия на образование','Группы: 6–10 детей','Летний спад: –40%']},
+  {n:'Зоомагазин',e:'🐾',c:'ret',cn:'Ритейл',inv:'2.5–6 млн ₸',pb:'8–12 мес',r:'g',rl:'Низкий',d:'Растущий рынок. Корма — основной драйвер.',f:['Корма = 60–70% выручки','Маржа на аксессуары: 50–80%','Подписочная модель возможна','Конкуренция с маркетплейсами']},
+];
+
+var JR=[
+  {t:'Что такое деньги и зачем они',d:'Как работает обмен, откуда берётся инфляция'},
+  {t:'Доходы и расходы семьи',d:'Бюджет домохозяйства, постоянные и переменные траты'},
+  {t:'Накопление и финансовые цели',d:'Правило 50/30/20, вклады, сложный процент'},
+  {t:'Банки, карты и кредиты',d:'Как работают банки и почему кредит — не бесплатные деньги'},
+  {t:'Налоги простым языком',d:'Зачем платить налоги, куда идут деньги государства'},
+  {t:'Предприниматель vs наёмный работник',d:'Два пути: стабильность или свобода'},
+  {t:'Мини-проект: бюджет на месяц',d:'Практика — составляем семейный бюджет'},
+];
+var ST=[
+  {t:'От мечты к гипотезе',d:'Как отличить идею от бизнеса'},
+  {t:'Юнит-экономика',d:'Один клиент = сколько зарабатываешь? LTV, CAC, маржа'},
+  {t:'P&L: доходы минус расходы',d:'Выручка, себестоимость, чистая прибыль'},
+  {t:'Стартовые вложения и Cash Flow',d:'Сколько нужно на старте, когда деньги вернутся'},
+  {t:'Точка безубыточности',d:'Минимум продаж, чтобы не работать в убыток'},
+  {t:'Налоги для ИП в Казахстане',d:'УСН, самозанятый, ОУР — какой режим выбрать'},
+  {t:'Кейс: строим кофейню с нуля',d:'Сквозной кейс от идеи до финмодели'},
+  {t:'Бизнес-план и презентация',d:'Как упаковать проект для гранта или инвестора'},
+];
+
+var catAc='all';
+var cats=[{id:'all',n:'Все'},{id:'food',n:'Общепит'},{id:'svc',n:'Услуги'},{id:'ret',n:'Ритейл'},{id:'edu',n:'Обучение'}];
+
+function rCats(){var h='';cats.forEach(function(c){h+='<div class="cp-p'+(c.id===catAc?' on':'')+'" onclick="sC(\''+c.id+'\',this)">'+c.n+'</div>'});document.getElementById('cpEl').innerHTML=h}
+function sC(c,el){catAc=c;document.querySelectorAll('.cp-p').forEach(function(p){p.classList.remove('on')});el.classList.add('on');renderN()}
+
+function renderN(){
+  var s=(document.getElementById('sIn').value||'').toLowerCase(),h='';
+  D.forEach(function(n,i){
+    if(catAc!=='all'&&n.c!==catAc)return;
+    if(s&&n.n.toLowerCase().indexOf(s)===-1)return;
+    var bc=n.r==='g'?'bg-g':n.r==='r'?'bg-r':'bg-a';
+    h+='<div class="nc" onclick="openN('+i+')"><div class="nc-thumb">'+n.e+'</div><div class="nc-info"><div class="nc-cat">'+n.cn+'</div><div class="nc-name">'+n.n+'</div><div class="nc-meta">'+n.inv+' · '+n.pb+'</div><span class="nc-badge '+bc+'">'+n.rl+' риск</span></div></div>';
+  });
+  if(!h)h='<div style="text-align:center;padding:40px;color:var(--t3);font-size:13px">Ничего не найдено</div>';
+  document.getElementById('nList').innerHTML=h;
+}
+
+function renderAc(){
+  function ch(arr,trk,el){var h='';arr.forEach(function(c,i){h+='<div class="ac-ch" onclick="openCh(\''+trk+'\','+i+')"><div class="ac-ch-n">'+(i+1)+'</div><div class="ac-ch-b"><div class="ac-ch-t">'+c.t+'</div><div class="ac-ch-d">'+c.d+'</div></div><div class="ac-ch-a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>'});document.getElementById(el).innerHTML=h}
+  ch(JR,'jr','jrCh');ch(ST,'st','stCh');
+}
+
+function openN(i){
+  var n=D[i];if(!n)return;
+  document.getElementById('ovT').textContent=n.n;
+  var h='<div class="ov-hero" style="background:linear-gradient(135deg,var(--s2),var(--s1))">'+n.e+'</div><div class="ov-body"><div class="ov-cat">'+n.cn+'</div><h2>'+n.n+'</h2><div class="ov-txt">'+n.d+'</div><div class="ov-facts">';
+  n.f.forEach(function(f){h+='<div class="ov-f"><div class="ov-fi">→</div><div class="ov-ft">'+f+'</div></div>'});
+  h+='</div><div class="ov-nums"><div class="ov-nr"><span>Стартовые вложения</span><span>'+n.inv+'</span></div><div class="ov-nr"><span>Окупаемость</span><span>'+n.pb+'</span></div></div></div><div class="ov-cta"><button onclick="launchQC()">Проверить — Quick Check ⚡</button></div>';
+  document.getElementById('ovC').innerHTML=h;
+  document.getElementById('ov').classList.add('open');
+  try{Telegram.WebApp.HapticFeedback.impactOccurred('medium')}catch(e){}
+}
+
+function openCh(trk,i){
+  var c=trk==='jr'?JR[i]:ST[i];if(!c)return;
+  var tn=trk==='jr'?'Junior · Фундамент':'Startup · Архитектор';
+  document.getElementById('ovT').textContent='Глава '+(i+1);
+  var h='<div class="ov-hero" style="background:linear-gradient(135deg,'+(trk==='jr'?'rgba(77,212,230,0.06)':'rgba(255,190,77,0.06)')+',var(--s1));font-size:44px">'+(trk==='jr'?'📘':'🚀')+'</div><div class="ov-body"><div class="ov-cat">'+tn+'</div><h2>'+c.t+'</h2><div class="ov-txt">'+c.d+'</div><div style="background:var(--s1);border:1px solid var(--b2);border-radius:var(--r);padding:24px;text-align:center;margin-top:8px"><div style="font-size:28px;margin-bottom:8px">📝</div><div style="font-size:14px;font-weight:700;margin-bottom:4px">Контент готовится</div><div style="font-size:12px;color:var(--t3)">Лекция и задания скоро будут доступны</div></div></div>';
+  document.getElementById('ovC').innerHTML=h;
+  document.getElementById('ov').classList.add('open');
+  try{Telegram.WebApp.HapticFeedback.impactOccurred('medium')}catch(e){}
+}
+
+function closeOV(){document.getElementById('ov').classList.remove('open');try{Telegram.WebApp.HapticFeedback.impactOccurred('light')}catch(e){}}
+function launchQC(){window.location.href='quick-check.html'}
+
+rCats();renderN();renderAc();
+</script>
+</body>
+</html>
