@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>ZEREK · Академия</title>
+<title>ZEREK · Академия · Квадратное уродство</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -134,9 +134,9 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);-webki
 
 <!-- HERO -->
 <div class="hero a">
-  <div class="hero-mod">Модуль 3. Быстрый старт</div>
+  <div class="hero-mod">Модуль 3. Быстрый старт (MVP)</div>
   <div class="hero-ch">📖 Глава 1 из 5</div>
-  <h1>Квадратное<br><em>уродство</em></h1>
+  <h1>Квадратное уродство</h1>
   <div class="hero-lead">Давай поговорим о твоём главном враге. Это не конкуренты. Это не налоги. И даже не лень.</div>
 </div>
 
@@ -227,11 +227,11 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);-webki
 
 <!-- BOTTOM NAV -->
 <div class="bot">
-  <button class="bn bn-prev" onclick="goPrev()">
+  <button class="bn bn-prev" onclick="window.location.href='../startup/m2-ch05.html'">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-    Введение
+    Назад
   </button>
-  <button class="bn bn-next" onclick="goNext()">
+  <button class="bn bn-next" onclick="window.location.href='m3-ch02.html'">
     Глава 2
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 6 15 12 9 18"/></svg>
   </button>
@@ -239,12 +239,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);-webki
 
 <script>
 !function(){try{var t=Telegram.WebApp;t.ready();t.expand();t.requestFullscreen&&t.requestFullscreen();t.disableVerticalSwipes&&t.disableVerticalSwipes();t.setHeaderColor&&t.setHeaderColor('#0A0A14');t.setBackgroundColor&&t.setBackgroundColor('#0A0A14')}catch(e){}}();
-
-// Splash screen
-
-function goBack(){try{window.history.back()}catch(e){window.location.href='../../products/index.html'}}
-function goPrev(){/* link to previous chapter */}
-function goNext(){window.location.href='m3-ch02.html'}
+function goBack(){try{window.history.back()}catch(e){window.location.href='../../../products/index.html'}}
 </script>
 </body>
 </html>
