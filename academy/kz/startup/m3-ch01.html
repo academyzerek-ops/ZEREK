@@ -3,157 +3,248 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>ZEREK · Академия · Квадратное уродство (История Minecraft)</title>
+<title>ZEREK · Академия</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#06060C;--s1:#111119;--s2:#1A1A28;--s3:#222236;
-  --b1:rgba(255,255,255,0.05);--b2:rgba(255,255,255,0.09);
-  --t1:#EEEEF4;--t2:#9898AD;--t3:#6A6A80;
-  --ac:#7C6CFF;--ac2:#9B8FFF;--acd:rgba(124,108,255,0.10);
-  --am:#FFBE4D;--amd:rgba(255,190,77,0.08);--amb:rgba(255,190,77,0.15);
-  --gr:#00E4A0;--grd:rgba(0,228,160,0.08);
-  --r:16px;--rs:10px;
+  --bg:#0A0A14;--s1:#131320;--s2:#1C1C30;--s3:#262640;
+  --b1:rgba(255,255,255,0.06);--b2:rgba(255,255,255,0.10);
+  --t1:#F0F0F8;--t2:#A0A0B8;--t3:#6E6E88;
+  --ac:#8B7BFF;--ac2:#A89BFF;--acd:rgba(139,123,255,0.12);
+  --am:#FFD166;--am2:#FFE08A;--amd:rgba(255,209,102,0.10);--amb:rgba(255,209,102,0.18);
+  --gr:#06D6A0;--grd:rgba(6,214,160,0.10);
+  --cy:#4CC9F0;--cyd:rgba(76,201,240,0.10);
+  --r:18px;--rs:12px;
   --sb:env(safe-area-inset-bottom,0px);
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7;-webkit-font-smoothing:antialiased;max-width:440px;margin:0 auto;min-height:100vh;overflow-x:hidden}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);-webkit-font-smoothing:antialiased;max-width:440px;margin:0 auto;min-height:100vh;overflow-x:hidden}
 
-.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:12px;padding:10px 16px;background:rgba(6,6,12,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--b1)}
-.nav-back{width:32px;height:32px;border-radius:50%;background:var(--s2);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
-.nav-back:active{transform:scale(0.9)}
-.nav-back svg{width:16px;height:16px;color:var(--t1)}
+
+/* ═══ NAV BAR — pushed down to avoid Telegram overlay ═══ */
+.nav{position:sticky;top:0;z-index:100;padding:8px 16px;background:rgba(10,10,20,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--b1)}
+.nav-row{display:flex;align-items:center;gap:10px}
+.nav-back{width:36px;height:36px;border-radius:50%;background:var(--s2);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.nav-back:active{transform:scale(0.88);background:var(--s3)}
+.nav-back svg{width:18px;height:18px;color:var(--t1)}
 .nav-info{flex:1;min-width:0}
-.nav-track{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--am);margin-bottom:1px}
-.nav-title{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--t2)}
-.nav-progress{width:48px;display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0}
-.nav-pg-text{font-size:9px;font-weight:700;color:var(--t3);font-family:'JetBrains Mono',monospace}
-.nav-pg-bar{width:48px;height:3px;background:var(--s2);border-radius:2px;overflow:hidden}
-.nav-pg-fill{height:100%;background:var(--am);border-radius:2px;transition:width .3s}
+.nav-track{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--am);margin-bottom:1px}
+.nav-module{font-size:13px;font-weight:600;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-pg{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.nav-pg-num{font-size:11px;font-weight:700;color:var(--t3);font-family:'JetBrains Mono',monospace}
+.nav-pg-bar{width:50px;height:4px;background:var(--s2);border-radius:2px;overflow:hidden}
+.nav-pg-fill{height:100%;background:linear-gradient(90deg,var(--am),var(--gr));border-radius:2px;transition:width .4s}
 
-.hero{position:relative;padding:28px 20px 24px;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-60px;right:-40px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,var(--amb),transparent 70%);pointer-events:none}
-.hero-module{font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--am);margin-bottom:6px}
-.hero-ch{font-size:11px;color:var(--t3);margin-bottom:10px;font-weight:500}
-.hero h1{font-size:24px;font-weight:900;line-height:1.2;margin-bottom:10px}
+/* ═══ HERO ═══ */
+.hero{position:relative;padding:30px 22px 26px;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-80px;right:-50px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,var(--amb),transparent 70%);pointer-events:none}
+.hero-mod{font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--am);margin-bottom:8px}
+.hero-ch{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:var(--amd);border:1px solid var(--amb);border-radius:20px;font-size:11px;font-weight:600;color:var(--am2);margin-bottom:14px}
+.hero h1{font-size:28px;font-weight:900;line-height:1.15;margin-bottom:12px}
 .hero h1 em{font-style:normal;color:var(--am)}
-.hero-lead{font-size:14px;color:var(--t2);line-height:1.65;font-family:'Lora',serif;font-style:italic}
+.hero-lead{font-size:16px;color:var(--t2);line-height:1.7;font-family:'Lora',serif;font-style:italic}
 
-.content{padding:0 20px}
+/* ═══ CONTENT ═══ */
+.content{padding:0 22px;line-height:1.8}
 
-.scene{margin:20px 0;background:var(--s1);border:1px solid var(--b2);border-radius:var(--r);overflow:hidden}
-.scene-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--b1)}
-.scene-emoji{font-size:22px;flex-shrink:0}
-.scene-label{font-size:13.5px;font-weight:700}
-.scene-body{padding:16px}
-.scene-body p{font-size:13.5px;color:var(--t2);line-height:1.7;margin-bottom:12px}
-.scene-body p:last-child{margin-bottom:0}
-.scene-body strong{color:var(--t1);font-weight:600}
-.scene-body em{color:var(--am);font-style:italic;font-family:'Lora',serif}
-
-.quote{margin:20px 0;padding:16px 18px;border-left:3px solid var(--am);background:var(--amd);border-radius:0 var(--rs) var(--rs) 0}
-.quote p{font-size:14px;font-weight:600;line-height:1.55;color:var(--t1)}
-.quote .qsrc{font-size:11px;color:var(--t3);margin-top:6px;font-weight:400}
-
-.biz{margin:24px 0;background:linear-gradient(135deg,rgba(124,108,255,0.06),rgba(0,228,160,0.04));border:1px solid rgba(124,108,255,0.12);border-radius:var(--r);padding:18px}
-.biz-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.biz-icon{font-size:20px}
-.biz-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac2)}
-.biz p{font-size:13.5px;color:var(--t2);line-height:1.7;margin-bottom:10px}
-.biz p:last-child{margin-bottom:0}
-.biz strong{color:var(--t1)}
-.biz-key{font-size:14px;font-weight:700;color:var(--gr);margin-bottom:6px}
-
-.txt{font-size:13.5px;color:var(--t2);line-height:1.7;margin:14px 0}
-.txt strong{color:var(--t1);font-weight:600}
+.txt{font-size:16px;color:var(--t2);line-height:1.8;margin:16px 0}
+.txt strong{color:var(--t1);font-weight:700}
 .txt em{color:var(--am);font-style:italic;font-family:'Lora',serif}
 
-.sep{display:flex;align-items:center;justify-content:center;padding:20px 0}
-.sep-dot{width:4px;height:4px;border-radius:50%;background:var(--s3);margin:0 4px}
+/* Scene */
+.scene{margin:24px 0;background:var(--s1);border:1px solid var(--b2);border-radius:var(--r);overflow:hidden}
+.scene-head{display:flex;align-items:center;gap:12px;padding:16px 18px;background:linear-gradient(135deg,rgba(255,209,102,0.04),transparent);border-bottom:1px solid var(--b1)}
+.scene-emoji{font-size:26px;flex-shrink:0}
+.scene-label{font-size:15px;font-weight:800;letter-spacing:0.3px}
+.scene-body{padding:18px 18px 20px}
+.scene-body p{font-size:16px;color:var(--t2);line-height:1.8;margin-bottom:14px}
+.scene-body p:last-child{margin-bottom:0}
+.scene-body strong{color:var(--t1);font-weight:700}
+.scene-body em{color:var(--am);font-style:italic;font-family:'Lora',serif}
 
-.bot-nav{position:sticky;bottom:0;display:flex;align-items:stretch;gap:8px;padding:12px 20px 16px;background:linear-gradient(0deg,var(--bg) 80%,transparent);padding-bottom:calc(16px + var(--sb))}
-.bn-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:13px 12px;border-radius:var(--rs);border:none;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
-.bn-btn:active{transform:scale(0.96)}
+/* Dialogue */
+.dialogue{margin:12px 0;padding:14px 16px;background:var(--s2);border-radius:var(--rs);border-left:3px solid var(--am)}
+.dialogue p{font-size:15px;line-height:1.7;color:var(--t2);margin-bottom:6px;font-family:'Lora',serif;font-style:italic}
+.dialogue p:last-child{margin-bottom:0}
+
+/* Quote */
+.quote{margin:24px 0;padding:20px;background:linear-gradient(135deg,var(--amd),rgba(6,214,160,0.05));border:1px solid var(--amb);border-radius:var(--r);text-align:center}
+.quote p{font-size:20px;font-weight:800;line-height:1.4;color:var(--t1)}
+
+/* Biz lesson */
+.biz{margin:28px 0;padding:22px;background:linear-gradient(135deg,rgba(139,123,255,0.08),rgba(6,214,160,0.05));border:1px solid rgba(139,123,255,0.15);border-radius:var(--r);position:relative;overflow:hidden}
+.biz::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--ac),var(--gr))}
+.biz-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.biz-icon{font-size:24px}
+.biz-label{font-size:12px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--ac2)}
+.biz-key{font-size:20px;font-weight:800;color:var(--gr);margin-bottom:10px;line-height:1.3}
+.biz p{font-size:16px;color:var(--t2);line-height:1.8;margin-bottom:12px}
+.biz p:last-child{margin-bottom:0}
+.biz strong{color:var(--t1)}
+
+/* Separator */
+.sep{display:flex;align-items:center;justify-content:center;gap:8px;padding:24px 0}
+.sep-line{width:30px;height:1px;background:var(--s3)}
+.sep-dot{width:5px;height:5px;border-radius:50%;background:var(--am)}
+
+/* Module complete */
+.mod-complete{margin:28px 0;padding:24px;background:linear-gradient(135deg,var(--grd),var(--amd));border:1px solid rgba(6,214,160,0.15);border-radius:var(--r);text-align:center}
+.mod-complete-emoji{font-size:36px;margin-bottom:10px}
+.mod-complete h3{font-size:18px;font-weight:800;margin-bottom:6px}
+.mod-complete p{font-size:14px;color:var(--t2);line-height:1.5;margin-bottom:14px}
+.mod-complete-btn{display:inline-flex;align-items:center;gap:6px;padding:12px 24px;background:var(--gr);color:#0A0A14;border:none;border-radius:var(--rs);font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer}
+.mod-complete-btn:active{transform:scale(0.96)}
+
+/* ═══ BOTTOM NAV ═══ */
+.bot{position:sticky;bottom:0;display:flex;gap:10px;padding:14px 22px 18px;padding-bottom:calc(18px + var(--sb));background:linear-gradient(0deg,var(--bg) 85%,transparent)}
+.bn{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:14px;border-radius:var(--rs);border:none;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .12s}
+.bn:active{transform:scale(0.95)}
 .bn-prev{background:var(--s2);color:var(--t2);border:1px solid var(--b2)}
-.bn-next{background:var(--am);color:#06060C}
-.bn-btn svg{width:16px;height:16px;flex-shrink:0}
-.bn-btn.disabled{opacity:0.3;pointer-events:none}
+.bn-next{background:var(--am);color:#0A0A14}
+.bn svg{width:17px;height:17px;flex-shrink:0}
+.bn.off{opacity:.25;pointer-events:none}
 
-@keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-.a{animation:fu .5s ease-out both}
-.d1{animation-delay:.08s}.d2{animation-delay:.16s}.d3{animation-delay:.24s}.d4{animation-delay:.32s}.d5{animation-delay:.4s}.d6{animation-delay:.48s}
+/* ═══ ANIM ═══ */
+@keyframes fu{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.a{animation:fu .55s ease-out both}
+.d1{animation-delay:.08s}.d2{animation-delay:.16s}.d3{animation-delay:.24s}.d4{animation-delay:.32s}.d5{animation-delay:.4s}.d6{animation-delay:.48s}.d7{animation-delay:.56s}
 </style>
 </head>
 <body>
 
+
+<!-- NAV -->
 <div class="nav">
-  <button class="nav-back" onclick="goBack()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-  </button>
-  <div class="nav-info">
-    <div class="nav-track">Startup · Модуль 3</div>
-    <div class="nav-title">Быстрый старт (MVP)</div>
-  </div>
-  <div class="nav-progress">
-    <div class="nav-pg-text">1/5</div>
-    <div class="nav-pg-bar"><div class="nav-pg-fill" style="width:20%"></div></div>
+  <div class="nav-row">
+    <button class="nav-back" onclick="goBack()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="nav-info">
+      <div class="nav-track">Startup · Модуль 3</div>
+      <div class="nav-module">Быстрый старт (MVP)</div>
+    </div>
+    <div class="nav-pg">
+      <div class="nav-pg-num">1/5</div>
+      <div class="nav-pg-bar"><div class="nav-pg-fill" style="width:20%"></div></div>
+    </div>
   </div>
 </div>
 
+<!-- HERO -->
 <div class="hero a">
-  <div class="hero-module">Модуль 3. Быстрый старт (MVP)</div>
-  <div class="hero-ch">Глава 1 из 5</div>
-  <h1>Квадратное уродство (История Minecraft)</h1>
-  <div class="hero-lead">Вступление: Давай поговорим о твоем главном враге. Это не конкуренты. Это не налоги. И даже не лень. Твой главный враг — это голос в голове, который шепчет: «Это еще не готово. Это выглядит криво. Не </div>
+  <div class="hero-mod">Модуль 3. Быстрый старт</div>
+  <div class="hero-ch">📖 Глава 1 из 5</div>
+  <h1>Квадратное<br><em>уродство</em></h1>
+  <div class="hero-lead">Давай поговорим о твоём главном враге. Это не конкуренты. Это не налоги. И даже не лень.</div>
 </div>
 
+<!-- CONTENT -->
 <div class="content">
 
-  <p class="txt a d1">Вступление: Давай поговорим о твоем главном враге. Это не конкуренты. Это не налоги. И даже не лень. Твой главный враг — это голос в голове, который шепчет: «Это еще не готово. Это выглядит криво. Не показывай это людям, они засмеют. Доделай, отшлифуй, сделай красиво». Этот голос называется Перфекционизм. И он убил больше бизнесов, чем все кризисы мира вместе взятые. Ты думаешь, что великие продукты выходили идеальными? Ты ошибаешься. Самая прибыльная игра в истории началась как уродливый, кривой эксперимент, за который любому дизайнеру оторвали бы руки. Но её создатель знал секрет: «Идеальное — враг сделанного».</p>
+  <p class="txt a d1">Твой главный враг — это голос в голове, который шепчет: <em>«Это ещё не готово. Это выглядит криво. Не показывай это людям, они засмеют.»</em></p>
 
-  <div class="scene a d2">
-    <div class="scene-head"><div class="scene-emoji">🧱</div><div class="scene-label">Сцена 1. Пещера программиста. 2009 год. Стокгольм. Программист-одиночка Маркус «Нотч» Перссон сидит в своей комнате. У него нет миллионов, нет команды художников и маркетологов. Он хочет сделать игру, где можно строить что угодно. Но он не умеет рисовать. Вообще. Если бы он мыслил как обычный человек, он бы сказал: «Ну, я не художник, значит, не судьба. Пойду искать команду». Но Нотч сказал: «Плевать. Пусть всё будет из кубиков. Квадратное солнце, квадратные свиньи, квадратная вода. Графика уровня 90-х. Зато работает».</div></div>
-    <div class="scene-body">
-      <p>🧟‍♂️ Сцена 2. Релиз «Гадкого утенка». Он не стал прятать этот «ужас» в стол. Он выложил сырую, глючную альфа-версию на форум для гиков. В игре не было сюжета. Не было цели. Можно было только ломать блоки и ставить их. Он написал: «Парни, зацените. Выглядит крипово, но вроде весело».</p>
-    </div>
+  <p class="txt a d2">Этот голос называется <strong>Перфекционизм</strong>. И он убил больше бизнесов, чем все кризисы мира вместе взятые.</p>
+
+  <p class="txt a d2">Самая прибыльная игра в истории началась как уродливый, кривой эксперимент, за который любому дизайнеру оторвали бы руки. Но её создатель знал секрет:</p>
+
+  <div class="quote a d3">
+    <p>«Идеальное — враг сделанного»</p>
   </div>
 
-  <div class="sep"><div class="sep-dot"></div><div class="sep-dot"></div><div class="sep-dot"></div></div>
+  <div class="sep"><div class="sep-line"></div><div class="sep-dot"></div><div class="sep-line"></div></div>
 
+  <!-- SCENE 1 -->
   <div class="scene a d3">
-    <div class="scene-head"><div class="scene-emoji">👑</div><div class="scene-label">Сцена 3. Соавторы на халяву. Игрокам понравилось! Им было плевать на графику, они кайфовали от свободы. Они начали писать Нотчу: — Чувак, добавь крафт мечей! — Сделай монстров по ночам! — Добавь динамит!</div></div>
+    <div class="scene-head">
+      <div class="scene-emoji">🧱</div>
+      <div class="scene-label">Пещера программиста</div>
+    </div>
     <div class="scene-body">
-      <p>Нотч не придумывал игру в одиночку. Он просто слушал толпу. Он обновлял игру каждую пятницу. Через несколько лет Microsoft купила этот «кривой проект» за 2,5 миллиарда долларов.</p>
+      <p>2009 год. Стокгольм. Программист-одиночка <strong>Маркус «Нотч» Перссон</strong> сидит в своей комнате. У него нет миллионов, нет команды художников и маркетологов.</p>
+      <p>Он хочет сделать игру, где можно строить что угодно. Но он <strong>не умеет рисовать</strong>. Вообще.</p>
+      <p>Если бы он мыслил как обычный человек, он бы сказал:</p>
+      <div class="dialogue">
+        <p>«Ну, я не художник, значит, не судьба. Пойду искать команду.»</p>
+      </div>
+      <p>Но Нотч сказал:</p>
+      <div class="dialogue">
+        <p>«Плевать. Пусть всё будет из кубиков. Квадратное солнце, квадратные свиньи, квадратная вода. Графика уровня 90-х. Зато работает.»</p>
+      </div>
     </div>
   </div>
 
-  <div class="sep"><div class="sep-dot"></div><div class="sep-dot"></div><div class="sep-dot"></div></div>
-
-  <div class="biz a d4">
-    <div class="biz-head"><div class="biz-icon">🧠</div><div class="biz-label">🧠 БИЗНЕС-РАЗБОР</div></div>
-  <p>Выпускай «Гадкого утенка». Твоя первая версия продукта (MVP) должна быть стыдной. Если тебе не стыдно за первый релиз — значит, ты запустился слишком поздно. Лучше выпустить кривой продукт сегодня и получить отзывы, чем выпустить «идеальный» через год, когда он уже никому не нужен.</p>
+  <!-- SCENE 2 -->
+  <div class="scene a d4">
+    <div class="scene-head">
+      <div class="scene-emoji">🧟‍♂️</div>
+      <div class="scene-label">Релиз «Гадкого утёнка»</div>
+    </div>
+    <div class="scene-body">
+      <p>Он не стал прятать этот «ужас» в стол. Он выложил сырую, глючную альфа-версию на форум для гиков.</p>
+      <p>В игре не было сюжета. Не было цели. Можно было только ломать блоки и ставить их.</p>
+      <p>Он написал:</p>
+      <div class="dialogue">
+        <p>«Парни, зацените. Выглядит крипово, но вроде весело.»</p>
+      </div>
+    </div>
   </div>
 
-  <div class="sep"><div class="sep-dot"></div><div class="sep-dot"></div><div class="sep-dot"></div></div>
+  <!-- SCENE 3 -->
+  <div class="scene a d5">
+    <div class="scene-head">
+      <div class="scene-emoji">👑</div>
+      <div class="scene-label">Соавторы на халяву</div>
+    </div>
+    <div class="scene-body">
+      <p>Игрокам понравилось! Им было плевать на графику, они кайфовали от свободы. Они начали писать Нотчу:</p>
+      <div class="dialogue">
+        <p>— Чувак, добавь крафт мечей!</p>
+        <p>— Сделай монстров по ночам!</p>
+        <p>— Добавь динамит!</p>
+      </div>
+      <p>Нотч не придумывал игру в одиночку. Он просто <strong>слушал толпу</strong>. Он обновлял игру каждую пятницу.</p>
+      <p>Через несколько лет Microsoft купила этот «кривой проект» за <strong>2,5 миллиарда долларов</strong>.</p>
+    </div>
+  </div>
+
+  <div class="sep"><div class="sep-line"></div><div class="sep-dot"></div><div class="sep-line"></div></div>
+
+  <!-- BUSINESS LESSON -->
+  <div class="biz a d6">
+    <div class="biz-head">
+      <div class="biz-icon">🧠</div>
+      <div class="biz-label">Бизнес-разбор</div>
+    </div>
+    <div class="biz-key">Выпускай «Гадкого утёнка»</div>
+    <p>Твоя первая версия продукта (MVP) <strong>должна</strong> быть стыдной.</p>
+    <p>Если тебе не стыдно за первый релиз — значит, ты запустился слишком поздно.</p>
+    <p>Лучше выпустить кривой продукт <strong>сегодня</strong> и получить отзывы, чем выпустить «идеальный» через год, когда он уже никому не нужен.</p>
+  </div>
 
 </div>
 
-<div class="bot-nav">
-  <button class="bn-btn bn-prev" onclick="window.location.href='m2-ch05.html'">
+<!-- BOTTOM NAV -->
+<div class="bot">
+  <button class="bn bn-prev" onclick="goPrev()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-    Назад
+    Введение
   </button>
-  <button class="bn-btn bn-next" onclick="window.location.href='m3-ch02.html'">
+  <button class="bn bn-next" onclick="goNext()">
     Глава 2
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 6 15 12 9 18"/></svg>
   </button>
 </div>
 
 <script>
-!function(){try{var t=Telegram.WebApp;t.ready();t.expand();t.requestFullscreen&&t.requestFullscreen();t.disableVerticalSwipes&&t.disableVerticalSwipes();t.setHeaderColor&&t.setHeaderColor('#06060C');t.setBackgroundColor&&t.setBackgroundColor('#06060C')}catch(e){}}();
-function goBack(){try{window.history.back()}catch(e){window.location.href='../../../products/index.html'}}
+!function(){try{var t=Telegram.WebApp;t.ready();t.expand();t.requestFullscreen&&t.requestFullscreen();t.disableVerticalSwipes&&t.disableVerticalSwipes();t.setHeaderColor&&t.setHeaderColor('#0A0A14');t.setBackgroundColor&&t.setBackgroundColor('#0A0A14')}catch(e){}}();
+
+// Splash screen
+
+function goBack(){try{window.history.back()}catch(e){window.location.href='../../products/index.html'}}
+function goPrev(){/* link to previous chapter */}
+function goNext(){window.location.href='m3-ch02.html'}
 </script>
 </body>
 </html>
