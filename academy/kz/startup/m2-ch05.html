@@ -24,11 +24,14 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);-webki
 
 
 /* ═══ NAV BAR — pushed down to avoid Telegram overlay ═══ */
-.nav{position:sticky;top:0;z-index:100;padding:8px 16px;background:rgba(10,10,20,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--b1)}
+.nav{position:sticky;top:0;z-index:100;padding:max(env(safe-area-inset-top,0px),46px) 16px 8px;background:rgba(10,10,20,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--b1)}
 .nav-row{display:flex;align-items:center;gap:10px}
 .nav-back{width:36px;height:36px;border-radius:50%;background:var(--s2);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
 .nav-back:active{transform:scale(0.88);background:var(--s3)}
 .nav-back svg{width:18px;height:18px;color:var(--t1)}
+.nav-toc{padding:7px 14px;background:var(--am);color:#0A0A14;border:none;border-radius:18px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:800;cursor:pointer;flex-shrink:0;letter-spacing:0.3px;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+.nav-toc:active{transform:scale(0.95)}
+
 .nav-info{flex:1;min-width:0}
 .nav-track{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--am);margin-bottom:1px}
 .nav-module{font-size:13px;font-weight:600;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -118,9 +121,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);-webki
 <!-- NAV -->
 <div class="nav">
   <div class="nav-row">
-    <button class="nav-back" onclick="goBack()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
+    <button class="nav-toc" onclick="goToc()">📑 Содержание</button>
     <div class="nav-info">
       <div class="nav-track">Startup · Модуль 2</div>
       <div class="nav-module">Визионер</div>
@@ -198,7 +199,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);-webki
 
 <script>
 !function(){try{var t=Telegram.WebApp;t.ready();t.expand();t.requestFullscreen&&t.requestFullscreen();t.disableVerticalSwipes&&t.disableVerticalSwipes();t.setHeaderColor&&t.setHeaderColor('#0A0A14');t.setBackgroundColor&&t.setBackgroundColor('#0A0A14')}catch(e){}}();
-function goBack(){try{window.history.back()}catch(e){window.location.href='../../../products/index.html'}}
+function goBack(){try{window.history.back()}catch(e){window.location.href='../../../products/index.html?tab=academy'}}
+function goToc(){window.location.href='../../../products/index.html?tab=academy'}catch(e){window.location.href='../../../products/index.html'}}
 </script>
 </body>
 </html>
