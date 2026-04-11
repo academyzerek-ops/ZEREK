@@ -507,14 +507,15 @@ input[type=range]::-webkit-slider-thumb{background:#1A1A2E !important;box-shadow
 /* === Landing Home Page (premium minimalism) === */
 #s-home{background:#FFFFFF !important;padding:0 !important;display:flex;flex-direction:column;justify-content:center;align-items:center;height:100%}
 #s-home::before{display:none !important}
-.lp{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px 26px 120px;width:100%;height:100%;max-width:440px;box-sizing:border-box}
+.lp{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;padding:32px 22px 120px;width:100%;height:100%;max-width:440px;box-sizing:border-box}
 .lp-slogan{font-family:'Playfair Display',serif !important;font-size:26px;font-weight:600;font-style:italic;line-height:1.45;color:#111111;letter-spacing:-0.3px;margin:0;max-width:360px}
 .lp-slogan em{font-style:italic;color:#6C63FF;font-weight:600;font-size:28px;display:inline}
-.lp-line{width:60px;height:2px;background:#6C63FF;margin:20px auto;border-radius:1px;flex-shrink:0}
-.lp-badge-vid{display:block;width:330px;max-width:90%;height:330px;margin:4px auto 24px;background:transparent;object-fit:contain;border:none;outline:none}
-.lp-sub{font-family:'Source Sans 3',sans-serif !important;font-size:15px;font-weight:400;line-height:1.6;color:#555555;margin:0 0 16px;max-width:340px;background:none;border:none;box-shadow:none;padding:0}
+.lp-line{width:60px;height:2px;background:#6C63FF;margin:18px auto 8px;border-radius:1px;flex-shrink:0}
+.lp-vid-crop{width:100%;max-width:400px;height:131px;overflow:hidden;position:relative;margin:6px auto 22px;flex-shrink:0}
+.lp-vid-crop video{position:absolute;width:565px;height:565px;left:50%;top:-207px;transform:translateX(-50%);object-fit:contain;background:transparent;border:none;outline:none}
+.lp-sub{font-family:'Source Sans 3',sans-serif !important;font-size:15px;font-weight:400;line-height:1.55;color:#555555;margin:0 0 14px;max-width:360px;padding:14px 20px;background:#F4F5F8;border:1px solid #E5E7EB;border-radius:14px;box-shadow:0 2px 8px rgba(15,23,42,0.04);text-align:center}
 .lp-sub::before{display:none}
-.lp-accent{font-family:'Source Sans 3',sans-serif !important;font-size:16px;font-weight:500;line-height:1.6;color:#111111;margin:0;max-width:340px;background:none;border:none;box-shadow:none;padding:0}
+.lp-accent{font-family:'Source Sans 3',sans-serif !important;font-size:15.5px;font-weight:600;line-height:1.55;color:#111111;margin:0;max-width:360px;padding:14px 20px;background:linear-gradient(135deg,#F5F3FF,#EEF2FF);border:1px solid #DDD6FE;border-radius:14px;box-shadow:0 4px 16px rgba(108,99,255,0.10);text-align:center}
 .lp-accent::before{display:none}
 
 </style>
@@ -540,9 +541,11 @@ input[type=range]::-webkit-slider-thumb{background:#1A1A2E !important;box-shadow
       <div class="lp">
         <h1 class="lp-slogan">В бизнесе успешен не тот, кто умнее — а тот, кто <em>управляет рисками</em>.</h1>
         <div class="lp-line"></div>
-        <video class="lp-badge-vid" autoplay loop muted playsinline preload="auto">
-          <source src="assets/mba.mp4?v=3" type="video/mp4">
-        </video>
+        <div class="lp-vid-crop">
+          <video class="lp-badge-vid" autoplay loop muted playsinline preload="auto">
+            <source src="assets/mba.mp4?v=3" type="video/mp4">
+          </video>
+        </div>
         <p class="lp-sub">Школа не учит бизнесу. Универ далёк от практики. Мы это устраняем.</p>
         <p class="lp-accent">Не скучная финграмотность и не «успешный успех» — а реальность.</p>
       </div>
