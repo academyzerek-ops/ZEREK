@@ -156,6 +156,51 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);line-h
 .trk-jr .ac-acc{background:var(--cy)}.trk-jr .ac-bdg{background:var(--cyd);color:var(--cy)}.trk-jr .ac-ch-n{background:var(--cyd);color:var(--cy)}
 .trk-st .ac-acc{background:var(--am)}.trk-st .ac-bdg{background:var(--amd);color:var(--am)}.trk-st .ac-ch-n{background:var(--amd);color:var(--am)}
 
+/* Academy steps (multi-screen flow) */
+.ac-step{display:none;animation:fu .4s ease-out;padding-top:max(env(safe-area-inset-top,0px),76px)}
+.ac-step.on{display:block}
+.ac-back{display:inline-flex;align-items:center;gap:6px;margin:0 22px 14px;padding:8px 14px;background:var(--s2);border:1px solid var(--b2);border-radius:18px;color:var(--t2);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer}
+.ac-back:active{transform:scale(0.95);background:var(--s3)}
+.ac-back svg{width:14px;height:14px}
+
+/* Splash screen */
+#ac-splash{padding-top:max(env(safe-area-inset-top,0px),60px)}
+.ac-spl-hero{position:relative;display:flex;align-items:center;justify-content:center;padding:30px 22px 10px}
+.ac-spl-emoji{font-size:90px;position:relative;z-index:2;filter:drop-shadow(0 8px 24px rgba(124,108,255,0.4))}
+.ac-spl-glow{position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(124,108,255,0.25),rgba(0,228,160,0.1) 40%,transparent 70%);animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:0.7}50%{transform:scale(1.1);opacity:1}}
+.ac-spl-body{padding:10px 26px 30px;text-align:center}
+.ac-spl-t{font-size:26px;font-weight:900;line-height:1.2;margin-bottom:14px;color:var(--t1)}
+.ac-spl-d{font-size:14.5px;color:var(--t2);line-height:1.6;margin-bottom:24px}
+.ac-spl-stats{display:flex;justify-content:center;gap:18px;margin-bottom:30px}
+.ac-spl-stat{flex:0 1 auto;padding:14px 18px;background:var(--s1);border:1px solid var(--b2);border-radius:14px;min-width:78px}
+.ac-spl-sn{font-size:24px;font-weight:900;color:var(--ac2);font-family:'JetBrains Mono',monospace;line-height:1}
+.ac-spl-sl{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-top:6px}
+.ac-cta{display:inline-flex;align-items:center;gap:10px;padding:18px 36px;background:linear-gradient(135deg,var(--ac),var(--gr));color:#fff;border:none;border-radius:100px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:0.5px;box-shadow:0 8px 32px rgba(124,108,255,0.4),0 2px 8px rgba(0,228,160,0.2);transition:all .2s;text-transform:uppercase}
+.ac-cta:active{transform:scale(0.95);box-shadow:0 4px 16px rgba(124,108,255,0.5)}
+.ac-cta svg{width:16px;height:16px}
+
+/* Level selector */
+.ac-lvl-h{padding:0 22px 14px}
+.ac-lvl-h h2{font-size:24px;font-weight:900;margin-bottom:4px}
+.ac-lvl-h p{font-size:13px;color:var(--t2);line-height:1.5}
+.ac-lvl{margin:12px 22px;padding:22px 20px;background:var(--s1);border:1.5px solid var(--b2);border-radius:18px;cursor:pointer;position:relative;overflow:hidden;transition:all .2s}
+.ac-lvl:active{transform:scale(0.98)}
+.ac-lvl::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--ac)}
+.ac-lvl.trk-jr::before{background:var(--cy)}
+.ac-lvl.trk-st::before{background:var(--am)}
+.ac-lvl-icon{font-size:42px;margin-bottom:8px}
+.ac-lvl-bdg{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 11px;border-radius:5px;margin-bottom:10px}
+.ac-lvl.trk-jr .ac-lvl-bdg{background:var(--cyd);color:var(--cy)}
+.ac-lvl.trk-st .ac-lvl-bdg{background:var(--amd);color:var(--am)}
+.ac-lvl-t{font-size:20px;font-weight:800;margin-bottom:6px}
+.ac-lvl-d{font-size:13px;color:var(--t2);line-height:1.55;margin-bottom:12px}
+.ac-lvl-mt{display:flex;flex-wrap:wrap;gap:6px;font-size:11px;color:var(--t3);font-weight:500;margin-bottom:14px}
+.ac-lvl-mt span{font-weight:600}
+.ac-lvl-go{font-size:12px;font-weight:800;letter-spacing:0.5px;text-transform:uppercase}
+.ac-lvl.trk-jr .ac-lvl-go{color:var(--cy)}
+.ac-lvl.trk-st .ac-lvl-go{color:var(--am)}
+
 /* ═══════════════════════════════════
    CASES
    ═══════════════════════════════════ */
@@ -277,9 +322,70 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);line-h
 
     <!-- ACADEMY -->
     <div class="scr" id="s-academy">
-      <div class="ac-h a"><h2>Академия</h2><p>Финансовая грамотность и предпринимательство. Кейсы мировых компаний, практика, задания.</p></div>
-      <div class="ac-trk trk-jr a d1"><div class="ac-top"><div class="ac-acc"></div><div class="ac-bdg">Junior</div><div class="ac-tt">Фундамент</div><div class="ac-ds">Финансовая грамотность для подростков. Деньги, бюджет, экономическое мышление.</div><div class="ac-mt"><div class="ac-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>3 модуля</div><div class="ac-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>12–15 лет</div></div></div><div class="ac-chs" id="jrCh"></div></div>
-      <div class="ac-trk trk-st a d2"><div class="ac-top"><div class="ac-acc"></div><div class="ac-bdg">Startup</div><div class="ac-tt">Архитектор бизнеса</div><div class="ac-ds">Бизнес-мышление для начинающих предпринимателей. От идеи до финмодели.</div><div class="ac-mt"><div class="ac-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>4 модуля</div><div class="ac-m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>16+</div></div></div><div class="ac-chs" id="stCh"></div></div>
+      <!-- STEP 1: Splash -->
+      <div class="ac-step on" id="ac-splash">
+        <div class="ac-spl-hero">
+          <div class="ac-spl-emoji">🎓</div>
+          <div class="ac-spl-glow"></div>
+        </div>
+        <div class="ac-spl-body">
+          <h1 class="ac-spl-t">Мы разработали уроки по&nbsp;бизнесу</h1>
+          <p class="ac-spl-d">Только самое нужное, самое важное.<br>Реальные кейсы. Практика. Без воды.</p>
+          <div class="ac-spl-stats">
+            <div class="ac-spl-stat"><div class="ac-spl-sn">50</div><div class="ac-spl-sl">уроков</div></div>
+            <div class="ac-spl-stat"><div class="ac-spl-sn">7</div><div class="ac-spl-sl">модулей</div></div>
+            <div class="ac-spl-stat"><div class="ac-spl-sn">∞</div><div class="ac-spl-sl">пользы</div></div>
+          </div>
+          <button class="ac-cta" onclick="acStart()">
+            Начать обучение
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="9 6 15 12 9 18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Level selector -->
+      <div class="ac-step" id="ac-levels">
+        <button class="ac-back" onclick="acGoSplash()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          Назад
+        </button>
+        <div class="ac-lvl-h">
+          <h2>Выбери уровень</h2>
+          <p>С чего начать твоё обучение</p>
+        </div>
+        <div class="ac-lvl trk-jr" onclick="acSelectLevel('jr')">
+          <div class="ac-lvl-icon">📘</div>
+          <div class="ac-lvl-bdg">Junior</div>
+          <div class="ac-lvl-t">Фундамент</div>
+          <div class="ac-lvl-d">Финансовая грамотность. Деньги, бюджет, экономическое мышление через истории и кейсы.</div>
+          <div class="ac-lvl-mt"><span>3 модуля</span><span>·</span><span>23 урока</span><span>·</span><span>12–15 лет</span></div>
+          <div class="ac-lvl-go">Открыть →</div>
+        </div>
+        <div class="ac-lvl trk-st" onclick="acSelectLevel('st')">
+          <div class="ac-lvl-icon">🚀</div>
+          <div class="ac-lvl-bdg">Startup</div>
+          <div class="ac-lvl-t">Архитектор бизнеса</div>
+          <div class="ac-lvl-d">Бизнес-мышление для начинающих предпринимателей. От идеи до финмодели на кейсах мировых компаний.</div>
+          <div class="ac-lvl-mt"><span>4 модуля</span><span>·</span><span>27 уроков</span><span>·</span><span>16+</span></div>
+          <div class="ac-lvl-go">Открыть →</div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Chapter list -->
+      <div class="ac-step" id="ac-chapters">
+        <button class="ac-back" onclick="acGoLevels()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          К уровням
+        </button>
+        <div class="ac-trk trk-jr a d1" id="ac-jrTrk" style="display:none">
+          <div class="ac-top"><div class="ac-acc"></div><div class="ac-bdg">Junior</div><div class="ac-tt">Фундамент</div><div class="ac-ds">Финансовая грамотность. Деньги, бюджет, экономическое мышление.</div></div>
+          <div class="ac-chs" id="jrCh"></div>
+        </div>
+        <div class="ac-trk trk-st a d1" id="ac-stTrk" style="display:none">
+          <div class="ac-top"><div class="ac-acc"></div><div class="ac-bdg">Startup</div><div class="ac-tt">Архитектор бизнеса</div><div class="ac-ds">Бизнес-мышление для начинающих предпринимателей.</div></div>
+          <div class="ac-chs" id="stCh"></div>
+        </div>
+      </div>
     </div>
 
     <!-- CASES -->
@@ -445,7 +551,44 @@ function launchQC(){window.location.href='../quick-check.html'}
 function openTG(){window.open('https://t.me/zerek_cases','_blank')}
 
 rCats();rCsCats();renderN();renderAc();renderCS();
-try{var _qs=new URLSearchParams(location.search);var _tab=_qs.get('tab');if(_tab&&document.getElementById('s-'+_tab)){go(_tab)}}catch(e){}
+
+// Academy multi-step flow
+var acStep='splash';
+function acGo(step){
+  var s=document.getElementById('ac-'+acStep);if(s)s.classList.remove('on');
+  acStep=step;
+  var ns=document.getElementById('ac-'+step);if(ns)ns.classList.add('on');
+  try{Telegram.WebApp.HapticFeedback.impactOccurred('light')}catch(e){}
+}
+function acStart(){
+  try{Telegram.WebApp.HapticFeedback.impactOccurred('heavy')}catch(e){}
+  acGo('levels');
+}
+function acGoSplash(){acGo('splash')}
+function acGoLevels(){acGo('levels')}
+function acSelectLevel(track){
+  try{Telegram.WebApp.HapticFeedback.impactOccurred('medium')}catch(e){}
+  document.getElementById('ac-jrTrk').style.display=(track==='jr')?'block':'none';
+  document.getElementById('ac-stTrk').style.display=(track==='st')?'block':'none';
+  try{localStorage.setItem('zerek_ac_track',track)}catch(e){}
+  acGo('chapters');
+}
+
+// Open specific tab from URL ?tab=academy
+try{
+  var _qs=new URLSearchParams(location.search);
+  var _tab=_qs.get('tab');
+  if(_tab&&document.getElementById('s-'+_tab)){
+    go(_tab);
+    // If returning from a lesson, auto-open last selected track
+    if(_tab==='academy'){
+      try{
+        var lastTrk=localStorage.getItem('zerek_ac_track');
+        if(lastTrk){acSelectLevel(lastTrk)}
+      }catch(e){}
+    }
+  }
+}catch(e){}
 </script>
 </body>
 </html>

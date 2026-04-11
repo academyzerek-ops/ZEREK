@@ -189,8 +189,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);-webki
 
 <script>
 !function(){try{var t=Telegram.WebApp;t.ready();t.expand();t.requestFullscreen&&t.requestFullscreen();t.disableVerticalSwipes&&t.disableVerticalSwipes();t.setHeaderColor&&t.setHeaderColor('#0A0A14');t.setBackgroundColor&&t.setBackgroundColor('#0A0A14')}catch(e){}}();
-function goBack(){window.location.href='../../../products/index.html?tab=academy'}
-function goToc(){window.location.href='../../../products/index.html?tab=academy'}
+function goBack(){try{localStorage.setItem('zerek_ac_track','st')}catch(e){}window.location.href='../../../products/index.html?tab=academy'}
+function goToc(){try{localStorage.setItem('zerek_ac_track','st')}catch(e){}window.location.href='../../../products/index.html?tab=academy'}
 </script>
 </body>
 </html>
