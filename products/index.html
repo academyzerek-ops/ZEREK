@@ -327,16 +327,16 @@ html,body{background:#E6E8ED !important;color:#1A1A2E !important}
 
 /* Tab bar at bottom — DARK NAVY */
 /* === Tab Bar (dark navy with wave) === */
-.tabs,.tbs,.tbar{background:linear-gradient(180deg,#2E86E0,#1565C0) !important;border-top:1px solid rgba(255,255,255,0.18) !important;box-shadow:0 -8px 26px rgba(21,101,192,0.38),0 -1px 0 rgba(255,255,255,0.35) inset !important;padding:5px 0 calc(8px + env(safe-area-inset-bottom,0px)) !important;position:fixed !important;overflow:hidden !important;border-radius:18px 18px 0 0 !important}
+.tabs,.tbs,.tbar{background:linear-gradient(180deg,#2E86E0,#1565C0) !important;border-top:1px solid rgba(255,255,255,0.18) !important;box-shadow:0 -8px 26px rgba(21,101,192,0.38),0 -1px 0 rgba(255,255,255,0.35) inset !important;padding:2px 0 calc(5px + env(safe-area-inset-bottom,0px)) !important;position:fixed !important;overflow:hidden !important;border-radius:18px 18px 0 0 !important}
 .tabs::before,.tbs::before,.tbar::before{display:none !important}
 .tabs::after,.tbs::after,.tbar::after{display:none !important}
-.tb{position:relative !important;padding:5px 0 3px !important;color:rgba(255,255,255,0.7) !important;display:flex !important;flex-direction:column !important;align-items:center !important;gap:2px !important;transition:transform .25s cubic-bezier(.34,1.56,.64,1) !important;background:transparent !important}
-.tb::before{content:'' !important;position:absolute !important;top:0 !important;left:50% !important;transform:translateX(-50%) scaleX(0) !important;width:26px !important;height:3px !important;background:#FFFFFF !important;border-radius:0 0 3px 3px !important;transition:transform .35s cubic-bezier(.34,1.56,.64,1) !important;box-shadow:0 0 14px rgba(255,255,255,0.9) !important;display:block !important}
+.tb{position:relative !important;padding:8px 0 4px !important;color:rgba(255,255,255,0.7) !important;display:flex !important;flex-direction:column !important;align-items:center !important;gap:2px !important;transition:transform .25s cubic-bezier(.34,1.56,.64,1) !important;background:transparent !important}
+.tb::before{content:'' !important;position:absolute !important;top:auto !important;bottom:0 !important;left:50% !important;transform:translateX(-50%) scaleX(0) !important;width:26px !important;height:3px !important;background:#FFFFFF !important;border-radius:3px 3px 0 0 !important;transition:transform .35s cubic-bezier(.34,1.56,.64,1) !important;box-shadow:0 0 14px rgba(255,255,255,0.9) !important;display:block !important}
 .tb.on::before{transform:translateX(-50%) scaleX(1) !important}
 .tb::after{display:none !important}
 .tb svg{width:22px !important;height:22px !important;color:rgba(255,255,255,0.75) !important;stroke-width:1.5 !important;fill:none !important;transition:color .25s,transform .35s cubic-bezier(.34,1.56,.64,1),filter .25s !important}
 .tb.on{color:#FFFFFF !important}
-.tb.on svg{color:#FFFFFF !important;transform:translateY(-3px) scale(1.12) !important;filter:drop-shadow(0 0 12px rgba(255,255,255,1)) !important}
+.tb.on svg{color:#FFFFFF !important;transform:scale(1.12) !important;filter:drop-shadow(0 0 12px rgba(255,255,255,1)) !important}
 .tb-l{font-family:'Source Sans 3',sans-serif !important;font-size:10px !important;font-weight:600 !important;color:rgba(255,255,255,0.75) !important;letter-spacing:0.2px !important;transition:color .25s,text-shadow .25s !important}
 .tb.on .tb-l{color:#FFFFFF !important;text-shadow:0 0 10px rgba(255,255,255,0.9) !important}
 .tb:active{transform:scale(0.92) !important}
