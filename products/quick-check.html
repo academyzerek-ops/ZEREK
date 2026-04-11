@@ -969,7 +969,7 @@ input[type=range]::-webkit-slider-thumb{background:#1A1A2E !important;box-shadow
 <style>.zerek-back{position:fixed;top:max(env(safe-area-inset-top,0px),100px);left:50%;transform:translateX(-50%);z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:10px 16px;background:rgba(6,6,12,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.15);border-radius:22px;color:#EEEEF4;font-family:-apple-system,'Outfit',sans-serif;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.3)}.zerek-back:active{transform:translateX(-50%) scale(0.95)}.zerek-back:hover{background:rgba(6,6,12,0.98)}</style>
 </head>
 <body>
-<a class="zerek-back" id="zerek-back" href="index.html" onclick="return zerekBack()">← Назад</a>
+<a class="zerek-back" id="zerek-back" href="index.html?tab=home" onclick="return zerekBack()">← Назад</a>
 
 
 <!-- ============================================
@@ -1566,7 +1566,7 @@ function zerekBack() {
   if (params.get('ref') === 'wiki' && window.history.length > 1) {
     history.back(); return false;
   }
-  location.href = 'index.html'; return false;
+  location.href = 'index.html?tab=home'; return false;
 }
 
 /* Render confirm summary */
