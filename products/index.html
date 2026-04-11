@@ -209,9 +209,6 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);line-h
 .cs-h{padding:18px 22px 10px}
 .cs-h h2{font-size:19px;font-weight:800;margin-bottom:3px}
 .cs-h p{font-size:12.5px;color:var(--t2);line-height:1.5}
-.tab-intro{background:#fff;padding:28px 22px 20px;text-align:center}
-.tab-intro-t{font-family:'Playfair Display',serif;font-style:italic;font-size:24px;font-weight:700;color:#111;line-height:1.25;margin:0}
-.tab-intro-d{font-family:'Source Sans 3',sans-serif;font-size:14px;color:#555;line-height:1.6;max-width:320px;margin:12px auto 20px}
 .cs-list{padding:0 22px;display:flex;flex-direction:column;gap:12px}
 .cs-card{background:var(--s1);border:1px solid var(--b2);border-radius:var(--r);padding:16px 18px;position:relative;overflow:hidden;cursor:pointer;transition:all .15s}
 .cs-card:active{transform:scale(0.98)}
@@ -591,11 +588,36 @@ input[type=range]::-webkit-slider-thumb{background:#1A1A2E !important;box-shadow
 
     <!-- ACADEMY -->
     <div class="scr" id="s-academy">
-      <!-- STEP 1: Level selector (default) -->
-      <div class="ac-step on" id="ac-levels">
-        <div class="tab-intro">
-          <h1 class="tab-intro-t">Бизнес-мышление — это навык.<br>Мы его тренируем.</h1>
-          <p class="tab-intro-d">Два уровня. Для школьников — основы финграмотности через реальные истории. Для взрослых — от идеи до финмодели на кейсах мировых компаний.</p>
+      <!-- STEP 1: Splash -->
+      <div class="ac-step on" id="ac-splash">
+        <div class="ac-spl-hero">
+          <div class="ac-spl-emoji">🎓</div>
+          <div class="ac-spl-glow"></div>
+        </div>
+        <div class="ac-spl-body">
+          <h1 class="ac-spl-t">Мы разработали уроки по&nbsp;бизнесу</h1>
+          <p class="ac-spl-d">Только самое нужное, самое важное.<br>Реальные кейсы. Практика. Без воды.</p>
+          <div class="ac-spl-stats">
+            <div class="ac-spl-stat"><div class="ac-spl-sn">50</div><div class="ac-spl-sl">уроков</div></div>
+            <div class="ac-spl-stat"><div class="ac-spl-sn">7</div><div class="ac-spl-sl">модулей</div></div>
+            <div class="ac-spl-stat"><div class="ac-spl-sn">∞</div><div class="ac-spl-sl">пользы</div></div>
+          </div>
+          <button class="ac-cta" onclick="acStart()">
+            Начать обучение
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="9 6 15 12 9 18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Level selector -->
+      <div class="ac-step" id="ac-levels">
+        <button class="ac-back" onclick="acGoSplash()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          Назад
+        </button>
+        <div class="ac-lvl-h">
+          <h2>Выбери уровень</h2>
+          <p>С чего начать твоё обучение</p>
         </div>
         <div class="ac-lvl trk-jr" onclick="acSelectLevel('jr')">
           <div class="ac-lvl-icon">📘</div>
@@ -634,11 +656,33 @@ input[type=range]::-webkit-slider-thumb{background:#1A1A2E !important;box-shadow
 
     <!-- CASES -->
     <div class="scr" id="s-cases">
-      <div class="ac-step on" id="cs-list">
-        <div class="tab-intro">
-          <h1 class="tab-intro-t">Чужие грабли</h1>
-          <p class="tab-intro-d">Реальные провалы бизнесов в Казахстане. Каждый кейс — конкретная ошибка, конкретный город, конкретный урок. Чтобы вы не платили за чужой опыт своими деньгами.</p>
+      <!-- STEP 1: Splash -->
+      <div class="ac-step on" id="cs-splash">
+        <div class="ac-spl-hero">
+          <div class="ac-spl-emoji">⚠️</div>
+          <div class="ac-spl-glow" style="background:radial-gradient(circle,rgba(255,107,107,0.25),rgba(255,190,77,0.1) 40%,transparent 70%)"></div>
         </div>
+        <div class="ac-spl-body">
+          <h1 class="ac-spl-t">Чужие грабли</h1>
+          <p class="ac-spl-d">Реальные провалы бизнесов в Казахстане. Учитесь на чужих ошибках — не платите за свой опыт миллионами.</p>
+          <div class="ac-spl-stats">
+            <div class="ac-spl-stat"><div class="ac-spl-sn">∞</div><div class="ac-spl-sl">кейсов</div></div>
+            <div class="ac-spl-stat"><div class="ac-spl-sn">5</div><div class="ac-spl-sl">сфер</div></div>
+            <div class="ac-spl-stat"><div class="ac-spl-sn">100%</div><div class="ac-spl-sl">правда</div></div>
+          </div>
+          <button class="ac-cta" onclick="csStart()" style="background:linear-gradient(135deg,#FF6B6B,var(--am))">
+            Смотреть кейсы
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="9 6 15 12 9 18"/></svg>
+          </button>
+        </div>
+      </div>
+      <!-- STEP 2: Cases list -->
+      <div class="ac-step" id="cs-list">
+        <button class="ac-back" onclick="csGoSplash()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          Назад
+        </button>
+        <div class="cs-h a"><h2>Чужие грабли</h2><p>Реальные ошибки бизнесов — чтобы вы не платили за чужой опыт своими деньгами</p></div>
         <div class="cp a d1" id="csCp"></div>
         <div class="cs-list a d2" id="csList"></div>
         <div class="cs-tg a d3" onclick="openTG()">
@@ -652,10 +696,7 @@ input[type=range]::-webkit-slider-thumb{background:#1A1A2E !important;box-shadow
     <!-- ABOUT -->
     <!-- CALC -->
     <div class="scr" id="s-calc">
-      <div class="tab-intro">
-        <h1 class="tab-intro-t">Посчитай прежде, чем вложишь</h1>
-        <p class="tab-intro-d">Три инструмента — три уровня глубины. От быстрой проверки идеи до полного бизнес-плана для гранта.</p>
-      </div>
+      <div class="nv-h a"><h2>Расчёты</h2><p>Финансовые инструменты для вашего бизнеса</p></div>
 
       <div class="pc a d1" onclick="launchQC()" style="margin:0 22px 12px;background:var(--s1);border:1px solid var(--b2);border-radius:var(--r);padding:20px;cursor:pointer;position:relative;overflow:hidden">
         <div style="position:absolute;top:0;left:0;width:3px;height:100%;background:var(--ac)"></div>
@@ -829,13 +870,18 @@ function openTG(){window.open('https://t.me/zerek_cases','_blank')}
 rCats();rCsCats();renderN();renderAc();renderCS();
 
 // Academy multi-step flow
-var acStep='levels';
+var acStep='splash';
 function acGo(step){
   var s=document.getElementById('ac-'+acStep);if(s)s.classList.remove('on');
   acStep=step;
   var ns=document.getElementById('ac-'+step);if(ns)ns.classList.add('on');
   try{Telegram.WebApp.HapticFeedback.impactOccurred('light')}catch(e){}
 }
+function acStart(){
+  try{Telegram.WebApp.HapticFeedback.impactOccurred('heavy')}catch(e){}
+  acGo('levels');
+}
+function acGoSplash(){acGo('splash')}
 function acGoLevels(){acGo('levels')}
 function acSelectLevel(track){
   try{Telegram.WebApp.HapticFeedback.impactOccurred('medium')}catch(e){}
@@ -853,6 +899,13 @@ function nvStep(step){
 function nvStart(){try{Telegram.WebApp.HapticFeedback.impactOccurred('heavy')}catch(e){}nvStep('catalog')}
 function nvGoSplash(){try{Telegram.WebApp.HapticFeedback.impactOccurred('light')}catch(e){}nvStep('splash')}
 
+// Cases multi-step
+function csStep(step){
+  document.querySelectorAll('#s-cases > .ac-step').forEach(function(s){s.classList.remove('on')});
+  var ns=document.getElementById('cs-'+step);if(ns)ns.classList.add('on');
+}
+function csStart(){try{Telegram.WebApp.HapticFeedback.impactOccurred('heavy')}catch(e){}csStep('list')}
+function csGoSplash(){try{Telegram.WebApp.HapticFeedback.impactOccurred('light')}catch(e){}csStep('splash')}
 
 // Open specific tab from URL ?tab=academy|niches|cases — instant, no animation
 try{
@@ -870,7 +923,7 @@ try{
         var lastTrk=localStorage.getItem('zerek_ac_track');
         if(lastTrk){
           // Go straight to chapters step without animation
-          document.getElementById('ac-levels').classList.remove('on');
+          document.getElementById('ac-splash').classList.remove('on');
           document.getElementById('ac-jrTrk').style.display=(lastTrk==='jr')?'block':'none';
           document.getElementById('ac-stTrk').style.display=(lastTrk==='st')?'block':'none';
           document.getElementById('ac-chapters').classList.add('on');
@@ -880,6 +933,9 @@ try{
     } else if(_tab==='niches'){
       document.getElementById('nv-splash').classList.remove('on');
       document.getElementById('nv-catalog').classList.add('on');
+    } else if(_tab==='cases'){
+      document.getElementById('cs-splash').classList.remove('on');
+      document.getElementById('cs-list').classList.add('on');
     }
   }
 }catch(e){}
