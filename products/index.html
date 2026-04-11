@@ -6,7 +6,7 @@
 <title>ZEREK</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@400;500;600&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0A0A14;--s1:#131320;--s2:#1C1C30;--s3:#262640;
@@ -502,6 +502,17 @@ input[type=range]::-webkit-slider-thumb{background:#1A1A2E !important;box-shadow
 .loading-sub,.loading-step{color:#4A4A60 !important}
 .loader-ring{border-color:#D0D2DA !important;border-top-color:var(--ac2) !important}
 
+/* === Landing Home Page === */
+#s-home{background:#FFFFFF !important;padding-bottom:0 !important;display:flex;flex-direction:column;justify-content:center;align-items:center;height:100%}
+#s-home::before{display:none !important}
+.lp{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px 28px;width:100%;max-width:380px;gap:18px}
+.lp-logo{height:32px;width:auto;display:block;margin-bottom:4px}
+.lp-slogan{font-family:'Playfair Display',serif !important;font-size:21px;font-weight:500;line-height:1.35;color:#1A1A2E;letter-spacing:-0.2px;margin:0;max-width:340px}
+.lp-slogan em{font-style:normal;color:#6C63FF;font-weight:500}
+.lp-video{width:180px;height:180px;object-fit:contain;border-radius:14px;display:block;background:transparent}
+.lp-sub{font-family:'Source Sans 3',sans-serif !important;font-size:14px;font-weight:400;line-height:1.5;color:#6B7280;margin:0;max-width:300px}
+.lp-accent{font-family:'Source Sans 3',sans-serif !important;font-size:14px;font-weight:500;line-height:1.5;color:#1A1A2E;margin:0;max-width:320px}
+
 </style>
 </head>
 <body>
@@ -522,23 +533,15 @@ input[type=range]::-webkit-slider-thumb{background:#1A1A2E !important;box-shadow
 
     <!-- HOME -->
     <div class="scr on" id="s-home">
-      <div class="hero a">
-        <div class="hero-badge"><div class="hero-dot"></div> Казахстан · 2026</div>
-        <h1>Бизнес начинается<br>с <em>правильных цифр</em></h1>
-        <div class="hero-p">ZEREK — платформа, которая учит, показывает и считает. Чтобы вы открывали бизнес с открытыми глазами, а не с розовыми очками.</div>
+      <div class="lp">
+        <img class="lp-logo" src="assets/logo.png?v=2" alt="zerek.ai">
+        <h1 class="lp-slogan">В бизнесе успешен не тот, кто умнее — а тот, кто <em>управляет рисками</em>.</h1>
+        <video class="lp-video" autoplay muted loop playsinline preload="auto">
+          <source src="assets/mba.mp4" type="video/mp4">
+        </video>
+        <p class="lp-sub">Школа не учит бизнесу. Универ далёк от практики. Мы это устраняем.</p>
+        <p class="lp-accent">Не скучная финграмотность и не «успешный успех» — а реальность.</p>
       </div>
-      <div class="mission a d2">
-        <div class="mission-q">«Мы не мотивируем открывать бизнес. Мы помогаем понять — стоит ли его открывать.»</div>
-        <div class="mission-a">Реальные цифры, реальные риски, реальные кейсы. Без «успешного успеха» — только экономика и факты.</div>
-      </div>
-      <div class="path-t a d3">Ваш путь в ZEREK</div>
-      <div class="path a d4">
-        <div class="ps ps1" onclick="go('academy')"><div class="ps-n">📖</div><div class="ps-b"><div class="ps-t">Академия</div><div class="ps-d">Финансовая грамотность и бизнес-мышление — два уровня обучения</div></div><div class="ps-a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
-        <div class="ps ps2" onclick="go('niches')"><div class="ps-n">🔍</div><div class="ps-b"><div class="ps-t">Аналитика ниш</div><div class="ps-d">Детальный разбор бизнесов: вложения, выручка, окупаемость, риски</div></div><div class="ps-a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
-        <div class="ps ps4" onclick="go('cases')"><div class="ps-n">💀</div><div class="ps-b"><div class="ps-t">Кейсы ошибок</div><div class="ps-d">Реальные провалы бизнесов — чтобы вы не повторили чужие ошибки</div></div><div class="ps-a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
-        <div class="ps ps3" onclick="launchQC()"><div class="ps-n">📊</div><div class="ps-b"><div class="ps-t">Расчёты</div><div class="ps-d">Экспресс-оценка, финмодель на 60 месяцев, бизнес-план для грантов</div></div><div class="ps-a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div></div>
-      </div>
-      <div class="tagline a d5"><strong>Акцент на защите от потери денег.</strong><br>Три сценария всегда. Пессимистичный — первый.</div>
     </div>
 
     <!-- NICHES -->
