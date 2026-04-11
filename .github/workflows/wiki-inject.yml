@@ -1,0 +1,47 @@
+name: Wiki inject back button
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'wiki/kz/**.html'
+      - 'wiki/ru/**.html'
+      - 'scripts/wiki_inject.py'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: wiki-inject
+  cancel-in-progress: false
+
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    # Skip our own auto-commit to avoid loops
+    if: "!contains(github.event.head_commit.message, '[auto-inject]')"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run wiki_inject.py
+        run: python scripts/wiki_inject.py
+
+      - name: Commit and push if changed
+        run: |
+          if [ -n "$(git status --porcelain wiki/)" ]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add wiki/
+            git commit -m "chore: auto-inject back button into new wiki reviews [auto-inject]"
+            git push
+          else
+            echo "No changes to commit"
+          fi
