@@ -648,22 +648,35 @@ function csStep(step){
 function csStart(){try{Telegram.WebApp.HapticFeedback.impactOccurred('heavy')}catch(e){}csStep('list')}
 function csGoSplash(){try{Telegram.WebApp.HapticFeedback.impactOccurred('light')}catch(e){}csStep('splash')}
 
-// Open specific tab from URL ?tab=academy|niches|cases
+// Open specific tab from URL ?tab=academy|niches|cases — instant, no animation
 try{
   var _qs=new URLSearchParams(location.search);
   var _tab=_qs.get('tab');
   if(_tab&&document.getElementById('s-'+_tab)){
-    go(_tab);
+    // Switch tab instantly without animation
+    document.getElementById('s-home').classList.remove('on');
+    document.getElementById('s-'+_tab).classList.add('on');
+    cur=_tab;
+    var tabEl=document.querySelector('.tb[data-t="'+_tab+'"]');
+    if(tabEl){document.querySelectorAll('.tb').forEach(function(x){x.classList.remove('on')});tabEl.classList.add('on')}
     if(_tab==='academy'){
       try{
         var lastTrk=localStorage.getItem('zerek_ac_track');
-        if(lastTrk){acSelectLevel(lastTrk)}
+        if(lastTrk){
+          // Go straight to chapters step without animation
+          document.getElementById('ac-splash').classList.remove('on');
+          document.getElementById('ac-jrTrk').style.display=(lastTrk==='jr')?'block':'none';
+          document.getElementById('ac-stTrk').style.display=(lastTrk==='st')?'block':'none';
+          document.getElementById('ac-chapters').classList.add('on');
+          acStep='chapters';
+        }
       }catch(e){}
     } else if(_tab==='niches'){
-      // Skip splash, go straight to catalog
-      nvStep('catalog');
+      document.getElementById('nv-splash').classList.remove('on');
+      document.getElementById('nv-catalog').classList.add('on');
     } else if(_tab==='cases'){
-      csStep('list');
+      document.getElementById('cs-splash').classList.remove('on');
+      document.getElementById('cs-list').classList.add('on');
     }
   }
 }catch(e){}
