@@ -63,8 +63,8 @@ table.dt{width:100%;border-collapse:collapse;font-size:13px}.dt thead th{padding
 </style>
 
 <style>
-.zk-back{position:fixed;top:max(env(safe-area-inset-top,0px),60px);left:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:10px 16px;background:rgba(6,6,12,0.92);color:#FAF7F2;border:1px solid rgba(255,255,255,0.15);border-radius:22px;font-family:-apple-system,'Source Sans 3',sans-serif;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 4px 16px rgba(0,0,0,0.3)}
-.zk-back:active{transform:scale(0.95)}
+.zk-back{position:fixed;top:max(env(safe-area-inset-top,0px),60px);left:50%;transform:translateX(-50%);z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:10px 16px;background:rgba(6,6,12,0.92);color:#FAF7F2;border:1px solid rgba(255,255,255,0.15);border-radius:22px;font-family:-apple-system,'Source Sans 3',sans-serif;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 4px 16px rgba(0,0,0,0.3)}
+.zk-back:active{transform:translateX(-50%) scale(0.95)}
 .zk-back svg{width:14px;height:14px}
 .zk-top{position:fixed;bottom:28px;right:20px;z-index:9998;width:52px;height:52px;border-radius:50%;background:#2C1810;color:#FAF7F2;border:none;display:none;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,0.4);opacity:0;transition:opacity .3s,transform .2s}
 .zk-top.on{display:flex;opacity:1}
@@ -77,10 +77,11 @@ table.dt{width:100%;border-collapse:collapse;font-size:13px}.dt thead th{padding
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
   Назад
 </a>
-<button class="zk-top" id="zkTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+<button class="zk-top" id="zkTop" onclick="smoothScrollTop()">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
 </button>
 <script>
+function smoothScrollTop(){var start=window.pageYOffset;var startTime=null;var duration=900;function ease(t){return 1-Math.pow(1-t,3)}function step(now){if(!startTime)startTime=now;var progress=Math.min((now-startTime)/duration,1);window.scrollTo(0,start*(1-ease(progress)));if(progress<1)requestAnimationFrame(step)}requestAnimationFrame(step)}
 window.addEventListener('scroll',function(){var t=document.getElementById('zkTop');if(!t)return;if(window.scrollY>400){t.classList.add('on')}else{t.classList.remove('on')}});
 try{if(window.Telegram&&window.Telegram.WebApp){var tg=window.Telegram.WebApp;tg.ready&&tg.ready();tg.expand&&tg.expand()}}catch(e){}
 </script>
