@@ -35,10 +35,29 @@
 table.dt{width:100%;border-collapse:collapse;font-size:13px}.dt thead th{padding:10px 14px;text-align:left;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);border-bottom:2px solid var(--brd2);background:var(--gold-bg)}.dt td{padding:10px 14px;border-bottom:1px solid var(--brd);color:var(--t2)}.dt tr:hover td{background:var(--gold-bg);color:var(--t1)}.dt .n{font-family:'JetBrains Mono',monospace;font-weight:500;color:var(--t1)}.dt .hl{color:var(--err);font-weight:600}.tw{overflow-x:auto;border-radius:var(--r);border:1px solid var(--brd)}
 .cta-block{text-align:center;padding:48px 24px;background:linear-gradient(180deg,var(--bg2),var(--bg3));border-radius:var(--r);margin:24px 0}.cta-t{font-family:'Playfair Display',serif;font-size:clamp(1.3rem,3vw,1.8rem);font-weight:700;margin-bottom:10px;color:var(--t1)}.cta-d{color:var(--t2);font-size:.92rem;max-width:480px;margin:0 auto 20px;line-height:1.7}.cta-btn{display:inline-block;padding:12px 36px;background:linear-gradient(135deg,#1D7A4E,#166B42);color:#F4F9F6;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;border-radius:100px;text-decoration:none;transition:.3s;border:none;cursor:pointer}.cta-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(29,122,78,.25)}.cta-price{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--ac);margin-bottom:14px}
 .ft{padding:36px 0;border-top:1px solid var(--brd);text-align:center;background:var(--bg)}.ft-t{font-size:11px;color:var(--t3)}
+.zk-back{position:fixed;top:max(env(safe-area-inset-top,0px),60px);left:50%;transform:translateX(-50%);z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:10px 16px;background:rgba(6,6,12,0.92);color:#F4F9F6;border:1px solid rgba(255,255,255,0.15);border-radius:22px;font-family:-apple-system,'Source Sans 3',sans-serif;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 4px 16px rgba(0,0,0,0.3)}
+.zk-back:active{transform:translateX(-50%) scale(0.95)}
+.zk-back svg{width:14px;height:14px}
+.zk-top{position:fixed;bottom:28px;right:20px;z-index:9998;width:52px;height:52px;border-radius:50%;background:#1A2E23;color:#F4F9F6;border:none;display:none;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,0.4);opacity:0;transition:opacity .3s,transform .2s}
+.zk-top.on{display:flex;opacity:1}
+.zk-top:active{transform:scale(0.92)}
+.zk-top svg{width:20px;height:20px}
 @media(max-width:768px){.ct{padding:0 16px}.sec{padding:40px 0}.cd{padding:18px}.tc,.cg2,.cg3,.cg4{grid-template-columns:1fr}.hero{min-height:60vh;padding:40px 16px}.hero h1{font-size:1.8rem}.hero-sub{font-size:.9rem}.nav-in{gap:2px;padding:0 12px}.nav-a{font-size:10px;padding:4px 7px}.nav-logo{font-size:12px;letter-spacing:2px;margin-right:6px}.risk{padding:16px 18px}.risk-math{font-size:.78rem;padding:10px 12px}.mistake{padding:16px 18px}.care{padding:18px 16px}.care::before{left:14px;font-size:16px}.explain{padding:16px 18px}.case{padding:16px 18px}.case-text{font-size:.84rem}.cta-block{padding:36px 16px}.cta-btn{padding:12px 28px;font-size:12px}.sc{padding:14px}.sv{font-size:1.1rem}.callout{padding:14px 16px}.tw{font-size:11px}.dt td,.dt thead th{padding:5px 5px;font-size:9.5px;white-space:nowrap}.dt .n{font-size:9.5px}.check-item{gap:10px;padding:10px 0}.check-text{font-size:.84rem}.p{font-size:.88rem}.sec-t{font-size:1.3rem}}
 </style>
 </head>
 <body>
+<a class="zk-back" href="../../products/index.html?tab=niches" onclick="if(window.Telegram&&window.Telegram.WebApp){event.preventDefault();window.location.href=this.href}">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+  Назад
+</a>
+<button class="zk-top" id="zkTop" onclick="smoothScrollTop()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+<script>
+function smoothScrollTop(){var start=window.pageYOffset;var startTime=null;var duration=900;function ease(t){return 1-Math.pow(1-t,3)}function step(now){if(!startTime)startTime=now;var progress=Math.min((now-startTime)/duration,1);window.scrollTo(0,start*(1-ease(progress)));if(progress<1)requestAnimationFrame(step)}requestAnimationFrame(step)}
+window.addEventListener('scroll',function(){var t=document.getElementById('zkTop');if(!t)return;if(window.scrollY>400){t.classList.add('on')}else{t.classList.remove('on')}});
+try{if(window.Telegram&&window.Telegram.WebApp){var tg=window.Telegram.WebApp;tg.ready&&tg.ready();tg.expand&&tg.expand()}}catch(e){}
+</script>
 
 <section class="hero" id="top"><div>
 <div class="hero-logo">ZEREK</div>
