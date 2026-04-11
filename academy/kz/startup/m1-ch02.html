@@ -50,7 +50,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);-webki
 .hero-lead{font-size:16px;color:var(--t2);line-height:1.7;font-family:'Lora',serif;font-style:italic}
 
 /* ═══ CONTENT ═══ */
-.content{padding:0 22px;line-height:1.8}
+.content{padding:0 22px 110px;line-height:1.8}
 
 .txt{font-size:16px;color:var(--t2);line-height:1.8;margin:16px 0}
 .txt strong{color:var(--t1);font-weight:700}
@@ -101,7 +101,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);-webki
 .mod-complete-btn:active{transform:scale(0.96)}
 
 /* ═══ BOTTOM NAV ═══ */
-.bot{position:sticky;bottom:0;display:flex;gap:10px;padding:14px 22px 18px;padding-bottom:calc(18px + var(--sb));background:linear-gradient(0deg,var(--bg) 85%,transparent)}
+.bot{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;display:flex;gap:10px;padding:14px 22px 18px;padding-bottom:calc(18px + var(--sb));background:linear-gradient(0deg,var(--bg) 60%,rgba(10,10,20,0.95) 100%);z-index:90}
 .bn{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:14px;border-radius:var(--rs);border:none;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .12s}
 .bn:active{transform:scale(0.95)}
 .bn-prev{background:var(--s2);color:var(--t2);border:1px solid var(--b2)}
