@@ -327,10 +327,10 @@ html,body{background:#E6E8ED !important;color:#1A1A2E !important}
 
 /* Tab bar at bottom — DARK NAVY */
 /* === Tab Bar (dark navy with wave) === */
-.tabs,.tbs,.tbar{background:linear-gradient(180deg,#2E86E0,#1565C0) !important;border-top:1px solid rgba(255,255,255,0.18) !important;box-shadow:0 -8px 26px rgba(21,101,192,0.38),0 -1px 0 rgba(255,255,255,0.35) inset !important;padding:8px 0 calc(16px + env(safe-area-inset-bottom,0px)) !important;position:fixed !important;overflow:hidden !important;border-radius:18px 18px 0 0 !important}
+.tabs,.tbs,.tbar{background:linear-gradient(180deg,#2E86E0,#1565C0) !important;border-top:1px solid rgba(255,255,255,0.18) !important;box-shadow:0 -8px 26px rgba(21,101,192,0.38),0 -1px 0 rgba(255,255,255,0.35) inset !important;padding:5px 0 calc(8px + env(safe-area-inset-bottom,0px)) !important;position:fixed !important;overflow:hidden !important;border-radius:18px 18px 0 0 !important}
 .tabs::before,.tbs::before,.tbar::before{display:none !important}
 .tabs::after,.tbs::after,.tbar::after{display:none !important}
-.tb{position:relative !important;padding:8px 0 6px !important;color:rgba(255,255,255,0.7) !important;display:flex !important;flex-direction:column !important;align-items:center !important;gap:3px !important;transition:transform .25s cubic-bezier(.34,1.56,.64,1) !important;background:transparent !important}
+.tb{position:relative !important;padding:5px 0 3px !important;color:rgba(255,255,255,0.7) !important;display:flex !important;flex-direction:column !important;align-items:center !important;gap:2px !important;transition:transform .25s cubic-bezier(.34,1.56,.64,1) !important;background:transparent !important}
 .tb::before{content:'' !important;position:absolute !important;top:0 !important;left:50% !important;transform:translateX(-50%) scaleX(0) !important;width:26px !important;height:3px !important;background:#FFFFFF !important;border-radius:0 0 3px 3px !important;transition:transform .35s cubic-bezier(.34,1.56,.64,1) !important;box-shadow:0 0 14px rgba(255,255,255,0.9) !important;display:block !important}
 .tb.on::before{transform:translateX(-50%) scaleX(1) !important}
 .tb::after{display:none !important}
@@ -511,8 +511,8 @@ input[type=range]::-webkit-slider-thumb{background:#1A1A2E !important;box-shadow
 .lp-slogan{font-family:'Playfair Display',serif !important;font-size:26px;font-weight:600;font-style:italic;line-height:1.45;color:#111111;letter-spacing:-0.3px;margin:0;max-width:360px}
 .lp-slogan em{font-style:italic;color:#6C63FF;font-weight:600;font-size:28px;display:inline}
 .lp-line{width:60px;height:2px;background:#6C63FF;margin:18px auto 8px;border-radius:1px;flex-shrink:0}
-.lp-vid-crop{width:100%;max-width:400px;height:131px;overflow:hidden;position:relative;margin:6px auto 22px;flex-shrink:0}
-.lp-vid-crop video{position:absolute;width:565px;height:565px;left:50%;top:-207px;transform:translateX(-50%);object-fit:contain;background:transparent;border:none;outline:none}
+.lp-vid-crop{width:100%;max-width:380px;height:230px;overflow:hidden;position:relative;margin:8px auto 18px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.lp-vid-crop video{width:340px;height:340px;object-fit:contain;background:transparent;border:none;outline:none;margin:-55px 0}
 .lp-sub{font-family:'Source Sans 3',sans-serif !important;font-size:15px;font-weight:400;line-height:1.55;color:#555555;margin:0 0 14px;max-width:360px;padding:14px 20px;background:#F4F5F8;border:1px solid #E5E7EB;border-radius:14px;box-shadow:0 2px 8px rgba(15,23,42,0.04);text-align:center}
 .lp-sub::before{display:none}
 .lp-accent{font-family:'Source Sans 3',sans-serif !important;font-size:15.5px;font-weight:600;line-height:1.55;color:#111111;margin:0;max-width:360px;padding:14px 20px;background:linear-gradient(135deg,#F5F3FF,#EEF2FF);border:1px solid #DDD6FE;border-radius:14px;box-shadow:0 4px 16px rgba(108,99,255,0.10);text-align:center}
@@ -764,10 +764,19 @@ input[type=range]::-webkit-slider-thumb{background:#1A1A2E !important;box-shadow
 
 <script>
 !function(){try{var t=Telegram.WebApp;t.ready();t.expand();t.requestFullscreen&&t.requestFullscreen();t.disableVerticalSwipes&&t.disableVerticalSwipes();t.MainButton.hide();t.setHeaderColor&&t.setHeaderColor('#0A0A14');t.setBackgroundColor&&t.setBackgroundColor('#0A0A14')}catch(e){}}();
-// Hide splash when video ends (or after 6 sec fallback)
+// Hide splash when video ends (skip entirely if returning from sub-screen)
 (function(){
   var sp=document.getElementById('splash');
+  if(!sp)return;
   var vid=document.getElementById('splashVideo');
+  // Skip splash if returning via ?tab= (back from lesson/wiki/product)
+  var fromBack=false;
+  try{fromBack=new URLSearchParams(location.search).has('tab')}catch(e){}
+  if(fromBack){
+    sp.style.display='none';
+    if(vid){try{vid.pause()}catch(e){}}
+    return;
+  }
   var hidden=false;
   function hide(){if(hidden)return;hidden=true;sp.classList.add('hide');setTimeout(function(){sp.style.display='none'},700)}
   if(vid){
