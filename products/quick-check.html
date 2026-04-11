@@ -1382,14 +1382,7 @@ function runCalculation() {
   // Show loading
   document.getElementById('survey-screen').style.display = 'none';
   document.getElementById('loading-screen').style.display = 'block';
-
-  var steps = ['Загружаем базу данных...', 'Анализируем рынок...', 'Считаем инвестиции...', 'Строим прогноз выручки...', 'Оцениваем риски...', 'Формируем отчёт...'];
-  var si = 0;
-  var stepEl = document.getElementById('loading-step');
-  var interval = setInterval(function() {
-    si++;
-    if (si < steps.length) stepEl.textContent = steps[si];
-  }, 1200);
+  var interval = 0;
 
   var areaVal = S.area_m2 || parseInt(document.getElementById('area-input').value) || 20;
 

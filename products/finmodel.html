@@ -460,9 +460,7 @@ function renderConfirm(){
 function runCalculation(){
   if(!S.city_id||!S.niche_id||!S.format_id){alert('Заполните все обязательные поля');return}
   $('survey-screen').style.display='none';$('loading-screen').style.display='block';
-  var steps=['Загружаем параметры','Считаем модель','Строим P&L','Cash Flow','Стресс-тест','Готовим файл'];
-  var si=0,stepEl=$('loading-step');
-  var iv=setInterval(function(){si++;if(si<steps.length)stepEl.textContent=steps[si]},1200);
+  var iv=0;
 
   var body={
     city_id:String(S.city_id),niche_id:String(S.niche_id),format_id:String(S.format_id),
