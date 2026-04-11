@@ -505,11 +505,12 @@ input[type=range]::-webkit-slider-thumb{background:#1A1A2E !important;box-shadow
 /* === Landing Home Page === */
 #s-home{background:#FFFFFF !important;padding:0 !important;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;height:100%}
 #s-home::before{display:none !important}
-.lp{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;padding:0 0 18px;width:100%;max-width:440px;gap:16px}
-.lp-slogan-img{display:block;width:100%;max-width:none;height:auto;margin:0;border-radius:0;background:#000;padding:14px 18px;box-sizing:border-box}
-.lp-video{width:345px;height:345px;object-fit:contain;display:block;background:transparent;border-radius:18px;margin-top:-8px}
-.lp-sub{font-family:'Source Sans 3',sans-serif !important;font-size:15.5px;font-weight:400;line-height:1.55;color:#4A5568;margin:0;padding:14px 22px;background:#F3F4F6;border-radius:14px;max-width:340px;letter-spacing:0.1px}
-.lp-accent{font-family:'Source Sans 3',sans-serif !important;font-size:15.5px;font-weight:600;line-height:1.55;color:#0F172A;margin:0;padding:14px 22px;background:#EEF2FF;border:1px solid #C7D2FE;border-radius:14px;max-width:340px;letter-spacing:0.1px}
+.lp{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;padding:0 0 14px;width:100%;max-width:440px;gap:8px}
+.lp-slogan-img{display:block;width:100%;max-width:none;height:auto;margin:0;border-radius:0;background:#000;padding:12px 18px;box-sizing:border-box}
+.lp-vid-wrap{width:100%;max-width:420px;height:140px;overflow:hidden;position:relative;margin:-4px 0 0}
+.lp-vid-wrap video{position:absolute;width:594px;height:594px;left:50%;top:-218px;transform:translateX(-50%);object-fit:contain;background:transparent}
+.lp-sub{font-family:'Source Sans 3',sans-serif !important;font-size:15px;font-weight:400;line-height:1.5;color:#4A5568;margin:0;padding:11px 18px;background:#F3F4F6;border-radius:12px;max-width:360px;letter-spacing:0.1px}
+.lp-accent{font-family:'Source Sans 3',sans-serif !important;font-size:15px;font-weight:600;line-height:1.5;color:#0F172A;margin:0;padding:11px 18px;background:#EEF2FF;border:1px solid #C7D2FE;border-radius:12px;max-width:360px;letter-spacing:0.1px}
 
 </style>
 </head>
@@ -533,9 +534,11 @@ input[type=range]::-webkit-slider-thumb{background:#1A1A2E !important;box-shadow
     <div class="scr on" id="s-home">
       <div class="lp">
         <img class="lp-slogan-img" src="assets/slogan.png?v=2" alt="В бизнесе успешен не тот, кто умнее — а тот, кто управляет рисками">
-        <video class="lp-video" autoplay muted loop playsinline preload="auto">
-          <source src="assets/mba.mp4?v=2" type="video/mp4">
-        </video>
+        <div class="lp-vid-wrap">
+          <video class="lp-video" autoplay muted loop playsinline preload="auto">
+            <source src="assets/mba.mp4?v=2" type="video/mp4">
+          </video>
+        </div>
         <p class="lp-sub">Школа не учит бизнесу. Универ далёк от практики. Мы это устраняем.</p>
         <p class="lp-accent">Не скучная финграмотность и не «успешный успех» — а реальность.</p>
       </div>
