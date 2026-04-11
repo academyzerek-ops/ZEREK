@@ -518,6 +518,185 @@ input[type=range]::-webkit-slider-thumb{background:#1A1A2E !important;box-shadow
 .lp-accent{font-family:'Source Sans 3',sans-serif !important;font-size:15.5px;font-weight:600;line-height:1.55;color:#111111;margin:0;max-width:360px;padding:14px 20px;background:linear-gradient(135deg,#F5F3FF,#EEF2FF);border:1px solid #DDD6FE;border-radius:14px;box-shadow:0 4px 16px rgba(108,99,255,0.10);text-align:center}
 .lp-accent::before{display:none}
 
+/* ═══════════════════════════════════════════════════════════════
+   NEUMORPHIC THEME — full visual override (final cascade layer)
+   Light cards floating on dark gradient bg, soft 3D shadows.
+   ═══════════════════════════════════════════════════════════════ */
+:root{
+  --nm-bg-1:#0f0f1a;
+  --nm-bg-2:#1a1030;
+  --nm-card:#f0f0f5;
+  --nm-card-hi:#ffffff;
+  --nm-text:#1a1a2e;
+  --nm-text-2:#4a4a60;
+  --nm-text-3:#6e6e88;
+  --nm-text-on-dark:#e8e6f0;
+  --nm-shadow-out:12px 12px 24px rgba(0,0,0,0.30),-6px -6px 16px rgba(255,255,255,0.05);
+  --nm-shadow-out-sm:6px 6px 14px rgba(0,0,0,0.22),-3px -3px 10px rgba(255,255,255,0.04);
+  --nm-shadow-in:inset 4px 4px 8px rgba(0,0,0,0.10),inset -3px -3px 6px rgba(255,255,255,0.95);
+  --nm-shadow-btn:6px 6px 12px rgba(0,0,0,0.12),-4px -4px 8px rgba(255,255,255,0.85);
+  --nm-shadow-btn-press:inset 3px 3px 6px rgba(0,0,0,0.15),inset -2px -2px 4px rgba(255,255,255,0.85);
+  --nm-glow-home:rgba(108,99,255,0.30);
+  --nm-glow-niches:rgba(91,140,255,0.30);
+  --nm-glow-academy:rgba(255,165,60,0.30);
+  --nm-glow-cases:rgba(240,98,146,0.30);
+  --nm-glow-calc:rgba(78,203,141,0.30);
+  --nm-purple:#6c63ff;
+  --nm-blue:#5b8cff;
+  --nm-orange:#ffa53c;
+  --nm-pink:#f06292;
+  --nm-green:#4ecb8d;
+}
+html,body{background:linear-gradient(180deg,var(--nm-bg-1) 0%,var(--nm-bg-2) 100%) !important}
+body{background-attachment:fixed !important;color:var(--nm-text-on-dark) !important;font-family:'Source Sans 3','Outfit',sans-serif !important}
+.app{background:transparent !important;padding-top:max(env(safe-area-inset-top,0px),16px) !important}
+.screens{background:transparent !important}
+.scr{background:transparent !important;padding-bottom:96px !important}
+.scr::-webkit-scrollbar{display:none}
+
+/* Header logo */
+.hdr{background:transparent !important;padding:6px 0 10px !important;display:flex;justify-content:center !important;border:none !important;box-shadow:none !important}
+.h-logo-img{height:24px !important;width:auto !important;filter:brightness(0) invert(1) !important;opacity:.95 !important}
+
+/* Splash bg */
+.splash{background:var(--nm-bg-1) !important}
+
+/* ───────── HOME (Главная) ───────── */
+.lp{padding:20px 22px 24px !important;text-align:center !important;display:flex;flex-direction:column;align-items:center;gap:14px !important;background:transparent !important}
+.lp-slogan{font-family:'Playfair Display',serif !important;font-style:italic !important;font-weight:500 !important;font-size:24px !important;line-height:1.3 !important;color:var(--nm-text-on-dark) !important;margin:6px 0 0 !important;max-width:380px;background:none !important;-webkit-text-fill-color:initial !important;padding:0 !important;border:none !important;box-shadow:none !important}
+.lp-slogan em{font-style:italic !important;color:#6c63ff !important;background:none !important;-webkit-background-clip:initial !important;-webkit-text-fill-color:#6c63ff !important;text-shadow:0 0 18px rgba(108,99,255,0.45) !important}
+.lp-line{display:none !important}
+.lp-vid-crop{width:220px !important;height:220px !important;border-radius:28px !important;overflow:hidden !important;background:var(--nm-card) !important;box-shadow:var(--nm-shadow-out) !important;display:flex;align-items:center;justify-content:center;position:relative}
+.lp-vid-crop::after{content:'';position:absolute;left:50%;bottom:-26px;width:140px;height:30px;background:radial-gradient(ellipse,var(--nm-glow-home),transparent 70%);transform:translateX(-50%);filter:blur(8px);pointer-events:none;z-index:-1}
+.lp-vid-crop video,.lp-badge-vid{width:200px !important;height:200px !important;object-fit:contain !important;margin:0 !important}
+.lp-sub,.lp-accent{font-family:'Source Sans 3',sans-serif !important;font-size:14.5px !important;font-weight:400 !important;line-height:1.6 !important;background:transparent !important;border:none !important;box-shadow:none !important;padding:0 16px !important;max-width:360px !important;margin:0 !important;text-align:center !important}
+.lp-sub{color:var(--nm-text-on-dark) !important;opacity:.9}
+.lp-accent{color:var(--nm-text-on-dark) !important;font-weight:500 !important;opacity:.95}
+
+/* ───────── TAB INTRO (общий) ───────── */
+.tab-intro{padding:24px 24px 16px !important;text-align:center !important;background:transparent !important}
+.tab-intro-t{font-family:'Playfair Display',serif !important;font-style:italic !important;font-weight:500 !important;font-size:24px !important;line-height:1.3 !important;color:var(--nm-text-on-dark) !important;margin:0 !important}
+.tab-intro-d{font-family:'Source Sans 3',sans-serif !important;font-size:14px !important;line-height:1.6 !important;color:var(--nm-text-on-dark) !important;opacity:.78 !important;max-width:320px !important;margin:12px auto 16px !important}
+
+/* Niches accent row (3 пилюли) */
+.acc-row{display:flex !important;gap:8px !important;justify-content:center !important;flex-wrap:wrap !important;margin:14px auto 4px !important;max-width:380px}
+.acc{display:inline-flex !important;align-items:center !important;gap:6px !important;padding:8px 14px !important;border-radius:50px !important;background:var(--nm-card) !important;color:var(--nm-text) !important;font-family:'Source Sans 3',sans-serif !important;font-size:11.5px !important;font-weight:600 !important;box-shadow:var(--nm-shadow-out-sm) !important;cursor:default}
+.acc-i{font-size:13px;line-height:1}
+.acc-t{white-space:nowrap}
+
+/* ───────── NICHES card list ───────── */
+.sb{margin:6px 22px 12px !important;padding:0 !important;background:var(--nm-card) !important;border-radius:50px !important;box-shadow:var(--nm-shadow-in) !important;border:none !important;display:flex !important;align-items:center !important;gap:10px !important;padding:0 18px !important;height:44px}
+.sb svg{width:18px !important;height:18px !important;color:var(--nm-text-3) !important;flex-shrink:0}
+.sb input{background:transparent !important;border:none !important;box-shadow:none !important;color:var(--nm-text) !important;font-family:'Source Sans 3',sans-serif !important;font-size:14px !important;font-weight:500 !important;outline:none !important;width:100% !important;padding:0 !important;height:44px}
+.sb input::placeholder{color:var(--nm-text-3) !important}
+.cp{padding:4px 22px 14px !important;display:flex !important;gap:8px !important;overflow-x:auto !important;-webkit-overflow-scrolling:touch}
+.cp::-webkit-scrollbar{display:none}
+.cp-p{flex-shrink:0 !important;padding:8px 16px !important;background:var(--nm-card) !important;border:none !important;border-radius:50px !important;font-family:'Source Sans 3',sans-serif !important;font-size:12px !important;font-weight:600 !important;color:var(--nm-text-2) !important;cursor:pointer !important;white-space:nowrap !important;box-shadow:var(--nm-shadow-out-sm) !important;transition:all .2s ease}
+.cp-p.on{background:linear-gradient(135deg,#1a1a2e,#2a2a44) !important;color:#fff !important;box-shadow:var(--nm-shadow-btn-press) !important}
+.nv-list{padding:4px 22px 18px !important;display:flex !important;flex-direction:column !important;gap:14px !important}
+.nc{background:var(--nm-card) !important;border:none !important;border-radius:20px !important;box-shadow:var(--nm-shadow-out) !important;padding:0 !important;display:flex !important;overflow:hidden !important;cursor:pointer !important;transition:transform .2s ease}
+.nc:active{transform:scale(0.98)}
+.nc-th{width:74px !important;min-width:74px !important;display:flex !important;align-items:center !important;justify-content:center !important;font-size:32px !important;background:#fff !important;border-right:1px solid rgba(0,0,0,0.04) !important}
+.nc-i{padding:14px 16px !important;flex:1 !important;display:flex !important;flex-direction:column !important;gap:3px !important}
+.nc-cat{font-family:'Source Sans 3',sans-serif !important;font-size:10px !important;font-weight:700 !important;text-transform:uppercase !important;letter-spacing:1px !important;color:var(--nm-text-3) !important}
+.nc-name{font-family:'Source Sans 3',sans-serif !important;font-size:16px !important;font-weight:700 !important;color:var(--nm-text) !important}
+.nc-meta{font-family:'JetBrains Mono',monospace !important;font-size:11px !important;color:var(--nm-text-2) !important;margin-top:2px}
+.nc-badge{display:inline-flex !important;align-items:center !important;align-self:flex-start !important;margin-top:6px !important;padding:3px 10px !important;border-radius:50px !important;font-family:'Source Sans 3',sans-serif !important;font-size:10px !important;font-weight:700 !important;text-transform:uppercase !important;letter-spacing:.5px !important}
+.nc-badge.bg-g{background:rgba(78,203,141,0.18) !important;color:#1d7a4e !important}
+.nc-badge.bg-a{background:rgba(255,165,60,0.20) !important;color:#a3580a !important}
+
+/* ───────── ACADEMY level cards ───────── */
+.ac-lvl-h{display:none !important}
+.ac-lvl{margin:14px 22px !important;padding:22px 22px !important;background:var(--nm-card) !important;border:none !important;border-radius:20px !important;box-shadow:var(--nm-shadow-out) !important;color:var(--nm-text) !important;cursor:pointer !important;position:relative !important;overflow:visible !important;transition:transform .2s ease}
+.ac-lvl::before{content:'';position:absolute;left:50%;bottom:-14px;width:60%;height:24px;background:radial-gradient(ellipse,var(--nm-glow-academy),transparent 70%);transform:translateX(-50%);filter:blur(10px);pointer-events:none;z-index:-1}
+.ac-lvl.trk-st::before{background:radial-gradient(ellipse,var(--nm-glow-academy),transparent 70%)}
+.ac-lvl.trk-jr::before{background:radial-gradient(ellipse,var(--nm-glow-niches),transparent 70%)}
+.ac-lvl:active{transform:scale(0.98)}
+.ac-lvl-icon{font-size:34px !important;line-height:1 !important;margin-bottom:10px !important}
+.ac-lvl-bdg{display:inline-block !important;padding:4px 12px !important;border-radius:50px !important;background:#1a1a2e !important;color:#fff !important;font-family:'Source Sans 3',sans-serif !important;font-size:10px !important;font-weight:700 !important;letter-spacing:1px !important;text-transform:uppercase !important;margin-bottom:8px !important}
+.ac-lvl-t{font-family:'Source Sans 3',sans-serif !important;font-size:20px !important;font-weight:700 !important;color:var(--nm-text) !important;margin-bottom:6px !important}
+.ac-lvl-d{font-family:'Source Sans 3',sans-serif !important;font-size:13.5px !important;line-height:1.55 !important;color:var(--nm-text-2) !important;margin-bottom:10px !important}
+.ac-lvl-mt{font-family:'JetBrains Mono',monospace !important;font-size:11px !important;color:var(--nm-text-3) !important;display:flex !important;flex-wrap:wrap !important;gap:6px !important;margin-bottom:14px !important}
+.ac-lvl-go{display:inline-flex !important;align-items:center !important;justify-content:center !important;padding:10px 22px !important;border-radius:50px !important;background:linear-gradient(135deg,#1a1a2e,#2a2a44) !important;color:#fff !important;font-family:'Source Sans 3',sans-serif !important;font-size:13px !important;font-weight:700 !important;box-shadow:var(--nm-shadow-btn) !important}
+
+/* Academy chapter list (when level selected) */
+.ac-back{margin:16px 22px 4px !important;padding:8px 14px !important;background:var(--nm-card) !important;color:var(--nm-text) !important;border:none !important;border-radius:50px !important;font-family:'Source Sans 3',sans-serif !important;font-size:12px !important;font-weight:700 !important;display:inline-flex !important;align-items:center !important;gap:6px !important;box-shadow:var(--nm-shadow-out-sm) !important;cursor:pointer !important}
+.ac-back svg{width:14px;height:14px}
+.ac-trk{margin:14px 22px !important;background:var(--nm-card) !important;border:none !important;border-radius:20px !important;box-shadow:var(--nm-shadow-out) !important;overflow:hidden !important;color:var(--nm-text) !important}
+.ac-top{padding:18px 20px 14px !important}
+.ac-bdg{display:inline-block;padding:3px 10px;border-radius:50px;background:#1a1a2e;color:#fff;font-size:9.5px;font-weight:700;letter-spacing:1px;margin-bottom:8px}
+.ac-tt{font-family:'Source Sans 3',sans-serif !important;font-size:18px;font-weight:700;color:var(--nm-text) !important;margin-bottom:4px}
+.ac-ds{font-family:'Source Sans 3',sans-serif !important;font-size:12.5px;color:var(--nm-text-2) !important;line-height:1.5}
+.ac-chs{padding:6px 16px 16px}
+.ac-ch{background:#fff !important;border:none !important;border-radius:14px !important;color:var(--nm-text) !important;box-shadow:var(--nm-shadow-out-sm) !important;margin-top:8px !important}
+
+/* ───────── CASES list ───────── */
+.cs-h{display:none !important}
+.cs-list{padding:4px 22px 18px !important;display:flex !important;flex-direction:column !important;gap:14px !important}
+.cs-list>*,.cs-card{background:var(--nm-card) !important;border:none !important;border-radius:18px !important;box-shadow:var(--nm-shadow-out) !important;color:var(--nm-text) !important;padding:16px 18px 16px 22px !important;position:relative !important;overflow:hidden !important;cursor:pointer !important}
+.cs-card::before{content:'' !important;position:absolute !important;left:0 !important;top:14px !important;bottom:14px !important;width:5px !important;height:auto !important;border-radius:0 4px 4px 0 !important;background:var(--nm-pink) !important}
+.cs-card[data-cat="food"]::before{background:var(--nm-orange) !important}
+.cs-card[data-cat="svc"]::before{background:var(--nm-purple) !important}
+.cs-card[data-cat="ret"]::before{background:var(--nm-blue) !important}
+.cs-card[data-cat="edu"]::before{background:var(--nm-green) !important}
+.cs-tag{font-family:'Source Sans 3',sans-serif !important;font-size:9.5px !important;font-weight:700 !important;letter-spacing:1.5px !important;text-transform:uppercase !important;color:var(--nm-text-3) !important;margin-bottom:6px !important}
+.cs-title{font-family:'Source Sans 3',sans-serif !important;font-size:15.5px !important;font-weight:700 !important;color:var(--nm-text) !important;line-height:1.3 !important;margin-bottom:4px !important}
+.cs-city{font-family:'Source Sans 3',sans-serif !important;font-size:11px !important;color:var(--nm-text-3) !important;margin-bottom:10px !important}
+.cs-lesson{font-family:'Source Sans 3',sans-serif !important;font-size:12.5px !important;color:var(--nm-text-2) !important;line-height:1.55 !important;padding:11px 13px !important;background:#fff !important;border-radius:12px !important;box-shadow:var(--nm-shadow-in) !important}
+.cs-lesson strong{color:var(--nm-text) !important;font-weight:700 !important}
+.cs-tg{margin:8px 22px 0 !important;padding:14px 16px !important;background:var(--nm-card) !important;border:none !important;border-radius:18px !important;box-shadow:var(--nm-shadow-out) !important;display:flex !important;align-items:center !important;gap:14px !important;cursor:pointer !important;color:var(--nm-text) !important}
+.cs-tg-icon{font-size:24px;flex-shrink:0}
+.cs-tg-t{font-family:'Source Sans 3',sans-serif;font-size:13.5px;font-weight:700;color:var(--nm-text) !important}
+.cs-tg-d{font-family:'Source Sans 3',sans-serif;font-size:11.5px;color:var(--nm-text-2) !important;margin-top:2px}
+.cs-tg-a{margin-left:auto;color:var(--nm-text-3)}
+
+/* ───────── CALC product cards ───────── */
+.pc{margin:14px 22px !important;padding:22px !important;background:var(--nm-card) !important;border:none !important;border-radius:20px !important;box-shadow:var(--nm-shadow-out) !important;color:var(--nm-text) !important;cursor:pointer !important;position:relative !important;overflow:visible !important}
+.pc::before{content:'';position:absolute;left:50%;bottom:-12px;width:60%;height:22px;background:radial-gradient(ellipse,var(--nm-glow-calc),transparent 70%);transform:translateX(-50%);filter:blur(10px);pointer-events:none;z-index:-1}
+.pc:nth-of-type(2)::before{background:radial-gradient(ellipse,var(--nm-glow-academy),transparent 70%)}
+.pc:nth-of-type(3)::before{background:radial-gradient(ellipse,var(--nm-glow-cases),transparent 70%)}
+.pc>div[style*="position:absolute"]{display:none !important}
+.pc>div[style*="display:flex;align-items:flex-start;justify-content:space-between"]{margin-bottom:12px !important}
+.pc>div[style*="display:flex;align-items:flex-start;justify-content:space-between"]>div:first-child{background:#fff !important;box-shadow:var(--nm-shadow-out-sm) !important;border-radius:14px !important;width:48px !important;height:48px !important}
+.pc>div[style*="display:flex;align-items:flex-start;justify-content:space-between"]>div:last-child{font-family:'JetBrains Mono',monospace !important;font-size:18px !important;font-weight:700 !important;color:var(--nm-text) !important}
+.pc>div[style*="display:flex;align-items:flex-start;justify-content:space-between"]>div:last-child span{color:var(--nm-text-3) !important}
+.pc>div[style*="font-size:16px;font-weight:700"]{font-family:'Source Sans 3',sans-serif !important;font-size:18px !important;color:var(--nm-text) !important;margin-bottom:6px !important}
+.pc>div[style*="font-size:13px;color:var(--t2)"]{font-family:'Source Sans 3',sans-serif !important;font-size:13.5px !important;color:var(--nm-text-2) !important;line-height:1.55 !important;margin-bottom:14px !important}
+.pc>div[style*="display:flex;flex-wrap:wrap;gap:6px"]{margin-bottom:16px !important}
+.pc>div[style*="display:flex;flex-wrap:wrap;gap:6px"]>span{background:#fff !important;color:var(--nm-text-2) !important;font-family:'Source Sans 3',sans-serif !important;font-size:10.5px !important;font-weight:600 !important;padding:5px 12px !important;border-radius:50px !important;box-shadow:var(--nm-shadow-out-sm) !important}
+.pc>div[style*="display:flex;align-items:center;justify-content:center;gap:8px;width:100%"]{font-family:'Source Sans 3',sans-serif !important;font-size:14px !important;font-weight:700 !important;padding:14px !important;border-radius:50px !important;box-shadow:var(--nm-shadow-btn) !important;color:#fff !important}
+.pc:nth-of-type(1)>div[style*="display:flex;align-items:center;justify-content:center;gap:8px;width:100%"]{background:linear-gradient(135deg,var(--nm-purple),#5249e0) !important}
+.pc:nth-of-type(2)>div[style*="display:flex;align-items:center;justify-content:center;gap:8px;width:100%"]{background:linear-gradient(135deg,var(--nm-green),#3aa872) !important;color:#fff !important}
+.pc:nth-of-type(3)>div[style*="display:flex;align-items:center;justify-content:center;gap:8px;width:100%"]{background:linear-gradient(135deg,var(--nm-orange),#e08a1f) !important;color:#fff !important}
+
+/* ───────── TAB BAR (нижний) ───────── */
+.tabs{background:var(--nm-card) !important;border:none !important;border-radius:24px 24px 0 0 !important;box-shadow:0 -10px 30px rgba(0,0,0,0.45),0 -2px 0 rgba(255,255,255,0.10) inset !important;padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px)) !important;position:fixed !important;overflow:visible !important}
+.tabs::before,.tabs::after{display:none !important}
+.tb{position:relative !important;padding:8px 0 6px !important;display:flex !important;flex-direction:column !important;align-items:center !important;gap:3px !important;color:var(--nm-text-3) !important;background:transparent !important;cursor:pointer !important;transition:transform .2s ease}
+.tb svg{width:22px !important;height:22px !important;color:var(--nm-text-3) !important;stroke-width:1.5 !important;fill:none !important;transition:color .25s ease,transform .25s ease}
+.tb-l{font-family:'Source Sans 3',sans-serif !important;font-size:10px !important;font-weight:600 !important;color:var(--nm-text-3) !important;letter-spacing:.2px !important;transition:color .25s ease}
+.tb::before{display:block !important;content:'' !important;position:absolute !important;left:50% !important;bottom:-2px !important;top:auto !important;width:32px !important;height:6px !important;border-radius:50% !important;transform:translateX(-50%) scale(0) !important;background:var(--nm-purple) !important;filter:blur(8px) !important;opacity:.0 !important;transition:transform .35s ease,opacity .35s ease !important;box-shadow:none !important}
+.tb.on{color:var(--nm-text) !important}
+.tb.on svg{color:var(--nm-text) !important;transform:translateY(-1px) scale(1.05) !important;filter:none !important}
+.tb.on .tb-l{color:var(--nm-text) !important;text-shadow:none !important}
+.tb.on::before{transform:translateX(-50%) scale(1) !important;opacity:1 !important}
+.tb[data-t="home"].on::before{background:var(--nm-purple) !important;box-shadow:0 0 14px var(--nm-glow-home) !important}
+.tb[data-t="niches"].on::before{background:var(--nm-blue) !important;box-shadow:0 0 14px var(--nm-glow-niches) !important}
+.tb[data-t="academy"].on::before{background:var(--nm-orange) !important;box-shadow:0 0 14px var(--nm-glow-academy) !important}
+.tb[data-t="cases"].on::before{background:var(--nm-pink) !important;box-shadow:0 0 14px var(--nm-glow-cases) !important}
+.tb[data-t="calc"].on::before{background:var(--nm-green) !important;box-shadow:0 0 14px var(--nm-glow-calc) !important}
+.tb:active{transform:scale(0.94) !important}
+
+/* Calc footer text */
+.scr#s-calc>div[style*="text-align:center"]{color:var(--nm-text-3) !important;font-family:'Source Sans 3',sans-serif !important}
+
+/* Hide any leftover ac-spl-* (no longer used) */
+.ac-spl-hero,.ac-spl-body,.ac-spl-emoji,.ac-spl-glow,.ac-spl-stats,.ac-cta{display:none !important}
+
+@media (prefers-reduced-motion:reduce){
+  .scr,.tb,.nc,.ac-lvl,.pc{transition:none !important}
+}
+
 </style>
 </head>
 <body>
@@ -553,33 +732,16 @@ input[type=range]::-webkit-slider-thumb{background:#1A1A2E !important;box-shadow
 
     <!-- NICHES -->
     <div class="scr" id="s-niches">
-      <!-- STEP 1: Splash -->
-      <div class="ac-step on" id="nv-splash">
-        <div class="ac-spl-hero">
-          <div class="ac-spl-emoji">🔍</div>
-          <div class="ac-spl-glow" style="background:radial-gradient(circle,rgba(76,201,240,0.25),rgba(124,108,255,0.1) 40%,transparent 70%)"></div>
-        </div>
-        <div class="ac-spl-body">
-          <h1 class="ac-spl-t">Обзоры ниш</h1>
-          <p class="ac-spl-d">Подробные разборы 30+ бизнес-ниш в Казахстане. Вложения, окупаемость, риски, реальные кейсы.</p>
-          <div class="ac-spl-stats">
-            <div class="ac-spl-stat"><div class="ac-spl-sn">30+</div><div class="ac-spl-sl">ниш</div></div>
-            <div class="ac-spl-stat"><div class="ac-spl-sn">5</div><div class="ac-spl-sl">категорий</div></div>
-            <div class="ac-spl-stat"><div class="ac-spl-sn">14</div><div class="ac-spl-sl">городов</div></div>
+      <div class="ac-step on" id="nv-catalog">
+        <div class="tab-intro">
+          <h1 class="tab-intro-t">Каждая ниша — разобрана на цифры</h1>
+          <p class="tab-intro-d">Не гуглите «как открыть кофейню». Здесь — реальные вложения, реальная окупаемость, реальные причины закрытий. По каждому городу Казахстана.</p>
+          <div class="acc-row">
+            <div class="acc"><span class="acc-i">💰</span><span class="acc-t">Сколько вложить</span></div>
+            <div class="acc"><span class="acc-i">⏱</span><span class="acc-t">Когда окупится</span></div>
+            <div class="acc"><span class="acc-i">⚠️</span><span class="acc-t">Что убивает бизнес</span></div>
           </div>
-          <button class="ac-cta" onclick="nvStart()" style="background:linear-gradient(135deg,var(--cy),var(--ac))">
-            Открыть каталог
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="9 6 15 12 9 18"/></svg>
-          </button>
         </div>
-      </div>
-      <!-- STEP 2: Catalog -->
-      <div class="ac-step" id="nv-catalog">
-        <button class="ac-back" onclick="nvGoSplash()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-          Назад
-        </button>
-        <div class="nv-h a"><h2>Аналитика ниш</h2><p>Каждая ниша — вложения, риски, окупаемость и реальные кейсы</p></div>
         <div class="sb a d1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" placeholder="Поиск..." id="sIn" oninput="renderN()"></div>
         <div class="cp a d2" id="cpEl"></div>
         <div class="nv-list a d3" id="nList"></div>
@@ -588,36 +750,10 @@ input[type=range]::-webkit-slider-thumb{background:#1A1A2E !important;box-shadow
 
     <!-- ACADEMY -->
     <div class="scr" id="s-academy">
-      <!-- STEP 1: Splash -->
-      <div class="ac-step on" id="ac-splash">
-        <div class="ac-spl-hero">
-          <div class="ac-spl-emoji">🎓</div>
-          <div class="ac-spl-glow"></div>
-        </div>
-        <div class="ac-spl-body">
-          <h1 class="ac-spl-t">Мы разработали уроки по&nbsp;бизнесу</h1>
-          <p class="ac-spl-d">Только самое нужное, самое важное.<br>Реальные кейсы. Практика. Без воды.</p>
-          <div class="ac-spl-stats">
-            <div class="ac-spl-stat"><div class="ac-spl-sn">50</div><div class="ac-spl-sl">уроков</div></div>
-            <div class="ac-spl-stat"><div class="ac-spl-sn">7</div><div class="ac-spl-sl">модулей</div></div>
-            <div class="ac-spl-stat"><div class="ac-spl-sn">∞</div><div class="ac-spl-sl">пользы</div></div>
-          </div>
-          <button class="ac-cta" onclick="acStart()">
-            Начать обучение
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="9 6 15 12 9 18"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- STEP 2: Level selector -->
-      <div class="ac-step" id="ac-levels">
-        <button class="ac-back" onclick="acGoSplash()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-          Назад
-        </button>
-        <div class="ac-lvl-h">
-          <h2>Выбери уровень</h2>
-          <p>С чего начать твоё обучение</p>
+      <div class="ac-step on" id="ac-levels">
+        <div class="tab-intro">
+          <h1 class="tab-intro-t">Бизнес-мышление — это навык.<br>Мы его тренируем.</h1>
+          <p class="tab-intro-d">Два уровня. Для школьников — основы финграмотности через реальные истории. Для взрослых — от идеи до финмодели на кейсах мировых компаний.</p>
         </div>
         <div class="ac-lvl trk-jr" onclick="acSelectLevel('jr')">
           <div class="ac-lvl-icon">📘</div>
@@ -656,33 +792,11 @@ input[type=range]::-webkit-slider-thumb{background:#1A1A2E !important;box-shadow
 
     <!-- CASES -->
     <div class="scr" id="s-cases">
-      <!-- STEP 1: Splash -->
-      <div class="ac-step on" id="cs-splash">
-        <div class="ac-spl-hero">
-          <div class="ac-spl-emoji">⚠️</div>
-          <div class="ac-spl-glow" style="background:radial-gradient(circle,rgba(255,107,107,0.25),rgba(255,190,77,0.1) 40%,transparent 70%)"></div>
+      <div class="ac-step on" id="cs-list">
+        <div class="tab-intro">
+          <h1 class="tab-intro-t">Чужие грабли</h1>
+          <p class="tab-intro-d">Реальные провалы бизнесов в Казахстане. Каждый кейс — конкретная ошибка, конкретный город, конкретный урок. Чтобы вы не платили за чужой опыт своими деньгами.</p>
         </div>
-        <div class="ac-spl-body">
-          <h1 class="ac-spl-t">Чужие грабли</h1>
-          <p class="ac-spl-d">Реальные провалы бизнесов в Казахстане. Учитесь на чужих ошибках — не платите за свой опыт миллионами.</p>
-          <div class="ac-spl-stats">
-            <div class="ac-spl-stat"><div class="ac-spl-sn">∞</div><div class="ac-spl-sl">кейсов</div></div>
-            <div class="ac-spl-stat"><div class="ac-spl-sn">5</div><div class="ac-spl-sl">сфер</div></div>
-            <div class="ac-spl-stat"><div class="ac-spl-sn">100%</div><div class="ac-spl-sl">правда</div></div>
-          </div>
-          <button class="ac-cta" onclick="csStart()" style="background:linear-gradient(135deg,#FF6B6B,var(--am))">
-            Смотреть кейсы
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="9 6 15 12 9 18"/></svg>
-          </button>
-        </div>
-      </div>
-      <!-- STEP 2: Cases list -->
-      <div class="ac-step" id="cs-list">
-        <button class="ac-back" onclick="csGoSplash()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-          Назад
-        </button>
-        <div class="cs-h a"><h2>Чужие грабли</h2><p>Реальные ошибки бизнесов — чтобы вы не платили за чужой опыт своими деньгами</p></div>
         <div class="cp a d1" id="csCp"></div>
         <div class="cs-list a d2" id="csList"></div>
         <div class="cs-tg a d3" onclick="openTG()">
@@ -696,7 +810,10 @@ input[type=range]::-webkit-slider-thumb{background:#1A1A2E !important;box-shadow
     <!-- ABOUT -->
     <!-- CALC -->
     <div class="scr" id="s-calc">
-      <div class="nv-h a"><h2>Расчёты</h2><p>Финансовые инструменты для вашего бизнеса</p></div>
+      <div class="tab-intro">
+        <h1 class="tab-intro-t">Посчитай прежде, чем вложишь</h1>
+        <p class="tab-intro-d">Три инструмента — три уровня глубины. От быстрой проверки идеи до полного бизнес-плана для гранта.</p>
+      </div>
 
       <div class="pc a d1" onclick="launchQC()" style="margin:0 22px 12px;background:var(--s1);border:1px solid var(--b2);border-radius:var(--r);padding:20px;cursor:pointer;position:relative;overflow:hidden">
         <div style="position:absolute;top:0;left:0;width:3px;height:100%;background:var(--ac)"></div>
@@ -854,7 +971,7 @@ function renderAc(){
 
 function renderCS(){
   var h='';
-  CASES.forEach(function(c){if(csCatAc!=='all'&&c.cat!==csCatAc)return;h+='<div class="cs-card"><div class="cs-tag">'+c.cn+'</div><div class="cs-title">'+c.title+'</div><div class="cs-city">📍 '+c.city+'</div><div class="cs-lesson">'+c.lesson+'</div></div>'});
+  CASES.forEach(function(c){if(csCatAc!=='all'&&c.cat!==csCatAc)return;h+='<div class="cs-card" data-cat="'+c.cat+'"><div class="cs-tag">'+c.cn+'</div><div class="cs-title">'+c.title+'</div><div class="cs-city">📍 '+c.city+'</div><div class="cs-lesson">'+c.lesson+'</div></div>'});
   if(!h)h='<div style="text-align:center;padding:40px;color:var(--t3);font-size:13px">Кейсы в этой категории скоро появятся</div>';
   document.getElementById('csList').innerHTML=h;
 }
@@ -870,7 +987,7 @@ function openTG(){window.open('https://t.me/zerek_cases','_blank')}
 rCats();rCsCats();renderN();renderAc();renderCS();
 
 // Academy multi-step flow
-var acStep='splash';
+var acStep='levels';
 function acGo(step){
   var s=document.getElementById('ac-'+acStep);if(s)s.classList.remove('on');
   acStep=step;
@@ -923,19 +1040,13 @@ try{
         var lastTrk=localStorage.getItem('zerek_ac_track');
         if(lastTrk){
           // Go straight to chapters step without animation
-          document.getElementById('ac-splash').classList.remove('on');
+          document.getElementById('ac-levels').classList.remove('on');
           document.getElementById('ac-jrTrk').style.display=(lastTrk==='jr')?'block':'none';
           document.getElementById('ac-stTrk').style.display=(lastTrk==='st')?'block':'none';
           document.getElementById('ac-chapters').classList.add('on');
           acStep='chapters';
         }
       }catch(e){}
-    } else if(_tab==='niches'){
-      document.getElementById('nv-splash').classList.remove('on');
-      document.getElementById('nv-catalog').classList.add('on');
-    } else if(_tab==='cases'){
-      document.getElementById('cs-splash').classList.remove('on');
-      document.getElementById('cs-list').classList.add('on');
     }
   }
 }catch(e){}
