@@ -581,7 +581,7 @@ function sCC(c,el){csCatAc=c;document.querySelectorAll('#csCp .cp-p').forEach(fu
 
 function renderN(){
   var s=(document.getElementById('sIn').value||'').toLowerCase(),h='';
-  D.forEach(function(n,i){if(catAc!=='all'&&n.c!==catAc)return;if(s&&n.n.toLowerCase().indexOf(s)===-1)return;var bc=n.r==='g'?'bg-g':'bg-a';h+='<div class="nc" onclick="openN('+i+')"><div class="nc-th">'+n.e+'</div><div class="nc-i"><div class="nc-cat">'+n.cn+'</div><div class="nc-name">'+n.n+'</div><div class="nc-meta">'+n.inv+' · '+n.pb+'</div><span class="nc-badge '+bc+'">'+n.rl+' риск</span></div></div>'});
+  D.forEach(function(n,i){if(!n.wiki)return;if(catAc!=='all'&&n.c!==catAc)return;if(s&&n.n.toLowerCase().indexOf(s)===-1)return;var bc=n.r==='g'?'bg-g':'bg-a';h+='<div class="nc" onclick="openWiki(\''+n.wiki+'\')"><div class="nc-th">'+n.e+'</div><div class="nc-i"><div class="nc-cat">'+n.cn+'</div><div class="nc-name">'+n.n+'</div><div class="nc-meta">'+n.inv+' · '+n.pb+'</div><span class="nc-badge '+bc+'">'+n.rl+' риск</span></div></div>'});
   if(!h)h='<div style="text-align:center;padding:40px;color:var(--t3);font-size:13px">Ничего не найдено</div>';
   document.getElementById('nList').innerHTML=h;
 }
@@ -648,18 +648,22 @@ function csStep(step){
 function csStart(){try{Telegram.WebApp.HapticFeedback.impactOccurred('heavy')}catch(e){}csStep('list')}
 function csGoSplash(){try{Telegram.WebApp.HapticFeedback.impactOccurred('light')}catch(e){}csStep('splash')}
 
-// Open specific tab from URL ?tab=academy
+// Open specific tab from URL ?tab=academy|niches|cases
 try{
   var _qs=new URLSearchParams(location.search);
   var _tab=_qs.get('tab');
   if(_tab&&document.getElementById('s-'+_tab)){
     go(_tab);
-    // If returning from a lesson, auto-open last selected track
     if(_tab==='academy'){
       try{
         var lastTrk=localStorage.getItem('zerek_ac_track');
         if(lastTrk){acSelectLevel(lastTrk)}
       }catch(e){}
+    } else if(_tab==='niches'){
+      // Skip splash, go straight to catalog
+      nvStep('catalog');
+    } else if(_tab==='cases'){
+      csStep('list');
     }
   }
 }catch(e){}
