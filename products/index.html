@@ -314,10 +314,37 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);line-h
 
     <!-- NICHES -->
     <div class="scr" id="s-niches">
-      <div class="nv-h a"><h2>Аналитика ниш</h2><p>Каждая ниша — вложения, риски, окупаемость и реальные кейсы</p></div>
-      <div class="sb a d1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" placeholder="Поиск..." id="sIn" oninput="renderN()"></div>
-      <div class="cp a d2" id="cpEl"></div>
-      <div class="nv-list a d3" id="nList"></div>
+      <!-- STEP 1: Splash -->
+      <div class="ac-step on" id="nv-splash">
+        <div class="ac-spl-hero">
+          <div class="ac-spl-emoji">🔍</div>
+          <div class="ac-spl-glow" style="background:radial-gradient(circle,rgba(76,201,240,0.25),rgba(124,108,255,0.1) 40%,transparent 70%)"></div>
+        </div>
+        <div class="ac-spl-body">
+          <h1 class="ac-spl-t">Обзоры ниш</h1>
+          <p class="ac-spl-d">Подробные разборы 30+ бизнес-ниш в Казахстане. Вложения, окупаемость, риски, реальные кейсы.</p>
+          <div class="ac-spl-stats">
+            <div class="ac-spl-stat"><div class="ac-spl-sn">30+</div><div class="ac-spl-sl">ниш</div></div>
+            <div class="ac-spl-stat"><div class="ac-spl-sn">5</div><div class="ac-spl-sl">категорий</div></div>
+            <div class="ac-spl-stat"><div class="ac-spl-sn">14</div><div class="ac-spl-sl">городов</div></div>
+          </div>
+          <button class="ac-cta" onclick="nvStart()" style="background:linear-gradient(135deg,var(--cy),var(--ac))">
+            Открыть каталог
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="9 6 15 12 9 18"/></svg>
+          </button>
+        </div>
+      </div>
+      <!-- STEP 2: Catalog -->
+      <div class="ac-step" id="nv-catalog">
+        <button class="ac-back" onclick="nvGoSplash()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          Назад
+        </button>
+        <div class="nv-h a"><h2>Аналитика ниш</h2><p>Каждая ниша — вложения, риски, окупаемость и реальные кейсы</p></div>
+        <div class="sb a d1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" placeholder="Поиск..." id="sIn" oninput="renderN()"></div>
+        <div class="cp a d2" id="cpEl"></div>
+        <div class="nv-list a d3" id="nList"></div>
+      </div>
     </div>
 
     <!-- ACADEMY -->
@@ -390,13 +417,40 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);line-h
 
     <!-- CASES -->
     <div class="scr" id="s-cases">
-      <div class="cs-h a"><h2>Чужие грабли</h2><p>Реальные ошибки бизнесов — чтобы вы не платили за чужой опыт своими деньгами</p></div>
-      <div class="cp a d1" id="csCp"></div>
-      <div class="cs-list a d2" id="csList"></div>
-      <div class="cs-tg a d3" onclick="openTG()">
-        <div class="cs-tg-icon">📢</div>
-        <div class="cs-tg-body"><div class="cs-tg-t">Telegram-канал «Чужие грабли»</div><div class="cs-tg-d">Новые кейсы каждую неделю — подпишитесь</div></div>
-        <div class="cs-tg-a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+      <!-- STEP 1: Splash -->
+      <div class="ac-step on" id="cs-splash">
+        <div class="ac-spl-hero">
+          <div class="ac-spl-emoji">⚠️</div>
+          <div class="ac-spl-glow" style="background:radial-gradient(circle,rgba(255,107,107,0.25),rgba(255,190,77,0.1) 40%,transparent 70%)"></div>
+        </div>
+        <div class="ac-spl-body">
+          <h1 class="ac-spl-t">Чужие грабли</h1>
+          <p class="ac-spl-d">Реальные провалы бизнесов в Казахстане. Учитесь на чужих ошибках — не платите за свой опыт миллионами.</p>
+          <div class="ac-spl-stats">
+            <div class="ac-spl-stat"><div class="ac-spl-sn">∞</div><div class="ac-spl-sl">кейсов</div></div>
+            <div class="ac-spl-stat"><div class="ac-spl-sn">5</div><div class="ac-spl-sl">сфер</div></div>
+            <div class="ac-spl-stat"><div class="ac-spl-sn">100%</div><div class="ac-spl-sl">правда</div></div>
+          </div>
+          <button class="ac-cta" onclick="csStart()" style="background:linear-gradient(135deg,#FF6B6B,var(--am))">
+            Смотреть кейсы
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="9 6 15 12 9 18"/></svg>
+          </button>
+        </div>
+      </div>
+      <!-- STEP 2: Cases list -->
+      <div class="ac-step" id="cs-list">
+        <button class="ac-back" onclick="csGoSplash()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          Назад
+        </button>
+        <div class="cs-h a"><h2>Чужие грабли</h2><p>Реальные ошибки бизнесов — чтобы вы не платили за чужой опыт своими деньгами</p></div>
+        <div class="cp a d1" id="csCp"></div>
+        <div class="cs-list a d2" id="csList"></div>
+        <div class="cs-tg a d3" onclick="openTG()">
+          <div class="cs-tg-icon">📢</div>
+          <div class="cs-tg-body"><div class="cs-tg-t">Telegram-канал «Чужие грабли»</div><div class="cs-tg-d">Новые кейсы каждую неделю — подпишитесь</div></div>
+          <div class="cs-tg-a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
       </div>
     </div>
 
@@ -573,6 +627,22 @@ function acSelectLevel(track){
   try{localStorage.setItem('zerek_ac_track',track)}catch(e){}
   acGo('chapters');
 }
+
+// Niches multi-step
+function nvStep(step){
+  document.querySelectorAll('#s-niches > .ac-step').forEach(function(s){s.classList.remove('on')});
+  var ns=document.getElementById('nv-'+step);if(ns)ns.classList.add('on');
+}
+function nvStart(){try{Telegram.WebApp.HapticFeedback.impactOccurred('heavy')}catch(e){}nvStep('catalog')}
+function nvGoSplash(){try{Telegram.WebApp.HapticFeedback.impactOccurred('light')}catch(e){}nvStep('splash')}
+
+// Cases multi-step
+function csStep(step){
+  document.querySelectorAll('#s-cases > .ac-step').forEach(function(s){s.classList.remove('on')});
+  var ns=document.getElementById('cs-'+step);if(ns)ns.classList.add('on');
+}
+function csStart(){try{Telegram.WebApp.HapticFeedback.impactOccurred('heavy')}catch(e){}csStep('list')}
+function csGoSplash(){try{Telegram.WebApp.HapticFeedback.impactOccurred('light')}catch(e){}csStep('splash')}
 
 // Open specific tab from URL ?tab=academy
 try{
