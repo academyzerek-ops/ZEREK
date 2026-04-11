@@ -17,7 +17,7 @@
   --radius: 16px; --radius-sm: 10px;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Outfit',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; max-width:440px; margin:0 auto; min-height:100vh; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+body { font-family:'Outfit',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; max-width:440px; margin:0 auto; min-height:100vh; -webkit-font-smoothing:antialiased; overflow-x:hidden; padding-top:max(env(safe-area-inset-top,0px),110px); }
 @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
 .zerek-back{position:fixed;top:max(env(safe-area-inset-top,0px),60px);left:50%;transform:translateX(-50%);z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:10px 16px;background:rgba(6,6,12,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.15);border-radius:22px;color:#EEEEF4;font-family:-apple-system,'Outfit',sans-serif;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.3)}.zerek-back:active{transform:translateX(-50%) scale(0.95)}.zerek-back:hover{background:rgba(6,6,12,0.98)}
 
