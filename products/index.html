@@ -45,7 +45,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);line-h
 
 /* ═══ SCREENS ═══ */
 .screens{flex:1;overflow:hidden;position:relative}
-.scr{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;opacity:0;transform:translateY(6px);transition:opacity .28s,transform .28s;pointer-events:none;padding-bottom:70px}
+.scr{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;opacity:0;transform:translateY(6px);transition:opacity .28s,transform .28s;pointer-events:none;padding-top:max(env(safe-area-inset-top,0px),76px);padding-bottom:70px}
 .scr.on{opacity:1;transform:translateY(0);pointer-events:auto}
 .scr::-webkit-scrollbar{width:0}
 
@@ -157,14 +157,14 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);line-h
 .trk-st .ac-acc{background:var(--am)}.trk-st .ac-bdg{background:var(--amd);color:var(--am)}.trk-st .ac-ch-n{background:var(--amd);color:var(--am)}
 
 /* Academy steps (multi-screen flow) */
-.ac-step{display:none;animation:fu .4s ease-out;padding-top:max(env(safe-area-inset-top,0px),76px)}
+.ac-step{display:none;animation:fu .4s ease-out}
 .ac-step.on{display:block}
 .ac-back{display:inline-flex;align-items:center;gap:6px;margin:0 22px 14px;padding:8px 14px;background:var(--s2);border:1px solid var(--b2);border-radius:18px;color:var(--t2);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer}
 .ac-back:active{transform:scale(0.95);background:var(--s3)}
 .ac-back svg{width:14px;height:14px}
 
 /* Splash screen */
-#ac-splash{padding-top:max(env(safe-area-inset-top,0px),60px)}
+#ac-splash{padding-top:0}
 .ac-spl-hero{position:relative;display:flex;align-items:center;justify-content:center;padding:30px 22px 10px}
 .ac-spl-emoji{font-size:90px;position:relative;z-index:2;filter:drop-shadow(0 8px 24px rgba(124,108,255,0.4))}
 .ac-spl-glow{position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(124,108,255,0.25),rgba(0,228,160,0.1) 40%,transparent 70%);animation:pulse 3s ease-in-out infinite}
