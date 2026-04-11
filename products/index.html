@@ -503,15 +503,13 @@ input[type=range]::-webkit-slider-thumb{background:#1A1A2E !important;box-shadow
 .loader-ring{border-color:#D0D2DA !important;border-top-color:var(--ac2) !important}
 
 /* === Landing Home Page === */
-#s-home{background:#FFFFFF !important;padding-bottom:0 !important;display:flex;flex-direction:column;justify-content:center;align-items:center;height:100%}
+#s-home{background:#FFFFFF !important;padding:0 !important;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;height:100%}
 #s-home::before{display:none !important}
-.lp{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px 28px;width:100%;max-width:380px;gap:18px}
-.lp-logo{height:32px;width:auto;display:block;margin-bottom:4px}
-.lp-slogan{font-family:'Playfair Display',serif !important;font-size:21px;font-weight:500;line-height:1.35;color:#1A1A2E;letter-spacing:-0.2px;margin:0;max-width:340px}
-.lp-slogan em{font-style:normal;color:#6C63FF;font-weight:500}
-.lp-video{width:180px;height:180px;object-fit:contain;border-radius:14px;display:block;background:transparent}
-.lp-sub{font-family:'Source Sans 3',sans-serif !important;font-size:14px;font-weight:400;line-height:1.5;color:#6B7280;margin:0;max-width:300px}
-.lp-accent{font-family:'Source Sans 3',sans-serif !important;font-size:14px;font-weight:500;line-height:1.5;color:#1A1A2E;margin:0;max-width:320px}
+.lp{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;padding:0 22px 18px;width:100%;max-width:420px;gap:16px}
+.lp-slogan-img{display:block;width:100%;max-width:380px;height:auto;margin:0;border-radius:0;background:transparent}
+.lp-video{width:230px;height:230px;object-fit:contain;display:block;background:transparent;border-radius:18px;margin-top:-4px}
+.lp-sub{font-family:'Source Sans 3',sans-serif !important;font-size:15.5px;font-weight:400;line-height:1.55;color:#4A5568;margin:0;padding:14px 22px;background:#F3F4F6;border-radius:14px;max-width:340px;letter-spacing:0.1px}
+.lp-accent{font-family:'Source Sans 3',sans-serif !important;font-size:15.5px;font-weight:600;line-height:1.55;color:#0F172A;margin:0;padding:14px 22px;background:#EEF2FF;border:1px solid #C7D2FE;border-radius:14px;max-width:340px;letter-spacing:0.1px}
 
 </style>
 </head>
@@ -534,10 +532,9 @@ input[type=range]::-webkit-slider-thumb{background:#1A1A2E !important;box-shadow
     <!-- HOME -->
     <div class="scr on" id="s-home">
       <div class="lp">
-        <img class="lp-logo" src="assets/logo.png?v=2" alt="zerek.ai">
-        <h1 class="lp-slogan">В бизнесе успешен не тот, кто умнее — а тот, кто <em>управляет рисками</em>.</h1>
+        <img class="lp-slogan-img" src="assets/slogan.png?v=2" alt="В бизнесе успешен не тот, кто умнее — а тот, кто управляет рисками">
         <video class="lp-video" autoplay muted loop playsinline preload="auto">
-          <source src="assets/mba.mp4" type="video/mp4">
+          <source src="assets/mba.mp4?v=2" type="video/mp4">
         </video>
         <p class="lp-sub">Школа не учит бизнесу. Универ далёк от практики. Мы это устраняем.</p>
         <p class="lp-accent">Не скучная финграмотность и не «успешный успех» — а реальность.</p>
