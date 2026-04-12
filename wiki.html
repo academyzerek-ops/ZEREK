@@ -4,113 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wiki ZEREK — Обзоры 50 ниш бизнеса в Казахстане</title>
-  <meta name="description" content="Бесплатные обзоры рынков Казахстана: конкуренция, средний чек, причины закрытий, подводные камни. 50 ниш × 14 городов.">
-
-  <!-- OG -->
+  <meta name="description" content="Бесплатные обзоры рынков Казахстана: конкуренция, средний чек, причины закрытий, подводные камни. 50 ниш x 14 городов.">
   <meta property="og:title" content="Wiki ZEREK — Обзоры 50 ниш бизнеса в Казахстане">
-  <meta property="og:description" content="Бесплатная аналитика для предпринимателей. 50 ниш × 14 городов.">
+  <meta property="og:description" content="Бесплатная аналитика для предпринимателей. 50 ниш x 14 городов.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://zerek.cc/wiki.html">
-
   <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="style.css">
   <script src="main.js" defer></script>
-
-  <style>
-    /* ─── WIKI-SPECIFIC OVERRIDES ─── */
-    .niche-card {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      padding: 20px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-light);
-      border-radius: var(--radius);
-      transition: box-shadow .25s, transform .25s;
-      text-decoration: none;
-      color: inherit;
-    }
-    .niche-card:hover {
-      box-shadow: var(--shadow-md);
-      transform: translateY(-2px);
-      opacity: 1;
-    }
-    .niche-card.live { cursor: pointer; }
-    .niche-card.soon { opacity: .75; cursor: default; }
-    .niche-card.soon:hover { transform: none; box-shadow: none; }
-    .niche-emoji { font-size: 30px; flex-shrink: 0; line-height: 1; padding-top: 2px; }
-    .niche-info { flex: 1; }
-    .niche-name {
-      font-size: 15px; font-weight: 600;
-      margin-bottom: 4px; line-height: 1.3;
-    }
-    .niche-desc {
-      font-size: 12px; color: var(--text-3);
-      line-height: 1.5; margin-bottom: 8px;
-    }
-
-    /* Section label above grid */
-    .wiki-section-label {
-      font-size: 13px; font-weight: 600;
-      color: var(--text-2); letter-spacing: .4px;
-      text-transform: uppercase;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border-light);
-    }
-    .wiki-section-label span {
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 400; color: var(--text-3);
-      margin-left: 8px;
-    }
-
-    /* CTA block override for wiki */
-    .wiki-cta {
-      text-align: center;
-      background: linear-gradient(135deg, var(--accent-light), #F0EDFF);
-      border-radius: var(--radius);
-      padding: 56px 32px;
-    }
-    .wiki-cta-title {
-      font-size: clamp(24px, 3.5vw, 36px);
-      font-weight: 800; margin-bottom: 12px;
-    }
-    .wiki-cta-sub {
-      font-size: 17px; color: var(--text-2);
-      margin-bottom: 28px; line-height: 1.6;
-    }
-
-    @media (max-width: 960px) {
-      .card-grid-3 { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 600px) {
-      .card-grid-3 { grid-template-columns: 1fr; }
-    }
-  </style>
 </head>
 <body>
 
   <!-- HEADER -->
   <header class="site-header">
-    <div class="container">
-      <nav class="nav">
-        <a href="/" class="logo-link">
-          <img src="logo.png" alt="Zerek AI" class="logo-img">
-        </a>
-        <ul class="nav-links">
-          <li><a href="products.html">Продукты</a></li>
-          <li><a href="academy.html">Academy</a></li>
-          <li><a href="wiki.html" class="active">Wiki</a></li>
-          <li><a href="cases.html">Кейсы</a></li>
-        </ul>
-        <a href="https://t.me/zerekai_bot" class="nav-cta" target="_blank" rel="noopener">Открыть в Telegram →</a>
-        <button id="burger" class="burger" aria-label="Меню">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-      </nav>
-    </div>
+    <nav class="nav">
+      <a href="/" class="logo-link">Zerek<span class="logo-ai">ai</span></a>
+      <div class="nav-links">
+        <a href="products.html">Продукты</a>
+        <a href="academy.html">Academy</a>
+        <a href="wiki.html" class="active">Wiki</a>
+        <a href="cases.html">Кейсы</a>
+      </div>
+      <a href="https://t.me/zerekai_bot" class="nav-cta" target="_blank" rel="noopener">Telegram &rarr;</a>
+      <button id="burger" class="burger" aria-label="Меню">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
   </header>
 
   <!-- MOBILE MENU -->
@@ -119,25 +38,26 @@
     <a href="academy.html">Academy</a>
     <a href="wiki.html">Wiki</a>
     <a href="cases.html">Кейсы</a>
-    <a href="https://t.me/zerekai_bot" target="_blank" rel="noopener" class="nav-cta">Открыть в Telegram →</a>
+    <a href="https://t.me/zerekai_bot" class="nav-cta" target="_blank" rel="noopener">Открыть в Telegram &rarr;</a>
   </div>
 
   <!-- PAGE HERO -->
   <section class="page-hero rv">
     <div class="container">
+      <div class="page-hero-label">Wiki</div>
       <h1 class="section-title">Обзоры рынка Казахстана по нишам</h1>
-      <p class="section-subtitle">Бесплатная аналитика для предпринимателей. 50 ниш × 14 городов.</p>
+      <p class="section-subtitle" style="margin-left:auto;margin-right:auto;">Бесплатная аналитика для предпринимателей. 50 ниш &times; 14 городов.</p>
     </div>
   </section>
 
   <!-- LIVE NICHES -->
-  <section class="section rv">
+  <section class="section rv" style="padding-top:24px;">
     <div class="container">
-      <div class="wiki-section-label">Доступно сейчас <span>20 ниш</span></div>
-      <div class="card-grid card-grid-3">
+      <div class="wiki-section-label rv">Доступно сейчас <span>20 ниш</span></div>
+      <div class="niche-grid">
 
-        <a href="#" class="niche-card live">
-          <div class="niche-emoji">☕</div>
+        <a href="#" class="niche-card live rv rv-d1">
+          <div class="niche-emoji">&#9749;</div>
           <div class="niche-info">
             <div class="niche-name">Кофейня</div>
             <div class="niche-desc">Средний чек, аренда, конкуренты</div>
@@ -145,8 +65,8 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live">
-          <div class="niche-emoji">🌯</div>
+        <a href="#" class="niche-card live rv rv-d1">
+          <div class="niche-emoji">&#127791;</div>
           <div class="niche-info">
             <div class="niche-name">Донерная</div>
             <div class="niche-desc">Фудкост, трафик, форматы</div>
@@ -154,8 +74,8 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live">
-          <div class="niche-emoji">🚗</div>
+        <a href="#" class="niche-card live rv rv-d1">
+          <div class="niche-emoji">&#128663;</div>
           <div class="niche-info">
             <div class="niche-name">Автомойка</div>
             <div class="niche-desc">Загрузка, сезонность, оборудование</div>
@@ -163,8 +83,8 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live">
-          <div class="niche-emoji">🧹</div>
+        <a href="#" class="niche-card live rv rv-d2">
+          <div class="niche-emoji">&#129529;</div>
           <div class="niche-info">
             <div class="niche-name">Клининг</div>
             <div class="niche-desc">B2C vs B2B, команда, расходники</div>
@@ -172,8 +92,8 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live">
-          <div class="niche-emoji">💊</div>
+        <a href="#" class="niche-card live rv rv-d2">
+          <div class="niche-emoji">&#128138;</div>
           <div class="niche-info">
             <div class="niche-name">Аптека</div>
             <div class="niche-desc">Лицензия, ассортимент, маржа</div>
@@ -181,8 +101,8 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live">
-          <div class="niche-emoji">💈</div>
+        <a href="#" class="niche-card live rv rv-d2">
+          <div class="niche-emoji">&#128136;</div>
           <div class="niche-info">
             <div class="niche-name">Барбершоп</div>
             <div class="niche-desc">Мастера, локация, окупаемость</div>
@@ -190,8 +110,8 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live">
-          <div class="niche-emoji">🦷</div>
+        <a href="#" class="niche-card live rv rv-d3">
+          <div class="niche-emoji">&#129463;</div>
           <div class="niche-info">
             <div class="niche-name">Стоматология</div>
             <div class="niche-desc">Оборудование, врачи, лицензия</div>
@@ -199,8 +119,8 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live">
-          <div class="niche-emoji">💅</div>
+        <a href="#" class="niche-card live rv rv-d3">
+          <div class="niche-emoji">&#128133;</div>
           <div class="niche-info">
             <div class="niche-name">Маникюр</div>
             <div class="niche-desc">Мастера, расходники, Instagram</div>
@@ -208,8 +128,8 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live">
-          <div class="niche-emoji">🧁</div>
+        <a href="#" class="niche-card live rv rv-d3">
+          <div class="niche-emoji">&#129473;</div>
           <div class="niche-info">
             <div class="niche-name">Пекарня</div>
             <div class="niche-desc">Фудкост, оборудование, ассортимент</div>
@@ -217,8 +137,8 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live">
-          <div class="niche-emoji">💪</div>
+        <a href="#" class="niche-card live rv">
+          <div class="niche-emoji">&#128170;</div>
           <div class="niche-info">
             <div class="niche-name">Фитнес-клуб</div>
             <div class="niche-desc">Оборудование, абонементы, сезонность</div>
@@ -226,8 +146,8 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live">
-          <div class="niche-emoji">🖥</div>
+        <a href="#" class="niche-card live rv">
+          <div class="niche-emoji">&#128421;</div>
           <div class="niche-info">
             <div class="niche-name">Компьютерный клуб</div>
             <div class="niche-desc">Железо, электричество, турниры</div>
@@ -235,8 +155,8 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live">
-          <div class="niche-emoji">🍕</div>
+        <a href="#" class="niche-card live rv">
+          <div class="niche-emoji">&#127829;</div>
           <div class="niche-info">
             <div class="niche-name">Пиццерия</div>
             <div class="niche-desc">Доставка, оборудование, стандарты</div>
@@ -244,8 +164,8 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live">
-          <div class="niche-emoji">🍣</div>
+        <a href="#" class="niche-card live rv">
+          <div class="niche-emoji">&#127843;</div>
           <div class="niche-info">
             <div class="niche-name">Суши</div>
             <div class="niche-desc">Повар, рыба, холодовая цепочка</div>
@@ -253,8 +173,8 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live">
-          <div class="niche-emoji">🪑</div>
+        <a href="#" class="niche-card live rv">
+          <div class="niche-emoji">&#129681;</div>
           <div class="niche-info">
             <div class="niche-name">Мебельный цех</div>
             <div class="niche-desc">ЧПУ, заказы, материалы</div>
@@ -262,8 +182,8 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live">
-          <div class="niche-emoji">🔧</div>
+        <a href="#" class="niche-card live rv">
+          <div class="niche-emoji">&#128295;</div>
           <div class="niche-info">
             <div class="niche-name">Шиномонтаж</div>
             <div class="niche-desc">Сезонность, оборудование, локация</div>
@@ -271,8 +191,8 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live">
-          <div class="niche-emoji">🌸</div>
+        <a href="#" class="niche-card live rv">
+          <div class="niche-emoji">&#127800;</div>
           <div class="niche-info">
             <div class="niche-name">Цветочный</div>
             <div class="niche-desc">Списание, праздники, холодильник</div>
@@ -280,8 +200,8 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live">
-          <div class="niche-emoji">🐾</div>
+        <a href="#" class="niche-card live rv">
+          <div class="niche-emoji">&#128062;</div>
           <div class="niche-info">
             <div class="niche-name">Зоомагазин</div>
             <div class="niche-desc">Корма, аксессуары, доставка</div>
@@ -289,8 +209,8 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live">
-          <div class="niche-emoji">🧒</div>
+        <a href="#" class="niche-card live rv">
+          <div class="niche-emoji">&#129490;</div>
           <div class="niche-info">
             <div class="niche-name">Детский центр</div>
             <div class="niche-desc">Лицензия, педагоги, безопасность</div>
@@ -298,8 +218,8 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live">
-          <div class="niche-emoji">👔</div>
+        <a href="#" class="niche-card live rv">
+          <div class="niche-emoji">&#128084;</div>
           <div class="niche-info">
             <div class="niche-name">Химчистка</div>
             <div class="niche-desc">Оборудование, деликатные ткани, технолог</div>
@@ -307,8 +227,8 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live">
-          <div class="niche-emoji">🏠</div>
+        <a href="#" class="niche-card live rv">
+          <div class="niche-emoji">&#127968;</div>
           <div class="niche-info">
             <div class="niche-name">Детский сад</div>
             <div class="niche-desc">Лицензия, питание, воспитатели</div>
@@ -323,248 +243,39 @@
   <!-- COMING SOON NICHES -->
   <section class="section section-alt rv">
     <div class="container">
-      <div class="wiki-section-label">Скоро <span>30 ниш</span></div>
-      <div class="card-grid card-grid-3">
+      <div class="wiki-section-label rv">Скоро <span>30 ниш</span></div>
+      <div class="niche-grid">
 
-        <div class="niche-card soon">
-          <div class="niche-emoji">🔧</div>
-          <div class="niche-info">
-            <div class="niche-name">Автосервис</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">🎂</div>
-          <div class="niche-info">
-            <div class="niche-name">Кондитерская</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">🍽</div>
-          <div class="niche-info">
-            <div class="niche-name">Столовая</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">🍔</div>
-          <div class="niche-info">
-            <div class="niche-name">Фастфуд</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">🥟</div>
-          <div class="niche-info">
-            <div class="niche-name">Полуфабрикаты</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">🍎</div>
-          <div class="niche-info">
-            <div class="niche-name">Фрукты/Овощи</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">💧</div>
-          <div class="niche-info">
-            <div class="niche-name">Вода на розлив</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">✏️</div>
-          <div class="niche-info">
-            <div class="niche-name">Брови</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">👁</div>
-          <div class="niche-info">
-            <div class="niche-name">Ресницы</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">🍯</div>
-          <div class="niche-info">
-            <div class="niche-name">Шугаринг</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">💆</div>
-          <div class="niche-info">
-            <div class="niche-name">Массаж</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">💉</div>
-          <div class="niche-info">
-            <div class="niche-name">Косметология</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">👓</div>
-          <div class="niche-info">
-            <div class="niche-name">Оптика</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">📱</div>
-          <div class="niche-info">
-            <div class="niche-name">Ремонт телефонов</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">🚘</div>
-          <div class="niche-info">
-            <div class="niche-name">Детейлинг</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">🧶</div>
-          <div class="niche-info">
-            <div class="niche-name">Чистка ковров</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">✂️</div>
-          <div class="niche-info">
-            <div class="niche-name">Ателье</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">📦</div>
-          <div class="niche-info">
-            <div class="niche-name">ПВЗ</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">🗣</div>
-          <div class="niche-info">
-            <div class="niche-name">Языковые курсы</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">📸</div>
-          <div class="niche-info">
-            <div class="niche-name">Фотостудия</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">🧘</div>
-          <div class="niche-info">
-            <div class="niche-name">Йога/Пилатес</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">🧋</div>
-          <div class="niche-info">
-            <div class="niche-name">Бабл-ти</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">📒</div>
-          <div class="niche-info">
-            <div class="niche-name">Бухгалтерия</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">🚚</div>
-          <div class="niche-info">
-            <div class="niche-name">Грузоперевозки</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">🏘</div>
-          <div class="niche-info">
-            <div class="niche-name">Риелтор</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">🚗</div>
-          <div class="niche-info">
-            <div class="niche-name">Автошкола</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">⚙️</div>
-          <div class="niche-info">
-            <div class="niche-name">Автозапчасти</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">🧱</div>
-          <div class="niche-info">
-            <div class="niche-name">Стройматериалы</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">🥩</div>
-          <div class="niche-info">
-            <div class="niche-name">Мясная лавка</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
-
-        <div class="niche-card soon">
-          <div class="niche-emoji">🧺</div>
-          <div class="niche-info">
-            <div class="niche-name">Прачечная</div>
-            <span class="badge badge-soon">Скоро</span>
-          </div>
-        </div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#128295;</div><div class="niche-info"><div class="niche-name">Автосервис</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#127874;</div><div class="niche-info"><div class="niche-name">Кондитерская</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#127860;</div><div class="niche-info"><div class="niche-name">Столовая</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#127828;</div><div class="niche-info"><div class="niche-name">Фастфуд</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#129375;</div><div class="niche-info"><div class="niche-name">Полуфабрикаты</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#127822;</div><div class="niche-info"><div class="niche-name">Фрукты/Овощи</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#128167;</div><div class="niche-info"><div class="niche-name">Вода на розлив</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#9999;&#65039;</div><div class="niche-info"><div class="niche-name">Брови</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#128065;</div><div class="niche-info"><div class="niche-name">Ресницы</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#127855;</div><div class="niche-info"><div class="niche-name">Шугаринг</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#128134;</div><div class="niche-info"><div class="niche-name">Массаж</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#128137;</div><div class="niche-info"><div class="niche-name">Косметология</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#128083;</div><div class="niche-info"><div class="niche-name">Оптика</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#128241;</div><div class="niche-info"><div class="niche-name">Ремонт телефонов</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#128664;</div><div class="niche-info"><div class="niche-name">Детейлинг</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#129526;</div><div class="niche-info"><div class="niche-name">Чистка ковров</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#9986;&#65039;</div><div class="niche-info"><div class="niche-name">Ателье</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#128230;</div><div class="niche-info"><div class="niche-name">ПВЗ</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#128483;</div><div class="niche-info"><div class="niche-name">Языковые курсы</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#128248;</div><div class="niche-info"><div class="niche-name">Фотостудия</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#129496;</div><div class="niche-info"><div class="niche-name">Йога/Пилатес</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#129379;</div><div class="niche-info"><div class="niche-name">Бабл-ти</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#128210;</div><div class="niche-info"><div class="niche-name">Бухгалтерия</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#128666;</div><div class="niche-info"><div class="niche-name">Грузоперевозки</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#127960;</div><div class="niche-info"><div class="niche-name">Риелтор</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#128663;</div><div class="niche-info"><div class="niche-name">Автошкола</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#9881;&#65039;</div><div class="niche-info"><div class="niche-name">Автозапчасти</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#129521;</div><div class="niche-info"><div class="niche-name">Стройматериалы</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#129385;</div><div class="niche-info"><div class="niche-name">Мясная лавка</div><span class="badge badge-soon">Скоро</span></div></div>
+        <div class="niche-card soon rv"><div class="niche-emoji">&#129530;</div><div class="niche-info"><div class="niche-name">Прачечная</div><span class="badge badge-soon">Скоро</span></div></div>
 
       </div>
     </div>
@@ -576,27 +287,23 @@
       <div class="wiki-cta">
         <p class="wiki-cta-title">Все обзоры доступны в Mini App</p>
         <p class="wiki-cta-sub">Откройте нишу в Telegram — там полный обзор с данными по вашему городу.</p>
-        <a href="https://t.me/zerekai_bot" class="btn btn-primary" target="_blank" rel="noopener">Открыть в Telegram →</a>
+        <a href="https://t.me/zerekai_bot" class="btn-primary" target="_blank" rel="noopener">Открыть в Telegram &rarr;</a>
       </div>
     </div>
   </section>
 
   <!-- FOOTER -->
   <footer class="site-footer">
-    <div class="container">
-      <div class="footer-inner">
-        <div class="footer-copy">© 2026 ZEREK. Казахстан, Актобе.</div>
-        <nav class="footer-links">
-          <a href="products.html">Продукты</a>
-          <a href="academy.html">Academy</a>
-          <a href="wiki.html">Wiki</a>
-          <a href="cases.html">Кейсы</a>
-          <a href="privacy.html">Конфиденциальность</a>
-        </nav>
-        <div class="footer-tg">
-          Telegram: <a href="https://t.me/zerekai_bot" target="_blank" rel="noopener">@zerekai_bot</a>
-        </div>
-      </div>
+    <div class="footer-inner">
+      <div class="footer-copy">&copy; 2026 ZEREK. Казахстан.</div>
+      <nav class="footer-links">
+        <a href="products.html">Продукты</a>
+        <a href="academy.html">Academy</a>
+        <a href="wiki.html">Wiki</a>
+        <a href="cases.html">Кейсы</a>
+        <a href="privacy.html">Конфиденциальность</a>
+      </nav>
+      <div class="footer-tg">Telegram: <a href="https://t.me/zerekai_bot" target="_blank" rel="noopener">@zerekai_bot</a></div>
     </div>
   </footer>
 

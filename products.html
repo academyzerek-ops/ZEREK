@@ -5,304 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Продукты ZEREK — аналитика для бизнеса</title>
   <meta name="description" content="Финансовые инструменты ZEREK для предпринимателей Казахстана: Экспресс-оценка, Финансовая модель, Бизнес-план, Pitch Deck. Реальные данные, честные цифры.">
-
-  <!-- OG -->
   <meta property="og:title" content="Продукты ZEREK — аналитика для бизнеса">
   <meta property="og:description" content="Финансовые инструменты для предпринимателей Казахстана. От быстрой проверки идеи до полного бизнес-плана.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://zerek.cc/products.html">
-
   <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="style.css">
   <script src="main.js" defer></script>
-
-  <style>
-    /* ─── PAGE HERO ─── */
-    .page-hero {
-      padding: 140px 0 72px;
-      text-align: center;
-    }
-    .page-hero-label {
-      display: inline-block;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: var(--accent);
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-    }
-    .page-hero h1 {
-      font-size: clamp(28px, 5vw, 46px);
-      font-weight: 800;
-      letter-spacing: -1px;
-      line-height: 1.15;
-      margin-bottom: 18px;
-    }
-    .page-hero p {
-      font-size: 17px;
-      color: var(--text-dim);
-      max-width: 560px;
-      margin: 0 auto;
-      line-height: 1.75;
-    }
-
-    /* ─── PRODUCTS GRID ─── */
-    .products-list {
-      padding: 16px 0 100px;
-      display: flex;
-      flex-direction: column;
-      gap: 28px;
-    }
-
-    /* ─── PRODUCT CARD ─── */
-    .product-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 40px 40px 36px;
-      transition: border-color .3s, transform .3s, box-shadow .3s;
-      position: relative;
-      overflow: hidden;
-    }
-    .product-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent), var(--success));
-      opacity: 0;
-      transition: opacity .3s;
-    }
-    .product-card:hover {
-      border-color: rgba(108, 99, 255, 0.22);
-      transform: translateY(-3px);
-      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
-    }
-    .product-card:hover::before {
-      opacity: 1;
-    }
-    .product-card.card-soon {
-      opacity: 0.82;
-    }
-
-    .card-head {
-      display: flex;
-      align-items: flex-start;
-      gap: 20px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
-    .card-icon {
-      font-size: 40px;
-      line-height: 1;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-    .card-meta {
-      flex: 1;
-      min-width: 0;
-    }
-    .card-meta h2 {
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: -.3px;
-      margin-bottom: 6px;
-    }
-    .card-price {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--success);
-    }
-    .card-price.price-tbd {
-      color: var(--text-muted);
-      font-size: 15px;
-    }
-    .card-price.price-included {
-      color: var(--text-dim);
-      font-size: 14px;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 400;
-    }
-
-    /* Badges */
-    .badge-live {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 12px;
-      background: rgba(0, 212, 170, 0.12);
-      border: 1px solid rgba(0, 212, 170, 0.25);
-      border-radius: 100px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--success);
-      letter-spacing: .5px;
-      text-transform: uppercase;
-      margin-left: 8px;
-      vertical-align: middle;
-      white-space: nowrap;
-    }
-    .badge-live::before {
-      content: '●';
-      font-size: 7px;
-      animation: pulse 2s infinite;
-    }
-    .badge-soon {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 12px;
-      background: rgba(255, 181, 71, 0.1);
-      border: 1px solid rgba(255, 181, 71, 0.2);
-      border-radius: 100px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--warning);
-      letter-spacing: .5px;
-      text-transform: uppercase;
-      margin-left: 8px;
-      vertical-align: middle;
-      white-space: nowrap;
-    }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
-
-    /* Tags row */
-    .card-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 28px;
-    }
-    .card-tag {
-      padding: 5px 14px;
-      background: rgba(108, 99, 255, 0.08);
-      border: 1px solid rgba(108, 99, 255, 0.15);
-      border-radius: 100px;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--accent);
-      white-space: nowrap;
-    }
-
-    /* Feature list */
-    .feature-list {
-      list-style: none;
-      margin: 0 0 32px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px 32px;
-    }
-    .feature-list li {
-      font-size: 14px;
-      color: var(--text-dim);
-      padding-left: 20px;
-      position: relative;
-      line-height: 1.55;
-    }
-    .feature-list li::before {
-      content: '→';
-      position: absolute;
-      left: 0;
-      color: var(--success);
-      font-weight: 600;
-    }
-
-    /* CTA row */
-    .card-footer {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 13px 28px;
-      background: var(--accent);
-      color: #fff;
-      text-decoration: none;
-      border-radius: var(--radius-sm);
-      font-weight: 600;
-      font-size: 14px;
-      transition: transform .25s, box-shadow .25s;
-      box-shadow: 0 4px 20px rgba(108, 99, 255, 0.3);
-      border: none;
-      cursor: pointer;
-    }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 28px rgba(108, 99, 255, 0.45);
-    }
-    .btn-primary.btn-disabled {
-      background: var(--bg-elevated);
-      color: var(--text-muted);
-      box-shadow: none;
-      cursor: not-allowed;
-      pointer-events: none;
-      border: 1px solid var(--border);
-    }
-    .card-note {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    /* ─── CTA BLOCK ─── */
-    .cta-block {
-      text-align: center;
-      padding: 80px 0 100px;
-      border-top: 1px solid var(--border);
-    }
-    .cta-block h2 {
-      font-size: clamp(24px, 4vw, 36px);
-      font-weight: 800;
-      letter-spacing: -.5px;
-      margin-bottom: 16px;
-    }
-    .cta-block p {
-      font-size: 16px;
-      color: var(--text-dim);
-      max-width: 480px;
-      margin: 0 auto 36px;
-      line-height: 1.7;
-    }
-
-    /* ─── RESPONSIVE ─── */
-    @media (max-width: 680px) {
-      .product-card { padding: 28px 22px 26px; }
-      .card-head { gap: 14px; }
-      .card-icon { font-size: 32px; }
-      .card-meta h2 { font-size: 18px; }
-      .feature-list { grid-template-columns: 1fr; }
-      .page-hero { padding: 110px 0 52px; }
-      .page-hero p { font-size: 15px; }
-    }
-  </style>
 </head>
 <body>
 
   <!-- HEADER -->
   <header class="site-header">
-    <div class="container">
-      <nav class="nav">
-        <a href="/" class="logo-link">
-          <img src="logo.png" alt="Zerek AI" class="logo-img">
-        </a>
-        <ul class="nav-links">
-          <li><a href="products.html">Продукты</a></li>
-          <li><a href="academy.html">Academy</a></li>
-          <li><a href="wiki.html">Wiki</a></li>
-          <li><a href="cases.html">Кейсы</a></li>
-        </ul>
-        <a href="https://t.me/zerekai_bot" class="nav-cta" target="_blank" rel="noopener">Открыть в Telegram →</a>
-        <button id="burger" class="burger" aria-label="Меню">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-      </nav>
-    </div>
+    <nav class="nav">
+      <a href="/" class="logo-link">Zerek<span class="logo-ai">ai</span></a>
+      <div class="nav-links">
+        <a href="products.html" class="active">Продукты</a>
+        <a href="academy.html">Academy</a>
+        <a href="wiki.html">Wiki</a>
+        <a href="cases.html">Кейсы</a>
+      </div>
+      <a href="https://t.me/zerekai_bot" class="nav-cta" target="_blank" rel="noopener">Telegram &rarr;</a>
+      <button id="burger" class="burger" aria-label="Меню">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
   </header>
 
   <!-- MOBILE MENU -->
@@ -311,199 +38,182 @@
     <a href="academy.html">Academy</a>
     <a href="wiki.html">Wiki</a>
     <a href="cases.html">Кейсы</a>
-    <a href="https://t.me/zerekai_bot" target="_blank" rel="noopener">Открыть в Telegram →</a>
+    <a href="https://t.me/zerekai_bot" class="nav-cta" target="_blank" rel="noopener">Открыть в Telegram &rarr;</a>
   </div>
 
   <!-- PAGE HERO -->
-  <div class="page-hero rv">
+  <section class="page-hero rv">
     <div class="container">
-      <div class="page-hero-label">Продукты ZEREK</div>
-      <h1>Продукты ZEREK</h1>
-      <p>Финансовые инструменты для предпринимателей. От быстрой проверки идеи до полного бизнес-плана.</p>
+      <div class="page-hero-label">Products</div>
+      <h1 class="section-title">Продукты ZEREK</h1>
+      <p class="section-subtitle" style="margin-left:auto;margin-right:auto;">Финансовые инструменты для предпринимателей. От быстрой проверки идеи до полного бизнес-плана.</p>
     </div>
-  </div>
+  </section>
 
   <!-- PRODUCTS LIST -->
-  <div class="container">
-    <div class="products-list">
+  <section class="section" style="padding-top:24px;">
+    <div class="container">
+      <div class="products-list">
 
-      <!-- 1. ЭКСПРЕСС-ОЦЕНКА -->
-      <div class="product-card rv">
-        <div class="card-head">
-          <div class="card-icon">⚡</div>
-          <div class="card-meta">
-            <h2>Экспресс-оценка <span class="badge-live">Работает</span></h2>
-            <div class="card-price">3 000 ₸</div>
+        <!-- 1. ЭКСПРЕСС-ОЦЕНКА -->
+        <div class="product-card-full rv">
+          <div class="card-head">
+            <div class="card-icon">&#9889;</div>
+            <div class="card-meta">
+              <h2>Экспресс-оценка <span class="badge-inline badge-inline-live">Работает</span></h2>
+              <div class="card-price">3 000 &#8376;</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="card-tag">3 минуты</span>
+            <span class="card-tag">3 сценария</span>
+            <span class="card-tag">14 городов</span>
+          </div>
+          <ul class="feature-list">
+            <li>Анализ стартовых вложений (CAPEX)</li>
+            <li>Прогноз ежемесячной выручки</li>
+            <li>Расчёт точки безубыточности</li>
+            <li>Налоговая нагрузка по режимам</li>
+            <li>3 сценария: оптимистичный, реалистичный, пессимистичный</li>
+            <li>Оценка рисков и рекомендации</li>
+          </ul>
+          <div class="card-footer">
+            <a href="https://t.me/zerekai_bot" class="btn-primary" target="_blank" rel="noopener">Пройти оценку &rarr;</a>
+            <span class="card-note">Через Telegram — без регистрации</span>
           </div>
         </div>
 
-        <div class="card-tags">
-          <span class="card-tag">3 минуты</span>
-          <span class="card-tag">3 сценария</span>
-          <span class="card-tag">14 городов</span>
-        </div>
-
-        <ul class="feature-list">
-          <li>Анализ стартовых вложений (CAPEX)</li>
-          <li>Прогноз ежемесячной выручки</li>
-          <li>Расчёт точки безубыточности</li>
-          <li>Налоговая нагрузка по режимам</li>
-          <li>3 сценария: оптимистичный, реалистичный, пессимистичный</li>
-          <li>Оценка рисков и рекомендации</li>
-        </ul>
-
-        <div class="card-footer">
-          <a href="https://t.me/zerekai_bot" class="btn-primary" target="_blank" rel="noopener">Пройти оценку →</a>
-          <span class="card-note">Через Telegram — без регистрации</span>
-        </div>
-      </div>
-
-      <!-- 2. ФИНАНСОВАЯ МОДЕЛЬ -->
-      <div class="product-card rv">
-        <div class="card-head">
-          <div class="card-icon">📊</div>
-          <div class="card-meta">
-            <h2>Финансовая модель <span class="badge-live">Работает</span></h2>
-            <div class="card-price">9 000 ₸</div>
+        <!-- 2. ФИНАНСОВАЯ МОДЕЛЬ -->
+        <div class="product-card-full rv">
+          <div class="card-head">
+            <div class="card-icon">&#128202;</div>
+            <div class="card-meta">
+              <h2>Финансовая модель <span class="badge-inline badge-inline-live">Работает</span></h2>
+              <div class="card-price">9 000 &#8376;</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="card-tag">Excel-файл</span>
+            <span class="card-tag">60 месяцев</span>
+            <span class="card-tag">Все налоги</span>
+          </div>
+          <ul class="feature-list">
+            <li>P&amp;L на 60 месяцев</li>
+            <li>Прогноз Cash Flow</li>
+            <li>Точка безубыточности</li>
+            <li>Кредитный калькулятор</li>
+            <li>Налоговые режимы КЗ 2026</li>
+            <li>Графики и диаграммы</li>
+          </ul>
+          <div class="card-footer">
+            <a href="https://t.me/zerekai_bot" class="btn-primary" target="_blank" rel="noopener">Получить модель &rarr;</a>
+            <span class="card-note">Excel-файл на email или в Telegram</span>
           </div>
         </div>
 
-        <div class="card-tags">
-          <span class="card-tag">Excel-файл</span>
-          <span class="card-tag">60 месяцев</span>
-          <span class="card-tag">Все налоги</span>
-        </div>
-
-        <ul class="feature-list">
-          <li>P&amp;L на 60 месяцев</li>
-          <li>Прогноз Cash Flow</li>
-          <li>Точка безубыточности</li>
-          <li>Кредитный калькулятор</li>
-          <li>Налоговые режимы КЗ 2026</li>
-          <li>Графики и диаграммы</li>
-        </ul>
-
-        <div class="card-footer">
-          <a href="https://t.me/zerekai_bot" class="btn-primary" target="_blank" rel="noopener">Получить модель →</a>
-          <span class="card-note">Excel-файл на email или в Telegram</span>
-        </div>
-      </div>
-
-      <!-- 3. БИЗНЕС-ПЛАН -->
-      <div class="product-card card-soon rv">
-        <div class="card-head">
-          <div class="card-icon">📋</div>
-          <div class="card-meta">
-            <h2>Бизнес-план <span class="badge-soon">Скоро</span></h2>
-            <div class="card-price">15 000 ₸</div>
+        <!-- 3. БИЗНЕС-ПЛАН -->
+        <div class="product-card-full card-soon rv">
+          <div class="card-head">
+            <div class="card-icon">&#128203;</div>
+            <div class="card-meta">
+              <h2>Бизнес-план <span class="badge-inline badge-inline-soon">Скоро</span></h2>
+              <div class="card-price">15 000 &#8376;</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="card-tag">Word + PDF</span>
+            <span class="card-tag">Шаблон 400 МРП</span>
+            <span class="card-tag">Pitch Deck</span>
+          </div>
+          <ul class="feature-list">
+            <li>Документ под Даму / Бастау Бизнес</li>
+            <li>Финансовый раздел с расчётами</li>
+            <li>Маркетинговый анализ рынка</li>
+            <li>Pitch Deck презентация</li>
+          </ul>
+          <div class="card-footer">
+            <button class="btn-primary btn-disabled" disabled>Заказать план &rarr;</button>
+            <span class="card-note">Скоро — оставьте заявку в Telegram</span>
           </div>
         </div>
 
-        <div class="card-tags">
-          <span class="card-tag">Word + PDF</span>
-          <span class="card-tag">Шаблон 400 МРП</span>
-          <span class="card-tag">Pitch Deck</span>
-        </div>
-
-        <ul class="feature-list">
-          <li>Документ под Даму / Бастау Бизнес</li>
-          <li>Финансовый раздел с расчётами</li>
-          <li>Маркетинговый анализ рынка</li>
-          <li>Pitch Deck презентация</li>
-        </ul>
-
-        <div class="card-footer">
-          <button class="btn-primary btn-disabled" disabled>Заказать план →</button>
-          <span class="card-note">Скоро — оставьте заявку в Telegram</span>
-        </div>
-      </div>
-
-      <!-- 4. PITCH DECK -->
-      <div class="product-card card-soon rv">
-        <div class="card-head">
-          <div class="card-icon">🎯</div>
-          <div class="card-meta">
-            <h2>Презентация (Pitch Deck) <span class="badge-soon">Скоро</span></h2>
-            <div class="card-price price-included">Включена в Бизнес-план</div>
+        <!-- 4. PITCH DECK -->
+        <div class="product-card-full card-soon rv">
+          <div class="card-head">
+            <div class="card-icon">&#127919;</div>
+            <div class="card-meta">
+              <h2>Презентация (Pitch Deck) <span class="badge-inline badge-inline-soon">Скоро</span></h2>
+              <div class="card-price price-included">Включена в Бизнес-план</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="card-tag">PowerPoint + PDF</span>
+            <span class="card-tag">Инвестиционная</span>
+            <span class="card-tag">Гранты</span>
+          </div>
+          <ul class="feature-list">
+            <li>Инвестиционная презентация</li>
+            <li>Подходит для грантовых комиссий</li>
+            <li>Профессиональная структура</li>
+            <li>Дизайн под бренд</li>
+          </ul>
+          <div class="card-footer">
+            <button class="btn-primary btn-disabled" disabled>Получить Pitch Deck &rarr;</button>
+            <span class="card-note">Доступна в комплекте с Бизнес-планом</span>
           </div>
         </div>
 
-        <div class="card-tags">
-          <span class="card-tag">PowerPoint + PDF</span>
-          <span class="card-tag">Инвестиционная</span>
-          <span class="card-tag">Гранты</span>
-        </div>
-
-        <ul class="feature-list">
-          <li>Инвестиционная презентация</li>
-          <li>Подходит для грантовых комиссий</li>
-          <li>Профессиональная структура</li>
-          <li>Дизайн под бренд</li>
-        </ul>
-
-        <div class="card-footer">
-          <button class="btn-primary btn-disabled" disabled>Получить Pitch Deck →</button>
-          <span class="card-note">Доступна в комплекте с Бизнес-планом</span>
-        </div>
-      </div>
-
-      <!-- 5. АНАЛИТИЧЕСКИЕ ОТЧЁТЫ -->
-      <div class="product-card card-soon rv">
-        <div class="card-head">
-          <div class="card-icon">🔬</div>
-          <div class="card-meta">
-            <h2>Аналитические отчёты <span class="badge-soon">Скоро</span></h2>
-            <div class="card-price price-tbd">Цена по запросу</div>
+        <!-- 5. АНАЛИТИЧЕСКИЕ ОТЧЁТЫ -->
+        <div class="product-card-full card-soon rv">
+          <div class="card-head">
+            <div class="card-icon">&#128300;</div>
+            <div class="card-meta">
+              <h2>Аналитические отчёты <span class="badge-inline badge-inline-soon">Скоро</span></h2>
+              <div class="card-price price-tbd">Цена по запросу</div>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="card-tag">PDF-отчёт</span>
+            <span class="card-tag">Глубокий анализ</span>
+            <span class="card-tag">Под заказ</span>
+          </div>
+          <ul class="feature-list">
+            <li>Глубокий анализ конкретной ниши</li>
+            <li>Конкуренты и ценообразование</li>
+            <li>Рекомендации по локации</li>
+            <li>Исследование под ваш город</li>
+          </ul>
+          <div class="card-footer">
+            <a href="https://t.me/zerekai_bot" class="btn-secondary" target="_blank" rel="noopener">Оставить заявку &rarr;</a>
+            <span class="card-note">Обсудим объём и стоимость в Telegram</span>
           </div>
         </div>
 
-        <div class="card-tags">
-          <span class="card-tag">PDF-отчёт</span>
-          <span class="card-tag">Глубокий анализ</span>
-          <span class="card-tag">Под заказ</span>
-        </div>
-
-        <ul class="feature-list">
-          <li>Глубокий анализ конкретной ниши</li>
-          <li>Конкуренты и ценообразование</li>
-          <li>Рекомендации по локации</li>
-          <li>Исследование под ваш город</li>
-        </ul>
-
-        <div class="card-footer">
-          <a href="https://t.me/zerekai_bot" class="btn-primary" target="_blank" rel="noopener" style="background:var(--bg-elevated);color:var(--text-dim);box-shadow:none;border:1px solid var(--border);">Оставить заявку →</a>
-          <span class="card-note">Обсудим объём и стоимость в Telegram</span>
-        </div>
       </div>
-
-    </div><!-- /products-list -->
-  </div>
+    </div>
+  </section>
 
   <!-- BOTTOM CTA -->
-  <section class="cta-block rv">
+  <section class="cta-section rv">
     <div class="container">
-      <h2>Готовы проверить свою идею?</h2>
-      <p>Начните с Экспресс-оценки — три минуты, честные цифры, три сценария.</p>
-      <a href="https://t.me/zerekai_bot" class="btn-primary" target="_blank" rel="noopener">Открыть в Telegram →</a>
+      <h2 class="cta-title">Готовы проверить свою идею?</h2>
+      <p class="cta-subtitle">Начните с Экспресс-оценки — три минуты, честные цифры, три сценария.</p>
+      <a href="https://t.me/zerekai_bot" class="btn-white" target="_blank" rel="noopener">Открыть в Telegram &rarr;</a>
     </div>
   </section>
 
   <!-- FOOTER -->
   <footer class="site-footer">
-    <div class="container">
-      <div class="footer-inner">
-        <div class="footer-copy">© 2026 ZEREK. Казахстан, Актобе.</div>
-        <nav class="footer-links">
-          <a href="products.html">Продукты</a>
-          <a href="academy.html">Academy</a>
-          <a href="wiki.html">Wiki</a>
-          <a href="cases.html">Кейсы</a>
-          <a href="privacy.html">Конфиденциальность</a>
-        </nav>
-        <div class="footer-tg">
-          Telegram: <a href="https://t.me/zerekai_bot" target="_blank" rel="noopener">@zerekai_bot</a>
-        </div>
-      </div>
+    <div class="footer-inner">
+      <div class="footer-copy">&copy; 2026 ZEREK. Казахстан.</div>
+      <nav class="footer-links">
+        <a href="products.html">Продукты</a>
+        <a href="academy.html">Academy</a>
+        <a href="wiki.html">Wiki</a>
+        <a href="cases.html">Кейсы</a>
+        <a href="privacy.html">Конфиденциальность</a>
+      </nav>
+      <div class="footer-tg">Telegram: <a href="https://t.me/zerekai_bot" target="_blank" rel="noopener">@zerekai_bot</a></div>
     </div>
   </footer>
 

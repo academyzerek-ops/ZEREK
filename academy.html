@@ -1,731 +1,191 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZEREK Academy — бесплатное обучение бизнесу</title>
-<meta name="description" content="ZEREK Academy — бесплатное обучение финансовой грамотности и бизнес-мышлению для школьников и взрослых. Два уровня: Фундамент (12–15 лет) и Архитектор (16+). Без регистрации, в Telegram.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://zerek.cc/academy.html">
-<meta property="og:title" content="ZEREK Academy — бесплатное обучение бизнесу">
-<meta property="og:description" content="Финансовая грамотность и бизнес-мышление. От школьников до взрослых. Бесплатно. Два трека: Фундамент и Архитектор — в Telegram.">
-<meta property="og:image" content="https://zerek.cc/logo.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="ZEREK Academy — бесплатное обучение бизнесу">
-<meta name="twitter:description" content="Финансовая грамотность и бизнес-мышление. Бесплатно. От школьников до взрослых.">
-<link rel="icon" href="favicon.png" type="image/png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-
-:root{
-  --bg:#06060B;
-  --bg-card:#0E0E16;
-  --bg-elevated:#14141F;
-  --text:#E8E6F0;
-  --text-dim:#8B89A0;
-  --text-muted:#5C5A6E;
-  --accent:#6C63FF;
-  --accent-glow:rgba(108,99,255,0.15);
-  --success:#00D4AA;
-  --success-glow:rgba(0,212,170,0.12);
-  --warning:#FFB547;
-  --warning-glow:rgba(255,181,71,0.12);
-  --danger:#FF5C72;
-  --border:rgba(255,255,255,0.06);
-  --radius:16px;
-  --radius-sm:10px;
-  --gold:#C9A84C;
-  --gold-glow:rgba(201,168,76,0.14);
-  --teal:#00C4B4;
-  --teal-glow:rgba(0,196,180,0.13);
-}
-
-html{scroll-behavior:smooth}
-
-body{
-  font-family:'Outfit',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  line-height:1.6;
-  overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-}
-
-body::before{
-  content:'';
-  position:fixed;
-  top:0;left:0;width:100%;height:100%;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events:none;
-  z-index:9999;
-}
-
-.container{max-width:1120px;margin:0 auto;padding:0 24px}
-
-/* ─── HEADER ─── */
-header{
-  position:fixed;
-  top:0;left:0;right:0;
-  z-index:100;
-  padding:18px 0;
-  background:rgba(6,6,11,0.85);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--border);
-  transition:all .3s ease;
-}
-header.scrolled{padding:12px 0}
-.nav{display:flex;align-items:center;justify-content:space-between}
-.logo{
-  font-weight:800;
-  font-size:22px;
-  letter-spacing:3px;
-  text-transform:uppercase;
-  background:linear-gradient(135deg,var(--accent),var(--success));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  text-decoration:none;
-}
-.logo span{
-  font-weight:400;
-  font-size:11px;
-  letter-spacing:1px;
-  display:block;
-  -webkit-text-fill-color:var(--text-dim);
-  margin-top:-2px;
-}
-.nav-links{display:flex;gap:32px;align-items:center}
-.nav-links a{
-  color:var(--text-dim);
-  text-decoration:none;
-  font-size:14px;
-  font-weight:500;
-  transition:color .2s;
-}
-.nav-links a:hover{color:var(--text)}
-.nav-links a.active{color:var(--text)}
-
-.burger{
-  display:none;
-  flex-direction:column;
-  gap:5px;
-  cursor:pointer;
-  padding:8px;
-  z-index:200;
-}
-.burger span{
-  width:24px;height:2px;
-  background:var(--text);
-  border-radius:2px;
-  transition:all .3s ease;
-}
-.burger.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
-.burger.active span:nth-child(2){opacity:0}
-.burger.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
-
-.mobile-menu{
-  display:none;
-  position:fixed;
-  top:0;left:0;right:0;bottom:0;
-  background:rgba(6,6,11,0.97);
-  backdrop-filter:blur(30px);
-  z-index:150;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:28px;
-}
-.mobile-menu.open{display:flex}
-.mobile-menu a{
-  color:var(--text);
-  text-decoration:none;
-  font-size:20px;
-  font-weight:500;
-  letter-spacing:1px;
-  opacity:0;
-  transform:translateY(20px);
-  transition:all .3s ease;
-}
-.mobile-menu.open a{opacity:1;transform:translateY(0)}
-.mobile-menu a:nth-child(2){transition-delay:.05s}
-.mobile-menu a:nth-child(3){transition-delay:.1s}
-.mobile-menu a:nth-child(4){transition-delay:.15s}
-.mobile-menu a:nth-child(5){transition-delay:.2s}
-.mobile-menu a:nth-child(6){transition-delay:.25s}
-
-/* ─── BUTTONS ─── */
-.btn-primary{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  padding:16px 32px;
-  background:var(--accent);
-  color:#fff;
-  text-decoration:none;
-  border-radius:var(--radius-sm);
-  font-weight:600;
-  font-size:15px;
-  transition:all .3s ease;
-  box-shadow:0 4px 24px rgba(108,99,255,0.3);
-}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(108,99,255,0.45)}
-.btn-secondary{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  padding:16px 32px;
-  background:transparent;
-  border:1px solid var(--border);
-  color:var(--text);
-  text-decoration:none;
-  border-radius:var(--radius-sm);
-  font-weight:500;
-  font-size:15px;
-  transition:all .3s ease;
-}
-.btn-secondary:hover{border-color:var(--text-muted);background:var(--bg-card)}
-
-/* ─── PAGE HERO ─── */
-.page-hero{
-  padding:140px 0 80px;
-  position:relative;
-}
-.page-hero::before{
-  content:'';
-  position:absolute;
-  top:-80px;left:50%;
-  transform:translateX(-50%);
-  width:900px;height:500px;
-  background:radial-gradient(ellipse,rgba(108,99,255,0.09) 0%,rgba(0,212,170,0.05) 50%,transparent 75%);
-  pointer-events:none;
-}
-.page-hero-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:12px;
-  color:var(--accent);
-  letter-spacing:3px;
-  text-transform:uppercase;
-  margin-bottom:20px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.page-hero-label::before{
-  content:'';
-  width:32px;height:1px;
-  background:var(--accent);
-  display:inline-block;
-}
-.page-hero h1{
-  font-size:clamp(36px,5.5vw,64px);
-  font-weight:800;
-  letter-spacing:-2px;
-  line-height:1.05;
-  margin-bottom:20px;
-  background:linear-gradient(135deg,var(--text) 40%,var(--accent));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  position:relative;
-}
-.page-hero p{
-  font-size:18px;
-  color:var(--text-dim);
-  max-width:620px;
-  line-height:1.75;
-  position:relative;
-}
-.page-hero p strong{color:var(--text);font-weight:600}
-
-/* ─── SECTIONS ─── */
-section.level-section{padding:80px 0}
-section.level-section:first-of-type{padding-top:0}
-
-.section-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:12px;
-  color:var(--accent);
-  letter-spacing:3px;
-  text-transform:uppercase;
-  margin-bottom:12px;
-}
-
-/* ─── ACADEMY CARD ─── */
-.academy-card{
-  background:var(--bg-card);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  overflow:hidden;
-  transition:transform .35s ease, box-shadow .35s ease, border-color .35s ease;
-}
-.academy-card:hover{
-  transform:translateY(-4px);
-  box-shadow:0 20px 56px rgba(0,0,0,0.35);
-}
-
-/* Gold bar for Level 1 */
-.bar-gold .academy-card-bar{
-  height:4px;
-  background:linear-gradient(90deg,#C9A84C,#F0D080,#C9A84C);
-}
-.bar-gold:hover{border-color:rgba(201,168,76,0.3)}
-
-/* Teal bar for Level 2 */
-.bar-teal .academy-card-bar{
-  height:4px;
-  background:linear-gradient(90deg,var(--teal),var(--success),var(--teal));
-}
-.bar-teal:hover{border-color:rgba(0,212,170,0.3)}
-
-.academy-card-body{padding:36px 36px 32px}
-
-.academy-card-header{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:16px;
-  margin-bottom:8px;
-  flex-wrap:wrap;
-}
-.academy-card-title{
-  font-size:clamp(22px,3.5vw,30px);
-  font-weight:800;
-  letter-spacing:-0.5px;
-  line-height:1.15;
-}
-.badge-free{
-  display:inline-flex;
-  align-items:center;
-  padding:5px 14px;
-  background:var(--success-glow);
-  border:1px solid rgba(0,212,170,0.2);
-  border-radius:100px;
-  font-size:12px;
-  font-weight:700;
-  color:var(--success);
-  letter-spacing:.5px;
-  white-space:nowrap;
-  flex-shrink:0;
-}
-
-.academy-card-age{
-  font-family:'JetBrains Mono',monospace;
-  font-size:12px;
-  color:var(--text-muted);
-  letter-spacing:2px;
-  text-transform:uppercase;
-  margin-bottom:16px;
-}
-
-.academy-card-desc{
-  font-size:15px;
-  color:var(--text-dim);
-  line-height:1.7;
-  margin-bottom:28px;
-  max-width:680px;
-}
-
-/* ─── MODULES LIST ─── */
-.modules-list{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-  margin-bottom:28px;
-}
-.module-item{
-  display:flex;
-  gap:16px;
-  align-items:flex-start;
-  padding:18px 20px;
-  background:var(--bg-elevated);
-  border:1px solid var(--border);
-  border-radius:var(--radius-sm);
-  transition:border-color .2s;
-}
-.module-item:hover{border-color:rgba(255,255,255,0.1)}
-
-.module-num{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;
-  font-weight:500;
-  color:var(--text-muted);
-  letter-spacing:1px;
-  white-space:nowrap;
-  padding-top:2px;
-  min-width:56px;
-}
-.bar-gold .module-item .module-num{color:var(--gold)}
-.bar-teal .module-item .module-num{color:var(--teal)}
-
-.module-info{}
-.module-name{
-  font-size:15px;
-  font-weight:600;
-  color:var(--text);
-  margin-bottom:3px;
-  line-height:1.35;
-}
-.module-topics{
-  font-size:13px;
-  color:var(--text-dim);
-  line-height:1.55;
-}
-
-/* ─── META STRIP ─── */
-.academy-card-meta{
-  display:flex;
-  align-items:center;
-  gap:20px;
-  padding:16px 20px;
-  background:var(--bg-elevated);
-  border-top:1px solid var(--border);
-  border-radius:0 0 var(--radius) var(--radius);
-  flex-wrap:wrap;
-}
-.meta-item{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-family:'JetBrains Mono',monospace;
-  font-size:12px;
-  color:var(--text-muted);
-  letter-spacing:.5px;
-}
-.meta-dot{
-  width:6px;height:6px;
-  border-radius:50%;
-  flex-shrink:0;
-}
-.bar-gold .meta-dot{background:var(--gold)}
-.bar-teal .meta-dot{background:var(--teal)}
-
-/* ─── LEVEL HEADING ─── */
-.level-heading{
-  display:flex;
-  align-items:center;
-  gap:16px;
-  margin-bottom:28px;
-}
-.level-badge{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  padding:5px 14px;
-  border-radius:100px;
-  font-weight:600;
-}
-.level-badge-gold{
-  background:var(--gold-glow);
-  border:1px solid rgba(201,168,76,0.2);
-  color:var(--gold);
-}
-.level-badge-teal{
-  background:var(--teal-glow);
-  border:1px solid rgba(0,212,170,0.18);
-  color:var(--teal);
-}
-.level-title{
-  font-size:clamp(20px,3vw,26px);
-  font-weight:700;
-  letter-spacing:-0.3px;
-}
-
-/* ─── CTA BLOCK ─── */
-.cta-block{
-  text-align:center;
-  padding:80px 0 100px;
-}
-.cta-block .section-label{justify-content:center;display:flex;gap:8px;margin-bottom:20px}
-.cta-block h2{
-  font-size:clamp(26px,4vw,42px);
-  font-weight:800;
-  letter-spacing:-0.5px;
-  margin-bottom:16px;
-  line-height:1.15;
-}
-.cta-block p{
-  font-size:16px;
-  color:var(--text-dim);
-  max-width:520px;
-  margin:0 auto 36px;
-  line-height:1.7;
-}
-
-/* ─── DIVIDER ─── */
-.section-divider{
-  border:none;
-  border-top:1px solid var(--border);
-  margin:0;
-}
-
-/* ─── FOOTER ─── */
-footer{border-top:1px solid var(--border);padding:48px 0}
-.footer-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px}
-.footer-copy{font-size:13px;color:var(--text-muted)}
-.footer-links{display:flex;gap:24px}
-.footer-links a{font-size:13px;color:var(--text-dim);text-decoration:none;transition:color .2s}
-.footer-links a:hover{color:var(--text)}
-
-/* ─── SCROLL REVEAL ─── */
-.rv{
-  opacity:0;
-  transform:translateY(28px);
-  transition:opacity .7s ease, transform .7s ease;
-}
-.rv.visible{opacity:1;transform:translateY(0)}
-.rv-delay-1{transition-delay:.08s}
-.rv-delay-2{transition-delay:.16s}
-.rv-delay-3{transition-delay:.24s}
-.rv-delay-4{transition-delay:.32s}
-
-/* ─── RESPONSIVE ─── */
-@media(max-width:768px){
-  .nav-links{display:none}
-  .burger{display:flex}
-  .page-hero{padding:120px 0 60px}
-  .page-hero h1{letter-spacing:-1px}
-  .page-hero p{font-size:16px}
-  section.level-section{padding:56px 0}
-  .academy-card-body{padding:24px 20px 20px}
-  .module-item{padding:14px 16px}
-  .module-num{min-width:44px;font-size:10px}
-  .cta-block{padding:56px 0 72px}
-  .footer-inner{flex-direction:column;text-align:center}
-  .footer-links{flex-wrap:wrap;justify-content:center}
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZEREK Academy — бесплатное обучение бизнесу</title>
+  <meta name="description" content="ZEREK Academy — бесплатное обучение финансовой грамотности и бизнес-мышлению для школьников и взрослых. Два уровня: Фундамент (12-15 лет) и Архитектор (16+).">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://zerek.cc/academy.html">
+  <meta property="og:title" content="ZEREK Academy — бесплатное обучение бизнесу">
+  <meta property="og:description" content="Финансовая грамотность и бизнес-мышление. От школьников до взрослых. Бесплатно.">
+  <link rel="icon" href="favicon.png">
+  <link rel="stylesheet" href="style.css">
+  <script src="main.js" defer></script>
 </head>
 <body>
 
-<!-- ═══ HEADER ═══ -->
-<header id="header">
-<div class="container">
-  <div class="nav">
-    <a href="index.html" class="logo">ZEREK<span>бизнес-аналитика</span></a>
-    <div class="nav-links">
-      <a href="products.html">Продукты</a>
-      <a href="academy.html" class="active">Academy</a>
-      <a href="wiki.html">Wiki</a>
-      <a href="cases.html">Кейсы</a>
-      <a href="https://t.me/zerekai_bot" target="_blank" class="btn-primary" style="padding:10px 22px;font-size:13px;">Открыть в Telegram →</a>
-    </div>
-    <div class="burger" id="burger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
-  </div>
-</div>
-</header>
+  <!-- HEADER -->
+  <header class="site-header">
+    <nav class="nav">
+      <a href="/" class="logo-link">Zerek<span class="logo-ai">ai</span></a>
+      <div class="nav-links">
+        <a href="products.html">Продукты</a>
+        <a href="academy.html" class="active">Academy</a>
+        <a href="wiki.html">Wiki</a>
+        <a href="cases.html">Кейсы</a>
+      </div>
+      <a href="https://t.me/zerekai_bot" class="nav-cta" target="_blank" rel="noopener">Telegram &rarr;</a>
+      <button id="burger" class="burger" aria-label="Меню">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
 
-<div class="mobile-menu" id="mobileMenu">
-  <a href="products.html" onclick="toggleMenu()">Продукты</a>
-  <a href="academy.html" onclick="toggleMenu()">Academy</a>
-  <a href="wiki.html" onclick="toggleMenu()">Wiki</a>
-  <a href="cases.html" onclick="toggleMenu()">Кейсы</a>
-  <a href="https://t.me/zerekai_bot" target="_blank">Открыть в Telegram →</a>
-  <a href="about.html" style="font-size:15px;color:var(--text-dim);">О проекте</a>
-</div>
-
-<!-- ═══ PAGE HERO ═══ -->
-<div class="page-hero">
-<div class="container">
-  <div class="page-hero-label rv">Education</div>
-  <h1 class="rv rv-delay-1">ZEREK Academy</h1>
-  <p class="rv rv-delay-2">Финансовая грамотность и бизнес-мышление.<br>От школьников до взрослых. <strong>Бесплатно.</strong></p>
-</div>
-</div>
-
-<!-- ═══ LEVEL 1 — ФУНДАМЕНТ ═══ -->
-<section class="level-section">
-<div class="container">
-
-  <div class="level-heading rv">
-    <span class="level-badge level-badge-gold">Уровень 1</span>
-    <span class="level-title">«Фундамент» — 12–15 лет</span>
+  <!-- MOBILE MENU -->
+  <div id="mobileMenu" class="mobile-menu">
+    <a href="products.html">Продукты</a>
+    <a href="academy.html">Academy</a>
+    <a href="wiki.html">Wiki</a>
+    <a href="cases.html">Кейсы</a>
+    <a href="https://t.me/zerekai_bot" class="nav-cta" target="_blank" rel="noopener">Открыть в Telegram &rarr;</a>
   </div>
 
-  <div class="academy-card bar-gold rv rv-delay-1">
-    <div class="academy-card-bar"></div>
-    <div class="academy-card-body">
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="page-hero-label rv">Education</div>
+      <h1 class="section-title rv rv-d1">ZEREK Academy</h1>
+      <p class="section-subtitle rv rv-d2" style="margin-left:auto;margin-right:auto;">Финансовая грамотность и бизнес-мышление.<br>От школьников до взрослых. <strong>Бесплатно.</strong></p>
+    </div>
+  </section>
 
-      <div class="academy-card-header">
-        <h2 class="academy-card-title">Финансовая грамотность<br>для подростков</h2>
-        <span class="badge-free">Бесплатно</span>
+  <!-- LEVEL 1 — ФУНДАМЕНТ -->
+  <section class="section">
+    <div class="container">
+      <div class="level-heading rv">
+        <span class="level-badge level-badge-gold">Уровень 1</span>
+        <span class="level-title">«Фундамент» — 12-15 лет</span>
       </div>
-      <div class="academy-card-age">12–15 лет · Базовый уровень</div>
-      <p class="academy-card-desc">
-        Курс даёт подросткам реальное понимание того, как работают деньги, откуда берётся доход и как управлять личным бюджетом. Никакой скуки — только практика, примеры из жизни и понятный язык.
-      </p>
 
-      <div class="modules-list">
+      <div class="academy-card-full rv rv-d1">
+        <div class="academy-bar bar-gold"></div>
+        <div class="academy-card-full-body">
+          <div class="academy-card-full-header">
+            <h2 class="academy-card-full-title">Финансовая грамотность<br>для подростков</h2>
+            <span class="badge badge-free">Бесплатно</span>
+          </div>
+          <div class="academy-card-full-age">12-15 лет &middot; Базовый уровень</div>
+          <p class="academy-card-full-desc">
+            Курс даёт подросткам реальное понимание того, как работают деньги, откуда берётся доход и как управлять личным бюджетом. Никакой скуки — только практика, примеры из жизни и понятный язык.
+          </p>
 
-        <div class="module-item rv rv-delay-1">
-          <span class="module-num">МОД. 01</span>
-          <div class="module-info">
-            <div class="module-name">Деньги — что это, как работают, инфляция, банки</div>
-            <div class="module-topics">Откуда берутся деньги · Покупательная способность · Инфляция на примерах · Как работает банк · Депозит и процент</div>
+          <div class="modules-list">
+            <div class="module-item rv rv-d1">
+              <span class="module-num">МОД. 01</span>
+              <div>
+                <div class="module-name">Деньги — что это, как работают, инфляция, банки</div>
+                <div class="module-topics">Откуда берутся деньги &middot; Покупательная способность &middot; Инфляция на примерах &middot; Как работает банк &middot; Депозит и процент</div>
+              </div>
+            </div>
+            <div class="module-item rv rv-d2">
+              <span class="module-num">МОД. 02</span>
+              <div>
+                <div class="module-name">Генератор кэша — как зарабатывать, виды дохода, налоги просто</div>
+                <div class="module-topics">Активный и пассивный доход &middot; Зарплата, бизнес, инвестиции &middot; Почему государство берёт налоги &middot; Налоги для подростка</div>
+              </div>
+            </div>
+            <div class="module-item rv rv-d3">
+              <span class="module-num">МОД. 03</span>
+              <div>
+                <div class="module-name">Управление и рост — бюджет, накопления, инвестиции базовые</div>
+                <div class="module-topics">Личный бюджет: доходы и расходы &middot; Правило 50/30/20 &middot; Как копить с нуля &middot; Вклады, акции, базово</div>
+              </div>
+            </div>
           </div>
         </div>
-
-        <div class="module-item rv rv-delay-2">
-          <span class="module-num">МОД. 02</span>
-          <div class="module-info">
-            <div class="module-name">Генератор кэша — как зарабатывать, виды дохода, налоги просто</div>
-            <div class="module-topics">Активный и пассивный доход · Зарплата, бизнес, инвестиции · Почему государство берёт налоги · Налоги для подростка</div>
-          </div>
+        <div class="academy-card-full-meta">
+          <div class="meta-item"><span class="meta-dot meta-dot-gold"></span> 3 модуля</div>
+          <div class="meta-item"><span class="meta-dot meta-dot-gold"></span> 23 главы</div>
         </div>
-
-        <div class="module-item rv rv-delay-3">
-          <span class="module-num">МОД. 03</span>
-          <div class="module-info">
-            <div class="module-name">Управление и рост — бюджет, накопления, инвестиции базовые</div>
-            <div class="module-topics">Личный бюджет: доходы и расходы · Правило 50/30/20 · Как копить с нуля · Вклады, акции, базово</div>
-          </div>
-        </div>
-
       </div>
     </div>
+  </section>
 
-    <div class="academy-card-meta">
-      <div class="meta-item">
-        <span class="meta-dot"></span>
-        3 модуля
+  <hr class="section-divider">
+
+  <!-- LEVEL 2 — АРХИТЕКТОР -->
+  <section class="section">
+    <div class="container">
+      <div class="level-heading rv">
+        <span class="level-badge level-badge-teal">Уровень 2</span>
+        <span class="level-title">«Архитектор» — 16+</span>
       </div>
-      <div class="meta-item">
-        <span class="meta-dot"></span>
-        23 главы
-      </div>
-    </div>
-  </div>
 
-</div>
-</section>
+      <div class="academy-card-full rv rv-d1">
+        <div class="academy-bar bar-teal"></div>
+        <div class="academy-card-full-body">
+          <div class="academy-card-full-header">
+            <h2 class="academy-card-full-title">Бизнес-мышление<br>для начинающих предпринимателей</h2>
+            <span class="badge badge-free">Бесплатно</span>
+          </div>
+          <div class="academy-card-full-age">16+ &middot; Продвинутый уровень</div>
+          <p class="academy-card-full-desc">
+            Курс для тех, кто думает об открытии бизнеса или хочет понять, как устроена предпринимательская логика. От поиска идеи до первых клиентов — без иллюзий, с практическими инструментами.
+          </p>
 
-<hr class="section-divider">
-
-<!-- ═══ LEVEL 2 — АРХИТЕКТОР ═══ -->
-<section class="level-section">
-<div class="container">
-
-  <div class="level-heading rv">
-    <span class="level-badge level-badge-teal">Уровень 2</span>
-    <span class="level-title">«Архитектор» — 16+</span>
-  </div>
-
-  <div class="academy-card bar-teal rv rv-delay-1">
-    <div class="academy-card-bar"></div>
-    <div class="academy-card-body">
-
-      <div class="academy-card-header">
-        <h2 class="academy-card-title">Бизнес-мышление<br>для начинающих предпринимателей</h2>
-        <span class="badge-free">Бесплатно</span>
-      </div>
-      <div class="academy-card-age">16+ · Продвинутый уровень</div>
-      <p class="academy-card-desc">
-        Курс для тех, кто думает об открытии бизнеса или хочет понять, как устроена предпринимательская логика. От поиска идеи до первых клиентов — без иллюзий, с практическими инструментами.
-      </p>
-
-      <div class="modules-list">
-
-        <div class="module-item rv rv-delay-1">
-          <span class="module-num">МОД. 01</span>
-          <div class="module-info">
-            <div class="module-name">Искра — как находить бизнес-идеи</div>
-            <div class="module-topics">Где ищут идеи предприниматели · Боль рынка vs красивая идея · Проверка спроса до старта · Ошибки при выборе ниши</div>
+          <div class="modules-list">
+            <div class="module-item rv rv-d1">
+              <span class="module-num">МОД. 01</span>
+              <div>
+                <div class="module-name">Искра — как находить бизнес-идеи</div>
+                <div class="module-topics">Где ищут идеи предприниматели &middot; Боль рынка vs красивая идея &middot; Проверка спроса до старта &middot; Ошибки при выборе ниши</div>
+              </div>
+            </div>
+            <div class="module-item rv rv-d2">
+              <span class="module-num">МОД. 02</span>
+              <div>
+                <div class="module-name">Визионер — бизнес-модель, ценностное предложение</div>
+                <div class="module-topics">Canvas на практике &middot; Для кого и зачем &middot; Каналы дистрибуции &middot; Как отличаться от конкурентов &middot; Unit-экономика просто</div>
+              </div>
+            </div>
+            <div class="module-item rv rv-d3">
+              <span class="module-num">МОД. 03</span>
+              <div>
+                <div class="module-name">MVP — минимальный продукт, тестирование гипотез</div>
+                <div class="module-topics">Что такое MVP и зачем &middot; Как запустить за минимум денег &middot; Как проверить гипотезу за неделю &middot; Что считать успехом теста</div>
+              </div>
+            </div>
+            <div class="module-item rv rv-d4">
+              <span class="module-num">МОД. 04</span>
+              <div>
+                <div class="module-name">Маркетинг — привлечение клиентов, каналы, аналитика</div>
+                <div class="module-topics">Кто твой клиент &middot; Каналы продвижения в КЗ &middot; Стоимость привлечения &middot; Воронка продаж &middot; Первая аналитика без Excel</div>
+              </div>
+            </div>
           </div>
         </div>
-
-        <div class="module-item rv rv-delay-2">
-          <span class="module-num">МОД. 02</span>
-          <div class="module-info">
-            <div class="module-name">Визионер — бизнес-модель, ценностное предложение</div>
-            <div class="module-topics">Canvas на практике · Для кого и зачем · Каналы дистрибуции · Как отличаться от конкурентов · Unit-экономика просто</div>
-          </div>
+        <div class="academy-card-full-meta">
+          <div class="meta-item"><span class="meta-dot meta-dot-teal"></span> 4 модуля</div>
+          <div class="meta-item"><span class="meta-dot meta-dot-teal"></span> 26 глав</div>
         </div>
-
-        <div class="module-item rv rv-delay-3">
-          <span class="module-num">МОД. 03</span>
-          <div class="module-info">
-            <div class="module-name">MVP — минимальный продукт, тестирование гипотез</div>
-            <div class="module-topics">Что такое MVP и зачем · Как запустить за минимум денег · Как проверить гипотезу за неделю · Что считать успехом теста</div>
-          </div>
-        </div>
-
-        <div class="module-item rv rv-delay-4">
-          <span class="module-num">МОД. 04</span>
-          <div class="module-info">
-            <div class="module-name">Маркетинг — привлечение клиентов, каналы, аналитика</div>
-            <div class="module-topics">Кто твой клиент · Каналы продвижения в КЗ · Стоимость привлечения · Воронка продаж · Первая аналитика без Excel</div>
-          </div>
-        </div>
-
       </div>
     </div>
+  </section>
 
-    <div class="academy-card-meta">
-      <div class="meta-item">
-        <span class="meta-dot"></span>
-        4 модуля
-      </div>
-      <div class="meta-item">
-        <span class="meta-dot"></span>
-        26 глав
-      </div>
+  <!-- CTA -->
+  <section class="cta-section rv">
+    <div class="container">
+      <h2 class="cta-title">Учись бесплатно — прямо в Telegram</h2>
+      <p class="cta-subtitle">Никакой регистрации и формочек. Открываешь бота, выбираешь уровень — и начинаешь.</p>
+      <a href="https://t.me/zerekai_bot" class="btn-white" target="_blank" rel="noopener">Начать обучение в Telegram &rarr;</a>
     </div>
-  </div>
+  </section>
 
-</div>
-</section>
-
-<!-- ═══ CTA ═══ -->
-<section class="cta-block">
-<div class="container">
-  <div class="section-label rv">Начни сейчас</div>
-  <h2 class="rv rv-delay-1">Учись бесплатно — прямо в Telegram</h2>
-  <p class="rv rv-delay-2">Никакой регистрации и формочек. Открываешь бота, выбираешь уровень — и начинаешь.</p>
-  <a href="https://t.me/zerekai_bot" target="_blank" class="btn-primary rv rv-delay-3" style="font-size:17px;padding:18px 40px;">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
-    Начать обучение в Telegram →
-  </a>
-</div>
-</section>
-
-<!-- ═══ FOOTER ═══ -->
-<footer>
-<div class="container">
-  <div class="footer-inner">
-    <div class="footer-copy">&copy; 2026 ZEREK · Казахстан</div>
-    <div class="footer-links">
-      <a href="about.html">О проекте</a>
-      <a href="privacy.html">Конфиденциальность</a>
-      <a href="https://t.me/zerekai_bot" target="_blank">Telegram</a>
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-copy">&copy; 2026 ZEREK. Казахстан.</div>
+      <nav class="footer-links">
+        <a href="products.html">Продукты</a>
+        <a href="academy.html">Academy</a>
+        <a href="wiki.html">Wiki</a>
+        <a href="cases.html">Кейсы</a>
+        <a href="privacy.html">Конфиденциальность</a>
+      </nav>
+      <div class="footer-tg">Telegram: <a href="https://t.me/zerekai_bot" target="_blank" rel="noopener">@zerekai_bot</a></div>
     </div>
-  </div>
-</div>
-</footer>
+  </footer>
 
-<script>
-function toggleMenu(){
-  const b=document.getElementById('burger');
-  const m=document.getElementById('mobileMenu');
-  b.classList.toggle('active');
-  m.classList.toggle('open');
-  document.body.style.overflow=m.classList.contains('open')?'hidden':'';
-}
-
-window.addEventListener('scroll',()=>{
-  document.getElementById('header').classList.toggle('scrolled',window.scrollY>50);
-});
-
-const rvObserver=new IntersectionObserver(entries=>{
-  entries.forEach(el=>{
-    if(el.isIntersecting){
-      el.target.classList.add('visible');
-      rvObserver.unobserve(el.target);
-    }
-  });
-},{threshold:0.08,rootMargin:'0px 0px -36px 0px'});
-document.querySelectorAll('.rv').forEach(el=>rvObserver.observe(el));
-</script>
 </body>
 </html>

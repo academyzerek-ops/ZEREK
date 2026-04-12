@@ -1,16 +1,28 @@
 /* ZEREK — zerek.cc main JS */
 
-/* ─── Scroll Reveal ─── */
+/* Scroll Reveal with stagger */
 (function() {
   var obs = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
-      if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
     });
-  }, { threshold: 0.1 });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
   document.querySelectorAll('.rv').forEach(function(el) { obs.observe(el); });
 })();
 
-/* ─── Burger Menu ─── */
+/* Header scroll effect */
+(function() {
+  var header = document.querySelector('.site-header');
+  if (!header) return;
+  window.addEventListener('scroll', function() {
+    header.classList.toggle('scrolled', window.scrollY > 50);
+  });
+})();
+
+/* Burger Menu — full screen overlay */
 (function() {
   var burger = document.getElementById('burger');
   var menu = document.getElementById('mobileMenu');
@@ -29,14 +41,13 @@
   });
 })();
 
-/* ─── FAQ Accordion ─── */
+/* FAQ Accordion */
 (function() {
   document.querySelectorAll('.faq-q').forEach(function(btn) {
     btn.addEventListener('click', function() {
       var item = btn.parentElement;
       var ans = item.querySelector('.faq-a');
       var wasOpen = item.classList.contains('open');
-      // close all
       document.querySelectorAll('.faq-item.open').forEach(function(i) {
         i.classList.remove('open');
         i.querySelector('.faq-a').style.maxHeight = null;
