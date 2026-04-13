@@ -2109,18 +2109,41 @@ function sendMessage() {
   for (var i = 0; i < qas.length; i++) qas[i].remove();
 
   addUserMessage(text);
-  chatHistory.push({ role: 'user', text: text });
+  chatHistory.push({ role: 'user', content: text });
 
   showTyping();
   syncOverlayMessages();
 
-  var response = getStubResponse(text);
+  var ctx = currentContext || { screen: 'chat' };
 
-  setTimeout(function() {
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', API + '/chat', true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      removeTyping();
+      if (xhr.status === 200) {
+        try {
+          var data = JSON.parse(xhr.responseText);
+          addAiMessage(data.reply, false);
+          chatHistory.push({ role: 'assistant', content: data.reply });
+        } catch(e) {
+          addAiMessage('Ошибка обработки ответа.', false);
+        }
+      } else {
+        addAiMessage('Нет связи с сервером. Проверь интернет.', false);
+      }
+    }
+  };
+  xhr.onerror = function() {
     removeTyping();
-    addAiMessage(response, false);
-    chatHistory.push({ role: 'ai', text: response });
-  }, 1200 + Math.random() * 800);
+    addAiMessage('Нет связи с сервером. Проверь интернет.', false);
+  };
+  xhr.send(JSON.stringify({
+    message: text,
+    context: ctx,
+    history: chatHistory.slice(-20)
+  }));
 }
 
 function sendQuick(text) {
@@ -2251,9 +2274,8 @@ function sendMessageOverlay() {
   if (!text) return;
   input.value = '';
 
-  // Add to main chat
   addUserMessage(text);
-  chatHistory.push({ role: 'user', text: text });
+  chatHistory.push({ role: 'user', content: text });
   syncOverlayMessages();
   scrollOverlay();
 
@@ -2261,14 +2283,40 @@ function sendMessageOverlay() {
   syncOverlayMessages();
   scrollOverlay();
 
-  var response = getStubResponse(text);
-  setTimeout(function() {
+  var ctx = currentContext || { screen: 'chat' };
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', API + '/chat', true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      removeTyping();
+      if (xhr.status === 200) {
+        try {
+          var data = JSON.parse(xhr.responseText);
+          addAiMessage(data.reply, false);
+          chatHistory.push({ role: 'assistant', content: data.reply });
+        } catch(e) {
+          addAiMessage('Ошибка обработки ответа.', false);
+        }
+      } else {
+        addAiMessage('Нет связи с сервером.', false);
+      }
+      syncOverlayMessages();
+      scrollOverlay();
+    }
+  };
+  xhr.onerror = function() {
     removeTyping();
-    addAiMessage(response, false);
-    chatHistory.push({ role: 'ai', text: response });
+    addAiMessage('Нет связи с сервером.', false);
     syncOverlayMessages();
     scrollOverlay();
-  }, 1200 + Math.random() * 800);
+  };
+  xhr.send(JSON.stringify({
+    message: text,
+    context: ctx,
+    history: chatHistory.slice(-20)
+  }));
 }
 
 /* ============================================

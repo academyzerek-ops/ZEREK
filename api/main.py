@@ -2,11 +2,12 @@
 ZEREK API Server v3.1 — FastAPI
 33 ниши, 14-листовые шаблоны, report v4, finmodel с полной анкетой.
 """
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 import os, sys, math, uuid, time
+import httpx
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE_DIR)
@@ -452,3 +453,94 @@ def finmodel_html_report(data: dict):
     except Exception as e:
         import traceback; d=traceback.format_exc(); print("FINMODEL REPORT ERROR:", d)
         raise HTTPException(500, str(e))
+
+
+# ============================================
+# GEMINI FLASH CHAT
+# ============================================
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}"
+
+SYSTEM_PROMPT = """
+Ты — ZEREK, AI-ассистент для предпринимателей Казахстана.
+
+## Кто ты
+- Ты не инфоцыган и не кричишь про «успешный успех»
+- Ты показываешь реальность: риски, подводные камни, реальные причины банкротств
+- Ты заботливый, но жёсткий — не обманываешь клиента розовыми очками
+- Ты финансовый консультант с глубокой экспертизой в малом бизнесе Казахстана
+- Говоришь просто, без финансового жаргона — твоя аудитория не финансисты
+
+## Платформа ZEREK
+ZEREK — edtech + AI-аналитика для предпринимателей. Включает:
+
+1. **ZEREK Academy** — бесплатное обучение бизнесу:
+   - Фундамент (12-15 лет): финграмотность с нуля
+   - Архитектор (16+): от идеи до запуска
+
+2. **Обзоры рынка** — 50 ниш малого бизнеса × 14 городов КЗ. Бесплатно.
+
+3. **Кейсы (Чужие грабли)** — реальные истории провалов и успехов.
+
+4. **Расчёты:**
+   - Экспресс-оценка — 3 000 ₸
+   - Финансовая модель — 9 000 ₸: Excel на 60 месяцев
+   - Бизнес-план — 15 000 ₸ (скоро)
+
+## Данные Казахстана 2026
+- МРП 2026 = 4 325 ₸, НДС = 16%, Ставка НБРК 18%, Инфляция ~12%
+- Патент отменён с 01.01.2026 → заменён на «Самозанятый»
+- Упрощёнка (УСН): Астана 3%, Алматы 3%, Шымкент 2%, Актобе 3%, Караганда 2%, Атырау 2%
+
+## Как отвечать
+- Кратко и по делу, без воды
+- Используй конкретные цифры когда знаешь
+- Если не знаешь точно — скажи честно
+- Всегда предупреждай о рисках
+- Тон: как умный друг который шарит в бизнесе и не хочет чтобы ты прогорел
+- Отвечай на русском языке
+- Никогда не упоминай город Актобе как базу ZEREK
+"""
+
+@app.post("/chat")
+async def chat_endpoint(request: Request):
+    if not GEMINI_API_KEY:
+        return {"reply": "AI-чат временно недоступен. Попробуй позже.", "status": "error"}
+
+    body = await request.json()
+    user_message = body.get("message", "")
+    context = body.get("context", {})
+    history = body.get("history", [])
+
+    context_note = ""
+    if context.get("screen") and context["screen"] != "chat":
+        context_note = f"\n\n[Контекст: пользователь на экране '{context['screen']}'"
+        if context.get("title"):
+            context_note += f", читает: {context['title']}"
+        context_note += "]"
+
+    contents = []
+    for msg in history[-20:]:
+        role = "user" if msg.get("role") == "user" else "model"
+        contents.append({"role": role, "parts": [{"text": msg.get("content", "")}]})
+
+    contents.append({"role": "user", "parts": [{"text": user_message + context_note}]})
+
+    payload = {
+        "system_instruction": {"parts": [{"text": SYSTEM_PROMPT}]},
+        "contents": contents,
+        "generationConfig": {"temperature": 0.7, "maxOutputTokens": 1024, "topP": 0.9}
+    }
+
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            resp = await client.post(GEMINI_URL, json=payload)
+            data = resp.json()
+            if "candidates" in data and len(data["candidates"]) > 0:
+                text = data["candidates"][0]["content"]["parts"][0]["text"]
+                return {"reply": text, "status": "ok"}
+            else:
+                return {"reply": "Не удалось получить ответ. Попробуй ещё раз.", "status": "error"}
+    except Exception as e:
+        print(f"GEMINI ERROR: {e}")
+        return {"reply": "Сервер временно недоступен. Попробуй через минуту.", "status": "error"}
