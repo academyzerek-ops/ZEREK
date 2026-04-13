@@ -87,6 +87,15 @@ def debug():
     except: pass
     return {"base_dir":BASE_DIR,"data_dir":DATA_DIR,"files":f1,"niche_files":f2,"templates":tpl,"db_loaded":db is not None,"db_error":db_error}
 
+@app.get("/check-env")
+def check_env():
+    return {
+        "GEMINI_API_KEY_exists": bool(os.environ.get("GEMINI_API_KEY")),
+        "GEMINI_API_KEY_length": len(os.environ.get("GEMINI_API_KEY", "")),
+        "env_count": len(os.environ),
+        "railway_env": bool(os.environ.get("RAILWAY_ENVIRONMENT")),
+    }
+
 @app.get("/cities")
 def get_cities():
     if not db: raise HTTPException(503,"БД не загружена")
