@@ -52,10 +52,29 @@ strong{color:var(--text);font-weight:600}a{color:var(--gold2);text-decoration:no
 .img-block{border-radius:var(--r);overflow:hidden;margin:20px 0;box-shadow:var(--sh)}.img-block img{width:100%;display:block;height:auto}.img-cap{padding:10px 16px;background:var(--bg2);font-size:11px;color:var(--t3);text-align:center}
 .ft{padding:36px 0;border-top:1px solid var(--brd);text-align:center;background:var(--bg)}.ft-t{font-size:11px;color:var(--t3)}
 @media(max-width:768px){.ct{padding:0 16px}.sec{padding:40px 0}.cd{padding:18px}.tc,.cg2,.cg3,.cg4{grid-template-columns:1fr}.hero{min-height:65vh;padding:40px 16px}.hero h1{font-size:1.8rem}.hero-sub{font-size:.9rem}.nav-in{gap:2px;padding:0 12px}.nav-a{font-size:10px;padding:4px 7px}.nav-logo{font-size:12px;letter-spacing:2px;margin-right:6px}.risk{padding:16px 18px}.risk-math{font-size:.78rem;padding:10px 12px}.mistake{padding:16px 18px}.care{padding:18px 16px}.case{padding:16px 18px}.cta-block{padding:36px 16px}.cta-btn{padding:12px 28px;font-size:12px}.sc{padding:14px}.sv{font-size:1.1rem}.callout{padding:14px 16px}.tw{font-size:12px}.dt td,.dt thead th{padding:8px 10px;font-size:11px;white-space:nowrap}.check-item{gap:10px;padding:10px 0}.signal{gap:10px;padding:10px 0}.p{font-size:.88rem}.sec-t{font-size:1.3rem}}
+.zk-back{position:fixed;top:max(env(safe-area-inset-top,0px),60px);left:50%;transform:translateX(-50%);z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:10px 16px;background:rgba(6,6,12,0.92);color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:22px;font-family:-apple-system,'Source Sans 3',sans-serif;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 4px 16px rgba(0,0,0,0.3)}
+.zk-back:active{transform:translateX(-50%) scale(0.95)}
+.zk-back svg{width:14px;height:14px}
+.zk-top{position:fixed;bottom:28px;right:20px;z-index:9998;width:52px;height:52px;border-radius:50%;background:#1a1a1a;color:#fff;border:none;display:none;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,0.4);opacity:0;transition:opacity .3s,transform .2s}
+.zk-top.on{display:flex;opacity:1}
+.zk-top:active{transform:scale(0.92)}
+.zk-top svg{width:20px;height:20px}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700;800&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-</head><body>
+</head><body><a class="zk-back" href="../../products/index.html?tab=niches" onclick="if(window.Telegram&&window.Telegram.WebApp){event.preventDefault();window.location.href=this.href}">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+  Назад
+</a>
+<button class="zk-top" id="zkTop" onclick="smoothScrollTop()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+<script>
+function smoothScrollTop(){var start=window.pageYOffset;var startTime=null;var duration=900;function ease(t){return 1-Math.pow(1-t,3)}function step(now){if(!startTime)startTime=now;var progress=Math.min((now-startTime)/duration,1);window.scrollTo(0,start*(1-ease(progress)));if(progress<1)requestAnimationFrame(step)}requestAnimationFrame(step)}
+window.addEventListener('scroll',function(){var t=document.getElementById('zkTop');if(!t)return;if(window.scrollY>400){t.classList.add('on')}else{t.classList.remove('on')}});
+try{if(window.Telegram&&window.Telegram.WebApp){var tg=window.Telegram.WebApp;tg.ready&&tg.ready();tg.expand&&tg.expand()}}catch(e){}
+</script>
+
 
 <section class="hero"><div>
 <div class="hero-logo">ZEREK</div>
