@@ -657,6 +657,7 @@ body {
   font-family: 'Outfit', sans-serif;
 }
 .module-item, .chapter-item {
+  width: 100%;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -668,6 +669,9 @@ body {
   align-items: center;
   gap: 12px;
   -webkit-tap-highlight-color: transparent;
+  font-family: 'Outfit', sans-serif;
+  color: var(--text);
+  text-align: left;
 }
 .module-item:hover, .chapter-item:hover { border-color: var(--accent); }
 .module-num {
@@ -2431,11 +2435,11 @@ function openLevel(levelId) {
   var html = '';
   for (var i = 0; i < data.modules.length; i++) {
     var m = data.modules[i];
-    html += '<div class="module-item" onclick="openModule(' + i + ')">' +
+    html += '<button type="button" class="module-item" data-mod="' + i + '">' +
       '<div class="module-num">' + (i + 1) + '</div>' +
       '<div class="module-info"><div class="module-name">' + m.name + '</div>' +
       '<div class="module-chapters">' + m.chapters.length + ' глав</div></div>' +
-      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>';
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>';
   }
   document.getElementById('module-items').innerHTML = html;
 
@@ -2458,10 +2462,10 @@ function openModule(idx) {
 
   var html = '';
   for (var i = 0; i < mod.chapters.length; i++) {
-    html += '<div class="chapter-item" onclick="openChapter(\'' + mod.chapters[i] + '\')">' +
+    html += '<button type="button" class="chapter-item" data-ch="' + i + '">' +
       '<div class="module-num">' + (i + 1) + '</div>' +
       '<div class="module-info"><div class="module-name">' + mod.chapters[i] + '</div></div>' +
-      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>';
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>';
   }
   document.getElementById('chapter-items').innerHTML = html;
 
@@ -2476,7 +2480,10 @@ function closeChapterList() {
   academyView = 'modules';
 }
 
-function openChapter(title) {
+function openChapter(idx) {
+  var data = ACADEMY_DATA[currentLevel];
+  var mod = data.modules[currentModuleIdx];
+  var title = mod.chapters[idx];
   document.getElementById('chapter-content-title').textContent = title;
   document.getElementById('chapter-list').classList.remove('active');
   document.getElementById('chapter-content').classList.add('active');
@@ -2487,6 +2494,23 @@ function closeChapterContent() {
   document.getElementById('chapter-content').classList.remove('active');
   document.getElementById('chapter-list').classList.add('active');
   academyView = 'chapters';
+}
+
+function initAcademyListeners() {
+  // Event delegation for module items
+  document.getElementById('module-items').addEventListener('click', function(e) {
+    var item = e.target.closest('.module-item');
+    if (item && item.dataset.mod !== undefined) {
+      openModule(parseInt(item.dataset.mod));
+    }
+  });
+  // Event delegation for chapter items
+  document.getElementById('chapter-items').addEventListener('click', function(e) {
+    var item = e.target.closest('.chapter-item');
+    if (item && item.dataset.ch !== undefined) {
+      openChapter(parseInt(item.dataset.ch));
+    }
+  });
 }
 
 /* ============================================
@@ -3057,13 +3081,14 @@ function init() {
     if (e.key === 'Enter') { e.preventDefault(); sendMessageOverlay(); }
   });
 
-  // Academy level cards
+  // Academy
   document.getElementById('level-fund').addEventListener('click', function(e) {
     e.preventDefault(); openLevel('fund');
   });
   document.getElementById('level-arch').addEventListener('click', function(e) {
     e.preventDefault(); openLevel('arch');
   });
+  initAcademyListeners();
 
   // Handle ?tab= param (back from wiki reviews)
   try {
