@@ -2,16 +2,17 @@
 
 import os
 import json
-import httpx
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 
 def get_ai_interpretation(report_data: dict, knowledge_context: str = "") -> str:
     """Генерирует AI-интерпретацию отчёта Quick Check на простом русском языке."""
-    if not GEMINI_API_KEY:
+    import httpx
+
+    api_key = os.getenv("GEMINI_API_KEY", "")
+    if not api_key:
         return "AI-интерпретация временно недоступна."
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
 
     prompt = f"""Ты — финансовый консультант ZEREK. Проанализируй результаты Quick Check и дай интерпретацию на простом русском языке.
 
@@ -35,6 +36,6 @@ def get_ai_interpretation(report_data: dict, knowledge_context: str = "") -> str
         data = resp.json()
         if "candidates" in data and len(data["candidates"]) > 0:
             return data["candidates"][0]["content"]["parts"][0]["text"]
-        return "AI-интерпретация временно недоступна."
+        return "AI-интерпретация временно недоступна: " + json.dumps(data.get("error", {}), ensure_ascii=False)[:200]
     except Exception as e:
         return f"AI-интерпретация временно недоступна: {str(e)}"
