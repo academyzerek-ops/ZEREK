@@ -1504,7 +1504,7 @@ body {
 
   <div class="cabinet-divider"></div>
 
-  <button class="cabinet-link" id="pwa-install-btn" style="display:none" onclick="pwaInstall()">📲 На главный экран</button>
+  <button class="cabinet-link" id="pwa-install-btn" onclick="pwaInstall()">📲 Добавить на главный экран</button>
   <button class="cabinet-link" onclick="alert('Скоро!')">🌐 Язык: Русский</button>
   <a class="cabinet-link" href="../about.html" target="_blank">ℹ️ О платформе</a>
   <a class="cabinet-link" href="../privacy.html" target="_blank">📄 Политика конфиденциальности</a>
@@ -3396,10 +3396,10 @@ window.addEventListener('appinstalled', function() {
   if (btn) btn.style.display = 'none';
   _pwaEvent = null;
 });
-/* Show button on iOS even without beforeinstallprompt */
-if (!window.matchMedia('(display-mode: standalone)').matches && !navigator.standalone) {
+/* Hide if already installed as PWA */
+if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) {
   var btn = document.getElementById('pwa-install-btn');
-  if (btn) btn.style.display = '';
+  if (btn) btn.style.display = 'none';
 }
 </script>
 </body>
