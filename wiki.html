@@ -12,6 +12,22 @@
   <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="style.css">
   <script src="main.js" defer></script>
+  <style>
+    .wiki-nav {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .wiki-nav a {
+      padding: 8px 16px; border-radius: 50px;
+      font-size: 14px; font-weight: 600;
+      background: var(--bg-card); border: 1px solid var(--border);
+      color: var(--text-2); text-decoration: none;
+      transition: all .2s;
+    }
+    .wiki-nav a:hover, .wiki-nav a.active {
+      background: var(--accent); color: #fff; border-color: var(--accent);
+    }
+  </style>
 </head>
 <body>
 
@@ -50,13 +66,24 @@
     </div>
   </section>
 
-  <!-- LIVE NICHES -->
-  <section class="section rv" style="padding-top:24px;">
+  <!-- CATEGORY NAV -->
+  <section style="padding: 0 0 8px;">
     <div class="container">
-      <div class="wiki-section-label rv">Доступно сейчас <span>20 ниш</span></div>
+      <div class="wiki-nav rv">
+        <a href="#general">Общий бизнес</a>
+        <a href="#beauty">Красота и здоровье</a>
+        <a href="#soon">Скоро</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ОБЩИЙ БИЗНЕС -->
+  <section class="section rv" id="general" style="padding-top:24px;">
+    <div class="container">
+      <div class="wiki-section-label rv">Общий бизнес <span>16 ниш</span></div>
       <div class="niche-grid">
 
-        <a href="#" class="niche-card live rv rv-d1">
+        <a href="wiki/kz/ZEREK_Coffee.html" class="niche-card live rv rv-d1">
           <div class="niche-emoji">&#9749;</div>
           <div class="niche-info">
             <div class="niche-name">Кофейня</div>
@@ -65,7 +92,7 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live rv rv-d1">
+        <a href="wiki/kz/ZEREK_Doner.html" class="niche-card live rv rv-d1">
           <div class="niche-emoji">&#127791;</div>
           <div class="niche-info">
             <div class="niche-name">Донерная</div>
@@ -74,7 +101,7 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live rv rv-d1">
+        <a href="wiki/kz/ZEREK_Carwash.html" class="niche-card live rv rv-d1">
           <div class="niche-emoji">&#128663;</div>
           <div class="niche-info">
             <div class="niche-name">Автомойка</div>
@@ -83,7 +110,7 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live rv rv-d2">
+        <a href="wiki/kz/ZEREK_Clean.html" class="niche-card live rv rv-d2">
           <div class="niche-emoji">&#129529;</div>
           <div class="niche-info">
             <div class="niche-name">Клининг</div>
@@ -92,7 +119,7 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live rv rv-d2">
+        <a href="wiki/kz/ZEREK_Pharmacy.html" class="niche-card live rv rv-d2">
           <div class="niche-emoji">&#128138;</div>
           <div class="niche-info">
             <div class="niche-name">Аптека</div>
@@ -101,29 +128,11 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live rv rv-d2">
-          <div class="niche-emoji">&#128136;</div>
+        <a href="wiki/kz/ZEREK_Autoservice.html" class="niche-card live rv rv-d2">
+          <div class="niche-emoji">&#128295;</div>
           <div class="niche-info">
-            <div class="niche-name">Барбершоп</div>
-            <div class="niche-desc">Мастера, локация, окупаемость</div>
-            <span class="badge badge-live">Доступно</span>
-          </div>
-        </a>
-
-        <a href="#" class="niche-card live rv rv-d3">
-          <div class="niche-emoji">&#129463;</div>
-          <div class="niche-info">
-            <div class="niche-name">Стоматология</div>
-            <div class="niche-desc">Оборудование, врачи, лицензия</div>
-            <span class="badge badge-live">Доступно</span>
-          </div>
-        </a>
-
-        <a href="#" class="niche-card live rv rv-d3">
-          <div class="niche-emoji">&#128133;</div>
-          <div class="niche-info">
-            <div class="niche-name">Маникюр</div>
-            <div class="niche-desc">Мастера, расходники, Instagram</div>
+            <div class="niche-name">Автосервис</div>
+            <div class="niche-desc">Диагностика, запчасти, клиенты</div>
             <span class="badge badge-live">Доступно</span>
           </div>
         </a>
@@ -137,16 +146,7 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live rv">
-          <div class="niche-emoji">&#128170;</div>
-          <div class="niche-info">
-            <div class="niche-name">Фитнес-клуб</div>
-            <div class="niche-desc">Оборудование, абонементы, сезонность</div>
-            <span class="badge badge-live">Доступно</span>
-          </div>
-        </a>
-
-        <a href="#" class="niche-card live rv">
+        <a href="#" class="niche-card live rv rv-d3">
           <div class="niche-emoji">&#128421;</div>
           <div class="niche-info">
             <div class="niche-name">Компьютерный клуб</div>
@@ -155,7 +155,7 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live rv">
+        <a href="#" class="niche-card live rv rv-d3">
           <div class="niche-emoji">&#127829;</div>
           <div class="niche-info">
             <div class="niche-name">Пиццерия</div>
@@ -191,7 +191,7 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live rv">
+        <a href="wiki/kz/ZEREK_Flowers.html" class="niche-card live rv">
           <div class="niche-emoji">&#127800;</div>
           <div class="niche-info">
             <div class="niche-name">Цветочный</div>
@@ -227,7 +227,89 @@
           </div>
         </a>
 
-        <a href="#" class="niche-card live rv">
+      </div>
+    </div>
+  </section>
+
+  <!-- КРАСОТА И ЗДОРОВЬЕ -->
+  <section class="section section-alt rv" id="beauty">
+    <div class="container">
+      <div class="wiki-section-label rv">Красота и здоровье <span>9 ниш</span></div>
+      <div class="niche-grid">
+
+        <a href="wiki/kz/ZEREK_Barber.html" class="niche-card live rv rv-d1">
+          <div class="niche-emoji">&#128136;</div>
+          <div class="niche-info">
+            <div class="niche-name">Барбершоп</div>
+            <div class="niche-desc">Мастера, локация, окупаемость</div>
+            <span class="badge badge-live">Доступно</span>
+          </div>
+        </a>
+
+        <a href="wiki/kz/ZEREK_Beauty.html" class="niche-card live rv rv-d1">
+          <div class="niche-emoji">&#128135;</div>
+          <div class="niche-info">
+            <div class="niche-name">Парикмахерская</div>
+            <div class="niche-desc">Мастера, клиенты, форматы салонов</div>
+            <span class="badge badge-live">Доступно</span>
+          </div>
+        </a>
+
+        <a href="wiki/kz/ZEREK_Dental.html" class="niche-card live rv rv-d1">
+          <div class="niche-emoji">&#129463;</div>
+          <div class="niche-info">
+            <div class="niche-name">Стоматология</div>
+            <div class="niche-desc">Оборудование, врачи, лицензия</div>
+            <span class="badge badge-live">Доступно</span>
+          </div>
+        </a>
+
+        <a href="wiki/kz/ZEREK_Manicure.html" class="niche-card live rv rv-d2">
+          <div class="niche-emoji">&#128133;</div>
+          <div class="niche-info">
+            <div class="niche-name">Маникюр</div>
+            <div class="niche-desc">Мастера, расходники, Instagram</div>
+            <span class="badge badge-live">Доступно</span>
+          </div>
+        </a>
+
+        <a href="wiki/kz/ZEREK_BrowLash.html" class="niche-card live rv rv-d2">
+          <div class="niche-emoji">&#9999;&#65039;</div>
+          <div class="niche-info">
+            <div class="niche-name">Брови и ресницы</div>
+            <div class="niche-desc">Обучение, доверие, продвижение</div>
+            <span class="badge badge-live">Доступно</span>
+          </div>
+        </a>
+
+        <a href="wiki/kz/ZEREK_Cosmetology.html" class="niche-card live rv rv-d2">
+          <div class="niche-emoji">&#128137;</div>
+          <div class="niche-info">
+            <div class="niche-name">Косметология</div>
+            <div class="niche-desc">Лицензия, аппараты, инъекции</div>
+            <span class="badge badge-live">Доступно</span>
+          </div>
+        </a>
+
+        <a href="wiki/kz/ZEREK_GroupFitness.html" class="niche-card live rv rv-d3">
+          <div class="niche-emoji">&#128170;</div>
+          <div class="niche-info">
+            <div class="niche-name">Фитнес и групповые занятия</div>
+            <div class="niche-desc">Абонементы, тренеры, сезонность</div>
+            <span class="badge badge-live">Доступно</span>
+          </div>
+        </a>
+
+        <a href="wiki/kz/ZEREK_Massage.html" class="niche-card live rv rv-d3">
+          <div class="niche-emoji">&#128134;</div>
+          <div class="niche-info">
+            <div class="niche-name">Массаж</div>
+            <div class="niche-desc">Лицензия, юнит-экономика, форматы</div>
+            <span class="badge badge-live">Доступно</span>
+          </div>
+        </a>
+
+        <a href="#" class="niche-card live rv rv-d3">
           <div class="niche-emoji">&#127968;</div>
           <div class="niche-info">
             <div class="niche-name">Детский сад</div>
@@ -240,24 +322,20 @@
     </div>
   </section>
 
-  <!-- COMING SOON NICHES -->
-  <section class="section section-alt rv">
+  <!-- СКОРО -->
+  <section class="section rv" id="soon">
     <div class="container">
-      <div class="wiki-section-label rv">Скоро <span>30 ниш</span></div>
+      <div class="wiki-section-label rv">Скоро <span>22 ниши</span></div>
       <div class="niche-grid">
 
-        <div class="niche-card soon rv"><div class="niche-emoji">&#128295;</div><div class="niche-info"><div class="niche-name">Автосервис</div><span class="badge badge-soon">Скоро</span></div></div>
         <div class="niche-card soon rv"><div class="niche-emoji">&#127874;</div><div class="niche-info"><div class="niche-name">Кондитерская</div><span class="badge badge-soon">Скоро</span></div></div>
         <div class="niche-card soon rv"><div class="niche-emoji">&#127860;</div><div class="niche-info"><div class="niche-name">Столовая</div><span class="badge badge-soon">Скоро</span></div></div>
         <div class="niche-card soon rv"><div class="niche-emoji">&#127828;</div><div class="niche-info"><div class="niche-name">Фастфуд</div><span class="badge badge-soon">Скоро</span></div></div>
         <div class="niche-card soon rv"><div class="niche-emoji">&#129375;</div><div class="niche-info"><div class="niche-name">Полуфабрикаты</div><span class="badge badge-soon">Скоро</span></div></div>
         <div class="niche-card soon rv"><div class="niche-emoji">&#127822;</div><div class="niche-info"><div class="niche-name">Фрукты/Овощи</div><span class="badge badge-soon">Скоро</span></div></div>
         <div class="niche-card soon rv"><div class="niche-emoji">&#128167;</div><div class="niche-info"><div class="niche-name">Вода на розлив</div><span class="badge badge-soon">Скоро</span></div></div>
-        <div class="niche-card soon rv"><div class="niche-emoji">&#9999;&#65039;</div><div class="niche-info"><div class="niche-name">Брови</div><span class="badge badge-soon">Скоро</span></div></div>
         <div class="niche-card soon rv"><div class="niche-emoji">&#128065;</div><div class="niche-info"><div class="niche-name">Ресницы</div><span class="badge badge-soon">Скоро</span></div></div>
         <div class="niche-card soon rv"><div class="niche-emoji">&#127855;</div><div class="niche-info"><div class="niche-name">Шугаринг</div><span class="badge badge-soon">Скоро</span></div></div>
-        <div class="niche-card soon rv"><div class="niche-emoji">&#128134;</div><div class="niche-info"><div class="niche-name">Массаж</div><span class="badge badge-soon">Скоро</span></div></div>
-        <div class="niche-card soon rv"><div class="niche-emoji">&#128137;</div><div class="niche-info"><div class="niche-name">Косметология</div><span class="badge badge-soon">Скоро</span></div></div>
         <div class="niche-card soon rv"><div class="niche-emoji">&#128083;</div><div class="niche-info"><div class="niche-name">Оптика</div><span class="badge badge-soon">Скоро</span></div></div>
         <div class="niche-card soon rv"><div class="niche-emoji">&#128241;</div><div class="niche-info"><div class="niche-name">Ремонт телефонов</div><span class="badge badge-soon">Скоро</span></div></div>
         <div class="niche-card soon rv"><div class="niche-emoji">&#128664;</div><div class="niche-info"><div class="niche-name">Детейлинг</div><span class="badge badge-soon">Скоро</span></div></div>
@@ -271,18 +349,14 @@
         <div class="niche-card soon rv"><div class="niche-emoji">&#128210;</div><div class="niche-info"><div class="niche-name">Бухгалтерия</div><span class="badge badge-soon">Скоро</span></div></div>
         <div class="niche-card soon rv"><div class="niche-emoji">&#128666;</div><div class="niche-info"><div class="niche-name">Грузоперевозки</div><span class="badge badge-soon">Скоро</span></div></div>
         <div class="niche-card soon rv"><div class="niche-emoji">&#127960;</div><div class="niche-info"><div class="niche-name">Риелтор</div><span class="badge badge-soon">Скоро</span></div></div>
-        <div class="niche-card soon rv"><div class="niche-emoji">&#128663;</div><div class="niche-info"><div class="niche-name">Автошкола</div><span class="badge badge-soon">Скоро</span></div></div>
-        <div class="niche-card soon rv"><div class="niche-emoji">&#9881;&#65039;</div><div class="niche-info"><div class="niche-name">Автозапчасти</div><span class="badge badge-soon">Скоро</span></div></div>
-        <div class="niche-card soon rv"><div class="niche-emoji">&#129521;</div><div class="niche-info"><div class="niche-name">Стройматериалы</div><span class="badge badge-soon">Скоро</span></div></div>
         <div class="niche-card soon rv"><div class="niche-emoji">&#129385;</div><div class="niche-info"><div class="niche-name">Мясная лавка</div><span class="badge badge-soon">Скоро</span></div></div>
-        <div class="niche-card soon rv"><div class="niche-emoji">&#129530;</div><div class="niche-info"><div class="niche-name">Прачечная</div><span class="badge badge-soon">Скоро</span></div></div>
 
       </div>
     </div>
   </section>
 
   <!-- CTA -->
-  <section class="section rv">
+  <section class="section section-alt rv">
     <div class="container">
       <div class="wiki-cta">
         <p class="wiki-cta-title">Все обзоры доступны в Mini App</p>
