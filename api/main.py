@@ -459,6 +459,17 @@ def finmodel_html_report(data: dict):
 # ============================================
 # GEMINI RAG — AI-интерпретация отчётов
 # ============================================
+@app.post("/ai-chat")
+async def ai_chat(request: Request):
+    body = await request.json()
+    question = body.get("question", "")
+    context = body.get("context", "")
+    if not question:
+        return {"answer": "Задайте вопрос."}
+    from gemini_rag import get_ai_interpretation
+    answer = get_ai_interpretation({"question": question, "lesson_context": context})
+    return {"answer": answer}
+
 @app.get("/test-gemini")
 def test_gemini():
     try:
