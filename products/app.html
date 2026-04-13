@@ -3381,8 +3381,10 @@ function pwaInstall() {
       }
       _pwaEvent = null;
     });
+  } else if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
+    /* Telegram WebView — open in external browser for PWA install */
+    window.Telegram.WebApp.openLink('https://zerek.cc/products/app.html');
   } else {
-    /* iOS / browsers without beforeinstallprompt */
     var ua = navigator.userAgent || '';
     if (/iPhone|iPad|iPod/.test(ua)) {
       alert('Нажмите кнопку «Поделиться» (⎙) внизу экрана, затем «На экран Домой».');
