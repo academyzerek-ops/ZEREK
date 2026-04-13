@@ -1868,6 +1868,23 @@ function initTelegram() {
       if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
         tgUser = tg.initDataUnsafe.user;
       }
+      /* Add to Home Screen */
+      if (tg.checkHomeScreenStatus) {
+        tg.checkHomeScreenStatus(function(status) {
+          if (status === 'unsupported' || status === 'added') {
+            var btn = document.getElementById('pwa-install-btn');
+            if (btn) btn.style.display = 'none';
+          } else if (status === 'unknown' || status === 'missed') {
+            /* Предложить при первом визите */
+            try {
+              if (!localStorage.getItem('zerek_hs_asked')) {
+                localStorage.setItem('zerek_hs_asked', '1');
+                setTimeout(function() { tg.addToHomeScreen(); }, 3000);
+              }
+            } catch(e) {}
+          }
+        });
+      }
     }
   } catch(e) {}
 }
