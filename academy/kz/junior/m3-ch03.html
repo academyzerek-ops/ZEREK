@@ -45,6 +45,7 @@ html::before{
 .prog-n{font-family:'JetBrains Mono',monospace;font-size:11px;color:#A9A7BE;font-weight:700}
 .prog-track{flex:1;height:5px;background:#E8E4DE;border-radius:5px;overflow:hidden}
 .prog-fill{height:100%;width:40%;border-radius:5px;background:linear-gradient(90deg,#6C5CE7,#00B894)}
+.hdr-back{display:flex;align-items:center;gap:4px;background:none;border:1px solid #E8E4DE;border-radius:8px;padding:6px 12px;font-family:"Nunito",sans-serif;font-size:12px;font-weight:700;color:#8B89A0;cursor:pointer;white-space:nowrap}.hdr-back:active{background:#F0EDE8}.hdr-back svg{width:14px;height:14px;stroke:#8B89A0;stroke-width:2.5;fill:none}
 
 /* ══════ MAIN ══════ */
 .page{max-width:460px;margin:0 auto;padding:0 18px 120px}
@@ -324,7 +325,7 @@ html::before{
 <body>
 
 <header class="hdr">
-  <div class="hdr-row">
+  <div class="hdr-row"><button class="hdr-back" onclick="location.href='../../../products/app.html?tab=academy'"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Содержание</button>
     <span class="hdr-badge">JUNIOR</span>
     <span class="hdr-mod">Модуль 3 · Управление деньгами</span>
   </div>
