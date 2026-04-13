@@ -1442,12 +1442,12 @@ body {
   border-radius: 24px;
 }
 </style>
-<link rel="manifest" href="/ZEREK/manifest.json">
+<link rel="manifest" href="../manifest.json">
 <meta name="theme-color" content="#7C6CFF">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="ZEREK">
-<link rel="apple-touch-icon" href="/ZEREK/icon-192.png">
+<link rel="apple-touch-icon" href="../icon-192.png">
 </head>
 <body>
 
@@ -1504,6 +1504,7 @@ body {
 
   <div class="cabinet-divider"></div>
 
+  <button class="cabinet-link" id="pwa-install-btn" style="display:none" onclick="pwaInstall()">📲 На главный экран</button>
   <button class="cabinet-link" onclick="alert('Скоро!')">🌐 Язык: Русский</button>
   <a class="cabinet-link" href="../about.html" target="_blank">ℹ️ О платформе</a>
   <a class="cabinet-link" href="../privacy.html" target="_blank">📄 Политика конфиденциальности</a>
@@ -3359,7 +3360,46 @@ document.addEventListener('DOMContentLoaded', init);
 </script>
 <script>
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/ZEREK/sw.js').catch(function() {});
+  navigator.serviceWorker.register('../sw.js').catch(function() {});
+}
+
+/* PWA Install */
+var _pwaEvent = null;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  _pwaEvent = e;
+  var btn = document.getElementById('pwa-install-btn');
+  if (btn) btn.style.display = '';
+});
+function pwaInstall() {
+  if (_pwaEvent) {
+    _pwaEvent.prompt();
+    _pwaEvent.userChoice.then(function(r) {
+      if (r.outcome === 'accepted') {
+        var btn = document.getElementById('pwa-install-btn');
+        if (btn) btn.style.display = 'none';
+      }
+      _pwaEvent = null;
+    });
+  } else {
+    /* iOS / browsers without beforeinstallprompt */
+    var ua = navigator.userAgent || '';
+    if (/iPhone|iPad|iPod/.test(ua)) {
+      alert('Нажмите кнопку «Поделиться» (⎙) внизу экрана, затем «На экран Домой».');
+    } else {
+      alert('Откройте меню браузера (⋮) и выберите «Добавить на главный экран» или «Установить приложение».');
+    }
+  }
+}
+window.addEventListener('appinstalled', function() {
+  var btn = document.getElementById('pwa-install-btn');
+  if (btn) btn.style.display = 'none';
+  _pwaEvent = null;
+});
+/* Show button on iOS even without beforeinstallprompt */
+if (!window.matchMedia('(display-mode: standalone)').matches && !navigator.standalone) {
+  var btn = document.getElementById('pwa-install-btn');
+  if (btn) btn.style.display = '';
 }
 </script>
 </body>
