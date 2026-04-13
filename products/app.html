@@ -548,6 +548,8 @@ body {
 }
 
 .level-card {
+  display: block;
+  width: 100%;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -556,8 +558,13 @@ body {
   transition: box-shadow 0.2s;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  padding: 0;
+  text-align: left;
+  font-family: 'Outfit', sans-serif;
+  color: var(--text);
 }
 .level-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+.level-card:active { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
 .level-stripe {
   height: 3px;
 }
@@ -1518,7 +1525,7 @@ body {
     <div class="screen-title">ZEREK Academy</div>
     <div class="screen-subtitle">Бесплатное обучение финграмотности и бизнесу</div>
 
-    <div class="level-card" onclick="openLevel('fund')">
+    <button class="level-card" id="level-fund" type="button">
       <div class="level-stripe level-stripe-gold"></div>
       <div class="level-card-body">
         <div class="level-badge">БЕСПЛАТНО</div>
@@ -1531,9 +1538,9 @@ body {
         </div>
         <div class="level-btn">Начать обучение →</div>
       </div>
-    </div>
+    </button>
 
-    <div class="level-card" onclick="openLevel('arch')">
+    <button class="level-card" id="level-arch" type="button">
       <div class="level-stripe level-stripe-teal"></div>
       <div class="level-card-body">
         <div class="level-badge">БЕСПЛАТНО</div>
@@ -1546,7 +1553,7 @@ body {
         </div>
         <div class="level-btn">Начать обучение →</div>
       </div>
-    </div>
+    </button>
   </div>
 
   <!-- Module list view -->
@@ -3000,6 +3007,14 @@ function init() {
   });
   document.getElementById('chat-input-overlay').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') { e.preventDefault(); sendMessageOverlay(); }
+  });
+
+  // Academy level cards
+  document.getElementById('level-fund').addEventListener('click', function(e) {
+    e.preventDefault(); openLevel('fund');
+  });
+  document.getElementById('level-arch').addEventListener('click', function(e) {
+    e.preventDefault(); openLevel('arch');
   });
 
   // Handle ?tab= param (back from wiki reviews)
