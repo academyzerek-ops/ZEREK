@@ -513,6 +513,7 @@ ZEREK — edtech + AI-аналитика для предпринимателей
 - Всегда предупреждай о рисках
 - Тон: как умный друг который шарит в бизнесе и не хочет чтобы ты прогорел
 - Отвечай на русском языке
+- Отвечай чистым текстом без Markdown. Не используй звёздочки, решётки, списки с дефисами
 - Никогда не упоминай город Актобе как базу ZEREK
 """
 
@@ -551,7 +552,8 @@ async def chat_endpoint(request: Request):
             resp = await client.post(GEMINI_URL, json=payload)
             data = resp.json()
             if "candidates" in data and len(data["candidates"]) > 0:
-                text = data["candidates"][0]["content"]["parts"][0]["text"]
+                from gemini_rag import clean_markdown
+                text = clean_markdown(data["candidates"][0]["content"]["parts"][0]["text"])
                 return {"reply": text, "status": "ok"}
             else:
                 return {"reply": "Не удалось получить ответ. Попробуй ещё раз.", "status": "error"}
