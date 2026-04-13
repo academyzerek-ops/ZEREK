@@ -461,9 +461,13 @@ def finmodel_html_report(data: dict):
 # ============================================
 @app.get("/test-gemini")
 def test_gemini():
-    from gemini_rag import get_ai_interpretation
-    test = get_ai_interpretation({"test": "Кофейня в Актобе, инвестиции 5 млн, окупаемость 14 мес"})
-    return {"status": "ok", "response": test[:500]}
+    try:
+        from gemini_rag import get_ai_interpretation
+        test = get_ai_interpretation({"test": "Кофейня в Актобе, инвестиции 5 млн, окупаемость 14 мес"})
+        return {"status": "ok", "response": test[:500]}
+    except Exception as e:
+        import traceback
+        return {"status": "error", "error": str(e), "trace": traceback.format_exc()[-500:]}
 
 
 # ============================================
