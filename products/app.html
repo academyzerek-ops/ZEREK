@@ -1504,7 +1504,6 @@ body {
 
   <div class="cabinet-divider"></div>
 
-  <button class="cabinet-link" id="pwa-install-btn" onclick="pwaInstall()">📲 Добавить на главный экран</button>
   <button class="cabinet-link" onclick="alert('Скоро!')">🌐 Язык: Русский</button>
   <a class="cabinet-link" href="../about.html" target="_blank">ℹ️ О платформе</a>
   <a class="cabinet-link" href="../privacy.html" target="_blank">📄 Политика конфиденциальности</a>
@@ -1867,23 +1866,6 @@ function initTelegram() {
       if (tg.enableClosingConfirmation) tg.enableClosingConfirmation();
       if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
         tgUser = tg.initDataUnsafe.user;
-      }
-      /* Add to Home Screen */
-      if (tg.checkHomeScreenStatus) {
-        tg.checkHomeScreenStatus(function(status) {
-          if (status === 'unsupported' || status === 'added') {
-            var btn = document.getElementById('pwa-install-btn');
-            if (btn) btn.style.display = 'none';
-          } else if (status === 'unknown' || status === 'missed') {
-            /* Предложить при первом визите */
-            try {
-              if (!localStorage.getItem('zerek_hs_asked')) {
-                localStorage.setItem('zerek_hs_asked', '1');
-                setTimeout(function() { tg.addToHomeScreen(); }, 3000);
-              }
-            } catch(e) {}
-          }
-        });
       }
     }
   } catch(e) {}
@@ -3380,48 +3362,6 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('../sw.js').catch(function() {});
 }
 
-/* PWA Install */
-var _pwaEvent = null;
-window.addEventListener('beforeinstallprompt', function(e) {
-  e.preventDefault();
-  _pwaEvent = e;
-  var btn = document.getElementById('pwa-install-btn');
-  if (btn) btn.style.display = '';
-});
-function pwaInstall() {
-  var tg = window.Telegram && window.Telegram.WebApp;
-  if (tg && tg.addToHomeScreen) {
-    tg.addToHomeScreen();
-  } else if (_pwaEvent) {
-    _pwaEvent.prompt();
-    _pwaEvent.userChoice.then(function(r) {
-      if (r.outcome === 'accepted') {
-        var btn = document.getElementById('pwa-install-btn');
-        if (btn) btn.style.display = 'none';
-      }
-      _pwaEvent = null;
-    });
-  } else if (tg && tg.openLink) {
-    tg.openLink('https://zerek.cc/products/app.html');
-  } else {
-    var ua = navigator.userAgent || '';
-    if (/iPhone|iPad|iPod/.test(ua)) {
-      alert('Нажмите кнопку «Поделиться» (⎙) внизу экрана, затем «На экран Домой».');
-    } else {
-      alert('Откройте меню браузера (⋮) и выберите «Добавить на главный экран» или «Установить приложение».');
-    }
-  }
-}
-window.addEventListener('appinstalled', function() {
-  var btn = document.getElementById('pwa-install-btn');
-  if (btn) btn.style.display = 'none';
-  _pwaEvent = null;
-});
-/* Hide if already installed as PWA */
-if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) {
-  var btn = document.getElementById('pwa-install-btn');
-  if (btn) btn.style.display = 'none';
-}
 </script>
 </body>
 </html>
