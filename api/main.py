@@ -461,16 +461,17 @@ def finmodel_html_report(data: dict):
 # ============================================
 @app.get("/test-gemini")
 def test_gemini():
+    key = os.getenv("GEMINI_API_KEY", "")
+    info = {"has_key": bool(key), "key_len": len(key), "key_start": key[:6] + "..." if len(key) > 6 else "(empty)"}
+    if not key:
+        return {"status": "no_key", **info}
     try:
-        key = os.getenv("GEMINI_API_KEY", "")
-        has_key = bool(key)
-        key_preview = key[:8] + "..." if len(key) > 8 else "(empty)"
         from gemini_rag import get_ai_interpretation
-        test = get_ai_interpretation({"test": "Кофейня в Актобе, инвестиции 5 млн, окупаемость 14 мес"})
-        return {"status": "ok", "has_key": has_key, "key_preview": key_preview, "response": test[:500]}
+        result = get_ai_interpretation({"test": "Кофейня в Актобе, инвестиции 5 млн, окупаемость 14 мес"})
+        return {"status": "ok", **info, "response": result[:500]}
     except Exception as e:
         import traceback
-        return {"status": "error", "error": str(e), "trace": traceback.format_exc()[-500:]}
+        return {"status": "error", **info, "error": str(e), "trace": traceback.format_exc()[-300:]}
 
 
 # ============================================
