@@ -3372,7 +3372,10 @@ window.addEventListener('beforeinstallprompt', function(e) {
   if (btn) btn.style.display = '';
 });
 function pwaInstall() {
-  if (_pwaEvent) {
+  var tg = window.Telegram && window.Telegram.WebApp;
+  if (tg && tg.addToHomeScreen) {
+    tg.addToHomeScreen();
+  } else if (_pwaEvent) {
     _pwaEvent.prompt();
     _pwaEvent.userChoice.then(function(r) {
       if (r.outcome === 'accepted') {
@@ -3381,9 +3384,8 @@ function pwaInstall() {
       }
       _pwaEvent = null;
     });
-  } else if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
-    /* Telegram WebView — open in external browser for PWA install */
-    window.Telegram.WebApp.openLink('https://zerek.cc/products/app.html');
+  } else if (tg && tg.openLink) {
+    tg.openLink('https://zerek.cc/products/app.html');
   } else {
     var ua = navigator.userAgent || '';
     if (/iPhone|iPad|iPod/.test(ua)) {
