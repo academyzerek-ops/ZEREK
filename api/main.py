@@ -457,6 +457,16 @@ def finmodel_html_report(data: dict):
 
 
 # ============================================
+# GEMINI RAG — AI-интерпретация отчётов
+# ============================================
+@app.get("/test-gemini")
+def test_gemini():
+    from engine.gemini_rag import get_ai_interpretation
+    test = get_ai_interpretation({"test": "Кофейня в Актобе, инвестиции 5 млн, окупаемость 14 мес"})
+    return {"status": "ok", "response": test[:500]}
+
+
+# ============================================
 # GEMINI FLASH CHAT
 # ============================================
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
