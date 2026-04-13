@@ -106,9 +106,6 @@ body {
   z-index: 90;
   flex-shrink: 0;
 }
-.top-header-left {
-  width: 36px;
-}
 .top-header-logo {
   height: 36px;
   width: auto;
@@ -1300,33 +1297,32 @@ body {
    FLOATING CHAT BUTTON
    ============================================ */
 .chat-float-btn {
-  position: fixed;
-  top: calc(env(safe-area-inset-top, 0px) + 14px);
-  right: 60px;
   width: 36px;
   height: 36px;
-  background: var(--accent);
+  background: var(--accent-light);
   border-radius: 50%;
   border: none;
   cursor: pointer;
-  z-index: 89;
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(124,108,255,0.3);
   transition: transform 0.2s;
   -webkit-tap-highlight-color: transparent;
+  color: var(--accent);
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
 }
 .chat-float-btn:active { transform: scale(0.9); }
 .chat-float-btn svg {
   width: 18px; height: 18px;
   fill: none;
-  stroke: white;
-  stroke-width: 2;
+  stroke: currentColor;
+  stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.chat-float-btn.visible { display: flex; }
+.chat-float-btn.visible { visibility: visible; opacity: 1; }
 
 /* ============================================
    CHAT OVERLAY
@@ -1425,7 +1421,9 @@ body {
 
 <!-- TOP HEADER with logo -->
 <div class="top-header">
-  <div class="top-header-left"></div>
+  <button class="chat-float-btn" id="chat-float-btn" onclick="openChatOverlay()">
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  </button>
   <img class="top-header-logo" src="assets/logo.png?v=2" alt="ZEREK">
   <button class="top-header-cabinet" onclick="openCabinet()">
     <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -1765,13 +1763,6 @@ body {
     <div id="qc-report-content"></div>
   </div>
 </div>
-
-<!-- ============================================
-     FLOATING CHAT BUTTON
-     ============================================ -->
-<button class="chat-float-btn" id="chat-float-btn" onclick="openChatOverlay()">
-  <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-</button>
 
 <!-- ============================================
      CHAT OVERLAY
