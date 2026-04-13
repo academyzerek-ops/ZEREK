@@ -742,25 +742,21 @@ body {
    ============================================ */
 .wiki-cat-pills {
   display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 4px;
+  gap: 6px;
   margin-bottom: 16px;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
 }
-.wiki-cat-pills::-webkit-scrollbar { display: none; }
 .wiki-cat-pill {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 10px 14px;
-  border-radius: 14px;
+  justify-content: center;
+  width: 0;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 8px 4px;
+  border-radius: 10px;
   border: 1.5px solid var(--border);
   background: var(--bg);
   cursor: pointer;
-  flex-shrink: 0;
   transition: all 0.2s;
   -webkit-tap-highlight-color: transparent;
 }
@@ -768,12 +764,12 @@ body {
   border-color: var(--accent);
   background: var(--accent-light);
 }
-.wiki-cat-pill-icon { font-size: 22px; }
 .wiki-cat-pill-name {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--text2);
-  white-space: nowrap;
+  text-align: center;
+  line-height: 1.2;
 }
 .wiki-cat-pill.active .wiki-cat-pill-name { color: var(--accent); }
 
@@ -2504,53 +2500,36 @@ function closeCase() {
    WIKI / REVIEWS
    ============================================ */
 var WIKI_CATEGORIES = [
-  { title: 'Общепит', icon: '🍽️', niches: [
-    { icon: '☕', name: 'Кофейня', live: true, file: 'ZEREK_Coffee' },
-    { icon: '🌯', name: 'Донерная', live: true, file: 'ZEREK_Doner' },
-    { icon: '🥐', name: 'Пекарня', live: false },
-    { icon: '🍕', name: 'Пиццерия', live: false },
-    { icon: '🍣', name: 'Суши', live: false },
-    { icon: '🍔', name: 'Фастфуд', live: false },
-    { icon: '🍽️', name: 'Столовая', live: false },
-    { icon: '🎂', name: 'Кондитерская', live: false },
-    { icon: '🥟', name: 'Полуфабрикаты', live: false }
+  { title: 'Общепит', niches: [
+    { icon: '☕', name: 'Кофейня', file: 'ZEREK_Coffee' },
+    { icon: '🌯', name: 'Донерная', file: 'ZEREK_Doner' }
   ]},
-  { title: 'Красота и здоровье', icon: '💅', niches: [
-    { icon: '💈', name: 'Барбершоп', live: true, file: 'ZEREK_Barber' },
-    { icon: '💅', name: 'Маникюр', live: true, file: 'ZEREK_Manicure' },
-    { icon: '✨', name: 'Брови и ресницы', live: true, file: 'ZEREK_BrowLash' },
-    { icon: '🌸', name: 'Эпиляция', live: true, file: 'ZEREK_Epilation' },
-    { icon: '💆', name: 'Массаж', live: true, file: 'ZEREK_Massage' },
-    { icon: '🦷', name: 'Стоматология', live: true, file: 'ZEREK_Dental' },
-    { icon: '🧴', name: 'Косметология', live: true, file: 'ZEREK_Cosmetology' },
-    { icon: '💪', name: 'Фитнес', live: true, file: 'ZEREK_Fitness' }
+  { title: 'Красота', niches: [
+    { icon: '💈', name: 'Барбершоп', file: 'ZEREK_Barber' },
+    { icon: '💅', name: 'Маникюр', file: 'ZEREK_Manicure' },
+    { icon: '✨', name: 'Брови и ресницы', file: 'ZEREK_BrowLash' },
+    { icon: '🌸', name: 'Эпиляция', file: 'ZEREK_Epilation' },
+    { icon: '💆', name: 'Массаж', file: 'ZEREK_Massage' },
+    { icon: '🦷', name: 'Стоматология', file: 'ZEREK_Dental' },
+    { icon: '🧴', name: 'Косметология', file: 'ZEREK_Cosmetology' },
+    { icon: '💄', name: 'Салон красоты', file: 'ZEREK_Beauty' }
   ]},
-  { title: 'Спорт', icon: '🏆', niches: [
-    { icon: '💪', name: 'Фитнес-клуб', live: true, file: 'ZEREK_Fitness' },
-    { icon: '🏋️', name: 'Кроссфит', live: true, file: 'ZEREK_CrossFit' },
-    { icon: '🥊', name: 'Единоборства', live: true, file: 'ZEREK_MartialArts' },
-    { icon: '⚽', name: 'Футбольная школа', live: true, file: 'ZEREK_FootballSchool' },
-    { icon: '🧘', name: 'Групповой фитнес', live: true, file: 'ZEREK_GroupFitness' }
+  { title: 'Спорт', niches: [
+    { icon: '💪', name: 'Фитнес-клуб', file: 'ZEREK_Fitness' },
+    { icon: '🏋️', name: 'Кроссфит', file: 'ZEREK_CrossFit' },
+    { icon: '🥊', name: 'Единоборства', file: 'ZEREK_MartialArts' },
+    { icon: '⚽', name: 'Футбольная школа', file: 'ZEREK_FootballSchool' },
+    { icon: '🧘', name: 'Групповой фитнес', file: 'ZEREK_GroupFitness' }
   ]},
-  { title: 'Услуги', icon: '🔧', niches: [
-    { icon: '🧹', name: 'Клининг', live: true, file: 'ZEREK_Clean' },
-    { icon: '🚗', name: 'Автомойка', live: true, file: 'ZEREK_Carwash' },
-    { icon: '🔧', name: 'Автосервис', live: true, file: 'ZEREK_Autoservice' },
-    { icon: '👶', name: 'Детский сад', live: true, file: 'ZEREK_Kindergarten' },
-    { icon: '🛞', name: 'Шиномонтаж', live: false },
-    { icon: '👔', name: 'Химчистка', live: false },
-    { icon: '🧵', name: 'Ателье', live: false },
-    { icon: '📱', name: 'Ремонт телефонов', live: false },
-    { icon: '🎮', name: 'Компьютерный клуб', live: false }
+  { title: 'Услуги', niches: [
+    { icon: '🧹', name: 'Клининг', file: 'ZEREK_Clean' },
+    { icon: '🚗', name: 'Автомойка', file: 'ZEREK_Carwash' },
+    { icon: '🔧', name: 'Автосервис', file: 'ZEREK_Autoservice' },
+    { icon: '👶', name: 'Детский сад', file: 'ZEREK_Kindergarten' }
   ]},
-  { title: 'Продажи', icon: '🛒', niches: [
-    { icon: '💊', name: 'Аптека', live: true, file: 'ZEREK_Pharmacy' },
-    { icon: '💐', name: 'Цветы', live: true, file: 'ZEREK_Flowers' },
-    { icon: '🛒', name: 'Продукты', live: false },
-    { icon: '🍎', name: 'Овощи и фрукты', live: false },
-    { icon: '💧', name: 'Вода', live: false },
-    { icon: '🪑', name: 'Мебель', live: false },
-    { icon: '📦', name: 'ПВЗ', live: false }
+  { title: 'Продажи', niches: [
+    { icon: '💊', name: 'Аптека', file: 'ZEREK_Pharmacy' },
+    { icon: '💐', name: 'Цветы', file: 'ZEREK_Flowers' }
   ]}
 ];
 
@@ -2568,7 +2547,6 @@ function renderWikiPills() {
     var cat = WIKI_CATEGORIES[c];
     var active = c === wikiActiveCat ? ' active' : '';
     html += '<div class="wiki-cat-pill' + active + '" onclick="selectWikiCat(' + c + ')">' +
-      '<div class="wiki-cat-pill-icon">' + cat.icon + '</div>' +
       '<div class="wiki-cat-pill-name">' + cat.title + '</div></div>';
   }
   container.innerHTML = html;
@@ -2580,12 +2558,10 @@ function renderWikiList() {
   var html = '';
   for (var i = 0; i < niches.length; i++) {
     var n = niches[i];
-    var badge = n.live ? '<span class="wiki-item-badge badge-live">LIVE</span>' : '<span class="wiki-item-badge badge-soon">СКОРО</span>';
-    var onclick = n.live ? ' onclick="openWiki(\'' + n.file + '\')"' : '';
-    html += '<div class="wiki-item"' + onclick + '>' +
+    html += '<div class="wiki-item" onclick="openWiki(\'' + n.file + '\')">' +
       '<div class="wiki-item-icon">' + n.icon + '</div>' +
       '<div class="wiki-item-info"><div class="wiki-item-name">' + n.name + '</div>' +
-      badge + '</div>' +
+      '<span class="wiki-item-badge badge-live">LIVE</span></div>' +
       '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>' +
       '</div>';
   }
