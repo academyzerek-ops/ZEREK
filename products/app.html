@@ -90,7 +90,7 @@ body {
   min-height: calc(100vh - 60px - env(safe-area-inset-bottom, 0px));
   animation: fadeIn 0.3s ease-out;
 }
-.screen.active { display: flex; flex-direction: column; }
+.screen.active { display: block; }
 
 /* ============================================
    TAP BAR
@@ -279,13 +279,10 @@ body {
 /* ============================================
    AI CHAT SCREEN
    ============================================ */
-#screen-chat {
+#screen-chat.active {
   display: flex;
   flex-direction: column;
   height: calc(100vh - 60px - env(safe-area-inset-bottom, 0px));
-}
-#screen-chat.active {
-  display: flex;
 }
 
 .chat-top-row {
@@ -1188,9 +1185,42 @@ body {
   fill: white;
 }
 .fab-ai.visible { display: flex; }
+
+/* ============================================
+   SPLASH SCREEN
+   ============================================ */
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.6s, transform 0.4s;
+  overflow: hidden;
+}
+.splash.hide {
+  opacity: 0;
+  transform: scale(1.05);
+  pointer-events: none;
+}
+.splash-video {
+  width: 300px;
+  height: 300px;
+  object-fit: contain;
+  border-radius: 24px;
+}
 </style>
 </head>
 <body>
+
+<!-- SPLASH -->
+<div class="splash" id="splash">
+  <video class="splash-video" id="splashVideo" autoplay muted playsinline preload="auto">
+    <source src="assets/splash.mp4?v=2" type="video/mp4">
+  </video>
+</div>
 
 <!-- ============================================
      CABINET OVERLAY
@@ -2522,6 +2552,26 @@ function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+/* Splash screen */
+(function(){
+  var sp = document.getElementById('splash');
+  if (!sp) return;
+  var vid = document.getElementById('splashVideo');
+  var hidden = false;
+  function hide() {
+    if (hidden) return;
+    hidden = true;
+    sp.classList.add('hide');
+    setTimeout(function(){ sp.style.display = 'none'; }, 700);
+  }
+  if (vid) {
+    vid.addEventListener('ended', hide);
+    vid.addEventListener('error', hide);
+    vid.play().catch(hide);
+  }
+  setTimeout(hide, 6000);
+})();
 </script>
 </body>
 </html>
