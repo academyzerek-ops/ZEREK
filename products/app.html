@@ -1,0 +1,2527 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ZEREK — AI-платформа</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root {
+  --bg: #FFFFFF;
+  --bg2: #F7F7FB;
+  --text: #1A1A2E;
+  --text2: #6B7280;
+  --text3: #9CA3AF;
+  --accent: #7C6CFF;
+  --accent-light: #EDE9FF;
+  --accent2: #9B8FFF;
+  --green: #10B981;
+  --green-light: #ECFDF5;
+  --amber: #F59E0B;
+  --amber-light: #FFFBEB;
+  --red: #EF4444;
+  --border: #E5E7EB;
+  --radius: 16px;
+  --radius-sm: 12px;
+  --radius-xs: 8px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  max-width: 480px;
+  margin: 0 auto;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  min-height: 100vh;
+  padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes slideOutRight {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+@keyframes typing {
+  0%, 60%, 100% { opacity: 0.3; }
+  30% { opacity: 1; }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideOut {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(-30px); }
+}
+
+/* ============================================
+   SCREEN MANAGEMENT
+   ============================================ */
+.screen {
+  display: none;
+  min-height: calc(100vh - 60px - env(safe-area-inset-bottom, 0px));
+  animation: fadeIn 0.3s ease-out;
+}
+.screen.active { display: flex; flex-direction: column; }
+
+/* ============================================
+   TAP BAR
+   ============================================ */
+.tapbar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 60px;
+  background: #FFFFFF;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 8px;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  z-index: 100;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.tab-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 8px;
+  color: var(--text3);
+  transition: color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.tab-btn svg {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.tab-btn span {
+  font-size: 10px;
+  font-weight: 600;
+  font-family: 'Outfit', sans-serif;
+}
+.tab-btn.active {
+  color: var(--accent);
+}
+.tab-btn.tab-center svg {
+  width: 28px;
+  height: 28px;
+  color: var(--accent);
+}
+.tab-btn.tab-center span {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ============================================
+   PERSONAL CABINET (slide panel)
+   ============================================ */
+.cabinet-backdrop {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 200;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.cabinet-backdrop.visible { opacity: 1; }
+.cabinet-panel {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: 80%;
+  max-width: 360px;
+  background: var(--bg);
+  z-index: 201;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  overflow-y: auto;
+  padding: 24px 20px;
+  padding-top: max(env(safe-area-inset-top, 0px), 24px);
+}
+.cabinet-panel.open { transform: translateX(0); }
+.cabinet-close {
+  position: absolute;
+  top: max(env(safe-area-inset-top, 0px), 16px);
+  right: 16px;
+  width: 32px; height: 32px;
+  background: var(--bg2);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text2);
+}
+.cabinet-user {
+  margin-top: 16px;
+  margin-bottom: 24px;
+}
+.cabinet-user-name {
+  font-size: 20px;
+  font-weight: 700;
+}
+.cabinet-user-handle {
+  font-size: 14px;
+  color: var(--text2);
+  margin-top: 2px;
+}
+.cabinet-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 16px 0;
+}
+.cabinet-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cabinet-report-item {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.cabinet-report-item:last-child { border-bottom: none; }
+.cabinet-report-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+.cabinet-report-date {
+  font-size: 12px;
+  color: var(--text2);
+}
+.cabinet-empty {
+  font-size: 13px;
+  color: var(--text3);
+  padding: 8px 0;
+}
+.cabinet-progress {
+  margin-bottom: 12px;
+}
+.cabinet-progress-label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.cabinet-progress-bar {
+  height: 6px;
+  background: var(--bg2);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 2px;
+}
+.cabinet-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.4s;
+}
+.cabinet-progress-text {
+  font-size: 11px;
+  color: var(--text3);
+}
+.cabinet-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  font-size: 14px;
+  color: var(--text);
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-family: 'Outfit', sans-serif;
+}
+
+/* ============================================
+   AI CHAT SCREEN
+   ============================================ */
+#screen-chat {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 60px - env(safe-area-inset-bottom, 0px));
+}
+#screen-chat.active {
+  display: flex;
+}
+
+.chat-top-row {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 16px 0 16px;
+}
+.cabinet-trigger {
+  width: 36px; height: 36px;
+  background: var(--accent-light);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.cabinet-trigger svg {
+  width: 18px; height: 18px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.msg-ai {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px 16px 16px 4px;
+  padding: 14px 18px;
+  max-width: 85%;
+  align-self: flex-start;
+  font-size: 14px;
+  line-height: 1.6;
+  animation: fadeIn 0.3s ease-out;
+}
+.msg-user {
+  background: var(--accent);
+  color: white;
+  border-radius: 16px 16px 4px 16px;
+  padding: 14px 18px;
+  max-width: 85%;
+  align-self: flex-end;
+  font-size: 14px;
+  line-height: 1.6;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.msg-ai ul {
+  margin: 8px 0 4px 0;
+  padding-left: 16px;
+}
+.msg-ai li {
+  margin-bottom: 4px;
+}
+
+.quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  align-self: flex-start;
+  animation: fadeIn 0.4s ease-out 0.2s both;
+}
+.quick-btn {
+  background: var(--bg);
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.quick-btn:hover, .quick-btn:active {
+  background: var(--accent);
+  color: white;
+}
+
+.typing-indicator {
+  display: flex;
+  gap: 4px;
+  padding: 14px 18px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px 16px 16px 4px;
+  align-self: flex-start;
+  animation: fadeIn 0.2s ease-out;
+}
+.typing-dot {
+  width: 7px; height: 7px;
+  background: var(--text3);
+  border-radius: 50%;
+  animation: typing 1.4s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+.chat-input-wrap {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+}
+.chat-input {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-family: 'Outfit', sans-serif;
+  outline: none;
+  background: var(--bg);
+  color: var(--text);
+}
+.chat-input:focus { border-color: var(--accent); }
+.chat-input::placeholder { color: var(--text3); }
+.chat-send {
+  width: 42px; height: 42px;
+  background: var(--accent);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
+}
+.chat-send:active { opacity: 0.8; }
+.chat-send svg {
+  width: 20px; height: 20px;
+  fill: white;
+}
+
+/* ============================================
+   ACADEMY SCREEN
+   ============================================ */
+.screen-content {
+  padding: 20px 16px;
+}
+.screen-title {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+.screen-subtitle {
+  font-size: 14px;
+  color: var(--text2);
+  margin-top: 4px;
+  margin-bottom: 20px;
+}
+
+.level-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 16px;
+  transition: box-shadow 0.2s;
+}
+.level-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+.level-stripe {
+  height: 3px;
+}
+.level-stripe-gold {
+  background: linear-gradient(90deg, #F5D547, #E94B8A);
+}
+.level-stripe-teal {
+  background: linear-gradient(90deg, #3CC8D9, #8B5CF6);
+}
+.level-card-body {
+  padding: 20px;
+}
+.level-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: var(--green-light);
+  color: var(--green);
+  margin-bottom: 10px;
+}
+.level-name {
+  font-size: 20px;
+  font-weight: 700;
+}
+.level-age {
+  font-size: 13px;
+  color: var(--text2);
+  margin-top: 2px;
+}
+.level-desc {
+  font-size: 14px;
+  color: var(--text2);
+  margin-top: 8px;
+}
+.level-progress-wrap {
+  margin-top: 16px;
+}
+.level-progress-bar {
+  height: 6px;
+  background: var(--bg2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.level-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s;
+}
+.level-progress-fill-gold { background: linear-gradient(90deg, #F5D547, #E94B8A); }
+.level-progress-fill-teal { background: linear-gradient(90deg, #3CC8D9, #8B5CF6); }
+.level-progress-text {
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 4px;
+}
+.level-btn {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.level-btn:active { opacity: 0.85; }
+
+/* Module list (inside academy) */
+.module-list, .chapter-list { display: none; }
+.module-list.active, .chapter-list.active { display: block; }
+.module-back {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 16px;
+  font-family: 'Outfit', sans-serif;
+}
+.module-item, .chapter-item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.module-item:hover, .chapter-item:hover { border-color: var(--accent); }
+.module-num {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: var(--accent-light);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.module-info { flex: 1; }
+.module-name { font-size: 14px; font-weight: 600; }
+.module-chapters { font-size: 12px; color: var(--text3); }
+.chapter-content {
+  display: none;
+  padding: 20px 16px;
+}
+.chapter-content.active { display: block; }
+.chapter-placeholder {
+  background: var(--bg2);
+  border-radius: var(--radius);
+  padding: 40px 24px;
+  text-align: center;
+  color: var(--text2);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ============================================
+   CASES SCREEN
+   ============================================ */
+.case-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.case-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+}
+.case-icon {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+.case-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.case-excerpt {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.5;
+}
+.case-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 20px;
+  margin-top: 8px;
+}
+.case-tag-loss { background: #FEF2F2; color: var(--red); }
+.case-tag-win { background: var(--green-light); color: var(--green); }
+
+/* Case detail view */
+.case-detail { display: none; padding: 20px 16px; }
+.case-detail.active { display: block; }
+
+/* ============================================
+   WIKI / REVIEWS SCREEN
+   ============================================ */
+.search-input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px 12px 42px;
+  font-size: 14px;
+  font-family: 'Outfit', sans-serif;
+  outline: none;
+  background: var(--bg2);
+  color: var(--text);
+  margin-bottom: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 14px center;
+}
+.search-input:focus { border-color: var(--accent); background-color: var(--bg); }
+.search-input::placeholder { color: var(--text3); }
+
+.wiki-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.wiki-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px 14px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+.wiki-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+}
+.wiki-card-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+.wiki-card-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.wiki-card-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+.badge-live { background: var(--green-light); color: var(--green); }
+.badge-soon { background: var(--amber-light); color: var(--amber); }
+
+/* ============================================
+   CALC SCREEN
+   ============================================ */
+.product-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 12px;
+  position: relative;
+}
+.product-card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+.product-icon-wrap {
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  background: var(--accent-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.product-icon-wrap svg {
+  width: 24px; height: 24px;
+  stroke: var(--accent);
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.product-info { flex: 1; }
+.product-name {
+  font-size: 16px;
+  font-weight: 700;
+}
+.product-desc {
+  font-size: 13px;
+  color: var(--text2);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+.product-price {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.product-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.product-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: var(--bg2);
+  color: var(--text2);
+}
+.product-cta {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.product-cta:active { opacity: 0.85; }
+.product-cta-primary {
+  background: var(--accent);
+  color: white;
+}
+.product-cta-secondary {
+  background: var(--bg2);
+  color: var(--text);
+}
+.product-cta-disabled {
+  background: var(--bg2);
+  color: var(--text3);
+  cursor: default;
+}
+.product-badge-live {
+  position: absolute;
+  top: 16px; right: 16px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.my-reports-section {
+  margin-top: 24px;
+  padding: 20px;
+  background: var(--bg2);
+  border-radius: var(--radius);
+}
+.my-reports-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ============================================
+   QUICK CHECK (embedded in Calc screen)
+   ============================================ */
+#qc-screen { display: none; padding: 0 16px 20px; }
+#qc-screen.active { display: block; }
+
+.qc-back {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 16px 0;
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Quick-check survey reuses step styles */
+.qc-progress-bar {
+  height: 4px;
+  background: var(--bg2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.qc-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 2px;
+  transition: width 0.4s;
+}
+.qc-progress-text {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 20px;
+}
+
+.qc-step { display: none; animation: slideIn 0.3s ease-out; }
+.qc-step.active { display: block; }
+.qc-step-exit { animation: slideOut 0.25s ease-in forwards; }
+.qc-step-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.qc-step h2 {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+.qc-step-desc {
+  font-size: 13px;
+  color: var(--text2);
+  margin-bottom: 20px;
+}
+
+.qc-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.qc-options-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.qc-opt {
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  -webkit-tap-highlight-color: transparent;
+}
+.qc-opt:hover { border-color: var(--accent); }
+.qc-opt.selected { border-color: var(--accent); background: var(--accent-light); }
+.qc-opt-icon {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  background: var(--bg2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.qc-opt-label { font-size: 14px; font-weight: 600; }
+.qc-opt-sub { font-size: 12px; color: var(--text2); }
+
+.qc-niche-category { margin-bottom: 14px; }
+.qc-niche-category-title {
+  font-size: 13px; font-weight: 700; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.qc-loc-toggles {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.qc-loc-toggle {
+  flex: 1;
+  padding: 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  cursor: pointer;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Outfit', sans-serif;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.qc-loc-toggle.selected {
+  border-color: var(--accent);
+  background: var(--accent-light);
+  color: var(--accent);
+}
+.qc-range-wrap { margin-top: 16px; }
+.qc-range-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text2);
+  margin-bottom: 4px;
+}
+.qc-range-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  color: var(--text);
+}
+.qc-range {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg2);
+  outline: none;
+}
+.qc-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 3px solid white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.qc-lvl-btns {
+  display: flex;
+  gap: 8px;
+}
+.qc-lvl-btn {
+  flex: 1;
+  padding: 12px 8px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  cursor: pointer;
+  text-align: center;
+  font-family: 'Outfit', sans-serif;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.qc-lvl-btn .qc-lvl-title {
+  font-size: 13px; font-weight: 600;
+}
+.qc-lvl-btn .qc-lvl-sub {
+  font-size: 11px; color: var(--text3); margin-top: 2px;
+}
+.qc-lvl-btn.selected {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+/* Confirm step */
+.qc-confirm-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.qc-confirm-table td {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.qc-confirm-table td:first-child { color: var(--text2); }
+.qc-confirm-table td:last-child { font-weight: 600; text-align: right; }
+
+.qc-btn-wrap {
+  position: sticky;
+  bottom: 68px;
+  padding: 12px 0;
+  background: linear-gradient(0deg, var(--bg) 70%, transparent);
+}
+.qc-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.qc-btn-primary {
+  background: var(--accent);
+  color: white;
+}
+.qc-btn-primary:active { opacity: 0.85; }
+.qc-btn-disabled {
+  background: var(--bg2);
+  color: var(--text3);
+  cursor: default;
+}
+
+/* Loading screen */
+#qc-loading { display: none; }
+#qc-loading.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  text-align: center;
+}
+.qc-spinner {
+  width: 48px; height: 48px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 20px;
+}
+
+/* Report screen */
+#qc-report { display: none; }
+#qc-report.active { display: block; padding: 20px 16px; }
+
+.report-header-card {
+  background: var(--bg2);
+  border-radius: var(--radius);
+  padding: 24px 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.report-niche-icon { font-size: 36px; margin-bottom: 8px; }
+.report-niche-name { font-size: 20px; font-weight: 700; }
+.report-city-name { font-size: 14px; color: var(--text2); margin-top: 2px; }
+
+.report-verdict {
+  padding: 16px 20px;
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.report-verdict-green { background: var(--green-light); border: 1px solid #D1FAE5; }
+.report-verdict-amber { background: var(--amber-light); border: 1px solid #FEF3C7; }
+.report-verdict-red { background: #FEF2F2; border: 1px solid #FECACA; }
+.report-verdict-icon { font-size: 28px; }
+.report-verdict-text { font-size: 14px; font-weight: 600; }
+
+.report-section {
+  margin-bottom: 20px;
+}
+.report-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.report-card {
+  background: var(--bg2);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-bottom: 10px;
+}
+.report-card-label {
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 4px;
+}
+.report-card-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 20px;
+  font-weight: 500;
+}
+.report-card-value-green { color: var(--green); }
+.report-card-value-red { color: var(--red); }
+.report-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.report-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 24px;
+}
+.report-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  text-align: center;
+  -webkit-tap-highlight-color: transparent;
+}
+.report-btn-primary { background: var(--accent); color: white; }
+.report-btn-outline { background: var(--bg); border: 1.5px solid var(--border); color: var(--text); }
+
+/* ============================================
+   FAB (Ask AI button)
+   ============================================ */
+.fab-ai {
+  position: fixed;
+  bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+  right: 16px;
+  width: 48px; height: 48px;
+  background: var(--accent);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(124,108,255,0.4);
+  z-index: 50;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.2s;
+}
+.fab-ai:active { transform: scale(0.92); }
+.fab-ai svg {
+  width: 22px; height: 22px;
+  fill: white;
+}
+.fab-ai.visible { display: flex; }
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     CABINET OVERLAY
+     ============================================ -->
+<div class="cabinet-backdrop" id="cabinet-backdrop" onclick="closeCabinet()"></div>
+<div class="cabinet-panel" id="cabinet-panel">
+  <button class="cabinet-close" onclick="closeCabinet()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <div class="cabinet-user">
+    <div class="cabinet-user-name" id="cab-name">Гость</div>
+    <div class="cabinet-user-handle" id="cab-handle"></div>
+  </div>
+  <div class="cabinet-divider"></div>
+
+  <div class="cabinet-section-title">📊 Мои отчёты</div>
+  <div id="cab-reports">
+    <div class="cabinet-empty">Пока нет отчётов</div>
+  </div>
+
+  <div class="cabinet-divider"></div>
+
+  <div class="cabinet-section-title">📚 Прогресс обучения</div>
+  <div class="cabinet-progress">
+    <div class="cabinet-progress-label">Фундамент</div>
+    <div class="cabinet-progress-bar"><div class="cabinet-progress-fill" id="cab-progress-fund" style="width:0%"></div></div>
+    <div class="cabinet-progress-text" id="cab-progress-fund-text">0/23 глав</div>
+  </div>
+  <div class="cabinet-progress">
+    <div class="cabinet-progress-label">Архитектор</div>
+    <div class="cabinet-progress-bar"><div class="cabinet-progress-fill" id="cab-progress-arch" style="width:0%"></div></div>
+    <div class="cabinet-progress-text" id="cab-progress-arch-text">0/26 глав</div>
+  </div>
+
+  <div class="cabinet-divider"></div>
+
+  <button class="cabinet-link" onclick="alert('Скоро!')">🌐 Язык: Русский</button>
+  <a class="cabinet-link" href="../about.html" target="_blank">ℹ️ О платформе</a>
+  <a class="cabinet-link" href="../privacy.html" target="_blank">📄 Политика конфиденциальности</a>
+</div>
+
+<!-- ============================================
+     SCREEN: AI CHAT
+     ============================================ -->
+<div class="screen active" id="screen-chat">
+  <div class="chat-top-row">
+    <button class="cabinet-trigger" onclick="openCabinet()">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </button>
+  </div>
+  <div class="chat-messages" id="chat-messages">
+    <!-- messages rendered by JS -->
+  </div>
+  <div class="chat-input-wrap">
+    <input class="chat-input" id="chat-input" type="text" placeholder="Напишите сообщение..." autocomplete="off">
+    <button class="chat-send" onclick="sendMessage()">
+      <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ============================================
+     SCREEN: ACADEMY
+     ============================================ -->
+<div class="screen" id="screen-academy">
+  <div class="screen-content" id="academy-main">
+    <div class="screen-title">ZEREK Academy</div>
+    <div class="screen-subtitle">Бесплатное обучение финграмотности и бизнесу</div>
+
+    <div class="level-card" onclick="openLevel('fund')">
+      <div class="level-stripe level-stripe-gold"></div>
+      <div class="level-card-body">
+        <div class="level-badge">БЕСПЛАТНО</div>
+        <div class="level-name">Фундамент</div>
+        <div class="level-age">12–15 лет</div>
+        <div class="level-desc">Финансовая грамотность с нуля</div>
+        <div class="level-progress-wrap">
+          <div class="level-progress-bar"><div class="level-progress-fill level-progress-fill-gold" id="lp-fund" style="width:0%"></div></div>
+          <div class="level-progress-text" id="lp-fund-text">0/23 глав</div>
+        </div>
+        <button class="level-btn">Начать обучение →</button>
+      </div>
+    </div>
+
+    <div class="level-card" onclick="openLevel('arch')">
+      <div class="level-stripe level-stripe-teal"></div>
+      <div class="level-card-body">
+        <div class="level-badge">БЕСПЛАТНО</div>
+        <div class="level-name">Архитектор</div>
+        <div class="level-age">16+</div>
+        <div class="level-desc">Стартап-мышление и предпринимательство</div>
+        <div class="level-progress-wrap">
+          <div class="level-progress-bar"><div class="level-progress-fill level-progress-fill-teal" id="lp-arch" style="width:0%"></div></div>
+          <div class="level-progress-text" id="lp-arch-text">0/26 глав</div>
+        </div>
+        <button class="level-btn">Начать обучение →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Module list view -->
+  <div class="screen-content module-list" id="module-list">
+    <button class="module-back" onclick="closeModuleList()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Назад
+    </button>
+    <div class="screen-title" id="module-list-title"></div>
+    <div class="screen-subtitle" id="module-list-subtitle"></div>
+    <div id="module-items"></div>
+  </div>
+
+  <!-- Chapter list view -->
+  <div class="screen-content chapter-list" id="chapter-list">
+    <button class="module-back" onclick="closeChapterList()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Назад к модулям
+    </button>
+    <div class="screen-title" id="chapter-list-title"></div>
+    <div id="chapter-items"></div>
+  </div>
+
+  <!-- Chapter content view -->
+  <div class="chapter-content" id="chapter-content">
+    <button class="module-back" onclick="closeChapterContent()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Назад к главам
+    </button>
+    <div class="screen-title" id="chapter-content-title" style="margin-bottom:16px"></div>
+    <div class="chapter-placeholder">
+      <div style="font-size:36px;margin-bottom:12px">📖</div>
+      Контент урока скоро появится.<br>Мы готовим качественные материалы для тебя.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     SCREEN: CASES
+     ============================================ -->
+<div class="screen" id="screen-cases">
+  <div class="screen-content" id="cases-main">
+    <div class="screen-title">Чужие грабли</div>
+    <div class="screen-subtitle">Учись на чужих ошибках, экономь свои деньги</div>
+
+    <div class="case-card" onclick="openCase(0)">
+      <div class="case-icon">📉</div>
+      <div class="case-title">Кофейня закрылась через 8 месяцев</div>
+      <div class="case-excerpt">Не считали точку безубыточности. Арендовали 80 м² в спальном районе — трафик оказался в 3 раза ниже расчётного.</div>
+      <span class="case-tag case-tag-loss">Убыток</span>
+    </div>
+
+    <div class="case-card" onclick="openCase(1)">
+      <div class="case-icon">📈</div>
+      <div class="case-title">Барбершоп окупился за 4 месяца</div>
+      <div class="case-excerpt">Правильно выбрали локацию возле БЦ, начали с 2 кресел и выросли до 5 за полгода. Считали юнит-экономику до старта.</div>
+      <span class="case-tag case-tag-win">Успех</span>
+    </div>
+
+    <div class="case-card" onclick="openCase(2)">
+      <div class="case-icon">📉</div>
+      <div class="case-title">Клининг: 500K вложений — 0 клиентов</div>
+      <div class="case-excerpt">Не продумали каналы привлечения. Купили технику и оборудование, но ни одного заказа за 2 месяца.</div>
+      <span class="case-tag case-tag-loss">Убыток</span>
+    </div>
+
+    <div class="case-card" onclick="openCase(3)">
+      <div class="case-icon">📈</div>
+      <div class="case-title">Донерная: из ларька в сеть за год</div>
+      <div class="case-excerpt">Начали с одного киоска у рынка. Посчитали маржу — 62%. Через 8 месяцев открыли второю точку, через год — третью.</div>
+      <span class="case-tag case-tag-win">Успех</span>
+    </div>
+
+    <div class="case-card" onclick="openCase(4)">
+      <div class="case-icon">📉</div>
+      <div class="case-title">Пекарня: неправильный формат</div>
+      <div class="case-excerpt">Открыли полный цикл производства, а спрос был на кофе-пекарню to-go. Переформатировались — но потеряли 2 млн ₸.</div>
+      <span class="case-tag case-tag-loss">Убыток</span>
+    </div>
+  </div>
+
+  <!-- Case detail view -->
+  <div class="case-detail" id="case-detail">
+    <button class="module-back" onclick="closeCase()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Назад
+    </button>
+    <div id="case-detail-content"></div>
+  </div>
+</div>
+
+<!-- ============================================
+     SCREEN: WIKI / REVIEWS
+     ============================================ -->
+<div class="screen" id="screen-wiki">
+  <div class="screen-content">
+    <div class="screen-title">Обзоры рынка</div>
+    <div class="screen-subtitle">Бизнес-ниши Казахстана — аналитика и данные</div>
+    <input class="search-input" type="text" placeholder="Найти нишу..." oninput="filterWiki(this.value)">
+    <div class="wiki-grid" id="wiki-grid">
+      <!-- rendered by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     SCREEN: CALC
+     ============================================ -->
+<div class="screen" id="screen-calc">
+  <div class="screen-content" id="calc-main">
+    <div class="screen-title">Расчёты</div>
+    <div class="screen-subtitle">Финансовые инструменты для вашего бизнеса</div>
+
+    <!-- Product 1: Quick Check -->
+    <div class="product-card">
+      <span class="product-badge-live badge-live">LIVE</span>
+      <div class="product-card-top">
+        <div class="product-icon-wrap">
+          <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <div class="product-info">
+          <div class="product-name">Экспресс-оценка</div>
+          <div class="product-desc">Проверка бизнес-идеи за 2 минуты. Инвестиции, окупаемость, риски.</div>
+        </div>
+        <div class="product-price">3 000 ₸</div>
+      </div>
+      <div class="product-tags">
+        <span class="product-tag">33 ниши</span>
+        <span class="product-tag">14 городов</span>
+        <span class="product-tag">2 минуты</span>
+      </div>
+      <button class="product-cta product-cta-primary" onclick="startQuickCheck()">Пройти экспресс-оценку →</button>
+    </div>
+
+    <!-- Product 2: Finmodel -->
+    <div class="product-card">
+      <span class="product-badge-live badge-live">LIVE</span>
+      <div class="product-card-top">
+        <div class="product-icon-wrap">
+          <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
+        </div>
+        <div class="product-info">
+          <div class="product-name">Финансовая модель</div>
+          <div class="product-desc">Excel-файл с прогнозом на 36 месяцев. Доходы, расходы, Cash Flow.</div>
+        </div>
+        <div class="product-price">9 000 ₸</div>
+      </div>
+      <div class="product-tags">
+        <span class="product-tag">Excel 36 мес</span>
+        <span class="product-tag">P&L</span>
+        <span class="product-tag">Cash Flow</span>
+      </div>
+      <button class="product-cta product-cta-primary" onclick="goToChat('Хочу заказать финансовую модель')">Заказать финмодель →</button>
+    </div>
+
+    <!-- Product 3: Business Plan -->
+    <div class="product-card">
+      <span class="product-badge-live badge-soon">СКОРО</span>
+      <div class="product-card-top">
+        <div class="product-icon-wrap">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div class="product-info">
+          <div class="product-name">Бизнес-план</div>
+          <div class="product-desc">Полный бизнес-план + грантовая заявка (Бастау Бизнес).</div>
+        </div>
+        <div class="product-price">15 000 ₸</div>
+      </div>
+      <div class="product-tags">
+        <span class="product-tag">Бастау Бизнес</span>
+        <span class="product-tag">400 МРП</span>
+        <span class="product-tag">DOCX</span>
+      </div>
+      <button class="product-cta product-cta-disabled">Скоро →</button>
+    </div>
+
+    <!-- Product 4: Pitch Deck -->
+    <div class="product-card">
+      <span class="product-badge-live badge-soon">СКОРО</span>
+      <div class="product-card-top">
+        <div class="product-icon-wrap">
+          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <div class="product-info">
+          <div class="product-name">Презентация</div>
+          <div class="product-desc">Pitch Deck для инвесторов и грантовых комиссий.</div>
+        </div>
+        <div class="product-price">—</div>
+      </div>
+      <div class="product-tags">
+        <span class="product-tag">PDF/PPTX</span>
+        <span class="product-tag">10-15 слайдов</span>
+      </div>
+      <button class="product-cta product-cta-disabled">Скоро →</button>
+    </div>
+
+    <!-- My reports -->
+    <div class="my-reports-section">
+      <div class="my-reports-title">📂 Мои отчёты</div>
+      <div id="calc-reports" class="cabinet-empty">После покупки здесь появятся ваши отчёты</div>
+    </div>
+  </div>
+
+  <!-- Quick Check Survey (embedded) -->
+  <div id="qc-screen">
+    <button class="qc-back" onclick="exitQuickCheck()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Назад к расчётам
+    </button>
+    <div class="qc-progress-bar"><div class="qc-progress-fill" id="qc-pbar" style="width:16.6%"></div></div>
+    <div class="qc-progress-text">
+      <span id="qc-step-label">Шаг 1 из 6</span>
+      <span id="qc-step-name">Город</span>
+    </div>
+
+    <div id="qc-steps"></div>
+
+    <div class="qc-btn-wrap">
+      <button class="qc-btn qc-btn-disabled" id="qc-next-btn" onclick="qcHandleNext()">Далее</button>
+    </div>
+  </div>
+
+  <!-- Quick Check Loading -->
+  <div id="qc-loading">
+    <div class="qc-spinner"></div>
+    <div style="font-size:18px;font-weight:700;margin-bottom:8px">Считаем...</div>
+    <div style="font-size:14px;color:var(--text2)">Анализируем рынок и рассчитываем показатели</div>
+  </div>
+
+  <!-- Quick Check Report -->
+  <div id="qc-report">
+    <button class="qc-back" onclick="exitQuickCheck()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Назад к расчётам
+    </button>
+    <div id="qc-report-content"></div>
+  </div>
+</div>
+
+<!-- ============================================
+     FAB: Ask AI
+     ============================================ -->
+<button class="fab-ai" id="fab-ai" onclick="goToChat('')">
+  <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+</button>
+
+<!-- ============================================
+     TAP BAR
+     ============================================ -->
+<div class="tapbar">
+  <button class="tab-btn" data-tab="academy" onclick="switchTab('academy')">
+    <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1 2 3 6 3s6-2 6-3v-5"/></svg>
+    <span>Академия</span>
+  </button>
+  <button class="tab-btn" data-tab="cases" onclick="switchTab('cases')">
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    <span>Кейсы</span>
+  </button>
+  <button class="tab-btn tab-center active" data-tab="chat" onclick="switchTab('chat')">
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span>AI</span>
+  </button>
+  <button class="tab-btn" data-tab="wiki" onclick="switchTab('wiki')">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Обзоры</span>
+  </button>
+  <button class="tab-btn" data-tab="calc" onclick="switchTab('calc')">
+    <svg viewBox="0 0 24 24"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+    <span>Расчёты</span>
+  </button>
+</div>
+
+<script>
+/* ============================================
+   TELEGRAM INIT
+   ============================================ */
+var tg = null;
+var tgUser = null;
+
+function initTelegram() {
+  try {
+    if (window.Telegram && window.Telegram.WebApp) {
+      tg = window.Telegram.WebApp;
+      tg.ready();
+      tg.expand();
+      tg.MainButton.hide();
+      tg.enableClosingConfirmation();
+
+      if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        tgUser = tg.initDataUnsafe.user;
+      }
+    }
+  } catch(e) {}
+}
+
+/* ============================================
+   API CONFIG
+   ============================================ */
+var API = 'https://web-production-b3ede.up.railway.app';
+
+function apiGet(path, cb) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', API + path, true);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        try { cb(null, JSON.parse(xhr.responseText)); }
+        catch(e) { cb(e, null); }
+      } else {
+        cb(new Error('HTTP ' + xhr.status), null);
+      }
+    }
+  };
+  xhr.onerror = function() { cb(new Error('Network error'), null); };
+  xhr.send();
+}
+
+function apiPost(path, body, cb) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', API + path, true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        try { cb(null, JSON.parse(xhr.responseText)); }
+        catch(e) { cb(e, null); }
+      } else {
+        cb(new Error('HTTP ' + xhr.status + ': ' + xhr.responseText), null);
+      }
+    }
+  };
+  xhr.onerror = function() { cb(new Error('Network error'), null); };
+  xhr.send(JSON.stringify(body));
+}
+
+/* ============================================
+   FORMAT HELPERS
+   ============================================ */
+function fmt(n) {
+  if (n == null) return '\u2014';
+  return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+function fmtM(n) {
+  if (n == null) return '\u2014';
+  if (Math.abs(n) >= 1000000) return (n/1000000).toFixed(1).replace('.0','') + ' млн';
+  if (Math.abs(n) >= 1000) return (n/1000).toFixed(0) + ' тыс.';
+  return fmt(n);
+}
+function fmtPct(n) {
+  if (n == null) return '\u2014';
+  return Math.round(n) + '%';
+}
+
+/* ============================================
+   TAB NAVIGATION
+   ============================================ */
+var currentTab = 'chat';
+
+function switchTab(tabId) {
+  currentTab = tabId;
+  var screens = document.querySelectorAll('.screen');
+  for (var i = 0; i < screens.length; i++) {
+    screens[i].classList.remove('active');
+  }
+  document.getElementById('screen-' + tabId).classList.add('active');
+
+  var tabs = document.querySelectorAll('.tab-btn');
+  for (var i = 0; i < tabs.length; i++) {
+    tabs[i].classList.remove('active');
+    if (tabs[i].getAttribute('data-tab') === tabId) {
+      tabs[i].classList.add('active');
+    }
+  }
+
+  // FAB visibility
+  var fab = document.getElementById('fab-ai');
+  if (tabId === 'chat') {
+    fab.classList.remove('visible');
+  } else {
+    fab.classList.add('visible');
+  }
+
+  // Reset sub-views when switching tabs
+  if (tabId === 'calc') {
+    // Only reset if not in active QC session
+  }
+}
+
+/* ============================================
+   CABINET
+   ============================================ */
+function openCabinet() {
+  var backdrop = document.getElementById('cabinet-backdrop');
+  var panel = document.getElementById('cabinet-panel');
+  backdrop.style.display = 'block';
+  setTimeout(function() {
+    backdrop.classList.add('visible');
+    panel.classList.add('open');
+  }, 10);
+
+  // Update user info
+  if (tgUser) {
+    document.getElementById('cab-name').textContent = (tgUser.first_name || '') + ' ' + (tgUser.last_name || '');
+    document.getElementById('cab-handle').textContent = tgUser.username ? ('@' + tgUser.username) : '';
+  }
+}
+
+function closeCabinet() {
+  var backdrop = document.getElementById('cabinet-backdrop');
+  var panel = document.getElementById('cabinet-panel');
+  backdrop.classList.remove('visible');
+  panel.classList.remove('open');
+  setTimeout(function() {
+    backdrop.style.display = 'none';
+  }, 300);
+}
+
+/* ============================================
+   AI CHAT
+   ============================================ */
+var chatHistory = [];
+
+function initChat() {
+  var name = tgUser ? tgUser.first_name : '';
+  var greeting = name ? ('Привет, ' + name + '! ') : 'Привет! ';
+  var msg = greeting + '\u{1F44B} Я ZEREK \u2014 AI-ассистент для предпринимателей.\n\nМогу помочь:\n\u2022 Проверить бизнес-идею\n\u2022 Объяснить финансы простым языком\n\u2022 Подобрать нишу\n\nС чего начнём?';
+  addAiMessage(msg, true);
+}
+
+function addAiMessage(text, withQuickActions) {
+  var container = document.getElementById('chat-messages');
+  var div = document.createElement('div');
+  div.className = 'msg-ai';
+  div.innerHTML = formatChatText(text);
+  container.appendChild(div);
+
+  if (withQuickActions) {
+    var actions = document.createElement('div');
+    actions.className = 'quick-actions';
+    actions.innerHTML = '<button class="quick-btn" onclick="sendQuick(\'Проверить идею\')">Проверить идею</button>' +
+      '<button class="quick-btn" onclick="sendQuick(\'Хочу учиться\')">Хочу учиться</button>' +
+      '<button class="quick-btn" onclick="sendQuick(\'Обзоры ниш\')">Обзоры ниш</button>';
+    container.appendChild(actions);
+  }
+
+  scrollChat();
+}
+
+function addUserMessage(text) {
+  var container = document.getElementById('chat-messages');
+  var div = document.createElement('div');
+  div.className = 'msg-user';
+  div.textContent = text;
+  container.appendChild(div);
+  scrollChat();
+}
+
+function showTyping() {
+  var container = document.getElementById('chat-messages');
+  var div = document.createElement('div');
+  div.className = 'typing-indicator';
+  div.id = 'typing';
+  div.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+  container.appendChild(div);
+  scrollChat();
+}
+
+function removeTyping() {
+  var el = document.getElementById('typing');
+  if (el) el.remove();
+}
+
+function formatChatText(text) {
+  // Convert newlines to <br>, bullet points to list
+  var lines = text.split('\n');
+  var html = '';
+  var inList = false;
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    if (line.match(/^\u2022\s/)) {
+      if (!inList) { html += '<ul>'; inList = true; }
+      html += '<li>' + line.replace(/^\u2022\s/, '') + '</li>';
+    } else {
+      if (inList) { html += '</ul>'; inList = false; }
+      if (line === '') {
+        html += '<br>';
+      } else {
+        html += '<p style="margin:0 0 4px">' + line + '</p>';
+      }
+    }
+  }
+  if (inList) html += '</ul>';
+  return html;
+}
+
+function scrollChat() {
+  var container = document.getElementById('chat-messages');
+  setTimeout(function() {
+    container.scrollTop = container.scrollHeight;
+  }, 50);
+}
+
+function sendMessage() {
+  var input = document.getElementById('chat-input');
+  var text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+
+  // Remove quick actions if present
+  var qa = document.querySelector('.quick-actions');
+  if (qa) qa.remove();
+
+  addUserMessage(text);
+  chatHistory.push({ role: 'user', text: text });
+
+  showTyping();
+
+  // Check for specific intents
+  var response = getStubResponse(text);
+
+  setTimeout(function() {
+    removeTyping();
+    addAiMessage(response, false);
+    chatHistory.push({ role: 'ai', text: response });
+  }, 1200 + Math.random() * 800);
+}
+
+function sendQuick(text) {
+  var qa = document.querySelector('.quick-actions');
+  if (qa) qa.remove();
+  addUserMessage(text);
+  chatHistory.push({ role: 'user', text: text });
+
+  showTyping();
+  var response = '';
+  if (text === 'Проверить идею') {
+    response = 'Отлично! Давай проверим твою бизнес-идею.\n\nПерейди в раздел "Расчёты" и нажми "Пройти экспресс-оценку". За 2 минуты ты узнаешь:\n\n\u2022 Сколько нужно вложить\n\u2022 Когда окупится\n\u2022 Какие риски ждут\n\u2022 Какой налоговый режим выбрать';
+  } else if (text === 'Хочу учиться') {
+    response = 'Отличный выбор! В разделе "Академия" тебя ждут два курса:\n\n\u2022 Фундамент (12-15 лет) \u2014 финансовая грамотность с нуля\n\u2022 Архитектор (16+) \u2014 стартап-мышление и предпринимательство\n\nОба курса полностью бесплатные. Переходи и начинай!';
+  } else if (text === 'Обзоры ниш') {
+    response = 'В разделе "Обзоры" собраны подробные обзоры бизнес-ниш Казахстана:\n\n\u2022 Рыночные данные\n\u2022 Средние инвестиции\n\u2022 Сроки окупаемости\n\u2022 Конкуренция и риски\n\nВсё бесплатно. Переходи в "Обзоры" и выбирай нишу!';
+  }
+
+  setTimeout(function() {
+    removeTyping();
+    addAiMessage(response, false);
+    chatHistory.push({ role: 'ai', text: response });
+  }, 1000);
+}
+
+function getStubResponse(text) {
+  var t = text.toLowerCase();
+  if (t.indexOf('кофейн') !== -1 || t.indexOf('кофе') !== -1) {
+    return 'Кофейня \u2014 одна из самых популярных ниш в Казахстане. Средние инвестиции: 3-8 млн ₸ в зависимости от формата.\n\nХочешь точные цифры? Пройди экспресс-оценку в разделе "Расчёты" \u2014 мы рассчитаем всё под твой город и формат.';
+  }
+  if (t.indexOf('барбер') !== -1) {
+    return 'Барбершоп \u2014 ниша с высокой маржой (60-70%) и быстрой окупаемостью. Средние инвестиции: 2-5 млн ₸.\n\nДля точного расчёта перейди в "Расчёты" → "Экспресс-оценка".';
+  }
+  if (t.indexOf('финмодел') !== -1 || t.indexOf('фин модел') !== -1) {
+    return 'Финансовая модель \u2014 это Excel-файл с прогнозом на 36 месяцев: доходы, расходы, Cash Flow, P&L.\n\nСтоимость: 9 000 ₸. Для заказа сначала пройди экспресс-оценку, и на основе неё мы сгенерируем детальную модель.';
+  }
+  if (t.indexOf('бизнес-план') !== -1 || t.indexOf('грант') !== -1 || t.indexOf('бастау') !== -1) {
+    return 'Бизнес-план для гранта "Бастау Бизнес" (400 МРП = 1 730 000 ₸) \u2014 скоро будет доступен.\n\nСтоимость: 15 000 ₸. Включает полный бизнес-план + презентацию.';
+  }
+  if (t.indexOf('привет') !== -1 || t.indexOf('здравств') !== -1 || t.indexOf('салам') !== -1) {
+    return 'Привет! Чем могу помочь?\n\n\u2022 Проверить бизнес-идею\n\u2022 Рассказать про нишу\n\u2022 Помочь с обучением';
+  }
+  return 'Эта функция скоро заработает в полном объёме! Пока могу направить тебя:\n\n\u2022 "Расчёты" \u2014 проверить бизнес-идею\n\u2022 "Обзоры" \u2014 изучить нишу\n\u2022 "Академия" \u2014 начать обучение';
+}
+
+function goToChat(prefill) {
+  switchTab('chat');
+  if (prefill) {
+    document.getElementById('chat-input').value = prefill;
+    document.getElementById('chat-input').focus();
+  }
+}
+
+/* ============================================
+   ACADEMY
+   ============================================ */
+var ACADEMY_DATA = {
+  fund: {
+    title: 'Фундамент',
+    subtitle: '12–15 лет — финансовая грамотность',
+    modules: [
+      { name: 'Что такое деньги', chapters: ['История денег', 'Функции денег', 'Валюты мира'] },
+      { name: 'Семейный бюджет', chapters: ['Доходы и расходы', 'Планирование', 'Экономия и накопления'] },
+      { name: 'Банки и карты', chapters: ['Зачем нужен банк', 'Карты и переводы', 'Вклады и проценты'] },
+      { name: 'Предпринимательство', chapters: ['Что такое бизнес', 'Идея и продукт', 'Первые деньги'] },
+      { name: 'Налоги простым языком', chapters: ['Зачем платить налоги', 'Виды налогов', 'Налоги в Казахстане'] },
+      { name: 'Финансовые ошибки', chapters: ['Кредитные ловушки', 'Пирамиды и мошенники', 'Импульсивные покупки'] },
+      { name: 'Цифровые финансы', chapters: ['Электронные кошельки', 'Безопасность онлайн', 'Криптовалюты — основы'] },
+      { name: 'Итоговый проект', chapters: ['Мой бюджет на месяц', 'Презентация'] }
+    ]
+  },
+  arch: {
+    title: 'Архитектор',
+    subtitle: '16+ — стартап-мышление и предпринимательство',
+    modules: [
+      { name: 'Стартап-мышление', chapters: ['Problem-Solution Fit', 'Целевая аудитория', 'MVP'] },
+      { name: 'Бизнес-модель', chapters: ['Canvas', 'Юнит-экономика', 'Ценообразование'] },
+      { name: 'Финансы бизнеса', chapters: ['P&L отчёт', 'Cash Flow', 'Точка безубыточности', 'Unit-экономика'] },
+      { name: 'Маркетинг', chapters: ['Каналы привлечения', 'CAC и LTV', 'Контент-маркетинг'] },
+      { name: 'Юридические основы', chapters: ['ИП vs ТОО', 'Налоговые режимы КЗ', 'Лицензии и разрешения'] },
+      { name: 'Операционка', chapters: ['Аренда и ремонт', 'Персонал', 'Поставщики'] },
+      { name: 'Масштабирование', chapters: ['Когда расти', 'Франшиза', 'Автоматизация'] },
+      { name: 'Инвестиции и гранты', chapters: ['Бастау Бизнес', 'Дamu', 'Ангелы и фонды'] },
+      { name: 'Итоговый проект', chapters: ['Бизнес-план', 'Pitch Deck'] }
+    ]
+  }
+};
+
+var academyView = 'main'; // main | modules | chapters | content
+var currentLevel = null;
+var currentModuleIdx = null;
+
+function openLevel(levelId) {
+  currentLevel = levelId;
+  var data = ACADEMY_DATA[levelId];
+  document.getElementById('module-list-title').textContent = data.title;
+  document.getElementById('module-list-subtitle').textContent = data.subtitle;
+
+  var html = '';
+  for (var i = 0; i < data.modules.length; i++) {
+    var m = data.modules[i];
+    html += '<div class="module-item" onclick="openModule(' + i + ')">' +
+      '<div class="module-num">' + (i + 1) + '</div>' +
+      '<div class="module-info"><div class="module-name">' + m.name + '</div>' +
+      '<div class="module-chapters">' + m.chapters.length + ' глав</div></div>' +
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>';
+  }
+  document.getElementById('module-items').innerHTML = html;
+
+  document.getElementById('academy-main').style.display = 'none';
+  document.getElementById('module-list').classList.add('active');
+  academyView = 'modules';
+}
+
+function closeModuleList() {
+  document.getElementById('module-list').classList.remove('active');
+  document.getElementById('academy-main').style.display = 'block';
+  academyView = 'main';
+}
+
+function openModule(idx) {
+  currentModuleIdx = idx;
+  var data = ACADEMY_DATA[currentLevel];
+  var mod = data.modules[idx];
+  document.getElementById('chapter-list-title').textContent = mod.name;
+
+  var html = '';
+  for (var i = 0; i < mod.chapters.length; i++) {
+    html += '<div class="chapter-item" onclick="openChapter(\'' + mod.chapters[i] + '\')">' +
+      '<div class="module-num">' + (i + 1) + '</div>' +
+      '<div class="module-info"><div class="module-name">' + mod.chapters[i] + '</div></div>' +
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>';
+  }
+  document.getElementById('chapter-items').innerHTML = html;
+
+  document.getElementById('module-list').classList.remove('active');
+  document.getElementById('chapter-list').classList.add('active');
+  academyView = 'chapters';
+}
+
+function closeChapterList() {
+  document.getElementById('chapter-list').classList.remove('active');
+  document.getElementById('module-list').classList.add('active');
+  academyView = 'modules';
+}
+
+function openChapter(title) {
+  document.getElementById('chapter-content-title').textContent = title;
+  document.getElementById('chapter-list').classList.remove('active');
+  document.getElementById('chapter-content').classList.add('active');
+  academyView = 'content';
+}
+
+function closeChapterContent() {
+  document.getElementById('chapter-content').classList.remove('active');
+  document.getElementById('chapter-list').classList.add('active');
+  academyView = 'chapters';
+}
+
+/* ============================================
+   CASES
+   ============================================ */
+var CASES_DATA = [
+  {
+    icon: '📉', title: 'Кофейня закрылась через 8 месяцев', tag: 'loss',
+    content: '<h3 style="font-size:18px;font-weight:700;margin-bottom:12px">📉 Кофейня закрылась через 8 месяцев</h3>' +
+      '<p style="color:var(--text2);margin-bottom:16px">Город: Караганда | Формат: Мини-кофейня | Инвестиции: 4.2 млн ₸</p>' +
+      '<div class="report-card" style="margin-bottom:12px"><div class="report-card-label">Главная ошибка</div><div style="font-size:14px;font-weight:600">Не считали точку безубыточности</div></div>' +
+      '<p style="font-size:14px;line-height:1.6;margin-bottom:12px">Арендовали помещение 80 м² в спальном районе. Ожидали 150 чеков в день, реальность — 40-50. Аренда съедала 45% выручки вместо запланированных 25%.</p>' +
+      '<p style="font-size:14px;line-height:1.6;margin-bottom:12px">Не учли сезонность — летом трафик упал ещё на 30%. К 6-му месяцу накопился кассовый разрыв в 1.8 млн ₸.</p>' +
+      '<div class="report-card"><div class="report-card-label">Урок</div><div style="font-size:14px">Всегда считайте точку безубыточности и закладывайте пессимистичный сценарий. Если бизнес не выходит в плюс даже при 50% от плана — не открывайтесь.</div></div>'
+  },
+  {
+    icon: '📈', title: 'Барбершоп окупился за 4 месяца', tag: 'win',
+    content: '<h3 style="font-size:18px;font-weight:700;margin-bottom:12px">📈 Барбершоп окупился за 4 месяца</h3>' +
+      '<p style="color:var(--text2);margin-bottom:16px">Город: Астана | Формат: Мини-барбершоп | Инвестиции: 2.1 млн ₸</p>' +
+      '<div class="report-card" style="margin-bottom:12px"><div class="report-card-label">Ключ к успеху</div><div style="font-size:14px;font-weight:600">Локация рядом с БЦ + юнит-экономика до старта</div></div>' +
+      '<p style="font-size:14px;line-height:1.6;margin-bottom:12px">Начали с 2 кресел в 25 м² рядом с бизнес-центром. Средний чек 4 500 ₸, загрузка 85% с первого месяца.</p>' +
+      '<p style="font-size:14px;line-height:1.6;margin-bottom:12px">Через 4 месяца полностью окупили инвестиции. Через 6 месяцев расширились до 5 кресел, переехав в соседнее помещение.</p>' +
+      '<div class="report-card"><div class="report-card-label">Урок</div><div style="font-size:14px">Начинайте с минимума и масштабируйтесь по данным. Считайте юнит-экономику ДО вложений.</div></div>'
+  },
+  {
+    icon: '📉', title: 'Клининг: 500K вложений — 0 клиентов', tag: 'loss',
+    content: '<h3 style="font-size:18px;font-weight:700;margin-bottom:12px">📉 Клининг: 500K вложений — 0 клиентов</h3>' +
+      '<p style="color:var(--text2);margin-bottom:16px">Город: Шымкент | Формат: Бригада | Инвестиции: 500 000 ₸</p>' +
+      '<div class="report-card" style="margin-bottom:12px"><div class="report-card-label">Главная ошибка</div><div style="font-size:14px;font-weight:600">Не продумали каналы привлечения</div></div>' +
+      '<p style="font-size:14px;line-height:1.6;margin-bottom:12px">Купили моющее оборудование, расходники, даже форму. Но не продумали, откуда будут приходить клиенты. Ни сайта, ни Instagram, ни партнёрств.</p>' +
+      '<p style="font-size:14px;line-height:1.6;margin-bottom:12px">За 2 месяца — ни одного заказа. Оборудование лежит без дела, деньги потрачены.</p>' +
+      '<div class="report-card"><div class="report-card-label">Урок</div><div style="font-size:14px">Маркетинг — не опция, а часть бизнес-плана. Планируйте каналы привлечения ДО покупки оборудования.</div></div>'
+  },
+  {
+    icon: '📈', title: 'Донерная: из ларька в сеть за год', tag: 'win',
+    content: '<h3 style="font-size:18px;font-weight:700;margin-bottom:12px">📈 Донерная: из ларька в сеть за год</h3>' +
+      '<p style="color:var(--text2);margin-bottom:16px">Город: Алматы | Формат: Киоск → Мини-кафе | Инвестиции: 1.5 млн ₸</p>' +
+      '<div class="report-card" style="margin-bottom:12px"><div class="report-card-label">Ключ к успеху</div><div style="font-size:14px;font-weight:600">Высокая маржа + правильная локация</div></div>' +
+      '<p style="font-size:14px;line-height:1.6;margin-bottom:12px">Начали с одного киоска у рынка. Маржа 62% позволяла быстро накапливать прибыль. Через 8 месяцев открыли вторую точку.</p>' +
+      '<p style="font-size:14px;line-height:1.6;margin-bottom:12px">К концу года работали уже на 3 точках. Ключ — стандартизация рецептуры и процессов с первого дня.</p>' +
+      '<div class="report-card"><div class="report-card-label">Урок</div><div style="font-size:14px">Если маржа позволяет — масштабируйтесь. Но стандартизируйте процессы с первого дня, иначе качество просядет.</div></div>'
+  },
+  {
+    icon: '📉', title: 'Пекарня: неправильный формат', tag: 'loss',
+    content: '<h3 style="font-size:18px;font-weight:700;margin-bottom:12px">📉 Пекарня: неправильный формат</h3>' +
+      '<p style="color:var(--text2);margin-bottom:16px">Город: Павлодар | Формат: Полный цикл | Инвестиции: 6.8 млн ₸</p>' +
+      '<div class="report-card" style="margin-bottom:12px"><div class="report-card-label">Главная ошибка</div><div style="font-size:14px;font-weight:600">Выбрали формат без анализа спроса</div></div>' +
+      '<p style="font-size:14px;line-height:1.6;margin-bottom:12px">Открыли пекарню полного цикла: тесто, выпечка, упаковка. Вложили 6.8 млн ₸ в оборудование. Но район хотел кофе-пекарню to-go.</p>' +
+      '<p style="font-size:14px;line-height:1.6;margin-bottom:12px">Переформатировались, но уже потеряли 2 млн ₸ на ненужном оборудовании и ремонте.</p>' +
+      '<div class="report-card"><div class="report-card-label">Урок</div><div style="font-size:14px">Изучите спрос перед выбором формата. Дешевле потратить неделю на анализ, чем 2 млн на переделку.</div></div>'
+  }
+];
+
+function openCase(idx) {
+  var c = CASES_DATA[idx];
+  document.getElementById('case-detail-content').innerHTML = c.content;
+  document.getElementById('cases-main').style.display = 'none';
+  document.getElementById('case-detail').classList.add('active');
+}
+
+function closeCase() {
+  document.getElementById('case-detail').classList.remove('active');
+  document.getElementById('cases-main').style.display = 'block';
+}
+
+/* ============================================
+   WIKI / REVIEWS
+   ============================================ */
+var WIKI_NICHES = [
+  { id: 'COFFEE', icon: '☕', name: 'Кофейня', live: true, file: 'ZEREK_Coffee' },
+  { id: 'DONER', icon: '🌯', name: 'Донерная', live: true, file: 'ZEREK_Doner' },
+  { id: 'CARWASH', icon: '🚗', name: 'Автомойка', live: true, file: 'ZEREK_Carwash' },
+  { id: 'CLEAN', icon: '🧹', name: 'Клининг', live: true, file: 'ZEREK_Clean' },
+  { id: 'PHARMA', icon: '💊', name: 'Аптека', live: true, file: 'ZEREK_Pharmacy' },
+  { id: 'BARBER', icon: '💈', name: 'Барбершоп', live: true, file: 'ZEREK_Barber' },
+  { id: 'DENTAL', icon: '🦷', name: 'Стоматология', live: true, file: 'ZEREK_Dental' },
+  { id: 'FLOWERS', icon: '💐', name: 'Цветы', live: true, file: 'ZEREK_Flowers' },
+  { id: 'AUTOSERVICE', icon: '🔧', name: 'Автосервис', live: true, file: 'ZEREK_Autoservice' },
+  { id: 'NAIL', icon: '💅', name: 'Маникюр', live: true, file: 'ZEREK_Manicure' },
+  { id: 'BROW', icon: '✨', name: 'Брови и ресницы', live: true, file: 'ZEREK_BrowLash' },
+  { id: 'MASSAGE', icon: '💆', name: 'Массаж', live: true, file: 'ZEREK_Massage' },
+  { id: 'FITNESS', icon: '💪', name: 'Фитнес', live: true, file: 'ZEREK_Fitness' },
+  { id: 'SUGARING', icon: '🌸', name: 'Эпиляция', live: true, file: 'ZEREK_Epilation' },
+  { id: 'KINDERGARTEN', icon: '👶', name: 'Детский сад', live: true, file: 'ZEREK_Kindergarten' },
+  { id: 'BAKERY', icon: '🥐', name: 'Пекарня', live: false },
+  { id: 'PIZZA', icon: '🍕', name: 'Пиццерия', live: false },
+  { id: 'SUSHI', icon: '🍣', name: 'Суши', live: false },
+  { id: 'FASTFOOD', icon: '🍔', name: 'Фастфуд', live: false },
+  { id: 'GROCERY', icon: '🛒', name: 'Продукты', live: false },
+  { id: 'PVZ', icon: '📦', name: 'ПВЗ', live: false },
+  { id: 'TIRE', icon: '🛞', name: 'Шиномонтаж', live: false },
+  { id: 'CANTEEN', icon: '🍽️', name: 'Столовая', live: false },
+  { id: 'CONFECTION', icon: '🎂', name: 'Кондитерская', live: false },
+  { id: 'WATER', icon: '💧', name: 'Вода', live: false },
+  { id: 'FURNITURE', icon: '🪑', name: 'Мебель', live: false },
+  { id: 'DRYCLEAN', icon: '👔', name: 'Химчистка', live: false },
+  { id: 'TAILOR', icon: '🧵', name: 'Ателье', live: false },
+  { id: 'REPAIR_PHONE', icon: '📱', name: 'Ремонт телефонов', live: false },
+  { id: 'CYBERCLUB', icon: '🎮', name: 'Компьютерный клуб', live: false },
+  { id: 'SEMIFOOD', icon: '🥟', name: 'Полуфабрикаты', live: false },
+  { id: 'FRUITSVEGS', icon: '🍎', name: 'Овощи и фрукты', live: false },
+  { id: 'LASH', icon: '👁️', name: 'Ресницы', live: false }
+];
+
+function renderWiki(filter) {
+  var grid = document.getElementById('wiki-grid');
+  var html = '';
+  var f = (filter || '').toLowerCase();
+  for (var i = 0; i < WIKI_NICHES.length; i++) {
+    var n = WIKI_NICHES[i];
+    if (f && n.name.toLowerCase().indexOf(f) === -1) continue;
+    var badge = n.live ? '<span class="wiki-card-badge badge-live">LIVE</span>' : '<span class="wiki-card-badge badge-soon">СКОРО</span>';
+    var onclick = n.live ? ' onclick="openWiki(\'' + n.file + '\')"' : '';
+    html += '<div class="wiki-card"' + onclick + '>' +
+      '<div class="wiki-card-icon">' + n.icon + '</div>' +
+      '<div class="wiki-card-name">' + n.name + '</div>' +
+      badge + '</div>';
+  }
+  grid.innerHTML = html;
+}
+
+function filterWiki(val) {
+  renderWiki(val);
+}
+
+function openWiki(file) {
+  window.open('../wiki/kz/' + file + '.html', '_blank');
+}
+
+/* ============================================
+   QUICK CHECK (Survey)
+   ============================================ */
+var QC_STEPS = ['qc-city','qc-category','qc-niche','qc-format','qc-location','qc-confirm'];
+var QC_STEP_NAMES = ['Город','Категория','Ниша','Формат','Локация','Подтверждение'];
+
+var QC = {
+  step: 0,
+  city_id: null, city_name: null,
+  category_idx: null, category_name: null,
+  niche_id: null, niche_name: null,
+  format_id: null, format_name: null,
+  loc_type: 'ТЦ',
+  area_m2: 50,
+  capex_level: 'стандарт',
+  start_month: new Date().getMonth() + 1,
+  cities: [], niches: [], formats: []
+};
+
+var NICHE_ICONS = {
+  'COFFEE': '☕', 'DONER': '🌯', 'CARWASH': '🚗', 'CLEAN': '🧹',
+  'GROCERY': '🛒', 'PHARMA': '💊', 'BARBER': '💈', 'BAKERY': '🥐',
+  'PIZZA': '🍕', 'SUSHI': '🍣', 'FASTFOOD': '🍔', 'CANTEEN': '🍽️',
+  'CONFECTION': '🎂', 'SEMIFOOD': '🥟', 'NAIL': '💅', 'BROW': '✨',
+  'LASH': '👁️', 'SUGARING': '🌸', 'MASSAGE': '💆', 'DENTAL': '🦷',
+  'FITNESS': '💪', 'AUTOSERVICE': '🔧', 'TIRE': '🛞', 'FLOWERS': '💐',
+  'FRUITSVEGS': '🍎', 'WATER': '💧', 'FURNITURE': '🪑', 'PVZ': '📦',
+  'DRYCLEAN': '👔', 'TAILOR': '🧵', 'REPAIR_PHONE': '📱',
+  'KINDERGARTEN': '👶', 'CYBERCLUB': '🎮'
+};
+var NICHE_NAMES = {
+  'AUTOSERVICE': 'Автосервис', 'BAKERY': 'Пекарня', 'BARBER': 'Барбершоп',
+  'BROW': 'Брови', 'CANTEEN': 'Столовая', 'CARWASH': 'Автомойка',
+  'CLEAN': 'Клининг', 'COFFEE': 'Кофейня', 'CONFECTION': 'Кондитерская',
+  'CYBERCLUB': 'Компьютерный клуб', 'DENTAL': 'Стоматология', 'DONER': 'Донерная',
+  'DRYCLEAN': 'Химчистка', 'FASTFOOD': 'Фастфуд', 'FITNESS': 'Фитнес',
+  'FLOWERS': 'Цветы', 'FRUITSVEGS': 'Овощи и фрукты', 'FURNITURE': 'Мебель',
+  'GROCERY': 'Продукты', 'KINDERGARTEN': 'Детский сад', 'LASH': 'Ресницы',
+  'MASSAGE': 'Массаж', 'NAIL': 'Маникюр', 'PHARMA': 'Аптека',
+  'PIZZA': 'Пиццерия', 'PVZ': 'ПВЗ', 'REPAIR_PHONE': 'Ремонт телефонов',
+  'SEMIFOOD': 'Полуфабрикаты', 'SUGARING': 'Шугаринг', 'SUSHI': 'Суши',
+  'TAILOR': 'Ателье', 'TIRE': 'Шиномонтаж', 'WATER': 'Вода'
+};
+var NICHE_CATEGORIES = [
+  { title: 'Еда и напитки', icon: '🍽️', ids: ['COFFEE','BAKERY','DONER','PIZZA','SUSHI','FASTFOOD','CANTEEN','CONFECTION','SEMIFOOD'] },
+  { title: 'Красота и здоровье', icon: '💅', ids: ['BARBER','NAIL','BROW','LASH','SUGARING','MASSAGE','DENTAL','FITNESS'] },
+  { title: 'Авто', icon: '🚗', ids: ['CARWASH','AUTOSERVICE','TIRE'] },
+  { title: 'Торговля', icon: '🛒', ids: ['GROCERY','PHARMA','FLOWERS','FRUITSVEGS','WATER','FURNITURE','PVZ'] },
+  { title: 'Услуги', icon: '🔧', ids: ['CLEAN','DRYCLEAN','TAILOR','REPAIR_PHONE','KINDERGARTEN','CYBERCLUB'] }
+];
+var FORMAT_NAMES = {
+  'AUTO_FULL':'Полный автоцентр','AUTO_GARAGE':'Гаражный','AUTO_SERVICE':'СТО 2-4 поста','AUTO_SPEC':'Спецсервис',
+  'BAKERY_CAFE':'Кафе-пекарня','BAKERY_CONFECT':'Пекарня-кондитерская','BAKERY_CRAFT':'Пекарня полного цикла',
+  'BAKERY_ISLAND':'Островок в ТЦ','BAKERY_MINI':'Мини-пекарня to-go','BAKERY_PRODUCTION':'Пекарня-производство B2B',
+  'BARBER_FULL':'Полный барбершоп','BARBER_MINI':'Мини-барбершоп','BARBER_SOLO':'Аренда кресла',
+  'BROW_CABINET':'Свой кабинет','BROW_HOME':'На дому','BROW_RENT':'Аренда места',
+  'CANTEEN_CATERING':'Кейтеринг обедов','CANTEEN_CITY':'Городская столовая','CANTEEN_OFFICE':'Столовая при БЦ',
+  'CARWASH_AUTO':'Автоматическая портальная','CARWASH_MANUAL_L':'Ручная мойка 3-5 боксов',
+  'CARWASH_MANUAL_S':'Ручная мойка 1-2 бокса','CARWASH_SELF_BOX':'Самомойка боксовая','CARWASH_SELF_OPEN':'Самомойка терминальная',
+  'CLEAN_COMPANY':'Компания','CLEAN_SOLO':'Самозанятый','CLEAN_TEAM':'Бригада',
+  'COFFEE_FULL':'Кофейня-кафе','COFFEE_ISLAND':'Островок ТЦ/БЦ','COFFEE_KIOSK':'Кофе с собой',
+  'COFFEE_MINI':'Мини-кофейня','COFFEE_MOBILE':'На колёсах','COFFEE_SELF':'Самообслуживание','COFFEE_VENDING':'Вендинг автомат',
+  'CONF_CABINET':'Кабинет','CONF_HOME':'Домашний кондитер','CONF_STUDIO':'Студия',
+  'CYBER_MEDIUM':'Средний','CYBER_MINI':'Мини','CYBER_PREMIUM':'Премиум',
+  'DENTAL_CABINET':'Кабинет','DENTAL_CLINIC':'Клиника',
+  'DONER_CAFE':'Донер-кафе','DONER_DELIVERY':'Доставка (дарккитчен)','DONER_KIOSK':'Киоск / ларёк','DONER_MINI':'Мини-кафе',
+  'DRY_FULL':'Полная химчистка','DRY_MINI':'Мини-химчистка','DRY_POINT':'Приёмный пункт',
+  'FASTFOOD_CAFE':'Фастфуд-кафе','FASTFOOD_DARK':'Тёмная кухня','FASTFOOD_KIOSK':'Киоск / фудтрак','FASTFOOD_MINI':'Мини-кафе',
+  'FITNESS_CROSSFIT':'Кроссфит','FITNESS_GYM':'Тренажёрный зал','FITNESS_MMA':'Клуб единоборств','FITNESS_STUDIO':'Фитнес-студия',
+  'FLOWERS_KIOSK':'Цветочный ларёк','FLOWERS_SHOP':'Магазин','FLOWERS_STUDIO':'Цветочная студия',
+  'FURN_FACTORY':'Цех + шоурум','FURN_SOLO':'Мастер-одиночка','FURN_WORKSHOP':'Мастерская',
+  'FV_KIOSK':'Киоск','FV_SHOP':'Магазин','FV_WHOLESALE':'Оптовая точка',
+  'GROCERY_MEDIUM':'Средний магазин','GROCERY_MINI':'Мини-маркет','GROCERY_SPEC':'Спец. магазин',
+  'KINDER_FULL':'Полный','KINDER_HOME':'Домашний садик','KINDER_MINI':'Мини-садик',
+  'LASH_CABINET':'Свой кабинет','LASH_HOME':'На дому','LASH_RENT':'Аренда места',
+  'MASSAGE_CABINET':'Кабинет','MASSAGE_STUDIO':'Студия',
+  'NAIL_CABINET':'Свой кабинет','NAIL_HOME':'На дому','NAIL_RENT':'Аренда места','NAIL_STUDIO':'Студия',
+  'PHARMA_MINI':'Аптечный пункт','PHARMA_STD':'Стандартная аптека',
+  'PIZZA_CAFE':'Пиццерия с залом','PIZZA_COMBO':'Комбо пицца+суши','PIZZA_DELIVERY':'Доставка пиццы','PIZZA_TAKEAWAY':'Пицца на вынос',
+  'PVZ_MULTI':'Мультибренд','PVZ_SMALL':'Мини-ПВЗ',
+  'REP_KIOSK':'Точка в ТЦ/рынке','REP_SHOP':'Сервисный центр',
+  'SEMI_FULL':'Цех + точка','SEMI_HOME':'Домашнее производство','SEMI_MINI':'Мини-цех',
+  'SUGARING_HOME':'На дому','SUGARING_OWN':'Свой кабинет','SUGARING_RENT':'Аренда кабинета',
+  'SUSHI_BAR':'Суши-бар с залом','SUSHI_COMBO':'Комбо суши+пицца','SUSHI_DELIVERY':'Доставка суши',
+  'TAILOR_FULL':'Полное ателье','TAILOR_HOME':'На дому','TAILOR_MINI':'Мини-ателье',
+  'TIRE_FULL':'Полный','TIRE_MINI':'Мини','TIRE_MOBILE':'Мобильный',
+  'WATER_FILTER':'Фильтрация и розлив','WATER_VENDING':'Водомат','WATER_WELL':'Скважина + розлив'
+};
+var CITY_ICONS = {
+  'astana': '🏛️', 'almaty': '🏔️', 'shymkent': '☀️', 'aktobe': '🏭',
+  'karaganda': '⛏️', 'atyrau': '🛢️', 'pavlodar': '🌾', 'aktau': '🌊',
+  'semey': '📚', 'kostanay': '🌿'
+};
+
+function startQuickCheck() {
+  document.getElementById('calc-main').style.display = 'none';
+  document.getElementById('qc-screen').classList.add('active');
+  QC.step = 0;
+  loadQcCities();
+}
+
+function exitQuickCheck() {
+  document.getElementById('qc-screen').classList.remove('active');
+  document.getElementById('qc-loading').classList.remove('active');
+  document.getElementById('qc-report').classList.remove('active');
+  document.getElementById('calc-main').style.display = 'block';
+  // Reset QC state
+  QC.step = 0;
+  QC.city_id = null; QC.niche_id = null; QC.format_id = null;
+  QC.category_idx = null;
+}
+
+function loadQcCities() {
+  apiGet('/cities', function(err, resp) {
+    if (err || !resp) {
+      document.getElementById('qc-steps').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text2)">Ошибка загрузки. <button onclick="loadQcCities()" style="color:var(--accent);background:none;border:none;font-weight:600;cursor:pointer;font-family:Outfit">Повторить</button></div>';
+      return;
+    }
+    QC.cities = resp.cities || resp;
+    renderQcStep();
+  });
+  apiGet('/niches', function(err, resp) {
+    if (!err && resp) QC.niches = resp.niches || resp;
+  });
+}
+
+function renderQcStep() {
+  var html = '';
+  var stepName = QC_STEPS[QC.step];
+
+  // Update progress
+  document.getElementById('qc-pbar').style.width = ((QC.step + 1) / QC_STEPS.length * 100) + '%';
+  document.getElementById('qc-step-label').textContent = 'Шаг ' + (QC.step + 1) + ' из ' + QC_STEPS.length;
+  document.getElementById('qc-step-name').textContent = QC_STEP_NAMES[QC.step];
+
+  if (stepName === 'qc-city') {
+    html = '<div class="qc-step active"><div class="qc-step-label">ШАГ 1</div><h2>Выберите город</h2><div class="qc-step-desc">В каком городе планируете открывать бизнес?</div><div class="qc-options" id="qc-city-list">';
+    for (var i = 0; i < QC.cities.length; i++) {
+      var c = QC.cities[i];
+      var cid = c.city_id || c.id;
+      var cname = c.name_ru || c.name || cid;
+      var icon = CITY_ICONS[cid] || '📍';
+      var sel = QC.city_id === cid ? ' selected' : '';
+      html += '<div class="qc-opt' + sel + '" onclick="qcSelectCity(this,\'' + cid + '\',\'' + cname + '\')">' +
+        '<div class="qc-opt-icon">' + icon + '</div>' +
+        '<div><div class="qc-opt-label">' + cname + '</div></div></div>';
+    }
+    html += '</div></div>';
+  }
+  else if (stepName === 'qc-category') {
+    html = '<div class="qc-step active"><div class="qc-step-label">ШАГ 2</div><h2>Категория бизнеса</h2><div class="qc-step-desc">К какой категории относится ваша идея?</div><div class="qc-options">';
+    for (var i = 0; i < NICHE_CATEGORIES.length; i++) {
+      var cat = NICHE_CATEGORIES[i];
+      var sel = QC.category_idx === i ? ' selected' : '';
+      html += '<div class="qc-opt' + sel + '" onclick="qcSelectCategory(this,' + i + ')">' +
+        '<div class="qc-opt-icon">' + cat.icon + '</div>' +
+        '<div><div class="qc-opt-label">' + cat.title + '</div>' +
+        '<div class="qc-opt-sub">' + cat.ids.length + ' ниш</div></div></div>';
+    }
+    html += '</div></div>';
+  }
+  else if (stepName === 'qc-niche') {
+    html = '<div class="qc-step active"><div class="qc-step-label">ШАГ 3</div><h2>Выберите нишу</h2><div class="qc-step-desc">Какой бизнес хотите открыть?</div><div class="qc-options">';
+    var ids = NICHE_CATEGORIES[QC.category_idx].ids;
+    for (var i = 0; i < ids.length; i++) {
+      var nid = ids[i];
+      var sel = QC.niche_id === nid ? ' selected' : '';
+      html += '<div class="qc-opt' + sel + '" onclick="qcSelectNiche(this,\'' + nid + '\')">' +
+        '<div class="qc-opt-icon">' + (NICHE_ICONS[nid] || '📋') + '</div>' +
+        '<div><div class="qc-opt-label">' + (NICHE_NAMES[nid] || nid) + '</div></div></div>';
+    }
+    html += '</div></div>';
+  }
+  else if (stepName === 'qc-format') {
+    html = '<div class="qc-step active"><div class="qc-step-label">ШАГ 4</div><h2>Формат бизнеса</h2><div class="qc-step-desc">Выберите формат для "' + (NICHE_NAMES[QC.niche_id] || QC.niche_id) + '"</div><div class="qc-options" id="qc-format-list"><div style="text-align:center;padding:20px;color:var(--text3)">Загрузка форматов...</div></div></div>';
+    // Load formats from API
+    setTimeout(function() { loadQcFormats(); }, 50);
+  }
+  else if (stepName === 'qc-location') {
+    html = '<div class="qc-step active"><div class="qc-step-label">ШАГ 5</div><h2>Детали локации</h2><div class="qc-step-desc">Укажите тип помещения и площадь</div>';
+    html += '<div style="margin-bottom:20px"><div style="font-size:13px;font-weight:600;margin-bottom:8px">Тип помещения</div>';
+    html += '<div class="qc-loc-toggles">';
+    html += '<div class="qc-loc-toggle' + (QC.loc_type === 'ТЦ' ? ' selected' : '') + '" onclick="qcSelectLoc(this,\'ТЦ\')">ТЦ / БЦ</div>';
+    html += '<div class="qc-loc-toggle' + (QC.loc_type === 'улица' ? ' selected' : '') + '" onclick="qcSelectLoc(this,\'улица\')">Улица</div>';
+    html += '<div class="qc-loc-toggle' + (QC.loc_type === 'жилой дом' ? ' selected' : '') + '" onclick="qcSelectLoc(this,\'жилой дом\')">Жилой дом</div>';
+    html += '</div></div>';
+
+    html += '<div class="qc-range-wrap"><div class="qc-range-label"><span>Площадь</span><span class="qc-range-value" id="qc-area-val">' + QC.area_m2 + ' м²</span></div>';
+    html += '<input type="range" class="qc-range" min="10" max="300" value="' + QC.area_m2 + '" oninput="qcAreaChange(this.value)"></div>';
+
+    html += '<div style="margin-top:20px"><div style="font-size:13px;font-weight:600;margin-bottom:8px">Класс оснащения</div>';
+    html += '<div class="qc-lvl-btns">';
+    html += '<div class="qc-lvl-btn' + (QC.capex_level === 'эконом' ? ' selected' : '') + '" onclick="qcSelectLevel(this,\'эконом\')"><div class="qc-lvl-title">Эконом</div><div class="qc-lvl-sub">б/у, базовый</div></div>';
+    html += '<div class="qc-lvl-btn' + (QC.capex_level === 'стандарт' ? ' selected' : '') + '" onclick="qcSelectLevel(this,\'стандарт\')"><div class="qc-lvl-title">Стандарт</div><div class="qc-lvl-sub">новое, среднее</div></div>';
+    html += '<div class="qc-lvl-btn' + (QC.capex_level === 'премиум' ? ' selected' : '') + '" onclick="qcSelectLevel(this,\'премиум\')"><div class="qc-lvl-title">Премиум</div><div class="qc-lvl-sub">топовое</div></div>';
+    html += '</div></div>';
+    html += '</div>';
+  }
+  else if (stepName === 'qc-confirm') {
+    html = '<div class="qc-step active"><div class="qc-step-label">ПРОВЕРКА</div><h2>Всё верно?</h2><div class="qc-step-desc">Проверьте параметры перед расчётом</div>';
+    html += '<table class="qc-confirm-table">';
+    html += '<tr><td>Город</td><td>' + (QC.city_name || '') + '</td></tr>';
+    html += '<tr><td>Ниша</td><td>' + (NICHE_NAMES[QC.niche_id] || QC.niche_id) + '</td></tr>';
+    html += '<tr><td>Формат</td><td>' + (QC.format_name || '') + '</td></tr>';
+    html += '<tr><td>Локация</td><td>' + QC.loc_type + '</td></tr>';
+    html += '<tr><td>Площадь</td><td>' + QC.area_m2 + ' м²</td></tr>';
+    html += '<tr><td>Оснащение</td><td>' + QC.capex_level + '</td></tr>';
+    html += '</table></div>';
+  }
+
+  document.getElementById('qc-steps').innerHTML = html;
+  updateQcBtn();
+}
+
+function loadQcFormats() {
+  apiGet('/formats/' + QC.niche_id, function(err, resp) {
+    if (err || !resp) {
+      document.getElementById('qc-format-list').innerHTML = '<div style="color:var(--red);padding:12px">Ошибка загрузки форматов</div>';
+      return;
+    }
+    QC.formats = resp.formats || resp;
+    var html = '';
+    for (var i = 0; i < QC.formats.length; i++) {
+      var f = QC.formats[i];
+      var fid = f.format_id || f.id;
+      var fname = FORMAT_NAMES[fid] || fid;
+      var sel = QC.format_id === fid ? ' selected' : '';
+      html += '<div class="qc-opt' + sel + '" onclick="qcSelectFormat(this,\'' + fid + '\',\'' + fname.replace(/'/g, "\\'") + '\')">' +
+        '<div class="qc-opt-icon">📋</div>' +
+        '<div><div class="qc-opt-label">' + fname + '</div></div></div>';
+    }
+    document.getElementById('qc-format-list').innerHTML = html;
+  });
+}
+
+function qcSelectCity(el, id, name) {
+  QC.city_id = id; QC.city_name = name;
+  var opts = el.parentNode.querySelectorAll('.qc-opt');
+  for (var i = 0; i < opts.length; i++) opts[i].classList.remove('selected');
+  el.classList.add('selected');
+  updateQcBtn();
+}
+function qcSelectCategory(el, idx) {
+  QC.category_idx = idx;
+  QC.category_name = NICHE_CATEGORIES[idx].title;
+  QC.niche_id = null; QC.format_id = null;
+  var opts = el.parentNode.querySelectorAll('.qc-opt');
+  for (var i = 0; i < opts.length; i++) opts[i].classList.remove('selected');
+  el.classList.add('selected');
+  updateQcBtn();
+}
+function qcSelectNiche(el, id) {
+  QC.niche_id = id; QC.niche_name = NICHE_NAMES[id] || id;
+  QC.format_id = null;
+  var opts = el.parentNode.querySelectorAll('.qc-opt');
+  for (var i = 0; i < opts.length; i++) opts[i].classList.remove('selected');
+  el.classList.add('selected');
+  updateQcBtn();
+}
+function qcSelectFormat(el, id, name) {
+  QC.format_id = id; QC.format_name = name;
+  var opts = el.parentNode.querySelectorAll('.qc-opt');
+  for (var i = 0; i < opts.length; i++) opts[i].classList.remove('selected');
+  el.classList.add('selected');
+  updateQcBtn();
+}
+function qcSelectLoc(el, type) {
+  QC.loc_type = type;
+  var btns = el.parentNode.querySelectorAll('.qc-loc-toggle');
+  for (var i = 0; i < btns.length; i++) btns[i].classList.remove('selected');
+  el.classList.add('selected');
+}
+function qcAreaChange(val) {
+  QC.area_m2 = parseInt(val);
+  document.getElementById('qc-area-val').textContent = val + ' м²';
+}
+function qcSelectLevel(el, level) {
+  QC.capex_level = level;
+  var btns = el.parentNode.querySelectorAll('.qc-lvl-btn');
+  for (var i = 0; i < btns.length; i++) btns[i].classList.remove('selected');
+  el.classList.add('selected');
+}
+
+function updateQcBtn() {
+  var btn = document.getElementById('qc-next-btn');
+  var canProceed = false;
+  var stepName = QC_STEPS[QC.step];
+  if (stepName === 'qc-city') canProceed = !!QC.city_id;
+  else if (stepName === 'qc-category') canProceed = QC.category_idx !== null;
+  else if (stepName === 'qc-niche') canProceed = !!QC.niche_id;
+  else if (stepName === 'qc-format') canProceed = !!QC.format_id;
+  else if (stepName === 'qc-location') canProceed = true;
+  else if (stepName === 'qc-confirm') canProceed = true;
+
+  if (canProceed) {
+    btn.className = 'qc-btn qc-btn-primary';
+    btn.textContent = QC.step === QC_STEPS.length - 1 ? 'Рассчитать →' : 'Далее';
+  } else {
+    btn.className = 'qc-btn qc-btn-disabled';
+    btn.textContent = 'Далее';
+  }
+}
+
+function qcHandleNext() {
+  var btn = document.getElementById('qc-next-btn');
+  if (btn.classList.contains('qc-btn-disabled')) return;
+
+  if (QC.step === QC_STEPS.length - 1) {
+    runQcCalculation();
+    return;
+  }
+
+  QC.step++;
+  renderQcStep();
+}
+
+function runQcCalculation() {
+  document.getElementById('qc-screen').classList.remove('active');
+  document.getElementById('qc-loading').classList.add('active');
+
+  var body = {
+    city_id: QC.city_id,
+    niche_id: QC.niche_id,
+    format_id: QC.format_id,
+    area_m2: QC.area_m2,
+    loc_type: QC.loc_type,
+    capex_level: QC.capex_level,
+    start_month: QC.start_month
+  };
+
+  apiPost('/quick-check', body, function(err, data) {
+    document.getElementById('qc-loading').classList.remove('active');
+    if (err || !data) {
+      alert('Ошибка расчёта. Попробуйте ещё раз.');
+      document.getElementById('qc-screen').classList.add('active');
+      return;
+    }
+    renderQcReport(data);
+  });
+}
+
+function renderQcReport(d) {
+  document.getElementById('qc-report').classList.add('active');
+  var nicheIcon = NICHE_ICONS[QC.niche_id] || '📊';
+  var nicheName = NICHE_NAMES[QC.niche_id] || QC.niche_id;
+
+  // Determine verdict
+  var verdictClass = 'report-verdict-amber';
+  var verdictIcon = '⚠️';
+  var verdictText = 'Средний потенциал — требует внимания';
+
+  var roi = d.roi_annual || d.roi;
+  var payback = d.payback_months;
+
+  if (roi > 40 && payback && payback < 18) {
+    verdictClass = 'report-verdict-green';
+    verdictIcon = '✅';
+    verdictText = 'Хороший потенциал — стоит рассмотреть';
+  } else if (roi < 10 || (payback && payback > 36)) {
+    verdictClass = 'report-verdict-red';
+    verdictIcon = '🚨';
+    verdictText = 'Высокий риск — тщательно взвесьте';
+  }
+
+  var html = '';
+  html += '<div class="report-header-card">';
+  html += '<div class="report-niche-icon">' + nicheIcon + '</div>';
+  html += '<div class="report-niche-name">' + nicheName + '</div>';
+  html += '<div class="report-city-name">' + (QC.city_name || '') + ' · ' + (QC.format_name || '') + '</div>';
+  html += '</div>';
+
+  html += '<div class="report-verdict ' + verdictClass + '">';
+  html += '<div class="report-verdict-icon">' + verdictIcon + '</div>';
+  html += '<div class="report-verdict-text">' + verdictText + '</div>';
+  html += '</div>';
+
+  // Key metrics
+  html += '<div class="report-section">';
+  html += '<div class="report-section-title">Ключевые показатели</div>';
+  html += '<div class="report-row">';
+  html += '<div class="report-card"><div class="report-card-label">Инвестиции</div><div class="report-card-value">' + fmtM(d.total_capex || d.capex) + ' ₸</div></div>';
+  html += '<div class="report-card"><div class="report-card-label">Окупаемость</div><div class="report-card-value">' + (payback ? payback + ' мес' : '—') + '</div></div>';
+  html += '</div>';
+  html += '<div class="report-row">';
+  html += '<div class="report-card"><div class="report-card-label">Чистая прибыль/мес</div><div class="report-card-value ' + (d.net_profit > 0 ? 'report-card-value-green' : 'report-card-value-red') + '">' + fmtM(d.net_profit) + ' ₸</div></div>';
+  html += '<div class="report-card"><div class="report-card-label">ROI годовой</div><div class="report-card-value">' + fmtPct(roi) + '</div></div>';
+  html += '</div>';
+  html += '</div>';
+
+  // Revenue & Costs
+  html += '<div class="report-section">';
+  html += '<div class="report-section-title">Доходы и расходы</div>';
+  html += '<div class="report-card" style="margin-bottom:10px"><div class="report-card-label">Выручка/мес</div><div class="report-card-value">' + fmtM(d.revenue) + ' ₸</div></div>';
+  html += '<div class="report-card" style="margin-bottom:10px"><div class="report-card-label">Расходы/мес</div><div class="report-card-value">' + fmtM(d.total_opex || d.opex) + ' ₸</div></div>';
+  if (d.rent) html += '<div class="report-card" style="margin-bottom:10px"><div class="report-card-label">Аренда/мес</div><div class="report-card-value">' + fmtM(d.rent) + ' ₸</div></div>';
+  if (d.staff_cost) html += '<div class="report-card"><div class="report-card-label">ФОТ/мес</div><div class="report-card-value">' + fmtM(d.staff_cost) + ' ₸</div></div>';
+  html += '</div>';
+
+  // Actions
+  html += '<div class="report-actions">';
+  html += '<button class="report-btn report-btn-primary" onclick="goToChat(\'Хочу заказать финансовую модель для ' + nicheName + '\')">Заказать финмодель — 9 000 ₸</button>';
+  html += '<button class="report-btn report-btn-outline" onclick="exitQuickCheck()">Новый расчёт</button>';
+  html += '</div>';
+
+  document.getElementById('qc-report-content').innerHTML = html;
+}
+
+/* ============================================
+   INIT
+   ============================================ */
+function init() {
+  initTelegram();
+  initChat();
+  renderWiki();
+
+  // Enter key for chat
+  document.getElementById('chat-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); sendMessage(); }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
