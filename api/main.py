@@ -43,6 +43,7 @@ class QCReq(BaseModel):
     area_m2: float = 0; loc_type: str = ""; capital: Optional[int] = 0
     qty: int = 1; founder_works: bool = False
     rent_override: Optional[int] = None; start_month: int = 4
+    capex_level: str = "стандарт"
 
 class FMReq(BaseModel):
     """Запрос на генерацию финмодели — все параметры из анкеты."""
