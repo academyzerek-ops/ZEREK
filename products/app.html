@@ -553,6 +553,8 @@ body {
   overflow: hidden;
   margin-bottom: 16px;
   transition: box-shadow 0.2s;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 .level-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
 .level-stripe {
@@ -625,11 +627,9 @@ body {
   font-size: 14px;
   font-weight: 600;
   font-family: 'Outfit', sans-serif;
-  cursor: pointer;
-  transition: opacity 0.2s;
-  -webkit-tap-highlight-color: transparent;
+  text-align: center;
+  pointer-events: none;
 }
-.level-btn:active { opacity: 0.85; }
 
 /* Module list (inside academy) */
 .module-list, .chapter-list { display: none; }
@@ -659,6 +659,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
+  -webkit-tap-highlight-color: transparent;
 }
 .module-item:hover, .chapter-item:hover { border-color: var(--accent); }
 .module-num {
@@ -1507,7 +1508,7 @@ body {
           <div class="level-progress-bar"><div class="level-progress-fill level-progress-fill-gold" id="lp-fund" style="width:0%"></div></div>
           <div class="level-progress-text" id="lp-fund-text">0/23 глав</div>
         </div>
-        <button class="level-btn">Начать обучение →</button>
+        <div class="level-btn">Начать обучение →</div>
       </div>
     </div>
 
@@ -1522,7 +1523,7 @@ body {
           <div class="level-progress-bar"><div class="level-progress-fill level-progress-fill-teal" id="lp-arch" style="width:0%"></div></div>
           <div class="level-progress-text" id="lp-arch-text">0/26 глав</div>
         </div>
-        <button class="level-btn">Начать обучение →</button>
+        <div class="level-btn">Начать обучение →</div>
       </div>
     </div>
   </div>
@@ -1926,6 +1927,19 @@ function switchTab(tabId) {
         svg.classList.add('bounce');
       }
     }
+  }
+
+  // Reset academy sub-views when leaving
+  if (tabId !== 'academy') {
+    document.getElementById('academy-main').style.display = '';
+    document.getElementById('module-list').classList.remove('active');
+    document.getElementById('chapter-list').classList.remove('active');
+    document.getElementById('chapter-content').classList.remove('active');
+  }
+  // Reset cases sub-view
+  if (tabId !== 'cases') {
+    document.getElementById('cases-main').style.display = '';
+    document.getElementById('case-detail').classList.remove('active');
   }
 
   // Float chat button visibility
