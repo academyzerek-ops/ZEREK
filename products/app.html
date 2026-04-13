@@ -1442,6 +1442,12 @@ body {
   border-radius: 24px;
 }
 </style>
+<link rel="manifest" href="/ZEREK/manifest.json">
+<meta name="theme-color" content="#7C6CFF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ZEREK">
+<link rel="apple-touch-icon" href="/ZEREK/icon-192.png">
 </head>
 <body>
 
@@ -3128,6 +3134,11 @@ document.addEventListener('DOMContentLoaded', init);
   }
   setTimeout(hide, 3000);
 })();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/ZEREK/sw.js').catch(function() {});
+}
 </script>
 </body>
 </html>

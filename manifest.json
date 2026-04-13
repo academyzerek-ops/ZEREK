@@ -1,0 +1,25 @@
+{
+  "name": "ZEREK — AI для бизнеса",
+  "short_name": "ZEREK",
+  "description": "Обучение бизнесу, обзоры рынка, финансовые расчёты",
+  "start_url": "/ZEREK/products/app.html",
+  "scope": "/ZEREK/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFFFFF",
+  "theme_color": "#7C6CFF",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
