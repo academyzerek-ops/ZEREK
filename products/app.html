@@ -740,46 +740,78 @@ body {
 /* ============================================
    WIKI / REVIEWS SCREEN
    ============================================ */
-.wiki-cat-title {
-  font-size: 15px;
-  font-weight: 700;
-  margin-bottom: 10px;
-  margin-top: 20px;
+.wiki-cat-pills {
   display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 16px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.wiki-cat-pills::-webkit-scrollbar { display: none; }
+.wiki-cat-pill {
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  gap: 4px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1.5px solid var(--border);
+  background: var(--bg);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.wiki-cat-pill.active {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+.wiki-cat-pill-icon { font-size: 22px; }
+.wiki-cat-pill-name {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text2);
+  white-space: nowrap;
+}
+.wiki-cat-pill.active .wiki-cat-pill-name { color: var(--accent); }
+
+.wiki-list {
+  display: flex;
+  flex-direction: column;
   gap: 8px;
 }
-.wiki-cat-title:first-child { margin-top: 0; }
-.wiki-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-.wiki-card {
+.wiki-item {
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 16px 14px;
+  padding: 14px 16px;
   cursor: pointer;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  text-decoration: none;
-  color: inherit;
-  display: block;
+  transition: border-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  -webkit-tap-highlight-color: transparent;
 }
-.wiki-card:hover {
-  border-color: var(--accent);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+.wiki-item:hover { border-color: var(--accent); }
+.wiki-item-icon {
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  background: var(--bg2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
-.wiki-card-icon {
-  font-size: 28px;
-  margin-bottom: 8px;
-}
-.wiki-card-name {
+.wiki-item-info { flex: 1; }
+.wiki-item-name {
   font-size: 14px;
   font-weight: 600;
-  margin-bottom: 4px;
 }
-.wiki-card-badge {
+.wiki-item-badge {
   display: inline-block;
   font-size: 10px;
   font-weight: 700;
@@ -1616,7 +1648,10 @@ body {
   <div class="screen-content">
     <div class="screen-title">Обзоры рынка</div>
     <div class="screen-subtitle">Бизнес-ниши Казахстана — аналитика и данные</div>
-    <div id="wiki-categories">
+    <div class="wiki-cat-pills" id="wiki-cat-pills">
+      <!-- rendered by JS -->
+    </div>
+    <div class="wiki-list" id="wiki-list">
       <!-- rendered by JS -->
     </div>
   </div>
@@ -2519,25 +2554,48 @@ var WIKI_CATEGORIES = [
   ]}
 ];
 
+var wikiActiveCat = 0;
+
 function renderWiki() {
-  var container = document.getElementById('wiki-categories');
+  renderWikiPills();
+  renderWikiList();
+}
+
+function renderWikiPills() {
+  var container = document.getElementById('wiki-cat-pills');
   var html = '';
   for (var c = 0; c < WIKI_CATEGORIES.length; c++) {
     var cat = WIKI_CATEGORIES[c];
-    html += '<div class="wiki-cat-title">' + cat.icon + ' ' + cat.title + '</div>';
-    html += '<div class="wiki-grid">';
-    for (var i = 0; i < cat.niches.length; i++) {
-      var n = cat.niches[i];
-      var badge = n.live ? '<span class="wiki-card-badge badge-live">LIVE</span>' : '<span class="wiki-card-badge badge-soon">СКОРО</span>';
-      var onclick = n.live ? ' onclick="openWiki(\'' + n.file + '\')"' : '';
-      html += '<div class="wiki-card"' + onclick + '>' +
-        '<div class="wiki-card-icon">' + n.icon + '</div>' +
-        '<div class="wiki-card-name">' + n.name + '</div>' +
-        badge + '</div>';
-    }
-    html += '</div>';
+    var active = c === wikiActiveCat ? ' active' : '';
+    html += '<div class="wiki-cat-pill' + active + '" onclick="selectWikiCat(' + c + ')">' +
+      '<div class="wiki-cat-pill-icon">' + cat.icon + '</div>' +
+      '<div class="wiki-cat-pill-name">' + cat.title + '</div></div>';
   }
   container.innerHTML = html;
+}
+
+function renderWikiList() {
+  var container = document.getElementById('wiki-list');
+  var niches = WIKI_CATEGORIES[wikiActiveCat].niches;
+  var html = '';
+  for (var i = 0; i < niches.length; i++) {
+    var n = niches[i];
+    var badge = n.live ? '<span class="wiki-item-badge badge-live">LIVE</span>' : '<span class="wiki-item-badge badge-soon">СКОРО</span>';
+    var onclick = n.live ? ' onclick="openWiki(\'' + n.file + '\')"' : '';
+    html += '<div class="wiki-item"' + onclick + '>' +
+      '<div class="wiki-item-icon">' + n.icon + '</div>' +
+      '<div class="wiki-item-info"><div class="wiki-item-name">' + n.name + '</div>' +
+      badge + '</div>' +
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+      '</div>';
+  }
+  container.innerHTML = html;
+}
+
+function selectWikiCat(idx) {
+  wikiActiveCat = idx;
+  renderWikiPills();
+  renderWikiList();
 }
 
 function openWiki(file) {
