@@ -146,8 +146,8 @@ body {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   height: 64px;
-  background: linear-gradient(180deg, #CADCF5 0%, #B8CFF0 100%);
-  border-top: 1px solid #A3BDE0;
+  background: #0A0A14;
+  border-top: 1px solid rgba(255,255,255,0.06);
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -156,7 +156,6 @@ body {
   z-index: 100;
   max-width: 480px;
   margin: 0 auto;
-  box-shadow: 0 -2px 12px rgba(100,140,200,0.08);
 }
 .tab-btn {
   display: flex;
@@ -167,7 +166,7 @@ body {
   border: none;
   cursor: pointer;
   padding: 6px 10px 4px;
-  color: #8A9BB5;
+  color: rgba(255,255,255,0.4);
   transition: color 0.25s, transform 0.2s;
   -webkit-tap-highlight-color: transparent;
   position: relative;
@@ -181,8 +180,9 @@ body {
   width: 24px;
   height: 3px;
   border-radius: 2px;
-  background: var(--accent);
+  background: #FFFFFF;
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 8px rgba(255,255,255,0.5);
 }
 .tab-btn.active::after {
   transform: translateX(-50%) scaleX(1);
@@ -198,7 +198,7 @@ body {
   stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s, color 0.25s;
 }
 .tab-btn span {
   font-size: 10px;
@@ -207,11 +207,11 @@ body {
   transition: color 0.25s;
 }
 .tab-btn.active {
-  color: var(--accent);
+  color: #FFFFFF;
 }
 .tab-btn.active svg {
   transform: scale(1.15);
-  filter: drop-shadow(0 2px 6px rgba(124,108,255,0.35));
+  filter: drop-shadow(0 0 8px rgba(255,255,255,0.6)) drop-shadow(0 0 20px rgba(124,108,255,0.4));
 }
 .tab-btn.tab-center svg {
   width: 28px;
@@ -219,6 +219,7 @@ body {
 }
 .tab-btn.tab-center.active svg {
   transform: scale(1.2);
+  filter: drop-shadow(0 0 10px rgba(255,255,255,0.7)) drop-shadow(0 0 24px rgba(124,108,255,0.5));
 }
 .tab-btn.tab-center::after {
   width: 32px;
