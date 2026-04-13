@@ -462,7 +462,9 @@ def finmodel_html_report(data: dict):
 @app.get("/test-gemini")
 def test_gemini():
     key = os.getenv("GEMINI_API_KEY", "")
-    info = {"has_key": bool(key), "key_len": len(key), "key_start": key[:6] + "..." if len(key) > 6 else "(empty)"}
+    # Check all env vars that contain GEMINI or KEY
+    env_matches = {k: v[:8]+"..." for k, v in os.environ.items() if "GEMINI" in k.upper() or "API_KEY" in k.upper()}
+    info = {"has_key": bool(key), "key_len": len(key), "env_matches": env_matches, "total_env": len(os.environ)}
     if not key:
         return {"status": "no_key", **info}
     try:
