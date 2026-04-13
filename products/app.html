@@ -429,29 +429,49 @@ body {
 
 .quick-actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  flex-direction: column;
+  gap: 0;
   margin-top: 12px;
-  align-self: flex-start;
+  align-self: stretch;
   animation: fadeIn 0.4s ease-out 0.2s both;
 }
 .quick-btn {
-  background: var(--bg);
-  border: 1.5px solid var(--accent);
-  color: var(--accent);
-  border-radius: 20px;
-  padding: 8px 16px;
-  font-size: 13px;
-  font-weight: 600;
+  display: block;
+  width: 100%;
+  padding: 12px 18px;
+  margin: 4px 0;
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: 12px;
   font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  text-align: left;
   cursor: pointer;
   transition: all 0.2s;
   -webkit-tap-highlight-color: transparent;
 }
 .quick-btn:hover, .quick-btn:active {
+  background: var(--accent-light);
+  border-color: var(--accent);
+}
+.goto-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  margin-top: 10px;
   background: var(--accent);
   color: white;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
 }
+.goto-btn:active { opacity: 0.85; }
 
 .typing-indicator {
   display: flex;
@@ -1236,6 +1256,138 @@ body {
 
 
 /* ============================================
+   VOICE BUTTON
+   ============================================ */
+.voice-btn {
+  width: 42px;
+  height: 42px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.voice-btn:active, .voice-btn.recording {
+  background: #FEE2E2;
+  border-color: #EF4444;
+}
+.voice-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--text2);
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.voice-btn.recording svg {
+  stroke: #EF4444;
+}
+@keyframes pulse-record {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.3); }
+  50% { box-shadow: 0 0 0 8px rgba(239,68,68,0); }
+}
+.voice-btn.recording {
+  animation: pulse-record 1.5s ease-in-out infinite;
+}
+.voice-btn.hidden { display: none; }
+
+/* ============================================
+   FLOATING CHAT BUTTON
+   ============================================ */
+.chat-float-btn {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 14px);
+  right: 60px;
+  width: 36px;
+  height: 36px;
+  background: var(--accent);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  z-index: 89;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(124,108,255,0.3);
+  transition: transform 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.chat-float-btn:active { transform: scale(0.9); }
+.chat-float-btn svg {
+  width: 18px; height: 18px;
+  fill: none;
+  stroke: white;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.chat-float-btn.visible { display: flex; }
+
+/* ============================================
+   CHAT OVERLAY
+   ============================================ */
+.chat-overlay-bg {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 300;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.chat-overlay-bg.open { display: block; opacity: 1; }
+.chat-overlay-panel {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  max-width: 480px;
+  margin: 0 auto;
+  background: #FFFFFF;
+  z-index: 301;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.chat-overlay-panel.open { transform: translateY(0); }
+.chat-overlay-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 12px);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.chat-overlay-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+.chat-overlay-context {
+  font-size: 12px;
+  color: var(--text2);
+  margin-left: 8px;
+  font-weight: 400;
+}
+.chat-overlay-close {
+  width: 32px; height: 32px;
+  background: var(--bg2);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text2);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ============================================
    SPLASH SCREEN
    ============================================ */
 .splash {
@@ -1328,7 +1480,10 @@ body {
     <!-- messages rendered by JS -->
   </div>
   <div class="chat-input-wrap">
-    <input class="chat-input" id="chat-input" type="text" placeholder="Напишите сообщение..." autocomplete="off">
+    <input class="chat-input" id="chat-input" type="text" placeholder="Спроси что угодно..." autocomplete="off">
+    <button class="voice-btn" id="voice-btn" onclick="toggleVoice()">
+      <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+    </button>
     <button class="chat-send" onclick="sendMessage()">
       <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
     </button>
@@ -1612,6 +1767,41 @@ body {
 </div>
 
 <!-- ============================================
+     FLOATING CHAT BUTTON
+     ============================================ -->
+<button class="chat-float-btn" id="chat-float-btn" onclick="openChatOverlay()">
+  <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+</button>
+
+<!-- ============================================
+     CHAT OVERLAY
+     ============================================ -->
+<div class="chat-overlay-bg" id="chat-overlay-bg" onclick="closeChatOverlay()"></div>
+<div class="chat-overlay-panel" id="chat-overlay-panel">
+  <div class="chat-overlay-header">
+    <div>
+      <span class="chat-overlay-title">ZEREK AI</span>
+      <span class="chat-overlay-context" id="chat-overlay-context"></span>
+    </div>
+    <button class="chat-overlay-close" onclick="closeChatOverlay()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>
+  </div>
+  <div class="chat-messages" id="chat-messages-overlay">
+    <!-- shared messages rendered by JS -->
+  </div>
+  <div class="chat-input-wrap">
+    <input class="chat-input" id="chat-input-overlay" type="text" placeholder="Спроси что угодно..." autocomplete="off">
+    <button class="voice-btn" id="voice-btn-overlay" onclick="toggleVoice()">
+      <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+    </button>
+    <button class="chat-send" onclick="sendMessageOverlay()">
+      <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ============================================
      TAP BAR
      ============================================ -->
 <div class="tapbar">
@@ -1735,21 +1925,26 @@ function switchTab(tabId) {
   var tabs = document.querySelectorAll('.tab-btn');
   for (var i = 0; i < tabs.length; i++) {
     tabs[i].classList.remove('active');
-    // Remove old bounce
     var svg = tabs[i].querySelector('svg');
     if (svg) svg.classList.remove('bounce');
 
     if (tabs[i].getAttribute('data-tab') === tabId) {
       tabs[i].classList.add('active');
-      // Trigger bounce animation
       if (svg) {
-        void svg.offsetWidth; // force reflow
+        void svg.offsetWidth;
         svg.classList.add('bounce');
       }
     }
   }
 
-  // Scroll to top on tab switch
+  // Float chat button visibility
+  var floatBtn = document.getElementById('chat-float-btn');
+  if (tabId === 'chat') {
+    floatBtn.classList.remove('visible');
+  } else {
+    floatBtn.classList.add('visible');
+  }
+
   window.scrollTo(0, 0);
 }
 
@@ -1788,9 +1983,7 @@ function closeCabinet() {
 var chatHistory = [];
 
 function initChat() {
-  var name = tgUser ? tgUser.first_name : '';
-  var greeting = name ? ('Привет, ' + name + '! ') : 'Привет! ';
-  var msg = greeting + '\u{1F44B} Я ZEREK \u2014 AI-ассистент для предпринимателей.\n\nМогу помочь:\n\u2022 Проверить бизнес-идею\n\u2022 Объяснить финансы простым языком\n\u2022 Подобрать нишу\n\nС чего начнём?';
+  var msg = 'Привет! Я ZEREK.\n\nЯ не инфоцыган и не кричу про \u00ABуспешный успех\u00BB.\n\nПоказываю реальность.\n\nЗдесь \u2014 обучение бизнесу для тех, кому не дали этого ни в школе, ни в универе.\n\nОбзоры рынка без розовых очков.\n\nИ расчёты, которые покажут правду до того, как ты вложишь деньги.\n\nОт первого урока \u00ABоткуда взялись деньги\u00BB \u2014 до акулы бизнеса.\n\nВся цепочка.\n\nНачнём?';
   addAiMessage(msg, true);
 }
 
@@ -1804,12 +1997,15 @@ function addAiMessage(text, withQuickActions) {
   if (withQuickActions) {
     var actions = document.createElement('div');
     actions.className = 'quick-actions';
-    actions.innerHTML = '<button class="quick-btn" onclick="sendQuick(\'Проверить идею\')">Проверить идею</button>' +
+    actions.innerHTML =
       '<button class="quick-btn" onclick="sendQuick(\'Хочу учиться\')">Хочу учиться</button>' +
-      '<button class="quick-btn" onclick="sendQuick(\'Обзоры ниш\')">Обзоры ниш</button>';
+      '<button class="quick-btn" onclick="sendQuick(\'Оценить открытие бизнеса\')">Оценить открытие бизнеса</button>' +
+      '<button class="quick-btn" onclick="sendQuick(\'Чужие грабли\')">Чужие грабли</button>' +
+      '<button class="quick-btn" onclick="sendQuick(\'Обзоры рынка\')">Обзоры рынка</button>';
     container.appendChild(actions);
   }
 
+  syncOverlayMessages();
   scrollChat();
 }
 
@@ -1819,6 +2015,7 @@ function addUserMessage(text) {
   div.className = 'msg-user';
   div.textContent = text;
   container.appendChild(div);
+  syncOverlayMessages();
   scrollChat();
 }
 
@@ -1873,16 +2070,15 @@ function sendMessage() {
   if (!text) return;
   input.value = '';
 
-  // Remove quick actions if present
-  var qa = document.querySelector('.quick-actions');
-  if (qa) qa.remove();
+  var qas = document.querySelectorAll('.quick-actions');
+  for (var i = 0; i < qas.length; i++) qas[i].remove();
 
   addUserMessage(text);
   chatHistory.push({ role: 'user', text: text });
 
   showTyping();
+  syncOverlayMessages();
 
-  // Check for specific intents
   var response = getStubResponse(text);
 
   setTimeout(function() {
@@ -1893,26 +2089,44 @@ function sendMessage() {
 }
 
 function sendQuick(text) {
-  var qa = document.querySelector('.quick-actions');
-  if (qa) qa.remove();
+  var qas = document.querySelectorAll('.quick-actions');
+  for (var i = 0; i < qas.length; i++) qas[i].remove();
   addUserMessage(text);
   chatHistory.push({ role: 'user', text: text });
 
   showTyping();
   var response = '';
-  if (text === 'Проверить идею') {
-    response = 'Отлично! Давай проверим твою бизнес-идею.\n\nПерейди в раздел "Расчёты" и нажми "Пройти экспресс-оценку". За 2 минуты ты узнаешь:\n\n\u2022 Сколько нужно вложить\n\u2022 Когда окупится\n\u2022 Какие риски ждут\n\u2022 Какой налоговый режим выбрать';
-  } else if (text === 'Хочу учиться') {
-    response = 'Отличный выбор! В разделе "Академия" тебя ждут два курса:\n\n\u2022 Фундамент (12-15 лет) \u2014 финансовая грамотность с нуля\n\u2022 Архитектор (16+) \u2014 стартап-мышление и предпринимательство\n\nОба курса полностью бесплатные. Переходи и начинай!';
-  } else if (text === 'Обзоры ниш') {
-    response = 'В разделе "Обзоры" собраны подробные обзоры бизнес-ниш Казахстана:\n\n\u2022 Рыночные данные\n\u2022 Средние инвестиции\n\u2022 Сроки окупаемости\n\u2022 Конкуренция и риски\n\nВсё бесплатно. Переходи в "Обзоры" и выбирай нишу!';
+  var gotoBtn = '';
+
+  if (text === 'Хочу учиться') {
+    response = 'ZEREK Academy \u2014 бесплатное обучение бизнесу.\n\nФундамент (12\u201315 лет) \u2014 финграмотность с нуля: откуда берутся деньги, как они работают, как не попасть на уловки.\n\nАрхитектор (16+) \u2014 от идеи до запуска: бизнес-модель, MVP, маркетинг, команда.\n\nЕсли что-то непонятно \u2014 всегда можешь спросить у меня прямо по ходу урока.';
+    gotoBtn = '<button class="goto-btn" onclick="switchTab(\'academy\')">Перейти в Академию \u2192</button>';
+  } else if (text === 'Оценить открытие бизнеса') {
+    response = 'Ответишь мне на несколько вопросов по своей идее, а я покажу вложения, выручку, окупаемость и риски.\n\nОбсудим результат вместе.\n\nЕсли уже знаешь свои параметры \u2014 можем рассчитать полноценную финансовую модель на 60 месяцев: P&L, Cash Flow, точка безубыточности, кредитный калькулятор. На выходе \u2014 файл, с которым можно идти в банк.';
+    gotoBtn = '<button class="goto-btn" onclick="switchTab(\'calc\')">Перейти к расчётам \u2192</button>';
+  } else if (text === 'Чужие грабли') {
+    response = 'Реальные истории \u2014 почему закрылись и почему выжили.\n\nНе мотивация, а разбор: что пошло не так и как этого избежать.\n\nНа чужих граблях учиться дешевле.';
+    gotoBtn = '<button class="goto-btn" onclick="switchTab(\'cases\')">Читать кейсы \u2192</button>';
+  } else if (text === 'Обзоры рынка') {
+    response = '50 ниш малого бизнеса Казахстана, от кофейни до автосервиса.\n\nСколько вложить, сколько заработаешь, сколько конкурентов, какие подводные камни.\n\nНа основе реального опыта предпринимателей, консалтинговой команды и огромной базы данных.\n\nБесплатно.';
+    gotoBtn = '<button class="goto-btn" onclick="switchTab(\'wiki\')">Смотреть обзоры \u2192</button>';
   }
 
   setTimeout(function() {
     removeTyping();
-    addAiMessage(response, false);
+    addAiMessageWithButton(response, gotoBtn);
     chatHistory.push({ role: 'ai', text: response });
   }, 1000);
+}
+
+function addAiMessageWithButton(text, btnHtml) {
+  var container = document.getElementById('chat-messages');
+  var div = document.createElement('div');
+  div.className = 'msg-ai';
+  div.innerHTML = formatChatText(text) + (btnHtml || '');
+  container.appendChild(div);
+  syncOverlayMessages();
+  scrollChat();
 }
 
 function getStubResponse(text) {
@@ -1940,6 +2154,149 @@ function goToChat(prefill) {
   if (prefill) {
     document.getElementById('chat-input').value = prefill;
     document.getElementById('chat-input').focus();
+  }
+}
+
+/* ============================================
+   CHAT OVERLAY
+   ============================================ */
+var currentContext = { screen: null, id: null, title: null };
+var chatOverlayOpen = false;
+
+function syncOverlayMessages() {
+  var main = document.getElementById('chat-messages');
+  var overlay = document.getElementById('chat-messages-overlay');
+  if (overlay) overlay.innerHTML = main.innerHTML;
+}
+
+function scrollOverlay() {
+  var container = document.getElementById('chat-messages-overlay');
+  if (container) {
+    setTimeout(function() { container.scrollTop = container.scrollHeight; }, 50);
+  }
+}
+
+function openChatOverlay() {
+  chatOverlayOpen = true;
+  // Determine context from current screen
+  currentContext.screen = currentTab;
+  currentContext.title = null;
+  if (currentTab === 'academy') currentContext.title = 'Академия';
+  if (currentTab === 'cases') currentContext.title = 'Кейсы';
+  if (currentTab === 'wiki') currentContext.title = 'Обзоры';
+  if (currentTab === 'calc') currentContext.title = 'Расчёты';
+
+  var ctxEl = document.getElementById('chat-overlay-context');
+  ctxEl.textContent = currentContext.title ? (' \u00B7 ' + currentContext.title) : '';
+
+  syncOverlayMessages();
+
+  var bg = document.getElementById('chat-overlay-bg');
+  var panel = document.getElementById('chat-overlay-panel');
+  bg.style.display = 'block';
+  setTimeout(function() {
+    bg.classList.add('open');
+    panel.classList.add('open');
+    scrollOverlay();
+  }, 10);
+}
+
+function closeChatOverlay() {
+  chatOverlayOpen = false;
+  var bg = document.getElementById('chat-overlay-bg');
+  var panel = document.getElementById('chat-overlay-panel');
+  bg.classList.remove('open');
+  panel.classList.remove('open');
+  setTimeout(function() { bg.style.display = 'none'; }, 300);
+}
+
+function sendMessageOverlay() {
+  var input = document.getElementById('chat-input-overlay');
+  var text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+
+  // Add to main chat
+  addUserMessage(text);
+  chatHistory.push({ role: 'user', text: text });
+  syncOverlayMessages();
+  scrollOverlay();
+
+  showTyping();
+  syncOverlayMessages();
+  scrollOverlay();
+
+  var response = getStubResponse(text);
+  setTimeout(function() {
+    removeTyping();
+    addAiMessage(response, false);
+    chatHistory.push({ role: 'ai', text: response });
+    syncOverlayMessages();
+    scrollOverlay();
+  }, 1200 + Math.random() * 800);
+}
+
+/* ============================================
+   VOICE INPUT
+   ============================================ */
+var recognition = null;
+
+function initVoice() {
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    // Hide voice buttons if not supported
+    var btns = document.querySelectorAll('.voice-btn');
+    for (var i = 0; i < btns.length; i++) btns[i].classList.add('hidden');
+    return;
+  }
+  recognition = new SR();
+  recognition.lang = 'ru-RU';
+  recognition.continuous = false;
+  recognition.interimResults = true;
+
+  recognition.onresult = function(e) {
+    var transcript = '';
+    for (var i = e.resultIndex; i < e.results.length; i++) {
+      transcript += e.results[i][0].transcript;
+    }
+    // Fill whichever input is active
+    var input = chatOverlayOpen ? document.getElementById('chat-input-overlay') : document.getElementById('chat-input');
+    input.value = transcript;
+  };
+
+  recognition.onend = function() {
+    var btns = document.querySelectorAll('.voice-btn');
+    for (var i = 0; i < btns.length; i++) btns[i].classList.remove('recording');
+    // Auto-send
+    var input = chatOverlayOpen ? document.getElementById('chat-input-overlay') : document.getElementById('chat-input');
+    if (input.value.trim()) {
+      if (chatOverlayOpen) {
+        sendMessageOverlay();
+      } else {
+        sendMessage();
+      }
+    }
+  };
+
+  recognition.onerror = function(e) {
+    var btns = document.querySelectorAll('.voice-btn');
+    for (var i = 0; i < btns.length; i++) btns[i].classList.remove('recording');
+  };
+}
+
+function toggleVoice() {
+  if (!recognition) {
+    alert('Голосовой ввод не поддерживается');
+    return;
+  }
+  var btns = document.querySelectorAll('.voice-btn');
+  var isRecording = btns[0] && btns[0].classList.contains('recording');
+  if (isRecording) {
+    recognition.stop();
+    for (var i = 0; i < btns.length; i++) btns[i].classList.remove('recording');
+  } else {
+    recognition.start();
+    for (var i = 0; i < btns.length; i++) btns[i].classList.add('recording');
   }
 }
 
@@ -2589,11 +2946,14 @@ function renderQcReport(d) {
 function init() {
   initTelegram();
   initChat();
+  initVoice();
   renderWiki();
 
-  // Enter key for chat
   document.getElementById('chat-input').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') { e.preventDefault(); sendMessage(); }
+  });
+  document.getElementById('chat-input-overlay').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); sendMessageOverlay(); }
   });
 }
 
