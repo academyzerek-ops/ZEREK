@@ -40,6 +40,7 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
   min-height: 100vh;
+  padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
 }
 
@@ -99,8 +100,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 16px;
-  padding-top: calc(env(safe-area-inset-top, 0px) + 8px);
+  padding: 10px 16px 8px;
   background: #FFFFFF;
   border-bottom: 1px solid rgba(0,0,0,0.06);
   z-index: 90;
