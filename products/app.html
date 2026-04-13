@@ -1587,18 +1587,7 @@ body {
     <div id="chapter-items"></div>
   </div>
 
-  <!-- Chapter content view -->
-  <div class="chapter-content" id="chapter-content">
-    <button class="module-back" onclick="closeChapterContent()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-      Назад к главам
-    </button>
-    <div class="screen-title" id="chapter-content-title" style="margin-bottom:16px"></div>
-    <div class="chapter-placeholder">
-      <div style="font-size:36px;margin-bottom:12px">📖</div>
-      Контент урока скоро появится.<br>Мы готовим качественные материалы для тебя.
-    </div>
-  </div>
+  <!-- Chapter content — navigates to separate HTML page -->
 </div>
 
 <!-- ============================================
@@ -2400,30 +2389,79 @@ var ACADEMY_DATA = {
   fund: {
     title: 'Фундамент',
     subtitle: '12–15 лет — финансовая грамотность',
+    folder: '../academy/kz/junior/',
     modules: [
-      { name: 'Что такое деньги', chapters: ['История денег', 'Функции денег', 'Валюты мира'] },
-      { name: 'Семейный бюджет', chapters: ['Доходы и расходы', 'Планирование', 'Экономия и накопления'] },
-      { name: 'Банки и карты', chapters: ['Зачем нужен банк', 'Карты и переводы', 'Вклады и проценты'] },
-      { name: 'Предпринимательство', chapters: ['Что такое бизнес', 'Идея и продукт', 'Первые деньги'] },
-      { name: 'Налоги простым языком', chapters: ['Зачем платить налоги', 'Виды налогов', 'Налоги в Казахстане'] },
-      { name: 'Финансовые ошибки', chapters: ['Кредитные ловушки', 'Пирамиды и мошенники', 'Импульсивные покупки'] },
-      { name: 'Цифровые финансы', chapters: ['Электронные кошельки', 'Безопасность онлайн', 'Криптовалюты — основы'] },
-      { name: 'Итоговый проект', chapters: ['Мой бюджет на месяц', 'Презентация'] }
+      { name: 'Деньги — откуда они и как работают', chStart: 1, chapters: [
+        'Когда денег не было (Бартер)',
+        'Деньги, которые можно съесть',
+        'Железные аргументы (Монеты)',
+        'Почему бумага победила золото?',
+        'Почему Доллар стоит 500? (Курс валют)',
+        'Старый добрый Кэш (Наличные)',
+        'Деньги-Призраки (Безнал и QR)',
+        'Чьи это деньги? (Жёсткая правда)',
+        'Магия ценника (Время = Деньги)',
+        'Ты — Управляющий (Финал модуля)'
+      ]},
+      { name: 'Доходы — как зарабатывать', chStart: 1, chapters: [
+        'За что платят деньги?',
+        'Твой «Инвентарь»: Чем ты богат?',
+        'Кнопка «Бабло» (Мифы и Скам)',
+        'Договор дороже денег',
+        'Золотая жила (Репутация)',
+        'Деньги жгут карман (Система)',
+        'Уровень «Босс»'
+      ]},
+      { name: 'Управление деньгами', chStart: 1, chapters: [
+        'Дырявое ведро (Секрет богатства)',
+        'Деньги не должны спать (Депозит)',
+        'Восьмое чудо света (Сложный %)',
+        'Жизнь взаймы (Ловушка рассрочек)',
+        'Активы и Пассивы (Формула)',
+        'Твой Финансовый План (Финал)'
+      ]}
     ]
   },
   arch: {
     title: 'Архитектор',
     subtitle: '16+ — стартап-мышление и предпринимательство',
+    folder: '../academy/kz/startup/',
     modules: [
-      { name: 'Стартап-мышление', chapters: ['Problem-Solution Fit', 'Целевая аудитория', 'MVP'] },
-      { name: 'Бизнес-модель', chapters: ['Canvas', 'Юнит-экономика', 'Ценообразование'] },
-      { name: 'Финансы бизнеса', chapters: ['P&L отчёт', 'Cash Flow', 'Точка безубыточности', 'Unit-экономика'] },
-      { name: 'Маркетинг', chapters: ['Каналы привлечения', 'CAC и LTV', 'Контент-маркетинг'] },
-      { name: 'Юридические основы', chapters: ['ИП vs ТОО', 'Налоговые режимы КЗ', 'Лицензии и разрешения'] },
-      { name: 'Операционка', chapters: ['Аренда и ремонт', 'Персонал', 'Поставщики'] },
-      { name: 'Масштабирование', chapters: ['Когда расти', 'Франшиза', 'Автоматизация'] },
-      { name: 'Инвестиции и гранты', chapters: ['Бастау Бизнес', 'Дamu', 'Ангелы и фонды'] },
-      { name: 'Итоговый проект', chapters: ['Бизнес-план', 'Pitch Deck'] }
+      { name: 'Архитектор бизнеса', chStart: 1, chapters: [
+        'Тракторист vs Феррари',
+        'Ошибка на миллиард долларов',
+        'Лень за 200 миллиардов',
+        'Серфер и камера (GoPro)',
+        'Головоломка профессора',
+        'Подсмотрено в Италии',
+        'Сушеная рыба vs Фотоплёнка',
+        'Как продать воздух (Dropbox)',
+        'Магазин без склада (Zappos)',
+        '51 провал и одна свинья (Angry Birds)'
+      ]},
+      { name: 'Визионер', chStart: 1, chapters: [
+        'Ошибка на триллион (Yahoo vs Google)',
+        'Проклятие «Быстрой Лошади» (Форд)',
+        'Океан без акул (Cirque du Soleil)',
+        'Торговец воздухом (IKEA)',
+        'Император Терпения (Amazon)'
+      ]},
+      { name: 'Быстрый старт (MVP)', chStart: 1, chapters: [
+        'Квадратное уродство',
+        'Театр одного актёра (Reddit)',
+        'Авиакомпания на один день (Virgin)',
+        'Стартап за 45 минут (DoorDash)',
+        'Искусство убийства (Instagram)'
+      ]},
+      { name: 'Маркетинг хищников', chStart: 0, chapters: [
+        'Великая иллюзия торговли',
+        'Эффект толпы (Red Bull)',
+        'Костёр из денег (Louis Vuitton)',
+        'Ты — Герой (Nike)',
+        'Король Троллинга (Burger King)',
+        'Смертельная вода (Liquid Death)',
+        'Один против всех (MrBeast)'
+      ]}
     ]
   }
 };
@@ -2489,17 +2527,14 @@ function closeChapterList() {
 function openChapter(idx) {
   var data = ACADEMY_DATA[currentLevel];
   var mod = data.modules[currentModuleIdx];
-  var title = mod.chapters[idx];
-  document.getElementById('chapter-content-title').textContent = title;
-  document.getElementById('chapter-list').classList.remove('active');
-  document.getElementById('chapter-content').classList.add('active');
-  academyView = 'content';
+  var chNum = (mod.chStart || 1) + idx;
+  var chStr = chNum < 10 ? '0' + chNum : '' + chNum;
+  var file = 'm' + (currentModuleIdx + 1) + '-ch' + chStr + '.html';
+  window.location.href = data.folder + file;
 }
 
 function closeChapterContent() {
-  document.getElementById('chapter-content').classList.remove('active');
-  document.getElementById('chapter-list').classList.add('active');
-  academyView = 'chapters';
+  closeChapterList();
 }
 
 function initAcademyListeners() {
