@@ -3000,6 +3000,15 @@ function init() {
   document.getElementById('chat-input-overlay').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') { e.preventDefault(); sendMessageOverlay(); }
   });
+
+  // Handle ?tab= param (back from wiki reviews)
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var tab = params.get('tab');
+    if (tab && document.getElementById('screen-' + tab)) {
+      switchTab(tab);
+    }
+  } catch(e) {}
 }
 
 document.addEventListener('DOMContentLoaded', init);
@@ -3008,6 +3017,13 @@ document.addEventListener('DOMContentLoaded', init);
 (function(){
   var sp = document.getElementById('splash');
   if (!sp) return;
+  // Skip splash if returning from sub-page (?tab=)
+  var fromBack = false;
+  try { fromBack = new URLSearchParams(location.search).has('tab'); } catch(e) {}
+  if (fromBack) {
+    sp.style.display = 'none';
+    return;
+  }
   var vid = document.getElementById('splashVideo');
   var hidden = false;
   function hide() {
