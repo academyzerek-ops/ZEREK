@@ -3044,13 +3044,18 @@ function renderQcReport(r) {
   document.getElementById('qc-report').classList.add('active');
   var nicheIcon = NICHE_ICONS[QC.niche_id] || '📊';
   var nicheName = NICHE_NAMES[QC.niche_id] || QC.niche_id;
-  var b1 = r.block_1 || {}; // выручка
-  var b3 = r.block_3 || {}; // расходы
-  var b4 = r.block_4 || {}; // инвестиции
-  var b5 = r.block_5 || {}; // сценарии
-  var b6 = r.block_6 || {}; // точка безубыточности
-  var b7 = r.block_7 || {}; // налоги
-  var b10 = r.block_10 || {}; // выводы
+  var b1 = r.block_1 || {};
+  var b2 = r.block_2 || {};
+  var b3 = r.block_3 || {};
+  var b4 = r.block_4 || {};
+  var b5 = r.block_5 || {};
+  var b6 = r.block_6 || {};
+  var b7 = r.block_7 || {};
+  var b8 = r.block_8 || {};
+  var b9 = r.block_9 || {};
+  var b10 = r.block_10 || {};
+  var b11 = r.block_11_season || {};
+  var b12 = r.block_12_checklist || {};
   var health = r.health || {};
   var scenarios = b5.scenarios || [];
   var base = scenarios[1] || scenarios[0] || {};
@@ -3079,7 +3084,7 @@ function renderQcReport(r) {
   // Health indicators
   if (health.indicators && health.indicators.length) {
     html += '<div class="report-section">';
-    html += '<div class="report-section-title">Здоровье проекта</div>';
+    html += '<div class="report-section-title">' + (health.title || 'Здоровье проекта') + '</div>';
     html += '<div class="report-row" style="flex-wrap:wrap;gap:8px">';
     for (var i = 0; i < health.indicators.length; i++) {
       var ind = health.indicators[i];
@@ -3089,93 +3094,192 @@ function renderQcReport(r) {
     html += '</div></div>';
   }
 
-  // Key metrics — investments + base scenario
+  // Block 1 — Revenue structure
   html += '<div class="report-section">';
-  html += '<div class="report-section-title">Ключевые показатели</div>';
+  html += '<div class="report-section-title">' + (b1.title || 'На чём зарабатываете') + '</div>';
   html += '<div class="report-row">';
-  html += '<div class="report-card"><div class="report-card-label">Инвестиции</div><div class="report-card-value">' + fmtM(b4.total || b4.investment_min) + ' ₸</div></div>';
+  html += '<div class="report-card"><div class="report-card-label">Ср. чек</div><div class="report-card-value">' + fmt(b1.check_med) + ' ₸</div></div>';
+  html += '<div class="report-card"><div class="report-card-label">Трафик/день</div><div class="report-card-value">' + (b1.traffic_med || '—') + '</div></div>';
+  html += '</div>';
+  html += '<div class="report-row">';
   html += '<div class="report-card"><div class="report-card-label">Выручка/мес</div><div class="report-card-value">' + fmtM(b1.revenue_monthly) + ' ₸</div></div>';
+  html += '<div class="report-card"><div class="report-card-label">Локомотив</div><div class="report-card-value" style="font-size:13px">' + (b1.locomotive || '—') + '</div></div>';
   html += '</div>';
-  html += '<div class="report-row">';
-  html += '<div class="report-card"><div class="report-card-label">Прибыль/мес (базовый)</div><div class="report-card-value ' + (base.profit_monthly > 0 ? 'report-card-value-green' : 'report-card-value-red') + '">' + fmtM(base.profit_monthly) + ' ₸</div></div>';
-  html += '<div class="report-card"><div class="report-card-label">Маржинальность</div><div class="report-card-value">' + fmtPct(r.block_2 ? r.block_2.gross_margin_pct : null) + '</div></div>';
-  html += '</div>';
+  if (b1.revenue_structure && b1.revenue_structure.length) {
+    for (var i = 0; i < b1.revenue_structure.length; i++) {
+      var rs = b1.revenue_structure[i];
+      html += '<div class="report-card" style="margin-top:6px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px">' + (rs.name || rs.product || '') + '</span><span style="font-weight:700;font-size:13px">' + (rs.pct ? rs.pct + '%' : fmt(rs.amount) + ' ₸') + '</span></div>';
+    }
+  }
+  if (b1.disclaimer) html += '<div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.4">' + b1.disclaimer + '</div>';
   html += '</div>';
 
-  // Monthly costs
+  // Block 2 — COGS
+  html += '<div class="report-section">';
+  html += '<div class="report-section-title">' + (b2.title || 'Прямые расходы') + '</div>';
+  html += '<div class="report-row">';
+  html += '<div class="report-card"><div class="report-card-label">Себестоимость</div><div class="report-card-value">' + fmtPct(b2.cogs_pct) + '</div></div>';
+  html += '<div class="report-card"><div class="report-card-label">Валовая маржа</div><div class="report-card-value report-card-value-green">' + fmtPct(b2.gross_margin_pct) + '</div></div>';
+  html += '</div>';
+  if (b2.gross_profit) {
+    html += '<div class="report-card" style="margin-top:6px"><div class="report-card-label">Валовая прибыль/мес</div><div class="report-card-value">' + fmtM(b2.gross_profit) + ' ₸</div></div>';
+  }
+  if (b2.disclaimer) html += '<div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.4">' + b2.disclaimer + '</div>';
+  html += '</div>';
+
+  // Block 3 — OPEX
   if (b3.items && b3.items.length) {
     html += '<div class="report-section">';
-    html += '<div class="report-section-title">Постоянные расходы/мес</div>';
+    html += '<div class="report-section-title">' + (b3.title || 'Постоянные расходы') + '</div>';
     for (var i = 0; i < b3.items.length; i++) {
       var item = b3.items[i];
-      if (item.amount > 0) {
-        html += '<div class="report-card" style="margin-bottom:6px;display:flex;justify-content:space-between;align-items:center"><div class="report-card-label" style="margin:0">' + item.name + '</div><div style="font-weight:700;font-size:14px">' + fmt(item.amount) + ' ₸</div></div>';
-      }
+      html += '<div class="report-card" style="margin-bottom:6px;display:flex;justify-content:space-between;align-items:center"><div class="report-card-label" style="margin:0">' + item.name + '</div><div style="font-weight:700;font-size:14px">' + fmt(item.amount) + ' ₸</div></div>';
     }
-    if (b3.total > 0) html += '<div class="report-card" style="background:var(--accent-light)"><div class="report-card-label" style="color:var(--accent);font-weight:700">ИТОГО расходы</div><div class="report-card-value" style="color:var(--accent)">' + fmt(b3.total) + ' ₸</div></div>';
+    html += '<div class="report-card" style="background:var(--accent-light)"><div class="report-card-label" style="color:var(--accent);font-weight:700">ИТОГО</div><div class="report-card-value" style="color:var(--accent)">' + fmt(b3.total) + ' ₸/мес</div></div>';
+    if (b3.disclaimer) html += '<div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.4">' + b3.disclaimer + '</div>';
     html += '</div>';
   }
 
-  // 3 scenarios
+  // Block 4 — CAPEX
+  html += '<div class="report-section">';
+  html += '<div class="report-section-title">' + (b4.title || 'Стартовые вложения') + '</div>';
+  if (b4.items && b4.items.length) {
+    for (var i = 0; i < b4.items.length; i++) {
+      var ci = b4.items[i];
+      html += '<div class="report-card" style="margin-bottom:6px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px">' + (ci.name || ci.item || '') + '</span><span style="font-weight:700;font-size:13px">' + fmt(ci.amount || ci.cost || 0) + ' ₸</span></div>';
+    }
+  }
+  html += '<div class="report-row" style="margin-top:8px">';
+  html += '<div class="report-card"><div class="report-card-label">Мин. вложения</div><div class="report-card-value">' + fmtM(b4.investment_min || b4.total) + ' ₸</div></div>';
+  html += '<div class="report-card"><div class="report-card-label">Макс. вложения</div><div class="report-card-value">' + fmtM(b4.investment_max || b4.total) + ' ₸</div></div>';
+  html += '</div>';
+  if (b4.budget_text) html += '<div style="font-size:12px;color:var(--text2);margin-top:8px;line-height:1.5">' + b4.budget_text + '</div>';
+  html += '</div>';
+
+  // Block 5 — Scenarios
   if (scenarios.length) {
     html += '<div class="report-section">';
-    html += '<div class="report-section-title">Три сценария</div>';
+    html += '<div class="report-section-title">' + (b5.title || 'Три сценария') + '</div>';
+    if (b5.subtitle) html += '<div style="font-size:12px;color:var(--text3);margin-bottom:10px">' + b5.subtitle + '</div>';
     for (var i = 0; i < scenarios.length; i++) {
       var sc = scenarios[i];
       var clr = sc.color === 'green' ? 'var(--green)' : sc.color === 'red' ? 'var(--red)' : 'var(--accent)';
       html += '<div class="report-card" style="margin-bottom:8px;border-left:3px solid ' + clr + '">';
-      html += '<div style="font-weight:700;font-size:14px;margin-bottom:4px">' + sc.label + '</div>';
-      html += '<div style="display:flex;gap:16px;font-size:13px;color:var(--text2)">';
-      html += '<span>Трафик: ' + sc.traffic + '/день</span>';
-      html += '<span>Чек: ' + fmt(sc.check) + ' ₸</span>';
+      html += '<div style="font-weight:700;font-size:14px;margin-bottom:6px">' + sc.label + '</div>';
+      html += '<div style="display:flex;gap:12px;font-size:13px;color:var(--text2);flex-wrap:wrap">';
+      html += '<span>Трафик: <strong>' + sc.traffic + '</strong>/день</span>';
+      html += '<span>Чек: <strong>' + fmt(sc.check) + '</strong> ₸</span>';
+      html += '<span>Год: <strong>' + fmtM(sc.revenue_year) + '</strong> ₸</span>';
       html += '</div>';
-      html += '<div style="display:flex;gap:16px;margin-top:6px;font-size:14px">';
-      html += '<span><strong>Прибыль:</strong> ' + fmtM(sc.profit_monthly) + ' ₸/мес</span>';
-      html += '</div>';
+      html += '<div style="margin-top:6px;font-size:14px"><strong>Прибыль: ' + fmtM(sc.profit_monthly) + ' ₸/мес</strong></div>';
       html += '<div style="font-size:12px;color:var(--text3);margin-top:4px">' + (sc.payback || '') + '</div>';
+      if (sc.mkt_desc) html += '<div style="font-size:11px;color:var(--text3);margin-top:4px">Маркетинг: ' + sc.mkt_desc + ' (' + (sc.mkt_budget || '') + ')</div>';
       html += '</div>';
     }
+    if (b5.disclaimer) html += '<div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.4">' + b5.disclaimer + '</div>';
     html += '</div>';
   }
 
-  // Break-even
-  if (b6.tb_checks_day > 0) {
-    html += '<div class="report-section">';
-    html += '<div class="report-section-title">Точка безубыточности</div>';
-    html += '<div class="report-row">';
-    html += '<div class="report-card"><div class="report-card-label">Мин. выручка</div><div class="report-card-value">' + fmtM(b6.tb_revenue) + ' ₸</div></div>';
-    html += '<div class="report-card"><div class="report-card-label">Мин. клиентов/день</div><div class="report-card-value">' + b6.tb_checks_day + '</div></div>';
-    html += '</div>';
-    html += '</div>';
-  }
+  // Block 6 — Break-even
+  html += '<div class="report-section">';
+  html += '<div class="report-section-title">' + (b6.title || 'Точка безубыточности') + '</div>';
+  html += '<div class="report-row">';
+  html += '<div class="report-card"><div class="report-card-label">Мин. выручка</div><div class="report-card-value">' + fmtM(b6.tb_revenue) + ' ₸</div></div>';
+  html += '<div class="report-card"><div class="report-card-label">Мин. клиентов/день</div><div class="report-card-value">' + (b6.tb_checks_day || 0) + '</div></div>';
+  html += '</div>';
+  html += '<div class="report-card" style="margin-top:6px"><div class="report-card-label">Запас прочности</div><div class="report-card-value">' + fmtPct(b6.safety_margin) + '</div></div>';
+  if (b6.disclaimer) html += '<div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.4">' + b6.disclaimer + '</div>';
+  html += '</div>';
 
-  // Taxes
+  // Block 7 — Taxes
   if (b7.regime) {
     html += '<div class="report-section">';
-    html += '<div class="report-section-title">Налоги</div>';
-    html += '<div class="report-card"><div class="report-card-label">' + b7.regime + ' — ' + b7.rate_pct + '%</div><div style="font-size:13px;color:var(--text2);margin-top:4px">' + (b7.text || '') + '</div></div>';
+    html += '<div class="report-section-title">' + (b7.title || 'Налоги') + '</div>';
+    html += '<div class="report-card"><div class="report-card-label">' + b7.regime + ' — ' + b7.rate_pct + '%</div><div style="font-size:13px;color:var(--text2);margin-top:4px;line-height:1.5">' + (b7.text || '') + '</div></div>';
     html += '</div>';
   }
 
-  // Verdict details
+  // Block 8 — Marketing
+  if ((b8.main && b8.main.length) || b8.disclaimer) {
+    html += '<div class="report-section">';
+    html += '<div class="report-section-title">' + (b8.title || 'Как продвигать') + '</div>';
+    if (b8.main && b8.main.length) {
+      html += '<div class="report-card"><ul style="padding-left:18px;margin:0">';
+      for (var i = 0; i < b8.main.length; i++) {
+        var ch = b8.main[i];
+        html += '<li style="font-size:13px;margin-bottom:4px">' + (typeof ch === 'string' ? ch : (ch.name || ch.channel || '')) + '</li>';
+      }
+      html += '</ul></div>';
+    }
+    if (b8.disclaimer) html += '<div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.4">' + b8.disclaimer + '</div>';
+    html += '</div>';
+  }
+
+  // Block 9 — Tips & Risks
+  var hasB9 = (b9.income && b9.income.length) || (b9.risks && b9.risks.length) || (b9.mistakes && b9.mistakes.length);
+  if (hasB9) {
+    html += '<div class="report-section">';
+    html += '<div class="report-section-title">' + (b9.title || 'Советы и риски') + '</div>';
+    if (b9.income && b9.income.length) {
+      html += '<div class="report-card" style="margin-bottom:8px;border-left:3px solid var(--green)"><div style="font-weight:700;font-size:12px;color:var(--green);margin-bottom:4px">СОВЕТЫ ПО ДОХОДУ</div>';
+      for (var i = 0; i < b9.income.length; i++) html += '<div style="font-size:13px;margin-bottom:4px">' + b9.income[i] + '</div>';
+      html += '</div>';
+    }
+    if (b9.risks && b9.risks.length) {
+      html += '<div class="report-card" style="margin-bottom:8px;border-left:3px solid var(--red)"><div style="font-weight:700;font-size:12px;color:var(--red);margin-bottom:4px">РИСКИ</div>';
+      for (var i = 0; i < b9.risks.length; i++) html += '<div style="font-size:13px;margin-bottom:4px">' + b9.risks[i] + '</div>';
+      html += '</div>';
+    }
+    if (b9.mistakes && b9.mistakes.length) {
+      html += '<div class="report-card" style="border-left:3px solid var(--amber)"><div style="font-weight:700;font-size:12px;color:var(--amber);margin-bottom:4px">ЧАСТЫЕ ОШИБКИ</div>';
+      for (var i = 0; i < b9.mistakes.length; i++) html += '<div style="font-size:13px;margin-bottom:4px">' + b9.mistakes[i] + '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+
+  // Block 10 — Conclusions & next steps
   if (b10.next_steps && b10.next_steps.length) {
     html += '<div class="report-section">';
-    html += '<div class="report-section-title">Следующие шаги</div>';
-    html += '<div class="report-card"><ul style="padding-left:18px;margin:0">';
-    for (var i = 0; i < b10.next_steps.length; i++) {
-      html += '<li style="font-size:13px;margin-bottom:4px">' + b10.next_steps[i] + '</li>';
+    html += '<div class="report-section-title">' + (b10.title || 'Выводы') + '</div>';
+    if (b10.reasons && b10.reasons.length) {
+      html += '<div class="report-card" style="margin-bottom:8px">';
+      for (var i = 0; i < b10.reasons.length; i++) html += '<div style="font-size:13px;margin-bottom:4px">• ' + b10.reasons[i] + '</div>';
+      html += '</div>';
     }
+    html += '<div class="report-card"><div style="font-weight:700;font-size:12px;color:var(--accent);margin-bottom:6px">СЛЕДУЮЩИЕ ШАГИ</div><ul style="padding-left:18px;margin:0">';
+    for (var i = 0; i < b10.next_steps.length; i++) html += '<li style="font-size:13px;margin-bottom:4px">' + b10.next_steps[i] + '</li>';
     html += '</ul></div></div>';
   }
 
-  // Risks
-  var b9 = r.block_9 || {};
-  if (b9.risks && b9.risks.length) {
+  // Block 11 — Seasonality
+  if (b11.data && b11.data.length) {
     html += '<div class="report-section">';
-    html += '<div class="report-section-title">⚠️ Риски</div>';
+    html += '<div class="report-section-title">' + (b11.title || 'Сезонность') + '</div>';
+    var maxRev = 0;
+    for (var i = 0; i < b11.data.length; i++) { if (b11.data[i].revenue > maxRev) maxRev = b11.data[i].revenue; }
+    html += '<div style="display:flex;gap:3px;align-items:flex-end;height:100px;padding:8px 0">';
+    for (var i = 0; i < b11.data.length; i++) {
+      var m = b11.data[i];
+      var h = maxRev > 0 ? Math.max(8, Math.round(m.revenue / maxRev * 80)) : 8;
+      var clr = m.profit > 0 ? 'var(--green)' : 'var(--red)';
+      html += '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">';
+      html += '<div style="width:100%;height:' + h + 'px;background:' + clr + ';border-radius:3px 3px 0 0;opacity:0.7"></div>';
+      html += '<div style="font-size:9px;color:var(--text3)">' + m.month + '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+    html += '</div>';
+  }
+
+  // Block 12 — Checklist
+  if (b12.items && b12.items.length) {
+    html += '<div class="report-section">';
+    html += '<div class="report-section-title">' + (b12.title || 'Что оформить') + '</div>';
     html += '<div class="report-card">';
-    for (var i = 0; i < b9.risks.length; i++) {
-      html += '<div style="font-size:13px;margin-bottom:6px">' + b9.risks[i] + '</div>';
+    for (var i = 0; i < b12.items.length; i++) {
+      var ci = b12.items[i];
+      html += '<div style="font-size:13px;margin-bottom:6px">' + (ci.done ? '✅' : '⬜') + ' ' + ci.item + '</div>';
     }
     html += '</div></div>';
   }
