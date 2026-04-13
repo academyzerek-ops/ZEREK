@@ -3031,71 +3031,154 @@ function runQcCalculation() {
 
   apiPost('/quick-check', body, function(err, data) {
     document.getElementById('qc-loading').classList.remove('active');
-    if (err || !data) {
+    if (err || !data || data.status !== 'ok' || !data.result) {
       alert('Ошибка расчёта. Попробуйте ещё раз.');
       document.getElementById('qc-screen').classList.add('active');
       return;
     }
-    renderQcReport(data);
+    renderQcReport(data.result);
   });
 }
 
-function renderQcReport(d) {
+function renderQcReport(r) {
   document.getElementById('qc-report').classList.add('active');
   var nicheIcon = NICHE_ICONS[QC.niche_id] || '📊';
   var nicheName = NICHE_NAMES[QC.niche_id] || QC.niche_id;
+  var b1 = r.block_1 || {}; // выручка
+  var b3 = r.block_3 || {}; // расходы
+  var b4 = r.block_4 || {}; // инвестиции
+  var b5 = r.block_5 || {}; // сценарии
+  var b6 = r.block_6 || {}; // точка безубыточности
+  var b7 = r.block_7 || {}; // налоги
+  var b10 = r.block_10 || {}; // выводы
+  var health = r.health || {};
+  var scenarios = b5.scenarios || [];
+  var base = scenarios[1] || scenarios[0] || {};
 
-  // Determine verdict
-  var verdictClass = 'report-verdict-amber';
-  var verdictIcon = '⚠️';
-  var verdictText = 'Средний потенциал — требует внимания';
-
-  var roi = d.roi_annual || d.roi;
-  var payback = d.payback_months;
-
-  if (roi > 40 && payback && payback < 18) {
-    verdictClass = 'report-verdict-green';
-    verdictIcon = '✅';
-    verdictText = 'Хороший потенциал — стоит рассмотреть';
-  } else if (roi < 10 || (payback && payback > 36)) {
-    verdictClass = 'report-verdict-red';
-    verdictIcon = '🚨';
-    verdictText = 'Высокий риск — тщательно взвесьте';
-  }
+  // Verdict
+  var vc = b10.verdict_color || 'yellow';
+  var verdictClass = vc === 'green' ? 'report-verdict-green' : vc === 'red' ? 'report-verdict-red' : 'report-verdict-amber';
+  var verdictIcon = vc === 'green' ? '✅' : vc === 'red' ? '🚨' : '⚠️';
+  var verdictText = b10.verdict_text || 'Средний потенциал';
 
   var html = '';
+
+  // Header
   html += '<div class="report-header-card">';
   html += '<div class="report-niche-icon">' + nicheIcon + '</div>';
   html += '<div class="report-niche-name">' + nicheName + '</div>';
   html += '<div class="report-city-name">' + (QC.city_name || '') + ' · ' + (QC.format_name || '') + '</div>';
   html += '</div>';
 
+  // Verdict
   html += '<div class="report-verdict ' + verdictClass + '">';
   html += '<div class="report-verdict-icon">' + verdictIcon + '</div>';
   html += '<div class="report-verdict-text">' + verdictText + '</div>';
   html += '</div>';
 
-  // Key metrics
+  // Health indicators
+  if (health.indicators && health.indicators.length) {
+    html += '<div class="report-section">';
+    html += '<div class="report-section-title">Здоровье проекта</div>';
+    html += '<div class="report-row" style="flex-wrap:wrap;gap:8px">';
+    for (var i = 0; i < health.indicators.length; i++) {
+      var ind = health.indicators[i];
+      var ic = ind.status === 'green' ? '🟢' : ind.status === 'red' ? '🔴' : '🟡';
+      html += '<div class="report-card" style="flex:1;min-width:45%"><div class="report-card-label">' + ic + ' ' + ind.name + '</div><div class="report-card-value">' + ind.value + '</div></div>';
+    }
+    html += '</div></div>';
+  }
+
+  // Key metrics — investments + base scenario
   html += '<div class="report-section">';
   html += '<div class="report-section-title">Ключевые показатели</div>';
   html += '<div class="report-row">';
-  html += '<div class="report-card"><div class="report-card-label">Инвестиции</div><div class="report-card-value">' + fmtM(d.total_capex || d.capex) + ' ₸</div></div>';
-  html += '<div class="report-card"><div class="report-card-label">Окупаемость</div><div class="report-card-value">' + (payback ? payback + ' мес' : '—') + '</div></div>';
+  html += '<div class="report-card"><div class="report-card-label">Инвестиции</div><div class="report-card-value">' + fmtM(b4.total || b4.investment_min) + ' ₸</div></div>';
+  html += '<div class="report-card"><div class="report-card-label">Выручка/мес</div><div class="report-card-value">' + fmtM(b1.revenue_monthly) + ' ₸</div></div>';
   html += '</div>';
   html += '<div class="report-row">';
-  html += '<div class="report-card"><div class="report-card-label">Чистая прибыль/мес</div><div class="report-card-value ' + (d.net_profit > 0 ? 'report-card-value-green' : 'report-card-value-red') + '">' + fmtM(d.net_profit) + ' ₸</div></div>';
-  html += '<div class="report-card"><div class="report-card-label">ROI годовой</div><div class="report-card-value">' + fmtPct(roi) + '</div></div>';
+  html += '<div class="report-card"><div class="report-card-label">Прибыль/мес (базовый)</div><div class="report-card-value ' + (base.profit_monthly > 0 ? 'report-card-value-green' : 'report-card-value-red') + '">' + fmtM(base.profit_monthly) + ' ₸</div></div>';
+  html += '<div class="report-card"><div class="report-card-label">Маржинальность</div><div class="report-card-value">' + fmtPct(r.block_2 ? r.block_2.gross_margin_pct : null) + '</div></div>';
   html += '</div>';
   html += '</div>';
 
-  // Revenue & Costs
-  html += '<div class="report-section">';
-  html += '<div class="report-section-title">Доходы и расходы</div>';
-  html += '<div class="report-card" style="margin-bottom:10px"><div class="report-card-label">Выручка/мес</div><div class="report-card-value">' + fmtM(d.revenue) + ' ₸</div></div>';
-  html += '<div class="report-card" style="margin-bottom:10px"><div class="report-card-label">Расходы/мес</div><div class="report-card-value">' + fmtM(d.total_opex || d.opex) + ' ₸</div></div>';
-  if (d.rent) html += '<div class="report-card" style="margin-bottom:10px"><div class="report-card-label">Аренда/мес</div><div class="report-card-value">' + fmtM(d.rent) + ' ₸</div></div>';
-  if (d.staff_cost) html += '<div class="report-card"><div class="report-card-label">ФОТ/мес</div><div class="report-card-value">' + fmtM(d.staff_cost) + ' ₸</div></div>';
-  html += '</div>';
+  // Monthly costs
+  if (b3.items && b3.items.length) {
+    html += '<div class="report-section">';
+    html += '<div class="report-section-title">Постоянные расходы/мес</div>';
+    for (var i = 0; i < b3.items.length; i++) {
+      var item = b3.items[i];
+      if (item.amount > 0) {
+        html += '<div class="report-card" style="margin-bottom:6px;display:flex;justify-content:space-between;align-items:center"><div class="report-card-label" style="margin:0">' + item.name + '</div><div style="font-weight:700;font-size:14px">' + fmt(item.amount) + ' ₸</div></div>';
+      }
+    }
+    if (b3.total > 0) html += '<div class="report-card" style="background:var(--accent-light)"><div class="report-card-label" style="color:var(--accent);font-weight:700">ИТОГО расходы</div><div class="report-card-value" style="color:var(--accent)">' + fmt(b3.total) + ' ₸</div></div>';
+    html += '</div>';
+  }
+
+  // 3 scenarios
+  if (scenarios.length) {
+    html += '<div class="report-section">';
+    html += '<div class="report-section-title">Три сценария</div>';
+    for (var i = 0; i < scenarios.length; i++) {
+      var sc = scenarios[i];
+      var clr = sc.color === 'green' ? 'var(--green)' : sc.color === 'red' ? 'var(--red)' : 'var(--accent)';
+      html += '<div class="report-card" style="margin-bottom:8px;border-left:3px solid ' + clr + '">';
+      html += '<div style="font-weight:700;font-size:14px;margin-bottom:4px">' + sc.label + '</div>';
+      html += '<div style="display:flex;gap:16px;font-size:13px;color:var(--text2)">';
+      html += '<span>Трафик: ' + sc.traffic + '/день</span>';
+      html += '<span>Чек: ' + fmt(sc.check) + ' ₸</span>';
+      html += '</div>';
+      html += '<div style="display:flex;gap:16px;margin-top:6px;font-size:14px">';
+      html += '<span><strong>Прибыль:</strong> ' + fmtM(sc.profit_monthly) + ' ₸/мес</span>';
+      html += '</div>';
+      html += '<div style="font-size:12px;color:var(--text3);margin-top:4px">' + (sc.payback || '') + '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+
+  // Break-even
+  if (b6.tb_checks_day > 0) {
+    html += '<div class="report-section">';
+    html += '<div class="report-section-title">Точка безубыточности</div>';
+    html += '<div class="report-row">';
+    html += '<div class="report-card"><div class="report-card-label">Мин. выручка</div><div class="report-card-value">' + fmtM(b6.tb_revenue) + ' ₸</div></div>';
+    html += '<div class="report-card"><div class="report-card-label">Мин. клиентов/день</div><div class="report-card-value">' + b6.tb_checks_day + '</div></div>';
+    html += '</div>';
+    html += '</div>';
+  }
+
+  // Taxes
+  if (b7.regime) {
+    html += '<div class="report-section">';
+    html += '<div class="report-section-title">Налоги</div>';
+    html += '<div class="report-card"><div class="report-card-label">' + b7.regime + ' — ' + b7.rate_pct + '%</div><div style="font-size:13px;color:var(--text2);margin-top:4px">' + (b7.text || '') + '</div></div>';
+    html += '</div>';
+  }
+
+  // Verdict details
+  if (b10.next_steps && b10.next_steps.length) {
+    html += '<div class="report-section">';
+    html += '<div class="report-section-title">Следующие шаги</div>';
+    html += '<div class="report-card"><ul style="padding-left:18px;margin:0">';
+    for (var i = 0; i < b10.next_steps.length; i++) {
+      html += '<li style="font-size:13px;margin-bottom:4px">' + b10.next_steps[i] + '</li>';
+    }
+    html += '</ul></div></div>';
+  }
+
+  // Risks
+  var b9 = r.block_9 || {};
+  if (b9.risks && b9.risks.length) {
+    html += '<div class="report-section">';
+    html += '<div class="report-section-title">⚠️ Риски</div>';
+    html += '<div class="report-card">';
+    for (var i = 0; i < b9.risks.length; i++) {
+      html += '<div style="font-size:13px;margin-bottom:6px">' + b9.risks[i] + '</div>';
+    }
+    html += '</div></div>';
+  }
 
   // Actions
   html += '<div class="report-actions">';
