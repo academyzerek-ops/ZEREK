@@ -87,17 +87,6 @@ def debug():
     except: pass
     return {"base_dir":BASE_DIR,"data_dir":DATA_DIR,"files":f1,"niche_files":f2,"templates":tpl,"db_loaded":db is not None,"db_error":db_error}
 
-@app.get("/check-env")
-def check_env():
-    all_keys = sorted(os.environ.keys())
-    return {
-        "GEMINI_API_KEY_exists": bool(os.environ.get("GEMINI_API_KEY")),
-        "GEMINI_API_KEY_length": len(os.environ.get("GEMINI_API_KEY", "")),
-        "env_count": len(os.environ),
-        "railway_env": bool(os.environ.get("RAILWAY_ENVIRONMENT")),
-        "all_keys": all_keys,
-    }
-
 @app.get("/cities")
 def get_cities():
     if not db: raise HTTPException(503,"БД не загружена")
@@ -472,19 +461,12 @@ def finmodel_html_report(data: dict):
 # ============================================
 @app.get("/test-gemini")
 def test_gemini():
-    key = os.getenv("GEMINI_API_KEY", "")
-    # Check all env vars that contain GEMINI or KEY
-    env_matches = {k: v[:8]+"..." for k, v in os.environ.items() if "GEMINI" in k.upper() or "API_KEY" in k.upper()}
-    info = {"has_key": bool(key), "key_len": len(key), "env_matches": env_matches, "total_env": len(os.environ)}
-    if not key:
-        return {"status": "no_key", **info}
     try:
         from gemini_rag import get_ai_interpretation
         result = get_ai_interpretation({"test": "Кофейня в Актобе, инвестиции 5 млн, окупаемость 14 мес"})
-        return {"status": "ok", **info, "response": result[:500]}
+        return {"status": "ok", "response": result[:500]}
     except Exception as e:
-        import traceback
-        return {"status": "error", **info, "error": str(e), "trace": traceback.format_exc()[-300:]}
+        return {"status": "error", "error": str(e)}
 
 
 # ============================================
