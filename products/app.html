@@ -99,7 +99,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 16px 8px;
+  padding: 8px 16px;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 8px);
   background: #FFFFFF;
   border-bottom: 1px solid rgba(0,0,0,0.06);
   z-index: 90;
@@ -145,8 +146,8 @@ body {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   height: 64px;
-  background: linear-gradient(180deg, #E3EDFC 0%, #D4E2F8 100%);
-  border-top: 1px solid #C0D0E8;
+  background: linear-gradient(180deg, #CADCF5 0%, #B8CFF0 100%);
+  border-top: 1px solid #A3BDE0;
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -1648,9 +1649,9 @@ function initTelegram() {
       tg = window.Telegram.WebApp;
       tg.ready();
       tg.expand();
-      if (tg.requestFullscreen) tg.requestFullscreen();
       if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
       tg.MainButton.hide();
+      if (tg.enableClosingConfirmation) tg.enableClosingConfirmation();
       if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
         tgUser = tg.initDataUnsafe.user;
       }
