@@ -2839,7 +2839,7 @@ function renderQcStep() {
     for (var i = 0; i < QC.cities.length; i++) {
       var c = QC.cities[i];
       var cid = c.city_id || c.id;
-      var cname = c.name_ru || c.name || cid;
+      var cname = c['\u0413\u043e\u0440\u043e\u0434'] || c.name_ru || c.name || cid;
       var icon = CITY_ICONS[cid] || '📍';
       var sel = QC.city_id === cid ? ' selected' : '';
       html += '<div class="qc-opt' + sel + '" onclick="qcSelectCity(this,\'' + cid + '\',\'' + cname + '\')">' +
