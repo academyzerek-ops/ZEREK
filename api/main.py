@@ -89,11 +89,13 @@ def debug():
 
 @app.get("/check-env")
 def check_env():
+    all_keys = sorted(os.environ.keys())
     return {
         "GEMINI_API_KEY_exists": bool(os.environ.get("GEMINI_API_KEY")),
         "GEMINI_API_KEY_length": len(os.environ.get("GEMINI_API_KEY", "")),
         "env_count": len(os.environ),
         "railway_env": bool(os.environ.get("RAILWAY_ENVIRONMENT")),
+        "all_keys": all_keys,
     }
 
 @app.get("/cities")
