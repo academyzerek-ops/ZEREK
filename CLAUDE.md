@@ -100,6 +100,10 @@ AUTOSERVICE=Автосервис, BAKERY=Пекарня, BARBER=Барбершо
 - Кнопка меню: BotFather → /setmenubutton → Web App URL → https://academyzerek-ops.github.io/ZEREK/products/index.html
 
 ## Дизайн
-- Тёмная тема: #06060B, акцент #7C6CFF / #6C63FF, зелёный #00D4AA
-- Шрифты: Outfit (UI), JetBrains Mono (цифры), Playfair Display + Source Sans 3 (отчёты)
-- Mobile-first, max-width 440px
+- Mini App (`products/app.html`) — светлая тема: --bg #FFFFFF, --accent #7C6CFF, --green #10B981, --amber #F59E0B, --red #EF4444
+- Академия (`academy/kz/**`) — warm beige editorial: #FAF8F5, акцент #6C5CE7
+- Wiki-обзоры — светлая тема
+- Шрифты Mini App: Geist (UI), Geist Mono (цифры)
+- Шрифты Академии: Playfair Display + Nunito + JetBrains Mono
+- Mobile-first, max-width 480px (Mini App), 460px (академия)
+- Полный дизайн-контекст: `.impeccable.md` (users, brand personality, aesthetic direction, 5 design principles)
