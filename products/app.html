@@ -6,43 +6,51 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
+<meta name="theme-color" content="#101010">
 <title>ZEREK — AI-платформа</title>
+<!-- Threads design system (tokens + base components) -->
+<link rel="stylesheet" href="../design-system/threads.css">
 <!-- System-native fonts — no external font loading, zero FOIT/FOUT -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root {
-  /* Threads-like near-monochrome canvas */
-  --bg: #FFFFFF;
-  --bg2: #FAFAFA;
-  --surface: #F5F5F5;           /* subtle tint for input surfaces */
-  --text: #0A0A0A;              /* off-black */
-  --text2: #666666;              /* secondary */
-  --text3: #999999;              /* tertiary */
-  --border: rgba(0, 0, 0, 0.08);   /* hairlines — the signature element */
-  --border-strong: rgba(0, 0, 0, 0.16);
-  --accent: #7C6CFF;
-  --accent-hover: #6B5CFF;
-  --accent-subtle: rgba(124, 108, 255, 0.1);
-  --green: #10B981;
+  /* Local aliases that map to Threads design tokens for backwards compat */
+  --bg: var(--color-bg);
+  --bg2: var(--color-bg-card);
+  --surface: var(--color-bg-elevated);
+  --text: var(--color-text-primary);
+  --text2: var(--color-text-secondary);
+  --text3: var(--color-text-tertiary);
+  --border: var(--color-border);
+  --border-strong: var(--color-border);
+  --accent: var(--color-accent);
+  --accent-hover: var(--color-accent);
+  --accent-subtle: rgba(0, 149, 246, 0.12);
+  --accent-light: rgba(0, 149, 246, 0.12);
+  --accent2: var(--color-accent);
+  --green: var(--color-success);
+  --green-light: rgba(0, 186, 124, 0.12);
   --amber: #F59E0B;
-  --red: #EF4444;
-  /* Typography scale */
-  --fs-xs: 11px;
-  --fs-sm: 13px;
-  --fs-base: 15px;               /* body */
-  --fs-md: 17px;
-  --fs-lg: 20px;
-  --fs-xl: 24px;
+  --amber-light: rgba(245, 158, 11, 0.12);
+  --red: var(--color-like);
+  /* Typography scale (Threads-aligned) */
+  --fs-xs: var(--font-xs);
+  --fs-sm: var(--font-sm);
+  --fs-base: var(--font-base);
+  --fs-md: var(--font-lg);
+  --fs-lg: var(--font-xl);
+  --fs-xl: var(--font-xxl);
   --fs-2xl: 28px;
-  --fs-3xl: 34px;
-  /* Radii — Threads uses them sparingly, mostly 12-16 on interactive surfaces */
-  --radius: 16px;
+  --fs-3xl: 32px;
+  /* Radii */
+  --radius: var(--radius-lg);      /* 16px */
+  --radius-pill: var(--radius-full);/* 9999 */
+  /* Local radius aliases (override threads.css defaults that conflict w/ existing code) */
   --radius-sm: 12px;
   --radius-xs: 8px;
-  --radius-pill: 9999px;
-  /* System-native font stack (Threads-style) */
-  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', system-ui, 'Helvetica Neue', Arial, sans-serif;
-  --font-mono: 'SF Mono', 'Geist Mono', ui-monospace, Menlo, Consolas, monospace;
+  /* Font aliases */
+  --font-sans: var(--font-family);
+  /* --font-mono is defined in threads.css */
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -682,10 +690,10 @@ p { line-height: 1.5; }
   width: 100%;
   margin-top: 16px;
   padding: 12px;
-  background: var(--accent);
-  color: white;
+  background: var(--color-btn-primary-bg);
+  color: var(--color-btn-primary-text);
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   font-size: 14px;
   font-weight: 600;
   font-family: var(--font-sans);
@@ -796,8 +804,8 @@ p { line-height: 1.5; }
   border-radius: 20px;
   margin-top: 8px;
 }
-.case-tag-loss { background: #FEF2F2; color: var(--red); }
-.case-tag-win { background: var(--green-light); color: var(--green); }
+.case-tag-loss { background: rgba(255, 48, 64, 0.12); color: var(--red); }
+.case-tag-win  { background: rgba(0, 186, 124, 0.12); color: var(--green); }
 
 /* Case detail view */
 .case-detail { display: none; padding: 20px 16px; }
@@ -965,8 +973,8 @@ p { line-height: 1.5; }
 }
 .product-cta:active { opacity: 0.85; }
 .product-cta-primary {
-  background: var(--accent);
-  color: white;
+  background: var(--color-btn-primary-bg);
+  color: var(--color-btn-primary-text);
 }
 .product-cta-secondary {
   background: var(--bg2);
@@ -1281,9 +1289,9 @@ p { line-height: 1.5; }
   align-items: center;
   gap: 12px;
 }
-.report-verdict-green { background: var(--green-light); border: 1px solid #D1FAE5; }
-.report-verdict-amber { background: var(--amber-light); border: 1px solid #FEF3C7; }
-.report-verdict-red { background: #FEF2F2; border: 1px solid #FECACA; }
+.report-verdict-green { background: rgba(0, 186, 124, 0.12); border: 1px solid rgba(0, 186, 124, 0.3); }
+.report-verdict-amber { background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); }
+.report-verdict-red   { background: rgba(255, 48, 64, 0.12); border: 1px solid rgba(255, 48, 64, 0.3); }
 .report-verdict-icon { font-size: 28px; }
 .report-verdict-text { font-size: 14px; font-weight: 600; }
 
@@ -1416,8 +1424,8 @@ p { line-height: 1.5; }
   -webkit-tap-highlight-color: transparent;
 }
 .voice-btn:active, .voice-btn.recording {
-  background: #FEE2E2;
-  border-color: #EF4444;
+  background: rgba(255, 48, 64, 0.14);
+  border-color: var(--red);
 }
 .voice-btn svg {
   width: 20px;
@@ -1487,7 +1495,7 @@ p { line-height: 1.5; }
   top: 0; left: 0; right: 0; bottom: 0;
   max-width: 480px;
   margin: 0 auto;
-  background: #FFFFFF;
+  background: var(--bg);
   z-index: 301;
   display: flex;
   flex-direction: column;
@@ -1535,7 +1543,7 @@ p { line-height: 1.5; }
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: #FFFFFF;
+  background: var(--bg);
   display: flex;
   align-items: center;
   justify-content: center;
