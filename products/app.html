@@ -7,29 +7,42 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>ZEREK — AI-платформа</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- System-native fonts — no external font loading, zero FOIT/FOUT -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root {
+  /* Threads-like near-monochrome canvas */
   --bg: #FFFFFF;
-  --bg2: #F7F7FB;
-  --text: #1A1A2E;
-  --text2: #6B7280;
-  --text3: #9CA3AF;
+  --bg2: #FAFAFA;
+  --surface: #F5F5F5;           /* subtle tint for input surfaces */
+  --text: #0A0A0A;              /* off-black */
+  --text2: #666666;              /* secondary */
+  --text3: #999999;              /* tertiary */
+  --border: rgba(0, 0, 0, 0.08);   /* hairlines — the signature element */
+  --border-strong: rgba(0, 0, 0, 0.16);
   --accent: #7C6CFF;
-  --accent-light: #EDE9FF;
-  --accent2: #9B8FFF;
+  --accent-hover: #6B5CFF;
+  --accent-subtle: rgba(124, 108, 255, 0.1);
   --green: #10B981;
-  --green-light: #ECFDF5;
   --amber: #F59E0B;
-  --amber-light: #FFFBEB;
   --red: #EF4444;
-  --border: #E5E7EB;
+  /* Typography scale */
+  --fs-xs: 11px;
+  --fs-sm: 13px;
+  --fs-base: 15px;               /* body */
+  --fs-md: 17px;
+  --fs-lg: 20px;
+  --fs-xl: 24px;
+  --fs-2xl: 28px;
+  --fs-3xl: 34px;
+  /* Radii — Threads uses them sparingly, mostly 12-16 on interactive surfaces */
   --radius: 16px;
   --radius-sm: 12px;
   --radius-xs: 8px;
+  --radius-pill: 9999px;
+  /* System-native font stack (Threads-style) */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', system-ui, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'SF Mono', 'Geist Mono', ui-monospace, Menlo, Consolas, monospace;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -89,18 +102,24 @@ button, [role="button"], input, select, [tabindex="0"] {
 }
 
 body {
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
   background: var(--bg);
   color: var(--text);
-  line-height: 1.5;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
   max-width: 480px;
   margin: 0 auto;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   overflow-x: hidden;
   min-height: 100vh;
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
 }
+h1, h2, h3, h4 { letter-spacing: -0.02em; line-height: 1.15; font-weight: 700; }
+p { line-height: 1.5; }
 
 /* ============================================
    ANIMATIONS
@@ -154,42 +173,44 @@ body {
 /* ============================================
    TOP HEADER
    ============================================ */
+/* Threads-style header: clean white, hairline bottom, no accent-filled buttons */
 .top-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 16px 8px;
-  background: #FFFFFF;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  padding: 12px 16px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
   z-index: 90;
   flex-shrink: 0;
+  position: sticky;
+  top: 0;
 }
 .top-header-logo {
-  height: 36px;
+  height: 32px;
   width: auto;
   display: block;
 }
 .top-header-cabinet {
   width: 36px; height: 36px;
-  background: var(--accent-light);
+  background: transparent;
   border: none;
-  border-radius: 50%;
+  border-radius: var(--radius-pill);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--accent);
-  transition: transform 0.2s, box-shadow 0.2s;
+  color: var(--text);
+  transition: background 0.15s ease, transform 0.15s ease;
   -webkit-tap-highlight-color: transparent;
 }
-.top-header-cabinet:active {
-  transform: scale(0.9);
-}
+.top-header-cabinet:hover { background: var(--surface); }
+.top-header-cabinet:active { transform: scale(0.92); }
 .top-header-cabinet svg {
-  width: 18px; height: 18px;
+  width: 20px; height: 20px;
   stroke: currentColor;
   fill: none;
-  stroke-width: 1.5;
+  stroke-width: 1.75;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -197,16 +218,18 @@ body {
 /* ============================================
    TAP BAR
    ============================================ */
+/* Threads-style tabbar: white bg, hairline top, line icons, no labels on active state */
 .tapbar {
   position: fixed;
   bottom: 0; left: 0; right: 0;
-  height: 64px;
-  background: #0A0A14;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  height: 56px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-top: 1px solid var(--border);
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-around;
-  padding: 0 4px;
   padding-bottom: env(safe-area-inset-bottom, 0);
   z-index: 100;
   max-width: 480px;
@@ -216,92 +239,55 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  justify-content: center;
+  gap: 2px;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 6px 10px 4px;
-  color: rgba(255,255,255,0.4);
-  transition: color 0.25s, transform 0.2s;
+  padding: 0 8px;
+  flex: 1;
+  color: var(--text3);
+  transition: color 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   -webkit-tap-highlight-color: transparent;
-  position: relative;
 }
-.tab-btn::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%) scaleX(0);
-  width: 24px;
-  height: 3px;
-  border-radius: 2px;
-  background: var(--accent);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.tab-btn.active::after {
-  transform: translateX(-50%) scaleX(1);
-}
-.tab-btn:active {
-  transform: scale(0.9);
-}
+.tab-btn:active { transform: scale(0.94); }
 .tab-btn svg {
-  width: 22px;
-  height: 22px;
+  width: 26px;
+  height: 26px;
   stroke: currentColor;
   fill: none;
-  stroke-width: 1.5;
+  stroke-width: 1.75;
   stroke-linecap: round;
   stroke-linejoin: round;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s, color 0.25s;
+  transition: stroke-width 0.2s ease;
 }
 .tab-btn span {
   font-size: 10px;
-  font-weight: 600;
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
-  transition: color 0.25s;
+  font-weight: 500;
+  letter-spacing: 0;
+  font-family: var(--font-sans);
+  opacity: 0;
+  max-height: 0;
+  transition: opacity 0.2s ease;
 }
 .tab-btn.active {
-  color: #FFFFFF;
+  color: var(--text);
 }
 .tab-btn.active svg {
-  transform: scale(1.15);
-  filter: drop-shadow(0 0 8px rgba(255,255,255,0.6)) drop-shadow(0 0 20px rgba(124,108,255,0.4));
+  stroke-width: 2.5;
 }
-.tab-btn.tab-center svg {
-  width: 28px;
-  height: 28px;
-}
-.tab-btn.tab-center.active svg {
-  transform: scale(1.2);
-  filter: drop-shadow(0 0 10px rgba(255,255,255,0.7)) drop-shadow(0 0 24px rgba(124,108,255,0.5));
-}
-.tab-btn.tab-center::after {
-  width: 32px;
-}
+/* Center chat tab gets a subtle accent treatment */
+.tab-btn.tab-center.active { color: var(--accent); }
+.tab-btn.tab-center.active svg { stroke-width: 2.25; }
+/* Simplified keyframes — minimal scale bump on tab switch */
 @keyframes tabBounce {
   0% { transform: scale(1); }
-  100% { transform: scale(1.1); }
-}
-@keyframes tabPulse {
-  0% { box-shadow: 0 0 0 0 rgba(124,108,255,0.18); }
-  70% { box-shadow: 0 0 0 8px rgba(124,108,255,0); }
-  100% { box-shadow: 0 0 0 0 rgba(124,108,255,0); }
+  100% { transform: scale(1.08); }
 }
 .tab-btn.active svg.bounce {
-  animation: tabBounce 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: tabBounce 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-.tab-btn.active .tab-dot {
-  animation: tabPulse 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.tab-dot {
-  position: absolute;
-  top: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  pointer-events: none;
-}
+.tab-dot { display: none; }
 
 /* ============================================
    PERSONAL CABINET (slide panel)
@@ -429,7 +415,7 @@ body {
   background: none;
   width: 100%;
   text-align: left;
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans);
 }
 
 /* ============================================
@@ -452,26 +438,28 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
+/* Threads-style messages: AI bubble is subtle surface, user is solid dark */
 .msg-ai {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 16px 16px 16px 4px;
-  padding: 14px 18px;
-  max-width: 85%;
+  background: var(--surface);
+  border: none;
+  border-radius: 20px 20px 20px 6px;
+  padding: 12px 16px;
+  max-width: 88%;
   align-self: flex-start;
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: var(--fs-base);
+  line-height: 1.5;
+  color: var(--text);
   animation: fadeIn 0.3s ease-out;
 }
 .msg-user {
-  background: var(--accent);
-  color: white;
-  border-radius: 16px 16px 4px 16px;
-  padding: 14px 18px;
-  max-width: 85%;
+  background: var(--text);
+  color: var(--bg);
+  border-radius: 20px 20px 6px 20px;
+  padding: 12px 16px;
+  max-width: 88%;
   align-self: flex-end;
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: var(--fs-base);
+  line-height: 1.5;
   animation: fadeIn 0.3s ease-out;
 }
 
@@ -496,47 +484,47 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 14px 10px;
-  background: #FFFFFF;
+  padding: 13px 12px;
+  background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--text);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.2s ease, transform 0.15s ease;
   -webkit-tap-highlight-color: transparent;
   line-height: 1.3;
 }
-.quick-btn:hover, .quick-btn:active {
-  background: var(--accent-light);
-  border-color: var(--accent);
-}
+.quick-btn:hover { background: var(--surface); }
+.quick-btn:active { transform: scale(0.97); background: var(--surface); }
 .goto-btn {
   display: inline-block;
   padding: 10px 20px;
-  margin-top: 10px;
-  background: var(--accent);
-  color: white;
+  margin-top: 12px;
+  background: var(--text);
+  color: var(--bg);
   border: none;
-  border-radius: 10px;
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 13px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
   font-weight: 600;
+  letter-spacing: -0.01em;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: transform 0.15s ease, background 0.2s ease;
   -webkit-tap-highlight-color: transparent;
 }
-.goto-btn:active { opacity: 0.85; }
+.goto-btn:hover { background: #333; }
+.goto-btn:active { transform: scale(0.97); }
 
 .typing-indicator {
   display: flex;
   gap: 4px;
-  padding: 14px 18px;
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 16px 16px 16px 4px;
+  padding: 12px 16px;
+  background: var(--surface);
+  border: none;
+  border-radius: 20px 20px 20px 6px;
   align-self: flex-start;
   animation: fadeIn 0.2s ease-out;
 }
@@ -549,10 +537,12 @@ body {
 .typing-dot:nth-child(2) { animation-delay: 0.2s; }
 .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 
+/* Threads-style chat input: pill-shaped surface, no heavy border */
 .chat-input-wrap {
   display: flex;
   gap: 8px;
-  padding: 12px 16px;
+  align-items: center;
+  padding: 10px 14px;
   background: var(--bg);
   border-top: 1px solid var(--border);
   position: sticky;
@@ -561,31 +551,34 @@ body {
 }
 .chat-input {
   flex: 1;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 10px 16px;
-  font-size: 14px;
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  padding: 11px 18px;
+  font-size: var(--fs-base);
+  font-family: var(--font-sans);
+  letter-spacing: -0.01em;
   outline: none;
-  background: var(--bg);
+  background: var(--surface);
   color: var(--text);
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
-.chat-input:focus { border-color: var(--accent); }
+.chat-input:focus { background: var(--bg); border-color: var(--border-strong); }
 .chat-input::placeholder { color: var(--text3); }
 .chat-send {
-  width: 42px; height: 42px;
-  background: var(--accent);
+  width: 40px; height: 40px;
+  background: var(--text);
   border: none;
-  border-radius: 12px;
-  color: white;
+  border-radius: var(--radius-pill);
+  color: var(--bg);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: opacity 0.2s;
+  transition: transform 0.15s ease, background 0.2s ease;
 }
-.chat-send:active { opacity: 0.8; }
+.chat-send:hover { background: #333; }
+.chat-send:active { transform: scale(0.92); }
 .chat-send svg {
   width: 20px; height: 20px;
   fill: white;
@@ -622,7 +615,7 @@ body {
   -webkit-tap-highlight-color: transparent;
   padding: 0;
   text-align: left;
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans);
   color: var(--text);
 }
 .level-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.04); }
@@ -695,7 +688,7 @@ body {
   border-radius: var(--radius-sm);
   font-size: 14px;
   font-weight: 600;
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans);
   text-align: center;
   pointer-events: none;
 }
@@ -715,7 +708,7 @@ body {
   cursor: pointer;
   padding: 0;
   margin-bottom: 16px;
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans);
 }
 .module-item, .chapter-item {
   width: 100%;
@@ -730,7 +723,7 @@ body {
   align-items: center;
   gap: 12px;
   -webkit-tap-highlight-color: transparent;
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans);
   color: var(--text);
   text-align: left;
 }
@@ -937,7 +930,7 @@ body {
   line-height: 1.4;
 }
 .product-price {
-  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-family: var(--font-mono);
   font-size: 14px;
   font-weight: 500;
   color: var(--accent);
@@ -965,7 +958,7 @@ body {
   border-radius: var(--radius-sm);
   font-size: 14px;
   font-weight: 600;
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans);
   cursor: pointer;
   transition: opacity 0.2s;
   -webkit-tap-highlight-color: transparent;
@@ -1026,7 +1019,7 @@ body {
   border: none;
   cursor: pointer;
   padding: 16px 0;
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans);
 }
 
 /* Quick-check survey reuses step styles */
@@ -1136,7 +1129,7 @@ body {
   text-align: center;
   font-size: 14px;
   font-weight: 600;
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans);
   transition: all 0.2s;
   -webkit-tap-highlight-color: transparent;
 }
@@ -1154,7 +1147,7 @@ body {
   margin-bottom: 4px;
 }
 .qc-range-value {
-  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-family: var(--font-mono);
   font-weight: 500;
   color: var(--text);
 }
@@ -1189,7 +1182,7 @@ body {
   background: var(--bg);
   cursor: pointer;
   text-align: center;
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans);
   transition: all 0.2s;
   -webkit-tap-highlight-color: transparent;
 }
@@ -1230,7 +1223,7 @@ body {
   border-radius: var(--radius-sm);
   font-size: 15px;
   font-weight: 700;
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans);
   cursor: pointer;
   transition: opacity 0.2s;
   -webkit-tap-highlight-color: transparent;
@@ -1297,66 +1290,85 @@ body {
 .report-section {
   margin-bottom: 20px;
 }
+/* Threads-style section header: confident size, tight tracking */
 .report-section-title {
-  font-size: 16px;
+  font-size: var(--fs-lg);
   font-weight: 700;
-  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+  line-height: 1.2;
 }
+/* Cards: no border, no background. Hairline at bottom separates rows. */
 .report-card {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 16px;
-  margin-bottom: 10px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 14px 0;
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--border);
 }
+.report-card:last-child { border-bottom: none; }
 .report-card-label {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--text2);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  letter-spacing: 0;
 }
 .report-card-value {
-  font-family: 'Geist Mono', ui-monospace, monospace;
-  font-size: 20px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xl);
   font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 .report-card-value-green { color: var(--green); }
 .report-card-value-red { color: var(--red); }
-/* Status variants — full subtle border + tinted background, NO side stripes */
-.report-card--good {
-  border-color: color-mix(in oklch, var(--green) 30%, transparent);
-  background: color-mix(in oklch, var(--green) 6%, var(--bg));
-}
-.report-card--warn {
-  border-color: color-mix(in oklch, var(--amber) 30%, transparent);
-  background: color-mix(in oklch, var(--amber) 6%, var(--bg));
-}
-.report-card--bad {
-  border-color: color-mix(in oklch, var(--red) 30%, transparent);
-  background: color-mix(in oklch, var(--red) 6%, var(--bg));
-}
+/* Status variants — via colored tag only, no background on card */
+.report-card--good,
+.report-card--warn,
+.report-card--bad,
 .report-card--accent {
-  border-color: color-mix(in oklch, var(--accent) 30%, transparent);
-  background: color-mix(in oklch, var(--accent) 6%, var(--bg));
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0;
 }
 .report-card-tag {
-  display: inline-block;
-  font-family: 'Geist Mono', ui-monospace, monospace;
-  font-size: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 4px;
-  margin-bottom: 8px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 10px;
 }
-.report-card-tag--good { color: var(--green); background: color-mix(in oklch, var(--green) 12%, transparent); }
-.report-card-tag--warn { color: var(--amber); background: color-mix(in oklch, var(--amber) 12%, transparent); }
-.report-card-tag--bad  { color: var(--red); background: color-mix(in oklch, var(--red) 12%, transparent); }
-.report-card-tag--accent { color: var(--accent); background: var(--accent-light); }
+.report-card-tag--good    { color: var(--green); background: color-mix(in oklch, var(--green) 14%, transparent); }
+.report-card-tag--warn    { color: var(--amber); background: color-mix(in oklch, var(--amber) 14%, transparent); }
+.report-card-tag--bad     { color: var(--red);   background: color-mix(in oklch, var(--red) 14%, transparent); }
+.report-card-tag--accent  { color: var(--accent); background: var(--accent-subtle); }
 .report-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+}
+.report-row .report-card {
+  border-bottom: none;
+}
+.report-row .report-card:first-child {
+  border-right: 1px solid var(--border);
+  padding-right: 14px;
+}
+.report-row .report-card:last-child {
+  padding-left: 14px;
+}
+.report-section {
+  margin-bottom: 32px;
+  padding-bottom: 0;
 }
 
 .report-actions {
@@ -1367,18 +1379,22 @@ body {
 }
 .report-btn {
   width: 100%;
-  padding: 14px;
+  padding: 15px 20px;
   border: none;
-  border-radius: var(--radius-sm);
-  font-size: 14px;
+  border-radius: var(--radius);
+  font-size: var(--fs-base);
   font-weight: 600;
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans);
+  letter-spacing: -0.01em;
   cursor: pointer;
   text-align: center;
   -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s ease, background 0.2s ease;
 }
-.report-btn-primary { background: var(--accent); color: white; }
-.report-btn-outline { background: var(--bg); border: 1.5px solid var(--border); color: var(--text); }
+.report-btn:active { transform: scale(0.98); }
+.report-btn-primary { background: var(--text); color: var(--bg); }
+.report-btn-primary:hover { background: #333; }
+.report-btn-outline { background: transparent; border: 1px solid var(--border-strong); color: var(--text); }
 
 
 
@@ -1560,7 +1576,6 @@ body {
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
   </button>
   <img class="top-header-logo" src="assets/logo.png?v=2" alt="ZEREK">
-  <span style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-family:'Geist Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase">v.2026-04-15</span>
   <button class="top-header-cabinet" onclick="openCabinet()" aria-label="Открыть личный кабинет">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
   </button>
@@ -2943,7 +2958,7 @@ function exitQuickCheck() {
 function loadQcCities() {
   apiGet('/cities', function(err, resp) {
     if (err || !resp) {
-      document.getElementById('qc-steps').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text2)">Ошибка загрузки. <button onclick="loadQcCities()" style="color:var(--accent);background:none;border:none;font-weight:600;cursor:pointer;font-family:Geist">Повторить</button></div>';
+      document.getElementById('qc-steps').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text2)">Ошибка загрузки. <button onclick="loadQcCities()" style="color:var(--accent);background:none;border:none;font-weight:600;cursor:pointer;font-family:var(--font-sans)">Повторить</button></div>';
       return;
     }
     QC.cities = resp.cities || resp;
