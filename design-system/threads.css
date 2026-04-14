@@ -531,3 +531,45 @@ button, a.button, [role="button"] {
   color: #00BA7C !important;
   background: transparent !important;
 }
+
+/* Plashki/Pills/Tags — компактные, чтобы текст не тонул */
+.tag, .chip, .product-tag, .wiki-cat-pill, .quick-btn, .hdr-badge,
+[class*="tag"], [class*="chip"], [class*="filter"], .badge, .label {
+  padding: 4px 10px !important;
+  font-size: 12px !important;
+  min-height: 0 !important;
+  min-width: 0 !important;
+  line-height: 1.3 !important;
+  font-weight: 500 !important;
+}
+.quick-btn {
+  padding: 8px 14px !important;
+  font-size: 13px !important;
+}
+/* Badges на карточках минимальные */
+.product-badge-live, .level-badge {
+  padding: 3px 8px !important;
+  font-size: 10px !important;
+  letter-spacing: 0.5px !important;
+}
+
+/* Active tab — подсветка точкой снизу (Threads-style) */
+.tapbar .tab-btn {
+  position: relative !important;
+}
+.tapbar .tab-btn.active::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: 6px !important;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px !important;
+  height: 2px !important;
+  border-radius: 2px !important;
+  background: #F3F5F7 !important;
+  animation: tabBarSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes tabBarSlide {
+  from { opacity: 0; transform: translateX(-50%) scaleX(0); }
+  to { opacity: 1; transform: translateX(-50%) scaleX(1); }
+}

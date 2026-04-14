@@ -194,10 +194,19 @@ p { line-height: 1.5; }
   position: sticky;
   top: 0;
 }
-.top-header-logo {
-  height: 32px;
-  width: auto;
-  display: block;
+.top-header-brand {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text);
+  line-height: 1;
+  user-select: none;
+}
+.brand-accent {
+  font-weight: 400;
+  color: var(--text3);
+  margin-left: 1px;
 }
 .top-header-cabinet {
   width: 36px; height: 36px;
@@ -1536,34 +1545,14 @@ p { line-height: 1.5; }
   -webkit-tap-highlight-color: transparent;
 }
 
-/* ============================================
-   SPLASH SCREEN
-   ============================================ */
-.splash {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: var(--bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 0.6s, transform 0.4s;
-  overflow: hidden;
+/* Screen transition (tab switch) */
+.screen {
+  transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.splash.hide {
-  opacity: 0;
-  transform: scale(1.05);
-  pointer-events: none;
-}
-.splash-video {
-  width: 300px;
-  height: 300px;
-  object-fit: contain;
-  border-radius: 24px;
-}
+.screen.entering { opacity: 0; transform: translateY(6px); }
+.screen.active { opacity: 1; transform: translateY(0); }
 </style>
 <link rel="manifest" href="../manifest.json">
-<meta name="theme-color" content="#7C6CFF">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="ZEREK">
@@ -1572,18 +1561,12 @@ p { line-height: 1.5; }
 <body>
 
 <!-- SPLASH -->
-<div class="splash" id="splash">
-  <video class="splash-video" id="splashVideo" autoplay muted playsinline preload="metadata" aria-hidden="true">
-    <source src="assets/splash.mp4?v=2" type="video/mp4">
-  </video>
-</div>
-
-<!-- TOP HEADER with logo -->
+<!-- TOP HEADER -->
 <header class="top-header" role="banner">
   <button class="chat-float-btn" id="chat-float-btn" onclick="openChatOverlay()" aria-label="Открыть AI-чат">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
   </button>
-  <img class="top-header-logo" src="assets/logo.png?v=2" alt="ZEREK">
+  <div class="top-header-brand">ZEREK<span class="brand-accent">ai</span></div>
   <button class="top-header-cabinet" onclick="openCabinet()" aria-label="Открыть личный кабинет">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
   </button>
@@ -1638,12 +1621,12 @@ p { line-height: 1.5; }
   </div>
   <div class="chat-input-wrap">
     <label for="chat-input" class="visually-hidden">Сообщение</label>
-    <input class="chat-input" id="chat-input" type="text" placeholder="Спроси что угодно..." autocomplete="off" aria-label="Введите сообщение">
+    <input class="chat-input" id="chat-input" type="text" placeholder="Есть вопросы?" autocomplete="off" aria-label="Введите сообщение">
     <button class="voice-btn" id="voice-btn" onclick="toggleVoice()" aria-label="Голосовой ввод" aria-pressed="false">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
     </button>
     <button class="chat-send" onclick="sendMessage()" aria-label="Отправить сообщение">
-      <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
     </button>
   </div>
 </div>
@@ -1654,12 +1637,11 @@ p { line-height: 1.5; }
 <div class="screen" id="screen-academy">
   <div class="screen-content" id="academy-main">
     <div class="screen-title">ZEREK Academy</div>
-    <div class="screen-subtitle">Бесплатное обучение финграмотности и бизнесу</div>
+    <div class="screen-subtitle">Обучение финграмотности и бизнесу</div>
 
     <button class="level-card" id="level-fund" type="button">
       <div class="level-stripe level-stripe-gold"></div>
       <div class="level-card-body">
-        <div class="level-badge">БЕСПЛАТНО</div>
         <div class="level-name">Фундамент</div>
         <div class="level-age">12–15 лет</div>
         <div class="level-desc">Финансовая грамотность с нуля</div>
@@ -1674,7 +1656,6 @@ p { line-height: 1.5; }
     <button class="level-card" id="level-arch" type="button">
       <div class="level-stripe level-stripe-teal"></div>
       <div class="level-card-body">
-        <div class="level-badge">БЕСПЛАТНО</div>
         <div class="level-name">Архитектор</div>
         <div class="level-age">16+</div>
         <div class="level-desc">Стартап-мышление и предпринимательство</div>
@@ -1791,83 +1772,45 @@ p { line-height: 1.5; }
 
     <!-- Product 1: Quick Check -->
     <div class="product-card">
-      <span class="product-badge-live badge-live">LIVE</span>
       <div class="product-card-top">
         <div class="product-icon-wrap">
           <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
         </div>
         <div class="product-info">
           <div class="product-name">Экспресс-оценка</div>
-          <div class="product-desc">Проверка бизнес-идеи за 2 минуты. Инвестиции, окупаемость, риски.</div>
+          <div class="product-desc">Оценим ваш проект с учётом конкретных данных.</div>
         </div>
         <div class="product-price">3 000 ₸</div>
-      </div>
-      <div class="product-tags">
-        <span class="product-tag">33 ниши</span>
-        <span class="product-tag">14 городов</span>
-        <span class="product-tag">2 минуты</span>
       </div>
       <button class="product-cta product-cta-primary" onclick="startQuickCheck()">Пройти экспресс-оценку →</button>
     </div>
 
     <!-- Product 2: Finmodel -->
     <div class="product-card">
-      <span class="product-badge-live badge-live">LIVE</span>
       <div class="product-card-top">
         <div class="product-icon-wrap">
           <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
         </div>
         <div class="product-info">
           <div class="product-name">Финансовая модель</div>
-          <div class="product-desc">Excel-файл с прогнозом на 36 месяцев. Доходы, расходы, Cash Flow.</div>
+          <div class="product-desc">Профессиональная расчётная модель на основе многих параметров.</div>
         </div>
         <div class="product-price">9 000 ₸</div>
-      </div>
-      <div class="product-tags">
-        <span class="product-tag">Excel 36 мес</span>
-        <span class="product-tag">P&L</span>
-        <span class="product-tag">Cash Flow</span>
       </div>
       <button class="product-cta product-cta-primary" onclick="goToChat('Хочу заказать финансовую модель')">Заказать финмодель →</button>
     </div>
 
-    <!-- Product 3: Business Plan -->
+    <!-- Product 3: Business Plan + Presentation -->
     <div class="product-card">
-      <span class="product-badge-live badge-soon">СКОРО</span>
       <div class="product-card-top">
         <div class="product-icon-wrap">
           <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
         </div>
         <div class="product-info">
-          <div class="product-name">Бизнес-план</div>
-          <div class="product-desc">Полный бизнес-план + грантовая заявка (Бастау Бизнес).</div>
+          <div class="product-name">Бизнес-план + Презентация</div>
+          <div class="product-desc">Заполненный документ для банков, комиссий, инвесторов.</div>
         </div>
         <div class="product-price">15 000 ₸</div>
-      </div>
-      <div class="product-tags">
-        <span class="product-tag">Бастау Бизнес</span>
-        <span class="product-tag">400 МРП</span>
-        <span class="product-tag">DOCX</span>
-      </div>
-      <button class="product-cta product-cta-disabled">Скоро →</button>
-    </div>
-
-    <!-- Product 4: Pitch Deck -->
-    <div class="product-card">
-      <span class="product-badge-live badge-soon">СКОРО</span>
-      <div class="product-card-top">
-        <div class="product-icon-wrap">
-          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-        </div>
-        <div class="product-info">
-          <div class="product-name">Презентация</div>
-          <div class="product-desc">Pitch Deck для инвесторов и грантовых комиссий.</div>
-        </div>
-        <div class="product-price">—</div>
-      </div>
-      <div class="product-tags">
-        <span class="product-tag">PDF/PPTX</span>
-        <span class="product-tag">10-15 слайдов</span>
       </div>
       <button class="product-cta product-cta-disabled">Скоро →</button>
     </div>
@@ -1933,12 +1876,12 @@ p { line-height: 1.5; }
     <!-- shared messages rendered by JS -->
   </div>
   <div class="chat-input-wrap">
-    <input class="chat-input" id="chat-input-overlay" type="text" placeholder="Спроси что угодно..." autocomplete="off">
+    <input class="chat-input" id="chat-input-overlay" type="text" placeholder="Есть вопросы?" autocomplete="off">
     <button class="voice-btn" id="voice-btn-overlay" onclick="toggleVoice()">
       <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
     </button>
     <button class="chat-send" onclick="sendMessageOverlay()">
-      <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
     </button>
   </div>
 </div>
@@ -1952,7 +1895,7 @@ p { line-height: 1.5; }
     <span>Академия</span>
   </button>
   <button class="tab-btn" data-tab="cases" onclick="switchTab('cases')" role="tab" aria-controls="screen-cases" aria-selected="false">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg>
     <span>Кейсы</span>
   </button>
   <button class="tab-btn tab-center active" data-tab="chat" onclick="switchTab('chat')" role="tab" aria-controls="screen-chat" aria-selected="true">
@@ -2084,8 +2027,17 @@ function switchTab(tabId) {
   var screens = document.querySelectorAll('.screen');
   for (var i = 0; i < screens.length; i++) {
     screens[i].classList.remove('active');
+    screens[i].classList.remove('entering');
   }
-  document.getElementById('screen-' + tabId).classList.add('active');
+  var next = document.getElementById('screen-' + tabId);
+  next.classList.add('entering');
+  /* Double RAF to guarantee paint before transition */
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      next.classList.add('active');
+      next.classList.remove('entering');
+    });
+  });
 
   var tabs = document.querySelectorAll('.tab-btn');
   for (var i = 0; i < tabs.length; i++) {
@@ -2163,8 +2115,29 @@ function closeCabinet() {
 var chatHistory = [];
 
 function initChat() {
-  var msg = 'Привет! Я ZEREK.\nЯ не инфоцыган и не кричу про \u00ABуспешный успех\u00BB.\nПоказываю реальность.\nЗдесь \u2014 обучение бизнесу для тех, кому не дали этого ни в школе, ни в универе.\nОбзоры рынка без розовых очков.\nИ расчёты, которые покажут правду до того, как ты вложишь деньги.\nОт первого урока \u00ABоткуда взялись деньги\u00BB \u2014 до акулы бизнеса.\nВся цепочка.\n\nНачнём?';
-  addAiMessage(msg, true);
+  var msg = 'Привет! Я ZEREK.\nПоказываю реальность без розовых очков.\nОбучение, обзоры рынка и расчёты, которые покажут правду до того, как ты вложишь деньги.';
+  addAiMessage(msg, false);
+}
+
+/* Suggestion chips — shown on input focus (like ChatGPT) */
+function showSuggestions() {
+  var container = document.getElementById('chat-messages');
+  if (!container) return;
+  if (document.getElementById('chat-suggestions')) return;
+  var wrap = document.createElement('div');
+  wrap.className = 'quick-actions';
+  wrap.id = 'chat-suggestions';
+  wrap.innerHTML =
+    '<button class="quick-btn" onclick="sendQuick(\'Хочу учиться\')">Хочу учиться</button>' +
+    '<button class="quick-btn" onclick="sendQuick(\'Оценить открытие бизнеса\')">Оценить открытие бизнеса</button>' +
+    '<button class="quick-btn" onclick="sendQuick(\'Чужие грабли\')">Чужие грабли</button>' +
+    '<button class="quick-btn" onclick="sendQuick(\'Обзоры рынка\')">Обзоры рынка</button>';
+  container.appendChild(wrap);
+  scrollChat();
+}
+function hideSuggestions() {
+  var el = document.getElementById('chat-suggestions');
+  if (el) el.remove();
 }
 
 function addAiMessage(text, withQuickActions) {
@@ -2302,7 +2275,7 @@ function sendQuick(text) {
   var gotoBtn = '';
 
   if (text === 'Хочу учиться') {
-    response = 'ZEREK Academy \u2014 бесплатное обучение бизнесу.\n\nФундамент (12\u201315 лет) \u2014 финграмотность с нуля: откуда берутся деньги, как они работают, как не попасть на уловки.\n\nАрхитектор (16+) \u2014 от идеи до запуска: бизнес-модель, MVP, маркетинг, команда.\n\nЕсли что-то непонятно \u2014 всегда можешь спросить у меня прямо по ходу урока.';
+    response = 'ZEREK Academy \u2014 обучение бизнесу.\n\nФундамент (12\u201315 лет) \u2014 финграмотность с нуля: откуда берутся деньги, как они работают, как не попасть на уловки.\n\nАрхитектор (16+) \u2014 от идеи до запуска: бизнес-модель, MVP, маркетинг, команда.\n\nЕсли что-то непонятно \u2014 всегда можешь спросить у меня прямо по ходу урока.';
     gotoBtn = '<button class="goto-btn" onclick="switchTab(\'academy\')">Перейти в Академию \u2192</button>';
   } else if (text === 'Оценить открытие бизнеса') {
     response = 'Ответишь мне на несколько вопросов по своей идее, а я покажу вложения, выручку, окупаемость и риски.\n\nОбсудим результат вместе.\n\nЕсли уже знаешь свои параметры \u2014 можем рассчитать полноценную финансовую модель на 60 месяцев: P&L, Cash Flow, точка безубыточности, кредитный калькулятор. На выходе \u2014 файл, с которым можно идти в банк.';
@@ -2311,7 +2284,7 @@ function sendQuick(text) {
     response = 'Реальные истории \u2014 почему закрылись и почему выжили.\n\nНе мотивация, а разбор: что пошло не так и как этого избежать.\n\nНа чужих граблях учиться дешевле.';
     gotoBtn = '<button class="goto-btn" onclick="switchTab(\'cases\')">Читать кейсы \u2192</button>';
   } else if (text === 'Обзоры рынка') {
-    response = '50 ниш малого бизнеса Казахстана, от кофейни до автосервиса.\n\nСколько вложить, сколько заработаешь, сколько конкурентов, какие подводные камни.\n\nНа основе реального опыта предпринимателей, консалтинговой команды и огромной базы данных.\n\nБесплатно.';
+    response = 'Обзоры ниш малого бизнеса Казахстана.\n\nСколько вложить, сколько заработаешь, сколько конкурентов, какие подводные камни.\n\nНа основе реального опыта предпринимателей, консалтинговой команды и большой базы данных.';
     gotoBtn = '<button class="goto-btn" onclick="switchTab(\'wiki\')">Смотреть обзоры \u2192</button>';
   }
 
@@ -2833,9 +2806,8 @@ function renderWikiList() {
     var n = niches[i];
     html += '<div class="wiki-item" onclick="openWiki(\'' + n.file + '\')">' +
       '<div class="wiki-item-icon">' + n.icon + '</div>' +
-      '<div class="wiki-item-info"><div class="wiki-item-name">' + n.name + '</div>' +
-      '<span class="wiki-item-badge badge-live">LIVE</span></div>' +
-      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+      '<div class="wiki-item-info"><div class="wiki-item-name">' + n.name + '</div></div>' +
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>' +
       '</div>';
   }
   container.innerHTML = html;
@@ -3473,7 +3445,14 @@ function init() {
       el.scrollIntoView({ block: 'center', behavior: 'smooth' });
     }, 300);
   }
-  document.getElementById('chat-input').addEventListener('focus', function() { ensureInputVisible(this); });
+  document.getElementById('chat-input').addEventListener('focus', function() {
+    ensureInputVisible(this);
+    if (!this.value.trim()) showSuggestions();
+  });
+  document.getElementById('chat-input').addEventListener('input', function() {
+    if (this.value.trim()) hideSuggestions();
+    else showSuggestions();
+  });
   document.getElementById('chat-input-overlay').addEventListener('focus', function() { ensureInputVisible(this); });
 
   // Academy
@@ -3497,32 +3476,6 @@ function init() {
 
 document.addEventListener('DOMContentLoaded', init);
 
-/* Splash screen */
-(function(){
-  var sp = document.getElementById('splash');
-  if (!sp) return;
-  // Skip splash if returning from sub-page (?tab=)
-  var fromBack = false;
-  try { fromBack = new URLSearchParams(location.search).has('tab'); } catch(e) {}
-  if (fromBack) {
-    sp.style.display = 'none';
-    return;
-  }
-  var vid = document.getElementById('splashVideo');
-  var hidden = false;
-  function hide() {
-    if (hidden) return;
-    hidden = true;
-    sp.classList.add('hide');
-    setTimeout(function(){ sp.style.display = 'none'; }, 700);
-  }
-  if (vid) {
-    vid.addEventListener('ended', hide);
-    vid.addEventListener('error', hide);
-    vid.play().catch(hide);
-  }
-  setTimeout(hide, 3000);
-})();
 </script>
 <script>
 /* Force-clear old SW + caches, then re-register fresh */
