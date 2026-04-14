@@ -109,25 +109,66 @@ button, [role="button"], input, select, [tabindex="0"] {
   min-width: 44px;
 }
 
+html, body {
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
 body {
   font-family: var(--font-sans);
-  font-size: var(--fs-base);
+  font-size: 15px;
+  font-weight: 400;
   background: var(--bg);
   color: var(--text);
-  line-height: 1.45;
-  letter-spacing: -0.01em;
-  max-width: 480px;
-  margin: 0 auto;
+  line-height: 1.35;
+  letter-spacing: -0.1px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
-  min-height: 100vh;
-  padding-top: env(safe-area-inset-top, 0px);
-  padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
 }
-h1, h2, h3, h4 { letter-spacing: -0.02em; line-height: 1.15; font-weight: 700; }
-p { line-height: 1.5; }
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  max-width: 480px;
+  margin: 0 auto;
+  overflow: hidden;
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.app-main {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+}
+/* When chat tab is active, switch to flex-column with fixed input */
+.app-main.chat-mode {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.app-main.chat-mode .chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+.app-main.chat-mode .chat-input-wrap {
+  flex-shrink: 0;
+  position: static;
+}
+
+h1, h2, h3, h4 { letter-spacing: -0.3px; line-height: 1.2; font-weight: 700; }
+h1 { font-size: 22px; }
+h2 { font-size: 20px; }
+h3 { font-size: 17px; }
+h4 { font-size: 15px; }
+p { line-height: 1.4; font-weight: 400; }
 
 /* ============================================
    ANIMATIONS
@@ -186,19 +227,18 @@ p { line-height: 1.5; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: 0 16px;
+  height: 56px;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
   z-index: 90;
   flex-shrink: 0;
-  position: sticky;
-  top: 0;
 }
 .top-header-brand {
   font-family: var(--font-sans);
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
   color: var(--text);
   line-height: 1;
   user-select: none;
@@ -237,10 +277,10 @@ p { line-height: 1.5; }
    ============================================ */
 /* Threads-style tabbar: white bg, hairline top, line icons, no labels on active state */
 .tapbar {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
+  position: relative;
   height: 56px;
   background: rgba(255, 255, 255, 0.92);
+  flex-shrink: 0;
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-top: 1px solid var(--border);
@@ -249,8 +289,6 @@ p { line-height: 1.5; }
   justify-content: space-around;
   padding-bottom: env(safe-area-inset-bottom, 0);
   z-index: 100;
-  max-width: 480px;
-  margin: 0 auto;
 }
 .tab-btn {
   display: flex;
@@ -1560,7 +1598,8 @@ p { line-height: 1.5; }
 </head>
 <body>
 
-<!-- SPLASH -->
+<div class="app-container">
+
 <!-- TOP HEADER -->
 <header class="top-header" role="banner">
   <button class="chat-float-btn" id="chat-float-btn" onclick="openChatOverlay()" aria-label="Открыть AI-чат">
@@ -1571,6 +1610,8 @@ p { line-height: 1.5; }
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
   </button>
 </header>
+
+<main class="app-main" id="app-main">
 
 <!-- ============================================
      CABINET OVERLAY
@@ -1889,6 +1930,8 @@ p { line-height: 1.5; }
 <!-- ============================================
      TAP BAR
      ============================================ -->
+</main>
+
 <nav class="tapbar" role="tablist" aria-label="Навигация по разделам">
   <button class="tab-btn" data-tab="academy" onclick="switchTab('academy')" role="tab" aria-controls="screen-academy" aria-selected="false">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1 2 3 6 3s6-2 6-3v-5"/></svg>
@@ -2024,6 +2067,12 @@ var currentTab = 'chat';
 function switchTab(tabId) {
   if (currentTab === tabId) return;
   currentTab = tabId;
+  var main = document.getElementById('app-main');
+  if (main) {
+    if (tabId === 'chat') main.classList.add('chat-mode');
+    else main.classList.remove('chat-mode');
+    main.scrollTop = 0;
+  }
   var screens = document.querySelectorAll('.screen');
   for (var i = 0; i < screens.length; i++) {
     screens[i].classList.remove('active');
@@ -2031,7 +2080,6 @@ function switchTab(tabId) {
   }
   var next = document.getElementById('screen-' + tabId);
   next.classList.add('entering');
-  /* Double RAF to guarantee paint before transition */
   requestAnimationFrame(function() {
     requestAnimationFrame(function() {
       next.classList.add('active');
@@ -2115,8 +2163,25 @@ function closeCabinet() {
 var chatHistory = [];
 
 function initChat() {
-  var msg = 'Привет! Я ZEREK.\nПоказываю реальность без розовых очков.\nОбучение, обзоры рынка и расчёты, которые покажут правду до того, как ты вложишь деньги.';
-  addAiMessage(msg, false);
+  renderWelcome();
+}
+
+/* Welcome block (no card, centered text) — shown when chat is empty */
+function renderWelcome() {
+  var container = document.getElementById('chat-messages');
+  if (!container) return;
+  if (document.getElementById('welcome-text')) return;
+  var el = document.createElement('div');
+  el.id = 'welcome-text';
+  el.className = 'welcome-text';
+  el.innerHTML = '<strong>Привет! Я ZEREK</strong>'
+    + 'Показываю реальность без розовых очков.<br><br>'
+    + 'Обучение, обзоры рынка и расчёты, которые покажут правду до того, как ты вложишь деньги.';
+  container.appendChild(el);
+}
+function removeWelcome() {
+  var el = document.getElementById('welcome-text');
+  if (el) el.remove();
 }
 
 /* Suggestion chips — shown on input focus (like ChatGPT) */
@@ -2223,6 +2288,13 @@ function sendMessage() {
   if (!text) return;
   input.value = '';
 
+  /* Hide send arrow + suggestions + welcome */
+  var sendBtn = document.querySelector('#screen-chat .chat-send');
+  if (sendBtn) sendBtn.classList.remove('visible');
+  var wrap = document.querySelector('#screen-chat .chat-input-wrap');
+  if (wrap) wrap.classList.remove('chat-input-has-text');
+  removeWelcome();
+
   var qas = document.querySelectorAll('.quick-actions');
   for (var i = 0; i < qas.length; i++) qas[i].remove();
 
@@ -2265,6 +2337,7 @@ function sendMessage() {
 }
 
 function sendQuick(text) {
+  removeWelcome();
   var qas = document.querySelectorAll('.quick-actions');
   for (var i = 0; i < qas.length; i++) qas[i].remove();
   addUserMessage(text);
@@ -3427,6 +3500,9 @@ function renderQcReport(r) {
    ============================================ */
 function init() {
   initTelegram();
+  /* Set chat-mode on app-main since chat is the default active tab */
+  var main = document.getElementById('app-main');
+  if (main) main.classList.add('chat-mode');
   initChat();
   initVoice();
   renderWiki();
@@ -3445,14 +3521,27 @@ function init() {
       el.scrollIntoView({ block: 'center', behavior: 'smooth' });
     }, 300);
   }
-  document.getElementById('chat-input').addEventListener('focus', function() {
+  var chatInput = document.getElementById('chat-input');
+  var sendBtn = document.querySelector('#screen-chat .chat-send');
+  var inputWrap = document.querySelector('#screen-chat .chat-input-wrap');
+  function toggleSend() {
+    var has = chatInput.value.trim().length > 0;
+    if (sendBtn) sendBtn.classList.toggle('visible', has);
+    if (inputWrap) inputWrap.classList.toggle('chat-input-has-text', has);
+  }
+  chatInput.addEventListener('focus', function() {
     ensureInputVisible(this);
     if (!this.value.trim()) showSuggestions();
   });
-  document.getElementById('chat-input').addEventListener('input', function() {
+  chatInput.addEventListener('blur', function() {
+    setTimeout(hideSuggestions, 200);
+  });
+  chatInput.addEventListener('input', function() {
+    toggleSend();
     if (this.value.trim()) hideSuggestions();
     else showSuggestions();
   });
+  toggleSend();
   document.getElementById('chat-input-overlay').addEventListener('focus', function() { ensureInputVisible(this); });
 
   // Academy
@@ -3498,5 +3587,7 @@ if ('serviceWorker' in navigator) {
 }
 
 </script>
+
+</div><!-- /.app-container -->
 </body>
 </html>

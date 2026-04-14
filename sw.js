@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zerek-v5-threads-polish';
+const CACHE_NAME = 'zerek-v6-chat-layout';
 
 self.addEventListener('install', function(e) {
   self.skipWaiting();
