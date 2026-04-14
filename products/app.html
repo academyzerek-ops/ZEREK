@@ -146,7 +146,7 @@ body {
    ============================================ */
 .screen {
   display: none;
-  min-height: calc(100vh - 64px - env(safe-area-inset-bottom, 0px));
+  min-height: calc(var(--vh, 100dvh) - 64px - env(safe-area-inset-bottom, 0px));
   animation: fadeIn 0.3s ease-out;
 }
 .screen.active { display: block; }
@@ -438,7 +438,8 @@ body {
 #screen-chat.active {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 64px - env(safe-area-inset-bottom, 0px));
+  height: calc(var(--vh, 100dvh) - 64px - env(safe-area-inset-bottom, 0px));
+  position: relative;
 }
 
 .chat-messages {
@@ -554,6 +555,9 @@ body {
   padding: 12px 16px;
   background: var(--bg);
   border-top: 1px solid var(--border);
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
 }
 .chat-input {
   flex: 1;
@@ -1961,9 +1965,32 @@ function initTelegram() {
       if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
         tgUser = tg.initDataUnsafe.user;
       }
+      /* Subscribe to viewport changes (keyboard open/close) — set --vh CSS var */
+      function updateVh() {
+        var h = tg.viewportStableHeight || tg.viewportHeight || window.innerHeight;
+        document.documentElement.style.setProperty('--vh', h + 'px');
+      }
+      updateVh();
+      if (tg.onEvent) tg.onEvent('viewportChanged', updateVh);
     }
   } catch(e) {}
 }
+
+/* Fallback for browsers outside Telegram: use visualViewport */
+(function() {
+  if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.viewportHeight) return;
+  function updateVhFallback() {
+    var h = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+    document.documentElement.style.setProperty('--vh', h + 'px');
+  }
+  updateVhFallback();
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', updateVhFallback);
+    window.visualViewport.addEventListener('scroll', updateVhFallback);
+  }
+  window.addEventListener('resize', updateVhFallback);
+  window.addEventListener('orientationchange', updateVhFallback);
+})();
 
 /* ============================================
    API CONFIG
@@ -3415,6 +3442,16 @@ function init() {
   document.getElementById('chat-input-overlay').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') { e.preventDefault(); sendMessageOverlay(); }
   });
+  /* Scroll input into view when keyboard opens */
+  function ensureInputVisible(el) {
+    setTimeout(function() {
+      var container = document.getElementById('chat-messages');
+      if (container) container.scrollTop = container.scrollHeight;
+      el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }, 300);
+  }
+  document.getElementById('chat-input').addEventListener('focus', function() { ensureInputVisible(this); });
+  document.getElementById('chat-input-overlay').addEventListener('focus', function() { ensureInputVisible(this); });
 
   // Academy
   document.getElementById('level-fund').addEventListener('click', function(e) {
