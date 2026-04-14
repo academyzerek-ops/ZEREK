@@ -573,3 +573,77 @@ button, a.button, [role="button"] {
   from { opacity: 0; transform: translateX(-50%) scaleX(0); }
   to { opacity: 1; transform: translateX(-50%) scaleX(1); }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   Thin list items (Academy modules/chapters, Wiki niches)
+   — текст крупнее, плашки тоньше, больше воздуха но без «купанья»
+   ══════════════════════════════════════════════════════════════ */
+
+/* Academy: модули и главы — строки-ряды, а не огромные карточки */
+.module-item, .chapter-item, .wiki-item {
+  padding: 12px 14px !important;
+  margin-bottom: 6px !important;
+  min-height: 0 !important;
+  gap: 12px !important;
+  border-radius: 12px !important;
+  background: #181818 !important;
+  border: 1px solid #2B2B2B !important;
+}
+
+/* Названия крупнее, чтобы не тонули */
+.module-name, .chapter-item .module-name, .wiki-item-name {
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+  letter-spacing: -0.2px;
+}
+.module-chapters, .chapter-item .module-chapters {
+  font-size: 12px !important;
+  color: #999 !important;
+}
+
+/* Nummern/icons тоньше */
+.module-num {
+  width: 28px !important;
+  height: 28px !important;
+  font-size: 13px !important;
+  background: #252525 !important;
+  color: #F3F5F7 !important;
+  border-radius: 8px !important;
+}
+.wiki-item-icon {
+  width: 32px !important;
+  height: 32px !important;
+  font-size: 18px !important;
+  border-radius: 8px !important;
+  background: #252525 !important;
+}
+
+/* Product cards — убрать border (цены наезжали на обрамление) */
+.product-card, .product-card[class*="product"] {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid #2B2B2B !important;
+  border-radius: 0 !important;
+  padding: 16px 0 !important;
+  margin-bottom: 0 !important;
+}
+.product-card:last-child { border-bottom: none !important; }
+
+/* Chat screen height fix — ensure messages area is scrollable, не overflow window */
+#screen-chat.active {
+  height: calc(var(--vh, 100dvh) - 56px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+.chat-messages {
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  min-height: 0 !important;
+}
+.chat-input-wrap {
+  flex-shrink: 0 !important;
+}

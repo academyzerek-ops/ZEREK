@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zerek-v4-threads-dark';
+const CACHE_NAME = 'zerek-v5-threads-polish';
 
 self.addEventListener('install', function(e) {
   self.skipWaiting();
