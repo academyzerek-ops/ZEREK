@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>ZEREK — AI-платформа</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root {
@@ -30,8 +31,50 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+/* Visually hidden for screen-readers only */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Global focus state (keyboard users) */
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Minimum touch target for interactive controls */
+button, [role="button"], input, select, [tabindex="0"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+/* Exception for compact icon buttons inside tight layouts — still need tap area via padding */
+.voice-btn, .chat-send, .cabinet-close, .ai-close, .chat-float-btn {
+  min-height: 44px;
+  min-width: 44px;
+}
+
 body {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.5;
@@ -200,7 +243,7 @@ body {
 .tab-btn span {
   font-size: 10px;
   font-weight: 600;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
   transition: color 0.25s;
 }
 .tab-btn.active {
@@ -350,9 +393,12 @@ body {
 }
 .cabinet-progress-fill {
   height: 100%;
+  width: 100%;
   background: var(--accent);
   border-radius: 3px;
-  transition: width 0.4s;
+  transform-origin: left center;
+  transform: scaleX(var(--p, 0));
+  transition: transform 0.4s ease;
 }
 .cabinet-progress-text {
   font-size: 11px;
@@ -371,7 +417,7 @@ body {
   background: none;
   width: 100%;
   text-align: left;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 /* ============================================
@@ -441,7 +487,7 @@ body {
   background: #FFFFFF;
   border: 1px solid var(--border);
   border-radius: 12px;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 13px;
   font-weight: 600;
   color: var(--accent);
@@ -462,7 +508,7 @@ body {
   color: white;
   border: none;
   border-radius: 10px;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -503,7 +549,7 @@ body {
   border-radius: 12px;
   padding: 10px 16px;
   font-size: 14px;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
   outline: none;
   background: var(--bg);
   color: var(--text);
@@ -560,7 +606,7 @@ body {
   -webkit-tap-highlight-color: transparent;
   padding: 0;
   text-align: left;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
   color: var(--text);
 }
 .level-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
@@ -568,12 +614,8 @@ body {
 .level-stripe {
   height: 3px;
 }
-.level-stripe-gold {
-  background: linear-gradient(90deg, #F5D547, #E94B8A);
-}
-.level-stripe-teal {
-  background: linear-gradient(90deg, #3CC8D9, #8B5CF6);
-}
+.level-stripe-gold { background: var(--green); }
+.level-stripe-teal { background: var(--accent); }
 .level-card-body {
   padding: 20px;
 }
@@ -613,11 +655,14 @@ body {
 }
 .level-progress-fill {
   height: 100%;
+  width: 100%;
   border-radius: 3px;
-  transition: width 0.4s;
+  transform-origin: left center;
+  transform: scaleX(var(--p, 0));
+  transition: transform 0.4s ease;
 }
-.level-progress-fill-gold { background: linear-gradient(90deg, #F5D547, #E94B8A); }
-.level-progress-fill-teal { background: linear-gradient(90deg, #3CC8D9, #8B5CF6); }
+.level-progress-fill-gold { background: var(--amber); }
+.level-progress-fill-teal { background: var(--accent); }
 .level-progress-text {
   font-size: 12px;
   color: var(--text3);
@@ -634,7 +679,7 @@ body {
   border-radius: var(--radius-sm);
   font-size: 14px;
   font-weight: 600;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
   text-align: center;
   pointer-events: none;
 }
@@ -654,7 +699,7 @@ body {
   cursor: pointer;
   padding: 0;
   margin-bottom: 16px;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 .module-item, .chapter-item {
   width: 100%;
@@ -669,7 +714,7 @@ body {
   align-items: center;
   gap: 12px;
   -webkit-tap-highlight-color: transparent;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
   color: var(--text);
   text-align: left;
 }
@@ -876,7 +921,7 @@ body {
   line-height: 1.4;
 }
 .product-price {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Geist Mono', ui-monospace, monospace;
   font-size: 14px;
   font-weight: 500;
   color: var(--accent);
@@ -904,7 +949,7 @@ body {
   border-radius: var(--radius-sm);
   font-size: 14px;
   font-weight: 600;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
   cursor: pointer;
   transition: opacity 0.2s;
   -webkit-tap-highlight-color: transparent;
@@ -965,7 +1010,7 @@ body {
   border: none;
   cursor: pointer;
   padding: 16px 0;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 /* Quick-check survey reuses step styles */
@@ -978,9 +1023,12 @@ body {
 }
 .qc-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  width: 100%;
+  background: var(--accent);
   border-radius: 2px;
-  transition: width 0.4s;
+  transform-origin: left center;
+  transform: scaleX(var(--p, 0.166));
+  transition: transform 0.4s ease;
 }
 .qc-progress-text {
   display: flex;
@@ -1072,7 +1120,7 @@ body {
   text-align: center;
   font-size: 14px;
   font-weight: 600;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
   transition: all 0.2s;
   -webkit-tap-highlight-color: transparent;
 }
@@ -1090,7 +1138,7 @@ body {
   margin-bottom: 4px;
 }
 .qc-range-value {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Geist Mono', ui-monospace, monospace;
   font-weight: 500;
   color: var(--text);
 }
@@ -1125,7 +1173,7 @@ body {
   background: var(--bg);
   cursor: pointer;
   text-align: center;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
   transition: all 0.2s;
   -webkit-tap-highlight-color: transparent;
 }
@@ -1166,7 +1214,7 @@ body {
   border-radius: var(--radius-sm);
   font-size: 15px;
   font-weight: 700;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
   cursor: pointer;
   transition: opacity 0.2s;
   -webkit-tap-highlight-color: transparent;
@@ -1240,6 +1288,7 @@ body {
 }
 .report-card {
   background: var(--bg2);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 16px;
   margin-bottom: 10px;
@@ -1250,12 +1299,44 @@ body {
   margin-bottom: 4px;
 }
 .report-card-value {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Geist Mono', ui-monospace, monospace;
   font-size: 20px;
   font-weight: 500;
 }
 .report-card-value-green { color: var(--green); }
 .report-card-value-red { color: var(--red); }
+/* Status variants — full subtle border + tinted background, NO side stripes */
+.report-card--good {
+  border-color: color-mix(in oklch, var(--green) 30%, transparent);
+  background: color-mix(in oklch, var(--green) 6%, var(--bg));
+}
+.report-card--warn {
+  border-color: color-mix(in oklch, var(--amber) 30%, transparent);
+  background: color-mix(in oklch, var(--amber) 6%, var(--bg));
+}
+.report-card--bad {
+  border-color: color-mix(in oklch, var(--red) 30%, transparent);
+  background: color-mix(in oklch, var(--red) 6%, var(--bg));
+}
+.report-card--accent {
+  border-color: color-mix(in oklch, var(--accent) 30%, transparent);
+  background: color-mix(in oklch, var(--accent) 6%, var(--bg));
+}
+.report-card-tag {
+  display: inline-block;
+  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+.report-card-tag--good { color: var(--green); background: color-mix(in oklch, var(--green) 12%, transparent); }
+.report-card-tag--warn { color: var(--amber); background: color-mix(in oklch, var(--amber) 12%, transparent); }
+.report-card-tag--bad  { color: var(--red); background: color-mix(in oklch, var(--red) 12%, transparent); }
+.report-card-tag--accent { color: var(--accent); background: var(--accent-light); }
 .report-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1275,7 +1356,7 @@ body {
   border-radius: var(--radius-sm);
   font-size: 14px;
   font-weight: 600;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
   cursor: pointer;
   text-align: center;
   -webkit-tap-highlight-color: transparent;
@@ -1453,28 +1534,28 @@ body {
 
 <!-- SPLASH -->
 <div class="splash" id="splash">
-  <video class="splash-video" id="splashVideo" autoplay muted playsinline preload="auto">
+  <video class="splash-video" id="splashVideo" autoplay muted playsinline preload="metadata" aria-hidden="true">
     <source src="assets/splash.mp4?v=2" type="video/mp4">
   </video>
 </div>
 
 <!-- TOP HEADER with logo -->
-<div class="top-header">
-  <button class="chat-float-btn" id="chat-float-btn" onclick="openChatOverlay()">
-    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+<header class="top-header" role="banner">
+  <button class="chat-float-btn" id="chat-float-btn" onclick="openChatOverlay()" aria-label="Открыть AI-чат">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
   </button>
   <img class="top-header-logo" src="assets/logo.png?v=2" alt="ZEREK">
-  <button class="top-header-cabinet" onclick="openCabinet()">
-    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+  <button class="top-header-cabinet" onclick="openCabinet()" aria-label="Открыть личный кабинет">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
   </button>
-</div>
+</header>
 
 <!-- ============================================
      CABINET OVERLAY
      ============================================ -->
-<div class="cabinet-backdrop" id="cabinet-backdrop" onclick="closeCabinet()"></div>
-<div class="cabinet-panel" id="cabinet-panel">
-  <button class="cabinet-close" onclick="closeCabinet()">
+<div class="cabinet-backdrop" id="cabinet-backdrop" onclick="closeCabinet()" aria-hidden="true"></div>
+<div class="cabinet-panel" id="cabinet-panel" role="dialog" aria-label="Личный кабинет" aria-modal="true">
+  <button class="cabinet-close" onclick="closeCabinet()" aria-label="Закрыть кабинет">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
   </button>
   <div class="cabinet-user">
@@ -1493,12 +1574,12 @@ body {
   <div class="cabinet-section-title">📚 Прогресс обучения</div>
   <div class="cabinet-progress">
     <div class="cabinet-progress-label">Фундамент</div>
-    <div class="cabinet-progress-bar"><div class="cabinet-progress-fill" id="cab-progress-fund" style="width:0%"></div></div>
+    <div class="cabinet-progress-bar"><div class="cabinet-progress-fill" id="cab-progress-fund" style="--p:0"></div></div>
     <div class="cabinet-progress-text" id="cab-progress-fund-text">0/23 глав</div>
   </div>
   <div class="cabinet-progress">
     <div class="cabinet-progress-label">Архитектор</div>
-    <div class="cabinet-progress-bar"><div class="cabinet-progress-fill" id="cab-progress-arch" style="width:0%"></div></div>
+    <div class="cabinet-progress-bar"><div class="cabinet-progress-fill" id="cab-progress-arch" style="--p:0"></div></div>
     <div class="cabinet-progress-text" id="cab-progress-arch-text">0/26 глав</div>
   </div>
 
@@ -1512,16 +1593,17 @@ body {
 <!-- ============================================
      SCREEN: AI CHAT
      ============================================ -->
-<div class="screen active" id="screen-chat">
-  <div class="chat-messages" id="chat-messages">
+<div class="screen active" id="screen-chat" role="region" aria-label="AI-чат">
+  <div class="chat-messages" id="chat-messages" role="log" aria-live="polite" aria-atomic="false" aria-label="История сообщений">
     <!-- messages rendered by JS -->
   </div>
   <div class="chat-input-wrap">
-    <input class="chat-input" id="chat-input" type="text" placeholder="Спроси что угодно..." autocomplete="off">
-    <button class="voice-btn" id="voice-btn" onclick="toggleVoice()">
-      <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+    <label for="chat-input" class="visually-hidden">Сообщение</label>
+    <input class="chat-input" id="chat-input" type="text" placeholder="Спроси что угодно..." autocomplete="off" aria-label="Введите сообщение">
+    <button class="voice-btn" id="voice-btn" onclick="toggleVoice()" aria-label="Голосовой ввод" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
     </button>
-    <button class="chat-send" onclick="sendMessage()">
+    <button class="chat-send" onclick="sendMessage()" aria-label="Отправить сообщение">
       <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
     </button>
   </div>
@@ -1543,7 +1625,7 @@ body {
         <div class="level-age">12–15 лет</div>
         <div class="level-desc">Финансовая грамотность с нуля</div>
         <div class="level-progress-wrap">
-          <div class="level-progress-bar"><div class="level-progress-fill level-progress-fill-gold" id="lp-fund" style="width:0%"></div></div>
+          <div class="level-progress-bar"><div class="level-progress-fill level-progress-fill-gold" id="lp-fund" style="--p:0"></div></div>
           <div class="level-progress-text" id="lp-fund-text">0/23 глав</div>
         </div>
         <div class="level-btn">Начать обучение →</div>
@@ -1558,7 +1640,7 @@ body {
         <div class="level-age">16+</div>
         <div class="level-desc">Стартап-мышление и предпринимательство</div>
         <div class="level-progress-wrap">
-          <div class="level-progress-bar"><div class="level-progress-fill level-progress-fill-teal" id="lp-arch" style="width:0%"></div></div>
+          <div class="level-progress-bar"><div class="level-progress-fill level-progress-fill-teal" id="lp-arch" style="--p:0"></div></div>
           <div class="level-progress-text" id="lp-arch-text">0/26 глав</div>
         </div>
         <div class="level-btn">Начать обучение →</div>
@@ -1764,7 +1846,7 @@ body {
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       Назад к расчётам
     </button>
-    <div class="qc-progress-bar"><div class="qc-progress-fill" id="qc-pbar" style="width:16.6%"></div></div>
+    <div class="qc-progress-bar" role="progressbar" aria-label="Прогресс анкеты" aria-valuemin="0" aria-valuemax="100" aria-valuenow="17"><div class="qc-progress-fill" id="qc-pbar" style="--p:0.166"></div></div>
     <div class="qc-progress-text">
       <span id="qc-step-label">Шаг 1 из 6</span>
       <span id="qc-step-name">Город</span>
@@ -1778,8 +1860,8 @@ body {
   </div>
 
   <!-- Quick Check Loading -->
-  <div id="qc-loading">
-    <div class="qc-spinner"></div>
+  <div id="qc-loading" role="status" aria-live="polite">
+    <div class="qc-spinner" aria-hidden="true"></div>
     <div style="font-size:18px;font-weight:700;margin-bottom:8px">Считаем...</div>
     <div style="font-size:14px;color:var(--text2)">Анализируем рынок и рассчитываем показатели</div>
   </div>
@@ -1825,28 +1907,28 @@ body {
 <!-- ============================================
      TAP BAR
      ============================================ -->
-<div class="tapbar">
-  <button class="tab-btn" data-tab="academy" onclick="switchTab('academy')">
-    <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1 2 3 6 3s6-2 6-3v-5"/></svg>
+<nav class="tapbar" role="tablist" aria-label="Навигация по разделам">
+  <button class="tab-btn" data-tab="academy" onclick="switchTab('academy')" role="tab" aria-controls="screen-academy" aria-selected="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1 2 3 6 3s6-2 6-3v-5"/></svg>
     <span>Академия</span>
   </button>
-  <button class="tab-btn" data-tab="cases" onclick="switchTab('cases')">
-    <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+  <button class="tab-btn" data-tab="cases" onclick="switchTab('cases')" role="tab" aria-controls="screen-cases" aria-selected="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
     <span>Кейсы</span>
   </button>
-  <button class="tab-btn tab-center active" data-tab="chat" onclick="switchTab('chat')">
-    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  <button class="tab-btn tab-center active" data-tab="chat" onclick="switchTab('chat')" role="tab" aria-controls="screen-chat" aria-selected="true">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
     <span>AI</span>
   </button>
-  <button class="tab-btn" data-tab="wiki" onclick="switchTab('wiki')">
-    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+  <button class="tab-btn" data-tab="wiki" onclick="switchTab('wiki')" role="tab" aria-controls="screen-wiki" aria-selected="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
     <span>Обзоры</span>
   </button>
-  <button class="tab-btn" data-tab="calc" onclick="switchTab('calc')">
-    <svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="10" y2="18"/><line x1="14" y1="18" x2="16" y2="18"/></svg>
+  <button class="tab-btn" data-tab="calc" onclick="switchTab('calc')" role="tab" aria-controls="screen-calc" aria-selected="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="10" y2="18"/><line x1="14" y1="18" x2="16" y2="18"/></svg>
     <span>Расчёты</span>
   </button>
-</div>
+</nav>
 
 <script>
 /* ============================================
@@ -1946,11 +2028,13 @@ function switchTab(tabId) {
   var tabs = document.querySelectorAll('.tab-btn');
   for (var i = 0; i < tabs.length; i++) {
     tabs[i].classList.remove('active');
+    tabs[i].setAttribute('aria-selected', 'false');
     var svg = tabs[i].querySelector('svg');
     if (svg) svg.classList.remove('bounce');
 
     if (tabs[i].getAttribute('data-tab') === tabId) {
       tabs[i].classList.add('active');
+      tabs[i].setAttribute('aria-selected', 'true');
       if (svg) {
         void svg.offsetWidth;
         svg.classList.add('bounce');
@@ -2375,10 +2459,16 @@ function toggleVoice() {
   var isRecording = btns[0] && btns[0].classList.contains('recording');
   if (isRecording) {
     recognition.stop();
-    for (var i = 0; i < btns.length; i++) btns[i].classList.remove('recording');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.remove('recording');
+      btns[i].setAttribute('aria-pressed', 'false');
+    }
   } else {
     recognition.start();
-    for (var i = 0; i < btns.length; i++) btns[i].classList.add('recording');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.add('recording');
+      btns[i].setAttribute('aria-pressed', 'true');
+    }
   }
 }
 
@@ -2814,7 +2904,7 @@ function exitQuickCheck() {
 function loadQcCities() {
   apiGet('/cities', function(err, resp) {
     if (err || !resp) {
-      document.getElementById('qc-steps').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text2)">Ошибка загрузки. <button onclick="loadQcCities()" style="color:var(--accent);background:none;border:none;font-weight:600;cursor:pointer;font-family:Outfit">Повторить</button></div>';
+      document.getElementById('qc-steps').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text2)">Ошибка загрузки. <button onclick="loadQcCities()" style="color:var(--accent);background:none;border:none;font-weight:600;cursor:pointer;font-family:Geist">Повторить</button></div>';
       return;
     }
     QC.cities = resp.cities || resp;
@@ -2830,7 +2920,11 @@ function renderQcStep() {
   var stepName = QC_STEPS[QC.step];
 
   // Update progress
-  document.getElementById('qc-pbar').style.width = ((QC.step + 1) / QC_STEPS.length * 100) + '%';
+  var qcP = (QC.step + 1) / QC_STEPS.length;
+  var qcBar = document.getElementById('qc-pbar');
+  qcBar.style.setProperty('--p', qcP);
+  var qcBarParent = qcBar.parentElement;
+  if (qcBarParent && qcBarParent.setAttribute) qcBarParent.setAttribute('aria-valuenow', Math.round(qcP * 100));
   document.getElementById('qc-step-label').textContent = 'Шаг ' + (QC.step + 1) + ' из ' + QC_STEPS.length;
   document.getElementById('qc-step-name').textContent = QC_STEP_NAMES[QC.step];
 
@@ -3163,15 +3257,16 @@ function renderQcReport(r) {
     if (b5.subtitle) html += '<div style="font-size:12px;color:var(--text3);margin-bottom:10px">' + b5.subtitle + '</div>';
     for (var i = 0; i < scenarios.length; i++) {
       var sc = scenarios[i];
-      var clr = sc.color === 'green' ? 'var(--green)' : sc.color === 'red' ? 'var(--red)' : 'var(--accent)';
-      html += '<div class="report-card" style="margin-bottom:8px;border-left:3px solid ' + clr + '">';
-      html += '<div style="font-weight:700;font-size:14px;margin-bottom:6px">' + sc.label + '</div>';
+      var modCls = sc.color === 'green' ? 'report-card--good' : sc.color === 'red' ? 'report-card--bad' : 'report-card--accent';
+      var tagCls = sc.color === 'green' ? 'report-card-tag--good' : sc.color === 'red' ? 'report-card-tag--bad' : 'report-card-tag--accent';
+      html += '<div class="report-card ' + modCls + '" style="margin-bottom:8px">';
+      html += '<span class="report-card-tag ' + tagCls + '">' + sc.label + '</span>';
       html += '<div style="display:flex;gap:12px;font-size:13px;color:var(--text2);flex-wrap:wrap">';
       html += '<span>Трафик: <strong>' + sc.traffic + '</strong>/день</span>';
       html += '<span>Чек: <strong>' + fmt(sc.check) + '</strong> ₸</span>';
       html += '<span>Год: <strong>' + fmtM(sc.revenue_year) + '</strong> ₸</span>';
       html += '</div>';
-      html += '<div style="margin-top:6px;font-size:14px"><strong>Прибыль: ' + fmtM(sc.profit_monthly) + ' ₸/мес</strong></div>';
+      html += '<div style="margin-top:8px;font-size:15px"><strong>Прибыль: ' + fmtM(sc.profit_monthly) + ' ₸/мес</strong></div>';
       html += '<div style="font-size:12px;color:var(--text3);margin-top:4px">' + (sc.payback || '') + '</div>';
       if (sc.mkt_desc) html += '<div style="font-size:11px;color:var(--text3);margin-top:4px">Маркетинг: ' + sc.mkt_desc + ' (' + (sc.mkt_budget || '') + ')</div>';
       html += '</div>';
@@ -3221,17 +3316,17 @@ function renderQcReport(r) {
     html += '<div class="report-section">';
     html += '<div class="report-section-title">' + (b9.title || 'Советы и риски') + '</div>';
     if (b9.income && b9.income.length) {
-      html += '<div class="report-card" style="margin-bottom:8px;border-left:3px solid var(--green)"><div style="font-weight:700;font-size:12px;color:var(--green);margin-bottom:4px">СОВЕТЫ ПО ДОХОДУ</div>';
+      html += '<div class="report-card report-card--good" style="margin-bottom:8px"><span class="report-card-tag report-card-tag--good">Советы по доходу</span>';
       for (var i = 0; i < b9.income.length; i++) html += '<div style="font-size:13px;margin-bottom:4px">' + b9.income[i] + '</div>';
       html += '</div>';
     }
     if (b9.risks && b9.risks.length) {
-      html += '<div class="report-card" style="margin-bottom:8px;border-left:3px solid var(--red)"><div style="font-weight:700;font-size:12px;color:var(--red);margin-bottom:4px">РИСКИ</div>';
+      html += '<div class="report-card report-card--bad" style="margin-bottom:8px"><span class="report-card-tag report-card-tag--bad">Риски</span>';
       for (var i = 0; i < b9.risks.length; i++) html += '<div style="font-size:13px;margin-bottom:4px">' + b9.risks[i] + '</div>';
       html += '</div>';
     }
     if (b9.mistakes && b9.mistakes.length) {
-      html += '<div class="report-card" style="border-left:3px solid var(--amber)"><div style="font-weight:700;font-size:12px;color:var(--amber);margin-bottom:4px">ЧАСТЫЕ ОШИБКИ</div>';
+      html += '<div class="report-card report-card--warn"><span class="report-card-tag report-card-tag--warn">Частые ошибки</span>';
       for (var i = 0; i < b9.mistakes.length; i++) html += '<div style="font-size:13px;margin-bottom:4px">' + b9.mistakes[i] + '</div>';
       html += '</div>';
     }
