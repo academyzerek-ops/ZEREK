@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>ZEREK — AI-платформа</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1541,6 +1544,7 @@ body {
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
   </button>
   <img class="top-header-logo" src="assets/logo.png?v=2" alt="ZEREK">
+  <span style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-family:'Geist Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase">v.2026-04-15</span>
   <button class="top-header-cabinet" onclick="openCabinet()" aria-label="Открыть личный кабинет">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
   </button>
@@ -3449,8 +3453,23 @@ document.addEventListener('DOMContentLoaded', init);
 })();
 </script>
 <script>
+/* Force-clear old SW + caches, then re-register fresh */
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('../sw.js').catch(function() {});
+  /* Unregister all existing SWs */
+  navigator.serviceWorker.getRegistrations().then(function(regs) {
+    var p = Promise.all(regs.map(function(r) { return r.unregister(); }));
+    /* Clear all caches */
+    if ('caches' in window) {
+      p = p.then(function() {
+        return caches.keys().then(function(keys) {
+          return Promise.all(keys.map(function(k) { return caches.delete(k); }));
+        });
+      });
+    }
+    return p;
+  }).then(function() {
+    navigator.serviceWorker.register('../sw.js').catch(function() {});
+  });
 }
 
 </script>
