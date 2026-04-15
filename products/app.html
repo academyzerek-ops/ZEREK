@@ -315,40 +315,6 @@ p { line-height: 1.4; font-weight: 400; }
 .tab-btn.active { color: var(--color-text-primary); }
 .tab-btn.active svg { stroke-width: 2.25; }
 
-/* Center tab (chat) — ellipse/pill highlight */
-.tab-btn.tab-center {
-  position: relative;
-}
-.tab-btn.tab-center svg {
-  width: 24px;
-  height: 24px;
-  position: relative;
-  z-index: 1;
-}
-.tab-btn.tab-center::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 56px;
-  height: 32px;
-  border-radius: 9999px;
-  background: var(--color-bg-elevated);
-  border: 1px solid var(--color-border);
-  transition: background 0.15s ease, border-color 0.15s ease;
-  z-index: 0;
-}
-.tab-btn.tab-center.active::before {
-  background: var(--color-text-primary);
-  border-color: var(--color-text-primary);
-}
-.tab-btn.tab-center.active {
-  color: var(--color-text-inverse);
-}
-.tab-btn.tab-center.active svg {
-  stroke-width: 2.25;
-}
 
 /* ============================================
    PERSONAL CABINET (slide panel)
@@ -1686,7 +1652,7 @@ p { line-height: 1.4; font-weight: 400; }
 
 <!-- Floating AI chat button (FAB) — visible only on non-chat tabs -->
 <button class="chat-float-btn" id="chat-float-btn" onclick="openChatOverlay()" aria-label="Открыть AI-чат">
-  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  <svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="11" rx="9" ry="7"/><path d="M9 17.5L9 21l5-3.5"/></svg>
 </button>
 
 <main class="app-main" id="app-main">
@@ -2012,15 +1978,15 @@ p { line-height: 1.4; font-weight: 400; }
 
 <nav class="tapbar" role="tablist" aria-label="Навигация по разделам">
   <button class="tab-btn" data-tab="academy" onclick="switchTab('academy')" role="tab" aria-controls="screen-academy" aria-selected="false">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1 2 3 6 3s6-2 6-3v-5"/></svg>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
     <span>Академия</span>
   </button>
   <button class="tab-btn" data-tab="cases" onclick="switchTab('cases')" role="tab" aria-controls="screen-cases" aria-selected="false">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5z"/></svg>
     <span>Кейсы</span>
   </button>
   <button class="tab-btn tab-center active" data-tab="chat" onclick="switchTab('chat')" role="tab" aria-controls="screen-chat" aria-selected="true">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="11" rx="9" ry="7"/><path d="M9 17.5L9 21l5-3.5"/></svg>
     <span>AI</span>
   </button>
   <button class="tab-btn" data-tab="wiki" onclick="switchTab('wiki')" role="tab" aria-controls="screen-wiki" aria-selected="false">

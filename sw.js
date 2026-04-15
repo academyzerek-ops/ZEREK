@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zerek-v9-tab-ellipse';
+const CACHE_NAME = 'zerek-v10-icons-aligned';
 
 self.addEventListener('install', function(e) {
   self.skipWaiting();
