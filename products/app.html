@@ -302,8 +302,8 @@ p { line-height: 1.4; font-weight: 400; }
   -webkit-tap-highlight-color: transparent;
 }
 .tab-btn svg {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   stroke: currentColor;
   fill: none;
   stroke-width: 1.75;
@@ -314,6 +314,41 @@ p { line-height: 1.4; font-weight: 400; }
 .tab-btn span { display: none; }
 .tab-btn.active { color: var(--color-text-primary); }
 .tab-btn.active svg { stroke-width: 2.25; }
+
+/* Center tab (chat) — ellipse/pill highlight */
+.tab-btn.tab-center {
+  position: relative;
+}
+.tab-btn.tab-center svg {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  z-index: 1;
+}
+.tab-btn.tab-center::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 56px;
+  height: 32px;
+  border-radius: 9999px;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  transition: background 0.15s ease, border-color 0.15s ease;
+  z-index: 0;
+}
+.tab-btn.tab-center.active::before {
+  background: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+}
+.tab-btn.tab-center.active {
+  color: var(--color-text-inverse);
+}
+.tab-btn.tab-center.active svg {
+  stroke-width: 2.25;
+}
 
 /* ============================================
    PERSONAL CABINET (slide panel)

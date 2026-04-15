@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zerek-v8-fab-input-fix';
+const CACHE_NAME = 'zerek-v9-tab-ellipse';
 
 self.addEventListener('install', function(e) {
   self.skipWaiting();
