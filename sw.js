@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zerek-v14-m1ch04-fix';
+const CACHE_NAME = 'zerek-v15-dark-headers';
 
 self.addEventListener('install', function(e) {
   self.skipWaiting();
