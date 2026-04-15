@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zerek-v12-no-fab';
+const CACHE_NAME = 'zerek-v13-suggestions-list';
 
 self.addEventListener('install', function(e) {
   self.skipWaiting();
