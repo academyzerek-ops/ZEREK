@@ -228,7 +228,7 @@ p { line-height: 1.4; font-weight: 400; }
   align-items: center;
   justify-content: space-between;
   padding: 0 16px;
-  height: 48px;
+  height: 40px;
   background: var(--color-bg);
   border-bottom: 0.5px solid var(--color-border);
   z-index: 90;
@@ -236,7 +236,7 @@ p { line-height: 1.4; font-weight: 400; }
 }
 .top-header-brand {
   font-family: var(--font-family);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: -0.3px;
   color: var(--color-text-primary);
@@ -245,7 +245,8 @@ p { line-height: 1.4; font-weight: 400; }
 }
 .brand-accent {
   font-weight: 400;
-  color: var(--text3);
+  color: var(--color-text-tertiary);
+  font-size: 12px;
   margin-left: 1px;
 }
 .top-header-cabinet {
@@ -449,13 +450,17 @@ p { line-height: 1.4; font-weight: 400; }
 }
 
 /* ============================================
-   AI CHAT SCREEN
+   AI CHAT SCREEN — full available height, flex column
    ============================================ */
+#screen-chat {
+  display: none;
+  height: 100%;
+}
 #screen-chat.active {
   display: flex;
   flex-direction: column;
-  height: calc(var(--vh, 100dvh) - 64px - env(safe-area-inset-bottom, 0px));
-  position: relative;
+  height: 100%;
+  min-height: 0;
 }
 
 .chat-messages {
@@ -568,7 +573,7 @@ p { line-height: 1.4; font-weight: 400; }
 .typing-dot:nth-child(2) { animation-delay: 0.2s; }
 .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 
-/* Threads-style chat input: pill-shaped surface, no heavy border */
+/* Threads-style chat input: flex-shrink last child of chat screen */
 .chat-input-wrap {
   display: flex;
   gap: 8px;
@@ -576,9 +581,7 @@ p { line-height: 1.4; font-weight: 400; }
   padding: 10px 14px;
   background: var(--color-bg);
   border-top: 0.5px solid var(--color-border);
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
+  flex-shrink: 0;
 }
 .chat-input {
   flex: 1;
@@ -618,29 +621,30 @@ p { line-height: 1.4; font-weight: 400; }
   height: 18px;
 }
 
-/* Welcome message (centered, no card) */
+/* Welcome message — centered in available space, no card */
 .welcome-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 60px 24px;
-  color: var(--color-text-primary);
+  flex: 1;
+  padding: 0 32px;
+  gap: 8px;
+  color: var(--color-text-secondary);
   font-size: var(--font-base);
   line-height: 1.5;
   font-weight: 400;
-  max-width: 400px;
-  margin: auto;
   background: transparent;
   border: none;
 }
 .welcome-text strong {
+  display: block;
   font-size: var(--font-xl);
   font-weight: 700;
-  display: block;
-  margin-bottom: 12px;
-  letter-spacing: -0.3px;
   color: var(--color-text-primary);
-}
-.welcome-text + br + br {
-  display: block;
+  margin-bottom: 4px;
+  letter-spacing: -0.3px;
 }
 
 /* ============================================
@@ -1525,34 +1529,40 @@ p { line-height: 1.4; font-weight: 400; }
 .voice-btn.hidden { display: none; }
 
 /* ============================================
-   FLOATING CHAT BUTTON
+   FLOATING CHAT BUTTON (FAB) — body-level
    ============================================ */
 .chat-float-btn {
-  width: 36px;
-  height: 36px;
-  background: var(--accent-light);
+  position: fixed;
+  bottom: calc(56px + env(safe-area-inset-bottom, 0) + 16px);
+  right: 16px;
+  width: 48px;
+  height: 48px;
+  background: var(--color-text-primary);
   border-radius: 50%;
   border: none;
   cursor: pointer;
+  color: var(--color-text-inverse);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 90;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   -webkit-tap-highlight-color: transparent;
-  color: var(--accent);
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.2s, transform 0.2s;
+  padding: 0;
 }
+.chat-float-btn.visible { visibility: visible; opacity: 1; }
 .chat-float-btn:active { transform: scale(0.9); }
 .chat-float-btn svg {
-  width: 18px; height: 18px;
+  width: 22px; height: 22px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.5;
+  stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.chat-float-btn.visible { visibility: visible; opacity: 1; }
 
 /* ============================================
    CHAT OVERLAY
@@ -1633,14 +1643,16 @@ p { line-height: 1.4; font-weight: 400; }
 
 <!-- TOP HEADER -->
 <header class="top-header" role="banner">
-  <button class="chat-float-btn" id="chat-float-btn" onclick="openChatOverlay()" aria-label="Открыть AI-чат">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-  </button>
   <div class="top-header-brand">ZEREK<span class="brand-accent">ai</span></div>
   <button class="top-header-cabinet" onclick="openCabinet()" aria-label="Открыть личный кабинет">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
   </button>
 </header>
+
+<!-- Floating AI chat button (FAB) — visible only on non-chat tabs -->
+<button class="chat-float-btn" id="chat-float-btn" onclick="openChatOverlay()" aria-label="Открыть AI-чат">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+</button>
 
 <main class="app-main" id="app-main">
 

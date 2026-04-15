@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zerek-v7-threads-overhaul';
+const CACHE_NAME = 'zerek-v8-fab-input-fix';
 
 self.addEventListener('install', function(e) {
   self.skipWaiting();
