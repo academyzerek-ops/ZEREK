@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zerek-v11-icons-fix';
+const CACHE_NAME = 'zerek-v12-no-fab';
 
 self.addEventListener('install', function(e) {
   self.skipWaiting();

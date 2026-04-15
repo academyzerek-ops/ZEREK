@@ -104,7 +104,7 @@ button, [role="button"], input, select, [tabindex="0"] {
   min-width: 44px;
 }
 /* Exception for compact icon buttons inside tight layouts — still need tap area via padding */
-.voice-btn, .chat-send, .cabinet-close, .ai-close, .chat-float-btn {
+.voice-btn, .chat-send, .cabinet-close, .ai-close {
   min-height: 44px;
   min-width: 44px;
 }
@@ -1530,42 +1530,6 @@ p { line-height: 1.4; font-weight: 400; }
 .voice-btn.hidden { display: none; }
 
 /* ============================================
-   FLOATING CHAT BUTTON (FAB) — body-level
-   ============================================ */
-.chat-float-btn {
-  position: fixed;
-  bottom: calc(56px + env(safe-area-inset-bottom, 0) + 16px);
-  right: 16px;
-  width: 48px;
-  height: 48px;
-  background: var(--color-text-primary);
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  color: var(--color-text-inverse);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  z-index: 90;
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  -webkit-tap-highlight-color: transparent;
-  padding: 0;
-}
-.chat-float-btn.visible { visibility: visible; opacity: 1; }
-.chat-float-btn:active { transform: scale(0.9); }
-.chat-float-btn svg {
-  width: 22px; height: 22px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-/* ============================================
    CHAT OVERLAY
    ============================================ */
 .chat-overlay-bg {
@@ -1650,10 +1614,6 @@ p { line-height: 1.4; font-weight: 400; }
   </button>
 </header>
 
-<!-- Floating AI chat button (FAB) — visible only on non-chat tabs -->
-<button class="chat-float-btn" id="chat-float-btn" onclick="openChatOverlay()" aria-label="Открыть AI-чат">
-  <svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="11" rx="10.5" ry="8"/><path d="M8 18L8 22l5-4"/></svg>
-</button>
 
 <main class="app-main" id="app-main">
 
@@ -2159,14 +2119,6 @@ function switchTab(tabId) {
   if (tabId !== 'cases') {
     document.getElementById('cases-main').style.display = '';
     document.getElementById('case-detail').classList.remove('active');
-  }
-
-  // Float chat button visibility
-  var floatBtn = document.getElementById('chat-float-btn');
-  if (tabId === 'chat') {
-    floatBtn.classList.remove('visible');
-  } else {
-    floatBtn.classList.add('visible');
   }
 
   window.scrollTo(0, 0);
