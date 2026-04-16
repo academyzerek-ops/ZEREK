@@ -65,9 +65,9 @@ table.dt{width:100%;border-collapse:collapse;font-size:13px}.dt thead th{padding
 </style>
 
 <style>
-.zk-back{position:fixed;top:max(env(safe-area-inset-top,0px),60px);left:50%;transform:translateX(-50%);z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:10px 16px;background:rgba(6,6,12,0.92);color:#FAF7F2;border:1px solid rgba(255,255,255,0.15);border-radius:22px;font-family:-apple-system,'Source Sans 3',sans-serif;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 4px 16px rgba(0,0,0,0.3)}
-.zk-back:active{transform:translateX(-50%) scale(0.95)}
-.zk-back svg{width:14px;height:14px}
+.zk-back{position:fixed;top:12px;left:12px;z-index:100;display:inline-flex;align-items:center;gap:4px;padding:8px 16px 8px 12px;background:rgba(16,16,16,0.8);color:#F3F5F7;border:none;border-radius:20px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:13px;font-weight:600;text-decoration:none;cursor:pointer;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 2px 8px rgba(0,0,0,0.3);-webkit-tap-highlight-color:transparent}
+.zk-back:active{transform:scale(0.95);background:rgba(16,16,16,0.95)}
+.zk-back svg{width:14px;height:14px;stroke:#F3F5F7;stroke-width:2.5;fill:none}
 .zk-top{position:fixed;bottom:28px;right:20px;z-index:9998;width:52px;height:52px;border-radius:50%;background:#2C1810;color:#FAF7F2;border:none;display:none;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,0.4);opacity:0;transition:opacity .3s,transform .2s}
 .zk-top.on{display:flex;opacity:1}
 .zk-top:active{transform:scale(0.92)}

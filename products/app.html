@@ -1750,35 +1750,35 @@ p { line-height: 1.4; font-weight: 400; }
       <div class="case-icon">📉</div>
       <div class="case-title">Кофейня закрылась через 8 месяцев</div>
       <div class="case-excerpt">Не считали точку безубыточности. Арендовали 80 м² в спальном районе — трафик оказался в 3 раза ниже расчётного.</div>
-      <span class="case-tag case-tag-loss">Убыток</span>
+      <span class="case-tag case-tag-loss">Провал</span>
     </div>
 
     <div class="case-card" onclick="openCase(1)">
       <div class="case-icon">📈</div>
       <div class="case-title">Барбершоп окупился за 4 месяца</div>
       <div class="case-excerpt">Правильно выбрали локацию возле БЦ, начали с 2 кресел и выросли до 5 за полгода. Считали юнит-экономику до старта.</div>
-      <span class="case-tag case-tag-win">Успех</span>
+      <span class="case-tag case-tag-win">Взлёт</span>
     </div>
 
     <div class="case-card" onclick="openCase(2)">
       <div class="case-icon">📉</div>
       <div class="case-title">Клининг: 500K вложений — 0 клиентов</div>
       <div class="case-excerpt">Не продумали каналы привлечения. Купили технику и оборудование, но ни одного заказа за 2 месяца.</div>
-      <span class="case-tag case-tag-loss">Убыток</span>
+      <span class="case-tag case-tag-loss">Провал</span>
     </div>
 
     <div class="case-card" onclick="openCase(3)">
       <div class="case-icon">📈</div>
       <div class="case-title">Донерная: из ларька в сеть за год</div>
       <div class="case-excerpt">Начали с одного киоска у рынка. Посчитали маржу — 62%. Через 8 месяцев открыли второю точку, через год — третью.</div>
-      <span class="case-tag case-tag-win">Успех</span>
+      <span class="case-tag case-tag-win">Взлёт</span>
     </div>
 
     <div class="case-card" onclick="openCase(4)">
       <div class="case-icon">📉</div>
       <div class="case-title">Пекарня: неправильный формат</div>
       <div class="case-excerpt">Открыли полный цикл производства, а спрос был на кофе-пекарню to-go. Переформатировались — но потеряли 2 млн ₸.</div>
-      <span class="case-tag case-tag-loss">Убыток</span>
+      <span class="case-tag case-tag-loss">Провал</span>
     </div>
   </div>
 
@@ -2172,8 +2172,14 @@ function renderWelcome() {
   el.id = 'welcome-text';
   el.className = 'welcome-text';
   el.innerHTML = '<strong>Привет! Я ZEREK</strong>'
-    + 'Показываю реальность без розовых очков.<br><br>'
-    + 'Обучение, обзоры рынка и расчёты, которые покажут правду до того, как ты вложишь деньги.';
+    + '<br>Я не инфоцыган и не кричу про «успешный успех».'
+    + '<br><br>Показываю реальность.'
+    + '<br><br>Здесь — обучение бизнесу для тех, кому не дали этого ни в школе, ни в универе.'
+    + '<br><br>Обзоры рынка без розовых очков.'
+    + '<br><br>И расчёты, которые покажут правду до того, как ты вложишь деньги.'
+    + '<br><br>От первого урока «откуда взялись деньги» — до акулы бизнеса.'
+    + '<br>Вся цепочка.'
+    + '<br><br>Начнём?';
   container.appendChild(el);
 }
 function removeWelcome() {

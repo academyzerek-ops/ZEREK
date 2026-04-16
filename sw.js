@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zerek-v15-dark-headers';
+const CACHE_NAME = 'zerek-v16-welcome-cases-wiki-back';
 
 self.addEventListener('install', function(e) {
   self.skipWaiting();
