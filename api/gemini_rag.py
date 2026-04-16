@@ -117,7 +117,7 @@ def extract_niche_risks(niche_id: str, diag: dict = None) -> list[dict]:
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
         "generationConfig": {
             "temperature": 0.4,
-            "maxOutputTokens": 2048,
+            "maxOutputTokens": 4096,
             "response_mime_type": "application/json",
             "response_schema": schema,
         },
@@ -156,6 +156,11 @@ def extract_niche_risks(niche_id: str, diag: dict = None) -> list[dict]:
         if diag is not None:
             diag["reason"] = "exception"
             diag["error"] = str(e)[:300]
+            try:
+                diag["raw_text_preview"] = text[:400] if 'text' in locals() else ""
+                diag["raw_text_len"] = len(text) if 'text' in locals() else 0
+            except Exception:
+                pass
         return []
 
 
