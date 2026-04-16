@@ -173,15 +173,20 @@ def get_niche_risks(niche_id: str, debug: int = 0):
 
 @app.get("/pdf-health")
 def pdf_health():
-    """Diagnostic: is WeasyPrint installed and able to render a trivial PDF?"""
+    """Diagnostic: is the PDF generator (ReportLab) installed and able to render?"""
     try:
-        import weasyprint
+        import reportlab
     except Exception as e:
-        return {"status": "not_installed", "error": str(e)[:300]}
+        return {"status": "not_installed", "engine": "reportlab", "error": str(e)[:300]}
     try:
-        ver = getattr(weasyprint, "__version__", "unknown")
-        pdf = weasyprint.HTML(string="<html><body><p>test</p></body></html>").write_pdf()
-        return {"status": "ok", "weasyprint_version": ver, "pdf_bytes": len(pdf)}
+        from pdf_gen import generate_quick_check_pdf, _register_fonts_once
+        _register_fonts_once()
+        return {
+            "status": "ok",
+            "engine": "reportlab",
+            "reportlab_version": reportlab.Version,
+            "fonts_registered": True,
+        }
     except Exception as e:
         import traceback
         return {"status": "fail", "error": str(e)[:400], "trace": traceback.format_exc()[-2000:]}
