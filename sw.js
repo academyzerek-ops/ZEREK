@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zerek-v17-wiki-cats-back70';
+const CACHE_NAME = 'zerek-v18-back-fixed-hard';
 
 self.addEventListener('install', function(e) {
   self.skipWaiting();
