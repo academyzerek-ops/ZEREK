@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0A0A0F">
+<title>Глава 1 — Когда денег не было (Бартер)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+html,body{
+  background:#0A0A0F !important;
+  color:#E8E8ED;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+html::before{
+  content:'';position:fixed;inset:0;
+  background:#0A0A0F;z-index:-1;
+}
+
+:root{
+  --bg:#0A0A0F;
+  --surface:#16161E;
+  --surface2:#1E1E28;
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.10);
+  --text:#E8E8ED;
+  --text2:#A0A0B0;
+  --text3:#6B6B7B;
+  --purple:#A89BFF;
+  --purple-dim:rgba(168,155,255,0.12);
+  --green:#00D4AA;
+  --green-dim:rgba(0,212,170,0.10);
+  --orange:#E8A04C;
+  --orange-dim:rgba(232,160,76,0.10);
+  --red:#E85454;
+  --red-dim:rgba(232,84,84,0.10);
+  --accent:#6C63FF;
+}
+
+/* ══════ HEADER ══════ */
+.hdr{
+  position:sticky;top:0;z-index:50;
+  background:#101010;
+  border-bottom:1px solid #2C2C2C;
+  padding:14px 20px 12px;
+}
+.hdr::after{
+  content:'';
+  position:absolute;
+  bottom:-20px;left:0;right:0;
+  height:20px;
+  background:linear-gradient(180deg,#101010 0%,var(--bg) 100%);
+  pointer-events:none;
+  z-index:49;
+}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.hdr-badge{
+  background:var(--purple-dim);color:var(--purple);
+  font-size:11px;font-weight:700;
+  letter-spacing:1.2px;padding:4px 10px;border-radius:6px;
+}
+.hdr-mod{font-size:13px;color:var(--text3);font-weight:600}
+.prog{display:flex;align-items:center;gap:10px}
+.prog-n{font-size:12px;color:var(--text3);font-weight:700;font-variant-numeric:tabular-nums}
+.prog-track{flex:1;height:5px;background:#2C2C2C;border-radius:5px;overflow:hidden}
+.prog-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#6C5CE7,#00B894)}
+.hdr-back{display:flex;align-items:center;gap:4px;background:none;border:1px solid #2C2C2C;border-radius:8px;padding:6px 12px;font-family:inherit;font-size:12px;font-weight:700;color:var(--text3);cursor:pointer;white-space:nowrap}
+.hdr-back:active{background:#1E1E1E}
+.hdr-back svg{width:14px;height:14px;stroke:var(--text3);stroke-width:2.5;fill:none}
+
+/* ══════ MAIN ══════ */
+.page{max-width:460px;margin:0 auto;padding:20px 18px 120px}
+
+/* ══════ HERO ══════ */
+.hero{text-align:center;padding:32px 0 24px}
+.hero-ico{font-size:48px;display:block;margin-bottom:12px}
+.hero h1{
+  font-weight:800;font-size:26px;line-height:1.25;
+  color:var(--text);margin-bottom:8px;letter-spacing:-0.01em;
+}
+.hero h1 .o{color:var(--orange)}
+.hero-sub{font-size:14px;color:var(--text3);font-weight:500}
+
+/* ══════ CARD ══════ */
+.c{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:20px 18px;
+  margin-bottom:14px;
+}
+.c p{font-size:15px;color:var(--text2);margin-bottom:10px;line-height:1.8}
+.c p:last-child{margin-bottom:0}
+.c strong{font-weight:700;color:var(--text)}
+
+.c.al{border-left:3.5px solid var(--accent);background:rgba(108,92,231,0.04)}
+.c.ag{border-left:3.5px solid var(--green);background:rgba(0,212,170,0.04)}
+.c.ao{border-left:3.5px solid var(--orange);background:rgba(232,160,76,0.04)}
+
+/* ══════ LABEL ══════ */
+.lb{
+  display:inline-block;
+  font-size:12px;font-weight:700;
+  letter-spacing:0.5px;
+  padding:5px 11px;border-radius:6px;margin-bottom:14px;
+}
+.lb.purple{color:var(--purple);background:var(--purple-dim)}
+.lb.red{color:var(--red);background:var(--red-dim)}
+.lb.green{color:var(--green);background:var(--green-dim)}
+.lb.orange{color:var(--orange);background:var(--orange-dim)}
+
+/* ══════ VS GRID ══════ */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.vs-i{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:18px 14px;
+  text-align:center;
+}
+.vs-i.gold{border-top:3.5px solid var(--orange);background:rgba(232,160,76,0.04)}
+.vs-i.paper{border-top:3.5px solid var(--green);background:rgba(0,212,170,0.04)}
+.vs-ico{font-size:32px;margin-bottom:6px;display:block}
+.vs-t{font-weight:700;font-size:15px;color:var(--text);margin-bottom:4px}
+.vs-d{font-size:12.5px;color:var(--text3);line-height:1.5}
+
+/* ══════ DIVIDER ══════ */
+.div{display:flex;align-items:center;gap:12px;margin:22px 0 18px}
+.div .ln{flex:1;height:1px;background:var(--border2)}
+.div .dt{width:5px;height:5px;border-radius:50%;background:var(--text3)}
+
+/* ══════ TIMELINE ══════ */
+.tl{
+  padding-left:28px;position:relative;margin-bottom:18px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:22px 20px 22px 38px;
+}
+.tl::before{
+  content:'';position:absolute;left:18px;top:28px;bottom:28px;
+  width:2px;background:linear-gradient(180deg,#6C5CE7,#00B894);border-radius:2px;
+}
+.tl-i{position:relative;margin-bottom:20px}
+.tl-i:last-child{margin-bottom:0}
+.tl-dot{
+  position:absolute;left:-26px;top:4px;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--surface);border:2.5px solid #6C5CE7;
+  box-shadow:0 0 0 3px rgba(108,92,231,0.15);
+}
+.tl-i:last-child .tl-dot{border-color:#00B894;box-shadow:0 0 0 3px rgba(0,184,148,0.15)}
+.tl-date{
+  font-size:12px;font-weight:700;color:var(--purple);
+  letter-spacing:0.5px;margin-bottom:4px;
+  font-variant-numeric:tabular-nums;
+}
+.tl-i:last-child .tl-date{color:var(--green)}
+.tl-txt{font-size:14px;color:var(--text2);line-height:1.6}
+.tl-txt strong{font-weight:700;color:var(--text)}
+
+/* ══════ INSIGHT ══════ */
+.ins{
+  background:linear-gradient(135deg,rgba(108,92,231,0.08) 0%,rgba(0,184,148,0.06) 100%);
+  border:1px solid rgba(108,92,231,0.15);
+  border-radius:14px;
+  padding:22px 18px;
+  margin-bottom:14px;
+  position:relative;
+}
+.ins-ico{
+  position:absolute;top:-10px;left:16px;
+  background:var(--bg);padding:0 4px;font-size:18px;
+  border-radius:4px;
+}
+.ins p{font-size:14.5px;font-weight:500;color:var(--text);line-height:1.65}
+.ins strong{color:var(--purple);font-weight:700}
+
+/* ══════ FACT SCROLL ══════ */
+.fs{
+  display:flex;gap:10px;overflow-x:auto;
+  scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+  padding:2px 0 12px;margin-bottom:14px;
+}
+.fs::-webkit-scrollbar{display:none}
+.fc{
+  flex:0 0 auto;scroll-snap-align:start;
+  width:200px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;
+  padding:14px;
+}
+.fc-ico{font-size:20px;margin-bottom:6px;display:block}
+.fc-txt{font-size:12.5px;color:var(--text2);line-height:1.5}
+.fc-txt strong{color:var(--orange);font-weight:700}
+
+/* ══════ LIST CARD ══════ */
+.lc-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.lc-num{
+  width:28px;height:28px;border-radius:7px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:var(--purple);
+  font-variant-numeric:tabular-nums;
+}
+.lc-t{font-weight:700;font-size:16px;color:var(--text)}
+.c ul{list-style:none;padding:0}
+.c li{position:relative;padding-left:18px;margin-bottom:8px;font-size:14px;line-height:1.55;color:var(--text2)}
+.c li::before{
+  content:'';position:absolute;left:0;top:8px;
+  width:6px;height:6px;border-radius:2px;background:var(--accent);opacity:0.5;
+}
+.c li strong{font-weight:700;color:var(--text)}
+
+/* ══════ EXPANDABLE ══════ */
+.ex{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;margin-bottom:10px;overflow:hidden;
+}
+.ex-h{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;cursor:pointer;
+  user-select:none;-webkit-user-select:none;
+}
+.ex-h:active{background:var(--surface2)}
+.ex-q{font-size:14px;font-weight:600;color:var(--text);flex:1;padding-right:8px}
+.ex-arr{
+  width:24px;height:24px;border-radius:6px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  transition:transform 0.3s;flex-shrink:0;
+}
+.ex-arr svg{width:12px;height:12px;stroke:var(--purple);stroke-width:2.5;fill:none}
+.ex.open .ex-arr{transform:rotate(180deg)}
+.ex-b{max-height:0;overflow:hidden;transition:max-height 0.35s ease;padding:0 16px}
+.ex.open .ex-b{max-height:400px;padding:0 16px 16px}
+.ex-b p{font-size:13.5px;color:var(--text2);line-height:1.7;margin-bottom:6px}
+.ex-b p:last-child{margin-bottom:0}
+.ex-b strong{color:var(--text)}
+
+/* ══════ TAKEAWAY ══════ */
+.tk{
+  background:var(--surface);
+  border:1.5px solid var(--accent);
+  border-radius:14px;
+  padding:22px 18px;
+  margin-bottom:14px;
+  position:relative;overflow:hidden;
+}
+.tk::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,#6C5CE7,#00B894,#6C5CE7);
+  background-size:200% 100%;
+  animation:sh 4s ease-in-out infinite;
+}
+@keyframes sh{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.tk-badge{
+  display:inline-block;
+  font-size:12px;font-weight:700;
+  letter-spacing:0.5px;
+  color:var(--purple);background:var(--purple-dim);
+  padding:5px 11px;border-radius:6px;margin-bottom:14px;
+}
+.tk h3{
+  font-weight:800;
+  font-size:20px;line-height:1.3;color:var(--text);margin-bottom:16px;
+  letter-spacing:-0.01em;
+}
+.tk h3 .hl{color:var(--purple)}
+.tk-pt{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.tk-pt:last-child{margin-bottom:0}
+.tk-n{
+  min-width:22px;height:22px;border-radius:6px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:var(--purple);
+  margin-top:2px;
+  font-variant-numeric:tabular-nums;
+}
+.tk-t{font-size:14px;color:var(--text2);line-height:1.6}
+
+/* ══════ QUOTE ══════ */
+.qt{
+  border-left:3.5px solid var(--orange);
+  background:rgba(232,160,76,0.04);
+  border-radius:0 12px 12px 0;
+  padding:18px 18px;margin-bottom:14px;
+}
+.qt p{font-size:14.5px;font-weight:500;font-style:italic;color:var(--text2);line-height:1.6}
+
+/* ══════ NAV ══════ */
+.nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:50;
+  background:#101010;
+  border-top:1px solid #2C2C2C;
+  padding:12px 18px;
+  padding-bottom:max(12px,env(safe-area-inset-bottom));
+  display:flex;gap:10px;
+  max-width:460px;margin:0 auto;
+}
+.nb{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:13px;border-radius:12px;
+  font-family:inherit;font-size:14px;font-weight:700;
+  border:none;cursor:pointer;
+}
+.nb:active{transform:scale(0.97)}
+.nb-prev{
+  background:#1E1E1E;color:var(--text3);
+  border:1px solid #2C2C2C;
+}
+.nb-next{
+  background:var(--accent);color:#fff;
+}
+
+/* ══════ ANIM ══════ */
+@keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.c,.vs,.tl,.ins,.fs,.ex,.tk,.qt{animation:su 0.5s ease-out both}
+.c:nth-of-type(2){animation-delay:0.06s}
+.c:nth-of-type(3){animation-delay:0.12s}
+</style>
+
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-row"><button class="hdr-back" onclick="location.href='../../../products/app.html?tab=academy'"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Содержание</button>
+    <span class="hdr-badge">JUNIOR</span>
+    <span class="hdr-mod">Модуль 1 · Деньги</span>
+  </div>
+  <div class="prog">
+    <span class="prog-n">1/10</span>
+    <div class="prog-track"><div class="prog-fill" style="width:10%"></div></div>
+  </div>
+</header>
+
+<main class="page">
+
+  <div class="hero">
+    <span class="hero-ico">🔄</span>
+    <h1>Когда денег не было (<span class="o">Бартер</span>)</h1>
+    <p class="hero-sub">Эпоха, когда за сапоги платили рыбой</p>
+  </div>
+
+  <div class="c al">
+    <div class="lb purple">Представь:</div>
+    <p>весь мир забыл, что такое деньги. Kaspi не работает, банкоматы исчезли, бумажки превратились в мусор. Но тебе всё равно нужно есть, одеваться и как-то развлекаться.</p>
+    <p>Добро пожаловать в <strong>Эпоху Бартера</strong>. Здесь работает только одно правило: <strong>«Товар за товар»</strong>.</p>
+  </div>
+
+  <div class="c al">
+    <div class="lb purple">Сценарий</div>
+    <p><strong>Квест «Купи сапоги».</strong> Ты живёшь в деревне и ты — крутой рыбак. У тебя полная лодка свежей рыбы. Но босиком ходить холодно, тебе нужны сапоги. Ты идёшь к сапожнику.</p>
+    <p>Ты: «Вот тебе отличная рыба, давай мне сапоги!»</p>
+    <p>Сапожник: «Слушай, я рыбу не люблю. У меня от неё аллергия. Мне нужны дрова, чтобы печь топить».</p>
+  </div>
+
+  <div class="c ao">
+    <div class="lb red">Проблема №1: Несовпадение</div>
+    <p>Сделки нет. Ты стоишь с рыбой, которая начинает пахнуть. Теперь тебе нужно:</p>
+    <ul>
+      <li>Найти дровосека</li>
+      <li>Уговорить его взять рыбу (надеясь, что он её любит)</li>
+      <li>Получить дрова</li>
+      <li>Побежать с дровами к сапожнику, пока он не передумал</li>
+    </ul>
+    <p>Пока ты бегал — <strong>полдня прошло</strong>. Твой бизнес стоит, ты просто курьер.</p>
+  </div>
+
+  <div class="c ao">
+    <div class="lb red">Проблема №2: Сдача с коровы</div>
+    <p>Ты — богач. У тебя есть целый бык. Тебе нужно купить всего лишь... <strong>глиняный горшок</strong>.</p>
+    <p>Бык стоит дорого. Горшок стоит копейки. Как платить? Отпиливать быку ногу? Он обидится и убежит. Отдать целого быка за горшок? Глупо — разоришься.</p>
+    <p>Приходится либо брать <strong>100 ненужных горшков</strong> (чтобы цена совпала), либо ходить голодным.</p>
+  </div>
+
+  <div class="ins">
+    <span class="ins-ico">💡</span>
+    <p>Без денег ты тратишь кучу времени не на то, чтобы <strong>заработать</strong>, а на то, чтобы <strong>поменяться</strong>. Экономика при бартере работает как черепаха.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="ex" onclick="this.classList.toggle('open')">
+    <div class="ex-h">
+      <span class="ex-q">🤔 Почему нельзя было так и жить с бартером?</span>
+      <span class="ex-arr"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+    </div>
+    <div class="ex-b">
+      <p>Потому что многие вещи <strong>нельзя разделить</strong>. Ты не можешь купить шоколадку, если у тебя в кармане только живая лошадь.</p>
+      <p>А ещё бартер — это <strong>очень медленно</strong>. Пока найдёшь того, кому нужно именно то, что у тебя есть, уйдёт полдня.</p>
+    </div>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="tk">
+    <span class="tk-badge">Выводы главы</span>
+    <h3>Бартер тормозил людей.<br>Нужен был <span class="hl">посредник</span>.</h3>
+    <div class="tk-pt"><span class="tk-n">1</span><span class="tk-t">Бартер — это очень медленно. Без денег ты тратишь время на обмен, а не на заработок.</span></div>
+    <div class="tk-pt"><span class="tk-n">2</span><span class="tk-t">Проблема сдачи: многие вещи нельзя разделить. Не отпилишь быку ногу ради горшка.</span></div>
+    <div class="tk-pt"><span class="tk-n">3</span><span class="tk-t">Люди поняли: нужен какой-то третий предмет — посредник, который с радостью возьмёт любой сапожник. Так начались поиски идеальных денег.</span></div>
+  </div>
+
+  <div class="qt">
+    <p>«Товар за товар — звучит просто. Но попробуй купить дом за стадо, когда продавец хочет зерно.»</p>
+  </div>
+
+</main>
+
+<div class="nav">
+  <button class="nb nb-next" onclick="location.href='m1-ch02.html'">Глава 2 →</button>
+</div>
+
+</body>
+<style>
+.ai-fab{position:fixed;bottom:90px;right:18px;width:52px;height:52px;border-radius:50%;background:var(--accent);color:#fff;border:none;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(108,99,255,0.4),0 2px 6px rgba(0,0,0,0.3);z-index:40;cursor:pointer}
+.ai-fab:active{transform:scale(0.92)}
+.ai-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:50;opacity:0;pointer-events:none;transition:opacity 0.3s}
+.ai-overlay.open{opacity:1;pointer-events:auto}
+.ai-panel{position:fixed;bottom:0;left:0;right:0;height:70vh;max-width:480px;margin:0 auto;background:var(--surface);border-radius:16px 16px 0 0;box-shadow:0 -4px 24px rgba(0,0,0,0.4);z-index:60;transform:translateY(100%);transition:transform 0.3s ease;display:flex;flex-direction:column}
+.ai-panel.open{transform:translateY(0)}
+.ai-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border2)}
+.ai-hdr-t{font-weight:700;font-size:16px;color:var(--text)}
+.ai-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--text3)}
+.ai-body{flex:1;overflow-y:auto;padding:16px 18px}
+.ai-msg{font-size:14px;line-height:1.65;color:var(--text2);white-space:pre-wrap}
+.ai-empty{text-align:center;color:var(--text3);font-size:13px;padding:40px 0}
+.ai-typing{color:var(--text3);font-size:13px;padding:8px 0}
+.ai-foot{padding:12px 18px;border-top:1px solid var(--border2);display:flex;gap:8px}
+.ai-input{flex:1;border:1.5px solid var(--border2);border-radius:10px;padding:10px 14px;font-family:'Inter',sans-serif;font-size:14px;outline:none;color:var(--text);background:var(--surface2)}
+.ai-input:focus{border-color:var(--accent)}
+.ai-send{width:40px;height:40px;border-radius:10px;background:var(--accent);border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.ai-send:active{opacity:0.8}
+</style>
+<button class="ai-fab" id="ai-fab" onclick="aiOpen()" aria-label="AI-помощник"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></button>
+<div class="ai-overlay" id="ai-overlay" onclick="aiClose()"></div>
+<div class="ai-panel" id="ai-panel">
+<div class="ai-hdr"><span class="ai-hdr-t">AI-помощник</span><button class="ai-close" onclick="aiClose()">✕</button></div>
+<div class="ai-body" id="ai-body"><div class="ai-empty">Задай вопрос по уроку — AI объяснит простым языком</div></div>
+<div class="ai-foot"><input class="ai-input" id="ai-q" type="text" placeholder="Спроси по уроку..." onkeydown="if(event.key==='Enter')aiSend()"><button class="ai-send" onclick="aiSend()">→</button></div>
+</div>
+<script>
+var AI_API="https://web-production-921a5.up.railway.app";
+function aiOpen(){document.getElementById("ai-fab").style.display="none";document.getElementById("ai-overlay").classList.add("open");document.getElementById("ai-panel").classList.add("open");document.getElementById("ai-q").focus()}
+function aiClose(){document.getElementById("ai-panel").classList.remove("open");document.getElementById("ai-overlay").classList.remove("open");document.getElementById("ai-fab").style.display="flex"}
+function aiSend(){var q=document.getElementById("ai-q"),t=q.value.trim();if(!t)return;q.value="";var b=document.getElementById("ai-body"),title=document.title||"";b.innerHTML="<div class=\"ai-typing\">Думаю...</div>";var x=new XMLHttpRequest();x.open("POST",AI_API+"/ai-chat",true);x.setRequestHeader("Content-Type","application/json");x.onreadystatechange=function(){if(x.readyState===4){try{var d=JSON.parse(x.responseText);b.innerHTML="<div class=\"ai-msg\">"+d.answer.replace(/</g,"&lt;").replace(/\n/g,"<br>")+"</div>"}catch(e){b.innerHTML="<div class=\"ai-msg\">Ошибка. Попробуй ещё раз.</div>"}}};x.send(JSON.stringify({question:t,context:title}))}
+</script>
+</html>
