@@ -34,7 +34,7 @@ def render_report_v4(result: dict) -> dict:
     rent_month = fin.get("rent_month", 0)
     niche_id = inp.get("niche_id", "")
     format_id = inp.get("format_id", "")
-    cls = inp.get("cls", "")
+    cls = inp.get("class", "") or inp.get("cls", "")
     city_name = inp.get("city_name", "")
     revenue_med = check_med * traffic_med * 30
 
