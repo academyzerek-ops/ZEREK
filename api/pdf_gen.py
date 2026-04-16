@@ -1224,6 +1224,6 @@ def generate_quick_check_pdf(result: dict, niche_id: str, ai_risks=None) -> tupl
     pdf_bytes = buf.getvalue()
     buf.close()
 
-    m_niche = NICHE_NAMES.get(niche_id, niche_id)
-    filename = f"ZEREK_{m_niche}_{report_id}.pdf".replace(" ", "_")
+    # ASCII-safe filename — кириллица в Content-Disposition ломает HTTP
+    filename = f"ZEREK_{niche_id}_{report_id}.pdf"
     return pdf_bytes, report_id, filename

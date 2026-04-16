@@ -258,10 +258,18 @@ def download_file(token: str):
     if not f:
         raise HTTPException(404, "Файл не найден или истёк срок хранения")
     disp = f.get('disposition', 'attachment')
+    filename = f['filename']
+    # RFC 5987 — всегда кодируем filename для non-ASCII, оставляем ASCII-дубль для старых клиентов
+    from urllib.parse import quote
+    ascii_name = filename.encode('ascii', 'ignore').decode('ascii') or 'file'
+    encoded = quote(filename, safe='')
+    content_disposition = (
+        f"{disp}; filename=\"{ascii_name}\"; filename*=UTF-8''{encoded}"
+    )
     return Response(
         content=f['bytes'],
         media_type=f['media_type'],
-        headers={"Content-Disposition": f'{disp}; filename="{f["filename"]}"'},
+        headers={"Content-Disposition": content_disposition},
     )
 
 class GrantBPReq(BaseModel):
