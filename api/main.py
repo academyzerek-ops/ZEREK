@@ -171,6 +171,20 @@ def get_niche_risks(niche_id: str, debug: int = 0):
     return out
 
 
+@app.get("/pdf-health")
+def pdf_health():
+    """Diagnostic: confirm WeasyPrint + system libs load. Renders a trivial PDF."""
+    try:
+        import weasyprint
+        ver = getattr(weasyprint, "__version__", "unknown")
+        html = "<html><body><p>test</p></body></html>"
+        pdf = weasyprint.HTML(string=html).write_pdf()
+        return {"status": "ok", "weasyprint_version": ver, "pdf_bytes": len(pdf)}
+    except Exception as e:
+        import traceback
+        return {"status": "fail", "error": str(e)[:400], "trace": traceback.format_exc()[-2000:]}
+
+
 @app.post("/quick-check/pdf")
 def generate_pdf(req: QCReq):
     """
