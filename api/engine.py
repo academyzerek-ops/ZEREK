@@ -198,12 +198,19 @@ class ZerekDB:
         return self.niche_data[niche_id].get(sheet, pd.DataFrame())
 
     def get_format_row(self, niche_id: str, sheet: str, format_id: str, cls: str) -> dict:
-        """Получить строку по format_id + class. Возвращает dict или {} если не найдено."""
+        """Получить строку по format_id + class. Фоллбэк: если класс не найден,
+        берём первую доступную строку с этим format_id (некоторые форматы
+        существуют только в одном классе, например BARBER_SOLO только «Эконом»)."""
         df = self.get_niche_sheet(niche_id, sheet)
         if df.empty:
             return {}
-        mask = (df['format_id'].astype(str) == format_id) & (df['class'].astype(str) == cls)
-        rows = df[mask]
+        fid_mask = df['format_id'].astype(str) == format_id
+        if 'class' in df.columns:
+            rows = df[fid_mask & (df['class'].astype(str) == cls)]
+            if rows.empty:
+                rows = df[fid_mask]
+        else:
+            rows = df[fid_mask]
         if rows.empty:
             return {}
         return rows.iloc[0].to_dict()

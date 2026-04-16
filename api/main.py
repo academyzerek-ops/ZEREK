@@ -121,12 +121,15 @@ def get_tax_rate(city_id: str):
     from engine import get_city_tax_rate
     return {"city_id":city_id,"ud_rate_pct":get_city_tax_rate(db, city_id)}
 
+CAPEX_TO_CLS = {"эконом":"Эконом","стандарт":"Стандарт","бизнес":"Бизнес","премиум":"Премиум"}
+
 @app.post("/quick-check")
 def quick_check(req: QCReq):
     if not db: raise HTTPException(503,f"БД не загружена: {db_error}")
     try:
+        cls = CAPEX_TO_CLS.get((req.capex_level or "").strip().lower(), req.cls)
         result = run_quick_check_v3(db=db, city_id=req.city_id, niche_id=req.niche_id,
-            format_id=req.format_id, cls=req.cls, area_m2=req.area_m2, loc_type=req.loc_type,
+            format_id=req.format_id, cls=cls, area_m2=req.area_m2, loc_type=req.loc_type,
             capital=req.capital or 0, qty=req.qty, founder_works=req.founder_works,
             rent_override=req.rent_override, start_month=req.start_month)
         report = render_report_v4(result)
