@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zerek-v19-wiki-only-real';
+const CACHE_NAME = 'zerek-v20-back-absolute';
 
 self.addEventListener('install', function(e) {
   self.skipWaiting();
