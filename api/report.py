@@ -173,6 +173,7 @@ def render_report_v4(result: dict) -> dict:
 
     return {
         "input": inp,
+        "owner_economics": result.get("owner_economics", {}),
         "health": {"title":"Здоровье проекта","indicators":health},
         "block_1": {
             "title":"На чём зарабатываете","subtitle":"Структура выручки",

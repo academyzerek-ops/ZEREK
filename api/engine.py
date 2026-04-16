@@ -479,6 +479,131 @@ def calc_payback(capex_total: int, cashflow: list) -> dict:
 
 
 # ═══════════════════════════════════════════════
+# PHASE 2 — OWNER ECONOMICS
+# «В карман собственнику» + точки закрытия/роста + стресс-тест
+# ═══════════════════════════════════════════════
+
+OWNER_CLOSURE_POCKET = 200_000   # ниже зарплаты наёмного продавца — смысла вести бизнес нет
+OWNER_GROWTH_POCKET = 600_000    # 3× закрытие — уровень, с которого можно масштабироваться
+
+
+def calc_owner_social_payments(declared_monthly_base: int = None) -> int:
+    """
+    Обязательные соцплатежи собственника-ИП на Упрощёнке (РК 2026):
+    ОПВ 10% + ОПВР 3.5% + ОСМС ~5% от 1.4 МРП + СО 3.5% ≈ 18-22% от базы.
+    По умолчанию считаем базу = 50 МРП (≈216 250 ₸) — типично для активного ИП на УСН.
+    Возвращает ₸/мес.
+    """
+    if declared_monthly_base is None:
+        declared_monthly_base = MRP_2026 * 50
+    base = min(declared_monthly_base, MRP_2026 * 50)
+    return int(base * 0.22)
+
+
+def calc_owner_economics(fin: dict, staff: dict, tax_rate: float,
+                          rent_month_total: int, qty: int = 1,
+                          traffic_k: float = 1.0,
+                          check_k: float = 1.0,
+                          rent_k: float = 1.0,
+                          social: int = None) -> dict:
+    """
+    Месячная экономика собственника с полной разбивкой OPEX.
+    Возвращает выручку, COGS, валовую, OPEX-разбивку, налог, соцплатежи и
+    «в карман». Коэффициенты *_k используются в стресс-тесте.
+    """
+    check = _safe_int(fin.get('check_med'), 1000) * check_k
+    traffic = _safe_float(fin.get('traffic_med'), 50) * traffic_k
+    revenue = int(check * traffic * 30 * qty)
+
+    cogs_pct = _safe_float(fin.get('cogs_pct'), DEFAULTS['cogs_pct'])
+    cogs = int(revenue * cogs_pct)
+    gross = revenue - cogs
+
+    fot_full = _safe_int(staff.get('fot_full_med'), 0)
+    if fot_full == 0:
+        fot_full = int(_safe_int(staff.get('fot_net_med'), 0) * DEFAULTS['fot_multiplier'])
+
+    rent = int(rent_month_total * rent_k)
+    utilities = _safe_int(fin.get('utilities'), 0) * qty
+    marketing = _safe_int(fin.get('marketing'), 0)
+    consumables = _safe_int(fin.get('consumables'), 0) * qty
+    software = _safe_int(fin.get('software'), 0)
+    transport = _safe_int(fin.get('transport'), 0)
+    sez = _safe_int(fin.get('sez_month'), DEFAULTS['sez_month'])
+    other = consumables + software + transport + sez
+
+    opex_total = fot_full + rent + marketing + utilities + other
+    profit_before_tax = gross - opex_total
+    tax_amount = int(revenue * tax_rate)
+    social_amount = social if social is not None else calc_owner_social_payments()
+    net_in_pocket = profit_before_tax - tax_amount - social_amount
+
+    return {
+        'revenue': revenue, 'cogs': cogs, 'gross': gross,
+        'opex_breakdown': {
+            'rent': rent,
+            'fot': fot_full,
+            'marketing': marketing,
+            'utilities': utilities,
+            'other': other,
+        },
+        'opex_total': opex_total,
+        'profit_before_tax': profit_before_tax,
+        'tax_amount': tax_amount,
+        'tax_rate_pct': round(tax_rate * 100, 2),
+        'social_payments': social_amount,
+        'net_in_pocket': net_in_pocket,
+    }
+
+
+def calc_closure_growth_points(owner_eco: dict) -> dict:
+    """Переводит пороги «в карман» в пороги месячной выручки при той же структуре затрат."""
+    pocket = owner_eco.get('net_in_pocket', 0)
+    revenue = owner_eco.get('revenue', 0)
+    if pocket <= 0 or revenue <= 0:
+        return {
+            'closure_pocket': OWNER_CLOSURE_POCKET, 'closure_revenue': 0,
+            'growth_pocket': OWNER_GROWTH_POCKET, 'growth_revenue': 0,
+        }
+    ratio = revenue / pocket
+    return {
+        'closure_pocket': OWNER_CLOSURE_POCKET,
+        'closure_revenue': int(OWNER_CLOSURE_POCKET * ratio),
+        'growth_pocket': OWNER_GROWTH_POCKET,
+        'growth_revenue': int(OWNER_GROWTH_POCKET * ratio),
+    }
+
+
+def calc_stress_test(fin: dict, staff: dict, tax_rate: float,
+                     rent_month_total: int, qty: int = 1) -> list:
+    """Настоящий стресс-тест: плохо / база / хорошо. «В карман» по каждому сценарию."""
+    scenarios = [
+        {'key': 'bad',  'label': 'Если всё плохо',     'color': 'red',
+         'params': 'Трафик −25%, чек −10%, аренда +20%',
+         'traffic_k': 0.75, 'check_k': 0.90, 'rent_k': 1.20},
+        {'key': 'base', 'label': 'Базовый сценарий',   'color': 'blue',
+         'params': 'Расчётные показатели',
+         'traffic_k': 1.00, 'check_k': 1.00, 'rent_k': 1.00},
+        {'key': 'good', 'label': 'Если всё хорошо',    'color': 'green',
+         'params': 'Трафик +20%, чек +10%',
+         'traffic_k': 1.20, 'check_k': 1.10, 'rent_k': 1.00},
+    ]
+    out = []
+    for sc in scenarios:
+        eco = calc_owner_economics(
+            fin, staff, tax_rate, rent_month_total, qty,
+            traffic_k=sc['traffic_k'], check_k=sc['check_k'], rent_k=sc['rent_k'],
+        )
+        out.append({
+            'key': sc['key'], 'label': sc['label'], 'color': sc['color'],
+            'params': sc['params'],
+            'revenue': eco['revenue'],
+            'net_in_pocket': eco['net_in_pocket'],
+        })
+    return out
+
+
+# ═══════════════════════════════════════════════
 # 4. ГЛАВНАЯ ФУНКЦИЯ — QUICK CHECK v3
 # ═══════════════════════════════════════════════
 
@@ -580,6 +705,13 @@ def run_quick_check_v3(
 
     # ── Окупаемость ──
     payback = calc_payback(capex_total, cashflow)
+
+    # ── Phase 2: экономика собственника ──
+    owner_eco = calc_owner_economics(fin, staff_adjusted, tax_rate, rent_month_total, qty)
+    closure_growth = calc_closure_growth_points(owner_eco)
+    stress_test = calc_stress_test(fin, staff_adjusted, tax_rate, rent_month_total, qty)
+    # Окупаемость по чистой прибыли в карман (месяцев)
+    owner_payback_m = int(round(capex_total / owner_eco['net_in_pocket'])) if owner_eco['net_in_pocket'] > 0 else None
 
     # ── 3 сценария (пессимист/база/оптимист) ──
     scenarios = {}
@@ -717,6 +849,13 @@ def run_quick_check_v3(
         "breakeven": breakeven,
         "scenarios": scenarios,
         "payback": payback,
+
+        "owner_economics": {
+            **owner_eco,
+            **closure_growth,
+            "stress_test": stress_test,
+            "owner_payback_months": owner_payback_m,
+        },
 
         "tax": {
             "regime": _safe(tax_data.get('tax_regime'), 'Упрощёнка'),

@@ -1102,17 +1102,8 @@ function deriveMetrics(r) {
   var b5 = r.block_5 || {};
   var b6 = r.block_6 || {};
   var b7 = r.block_7 || {};
-  var scenarios = b5.scenarios || [];
-  var base = scenarios[1] || scenarios[0] || {};
+  var oe = r.owner_economics || null; // Phase 2 — server-computed
 
-  var revenue = b1.revenue_monthly || 0;
-  var cogs = b2.cogs_monthly || Math.round(revenue * ((b2.cogs_pct || 30) / 100));
-  var gross = b2.gross_profit || (revenue - cogs);
-  var opexTotal = b3.total || 0;
-  var taxRate = (b7.rate_pct || 4) / 100;
-  var tax = Math.round(revenue * taxRate);
-
-  // OPEX breakdown
   var opexItems = b3.items || [];
   function findItem(re) {
     for (var i = 0; i < opexItems.length; i++) {
@@ -1120,61 +1111,71 @@ function deriveMetrics(r) {
     }
     return 0;
   }
-  var rent = findItem(/аренд/);
-  var fot = findItem(/фот|зарпл/);
-  var mkt = findItem(/маркет|рекл/);
-  var util = findItem(/коммун|утили|электр/);
-  var other = Math.max(0, opexTotal - rent - fot - mkt - util);
 
-  // Owner social payments (KZ 2026 minimum for self-employed, ~1 МРП base)
-  // МРП 4325 × (10% ОПВ + 5% ОСМС + 3.5% СО) on 1 МРП — estimated floor ~4500/mo,
-  // but on реальном доходе ~45–55k. We use 45000 as realistic median для Phase 1.
-  var social = 45000;
+  var revenue, cogs, gross, rent, fot, mkt, util, other,
+      opexTotal, profitBeforeTax, tax, social, netInPocket,
+      closurePocket, growthPocket, closureRevenue, growthRevenue,
+      stress, payback, taxRatePct, taxRegime;
 
-  var profitBeforeTax = gross - opexTotal;
-  var netInPocket = profitBeforeTax - tax - social;
+  if (oe && typeof oe.net_in_pocket === 'number') {
+    // Server values — source of truth
+    revenue = oe.revenue; cogs = oe.cogs; gross = oe.gross;
+    var ob = oe.opex_breakdown || {};
+    rent = ob.rent || 0; fot = ob.fot || 0; mkt = ob.marketing || 0;
+    util = ob.utilities || 0; other = ob.other || 0;
+    opexTotal = oe.opex_total || (rent + fot + mkt + util + other);
+    profitBeforeTax = oe.profit_before_tax;
+    tax = oe.tax_amount; taxRatePct = oe.tax_rate_pct || (b7.rate_pct || 4);
+    taxRegime = b7.regime || 'Упрощёнка';
+    social = oe.social_payments;
+    netInPocket = oe.net_in_pocket;
+    closurePocket = oe.closure_pocket || 200000;
+    growthPocket = oe.growth_pocket || 600000;
+    closureRevenue = oe.closure_revenue || 0;
+    growthRevenue = oe.growth_revenue || 0;
+    payback = oe.owner_payback_months || null;
 
-  // Closure / growth points
-  // Closure: owner earns less than 200K/mo
-  // Break-even: b6.tb_revenue
-  // Growth: when we can finance expansion (3× net pocket threshold = 600K)
-  var closurePocket = 200000;
-  var growthPocket = 600000;
-  // Translate to monthly revenue thresholds (holding ratios of the base)
-  var pocketToRevenue = netInPocket > 0 ? revenue / netInPocket : 0;
-  var closureRevenue = pocketToRevenue > 0 ? Math.round(closurePocket * pocketToRevenue) : 0;
-  var growthRevenue = pocketToRevenue > 0 ? Math.round(growthPocket * pocketToRevenue) : 0;
+    var serverStress = oe.stress_test || [];
+    stress = serverStress.map(function(s) {
+      return { color: s.color, label: s.label, params: s.params, pocket: s.net_in_pocket };
+    });
+  } else {
+    // Client fallback (if server didn't deploy Phase 2 yet)
+    revenue = b1.revenue_monthly || 0;
+    cogs = b2.cogs_monthly || Math.round(revenue * ((b2.cogs_pct || 30) / 100));
+    gross = b2.gross_profit || (revenue - cogs);
+    opexTotal = b3.total || 0;
+    taxRatePct = b7.rate_pct || 4;
+    taxRegime = b7.regime || 'Упрощёнка';
+    tax = Math.round(revenue * taxRatePct / 100);
+    rent = findItem(/аренд/); fot = findItem(/фот|зарпл/); mkt = findItem(/маркет|рекл/);
+    util = findItem(/коммун|утили|электр/);
+    other = Math.max(0, opexTotal - rent - fot - mkt - util);
+    social = 45000;
+    profitBeforeTax = gross - opexTotal;
+    netInPocket = profitBeforeTax - tax - social;
+    closurePocket = 200000; growthPocket = 600000;
+    var ptr = netInPocket > 0 ? revenue / netInPocket : 0;
+    closureRevenue = ptr > 0 ? Math.round(closurePocket * ptr) : 0;
+    growthRevenue = ptr > 0 ? Math.round(growthPocket * ptr) : 0;
+    stress = [];
+    var bad = { color: 'red', label: 'Если всё плохо', params: 'Трафик −25%, чек −10%, аренда +20%' };
+    var br = Math.round(revenue * 0.75 * 0.9);
+    bad.pocket = br - Math.round(br * cogs / Math.max(revenue, 1)) - (opexTotal - rent + Math.round(rent * 1.2)) - Math.round(br * taxRatePct / 100) - social;
+    stress.push(bad);
+    stress.push({ color: 'blue', label: 'Базовый сценарий', params: 'Расчётные показатели', pocket: netInPocket });
+    var gr = Math.round(revenue * 1.2 * 1.1);
+    stress.push({ color: 'green', label: 'Если всё хорошо', params: 'Трафик +20%, чек +10%', pocket: gr - Math.round(gr * cogs / Math.max(revenue, 1)) - opexTotal - Math.round(gr * taxRatePct / 100) - social });
+    payback = netInPocket > 0 ? Math.max(1, Math.round((b4.investment_min || b4.total || 0) / netInPocket)) : null;
+  }
 
-  // Stress-test scenarios (new semantics)
-  var stress = [];
-  // Bad: -25% traffic, -10% check, +20% rent
-  var badRevenue = Math.round(revenue * 0.75 * 0.9);
-  var badCogs = Math.round(badRevenue * (cogs / Math.max(revenue, 1)));
-  var badGross = badRevenue - badCogs;
-  var badRent = Math.round(rent * 1.2);
-  var badOpex = opexTotal - rent + badRent;
-  var badTax = Math.round(badRevenue * taxRate);
-  var badPocket = badGross - badOpex - badTax - social;
-  stress.push({ color: 'red', label: 'Если всё плохо', params: 'Трафик −25%, чек −10%, аренда +20%', pocket: badPocket });
-
-  stress.push({ color: 'blue', label: 'Базовый сценарий', params: 'Расчётные показатели', pocket: netInPocket });
-
-  var goodRevenue = Math.round(revenue * 1.2 * 1.1);
-  var goodCogs = Math.round(goodRevenue * (cogs / Math.max(revenue, 1)));
-  var goodGross = goodRevenue - goodCogs;
-  var goodTax = Math.round(goodRevenue * taxRate);
-  var goodPocket = goodGross - opexTotal - goodTax - social;
-  stress.push({ color: 'green', label: 'Если всё хорошо', params: 'Трафик +20%, чек +10%', pocket: goodPocket });
-
-  // Payback
   var invMin = b4.investment_min || b4.total || 0;
-  var payback = netInPocket > 0 ? Math.max(1, Math.round(invMin / netInPocket)) : null;
 
   return {
     revenue: revenue, cogs: cogs, gross: gross,
     rent: rent, fot: fot, mkt: mkt, util: util, other: other,
     opexTotal: opexTotal, profitBeforeTax: profitBeforeTax,
-    tax: tax, taxRatePct: b7.rate_pct || 4, taxRegime: b7.regime || 'Упрощёнка',
+    tax: tax, taxRatePct: taxRatePct, taxRegime: taxRegime,
     social: social,
     netInPocket: netInPocket,
     invMin: invMin, invMax: b4.investment_max || invMin, capexItems: b4.items || [],
