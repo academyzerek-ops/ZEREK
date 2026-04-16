@@ -3,30 +3,177 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#101010">
-<title>ZEREK — Конкуренты приехали — и спасли наш бизнес</title>
+<title>Кейс: Конкуренты приехали — и спасли наш бизнес</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{background:#101010;color:#F3F5F7;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
-.page{max-width:480px;margin:0 auto;padding:20px 20px 100px}
-.back{display:inline-flex;align-items:center;gap:4px;padding:8px 16px 8px 12px;background:#1E1E1E;color:#999;border:1px solid #2C2C2C;border-radius:20px;font-size:13px;font-weight:600;text-decoration:none;margin-bottom:24px}
-.back:active{background:#252525}
-.back svg{width:14px;height:14px;stroke:#999;stroke-width:2.5;fill:none}
-.tag{display:inline-block;font-size:11px;font-weight:600;padding:4px 12px;border-radius:9999px;margin-bottom:16px}
-.tag-loss{background:rgba(255,48,64,0.12);color:#FF3040}
-.tag-win{background:rgba(0,186,124,0.12);color:#00BA7C}
-h1{font-size:24px;font-weight:700;letter-spacing:-0.3px;line-height:1.2;margin-bottom:12px}
-.preview{font-size:15px;color:#999;line-height:1.6;margin-bottom:32px}
-.placeholder{padding:40px 20px;text-align:center;color:#666;font-size:14px;border:1px dashed #2C2C2C;border-radius:16px}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0A0A0F;
+  --surface: #16161E;
+  --surface2: #1E1E28;
+  --border: rgba(255,255,255,0.06);
+  --text: #E8E8ED;
+  --text2: #A0A0B0;
+  --text3: #6B6B7B;
+  --red: #E85454;
+  --red-dim: rgba(232,84,84,0.08);
+  --green: #00D4AA;
+  --green-dim: rgba(0,212,170,0.08);
+  --accent: #6C63FF;
+}
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 40px;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 20px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+}
+.back::before {
+  content: '‹';
+  font-size: 20px;
+  line-height: 1;
+}
+
+.case-header {
+  padding: 12px 20px 20px;
+}
+.case-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.badge-success {
+  background: var(--green-dim);
+  color: var(--green);
+  border: 1px solid rgba(0,212,170,0.2);
+}
+
+.case-title {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 10px;
+}
+.case-meta {
+  font-size: 13px;
+  color: var(--text3);
+  line-height: 1.5;
+}
+
+.thread {
+  padding: 0 20px;
+}
+.thread p {
+  font-size: 15px;
+  color: var(--text2);
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+.thread strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.thread em {
+  font-style: normal;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+.accent-block {
+  background: var(--surface);
+  border-left: 3px solid var(--green);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  margin: 20px 0;
+}
+.accent-block.lesson {
+  border-left-color: var(--accent);
+}
+.accent-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+.accent-block .accent-label + p {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+
+.sep {
+  height: 1px;
+  background: var(--border);
+  margin: 24px 20px;
+}
 </style>
 </head>
 <body>
-<div class="page">
-  <a class="back" href="../products/app.html?tab=cases"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Назад</a>
-  <span class="tag tag-win">Взлёт</span>
-  <h1>Конкуренты приехали — и спасли наш бизнес</h1>
-  <p class="preview">Думали — конец. А конкуренты создали кластер, который утроил трафик.</p>
-  <div class="placeholder">Полный текст кейса готовится.</div>
+
+<a class="back" onclick="history.back()">Назад</a>
+
+<div class="case-header">
+  <div class="case-badge badge-success">Взлёт</div>
+  <h1 class="case-title">Конкуренты приехали — и спасли наш бизнес</h1>
+  <div class="case-meta">Торговый центр · Б/у телефоны · Студенческий бизнес</div>
 </div>
+
+<div class="thread">
+
+  <div class="accent-block">
+    <div class="accent-label">Главный инсайт</div>
+    <p>Конкуренция не всегда убивает — иногда она создаёт рынок, которого раньше не было</p>
+  </div>
+
+  <p>Студенческие годы. Мы занимались покупкой-продажей подержанных сотовых телефонов. Маленькая витринка — буквально один квадратный метр в торговом центре. Стоишь рядом со стулом, люди проходят мимо, спрашивают: чем занимаетесь? Говоришь: хотите телефон продать — мы принимаем. Хотите купить — вот витрина, выбирайте.</p>
+
+  <p>Единственная точка во всём ТЦ. Три-четыре-пять клиентов в день. Кто-то продавал, кто-то покупал. В принципе хватало нормально, по заработку было неплохо.</p>
+
+  <p>И тут через месяца три, когда работа уже наладилась, <strong>приезжают конкуренты</strong>. Прямо на наших глазах привезли витрину, поставили рядом с нами. Точно такую же. Встали и начали работать.</p>
+
+  <p>Удивлению и разочарованию не было предела. Мы сразу посчитали: всё, доход упадёт в два раза. Скорее всего, будем закрываться.</p>
+
+  <p>Проработали так буквально две недели — и тут приезжает <em>третья витрина</em>. Ну, эмоции не описать словами. Думали — конец.</p>
+
+  <p>А дальше произошло то, чего мы вообще не ожидали.</p>
+
+  <p>Клиентов стало <strong>не меньше, а больше</strong>. Мы-то думали, что будем делить тех же пятерых на троих. А получилось наоборот — только у нас одних стало приходить по десять человек в день. Аудитория начала понимать: теперь здесь не один продавец, а три. Больше выбора телефонов, больше ценовых предложений, можно прийти и сравнить.</p>
+
+  <p>Этот уголок начал жить. Ребята стали привозить аксессуары, кто-то начал продавать новые телефоны, кто-то — ремонтировать. И стоит ли мне говорить, что через год там было уже около <strong>пятнадцати точек</strong>? Аксессуары, новые телефоны, б/у, ремонт, чехлы. Бешеный трафик, постоянный поток. И на каждую точку — по десять клиентов в день.</p>
+
+  <div class="sep"></div>
+
+  <div class="accent-block lesson">
+    <div class="accent-label">Урок</div>
+    <p>Конкуренты — это не всегда угроза. Иногда они создают кластер, который притягивает аудиторию, которую ты в одиночку никогда бы не собрал. Один продавец — это случайная точка. Три продавца — это место, куда люди идут целенаправленно. Не бойся конкуренции рядом — бойся быть единственным там, где людям не за чем приходить.</p>
+  </div>
+
+</div>
+
 </body>
 </html>
