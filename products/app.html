@@ -1740,50 +1740,37 @@ p { line-height: 1.4; font-weight: 400; }
     <div class="screen-title">Чужие грабли</div>
     <div class="screen-subtitle">Учись на чужих ошибках, экономь свои деньги</div>
 
-    <div class="case-card" onclick="openCase(0)">
-      <div class="case-icon">📉</div>
-      <div class="case-title">Кофейня закрылась через 8 месяцев</div>
-      <div class="case-excerpt">Не считали точку безубыточности. Арендовали 80 м² в спальном районе — трафик оказался в 3 раза ниже расчётного.</div>
+    <div class="case-card" onclick="window.location.href='../cases/case-001.html'">
+      <div class="case-title">Дорогой диплом ценой в 19 миллионов</div>
+      <div class="case-excerpt">Кофейня европейского формата. Влюбился в продукт — проигнорировал рынок.</div>
       <span class="case-tag case-tag-loss">Провал</span>
     </div>
 
-    <div class="case-card" onclick="openCase(1)">
-      <div class="case-icon">📈</div>
-      <div class="case-title">Барбершоп окупился за 4 месяца</div>
-      <div class="case-excerpt">Правильно выбрали локацию возле БЦ, начали с 2 кресел и выросли до 5 за полгода. Считали юнит-экономику до старта.</div>
+    <div class="case-card" onclick="window.location.href='../cases/case-002.html'">
+      <div class="case-title">Как «успешный успех» чуть не убил клининг</div>
+      <div class="case-excerpt">Лидер B2C решил масштабироваться в B2B без подготовки — и чуть не потерял всё.</div>
+      <span class="case-tag case-tag-loss">Провал</span>
+    </div>
+
+    <div class="case-card" onclick="window.location.href='../cases/case-003.html'">
+      <div class="case-title">30 домов продали — построить не смогли</div>
+      <div class="case-excerpt">Всё посчитали, всё продали. Но в городе на 250 тысяч не хватило кадров и ресурсов.</div>
+      <span class="case-tag case-tag-loss">Провал</span>
+    </div>
+
+    <div class="case-card" onclick="window.location.href='../cases/case-004.html'">
+      <div class="case-title">Конкуренты приехали — и спасли наш бизнес</div>
+      <div class="case-excerpt">Думали — конец. А конкуренты создали кластер, который утроил трафик.</div>
       <span class="case-tag case-tag-win">Взлёт</span>
     </div>
 
-    <div class="case-card" onclick="openCase(2)">
-      <div class="case-icon">📉</div>
-      <div class="case-title">Клининг: 500K вложений — 0 клиентов</div>
-      <div class="case-excerpt">Не продумали каналы привлечения. Купили технику и оборудование, но ни одного заказа за 2 месяца.</div>
-      <span class="case-tag case-tag-loss">Провал</span>
-    </div>
-
-    <div class="case-card" onclick="openCase(3)">
-      <div class="case-icon">📈</div>
-      <div class="case-title">Донерная: из ларька в сеть за год</div>
-      <div class="case-excerpt">Начали с одного киоска у рынка. Посчитали маржу — 62%. Через 8 месяцев открыли второю точку, через год — третью.</div>
+    <div class="case-card" onclick="window.location.href='../cases/case-005.html'">
+      <div class="case-title">Камрюха за два месяца</div>
+      <div class="case-excerpt">Первыми поймали тренд на донеры. 500 лепёшек в день с одной точки.</div>
       <span class="case-tag case-tag-win">Взлёт</span>
     </div>
-
-    <div class="case-card" onclick="openCase(4)">
-      <div class="case-icon">📉</div>
-      <div class="case-title">Пекарня: неправильный формат</div>
-      <div class="case-excerpt">Открыли полный цикл производства, а спрос был на кофе-пекарню to-go. Переформатировались — но потеряли 2 млн ₸.</div>
-      <span class="case-tag case-tag-loss">Провал</span>
-    </div>
   </div>
 
-  <!-- Case detail view -->
-  <div class="case-detail" id="case-detail">
-    <button class="module-back" onclick="closeCase()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-      Назад
-    </button>
-    <div id="case-detail-content"></div>
-  </div>
 </div>
 
 <!-- ============================================
@@ -2752,63 +2739,8 @@ function initAcademyListeners() {
 /* ============================================
    CASES
    ============================================ */
-var CASES_DATA = [
-  {
-    icon: '📉', title: 'Кофейня закрылась через 8 месяцев', tag: 'loss',
-    content: '<h3 style="font-size:18px;font-weight:700;margin-bottom:12px">📉 Кофейня закрылась через 8 месяцев</h3>' +
-      '<p style="color:var(--text2);margin-bottom:16px">Город: Караганда | Формат: Мини-кофейня | Инвестиции: 4.2 млн ₸</p>' +
-      '<div class="report-card" style="margin-bottom:12px"><div class="report-card-label">Главная ошибка</div><div style="font-size:14px;font-weight:600">Не считали точку безубыточности</div></div>' +
-      '<p style="font-size:14px;line-height:1.6;margin-bottom:12px">Арендовали помещение 80 м² в спальном районе. Ожидали 150 чеков в день, реальность — 40-50. Аренда съедала 45% выручки вместо запланированных 25%.</p>' +
-      '<p style="font-size:14px;line-height:1.6;margin-bottom:12px">Не учли сезонность — летом трафик упал ещё на 30%. К 6-му месяцу накопился кассовый разрыв в 1.8 млн ₸.</p>' +
-      '<div class="report-card"><div class="report-card-label">Урок</div><div style="font-size:14px">Всегда считайте точку безубыточности и закладывайте пессимистичный сценарий. Если бизнес не выходит в плюс даже при 50% от плана — не открывайтесь.</div></div>'
-  },
-  {
-    icon: '📈', title: 'Барбершоп окупился за 4 месяца', tag: 'win',
-    content: '<h3 style="font-size:18px;font-weight:700;margin-bottom:12px">📈 Барбершоп окупился за 4 месяца</h3>' +
-      '<p style="color:var(--text2);margin-bottom:16px">Город: Астана | Формат: Мини-барбершоп | Инвестиции: 2.1 млн ₸</p>' +
-      '<div class="report-card" style="margin-bottom:12px"><div class="report-card-label">Ключ к успеху</div><div style="font-size:14px;font-weight:600">Локация рядом с БЦ + юнит-экономика до старта</div></div>' +
-      '<p style="font-size:14px;line-height:1.6;margin-bottom:12px">Начали с 2 кресел в 25 м² рядом с бизнес-центром. Средний чек 4 500 ₸, загрузка 85% с первого месяца.</p>' +
-      '<p style="font-size:14px;line-height:1.6;margin-bottom:12px">Через 4 месяца полностью окупили инвестиции. Через 6 месяцев расширились до 5 кресел, переехав в соседнее помещение.</p>' +
-      '<div class="report-card"><div class="report-card-label">Урок</div><div style="font-size:14px">Начинайте с минимума и масштабируйтесь по данным. Считайте юнит-экономику ДО вложений.</div></div>'
-  },
-  {
-    icon: '📉', title: 'Клининг: 500K вложений — 0 клиентов', tag: 'loss',
-    content: '<h3 style="font-size:18px;font-weight:700;margin-bottom:12px">📉 Клининг: 500K вложений — 0 клиентов</h3>' +
-      '<p style="color:var(--text2);margin-bottom:16px">Город: Шымкент | Формат: Бригада | Инвестиции: 500 000 ₸</p>' +
-      '<div class="report-card" style="margin-bottom:12px"><div class="report-card-label">Главная ошибка</div><div style="font-size:14px;font-weight:600">Не продумали каналы привлечения</div></div>' +
-      '<p style="font-size:14px;line-height:1.6;margin-bottom:12px">Купили моющее оборудование, расходники, даже форму. Но не продумали, откуда будут приходить клиенты. Ни сайта, ни Instagram, ни партнёрств.</p>' +
-      '<p style="font-size:14px;line-height:1.6;margin-bottom:12px">За 2 месяца — ни одного заказа. Оборудование лежит без дела, деньги потрачены.</p>' +
-      '<div class="report-card"><div class="report-card-label">Урок</div><div style="font-size:14px">Маркетинг — не опция, а часть бизнес-плана. Планируйте каналы привлечения ДО покупки оборудования.</div></div>'
-  },
-  {
-    icon: '📈', title: 'Донерная: из ларька в сеть за год', tag: 'win',
-    content: '<h3 style="font-size:18px;font-weight:700;margin-bottom:12px">📈 Донерная: из ларька в сеть за год</h3>' +
-      '<p style="color:var(--text2);margin-bottom:16px">Город: Алматы | Формат: Киоск → Мини-кафе | Инвестиции: 1.5 млн ₸</p>' +
-      '<div class="report-card" style="margin-bottom:12px"><div class="report-card-label">Ключ к успеху</div><div style="font-size:14px;font-weight:600">Высокая маржа + правильная локация</div></div>' +
-      '<p style="font-size:14px;line-height:1.6;margin-bottom:12px">Начали с одного киоска у рынка. Маржа 62% позволяла быстро накапливать прибыль. Через 8 месяцев открыли вторую точку.</p>' +
-      '<p style="font-size:14px;line-height:1.6;margin-bottom:12px">К концу года работали уже на 3 точках. Ключ — стандартизация рецептуры и процессов с первого дня.</p>' +
-      '<div class="report-card"><div class="report-card-label">Урок</div><div style="font-size:14px">Если маржа позволяет — масштабируйтесь. Но стандартизируйте процессы с первого дня, иначе качество просядет.</div></div>'
-  },
-  {
-    icon: '📉', title: 'Пекарня: неправильный формат', tag: 'loss',
-    content: '<h3 style="font-size:18px;font-weight:700;margin-bottom:12px">📉 Пекарня: неправильный формат</h3>' +
-      '<p style="color:var(--text2);margin-bottom:16px">Город: Павлодар | Формат: Полный цикл | Инвестиции: 6.8 млн ₸</p>' +
-      '<div class="report-card" style="margin-bottom:12px"><div class="report-card-label">Главная ошибка</div><div style="font-size:14px;font-weight:600">Выбрали формат без анализа спроса</div></div>' +
-      '<p style="font-size:14px;line-height:1.6;margin-bottom:12px">Открыли пекарню полного цикла: тесто, выпечка, упаковка. Вложили 6.8 млн ₸ в оборудование. Но район хотел кофе-пекарню to-go.</p>' +
-      '<p style="font-size:14px;line-height:1.6;margin-bottom:12px">Переформатировались, но уже потеряли 2 млн ₸ на ненужном оборудовании и ремонте.</p>' +
-      '<div class="report-card"><div class="report-card-label">Урок</div><div style="font-size:14px">Изучите спрос перед выбором формата. Дешевле потратить неделю на анализ, чем 2 млн на переделку.</div></div>'
-  }
-];
-
-function openCase(idx) {
-  var c = CASES_DATA[idx];
-  document.getElementById('case-detail-content').innerHTML = c.content;
-  document.getElementById('cases-main').style.display = 'none';
-  document.getElementById('case-detail').classList.add('active');
-}
-
+/* Cases now link to individual HTML pages — no inline content needed */
 function closeCase() {
-  document.getElementById('case-detail').classList.remove('active');
   document.getElementById('cases-main').style.display = 'block';
 }
 
