@@ -2818,78 +2818,34 @@ function closeCase() {
 var WIKI_CATEGORIES = [
   { title: 'Общепит', niches: [
     { icon: '☕', name: 'Кофейня', file: 'ZEREK_Coffee' },
-    { icon: '🌯', name: 'Донерная', file: 'ZEREK_Doner' },
-    { icon: '🍕', name: 'Пиццерия', file: 'ZEREK_Pizza' },
-    { icon: '🍣', name: 'Суши', file: 'ZEREK_Sushi' },
-    { icon: '🥐', name: 'Пекарня', file: 'ZEREK_Bakery' },
-    { icon: '🍔', name: 'Фастфуд', file: 'ZEREK_Fastfood' },
-    { icon: '🍽️', name: 'Столовая', file: 'ZEREK_Canteen' },
-    { icon: '🎂', name: 'Кондитерская', file: 'ZEREK_Confection' },
-    { icon: '🥟', name: 'Полуфабрикаты', file: 'ZEREK_Semifood' },
-    { icon: '🧋', name: 'Баббл-ти', file: 'ZEREK_Bubbletea' },
-    { icon: '🍱', name: 'Кейтеринг', file: 'ZEREK_Catering' }
+    { icon: '🌯', name: 'Донерная', file: 'ZEREK_Doner' }
   ]},
   { title: 'Красота', niches: [
     { icon: '💈', name: 'Барбершоп', file: 'ZEREK_Barber' },
     { icon: '💅', name: 'Маникюр', file: 'ZEREK_Manicure' },
-    { icon: '✨', name: 'Брови', file: 'ZEREK_Brow' },
-    { icon: '👁️', name: 'Ресницы', file: 'ZEREK_Lash' },
-    { icon: '🌸', name: 'Шугаринг', file: 'ZEREK_Sugaring' },
+    { icon: '✨', name: 'Брови и ресницы', file: 'ZEREK_BrowLash' },
+    { icon: '🌸', name: 'Эпиляция', file: 'ZEREK_Epilation' },
     { icon: '💆', name: 'Массаж', file: 'ZEREK_Massage' },
     { icon: '🧴', name: 'Косметология', file: 'ZEREK_Cosmetology' },
     { icon: '💄', name: 'Салон красоты', file: 'ZEREK_Beauty' }
   ]},
   { title: 'Здоровье', niches: [
     { icon: '🦷', name: 'Стоматология', file: 'ZEREK_Dental' },
-    { icon: '👓', name: 'Оптика', file: 'ZEREK_Optics' },
-    { icon: '💊', name: 'Аптека', file: 'ZEREK_Pharmacy' },
-    { icon: '💆', name: 'Массаж', file: 'ZEREK_Massage' },
-    { icon: '🧴', name: 'Косметология', file: 'ZEREK_Cosmetology' },
-    { icon: '🧘', name: 'Йога', file: 'ZEREK_Yoga' }
+    { icon: '💊', name: 'Аптека', file: 'ZEREK_Pharmacy' }
   ]},
   { title: 'Спорт', niches: [
     { icon: '💪', name: 'Фитнес-клуб', file: 'ZEREK_Fitness' },
-    { icon: '🧘', name: 'Йога', file: 'ZEREK_Yoga' },
-    { icon: '⚽', name: 'Футбольная школа', file: 'ZEREK_FootballSchool' }
+    { icon: '🏋️', name: 'Кроссфит', file: 'ZEREK_CrossFit' },
+    { icon: '🥊', name: 'Единоборства', file: 'ZEREK_MartialArts' },
+    { icon: '⚽', name: 'Футбольная школа', file: 'ZEREK_FootballSchool' },
+    { icon: '🧘', name: 'Групповой фитнес', file: 'ZEREK_GroupFitness' }
   ]},
   { title: 'Услуги', niches: [
     { icon: '🧹', name: 'Клининг', file: 'ZEREK_Clean' },
-    { icon: '👗', name: 'Ателье', file: 'ZEREK_Tailor' },
-    { icon: '📸', name: 'Фотостудия', file: 'ZEREK_Photo' },
-    { icon: '🖨️', name: 'Типография', file: 'ZEREK_Printing' },
-    { icon: '📦', name: 'ПВЗ', file: 'ZEREK_PVZ' },
-    { icon: '🧺', name: 'Химчистка', file: 'ZEREK_Dryclean' },
-    { icon: '🧺', name: 'Прачечная', file: 'ZEREK_Laundry' },
-    { icon: '🧽', name: 'Чистка ковров', file: 'ZEREK_Carpetclean' },
-    { icon: '💧', name: 'Вода (розлив)', file: 'ZEREK_Waterplant' },
-    { icon: '📚', name: 'Языковые курсы', file: 'ZEREK_Languages' },
-    { icon: '🚗', name: 'Автошкола', file: 'ZEREK_Driving' },
-    { icon: '📊', name: 'Бухгалтерия', file: 'ZEREK_Accounting' },
-    { icon: '📦', name: 'Карго', file: 'ZEREK_Cargo' },
-    { icon: '🏠', name: 'Риэлтор', file: 'ZEREK_Realtor' }
-  ]},
-  { title: 'Авто', niches: [
     { icon: '🚗', name: 'Автомойка', file: 'ZEREK_Carwash' },
     { icon: '🔧', name: 'Автосервис', file: 'ZEREK_Autoservice' },
-    { icon: '📱', name: 'Ремонт телефонов', file: 'ZEREK_RepairPhone' },
-    { icon: '✨', name: 'Детейлинг', file: 'ZEREK_Detailing' },
-    { icon: '🔩', name: 'Автозапчасти', file: 'ZEREK_Autoparts' },
-    { icon: '🛞', name: 'Шиномонтаж', file: 'ZEREK_Tireservice' }
-  ]},
-  { title: 'Торговля', niches: [
-    { icon: '🛒', name: 'Продукты', file: 'ZEREK_Grocery' },
-    { icon: '💐', name: 'Цветы', file: 'ZEREK_Flowers' },
-    { icon: '🐾', name: 'Зоотовары', file: 'ZEREK_Petshop' },
-    { icon: '🥩', name: 'Мясной магазин', file: 'ZEREK_Meatshop' },
-    { icon: '🍎', name: 'Фрукты/овощи', file: 'ZEREK_Fruitsvegs' },
-    { icon: '🪑', name: 'Мебель', file: 'ZEREK_Furniture' },
-    { icon: '🧱', name: 'Стройматериалы', file: 'ZEREK_Buildmat' }
-  ]},
-  { title: 'Дети', niches: [
     { icon: '👶', name: 'Детский сад', file: 'ZEREK_Kindergarten' },
-    { icon: '🎮', name: 'Компьютерный клуб', file: 'ZEREK_Compclub' },
-    { icon: '🎪', name: 'Детский центр', file: 'ZEREK_Kidscenter' },
-    { icon: '🏨', name: 'Хостел / мини-отель', file: 'ZEREK_Hotel' }
+    { icon: '💐', name: 'Цветы', file: 'ZEREK_Flowers' }
   ]}
 ];
 
