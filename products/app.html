@@ -1852,9 +1852,9 @@ p { line-height: 1.4; font-weight: 400; }
 
   <!-- Quick Check Survey (embedded) -->
   <div id="qc-screen">
-    <button class="qc-back" onclick="exitQuickCheck()">
+    <button class="qc-back" id="qc-back-btn" onclick="qcBack()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-      Назад к расчётам
+      <span id="qc-back-label">Назад к расчётам</span>
     </button>
     <div class="qc-progress-bar" role="progressbar" aria-label="Прогресс анкеты" aria-valuemin="0" aria-valuemax="100" aria-valuenow="17"><div class="qc-progress-fill" id="qc-pbar" style="--p:0.166"></div></div>
     <div class="qc-progress-text">
@@ -3041,6 +3041,13 @@ function renderQcStep() {
   }
 
   document.getElementById('qc-steps').innerHTML = html;
+
+  var backLabel = document.getElementById('qc-back-label');
+  if (backLabel) backLabel.textContent = QC.step === 0 ? 'Назад к расчётам' : 'Назад';
+
+  var btnWrap = document.querySelector('#qc-screen .qc-btn-wrap');
+  if (btnWrap) btnWrap.style.display = QC_AUTO_STEPS[stepName] ? 'none' : '';
+
   updateQcBtn();
 }
 
@@ -3065,36 +3072,55 @@ function loadQcFormats() {
   });
 }
 
+var QC_AUTO_STEPS = { 'qc-city':1, 'qc-category':1, 'qc-niche':1, 'qc-format':1 };
+
+function qcAutoAdvance() {
+  if (QC._advancing) return;
+  QC._advancing = true;
+  setTimeout(function() {
+    QC._advancing = false;
+    if (QC.step === QC_STEPS.length - 1) { runQcCalculation(); return; }
+    QC.step++;
+    renderQcStep();
+  }, 180);
+}
+
+function qcBack() {
+  if (QC.step === 0) { exitQuickCheck(); return; }
+  QC.step--;
+  renderQcStep();
+}
+
 function qcSelectCity(el, id, name) {
   QC.city_id = id; QC.city_name = name;
   var opts = el.parentNode.querySelectorAll('.qc-opt');
   for (var i = 0; i < opts.length; i++) opts[i].classList.remove('selected');
   el.classList.add('selected');
-  updateQcBtn();
+  qcAutoAdvance();
 }
 function qcSelectCategory(el, idx) {
+  if (QC.category_idx !== idx) { QC.niche_id = null; QC.format_id = null; }
   QC.category_idx = idx;
   QC.category_name = NICHE_CATEGORIES[idx].title;
-  QC.niche_id = null; QC.format_id = null;
   var opts = el.parentNode.querySelectorAll('.qc-opt');
   for (var i = 0; i < opts.length; i++) opts[i].classList.remove('selected');
   el.classList.add('selected');
-  updateQcBtn();
+  qcAutoAdvance();
 }
 function qcSelectNiche(el, id) {
+  if (QC.niche_id !== id) QC.format_id = null;
   QC.niche_id = id; QC.niche_name = NICHE_NAMES[id] || id;
-  QC.format_id = null;
   var opts = el.parentNode.querySelectorAll('.qc-opt');
   for (var i = 0; i < opts.length; i++) opts[i].classList.remove('selected');
   el.classList.add('selected');
-  updateQcBtn();
+  qcAutoAdvance();
 }
 function qcSelectFormat(el, id, name) {
   QC.format_id = id; QC.format_name = name;
   var opts = el.parentNode.querySelectorAll('.qc-opt');
   for (var i = 0; i < opts.length; i++) opts[i].classList.remove('selected');
   el.classList.add('selected');
-  updateQcBtn();
+  qcAutoAdvance();
 }
 function qcSelectLoc(el, type) {
   QC.loc_type = type;
