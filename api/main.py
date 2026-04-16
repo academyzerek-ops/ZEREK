@@ -171,6 +171,43 @@ def get_niche_risks(niche_id: str, debug: int = 0):
     return out
 
 
+@app.post("/quick-check/pdf")
+def generate_pdf(req: QCReq):
+    """
+    Генерирует 11-страничный PDF по тем же параметрам, что и /quick-check.
+    Возвращает {token, filename, pdf_url, report_id} — клиент открывает pdf_url через openLink.
+    """
+    if not db: raise HTTPException(503, f"БД не загружена: {db_error}")
+    try:
+        cls = CAPEX_TO_CLS.get((req.capex_level or "").strip().lower(), req.cls)
+        result = run_quick_check_v3(
+            db=db, city_id=req.city_id, niche_id=req.niche_id,
+            format_id=req.format_id, cls=cls, area_m2=req.area_m2, loc_type=req.loc_type,
+            capital=req.capital or 0, qty=req.qty, founder_works=req.founder_works,
+            rent_override=req.rent_override, start_month=req.start_month,
+        )
+        rendered = render_report_v4(result)
+
+        # Риски ниши (если insight.md + GEMINI_API_KEY есть)
+        from gemini_rag import extract_niche_risks
+        ai_risks = extract_niche_risks(req.niche_id.upper())
+
+        from pdf_gen import generate_quick_check_pdf
+        pdf_bytes, report_id, filename = generate_quick_check_pdf(rendered, req.niche_id.upper(), ai_risks=ai_risks)
+
+        token = _store_file(pdf_bytes, filename, "application/pdf", disposition="inline")
+        return {
+            "token": token,
+            "report_id": report_id,
+            "filename": filename,
+            "pdf_url": f"/download/{token}",
+            "size_bytes": len(pdf_bytes),
+        }
+    except Exception as e:
+        import traceback; d = traceback.format_exc(); print("PDF ERROR:", d)
+        raise HTTPException(500, str(e) + "\n" + d[-500:])
+
+
 # ── Бизнес-план на грант 400 МРП ──
 
 from fastapi.responses import FileResponse, Response, HTMLResponse
@@ -178,27 +215,32 @@ from fastapi.responses import FileResponse, Response, HTMLResponse
 # ── Временное хранилище файлов для скачивания ──
 _file_store = {}  # token → {bytes, filename, media_type, ts}
 
-def _store_file(content: bytes, filename: str, media_type: str) -> str:
+_FILE_TTL_SECONDS = 7 * 24 * 3600  # 7 дней для PDF-отчётов
+
+def _store_file(content: bytes, filename: str, media_type: str, disposition: str = 'attachment') -> str:
     """Сохраняет файл и возвращает токен для скачивания."""
-    # Очистка файлов старше 30 мин
     now = time.time()
-    expired = [k for k, v in _file_store.items() if now - v['ts'] > 1800]
+    expired = [k for k, v in _file_store.items() if now - v['ts'] > _FILE_TTL_SECONDS]
     for k in expired:
         del _file_store[k]
     token = uuid.uuid4().hex
-    _file_store[token] = {'bytes': content, 'filename': filename, 'media_type': media_type, 'ts': now}
+    _file_store[token] = {
+        'bytes': content, 'filename': filename, 'media_type': media_type,
+        'ts': now, 'disposition': disposition,
+    }
     return token
 
 @app.get("/download/{token}")
 def download_file(token: str):
-    """Скачивание файла по токену (GET — работает в Telegram WebView)."""
+    """Скачивание/предпросмотр файла по токену (GET — работает в Telegram WebView)."""
     f = _file_store.get(token)
     if not f:
-        raise HTTPException(404, "Файл не найден или истёк срок (30 мин)")
+        raise HTTPException(404, "Файл не найден или истёк срок хранения")
+    disp = f.get('disposition', 'attachment')
     return Response(
         content=f['bytes'],
         media_type=f['media_type'],
-        headers={"Content-Disposition": f'attachment; filename="{f["filename"]}"'},
+        headers={"Content-Disposition": f'{disp}; filename="{f["filename"]}"'},
     )
 
 class GrantBPReq(BaseModel):

@@ -1482,7 +1482,7 @@ function renderReport(r) {
   html += '<ul class="upsell-feats"><li>Полный документ для банка/гранта</li><li>Шаблон Bastau Biznes</li><li>Маркетинговая стратегия</li><li>Операционный план</li></ul>';
   html += '<button class="btn btn-outline" onclick="orderUpsell(\'bizplan\')">Заказать бизнес-план</button></div>';
 
-  html += '<div class="pdf-block"><h3>📄 Сохранить отчёт в PDF</h3><p>Полный 14-страничный отчёт для партнёров и банка. Скоро.</p><button class="btn btn-outline" onclick="alert(\'PDF-отчёт появится в ближайшее время\')">Скачать PDF (скоро)</button></div>';
+  html += '<div class="pdf-block" id="pdf-block"><h3>📄 Сохранить отчёт в PDF</h3><p>11-страничный отчёт, который не стыдно показать партнёру или банку.</p><button class="btn" id="pdf-btn" onclick="downloadPdf()">Скачать PDF</button></div>';
 
   html += '<div style="margin-top:18px"><button class="btn btn-outline" onclick="startOver()">Новый расчёт</button></div>';
   html += '</div>';
@@ -1497,6 +1497,40 @@ function renderReport(r) {
 function toggleCheck(el) {
   el.classList.toggle('done');
   haptic('select');
+}
+
+function downloadPdf() {
+  var btn = document.getElementById('pdf-btn');
+  if (!btn || btn.dataset.busy === '1') return;
+  btn.dataset.busy = '1';
+  var origText = btn.textContent;
+  btn.textContent = 'Готовим PDF… ~15 сек';
+  btn.classList.add('disabled');
+  haptic('light');
+
+  var body = {
+    city_id: QC.city_id, niche_id: QC.niche_id, format_id: QC.format_id,
+    area_m2: QC.area_m2, loc_type: QC.loc_type,
+    capex_level: QC.capex_level, start_month: QC.start_month
+  };
+
+  apiPost('/quick-check/pdf', body, function(err, data) {
+    btn.dataset.busy = '0';
+    btn.classList.remove('disabled');
+    if (err || !data || !data.pdf_url) {
+      btn.textContent = origText;
+      alert('Не удалось создать PDF. Попробуйте ещё раз.');
+      return;
+    }
+    btn.textContent = 'Готово — открываем…';
+    var fullUrl = API + data.pdf_url;
+    try {
+      if (tg && tg.openLink) { tg.openLink(fullUrl); }
+      else { window.open(fullUrl, '_blank'); }
+    } catch(e) { window.open(fullUrl, '_blank'); }
+    setTimeout(function() { btn.textContent = origText; }, 2500);
+    haptic('success');
+  });
 }
 function orderUpsell(what) {
   var txt = what === 'finmodel' ? 'Хочу заказать финансовую модель' : 'Хочу заказать бизнес-план';
