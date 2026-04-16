@@ -38,22 +38,38 @@ def _read_insight_file(niche_id: str) -> str:
         return ""
 
 
-def extract_niche_risks(niche_id: str) -> list[dict]:
+def extract_niche_risks(niche_id: str, diag: dict = None) -> list[dict]:
     """
     Структурирует риски ниши из knowledge/niches/{NICHE}_insight.md в 7 карточек
     формата {title, body, protect} через Gemini 2.5 Flash с JSON-схемой.
     Кешируется в памяти процесса.
     Возвращает пустой список, если insight.md или GEMINI_API_KEY отсутствуют.
+    Если передан dict `diag`, в него пишется стадия и причина пустого ответа.
     """
+    if diag is not None:
+        diag["knowledge_dir"] = KNOWLEDGE_DIR
     if niche_id in _RISK_CACHE:
+        if diag is not None: diag["source"] = "cache"
         return _RISK_CACHE[niche_id]
 
     insight_text = _read_insight_file(niche_id)
     if not insight_text:
+        if diag is not None:
+            diag["reason"] = "insight_file_missing"
+            diag["expected_path"] = os.path.join(KNOWLEDGE_DIR, f"{niche_id}_insight.md")
+            diag["dir_exists"] = os.path.isdir(KNOWLEDGE_DIR)
+            try:
+                diag["dir_listing"] = os.listdir(KNOWLEDGE_DIR)[:10] if diag["dir_exists"] else []
+            except Exception as e:
+                diag["dir_listing_error"] = str(e)
         return []
+
+    if diag is not None:
+        diag["insight_len"] = len(insight_text)
 
     api_key = os.getenv("GEMINI_API_KEY", "")
     if not api_key:
+        if diag is not None: diag["reason"] = "no_gemini_api_key"
         return []
 
     import httpx
@@ -110,11 +126,16 @@ def extract_niche_risks(niche_id: str) -> list[dict]:
     try:
         resp = httpx.post(url, json=payload, timeout=45.0)
         data = resp.json()
+        if diag is not None: diag["http_status"] = resp.status_code
         if "candidates" not in data or not data["candidates"]:
+            if diag is not None:
+                diag["reason"] = "no_candidates"
+                diag["api_response"] = str(data)[:500]
             return []
         text = data["candidates"][0]["content"]["parts"][0]["text"]
         parsed = json.loads(text)
         if not isinstance(parsed, list):
+            if diag is not None: diag["reason"] = "not_a_list"
             return []
         risks = []
         for item in parsed[:7]:
@@ -127,8 +148,14 @@ def extract_niche_risks(niche_id: str) -> list[dict]:
                 risks.append({"title": t, "body": b, "protect": p})
         if risks:
             _RISK_CACHE[niche_id] = risks
+        elif diag is not None:
+            diag["reason"] = "parsed_empty"
+            diag["parsed_items"] = len(parsed)
         return risks
-    except Exception:
+    except Exception as e:
+        if diag is not None:
+            diag["reason"] = "exception"
+            diag["error"] = str(e)[:300]
         return []
 
 
