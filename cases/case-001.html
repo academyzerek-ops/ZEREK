@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Кейс: Дорогой диплом ценой в 19 миллионов</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0A0A0F;
+  --surface: #16161E;
+  --surface2: #1E1E28;
+  --border: rgba(255,255,255,0.06);
+  --text: #E8E8ED;
+  --text2: #A0A0B0;
+  --text3: #6B6B7B;
+  --red: #E85454;
+  --red-dim: rgba(232,84,84,0.08);
+  --green: #00D4AA;
+  --accent: #6C63FF;
+}
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 40px;
+}
+
+/* Back button */
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 20px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+}
+.back::before {
+  content: '‹';
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* Header */
+.case-header {
+  padding: 12px 20px 20px;
+}
+.case-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.badge-fail {
+  background: var(--red-dim);
+  color: var(--red);
+  border: 1px solid rgba(232,84,84,0.2);
+}
+.badge-success {
+  background: rgba(0,212,170,0.08);
+  color: var(--green);
+  border: 1px solid rgba(0,212,170,0.2);
+}
+.case-title {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 10px;
+}
+.case-meta {
+  font-size: 13px;
+  color: var(--text3);
+  line-height: 1.5;
+}
+
+/* Content — thread style */
+.thread {
+  padding: 0 20px;
+}
+.thread p {
+  font-size: 15px;
+  color: var(--text2);
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+.thread strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.thread em {
+  font-style: normal;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+/* Accent block — for key mistake / lesson */
+.accent-block {
+  background: var(--surface);
+  border-left: 3px solid var(--red);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  margin: 20px 0;
+}
+.accent-block.lesson {
+  border-left-color: var(--accent);
+}
+.accent-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+.accent-block .accent-label + p {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+/* Separator */
+.sep {
+  height: 1px;
+  background: var(--border);
+  margin: 24px 20px;
+}
+</style>
+</head>
+<body>
+
+<a class="back" onclick="history.back()">Назад</a>
+
+<div class="case-header">
+  <div class="case-badge badge-fail">Провал</div>
+  <h1 class="case-title">Дорогой диплом ценой в 19 миллионов</h1>
+  <div class="case-meta">Город: Уральск · Кофейня · 19 млн ₸</div>
+</div>
+
+<div class="thread">
+
+  <div class="accent-block">
+    <div class="accent-label">Главная ошибка</div>
+    <p>Влюбился в свой продукт, проигнорировав рынок</p>
+  </div>
+
+  <p>После университета я поехал в Алматы и впервые увидел кофейни. Не одна, не две — их было много. Люди сидели с ноутбуками, встречались по работе, просто пили кофе и общались. Это был совсем другой ритм жизни. Я загорелся идеей: а почему в Уральске этого нет? Надо делать.</p>
+
+  <p>Надо понимать, какой был Уральск в те годы. Город жил в эпохе старых «кафе», где наливали кофе «3 в 1» из пакетиков. Кофейни как явления не существовало. Ни как привычки, ни как формата.</p>
+
+  <p>И вот я, молодой амбициозный выпускник, решил это изменить. Открыть в Уральске <em>настоящую кофейню</em>.</p>
+
+  <p>Я подошёл к делу с размахом. Аренда, ремонт, оборудование, закупка качественных зёрен — в проект было влито <strong>19 000 000 тенге</strong>. По тем временам это были колоссальные деньги. Я строил «храм кофе», будучи уверенным, что люди оценят вкус и атмосферу — ведь в Алматы же работает.</p>
+
+  <p>Я совершил <em>главную ошибку новичка</em> — влюбился в идею, проигнорировав свой рынок. То, что работает в миллионнике, не означает что это работает в региональном городе. В Уральске культура «кофе с собой» или посиделок за чашкой эспрессо за 500 тенге просто отсутствовала. Люди привыкли к «3 в 1» за копейки и не понимали, почему должны платить в разы больше за «просто кофе», когда дома есть чайник.</p>
+
+  <p>Я не считал ёмкость рынка и не делал тестов — я просто верил, что раз это работает там, сработает и здесь.</p>
+
+  <p>Деньги кончились быстрее, чем сформировалась привычка у горожан. Бизнес прогорел, оставив меня с огромным минусом и пониманием: <strong>наличие капитала не заменяет наличие рынка</strong>.</p>
+
+  <div class="sep"></div>
+
+  <div class="accent-block lesson">
+    <div class="accent-label">Урок</div>
+    <p>Никогда не строй финансовый замок на песке предположений. Прежде чем вливать миллионы, посчитай Unit-экономику и убедись, что твой клиент вообще существует и готов платить.</p>
+  </div>
+
+</div>
+
+</body>
+</html>
