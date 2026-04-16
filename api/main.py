@@ -173,12 +173,14 @@ def get_niche_risks(niche_id: str, debug: int = 0):
 
 @app.get("/pdf-health")
 def pdf_health():
-    """Diagnostic: confirm WeasyPrint + system libs load. Renders a trivial PDF."""
+    """Diagnostic: is WeasyPrint installed and able to render a trivial PDF?"""
     try:
         import weasyprint
+    except Exception as e:
+        return {"status": "not_installed", "error": str(e)[:300]}
+    try:
         ver = getattr(weasyprint, "__version__", "unknown")
-        html = "<html><body><p>test</p></body></html>"
-        pdf = weasyprint.HTML(string=html).write_pdf()
+        pdf = weasyprint.HTML(string="<html><body><p>test</p></body></html>").write_pdf()
         return {"status": "ok", "weasyprint_version": ver, "pdf_bytes": len(pdf)}
     except Exception as e:
         import traceback
@@ -193,6 +195,12 @@ def generate_pdf(req: QCReq):
     """
     if not db: raise HTTPException(503, f"БД не загружена: {db_error}")
     try:
+        # Defensive import — if weasyprint isn't installed on this deploy, fail gracefully
+        try:
+            from pdf_gen import generate_quick_check_pdf
+        except Exception as e:
+            raise HTTPException(503, f"PDF-генератор временно недоступен: {e}")
+
         cls = CAPEX_TO_CLS.get((req.capex_level or "").strip().lower(), req.cls)
         result = run_quick_check_v3(
             db=db, city_id=req.city_id, niche_id=req.niche_id,
@@ -202,13 +210,10 @@ def generate_pdf(req: QCReq):
         )
         rendered = render_report_v4(result)
 
-        # Риски ниши (если insight.md + GEMINI_API_KEY есть)
         from gemini_rag import extract_niche_risks
         ai_risks = extract_niche_risks(req.niche_id.upper())
 
-        from pdf_gen import generate_quick_check_pdf
         pdf_bytes, report_id, filename = generate_quick_check_pdf(rendered, req.niche_id.upper(), ai_risks=ai_risks)
-
         token = _store_file(pdf_bytes, filename, "application/pdf", disposition="inline")
         return {
             "token": token,
@@ -217,6 +222,8 @@ def generate_pdf(req: QCReq):
             "pdf_url": f"/download/{token}",
             "size_bytes": len(pdf_bytes),
         }
+    except HTTPException:
+        raise
     except Exception as e:
         import traceback; d = traceback.format_exc(); print("PDF ERROR:", d)
         raise HTTPException(500, str(e) + "\n" + d[-500:])
