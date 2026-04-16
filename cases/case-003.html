@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Кейс: 30 домов продали — построить не смогли</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0A0A0F;
+  --surface: #16161E;
+  --surface2: #1E1E28;
+  --border: rgba(255,255,255,0.06);
+  --text: #E8E8ED;
+  --text2: #A0A0B0;
+  --text3: #6B6B7B;
+  --red: #E85454;
+  --red-dim: rgba(232,84,84,0.08);
+  --green: #00D4AA;
+  --accent: #6C63FF;
+}
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 40px;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 20px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+}
+.back::before {
+  content: '‹';
+  font-size: 20px;
+  line-height: 1;
+}
+
+.case-header {
+  padding: 12px 20px 20px;
+}
+.case-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.badge-fail {
+  background: var(--red-dim);
+  color: var(--red);
+  border: 1px solid rgba(232,84,84,0.2);
+}
+
+.case-title {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 10px;
+}
+.case-meta {
+  font-size: 13px;
+  color: var(--text3);
+  line-height: 1.5;
+}
+
+.thread {
+  padding: 0 20px;
+}
+.thread p {
+  font-size: 15px;
+  color: var(--text2);
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+.thread strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.thread em {
+  font-style: normal;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+.accent-block {
+  background: var(--surface);
+  border-left: 3px solid var(--red);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  margin: 20px 0;
+}
+.accent-block.lesson {
+  border-left-color: var(--accent);
+}
+.accent-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+.accent-block .accent-label + p {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+
+.sep {
+  height: 1px;
+  background: var(--border);
+  margin: 24px 20px;
+}
+</style>
+</head>
+<body>
+
+<a class="back" onclick="history.back()">Назад</a>
+
+<div class="case-header">
+  <div class="case-badge badge-fail">Провал</div>
+  <h1 class="case-title">30 домов продали — построить не смогли</h1>
+  <div class="case-meta">Город: ~250 тыс. населения · Каркасные дома · С 8 до 30 объектов</div>
+</div>
+
+<div class="thread">
+
+  <div class="accent-block">
+    <div class="accent-label">Главная ошибка</div>
+    <p>Посчитали всё, кроме одного — хватит ли в городе людей и ресурсов, чтобы это построить</p>
+  </div>
+
+  <p>Компания строила каркасные деревянные дома. Небольшие, частные. Полностью ручная сборка — бригада выезжает на участок, завозятся материалы, и всё строится на месте. Делали 6–8 домов в год. Две проверенные бригады, два надёжных прораба, отлаженный процесс. Всё работало.</p>
+
+  <p>Решили расти. Цель — 30 домов в год. Подошли серьёзно: пригласили экономиста, посчитали все финансовые параметры, наняли маркетолога, запустили полноценную рекламную кампанию. С точки зрения цифр — всё было грамотно. И самое главное — <strong>продали все 30 домов</strong>. Спрос был.</p>
+
+  <p>А дальше начался ад.</p>
+
+  <p>Когда строишь 8 домов — это две бригады, работающие параллельно. Понятные прорабы, понятные мастера, понятная логистика. Когда строишь 30 — нужно <em>в четыре раза больше всего</em>. Четыре раза больше прорабов. Четыре раза больше бригад. Четыре раза больше материалов, доставок, контроля.</p>
+
+  <p>И вот тут сыграл ключевой фактор — <strong>размер города</strong>. Это не город-миллионник, где постоянный приток голодных до работы кадров. Город с населением 250 тысяч человек. Кадровый рынок ограничен. Качественных прорабов — единицы. Толковых мастеров — на вес золота. И за них ещё бьются конкуренты, которые строят те же дома и переманивают людей.</p>
+
+  <p>Найти прорабов такого же уровня, с которыми уже отработан процесс — невозможно. Найти бригады, которым можно доверить стройку без ежеминутного контроля — тоже. А это же не кофе варить — это стройка, людей нужно обучать, проверять, контролировать.</p>
+
+  <p>Логистика посыпалась следом. Одно дело — снабжать 7–8 объектов. Другое — тридцать, разбросанных по всему городу. Кран-балки, доставка материалов, графики — всё это требовало ресурсов, которых в городе такого размера просто не хватало.</p>
+
+  <p>Итог: 30 домов продали, но <strong>обеспечить качество не смогли</strong>. Стройки не заканчивались в срок, качество поползло вниз, клиенты недовольны. Деньги есть, заказы есть — а выполнить обязательства не получается. Компания стала заложником собственного роста.</p>
+
+  <div class="sep"></div>
+
+  <div class="accent-block lesson">
+    <div class="accent-label">Урок</div>
+    <p>Масштабирование — это не только «продать больше». Это ещё и «смочь произвести больше». Особенно в небольших городах, где кадры ограничены, а за качественных людей бьются конкуренты. Можно идеально посчитать экономику и блестяще продать — но если в городе физически не хватает рук, голов и техники, ты становишься заложником собственного роста. Прежде чем масштабироваться — считай не только спрос и финансы, а реальную пропускную способность: кадры, подрядчики, логистика, конкуренция за ресурсы.</p>
+  </div>
+
+</div>
+
+</body>
+</html>

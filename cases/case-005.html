@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Кейс: Камрюха за два месяца</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0A0A0F;
+  --surface: #16161E;
+  --surface2: #1E1E28;
+  --border: rgba(255,255,255,0.06);
+  --text: #E8E8ED;
+  --text2: #A0A0B0;
+  --text3: #6B6B7B;
+  --red: #E85454;
+  --red-dim: rgba(232,84,84,0.08);
+  --green: #00D4AA;
+  --green-dim: rgba(0,212,170,0.08);
+  --accent: #6C63FF;
+}
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 40px;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 20px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+}
+.back::before {
+  content: '‹';
+  font-size: 20px;
+  line-height: 1;
+}
+
+.case-header {
+  padding: 12px 20px 20px;
+}
+.case-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.badge-success {
+  background: var(--green-dim);
+  color: var(--green);
+  border: 1px solid rgba(0,212,170,0.2);
+}
+
+.case-title {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 10px;
+}
+.case-meta {
+  font-size: 13px;
+  color: var(--text3);
+  line-height: 1.5;
+}
+
+.thread {
+  padding: 0 20px;
+}
+.thread p {
+  font-size: 15px;
+  color: var(--text2);
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+.thread strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.thread em {
+  font-style: normal;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+.accent-block {
+  background: var(--surface);
+  border-left: 3px solid var(--green);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  margin: 20px 0;
+}
+.accent-block.lesson {
+  border-left-color: var(--accent);
+}
+.accent-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+.accent-block .accent-label + p {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+
+.sep {
+  height: 1px;
+  background: var(--border);
+  margin: 24px 20px;
+}
+</style>
+</head>
+<body>
+
+<a class="back" onclick="history.back()">Назад</a>
+
+<div class="case-header">
+  <div class="case-badge badge-success">Взлёт</div>
+  <h1 class="case-title">Камрюха за два месяца</h1>
+  <div class="case-meta">Донерная · Середина 2010-х</div>
+</div>
+
+<div class="thread">
+
+  <div class="accent-block">
+    <div class="accent-label">Главный инсайт</div>
+    <p>Поймать тренд в нужный момент, в нужном месте, с качественным продуктом — и даже короткого окна хватит, чтобы заработать больше, чем офис с дипломом</p>
+  </div>
+
+  <p>У моих родственников есть административное здание в самом центре города. Старенькое, но с убийственным преимуществом — прямо на проходной улице, с подъездными путями, в постоянном трафике. Здание полностью сдаётся в аренду. Рядом с автомойкой было небольшое помещение — внутреннее, но с витриной наружу. Там вечно кто-то менялся: один придёт — продаёт кофе, уйдёт. Другой придёт — чай, снеки, ерунда. Никто не задерживался.</p>
+
+  <p>И тут, середина 2010-х, в Казахстане набирает обороты тренд на донеры и шаурму. В Алматы они уже были давно, а в нашем городе культура донеров ещё не существовала. Город до сих пор больше на самсе сидит. И вот в это помещение заходят ребята и начинают делать донеры.</p>
+
+  <p>Практически <em>единственные в городе</em>.</p>
+
+  <p>И — что важно — делали качественно. Это не отнять. Хороший продукт, свежие лепёшки, нормальное мясо. Клиентура набралась моментально, молва разлетелась по городу. А тут ещё локация: оживлённая улица, подъездные пути. Ночные таксисты стали постоянными клиентами — приезжали, ели, рассказывали другим.</p>
+
+  <p>Моя двоюродная сестра как-то поделилась: слушай, говорит, этот наш арендатор рассказал — он каждый день заказывает по <strong>500 лепёшек</strong>. 500 донеров в день. С одной маленькой точки. Юнит-экономика была сумасшедшая — маржа на каждом донере <em>минимум 150%</em>. 500 штук в день давали очень ощутимую чистую прибыль.</p>
+
+  <p>Я тогда сидел и думал: ни фига себе, я тут с образованием и сложными финансовыми моделями зарабатываю меньше, чем эта точка с донерами.</p>
+
+  <p>Через несколько лет я уже лично познакомился с хозяином. К тому времени, конечно, конкуренция заполнила весь город — донерные и шаурма на каждом углу. Эта точка стала одной из многих. Но до сих пор популярна.</p>
+
+  <p>А тогда, на пике, он мне сказал фразу, которую я запомнил. К тому моменту Camry 50-ка была последней моделью. Подержанная, в хорошем состоянии — около 5 миллионов тенге. И он говорит: <strong>«Я мог себе позволить каждые два месяца покупать такую Camry»</strong>. С одной точки. В арендованном помещении.</p>
+
+  <div class="sep"></div>
+
+  <div class="accent-block lesson">
+    <div class="accent-label">Урок</div>
+    <p>Донеры к тому времени были развиты в Турции, в Эмиратах, давно пришли в Алматы. Логично, что рано или поздно тренд доберётся до городов поменьше. Вопрос — кто поймает это окно первым, насколько качественно сделает продукт и как удачно выберет локацию. Тот, кто заходит первым на растущий тренд — снимает сливки, пока конкуренты ещё раздумывают. И даже короткого окна в пару лет бывает достаточно, чтобы закрепиться или заработать быстрые деньги до того, как рынок заполнится. Тренды нужно ловить, а не догонять.</p>
+  </div>
+
+</div>
+
+</body>
+</html>
