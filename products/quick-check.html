@@ -1072,6 +1072,15 @@ function runCalculation() {
   document.getElementById('wizard-screen').style.display = 'none';
   document.getElementById('loading-screen').classList.add('active');
 
+  // Fire Gemini risks in parallel — typically slower than /quick-check,
+  // so block 8 starts with hardcoded/generic and gets upgraded when AI arrives
+  loadAiRisks(QC.niche_id, function() {
+    if (RESULT && document.getElementById('report-screen').classList.contains('active')) {
+      renderReport(RESULT);
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  });
+
   var body = {
     city_id: QC.city_id, niche_id: QC.niche_id, format_id: QC.format_id,
     area_m2: QC.area_m2, loc_type: QC.loc_type,
@@ -1227,15 +1236,28 @@ var NICHE_RISKS = {
 };
 
 function getNicheRisks(nicheId, m) {
+  // Priority: 1. Gemini-extracted (server), 2. Hardcoded, 3. Generic from API
+  if (AI_RISKS && AI_RISKS.length) return AI_RISKS;
   var specific = NICHE_RISKS[nicheId];
   if (specific && specific.length) return specific;
-  // Generic fallback from API
   var risks = m.risks || [];
   var mistakes = m.mistakes || [];
   var all = [];
   for (var i = 0; i < risks.length; i++) all.push({ title: 'Риск ниши', body: risks[i], protect: null });
   for (var i = 0; i < mistakes.length; i++) all.push({ title: 'Типичная ошибка', body: mistakes[i], protect: null });
   return all;
+}
+
+var AI_RISKS = null;
+
+function loadAiRisks(nicheId, onReady) {
+  AI_RISKS = null;
+  apiGet('/niche-risks/' + nicheId, function(err, resp) {
+    if (!err && resp && resp.risks && resp.risks.length) {
+      AI_RISKS = resp.risks;
+    }
+    if (onReady) onReady();
+  });
 }
 
 function parsePersonnel(items) {

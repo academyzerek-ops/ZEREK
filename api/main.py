@@ -159,6 +159,14 @@ def get_survey(niche_id:str):
     return {"survey":clean(db.get_survey(niche_id))}
 
 
+@app.get("/niche-risks/{niche_id}")
+def get_niche_risks(niche_id: str):
+    """Структурированные риски ниши через Gemini (из knowledge/niches/*_insight.md)."""
+    from gemini_rag import extract_niche_risks
+    risks = extract_niche_risks(niche_id.upper())
+    return {"niche_id": niche_id.upper(), "risks": risks}
+
+
 # ── Бизнес-план на грант 400 МРП ──
 
 from fastapi.responses import FileResponse, Response, HTMLResponse
