@@ -54,28 +54,46 @@ def _register_fonts_once():
 # Цвета
 # ═══════════════════════════════════════════════════════════
 
-COL_BG_DARK = colors.HexColor("#0F172A")
-COL_BG_DARK_2 = colors.HexColor("#1E293B")
-COL_PRIMARY = colors.HexColor("#6366F1")
-COL_PRIMARY_SOFT = colors.HexColor("#EEF2FF")
-COL_TEXT = colors.HexColor("#1F2937")
-COL_TEXT_MUTED = colors.HexColor("#6B7280")
-COL_TEXT_DIM = colors.HexColor("#9CA3AF")
-COL_TEXT_HEAD = colors.HexColor("#0F172A")
-COL_BG_CARD = colors.HexColor("#F9FAFB")
-COL_BORDER = colors.HexColor("#E5E7EB")
-COL_GREEN = colors.HexColor("#16A34A")
-COL_GREEN_DARK = colors.HexColor("#166534")
-COL_GREEN_SOFT = colors.HexColor("#DCFCE7")
-COL_YELLOW = colors.HexColor("#CA8A04")
-COL_YELLOW_DARK = colors.HexColor("#854D0E")
-COL_YELLOW_SOFT = colors.HexColor("#FEF9C3")
-COL_RED = colors.HexColor("#DC2626")
+# ── Palette ───────────────────────────────────────────────
+# Основано на бренд-токенах ZEREK: индиго #7C6CFF, зелёный #10B981, амбер #F59E0B,
+# красный #EF4444 (CLAUDE.md). Плюс тёплая editorial-нейтраль для фона карточек.
+COL_INK = colors.HexColor("#0B0B12")        # почти-чёрный текст на обложке
+COL_TEXT_HEAD = colors.HexColor("#111827")  # заголовки
+COL_TEXT = colors.HexColor("#1F2937")       # основной текст
+COL_TEXT_MUTED = colors.HexColor("#6B7280") # подписи
+COL_TEXT_DIM = colors.HexColor("#9CA3AF")   # совсем тихо (header/footer chrome)
+COL_LINE = colors.HexColor("#E5E7EB")       # разделители
+COL_LINE_SOFT = colors.HexColor("#F1F2F4")  # совсем тонкие
+COL_CARD = colors.HexColor("#FAFAF7")       # warm editorial off-white
+COL_CARD_COOL = colors.HexColor("#F9FAFB")
+
+COL_ACCENT = colors.HexColor("#7C6CFF")     # бренд
+COL_ACCENT_SOFT = colors.HexColor("#EFEDFF")
+COL_ACCENT_DARK = colors.HexColor("#4338CA")
+
+COL_GREEN = colors.HexColor("#10B981")
+COL_GREEN_DARK = colors.HexColor("#047857")
+COL_GREEN_SOFT = colors.HexColor("#ECFDF5")
+
+COL_AMBER = colors.HexColor("#F59E0B")
+COL_AMBER_DARK = colors.HexColor("#92400E")
+COL_AMBER_SOFT = colors.HexColor("#FFFBEB")
+
+COL_RED = colors.HexColor("#EF4444")
 COL_RED_DARK = colors.HexColor("#991B1B")
-COL_RED_SOFT = colors.HexColor("#FEE2E2")
+COL_RED_SOFT = colors.HexColor("#FEF2F2")
+
 COL_WHITE = colors.HexColor("#FFFFFF")
-COL_BLUE_SOFT = colors.HexColor("#DBEAFE")
-COL_BLUE = colors.HexColor("#2563EB")
+
+# Обратная совместимость (используются в старом коде — сохраняю алиасы)
+COL_PRIMARY = COL_ACCENT
+COL_PRIMARY_SOFT = COL_ACCENT_SOFT
+COL_BG_CARD = COL_CARD
+COL_BORDER = COL_LINE
+COL_YELLOW = COL_AMBER
+COL_YELLOW_DARK = COL_AMBER_DARK
+COL_YELLOW_SOFT = COL_AMBER_SOFT
+COL_BG_DARK = COL_INK
 
 
 # ═══════════════════════════════════════════════════════════
@@ -292,11 +310,11 @@ def _styles():
             textColor=colors.HexColor("#94A3B8"), alignment=TA_LEFT,
         ),
         "hero_num": ParagraphStyle(
-            "hero_num", fontName="DejaVuMono-Bold", fontSize=38, leading=44,
-            textColor=COL_GREEN, alignment=TA_CENTER,
+            "hero_num", fontName="DejaVuMono-Bold", fontSize=44, leading=50,
+            textColor=COL_GREEN_DARK, alignment=TA_CENTER,
         ),
         "hero_num_red": ParagraphStyle(
-            "hero_num_red", fontName="DejaVuMono-Bold", fontSize=38, leading=44,
+            "hero_num_red", fontName="DejaVuMono-Bold", fontSize=44, leading=50,
             textColor=COL_RED, alignment=TA_CENTER,
         ),
         "hero_label": ParagraphStyle(
@@ -330,38 +348,38 @@ DISCLAIMER_TEXT = (
 
 def _draw_cover_bg(canv, doc):
     canv.saveState()
-    # Весь лист — тёмно-синий градиент-имитация (два сплошных прямоугольника)
-    canv.setFillColor(COL_BG_DARK)
+    # Чистый холст: тёмный фон + тонкая акцентная линия сверху.
+    canv.setFillColor(COL_INK)
     canv.rect(0, 0, PAGE_W, PAGE_H, fill=1, stroke=0)
-    # Небольшая тёмно-фиолетовая заливка в нижней трети для глубины
-    canv.setFillColor(colors.HexColor("#1E1B4B"))
-    canv.rect(0, 0, PAGE_W, PAGE_H * 0.35, fill=1, stroke=0)
-    canv.setFillColor(colors.HexColor("#312E81"))
-    canv.rect(0, 0, PAGE_W * 0.55, PAGE_H * 0.12, fill=1, stroke=0)
+    # Акцентная горизонтальная полоса в верхней части
+    canv.setFillColor(COL_ACCENT)
+    canv.rect(0, PAGE_H - 4 * mm, 40 * mm, 2 * mm, fill=1, stroke=0)
     canv.restoreState()
 
 
 def _draw_content_chrome(canv, doc):
     canv.saveState()
-    # Top-left brand, top-right page number
-    canv.setFont("DejaVuSans", 8.5)
+    # Header: brand слева, номер страницы справа, тонкая линия под ними
+    canv.setFont("DejaVuSans-Bold", 8)
     canv.setFillColor(COL_TEXT_DIM)
-    canv.drawString(MARGIN_X, PAGE_H - 12 * mm, "ZEREK · Экспресс-оценка")
-    canv.setFont("DejaVuMono", 8.5)
-    canv.drawRightString(PAGE_W - MARGIN_X, PAGE_H - 12 * mm, f"{canv.getPageNumber()}")
-    # Thin top rule
-    canv.setStrokeColor(COL_BORDER)
+    canv.drawString(MARGIN_X, PAGE_H - 11 * mm, "ZEREK")
+    canv.setFont("DejaVuSans", 8)
+    canv.drawString(MARGIN_X + 14, PAGE_H - 11 * mm, "·  Экспресс-оценка")
+    canv.setFont("DejaVuMono", 8)
+    canv.drawRightString(PAGE_W - MARGIN_X, PAGE_H - 11 * mm, f"стр. {canv.getPageNumber():02d}")
+    canv.setStrokeColor(COL_LINE)
     canv.setLineWidth(0.3)
-    canv.line(MARGIN_X, PAGE_H - 14 * mm, PAGE_W - MARGIN_X, PAGE_H - 14 * mm)
+    canv.line(MARGIN_X, PAGE_H - 13 * mm, PAGE_W - MARGIN_X, PAGE_H - 13 * mm)
 
-    # Bottom disclaimer (wrap to 2 lines if needed)
+    # Footer: одна компактная строка
+    canv.setStrokeColor(COL_LINE)
+    canv.setLineWidth(0.3)
+    canv.line(MARGIN_X, 14 * mm, PAGE_W - MARGIN_X, 14 * mm)
     canv.setFont("DejaVuSans", 7.2)
     canv.setFillColor(COL_TEXT_DIM)
-    # Split into two lines for readability
-    line1 = "Это экспресс-оценка на основе усреднённых данных рынка Казахстана."
-    line2 = "Реальные показатели зависят от локации, команды и ситуации. Для запуска — детальная финмодель."
-    canv.drawCentredString(PAGE_W / 2, 12 * mm, line1)
-    canv.drawCentredString(PAGE_W / 2, 9 * mm, line2)
+    canv.drawString(MARGIN_X, 10 * mm,
+                    "Экспресс-оценка на основе усреднённых данных рынка КЗ. Для запуска — детальная финмодель.")
+    canv.drawRightString(PAGE_W - MARGIN_X, 10 * mm, "zerek.cc")
     canv.restoreState()
 
 
@@ -374,55 +392,49 @@ def _content_w() -> float:
 
 
 def _cover_story(m: dict, report_id: str, date_str: str, st: dict) -> list:
-    project = f"{m['niche_name']} · {m['city_name']}"
-    sub = (
-        "Оценка жизнеспособности бизнес-идеи на основе данных рынка "
-        f"{_e(m['city_name'])} и практики малого бизнеса Казахстана."
-    )
-    # На cover-шаблоне весь фрейм — вся страница, отступы делаем вручную через Spacer+Table.
-    # Собираем через одну большую Table с внешними отступами.
-    top = Table([[Paragraph("ZEREK", st["cover_brand"])],
-                 [Paragraph("AI-платформа бизнес-аналитики · Казахстан", st["cover_brand_sub"])]],
-                colWidths=[PAGE_W - 40 * mm])
-    top.setStyle(TableStyle([("LEFTPADDING", (0,0), (-1,-1), 0), ("RIGHTPADDING", (0,0), (-1,-1), 0),
-                             ("TOPPADDING", (0,0), (-1,-1), 0), ("BOTTOMPADDING", (0,0), (-1,-1), 2)]))
+    niche_upper = _e(m["niche_name"].upper())
+    city_upper = _e(m["city_name"].upper())
+    title = _e(m["format_name"]) if m.get("format_name") else _e(m["niche_name"])
+
+    brand_block = Table([[Paragraph("ZEREK", st["cover_brand"])]], colWidths=[PAGE_W - 40 * mm])
+    brand_block.setStyle(TableStyle([("LEFTPADDING", (0,0), (-1,-1), 0), ("RIGHTPADDING", (0,0), (-1,-1), 0),
+                                     ("TOPPADDING", (0,0), (-1,-1), 0), ("BOTTOMPADDING", (0,0), (-1,-1), 0)]))
 
     middle = Table([
-        [Paragraph("ЭКСПРЕСС-ОЦЕНКА НИШИ", st["cover_badge"])],
+        [Paragraph(f"{niche_upper} · {city_upper}", st["cover_badge"])],
+        [Spacer(1, 14)],
+        [Paragraph(title, st["cover_h1"])],
         [Spacer(1, 10)],
-        [Paragraph(_e(project), st["cover_h1"])],
-        [Spacer(1, 6)],
-        [Paragraph(sub, st["cover_sub"])],
+        [Paragraph(
+            "Экспресс-оценка бизнес-идеи на основе данных рынка "
+            f"{_e(m['city_name'])} и практики малого бизнеса Казахстана.",
+            st["cover_sub"],
+        )],
     ], colWidths=[PAGE_W - 40 * mm])
     middle.setStyle(TableStyle([("LEFTPADDING", (0,0), (-1,-1), 0), ("RIGHTPADDING", (0,0), (-1,-1), 0),
                                 ("TOPPADDING", (0,0), (-1,-1), 0), ("BOTTOMPADDING", (0,0), (-1,-1), 0)]))
 
-    meta = Table([
-        [Paragraph(f"Дата формирования: <b>{_e(date_str)}</b>", st["cover_meta"])],
-        [Paragraph(f"Номер отчёта: <b>{_e(report_id)}</b>", st["cover_meta"])],
-        [Spacer(1, 14)],
-        [Paragraph("ZEREK.CC · @ZEREKAI_BOT", st["cover_foot"])],
-    ], colWidths=[PAGE_W - 40 * mm])
-    meta.setStyle(TableStyle([("LEFTPADDING", (0,0), (-1,-1), 0), ("RIGHTPADDING", (0,0), (-1,-1), 0),
-                              ("TOPPADDING", (0,0), (-1,-1), 0), ("BOTTOMPADDING", (0,0), (-1,-1), 0)]))
+    # Мета — на одной строке, моноширинно
+    meta_p = Paragraph(
+        f'<font name="DejaVuMono" size="9" color="#9CA3AF">'
+        f'{_e(date_str)}  ·  {_e(report_id)}  ·  ZEREK.CC  ·  @ZEREKAI_BOT'
+        f'</font>',
+        ParagraphStyle("cm", fontName="DejaVuMono", fontSize=9, leading=12),
+    )
 
-    # Big outer frame: top-left / middle / bottom-left stacked
     outer = Table([
-        [top],
-        [Spacer(1, 110)],
+        [brand_block],
+        [Spacer(1, 120)],
         [middle],
-        [Spacer(1, 110)],
-        [meta],
+        [Spacer(1, 140)],
+        [meta_p],
     ], colWidths=[PAGE_W - 40 * mm])
     outer.setStyle(TableStyle([
-        ("LEFTPADDING", (0,0), (-1,-1), 0),
-        ("RIGHTPADDING", (0,0), (-1,-1), 0),
-        ("TOPPADDING", (0,0), (-1,-1), 0),
-        ("BOTTOMPADDING", (0,0), (-1,-1), 0),
+        ("LEFTPADDING", (0,0), (-1,-1), 0), ("RIGHTPADDING", (0,0), (-1,-1), 0),
+        ("TOPPADDING", (0,0), (-1,-1), 0), ("BOTTOMPADDING", (0,0), (-1,-1), 0),
     ]))
 
-    # Spacers to add top/bottom margin within the frame (since cover frame has zero padding)
-    return [Spacer(1, 28 * mm), Indenter(outer, left=20 * mm)]
+    return [Spacer(1, 34 * mm), Indenter(outer, left=20 * mm)]
 
 
 class Indenter(Flowable):
@@ -446,33 +458,122 @@ class Indenter(Flowable):
         self.canv.restoreState()
 
 
+class BarRow(Flowable):
+    """
+    Строка с подписью слева, моно-значением справа и пропорциональным баром-подложкой.
+    Используется в P&L и стресс-тесте. Бар = цветная заливка ширины proportion×label_w,
+    на прозрачном фоне строки.
+    """
+    def __init__(self, label, value_str, fraction, bar_color,
+                 label_font="DejaVuSans", label_size=10, label_color=None,
+                 value_font="DejaVuMono-Bold", value_size=11, value_color=None,
+                 row_h=20, total_w=None, bold_label=False, emphasize=False):
+        super().__init__()
+        self.label = label
+        self.value_str = value_str
+        self.fraction = max(0.0, min(1.0, fraction))
+        self.bar_color = bar_color
+        self.label_font = "DejaVuSans-Bold" if bold_label else label_font
+        self.label_size = label_size
+        self.label_color = label_color or COL_TEXT
+        self.value_font = value_font
+        self.value_size = value_size
+        self.value_color = value_color or COL_TEXT
+        self.row_h = row_h
+        self.width_override = total_w
+        self.emphasize = emphasize  # рамка + жирнее
+
+    def wrap(self, aW, aH):
+        self.width = self.width_override or aW
+        self.height = self.row_h
+        return self.width, self.height
+
+    def draw(self):
+        c = self.canv
+        w, h = self.width, self.height
+        # Колонки: label 65%, value 35%
+        label_w = w * 0.65
+        value_w = w - label_w
+        pad_x = 8
+        # Фон самой подложки под бар
+        c.setFillColor(COL_LINE_SOFT)
+        c.rect(0, 0, label_w, h, fill=1, stroke=0)
+        # Бар
+        if self.fraction > 0:
+            c.setFillColor(self.bar_color)
+            c.rect(0, 0, label_w * self.fraction, h, fill=1, stroke=0)
+        # Подпись
+        c.setFillColor(self.label_color)
+        c.setFont(self.label_font, self.label_size)
+        text_y = (h - self.label_size) / 2 + 2
+        c.drawString(pad_x, text_y, self.label)
+        # Значение справа
+        c.setFillColor(self.value_color)
+        c.setFont(self.value_font, self.value_size)
+        c.drawRightString(w - pad_x, text_y, self.value_str)
+        # Акцентная рамка (для grand-row)
+        if self.emphasize:
+            c.setStrokeColor(COL_GREEN)
+            c.setLineWidth(1.4)
+            c.rect(0, 0, w, h, fill=0, stroke=1)
+
+
+class RuleDivider(Flowable):
+    """Тонкая горизонтальная линия-разделитель на всю ширину контента."""
+    def __init__(self, color=None, thickness=0.4, space_before=3, space_after=3):
+        super().__init__()
+        self.color = color or COL_LINE
+        self.thickness = thickness
+        self.space_before = space_before
+        self.space_after = space_after
+
+    def wrap(self, aW, aH):
+        self.width = aW
+        self.height = self.space_before + self.thickness + self.space_after
+        return self.width, self.height
+
+    def draw(self):
+        c = self.canv
+        y = self.space_after + self.thickness / 2
+        c.setStrokeColor(self.color)
+        c.setLineWidth(self.thickness)
+        c.line(0, y, self.width, y)
+
+
 def _verdict_table(m: dict, st: dict) -> Table:
     vc = m["verdict_color"]
     label = {"green": "Бизнес жизнеспособен",
              "yellow": "Бизнес возможен, но есть риски",
              "red": "Высокий риск — рекомендуем пересмотреть"}.get(vc, "Бизнес возможен, но есть риски")
-    icon = {"green": "✓", "yellow": "⚠", "red": "✕"}.get(vc, "⚠")
-    bg = {"green": COL_GREEN_SOFT, "yellow": COL_YELLOW_SOFT, "red": COL_RED_SOFT}.get(vc, COL_YELLOW_SOFT)
-    txt = {"green": COL_GREEN_DARK, "yellow": COL_YELLOW_DARK, "red": COL_RED_DARK}.get(vc, COL_YELLOW_DARK)
-    stripe = {"green": COL_GREEN, "yellow": COL_YELLOW, "red": COL_RED}.get(vc, COL_YELLOW)
+    status_tag = {"green": "ВЕРДИКТ · ЗЕЛЁНЫЙ",
+                  "yellow": "ВЕРДИКТ · ЖЁЛТЫЙ",
+                  "red": "ВЕРДИКТ · КРАСНЫЙ"}.get(vc, "ВЕРДИКТ")
+    stripe = {"green": COL_GREEN, "yellow": COL_AMBER, "red": COL_RED}.get(vc, COL_AMBER)
+    txt_col = {"green": COL_GREEN_DARK, "yellow": COL_AMBER_DARK, "red": COL_RED_DARK}.get(vc, COL_AMBER_DARK)
 
-    icon_cell = Paragraph(
-        f'<font size="22" color="{txt.hexval()}">{icon}</font>',
-        ParagraphStyle("icon", fontName="DejaVuSans-Bold", fontSize=22, alignment=TA_CENTER),
+    tag_p = Paragraph(
+        f'<font name="DejaVuSans-Bold" size="8" color="{stripe.hexval()}">{status_tag}</font>',
+        ParagraphStyle("vt", fontName="DejaVuSans-Bold", fontSize=8, leading=12),
     )
-    label_cell = Paragraph(
-        f'<font color="{txt.hexval()}"><b>{_e(label)}</b></font>',
-        st["verdict_text"],
+    label_p = Paragraph(
+        f'<font name="DejaVuSans-Bold" size="14" color="{txt_col.hexval()}">{_e(label)}</font>',
+        ParagraphStyle("vl", fontName="DejaVuSans-Bold", fontSize=14, leading=18),
     )
-    t = Table([[icon_cell, label_cell]], colWidths=[15 * mm, _content_w() - 15 * mm])
+    inner = Table([[tag_p], [label_p]], colWidths=[_content_w() - 8])
+    inner.setStyle(TableStyle([
+        ("LEFTPADDING", (0, 0), (-1, -1), 12),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ("TOPPADDING", (0, 0), (0, 0), 0), ("BOTTOMPADDING", (0, 0), (0, 0), 2),
+        ("TOPPADDING", (0, 1), (0, 1), 0), ("BOTTOMPADDING", (0, 1), (0, 1), 0),
+    ]))
+    t = Table([[inner]], colWidths=[_content_w()])
     t.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), bg),
-        ("LINEBEFORE", (0, 0), (0, 0), 5, stripe),
+        ("LINEBEFORE", (0, 0), (0, 0), 3, stripe),
+        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ("TOPPADDING", (0, 0), (-1, -1), 6),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-        ("LEFTPADDING", (0, 0), (-1, -1), 8),
-        ("RIGHTPADDING", (0, 0), (-1, -1), 8),
-        ("TOPPADDING", (0, 0), (-1, -1), 10),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
     ]))
     return t
 
@@ -480,72 +581,74 @@ def _verdict_table(m: dict, st: dict) -> Table:
 def _hero_number_box(m: dict, st: dict) -> Table:
     pocket = m["net_in_pocket"]
     hero_style = st["hero_num_red"] if pocket < 0 else st["hero_num"]
-    if pocket < 0:
-        hero_style = st["hero_num_red"]
 
     t = Table([
         [Paragraph("В КАРМАН СОБСТВЕННИКУ", st["hero_label"])],
         [Paragraph(f"{_fmt_k(pocket)} ₸", hero_style)],
-        [Paragraph("в месяц, после всех налогов и соцплатежей", st["hero_unit"])],
+        [Paragraph("в месяц — после всех налогов и соцплатежей", st["hero_unit"])],
     ], colWidths=[_content_w()])
     t.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, -1), COL_BG_CARD),
-        ("BOX", (0, 0), (-1, -1), 0.5, COL_BORDER),
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-        ("LEFTPADDING", (0, 0), (-1, -1), 10),
-        ("RIGHTPADDING", (0, 0), (-1, -1), 10),
-        ("TOPPADDING", (0, 0), (0, 0), 14),
-        ("TOPPADDING", (0, 1), (-1, 1), 4),
-        ("TOPPADDING", (0, 2), (-1, 2), 2),
-        ("BOTTOMPADDING", (0, 2), (-1, -1), 14),
-        ("BOTTOMPADDING", (0, 0), (-1, 1), 2),
+        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ("TOPPADDING", (0, 0), (0, 0), 12),
+        ("BOTTOMPADDING", (0, 0), (0, 0), 4),
+        ("TOPPADDING", (0, 1), (-1, 1), 0),
+        ("BOTTOMPADDING", (0, 1), (-1, 1), 6),
+        ("TOPPADDING", (0, 2), (-1, 2), 0),
+        ("BOTTOMPADDING", (0, 2), (-1, 2), 12),
+        # Тонкие линии сверху и снизу, вместо коробки
+        ("LINEABOVE", (0, 0), (-1, 0), 0.4, COL_LINE),
+        ("LINEBELOW", (0, 2), (-1, 2), 0.4, COL_LINE),
     ]))
     return t
 
 
 def _stats_row(m: dict) -> Table:
-    def cell(label, value):
-        return [
-            Paragraph(
-                f'<font name="DejaVuSans-Bold" size="8" color="#6B7280">{_e(label).upper()}</font>',
-                ParagraphStyle("x", fontName="DejaVuSans", fontSize=8, leading=10, alignment=TA_CENTER),
-            ),
-            Paragraph(
-                f'<font name="DejaVuMono-Bold" size="13" color="#111827">{_e(value)}</font>',
-                ParagraphStyle("y", fontName="DejaVuMono-Bold", fontSize=13, leading=16, alignment=TA_CENTER),
-            ),
-        ]
-
     payback = f"{m['payback']} мес" if m.get("payback") else "—"
-    cells = [
-        cell("Окупаемость", payback),
-        cell("Старт", f"{_fmt_k(m['invMin'])} ₸"),
-        cell("Брейкевен", f"{_fmt_k(m['breakEven'])} ₸"),
-        cell("Запас", f"{m['safety_margin']}%"),
+    items = [
+        ("Окупаемость", payback),
+        ("Стартовые", f"{_fmt_k(m['invMin'])} ₸"),
+        ("Брейкевен", f"{_fmt_k(m['breakEven'])} ₸"),
+        ("Запас", f"{m['safety_margin']}%"),
     ]
 
-    col_w = (_content_w() - 3 * 4) / 4
-    data = [[
-        Table([[cells[i][0]], [cells[i][1]]], colWidths=[col_w])
-        for i in range(4)
-    ]]
-    t = Table(data, colWidths=[col_w] * 4)
-    # inner style applied to sub-tables via TableStyle on sub-tables
-    for inner in [d for row in data for d in row]:
-        inner.setStyle(TableStyle([
-            ("BACKGROUND", (0, 0), (-1, -1), COL_BG_CARD),
-            ("BOX", (0, 0), (-1, -1), 0.5, COL_BORDER),
-            ("LEFTPADDING", (0, 0), (-1, -1), 6),
-            ("RIGHTPADDING", (0, 0), (-1, -1), 6),
-            ("TOPPADDING", (0, 0), (-1, -1), 8),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+    col_w = _content_w() / 4
+    row = []
+    for label, value in items:
+        stack = Table(
+            [
+                [Paragraph(
+                    f'<font name="DejaVuSans" size="8" color="#9CA3AF">{_e(label).upper()}</font>',
+                    ParagraphStyle("x", fontName="DejaVuSans", fontSize=8, leading=10, alignment=TA_LEFT),
+                )],
+                [Paragraph(
+                    f'<font name="DejaVuMono-Bold" size="15" color="#111827">{_e(value)}</font>',
+                    ParagraphStyle("y", fontName="DejaVuMono-Bold", fontSize=15, leading=18, alignment=TA_LEFT),
+                )],
+            ],
+            colWidths=[col_w],
+        )
+        stack.setStyle(TableStyle([
+            ("LEFTPADDING", (0, 0), (-1, -1), 10),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 4),
+            ("TOPPADDING", (0, 0), (-1, -1), 2),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
         ]))
-    t.setStyle(TableStyle([
+        row.append(stack)
+
+    t = Table([row], colWidths=[col_w] * 4)
+    style = [
         ("LEFTPADDING", (0, 0), (-1, -1), 0),
         ("RIGHTPADDING", (0, 0), (-1, -1), 0),
-        ("TOPPADDING", (0, 0), (-1, -1), 0),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
-    ]))
+        ("TOPPADDING", (0, 0), (-1, -1), 10),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+    ]
+    # Тонкие вертикальные линии-разделители между колонками
+    for col in range(1, 4):
+        style.append(("LINEBEFORE", (col, 0), (col, 0), 0.3, COL_LINE))
+    t.setStyle(TableStyle(style))
     return t
 
 
@@ -572,7 +675,7 @@ def _summary_story(m: dict, st: dict) -> list:
     )
 
     return [
-        Paragraph("СТРАНИЦА 2 · СВОДКА", st["kicker"]),
+        Paragraph("СВОДКА", st["kicker"]),
         Paragraph("Главное за 60 секунд", st["h2"]),
         Spacer(1, 4),
         _verdict_table(m, st),
@@ -602,26 +705,44 @@ def _note_box(inner_para) -> Table:
     return t
 
 
-def _kv_table(pairs: list, st: dict, col1_frac=0.4) -> Table:
+def _kv_table(pairs: list, st: dict, col1_frac=0.4, numeric_right=True) -> Table:
     cw1 = _content_w() * col1_frac
     cw2 = _content_w() * (1 - col1_frac)
     data = []
     for k, v in pairs:
-        data.append([
-            Paragraph(_e(k), st["body_muted"]),
-            Paragraph(_e(v), ParagraphStyle("kv", parent=st["body"], fontName="DejaVuSans-Bold")),
-        ])
+        label_p = Paragraph(
+            f'<font name="DejaVuSans" color="#6B7280" size="10">{_e(k)}</font>',
+            ParagraphStyle("kl", fontName="DejaVuSans", fontSize=10, leading=14),
+        )
+        # Определяем: число это или текст (числа в моно, справа)
+        v_str = _e(v)
+        is_numeric = any(ch.isdigit() for ch in v_str) and ("₸" in v_str or "%" in v_str or "мес" in v_str or "м²" in v_str)
+        if is_numeric and numeric_right:
+            value_p = Paragraph(
+                f'<font name="DejaVuMono-Bold" color="#111827" size="11">{v_str}</font>',
+                ParagraphStyle("kvn", fontName="DejaVuMono-Bold", fontSize=11, leading=14, alignment=TA_RIGHT),
+            )
+        else:
+            value_p = Paragraph(
+                f'<font name="DejaVuSans-Bold" color="#111827" size="10.5">{v_str}</font>',
+                ParagraphStyle("kvt", fontName="DejaVuSans-Bold", fontSize=10.5, leading=14),
+            )
+        data.append([label_p, value_p])
     t = Table(data, colWidths=[cw1, cw2])
     style = [
-        ("VALIGN", (0, 0), (-1, -1), "TOP"),
-        ("LEFTPADDING", (0, 0), (-1, -1), 8),
-        ("RIGHTPADDING", (0, 0), (-1, -1), 8),
-        ("TOPPADDING", (0, 0), (-1, -1), 6),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
-        ("BACKGROUND", (0, 0), (-1, -1), COL_BG_CARD),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("LEFTPADDING", (0, 0), (-1, -1), 2),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 2),
+        ("TOPPADDING", (0, 0), (-1, -1), 7),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
     ]
-    for i in range(len(data) - 1):
-        style.append(("LINEBELOW", (0, i), (-1, i), 0.4, COL_BORDER))
+    for i in range(len(data)):
+        style.append(("LINEBELOW", (0, i), (-1, i), 0.3, COL_LINE))
+    # Убираем нижнюю линию у последней строки (выглядит как дублированный разрыв)
+    if data:
+        style.append(("LINEBELOW", (0, len(data) - 1), (-1, len(data) - 1), 0, COL_WHITE))
+    # Верхняя линия над первой строкой для акцента
+    style.insert(0, ("LINEABOVE", (0, 0), (-1, 0), 0.3, COL_LINE))
     t.setStyle(TableStyle(style))
     return t
 
@@ -656,7 +777,7 @@ def _passport_story(m: dict, st: dict) -> list:
     )
 
     return [
-        Paragraph("СТРАНИЦА 3 · ПАСПОРТ ПРОЕКТА", st["kicker"]),
+        Paragraph("ПАСПОРТ ПРОЕКТА", st["kicker"]),
         Paragraph("Что именно оцениваем", st["h2"]),
         _kv_table(pairs, st),
         Spacer(1, 12),
@@ -674,38 +795,36 @@ def _unit_econ_story(m: dict, st: dict) -> list:
     daily = 15 if m["trafficMed"] < 30 else int(m["trafficMed"])
     daily_gross = profit_per_tx * daily
 
-    def row(label, value, color_hex, bold=False, bg=None):
-        name = "DejaVuSans-Bold" if bold else "DejaVuSans"
+    # Три строки формулы: чек / минус себест. / равно прибыль
+    def chain_row(label, value_str, value_color, emphasize=False):
+        lbl_size = 12 if emphasize else 11
+        val_size = 20 if emphasize else 13
+        lbl_weight = "DejaVuSans-Bold" if emphasize else "DejaVuSans"
+        lbl_color = "#111827" if emphasize else "#374151"
         left = Paragraph(
-            f'<font name="{name}" size="11" color="#1F2937">{_e(label)}</font>',
-            ParagraphStyle("l", fontName=name, fontSize=11, leading=14),
+            f'<font name="{lbl_weight}" size="{lbl_size}" color="{lbl_color}">{_e(label)}</font>',
+            ParagraphStyle("l", fontName=lbl_weight, fontSize=lbl_size, leading=lbl_size + 3),
         )
         right = Paragraph(
-            f'<font name="DejaVuMono-Bold" size="14" color="{color_hex}">{_e(value)}</font>',
-            ParagraphStyle("r", fontName="DejaVuMono-Bold", fontSize=14, leading=17, alignment=TA_RIGHT),
+            f'<font name="DejaVuMono-Bold" size="{val_size}" color="{value_color}">{_e(value_str)}</font>',
+            ParagraphStyle("r", fontName="DejaVuMono-Bold", fontSize=val_size, leading=val_size + 3, alignment=TA_RIGHT),
         )
-        t = Table([[left, right]], colWidths=[_content_w() * 0.6, _content_w() * 0.4])
+        t = Table([[left, right]], colWidths=[_content_w() * 0.58, _content_w() * 0.42])
         style = [
             ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ("LEFTPADDING", (0, 0), (-1, -1), 10),
-            ("RIGHTPADDING", (0, 0), (-1, -1), 10),
+            ("LEFTPADDING", (0, 0), (-1, -1), 2),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 2),
             ("TOPPADDING", (0, 0), (-1, -1), 10),
             ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
-            ("BACKGROUND", (0, 0), (-1, -1), bg or COL_BG_CARD),
+            ("LINEBELOW", (0, 0), (-1, 0), 0.3, COL_LINE),
         ]
-        if bold:
-            style.append(("BOX", (0, 0), (-1, -1), 1.5, COL_GREEN))
+        if emphasize:
+            style.append(("LINEABOVE", (0, 0), (-1, 0), 1.5, COL_GREEN))
+            style.append(("LINEBELOW", (0, 0), (-1, 0), 1.5, COL_GREEN))
+            style.append(("TOPPADDING", (0, 0), (-1, -1), 14))
+            style.append(("BOTTOMPADDING", (0, 0), (-1, -1), 14))
         t.setStyle(TableStyle(style))
         return t
-
-    op = Paragraph(
-        '<font size="8" color="#9CA3AF">МИНУС</font>',
-        ParagraphStyle("op", fontName="DejaVuSans-Bold", fontSize=8, leading=12, alignment=TA_CENTER),
-    )
-    op2 = Paragraph(
-        '<font size="8" color="#9CA3AF">РАВНО</font>',
-        ParagraphStyle("op", fontName="DejaVuSans-Bold", fontSize=8, leading=12, alignment=TA_CENTER),
-    )
 
     note_text = (
         f"<b>Что это значит.</b> Если в день приходит {daily} клиентов — "
@@ -726,15 +845,20 @@ def _unit_econ_story(m: dict, st: dict) -> list:
     )
 
     return [
-        Paragraph("СТРАНИЦА 4 · ЭКОНОМИКА ОДНОГО КЛИЕНТА", st["kicker"]),
+        Paragraph("ЭКОНОМИКА ОДНОГО КЛИЕНТА", st["kicker"]),
         Paragraph("Сколько вы зарабатываете с одного чека", st["h2"]),
-        Spacer(1, 6),
-        row("Средний чек", f"{_fmt(m['checkMed'])} ₸", "#111827"),
-        Spacer(1, 2), op, Spacer(1, 2),
-        row("Себестоимость чека (товар / материалы)", f"−{_fmt(cost_per_tx)} ₸", "#DC2626"),
-        Spacer(1, 2), op2, Spacer(1, 2),
-        row("Заработок с клиента", f"{_fmt(profit_per_tx)} ₸", "#166534", bold=True, bg=COL_GREEN_SOFT),
+        Paragraph(
+            "Формула простая: чек минус себестоимость равно заработок с клиента.",
+            st["body_muted"],
+        ),
         Spacer(1, 10),
+        chain_row("Средний чек", f"{_fmt(m['checkMed'])} ₸", "#111827"),
+        chain_row("Минус себестоимость (товар / материалы)",
+                  f"−{_fmt(cost_per_tx)} ₸", COL_RED.hexval()),
+        Spacer(1, 6),
+        chain_row("Заработок с клиента", f"{_fmt(profit_per_tx)} ₸",
+                  COL_GREEN_DARK.hexval(), emphasize=True),
+        Spacer(1, 14),
         _note_box(Paragraph(note_text, st["note"])),
         Spacer(1, 10),
         Paragraph("Структура себестоимости", st["h3"]),
@@ -747,77 +871,53 @@ def _pnl_story(m: dict, st: dict) -> list:
     ob = m["opex_breakdown"]
     other = ob.get("other", 0)
 
-    # Собираем таблицу-водопад
+    revenue = max(m["revenue"], 1)
     rows = [
         ("Выручка в месяц", m["revenue"], "pos"),
-        ("Себестоимость (товар / материалы)", -m["cogs"], "neg"),
-        ("Наценка после себестоимости", m["gross"], "sub"),
-        ("Аренда", -ob.get("rent", 0), "neg"),
-        ("ФОТ (зарплаты + налоги работодателя)", -ob.get("fot", 0), "neg"),
-        ("Маркетинг", -ob.get("marketing", 0), "neg"),
-        ("Коммуналка", -ob.get("utilities", 0), "neg"),
-        ("Расходники, софт, прочее", -other, "neg"),
-        ("Прибыль до налогов", m["profitBeforeTax"], "sub"),
-        (f"Налог {m['taxRegime']} ({m['taxRatePct']}%)", -m["tax"], "neg"),
-        ("Соцплатежи собственника (ОПВ + ОСМС + СО)", -m["social"], "neg"),
-        ("В карман собственнику", m["net_in_pocket"], "grand"),
+        ("Себестоимость (товар / материалы)", m["cogs"], "neg"),
+        ("Наценка после себестоимости", m["gross"], "sub_pos"),
+        ("Аренда", ob.get("rent", 0), "neg"),
+        ("ФОТ (зарплаты + налоги работодателя)", ob.get("fot", 0), "neg"),
+        ("Маркетинг", ob.get("marketing", 0), "neg"),
+        ("Коммуналка", ob.get("utilities", 0), "neg"),
+        ("Расходники, софт, прочее", other, "neg"),
+        ("Прибыль до налогов", m["profitBeforeTax"], "sub_pos"),
+        (f"Налог {m['taxRegime']} ({m['taxRatePct']}%)", m["tax"], "neg"),
+        ("Соцплатежи собственника (ОПВ + ОСМС + СО)", m["social"], "neg"),
+        ("В карман собственнику", max(m["net_in_pocket"], 0), "grand"),
     ]
 
-    # Build data rows (label + value) as Paragraph cells
-    data = []
-    styles_rows = []
-    for idx, (label, val, kind) in enumerate(rows):
-        if kind == "grand":
-            lbl_font = "DejaVuSans-Bold"; lbl_color = "#166534"; lbl_size = 12
-            val_font = "DejaVuMono-Bold"; val_color = "#166534"; val_size = 15
-        elif kind == "sub":
-            lbl_font = "DejaVuSans-Bold"; lbl_color = "#111827"; lbl_size = 11
-            val_font = "DejaVuMono-Bold"; val_color = "#111827"; val_size = 12
+    flowables = []
+    for label, abs_val, kind in rows:
+        frac = abs_val / revenue if revenue else 0
+        if kind == "pos":
+            bar = COL_GREEN_SOFT; val_color = COL_GREEN_DARK; label_color = COL_TEXT_HEAD
+            bold = True; emphasize = False; sign = ""
+        elif kind == "sub_pos":
+            bar = COL_ACCENT_SOFT; val_color = COL_ACCENT_DARK; label_color = COL_TEXT_HEAD
+            bold = True; emphasize = False; sign = ""
         elif kind == "neg":
-            lbl_font = "DejaVuSans"; lbl_color = "#374151"; lbl_size = 10
-            val_font = "DejaVuMono-Bold"; val_color = "#DC2626"; val_size = 11
-        elif kind == "pos":
-            lbl_font = "DejaVuSans-Bold"; lbl_color = "#111827"; lbl_size = 11
-            val_font = "DejaVuMono-Bold"; val_color = "#15803D"; val_size = 12
+            bar = COL_RED_SOFT; val_color = COL_RED; label_color = COL_TEXT
+            bold = False; emphasize = False; sign = "−"
+        elif kind == "grand":
+            bar = COL_GREEN_SOFT; val_color = COL_GREEN_DARK; label_color = COL_GREEN_DARK
+            bold = True; emphasize = True; sign = ""
         else:
-            lbl_font = "DejaVuSans"; lbl_color = "#374151"; lbl_size = 10
-            val_font = "DejaVuMono-Bold"; val_color = "#111827"; val_size = 11
+            bar = COL_LINE_SOFT; val_color = COL_TEXT; label_color = COL_TEXT
+            bold = False; emphasize = False; sign = ""
 
-        sign = "−" if val < 0 else ""
-        val_str = f"{sign}{_fmt(abs(val))} ₸"
-        lp = Paragraph(
-            f'<font name="{lbl_font}" color="{lbl_color}" size="{lbl_size}">{_e(label)}</font>',
-            ParagraphStyle("p", fontName=lbl_font, fontSize=lbl_size, leading=lbl_size + 3),
-        )
-        vp = Paragraph(
-            f'<font name="{val_font}" color="{val_color}" size="{val_size}">{_e(val_str)}</font>',
-            ParagraphStyle("v", fontName=val_font, fontSize=val_size, leading=val_size + 3, alignment=TA_RIGHT),
-        )
-        data.append([lp, vp])
+        val_str = f"{sign}{_fmt(abs_val)} ₸"
+        row_h = 28 if kind == "grand" else (22 if kind in ("pos", "sub_pos") else 18)
+        val_size = 14 if kind == "grand" else (12 if kind in ("pos", "sub_pos") else 11)
+        label_size = 11 if kind in ("grand", "pos", "sub_pos") else 10
 
-        if kind == "grand":
-            styles_rows.append(("BACKGROUND", (0, idx), (-1, idx), COL_GREEN_SOFT))
-            styles_rows.append(("BOX", (0, idx), (-1, idx), 1.5, COL_GREEN))
-            styles_rows.append(("TOPPADDING", (0, idx), (-1, idx), 12))
-            styles_rows.append(("BOTTOMPADDING", (0, idx), (-1, idx), 12))
-        elif kind == "sub":
-            styles_rows.append(("BACKGROUND", (0, idx), (-1, idx), COL_BG_CARD))
-            styles_rows.append(("LINEABOVE", (0, idx), (-1, idx), 0.8, COL_BORDER))
-            styles_rows.append(("LINEBELOW", (0, idx), (-1, idx), 0.8, COL_BORDER))
-        elif kind == "pos":
-            styles_rows.append(("BACKGROUND", (0, idx), (-1, idx), colors.HexColor("#F0FDF4")))
-        elif kind == "neg":
-            styles_rows.append(("BACKGROUND", (0, idx), (-1, idx), colors.HexColor("#FEF2F2")))
-
-    t = Table(data, colWidths=[_content_w() * 0.65, _content_w() * 0.35])
-    base_style = [
-        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-        ("LEFTPADDING", (0, 0), (-1, -1), 10),
-        ("RIGHTPADDING", (0, 0), (-1, -1), 10),
-        ("TOPPADDING", (0, 0), (-1, -1), 6),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
-    ]
-    t.setStyle(TableStyle(base_style + styles_rows))
+        flowables.append(BarRow(
+            label=label, value_str=val_str, fraction=frac, bar_color=bar,
+            label_color=label_color, value_color=val_color,
+            label_size=label_size, value_size=val_size,
+            row_h=row_h, bold_label=bold, emphasize=emphasize,
+        ))
+        flowables.append(Spacer(1, 2))
 
     note_text = (
         "<b>Важно.</b> Налог УСН платится с <i>выручки</i>, не с прибыли — даже если "
@@ -825,14 +925,14 @@ def _pnl_story(m: dict, st: dict) -> list:
         "от дохода: это обязательные пенсионные, медстрах и соцотчисления."
     )
     return [
-        Paragraph("СТРАНИЦА 5 · МЕСЯЧНАЯ ЭКОНОМИКА", st["kicker"]),
+        Paragraph("МЕСЯЧНАЯ ЭКОНОМИКА", st["kicker"]),
         Paragraph("Куда уходят деньги", st["h2"]),
         Paragraph(
-            "Полный P&amp;L вашего бизнеса в базовом сценарии — выручка, расходы, налоги и что остаётся.",
+            "Длина бара — доля от месячной выручки. Сначала минусы (расходы, налоги), потом что остаётся вам.",
             st["body_muted"],
         ),
-        Spacer(1, 6),
-        t,
+        Spacer(1, 8),
+        *flowables,
         Spacer(1, 10),
         _note_box(Paragraph(note_text, st["note"])),
     ]
@@ -854,21 +954,21 @@ def _invest_story(m: dict, st: dict) -> list:
     grand_total = m["invMin"] + buffer_total
     grand_row = Table(
         [[Paragraph(
-            '<font name="DejaVuSans-Bold" color="#3730A3" size="13">Всего на старт (с подушкой)</font>',
+            '<font name="DejaVuSans-Bold" color="#111827" size="13">Всего на старт (с подушкой)</font>',
             ParagraphStyle("g", fontName="DejaVuSans-Bold", fontSize=13, leading=16)),
           Paragraph(
-            f'<font name="DejaVuMono-Bold" color="#3730A3" size="15">{_fmt(grand_total)} ₸</font>',
-            ParagraphStyle("gv", fontName="DejaVuMono-Bold", fontSize=15, leading=18, alignment=TA_RIGHT))]],
-        colWidths=[_content_w() * 0.65, _content_w() * 0.35],
+            f'<font name="DejaVuMono-Bold" color="{COL_ACCENT_DARK.hexval()}" size="18">{_fmt(grand_total)} ₸</font>',
+            ParagraphStyle("gv", fontName="DejaVuMono-Bold", fontSize=18, leading=22, alignment=TA_RIGHT))]],
+        colWidths=[_content_w() * 0.55, _content_w() * 0.45],
     )
     grand_row.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, -1), COL_PRIMARY_SOFT),
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-        ("BOX", (0, 0), (-1, -1), 1.5, COL_PRIMARY),
-        ("LEFTPADDING", (0, 0), (-1, -1), 14),
-        ("RIGHTPADDING", (0, 0), (-1, -1), 14),
+        ("LEFTPADDING", (0, 0), (-1, -1), 2),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 2),
         ("TOPPADDING", (0, 0), (-1, -1), 14),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 14),
+        ("LINEABOVE", (0, 0), (-1, 0), 1.5, COL_ACCENT),
+        ("LINEBELOW", (0, 0), (-1, 0), 1.5, COL_ACCENT),
     ]))
 
     note_text = (
@@ -878,7 +978,7 @@ def _invest_story(m: dict, st: dict) -> list:
     )
 
     return [
-        Paragraph("СТРАНИЦА 6 · СТАРТОВЫЕ ВЛОЖЕНИЯ", st["kicker"]),
+        Paragraph("СТАРТОВЫЕ ВЛОЖЕНИЯ", st["kicker"]),
         Paragraph("Что нужно вложить до открытия", st["h2"]),
         Paragraph("Оборудование и ремонт", st["h3"]),
         _kv_table(capex_rows, st, col1_frac=0.65),
@@ -901,62 +1001,73 @@ def _stress_story(m: dict, st: dict) -> list:
     stress = m["stress"]
     if len(stress) < 3:
         return []
-    s_bad, s_base, s_good = stress[0], stress[1], stress[2]
 
-    def scen_card(kind, s):
-        col_map = {"red": (COL_RED, COL_RED_SOFT), "blue": (COL_PRIMARY, COL_PRIMARY_SOFT),
-                   "green": (COL_GREEN, COL_GREEN_SOFT)}
-        stripe, bg = col_map.get(s.get("color", "blue"), (COL_PRIMARY, COL_PRIMARY_SOFT))
+    # Максимальное |pocket| для нормализации ширины бара
+    max_abs = max((abs(s.get("net_in_pocket", 0)) for s in stress), default=1) or 1
+
+    def scen_block(s):
+        color_key = s.get("color", "blue")
+        bar_color = {"red": COL_RED_SOFT, "blue": COL_ACCENT_SOFT, "green": COL_GREEN_SOFT}.get(color_key, COL_ACCENT_SOFT)
+        stripe = {"red": COL_RED, "blue": COL_ACCENT, "green": COL_GREEN}.get(color_key, COL_ACCENT)
+        val_color = {"red": COL_RED, "blue": COL_ACCENT_DARK, "green": COL_GREEN_DARK}.get(color_key, COL_ACCENT_DARK)
         pocket = s.get("net_in_pocket", 0)
         sign = "−" if pocket < 0 else ""
         val_str = f"{sign}{_fmt_k(abs(pocket))} ₸/мес"
+        frac = abs(pocket) / max_abs
+
+        # Заголовок сценария + параметры слева, значение справа
         title_p = Paragraph(
-            f'<font name="DejaVuSans-Bold" size="12" color="#0F172A">{_e(s["label"])}</font>',
-            ParagraphStyle("tp", fontName="DejaVuSans-Bold", fontSize=12, leading=15),
+            f'<font name="DejaVuSans-Bold" size="12" color="#111827">{_e(s["label"])}</font><br/>'
+            f'<font name="DejaVuSans" size="9" color="#6B7280">{_e(s.get("params", ""))}</font>',
+            ParagraphStyle("tp", fontName="DejaVuSans", fontSize=12, leading=15),
         )
         val_p = Paragraph(
-            f'<font name="DejaVuMono-Bold" size="15" color="{stripe.hexval()}">{_e(val_str)}</font>',
-            ParagraphStyle("vp", fontName="DejaVuMono-Bold", fontSize=15, leading=18, alignment=TA_RIGHT),
+            f'<font name="DejaVuMono-Bold" size="16" color="{val_color.hexval()}">{_e(val_str)}</font>',
+            ParagraphStyle("vp", fontName="DejaVuMono-Bold", fontSize=16, leading=19, alignment=TA_RIGHT),
         )
-        params_p = Paragraph(
-            f'<font name="DejaVuSans" size="9" color="#6B7280">{_e(s.get("params", ""))}</font>',
-            ParagraphStyle("pp", fontName="DejaVuSans", fontSize=9, leading=12),
-        )
-        inner = Table(
-            [[title_p, val_p], [params_p, ""]],
-            colWidths=[_content_w() * 0.6, _content_w() * 0.4],
-        )
-        inner.setStyle(TableStyle([
-            ("BACKGROUND", (0, 0), (-1, -1), COL_BG_CARD),
-            ("LINEBEFORE", (0, 0), (0, -1), 4, stripe),
-            ("VALIGN", (0, 0), (-1, -1), "TOP"),
-            ("LEFTPADDING", (0, 0), (-1, -1), 14),
-            ("RIGHTPADDING", (0, 0), (-1, -1), 14),
-            ("TOPPADDING", (0, 0), (-1, -1), 10),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
-            ("SPAN", (0, 1), (-1, 1)),
+        head = Table([[title_p, val_p]], colWidths=[_content_w() * 0.58, _content_w() * 0.42])
+        head.setStyle(TableStyle([
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("LEFTPADDING", (0, 0), (-1, -1), 0), ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+            ("TOPPADDING", (0, 0), (-1, -1), 0), ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
         ]))
-        return inner
+
+        # Бар-подложка с левой stripe
+        bar = BarRow(
+            label="", value_str="", fraction=frac, bar_color=bar_color,
+            row_h=10, label_size=10, label_color=COL_TEXT, value_color=COL_TEXT,
+        )
+
+        # Вставляем левую цветную полоску через обёртку Table с LINEBEFORE
+        wrap = Table([[head], [bar]], colWidths=[_content_w()])
+        wrap.setStyle(TableStyle([
+            ("LINEBEFORE", (0, 0), (0, -1), 3, stripe),
+            ("LEFTPADDING", (0, 0), (-1, -1), 10),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+            ("TOPPADDING", (0, 0), (-1, -1), 4),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ]))
+        return wrap
 
     note_text = (
-        "<b>Как читать.</b> Если даже в сценарии «всё плохо» вы не уходите в минус — "
-        "бизнес устойчив и переживёт плохой квартал. Если уходите в минус — нужна подушка "
-        "на покрытие убытков или пересмотр формата (меньше аренда, другой класс, другая локация)."
+        "<b>Как читать.</b> Длина бара — сравнительная величина «в карман» между сценариями. "
+        "Если в сценарии «всё плохо» цифра в минус — нужна подушка на покрытие или пересмотр формата."
     )
 
     return [
-        Paragraph("СТРАНИЦА 7 · СТРЕСС-ТЕСТ", st["kicker"]),
+        Paragraph("СТРЕСС-ТЕСТ", st["kicker"]),
         Paragraph("Что будет, если рынок просядет", st["h2"]),
         Paragraph(
             "Проверка устойчивости бизнеса. Каждый сценарий меняет ключевые параметры и пересчитывает «в карман».",
             st["body_muted"],
         ),
+        Spacer(1, 10),
+        scen_block(stress[0]),
         Spacer(1, 8),
-        scen_card("red", s_bad),
-        Spacer(1, 6),
-        scen_card("blue", s_base),
-        Spacer(1, 6),
-        scen_card("green", s_good),
+        scen_block(stress[1]),
+        Spacer(1, 8),
+        scen_block(stress[2]),
         Spacer(1, 10),
         _note_box(Paragraph(note_text, st["note"])),
     ]
@@ -968,7 +1079,7 @@ def _risks_story(m: dict, st: dict) -> list:
         return []
 
     story = [
-        Paragraph("СТРАНИЦА 8 · РИСКИ НИШИ", st["kicker"]),
+        Paragraph("РИСКИ НИШИ", st["kicker"]),
         Paragraph("Почему закрываются такие бизнесы", st["h2"]),
         Paragraph(
             "7 самых денежно-критичных рисков для вашей ниши — из практики закрывшихся бизнесов. "
@@ -979,44 +1090,52 @@ def _risks_story(m: dict, st: dict) -> list:
     ]
 
     for idx, r in enumerate(risks[:7]):
+        num = f"{idx + 1:02d}"
+        # Номер слева, заголовок и текст — справа
+        num_p = Paragraph(
+            f'<font name="DejaVuMono-Bold" size="14" color="{COL_AMBER.hexval()}">{num}</font>',
+            ParagraphStyle("rn", fontName="DejaVuMono-Bold", fontSize=14, leading=17, alignment=TA_LEFT),
+        )
         title_p = Paragraph(
-            f'<font name="DejaVuSans-Bold" size="12" color="#111827">⚠ {_e(r.get("title", ""))}</font>',
-            ParagraphStyle("rt", fontName="DejaVuSans-Bold", fontSize=12, leading=15),
+            f'<font name="DejaVuSans-Bold" size="12" color="#111827">{_e(r.get("title", ""))}</font>',
+            ParagraphStyle("rt", fontName="DejaVuSans-Bold", fontSize=12, leading=16),
         )
         body_p = Paragraph(
             f'<font name="DejaVuSans" size="10" color="#374151">{_e(r.get("body", ""))}</font>',
             ParagraphStyle("rb", fontName="DejaVuSans", fontSize=10, leading=14),
         )
         protect_text = r.get("protect", "")
+        right_rows = [[title_p], [body_p]]
         if protect_text:
             protect_p = Paragraph(
-                f'<font name="DejaVuSans-Bold" size="9.5" color="#15803D">Как защититься:</font> '
+                f'<font name="DejaVuSans-Bold" size="9.5" color="{COL_GREEN_DARK.hexval()}">Как защититься.</font> '
                 f'<font name="DejaVuSans" size="9.5" color="#111827">{_e(protect_text)}</font>',
                 ParagraphStyle("rp", fontName="DejaVuSans", fontSize=9.5, leading=13),
             )
-            rows_data = [[title_p], [body_p], [protect_p]]
-        else:
-            rows_data = [[title_p], [body_p]]
+            right_rows.append([protect_p])
 
-        card = Table(rows_data, colWidths=[_content_w()])
-        cstyle = [
-            ("BACKGROUND", (0, 0), (-1, -1), COL_BG_CARD),
-            ("LINEBEFORE", (0, 0), (0, -1), 4, COL_YELLOW),
+        right_stack = Table(right_rows, colWidths=[_content_w() - 14 * mm])
+        right_stack.setStyle(TableStyle([
+            ("LEFTPADDING", (0, 0), (-1, -1), 0),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+            ("TOPPADDING", (0, 0), (0, 0), 0),
+            ("TOPPADDING", (0, 1), (0, 1), 2),
+            ("BOTTOMPADDING", (0, 0), (0, 0), 2),
+            ("BOTTOMPADDING", (0, 1), (0, 1), 2),
+            ("TOPPADDING", (0, -1), (0, -1), 4),
+            ("BOTTOMPADDING", (0, -1), (0, -1), 0),
+        ]))
+
+        card = Table([[num_p, right_stack]], colWidths=[14 * mm, _content_w() - 14 * mm])
+        card.setStyle(TableStyle([
             ("VALIGN", (0, 0), (-1, -1), "TOP"),
-            ("LEFTPADDING", (0, 0), (-1, -1), 12),
-            ("RIGHTPADDING", (0, 0), (-1, -1), 12),
-            ("TOPPADDING", (0, 0), (-1, 0), 10),
-            ("TOPPADDING", (0, 1), (-1, -1), 4),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
-            ("BOTTOMPADDING", (0, -1), (-1, -1), 10),
-        ]
-        if protect_text:
-            cstyle.append(("BACKGROUND", (0, 2), (-1, 2), colors.HexColor("#F0FDF4")))
-            cstyle.append(("TOPPADDING", (0, 2), (-1, 2), 6))
-            cstyle.append(("BOTTOMPADDING", (0, 2), (-1, 2), 8))
-        card.setStyle(TableStyle(cstyle))
-
-        story.append(KeepTogether([card, Spacer(1, 6)]))
+            ("LEFTPADDING", (0, 0), (-1, -1), 0),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+            ("TOPPADDING", (0, 0), (-1, -1), 10),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+            ("LINEBELOW", (0, 0), (-1, 0), 0.3, COL_LINE),
+        ]))
+        story.append(KeepTogether([card]))
 
     return story
 
@@ -1049,7 +1168,7 @@ def _checklist_story(st: dict) -> list:
         ]),
     ]
     story = [
-        Paragraph("СТРАНИЦА 9 · ПЛАН ДЕЙСТВИЙ", st["kicker"]),
+        Paragraph("ПЛАН ДЕЙСТВИЙ", st["kicker"]),
         Paragraph("Чек-лист на первый месяц", st["h2"]),
         Paragraph(
             "Распечатайте и отмечайте по мере выполнения. Порядок имеет значение — "
@@ -1078,36 +1197,53 @@ def _glossary_story(st: dict) -> list:
         ("Выручка", "Все деньги от клиентов за месяц. Из неё ещё ничего не вычли."),
         ("Наценка после себестоимости", "То же, что «валовая прибыль». Выручка минус прямые расходы на товар/материалы."),
         ("Окупаемость", "Сколько месяцев нужно, чтобы вернуть стартовые вложения за счёт прибыли. Норма: 12–24 месяца."),
-        ("Подушка безопасности", "Деньги сверх CAPEX на покрытие расходов в первые месяцы. Минимум 3 месяца расходов."),
+        ("Подушка безопасности", "Деньги сверх стартовых вложений — на покрытие расходов в первые месяцы. Минимум 3 месяца."),
         ("Соцплатежи собственника", "Обязательные платежи ИП за себя: ОПВ (пенсия), ОСМС (медстрах), СО (соцотчисления)."),
         ("Стартовые вложения", "Деньги на оборудование, ремонт, первый закуп, разрешения — всё до открытия."),
         ("Точка безубыточности", "Минимальная выручка в месяц, при которой бизнес не теряет и не зарабатывает."),
         ("Точка закрытия", "Когда собственник зарабатывает меньше наёмного продавца — смысла вести бизнес нет."),
-        ("Точка роста", "Когда прибыль позволяет финансировать найм или новую точку из потока. От 600 тыс ₸ в карман."),
+        ("Точка роста", "Прибыль позволяет финансировать найм или новую точку из потока. От 600 тыс ₸ в карман."),
         ("Упрощёнка / УСН", "Налоговый режим для ИП и ТОО. Платится 2–4% от выручки."),
     ]
-    story = [
-        Paragraph("СТРАНИЦА 10 · ГЛОССАРИЙ", st["kicker"]),
-        Paragraph("Термины простым языком", st["h2"]),
-        Spacer(1, 6),
-    ]
+    rows = []
     for t, d in terms:
-        story.append(Paragraph(
-            f'<font name="DejaVuSans-Bold" size="10.5" color="#111827">{_e(t)}</font>',
-            ParagraphStyle("gt", fontName="DejaVuSans-Bold", fontSize=10.5, leading=13, spaceBefore=4),
-        ))
-        story.append(Paragraph(
-            f'<font name="DejaVuSans" size="9.5" color="#374151">{_e(d)}</font>',
-            ParagraphStyle("gd", fontName="DejaVuSans", fontSize=9.5, leading=13, spaceAfter=4),
-        ))
-    return story
+        rows.append([
+            Paragraph(
+                f'<font name="DejaVuSans-Bold" size="10" color="#111827">{_e(t)}</font>',
+                ParagraphStyle("gt", fontName="DejaVuSans-Bold", fontSize=10, leading=13),
+            ),
+            Paragraph(
+                f'<font name="DejaVuSans" size="9.5" color="#374151">{_e(d)}</font>',
+                ParagraphStyle("gd", fontName="DejaVuSans", fontSize=9.5, leading=13),
+            ),
+        ])
+    col1 = _content_w() * 0.32
+    col2 = _content_w() * 0.68
+    tbl = Table(rows, colWidths=[col1, col2])
+    style = [
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 8),
+        ("TOPPADDING", (0, 0), (-1, -1), 8),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+        ("LINEABOVE", (0, 0), (-1, 0), 0.3, COL_LINE),
+    ]
+    for i in range(len(rows)):
+        style.append(("LINEBELOW", (0, i), (-1, i), 0.3, COL_LINE))
+    tbl.setStyle(TableStyle(style))
+    return [
+        Paragraph("ГЛОССАРИЙ", st["kicker"]),
+        Paragraph("Термины простым языком", st["h2"]),
+        Spacer(1, 8),
+        tbl,
+    ]
 
 
 def _methodology_story(st: dict) -> list:
     products = [
-        ("📊 Финансовая модель", "9 000 ₸ — помесячный расчёт на 36 месяцев, сезонность, кредит"),
-        ("📋 Бизнес-план", "15 000 ₸ — для банка/гранта, шаблон Bastau Biznes"),
-        ("🎯 Pitch Deck", "По запросу — презентация для инвестора"),
+        ("Финансовая модель", "9 000 ₸ — помесячный расчёт на 36 месяцев, сезонность, кредит"),
+        ("Бизнес-план", "15 000 ₸ — для банка или гранта «Бастау Бизнес»"),
+        ("Pitch Deck", "По запросу — презентация для инвестора"),
     ]
     contacts = [
         ("Telegram-бот", "@zerekai_bot"),
@@ -1123,7 +1259,7 @@ def _methodology_story(st: dict) -> list:
     )
 
     return [
-        Paragraph("СТРАНИЦА 11 · МЕТОДОЛОГИЯ", st["kicker"]),
+        Paragraph("МЕТОДОЛОГИЯ", st["kicker"]),
         Paragraph("На чём основан этот отчёт", st["h2"]),
         Paragraph("Источники данных", st["h3"]),
         Paragraph(
