@@ -548,8 +548,9 @@
   }
   #splash.fade { opacity: 0; pointer-events: none; }
   #splash video {
-    width: 100vw; height: 100vh;
-    object-fit: cover;
+    width: 66.67vw; height: 66.67vh;
+    max-width: 66.67vw; max-height: 66.67vh;
+    object-fit: contain;
     pointer-events: none;
   }
   body.splash-on { overflow: hidden; }
