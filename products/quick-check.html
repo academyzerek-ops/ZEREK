@@ -478,10 +478,15 @@
   .upsell-head strong { display: block; margin-bottom: 4px; font-size: 15px; }
   .upsell { background: var(--surface); border: 1.5px solid var(--surface-2); border-radius: var(--radius); padding: 18px; margin-bottom: 10px; }
   .upsell-tag {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 20px; font-weight: 700; margin-bottom: 12px;
+    display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+    font-size: 18px; font-weight: 700; margin-bottom: 12px;
+    line-height: 1.25;
   }
-  .upsell-price { color: var(--accent); font-family: var(--mono); font-size: 18px; }
+  .upsell-tag > span:first-child { flex: 1; min-width: 0; }
+  .upsell-price {
+    color: var(--accent); font-family: var(--mono); font-size: 17px; font-weight: 700;
+    white-space: nowrap; flex-shrink: 0;
+  }
   .upsell-feats { list-style: none; padding: 0; margin: 0 0 14px; }
   .upsell-feats li {
     padding: 6px 0 6px 24px; position: relative; font-size: 13px; color: var(--text-2);
@@ -1461,12 +1466,12 @@ function renderReport(r) {
   html += '<div class="upsell-head"><strong>Вы получили экспресс-оценку.</strong>Для запуска нужен следующий уровень детализации — выбирайте ниже.</div>';
 
   html += '<div class="upsell">';
-  html += '<div class="upsell-tag">📊 Финансовая модель<span class="upsell-price">9 000 ₸</span></div>';
+  html += '<div class="upsell-tag"><span>Финансовая модель</span><span class="upsell-price">9 000 ₸</span></div>';
   html += '<ul class="upsell-feats"><li>Помесячный расчёт на 36 месяцев</li><li>Учёт сезонности</li><li>Расчёт кредита и кассовых разрывов</li><li>5 детальных сценариев</li></ul>';
   html += '<button class="btn" onclick="orderUpsell(\'finmodel\')">Заказать финмодель</button></div>';
 
   html += '<div class="upsell">';
-  html += '<div class="upsell-tag">📋 Бизнес-план<span class="upsell-price">15 000 ₸</span></div>';
+  html += '<div class="upsell-tag"><span>Бизнес-план</span><span class="upsell-price">15 000 ₸</span></div>';
   html += '<ul class="upsell-feats"><li>Полный документ для банка/гранта</li><li>Шаблон Bastau Biznes</li><li>Маркетинговая стратегия</li><li>Операционный план</li></ul>';
   html += '<button class="btn btn-outline" onclick="orderUpsell(\'bizplan\')">Заказать бизнес-план</button></div>';
 
