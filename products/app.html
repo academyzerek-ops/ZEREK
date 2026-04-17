@@ -1810,7 +1810,7 @@ p { line-height: 1.4; font-weight: 400; }
         </div>
         <div class="product-price">3 000 ₸</div>
       </div>
-      <button class="product-cta product-cta-primary" onclick="startQuickCheck()">Пройти экспресс-оценку →</button>
+      <button class="product-cta product-cta-primary" onclick="openQuickCheckNew()">Пройти экспресс-оценку →</button>
     </div>
 
     <!-- Product 2: Finmodel -->
@@ -2919,6 +2919,13 @@ var CITY_ICONS = {
   'karaganda': '⛏️', 'atyrau': '🛢️', 'pavlodar': '🌾', 'aktau': '🌊',
   'semey': '📚', 'kostanay': '🌿'
 };
+
+function openQuickCheckNew() {
+  // Redirect to the new standalone quick-check page (v3 — splash + polished report).
+  // Cache-buster query param forces Telegram WebView to load fresh after each deploy.
+  var v = 'v=' + Date.now();
+  window.location.href = 'quick-check.html?' + v;
+}
 
 function startQuickCheck() {
   document.getElementById('calc-main').style.display = 'none';
