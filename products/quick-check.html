@@ -548,8 +548,8 @@
   }
   #splash.fade { opacity: 0; pointer-events: none; }
   #splash video {
-    width: 66.67vw; height: 66.67vh;
-    max-width: 66.67vw; max-height: 66.67vh;
+    width: auto; height: auto;
+    max-width: 67vw; max-height: 67vh;
     object-fit: contain;
     pointer-events: none;
   }
@@ -1595,10 +1595,12 @@ function initSplash() {
   var finish = function() { if (done) return; done = true; hideSplash(); };
   v.addEventListener('ended', finish);
   v.addEventListener('error', finish);
-  // Fallback ceiling in case autoplay blocked or metadata slow
+  // Fallback ceiling — всегда показываем splash минимум 2.5 сек (если autoplay сработает,
+  // он сам завершится по ended раньше; если нет — покажем первый кадр и уйдём по таймауту).
   setTimeout(finish, 4500);
-  // Kick autoplay (iOS sometimes needs explicit play() after ready)
-  var tryPlay = function() { try { v.play().catch(finish); } catch(e) { finish(); } };
+  // Kick autoplay without dismissing on failure (iOS Safari WebView иногда возвращает
+  // rejected promise, но кадр остаётся виден; splash уйдёт по таймеру или ended).
+  var tryPlay = function() { try { v.play().catch(function() {}); } catch(e) {} };
   if (v.readyState >= 2) tryPlay(); else v.addEventListener('loadeddata', tryPlay);
   // Tap to skip
   document.getElementById('splash').addEventListener('click', finish);
