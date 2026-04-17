@@ -834,6 +834,10 @@ p { line-height: 1.4; font-weight: 400; }
   vertical-align: middle;
   background: var(--color-text-tertiary);
 }
+.case-card[data-tag="red"]::before { background: var(--color-error); }
+.case-card[data-tag="yellow"]::before { background: #F59E0B; }
+.case-card[data-tag="green"]::before { background: var(--color-success); }
+/* legacy aliases */
 .case-card[data-tag="loss"]::before { background: var(--color-error); }
 .case-card[data-tag="win"]::before  { background: var(--color-success); }
 .case-title {
@@ -857,6 +861,10 @@ p { line-height: 1.4; font-weight: 400; }
   border-radius: var(--radius-full);
   margin-top: 10px;
 }
+.case-tag-red    { background: rgba(255, 48, 64, 0.12); color: var(--color-error); }
+.case-tag-yellow { background: rgba(245, 158, 11, 0.15); color: #B45309; }
+.case-tag-green  { background: rgba(0, 186, 124, 0.12); color: var(--color-success); }
+/* legacy aliases */
 .case-tag-loss { background: rgba(255, 48, 64, 0.12); color: var(--color-error); }
 .case-tag-win  { background: rgba(0, 186, 124, 0.12); color: var(--color-success); }
 
@@ -1735,37 +1743,37 @@ p { line-height: 1.4; font-weight: 400; }
      ============================================ -->
 <div class="screen" id="screen-cases">
   <div class="screen-content" id="cases-main">
-    <div class="screen-title">Чужие грабли</div>
-    <div class="screen-subtitle">Учись на чужих ошибках, экономь свои деньги</div>
+    <div class="screen-title">Реальные кейсы</div>
+    <div class="screen-subtitle">Тут публикуются реальные истории из практики и книг — чтобы вы учились на чужом опыте.</div>
 
-    <div class="case-card" onclick="window.location.href='../cases/case-001.html'">
+    <div class="case-card" data-tag="red" onclick="window.location.href='../cases/case-001.html'">
       <div class="case-title">Дорогой диплом ценой в 19 миллионов</div>
       <div class="case-excerpt">Кофейня европейского формата. Влюбился в продукт — проигнорировал рынок.</div>
-      <span class="case-tag case-tag-loss">Провал</span>
+      <span class="case-tag case-tag-red">Красный</span>
     </div>
 
-    <div class="case-card" onclick="window.location.href='../cases/case-002.html'">
+    <div class="case-card" data-tag="yellow" onclick="window.location.href='../cases/case-002.html'">
       <div class="case-title">Как «успешный успех» чуть не убил клининг</div>
       <div class="case-excerpt">Лидер B2C решил масштабироваться в B2B без подготовки — и чуть не потерял всё.</div>
-      <span class="case-tag case-tag-loss">Провал</span>
+      <span class="case-tag case-tag-yellow">Жёлтый</span>
     </div>
 
-    <div class="case-card" onclick="window.location.href='../cases/case-003.html'">
+    <div class="case-card" data-tag="red" onclick="window.location.href='../cases/case-003.html'">
       <div class="case-title">30 домов продали — построить не смогли</div>
       <div class="case-excerpt">Всё посчитали, всё продали. Но в городе на 250 тысяч не хватило кадров и ресурсов.</div>
-      <span class="case-tag case-tag-loss">Провал</span>
+      <span class="case-tag case-tag-red">Красный</span>
     </div>
 
-    <div class="case-card" onclick="window.location.href='../cases/case-004.html'">
+    <div class="case-card" data-tag="green" onclick="window.location.href='../cases/case-004.html'">
       <div class="case-title">Конкуренты приехали — и спасли наш бизнес</div>
       <div class="case-excerpt">Думали — конец. А конкуренты создали кластер, который утроил трафик.</div>
-      <span class="case-tag case-tag-win">Взлёт</span>
+      <span class="case-tag case-tag-green">Зелёный</span>
     </div>
 
-    <div class="case-card" onclick="window.location.href='../cases/case-005.html'">
+    <div class="case-card" data-tag="green" onclick="window.location.href='../cases/case-005.html'">
       <div class="case-title">Камрюха за два месяца</div>
       <div class="case-excerpt">Первыми поймали тренд на донеры. 500 лепёшек в день с одной точки.</div>
-      <span class="case-tag case-tag-win">Взлёт</span>
+      <span class="case-tag case-tag-green">Зелёный</span>
     </div>
   </div>
 
@@ -1923,7 +1931,7 @@ p { line-height: 1.4; font-weight: 400; }
   </button>
   <button class="tab-btn" data-tab="cases" onclick="switchTab('cases')" role="tab" aria-controls="screen-cases" aria-selected="false">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5z"/></svg>
-    <span>Кейсы</span>
+    <span>Реальные кейсы</span>
   </button>
   <button class="tab-btn tab-center active" data-tab="chat" onclick="switchTab('chat')" role="tab" aria-controls="screen-chat" aria-selected="true">
     <svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="11" rx="10.5" ry="8"/><path d="M8 18L8 22l5-4"/></svg>
@@ -1967,6 +1975,21 @@ function initTelegram() {
       if (tg.onEvent) tg.onEvent('viewportChanged', updateVh);
     }
   } catch(e) {}
+}
+
+/* Global haptic feedback on interactive elements (Telegram-native on mobile, no-op elsewhere) */
+function initHaptics() {
+  var HAPTIC_SELECTOR = 'button, .tab-btn, .case-card, .product-cta, .qc-opt, .qc-loc-toggle, .qc-lvl-btn, .wiki-card, .review-item, .category-card, .topic-card, .product-card, .chat-send, .send-btn';
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest(HAPTIC_SELECTOR)) return;
+    try {
+      if (tg && tg.HapticFeedback) {
+        tg.HapticFeedback.selectionChanged();
+      } else if (navigator.vibrate) {
+        navigator.vibrate(8);
+      }
+    } catch(err) {}
+  }, true);
 }
 
 /* Fallback for browsers outside Telegram: use visualViewport */
@@ -2413,7 +2436,7 @@ function openChatOverlay() {
   currentContext.screen = currentTab;
   currentContext.title = null;
   if (currentTab === 'academy') currentContext.title = 'Академия';
-  if (currentTab === 'cases') currentContext.title = 'Кейсы';
+  if (currentTab === 'cases') currentContext.title = 'Реальные кейсы';
   if (currentTab === 'wiki') currentContext.title = 'Обзоры';
   if (currentTab === 'calc') currentContext.title = 'Расчёты';
 
@@ -3461,6 +3484,7 @@ function renderQcReport(r) {
    ============================================ */
 function init() {
   initTelegram();
+  initHaptics();
   /* Set chat-mode on app-main since chat is the default active tab */
   var main = document.getElementById('app-main');
   if (main) main.classList.add('chat-mode');
