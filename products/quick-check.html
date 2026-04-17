@@ -541,29 +541,9 @@
     body { padding: 0 12px 40px; }
   }
 
-  /* ========= Splash screen ========= */
-  #splash {
-    position: fixed; inset: 0; z-index: 200;
-    background: var(--bg);
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
-    transition: opacity 0.45s ease;
-  }
-  #splash.fade { opacity: 0; pointer-events: none; }
-  #splash video {
-    width: auto; height: auto;
-    max-width: 67vw; max-height: 67vh;
-    object-fit: contain;
-    pointer-events: none;
-  }
-  body.splash-on { overflow: hidden; }
 </style>
 </head>
-<body class="splash-on">
-
-<div id="splash">
-  <video id="splash-video" src="assets/splash.mp4" autoplay muted playsinline preload="auto"></video>
-</div>
+<body>
 
 <div class="top-bar">
   <button class="back-btn" id="back-btn" onclick="onBack()">
@@ -1581,39 +1561,9 @@ function closeSheet() {
 }
 
 /* ==========================================================
-   Splash
-   ========================================================== */
-function hideSplash() {
-  var s = document.getElementById('splash');
-  if (!s || s.classList.contains('fade')) return;
-  s.classList.add('fade');
-  document.body.classList.remove('splash-on');
-  setTimeout(function() { if (s && s.parentNode) s.parentNode.removeChild(s); }, 500);
-}
-
-function initSplash() {
-  var v = document.getElementById('splash-video');
-  if (!v) return;
-  var done = false;
-  var finish = function() { if (done) return; done = true; hideSplash(); };
-  v.addEventListener('ended', finish);
-  v.addEventListener('error', finish);
-  // Fallback ceiling — всегда показываем splash минимум 2.5 сек (если autoplay сработает,
-  // он сам завершится по ended раньше; если нет — покажем первый кадр и уйдём по таймауту).
-  setTimeout(finish, 4500);
-  // Kick autoplay without dismissing on failure (iOS Safari WebView иногда возвращает
-  // rejected promise, но кадр остаётся виден; splash уйдёт по таймеру или ended).
-  var tryPlay = function() { try { v.play().catch(function() {}); } catch(e) {} };
-  if (v.readyState >= 2) tryPlay(); else v.addEventListener('loadeddata', tryPlay);
-  // Tap to skip
-  document.getElementById('splash').addEventListener('click', finish);
-}
-
-/* ==========================================================
    Init
    ========================================================== */
 function init() {
-  initSplash();
   loadCities();
   renderStep();
 }
