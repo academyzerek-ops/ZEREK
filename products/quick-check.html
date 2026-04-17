@@ -548,7 +548,7 @@
 <div class="top-bar">
   <button class="back-btn" id="back-btn" onclick="onBack()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-    <span id="back-label">Закрыть</span>
+    <span id="back-label">Назад</span>
   </button>
   <div class="brand"><strong>ZEREK</strong> · Экспресс-оценка</div>
 </div>
@@ -828,7 +828,7 @@ function setBackLabel() {
   if (document.getElementById('report-screen').classList.contains('active')) {
     lbl.textContent = 'К расчётам';
   } else {
-    lbl.textContent = QC.step === 0 ? 'Закрыть' : 'Назад';
+    lbl.textContent = 'Назад';
   }
 }
 
@@ -955,8 +955,12 @@ function onBack() {
     return;
   }
   if (QC.step === 0) {
-    if (tg && tg.close) tg.close();
-    else window.history.back();
+    // Came from app.html (или прямой заход) — возвращаемся в историю, иначе на главную.
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = 'app.html';
+    }
     return;
   }
   QC.step--;
