@@ -101,10 +101,10 @@ strong{color:var(--text);font-weight:600}a{color:var(--gold2);text-decoration:no
 </style>
 <meta name="theme-color" content="#fdf7f9">
 </head>
-<body><a class="zk-back" href="../../products/app.html?tab=wiki" onclick="if(window.Telegram&&window.Telegram.WebApp){event.preventDefault();window.location.href=this.href}">
+<body><button type="button" class="zk-back" onclick="if(history.length>1){history.back()}else{window.location.href='../../products/app.html?tab=wiki'}">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
   Назад
-</a>
+</button>
 <button class="zk-top" id="zkTop" onclick="smoothScrollTop()">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
 </button>
