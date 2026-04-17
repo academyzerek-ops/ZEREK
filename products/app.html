@@ -810,6 +810,43 @@ p { line-height: 1.4; font-weight: 400; }
 /* ============================================
    CASES SCREEN — Threads-style cards
    ============================================ */
+.cases-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.cases-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-family);
+  color: var(--color-text-secondary);
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.cases-filter-pill.active {
+  background: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+  color: var(--color-text-inverse);
+}
+.cases-filter-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  flex-shrink: 0;
+}
+.cases-filter-dot--red    { background: var(--color-error); }
+.cases-filter-dot--yellow { background: #EAB308; }
+.cases-filter-dot--green  { background: var(--color-success); }
+
 .case-card {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
@@ -835,7 +872,7 @@ p { line-height: 1.4; font-weight: 400; }
   background: var(--color-text-tertiary);
 }
 .case-card[data-tag="red"]::before { background: var(--color-error); }
-.case-card[data-tag="yellow"]::before { background: #F59E0B; }
+.case-card[data-tag="yellow"]::before { background: #EAB308; }
 .case-card[data-tag="green"]::before { background: var(--color-success); }
 /* legacy aliases */
 .case-card[data-tag="loss"]::before { background: var(--color-error); }
@@ -862,7 +899,7 @@ p { line-height: 1.4; font-weight: 400; }
   margin-top: 10px;
 }
 .case-tag-red    { background: rgba(255, 48, 64, 0.12); color: var(--color-error); }
-.case-tag-yellow { background: rgba(245, 158, 11, 0.15); color: #B45309; }
+.case-tag-yellow { background: rgba(234, 179, 8, 0.18); color: #854D0E; }
 .case-tag-green  { background: rgba(0, 186, 124, 0.12); color: var(--color-success); }
 /* legacy aliases */
 .case-tag-loss { background: rgba(255, 48, 64, 0.12); color: var(--color-error); }
@@ -1745,6 +1782,13 @@ p { line-height: 1.4; font-weight: 400; }
   <div class="screen-content" id="cases-main">
     <div class="screen-title">Реальные кейсы</div>
     <div class="screen-subtitle">Тут публикуются реальные истории из практики и книг — чтобы вы учились на чужом опыте.</div>
+
+    <div class="cases-filter" id="cases-filter" role="tablist" aria-label="Фильтр кейсов">
+      <button type="button" class="cases-filter-pill active" data-filter="all"   onclick="filterCases('all', this)">Все</button>
+      <button type="button" class="cases-filter-pill" data-filter="red"   onclick="filterCases('red', this)"><span class="cases-filter-dot cases-filter-dot--red"></span>Красный</button>
+      <button type="button" class="cases-filter-pill" data-filter="yellow" onclick="filterCases('yellow', this)"><span class="cases-filter-dot cases-filter-dot--yellow"></span>Жёлтый</button>
+      <button type="button" class="cases-filter-pill" data-filter="green"  onclick="filterCases('green', this)"><span class="cases-filter-dot cases-filter-dot--green"></span>Зелёный</button>
+    </div>
 
     <div class="case-card" data-tag="red" onclick="window.location.href='../cases/case-001.html'">
       <div class="case-title">Дорогой диплом ценой в 19 миллионов</div>
@@ -2840,6 +2884,21 @@ function selectWikiCat(idx) {
   wikiActiveCat = idx;
   renderWikiPills();
   renderWikiList();
+}
+
+/* ============================================
+   CASES — фильтр по цветному маркеру
+   ============================================ */
+function filterCases(tag, pill) {
+  var pills = document.querySelectorAll('#cases-filter .cases-filter-pill');
+  for (var i = 0; i < pills.length; i++) pills[i].classList.remove('active');
+  if (pill) pill.classList.add('active');
+  var cards = document.querySelectorAll('#cases-main .case-card');
+  for (var j = 0; j < cards.length; j++) {
+    var c = cards[j];
+    var show = tag === 'all' || c.getAttribute('data-tag') === tag;
+    c.style.display = show ? '' : 'none';
+  }
 }
 
 function openWiki(file) {
