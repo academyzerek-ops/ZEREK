@@ -90,8 +90,12 @@ class ZerekDB:
             return pd.DataFrame()
 
     def _load_common(self):
-        """Загрузка общих файлов. Список ниш = файлы в data/niches/ (07_niches удалён)."""
+        """Загрузка общих файлов + Quick Check v2 конфиг (07_niches, 08_niche_formats)."""
         self.cities = self._xl("01_cities.xlsx", "Города", 4)
+        # Quick Check v2 config (optional — если файлов нет, возвращаются дефолты)
+        self.niches_config = self._xl("07_niches.xlsx", "Ниши", 5)
+        self.niches_questions = self._xl("07_niches.xlsx", "Специфичные вопросы", 5)
+        self.niches_formats_fallback = self._xl("08_niche_formats.xlsx", "Форматы", 5)
         self.rent = self._xl("11_rent_benchmarks.xlsx", "Калькулятор для движка", 5)
         self.inflation = self._xl("13_macro_dynamics.xlsx", "Инфляция по регионам", 5)
         self.competitors = self._xl("14_competitors.xlsx", "Конкуренты по городам", 5)
@@ -895,3 +899,167 @@ def get_inflation_region(db, city_id):
 def render_report(result):
     """Заглушка — будет переписан в report_v3.py"""
     return str(result)
+
+
+# ═══════════════════════════════════════════════
+# QUICK CHECK v2 — Adaptive Survey Config
+# ═══════════════════════════════════════════════
+
+# Справочник типов локации для рендера в анкете v2.
+LOCATION_TYPES_META = {
+    "tc":                  {"label": "Торговый центр",           "icon": "🏬"},
+    "street":              {"label": "Улица / отдельный офис",   "icon": "🏪"},
+    "home":                {"label": "Из дома",                   "icon": "🏠"},
+    "highway":             {"label": "Возле дороги",              "icon": "🛣️"},
+    "residential_complex": {"label": "Коммерция в ЖК",            "icon": "🏢"},
+    "business_center":     {"label": "Бизнес-центр",              "icon": "🏢"},
+    "market":              {"label": "Рынок / павильон",          "icon": "🛍️"},
+    "online":              {"label": "Только онлайн",             "icon": "🌐"},
+    "residential_area":    {"label": "Спальный район",            "icon": "🏘️"},
+    "own_building":        {"label": "Отдельное здание",          "icon": "🏛️"},
+}
+
+
+def _split_csv(val) -> list:
+    """'a, b,c' → ['a','b','c']; пусто / NaN → []."""
+    if val is None:
+        return []
+    s = str(val).strip()
+    if not s or s.lower() == "nan":
+        return []
+    return [p.strip() for p in s.split(",") if p.strip()]
+
+
+def _niche_name_from_registry(db, niche_id: str) -> str:
+    info = db.niche_registry.get(niche_id, {})
+    return info.get("name", niche_id)
+
+
+def _formats_from_per_niche_xlsx(db, niche_id: str) -> list:
+    """Форматы из data/kz/niches/niche_formats_{NICHE}.xlsx (лист FORMATS)."""
+    df = db.get_niche_sheet(niche_id, "FORMATS")
+    if df.empty or "format_id" not in df.columns:
+        return []
+    cols = [c for c in ["format_id", "format_name", "area_m2", "loc_type",
+                        "capex_standard", "class"] if c in df.columns]
+    return df[cols].drop_duplicates(subset=["format_id"]).to_dict("records")
+
+
+def _formats_from_fallback_xlsx(db, niche_id: str) -> list:
+    """Форматы из data/kz/08_niche_formats.xlsx, если per-niche xlsx пуст."""
+    df = getattr(db, "niches_formats_fallback", pd.DataFrame())
+    if df is None or df.empty or "niche_id" not in df.columns:
+        return []
+    rows = df[df["niche_id"].astype(str) == niche_id]
+    if rows.empty:
+        return []
+    keep = [c for c in ["format_id", "format_name", "area_m2", "loc_type",
+                        "capex_standard", "class"] if c in rows.columns]
+    return rows[keep].to_dict("records")
+
+
+def _specific_questions_for_niche(db, niche_id: str, qids: list) -> list:
+    """По списку question_id собирает полные определения вопросов."""
+    out = []
+    if not qids:
+        return out
+    df = getattr(db, "niches_questions", pd.DataFrame())
+    if df is None or df.empty or "question_id" not in df.columns:
+        return out
+    for qid in qids:
+        row = df[df["question_id"].astype(str) == qid]
+        if row.empty:
+            continue
+        r = row.iloc[0]
+        opts_raw = str(r.get("options", "")).strip()
+        options = [o.strip() for o in opts_raw.split("|")] if opts_raw and opts_raw.lower() != "nan" else []
+        out.append({
+            "question_id": qid,
+            "question_text": str(r.get("question_text", qid)).strip(),
+            "options": options,
+        })
+    return out
+
+
+def get_niche_config(db, niche_id: str) -> dict:
+    """Возвращает конфиг адаптивной анкеты Quick Check v2 для указанной ниши.
+
+    Формат соответствует спеке из docs/ADAPTIVE_SURVEY.md:
+        {niche_id, niche_name, requires_license, license_description,
+         self_operation_possible, class_grades_applicable,
+         allowed_location_types: [...], default_location_type,
+         area_question_mode, staff_question_mode,
+         specific_questions: [{question_id, question_text, options}],
+         formats: [{format_id, name, area_m2, capex_standard, ...}],
+         location_types_meta: {...}}
+    """
+    cfg_df = getattr(db, "niches_config", pd.DataFrame())
+
+    # Дефолт когда нет конфига / ниши в нём нет
+    fallback_loc = ["street", "own_building"]
+    config = {
+        "niche_id": niche_id,
+        "niche_name": _niche_name_from_registry(db, niche_id),
+        "requires_license": "no",
+        "license_description": "",
+        "self_operation_possible": "no",
+        "class_grades_applicable": "yes",
+        "allowed_location_types": fallback_loc,
+        "default_location_type": "street",
+        "area_question_mode": "required",
+        "staff_question_mode": "choice",
+        "specific_questions": [],
+        "formats": [],
+        "location_types_meta": LOCATION_TYPES_META,
+        "niche_notes": "",
+    }
+
+    if cfg_df is not None and not cfg_df.empty and "niche_id" in cfg_df.columns:
+        rows = cfg_df[cfg_df["niche_id"].astype(str) == niche_id]
+        if not rows.empty:
+            r = rows.iloc[0]
+            allowed = _split_csv(r.get("allowed_location_types", ""))
+            default_loc = str(r.get("default_location_type", "") or "").strip() or (
+                allowed[0] if allowed else "street"
+            )
+            qids = _split_csv(r.get("specific_questions_ids", ""))
+            name_override = str(r.get("niche_name", "") or "").strip()
+            config.update({
+                "niche_name": name_override or config["niche_name"],
+                "requires_license": str(r.get("requires_license", "no") or "no").strip(),
+                "license_description": str(r.get("license_description", "") or "").strip(),
+                "self_operation_possible": str(r.get("self_operation_possible", "no") or "no").strip(),
+                "class_grades_applicable": str(r.get("class_grades_applicable", "yes") or "yes").strip(),
+                "allowed_location_types": allowed or fallback_loc,
+                "default_location_type": default_loc,
+                "area_question_mode": str(r.get("area_question_mode", "required") or "required").strip(),
+                "staff_question_mode": str(r.get("staff_question_mode", "choice") or "choice").strip(),
+                "specific_questions": _specific_questions_for_niche(db, niche_id, qids),
+                "niche_notes": str(r.get("niche_notes", "") or "").strip(),
+            })
+
+    # Форматы: сначала per-niche xlsx (реальные данные движка), потом fallback-каталог.
+    formats = _formats_from_per_niche_xlsx(db, niche_id)
+    if not formats:
+        formats = _formats_from_fallback_xlsx(db, niche_id)
+
+    # Нормализуем поля
+    normalized = []
+    for f in formats:
+        normalized.append({
+            "format_id": str(f.get("format_id", "")).strip(),
+            "name": str(f.get("format_name", "") or "").strip(),
+            "area_m2": _safe_float(f.get("area_m2", 0)),
+            "loc_type": str(f.get("loc_type", "") or "").strip(),
+            "capex_standard": _safe_int(f.get("capex_standard", 0)),
+            "class": str(f.get("class", "") or "").strip().lower(),
+        })
+    config["formats"] = [f for f in normalized if f["format_id"]]
+
+    # Отфильтруем location_types_meta до только разрешённых типов
+    allowed_types = set(config["allowed_location_types"])
+    config["location_types_meta"] = {
+        k: v for k, v in LOCATION_TYPES_META.items() if k in allowed_types
+    }
+
+    return config

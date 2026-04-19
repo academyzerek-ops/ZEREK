@@ -12,7 +12,7 @@ import httpx
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE_DIR)
 
-from engine import ZerekDB, run_quick_check_v3
+from engine import ZerekDB, run_quick_check_v3, get_niche_config
 from report import render_report_v4
 
 def clean(obj):
@@ -44,6 +44,11 @@ class QCReq(BaseModel):
     qty: int = 1; founder_works: bool = False
     rent_override: Optional[int] = None; start_month: int = 4
     capex_level: str = "стандарт"
+    # --- Quick Check v2 adaptive fields (optional, не меняют расчёт) ---
+    has_license: Optional[str] = None          # "yes" / "no" / "in_progress"
+    staff_mode: Optional[str] = None            # "self" / "hired"
+    staff_count: Optional[int] = None
+    specific_answers: Optional[dict] = None     # {"Q_CHAIRS": "3-5", ...}
 
 class FMReq(BaseModel):
     """Запрос на генерацию финмодели — все параметры из анкеты."""
@@ -128,15 +133,38 @@ def quick_check(req: QCReq):
     if not db: raise HTTPException(503,f"БД не загружена: {db_error}")
     try:
         cls = CAPEX_TO_CLS.get((req.capex_level or "").strip().lower(), req.cls)
+        # v2 adaptive fields (has_license / staff_mode / staff_count / specific_answers)
+        # пока просто протаскиваем в ответ для трассировки, не меняя расчёт.
         result = run_quick_check_v3(db=db, city_id=req.city_id, niche_id=req.niche_id,
             format_id=req.format_id, cls=cls, area_m2=req.area_m2, loc_type=req.loc_type,
             capital=req.capital or 0, qty=req.qty, founder_works=req.founder_works,
             rent_override=req.rent_override, start_month=req.start_month)
         report = render_report_v4(result)
+        adaptive = {
+            "has_license": req.has_license,
+            "staff_mode": req.staff_mode,
+            "staff_count": req.staff_count,
+            "specific_answers": req.specific_answers,
+        }
+        # Вставим только если что-то пришло (v1 клиент ничего не меняет)
+        if any(v is not None for v in adaptive.values()):
+            if isinstance(report, dict):
+                report.setdefault("user_inputs", {}).update({k: v for k, v in adaptive.items() if v is not None})
         return {"status":"ok","result":clean(report)}
     except Exception as e:
         import traceback; d=traceback.format_exc(); print("ОШИБКА:",d)
         raise HTTPException(500,str(e)+"\n"+d[-500:])
+
+@app.get("/niche-config/{niche_id}")
+def niche_config(niche_id: str):
+    """Конфиг адаптивной анкеты Quick Check v2 для указанной ниши."""
+    if not db: raise HTTPException(503,"БД не загружена")
+    try:
+        cfg = get_niche_config(db, niche_id)
+        return clean(cfg)
+    except Exception as e:
+        import traceback; traceback.print_exc()
+        raise HTTPException(500, str(e))
 
 @app.get("/products/{niche_id}/{format_id}")
 def get_products(niche_id:str, format_id:str, cls:str="Стандарт"):
