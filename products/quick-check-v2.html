@@ -383,14 +383,36 @@ function loadNicheConfigThen(cb){
       return showError('Не удалось загрузить конфиг ниши: ' + err.message);
     }
     NicheConfig = data || {};
-    // sensible defaults из конфига
-    QC.loc_type = NicheConfig.default_location_type || '';
     if(NicheConfig.formats && NicheConfig.formats.length === 1){
       QC.format_id = NicheConfig.formats[0].format_id;
       QC.format_name = NicheConfig.formats[0].name || QC.format_id;
     }
+    // Инферим loc_type: если формат уже выбран — оттуда; если все форматы
+    // ниши имеют один loc_type — оттуда; иначе default_location_type.
+    QC.loc_type = inferLocType();
     cb();
   });
+}
+
+function inferLocType(){
+  if(!NicheConfig) return '';
+  // 1. Выбранный формат — мастер.
+  if(QC.format_id){
+    var fm = (NicheConfig.formats||[]).find(function(x){ return x.format_id === QC.format_id; });
+    if(fm && fm.loc_type) return fm.loc_type;
+  }
+  // 2. Все форматы делят один и тот же loc_type → берём его.
+  var formats = NicheConfig.formats || [];
+  if(formats.length){
+    var locs = {};
+    formats.forEach(function(f){ if(f.loc_type) locs[f.loc_type] = true; });
+    var keys = Object.keys(locs);
+    if(keys.length === 1) return keys[0];
+  }
+  // 3. Если уже выбрано пользователем — не перезатираем.
+  if(QC.loc_type) return QC.loc_type;
+  // 4. Дефолт из конфига ниши.
+  return NicheConfig.default_location_type || '';
 }
 
 function showError(msg){
