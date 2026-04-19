@@ -82,6 +82,8 @@ ul.bullets li{margin-bottom:8px}
 .three-grid .compare-card ul{font-size:13px}
 .intro-quote{background:var(--surface);border-left:4px solid var(--accent);padding:18px 22px;margin:18px 0;font-style:italic;color:var(--text2);border-radius:var(--radius-sm)}
 .data-table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;background:var(--surface);border-radius:var(--radius-sm);overflow:hidden}
+.dt-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:18px 0;max-width:100%}
+
 .data-table th{background:var(--accent);color:#fff;padding:10px 12px;text-align:left;font-weight:600;font-size:12.5px}
 .data-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);font-size:13.5px}
 .data-table tr:last-child td{border-bottom:none}
@@ -278,7 +280,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Основные услуги и ориентиры цен в КЗ 2026</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Услуга</th><th>Средняя цена</th><th>Длительность</th></tr></thead>
 <tbody>
 <tr><td>Полный курс категория B (стандарт)</td><td>180 000–280 000 ₸</td><td>2–3 месяца</td></tr>
@@ -294,7 +296,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Прокат авто на экзамен</td><td>8 000–15 000 ₸ за попытку</td><td>разово</td></tr>
 <tr><td>Женский инструктор (доплата)</td><td>+15–25% к базе</td><td>по часам</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p style="font-size:13px;color:var(--text3);margin-top:-8px"><em>В Алматы и Астане цены выше на 20–30%, в малых городах — ниже.</em></p>
 
@@ -348,7 +350,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Требования к учебным автомобилям</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Компонент</th><th>Требование</th></tr></thead>
 <tbody>
 <tr><td>Дублированное управление</td><td>Обязательно. Педали у инструктора (газ, тормоз, сцепление для МКПП). Переделка обычного авто в учебное — 350 000–700 000 ₸</td></tr>
@@ -358,7 +360,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Состояние</td><td>Исправное, с пройденным ТО, полной страховкой (ОСГПО обязательна)</td></tr>
 <tr><td>Видеорегистратор</td><td>Желательно 2-канальный (салон + дорога) для разбора ошибок и защиты</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3>Что берут в автопарк автошколы</h3>
 
@@ -372,14 +374,14 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Минимальный автопарк для старта</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Формат</th><th>Парк</th><th>Стартовые на автопарк</th></tr></thead>
 <tbody>
 <tr><td>Маленькая школа (1 категория B)</td><td>3–5 авто категории B</td><td>15–30 млн ₸</td></tr>
 <tr><td>Средняя школа (B + A)</td><td>5–10 авто B + 3–5 мопедов</td><td>30–55 млн ₸</td></tr>
 <tr><td>Крупная школа (B + A + C/D)</td><td>10–20 авто B + 5+ мопедов + грузовики</td><td>60–120 млн ₸</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3>Оборудование для теоретического класса</h3>
 
@@ -409,7 +411,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Структура команды автошколы</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Роль</th><th>Функции</th><th>Зарплата 2026</th></tr></thead>
 <tbody>
 <tr><td>Инструктор практики</td><td>Вождение с учениками, обучение навыкам</td><td>300 000–550 000 ₸ или % от часа</td></tr>
@@ -419,7 +421,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Администратор-менеджер</td><td>Запись, консультации, работа с клиентами</td><td>200 000–350 000 ₸</td></tr>
 <tr><td>Механик / водитель для перегона</td><td>Обслуживание автопарка</td><td>200 000–320 000 ₸</td></tr>
 </tbody>
-</table>
+</table></div>
 <p style="font-size:13px;color:var(--text3);margin-top:-8px"><em>Многие школы платят инструкторам % от часа (1 500–3 500 ₸ с часа практики). Это мотивирует на загрузку, но создаёт текучку и конкуренцию между инструкторами школы.</em></p>
 
 <h3>Где берут инструкторов</h3>
@@ -460,7 +462,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Требования к учебному классу</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Параметр</th><th>Минимум</th><th>Комфорт</th></tr></thead>
 <tbody>
 <tr><td>Площадь класса</td><td>40–60 м²</td><td>80–120 м²</td></tr>
@@ -471,7 +473,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Компьютерная зона</td><td>5–10 мест для тестов</td><td>Полноценный тест-класс</td></tr>
 <tr><td>Учебная литература</td><td>Билеты ПДД, методички</td><td>Цифровая платформа обучения</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3>Площадка для практики</h3>
 
@@ -567,7 +569,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Структура операционных расходов</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Статья</th><th>Доля в выручке</th></tr></thead>
 <tbody>
 <tr><td>ФОТ инструкторов (включая % с часа)</td><td>30–40%</td></tr>
@@ -579,7 +581,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Лицензии, страховки, налоги (УСН 3%)</td><td>5–8%</td></tr>
 <tr><td>Прочие расходы</td><td>3–5%</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p>Чистая маржа при грамотной загрузке: <strong>15–25%</strong>. Главные ограничители маржи — ГСМ (растёт с ценой топлива) и износ автопарка.</p>
 
@@ -720,7 +722,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Годовой календарь загрузки</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Период</th><th>Загрузка</th><th>Что происходит</th></tr></thead>
 <tbody>
 <tr><td>Март–май</td><td>Пик (100%)</td><td>Получение прав к лету, выпускники школ 11 класса</td></tr>
@@ -730,7 +732,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Декабрь</td><td>Низкая (35–45%)</td><td>Праздники, мало мотивации начинать</td></tr>
 <tr><td>Январь–февраль</td><td>Низкая (25–40%)</td><td>Холод, гололёд, низкий спрос</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3>Как закрывать зимний провал</h3>
 

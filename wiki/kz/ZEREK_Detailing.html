@@ -82,6 +82,8 @@ ul.bullets li{margin-bottom:8px}
 .three-grid .compare-card ul{font-size:13px}
 .intro-quote{background:#fff;border-left:4px solid var(--accent);padding:18px 22px;margin:18px 0;font-style:italic;color:var(--text2);border-radius:var(--radius-sm)}
 .data-table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;background:#fff;border-radius:var(--radius-sm);overflow:hidden}
+.dt-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:18px 0;max-width:100%}
+
 .data-table th{background:var(--accent);color:#fff;padding:10px 12px;text-align:left;font-weight:600;font-size:12.5px}
 .data-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);font-size:13.5px}
 .data-table tr:last-child td{border-bottom:none}
@@ -304,7 +306,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Основные услуги и ориентиры по ценам в КЗ 2026</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Услуга</th><th>Средняя цена</th><th>Время</th></tr></thead>
 <tbody>
 <tr><td>Двухфазная мойка с мягкой ваш-мит</td><td>6 000–12 000 ₸</td><td>1–1,5 часа</td></tr>
@@ -321,7 +323,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Реставрация кожи салона</td><td>40 000–200 000 ₸</td><td>2–5 часов</td></tr>
 <tr><td>Обработка кожи защитным составом</td><td>15 000–40 000 ₸</td><td>1–2 часа</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p style="font-size:13px;color:var(--text3);margin-top:-8px"><em>Цены зависят от марки, размера автомобиля, состояния покрытия и региона. Алматы/Астана — выше средних, малые города — ниже.</em></p>
 
@@ -378,7 +380,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Минимальный комплект для старта (полировка + химчистка + базовая керамика)</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Оборудование / расходники</th><th>Назначение</th><th>Ориентир цены</th></tr></thead>
 <tbody>
 <tr><td>Полировальная машина роторная (Rupes, Flex, Makita)</td><td>Основная полировка</td><td>180 000–450 000 ₸</td></tr>
@@ -394,13 +396,13 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Первая партия керамики и химии</td><td>На 20–30 заказов</td><td>300 000–700 000 ₸</td></tr>
 <tr><td>Диагностический толщиномер</td><td>Измерение слоя лака</td><td>30 000–80 000 ₸</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p>Итого минимальный комплект: <strong>1 800 000–4 600 000 ₸</strong>. Без учёта помещения и авторасходников.</p>
 
 <h3>Дополнительное оборудование для PPF и глубокой работы</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Оборудование</th><th>Назначение</th><th>Ориентир цены</th></tr></thead>
 <tbody>
 <tr><td>Плоттер для раскроя PPF</td><td>Точная нарезка плёнки по шаблонам</td><td>800 000–2 500 000 ₸</td></tr>
@@ -409,7 +411,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Ванна для смачивания PPF</td><td>Подготовка плёнки к наклейке</td><td>80 000–200 000 ₸</td></tr>
 <tr><td>Первая партия PPF-плёнок</td><td>На 10–15 заказов</td><td>1 500 000–4 000 000 ₸</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p>Добавление PPF-направления: <strong>2 500 000–7 000 000 ₸</strong>. Требует мастера-оклейщика с опытом.</p>
 
@@ -428,7 +430,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Структура команды детейлинг-студии</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Роль</th><th>Функции</th><th>Зарплата 2026</th></tr></thead>
 <tbody>
 <tr><td>Мастер-полировщик</td><td>Полировка кузова, нанесение керамики, восстановительные работы</td><td>400 000–900 000 ₸ или %</td></tr>
@@ -437,7 +439,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Мойщик-помощник</td><td>Двухфазная мойка, подготовка кузова</td><td>180 000–280 000 ₸</td></tr>
 <tr><td>Администратор-приёмщик</td><td>Запись, встреча клиента, документы</td><td>200 000–350 000 ₸</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p style="font-size:13px;color:var(--text3);margin-top:-8px"><em>Многие студии работают на сдельной оплате (% с заказа). Мастер-полировщик получает 25–40% от чека, мастер-оклейщик — 30–45%. Это мотивирует на качество и скорость.</em></p>
 
@@ -476,7 +478,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Требования к помещению</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Параметр</th><th>Минимум (1–2 поста)</th><th>Полноценная студия (3–5 постов)</th></tr></thead>
 <tbody>
 <tr><td>Площадь</td><td>80–150 м²</td><td>250–500 м²</td></tr>
@@ -491,7 +493,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Зона ожидания клиента</td><td>Зона отдыха 8–15 м²</td><td>Полноценная клиентская зона с wi-fi и кофе</td></tr>
 <tr><td>Охрана и видео</td><td>Камеры + сигнализация</td><td>Круглосуточная охрана, видеонаблюдение</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <div class="warn-box">
 <div class="box-title">Почему освещение — не косметика, а технология</div>
@@ -556,7 +558,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Структура операционных расходов</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Статья</th><th>Доля в выручке</th></tr></thead>
 <tbody>
 <tr><td>ФОТ с налогами (включая % мастерам)</td><td>30–45%</td></tr>
@@ -567,7 +569,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Налоги (УСН)</td><td>3%</td></tr>
 <tr><td>Прочие расходы</td><td>3–5%</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p>Чистая маржа при грамотной операционке: <strong>15–25%</strong>. Валовая маржа по услугам: полировка 45–60%, керамика 55–70%, PPF 40–55%, химчистка салона 50–65%.</p>
 
@@ -716,7 +718,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Годовой календарь студии</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Период</th><th>Загрузка</th><th>Что востребовано</th></tr></thead>
 <tbody>
 <tr><td>Март–май</td><td>Пик (100%)</td><td>Восстановительная полировка после зимы, химчистка салонов, подготовка к лету</td></tr>
@@ -725,7 +727,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Декабрь</td><td>Средняя (50–65%)</td><td>Подготовка к Новому году, подарочные сертификаты, быстрые услуги</td></tr>
 <tr><td>Январь–февраль</td><td>Низкая (25–40%)</td><td>B2B-контракты, химчистки, подготовка нового инвентаря</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3>Как закрывать провалы</h3>
 

@@ -82,6 +82,8 @@ ul.bullets li{margin-bottom:8px}
 .three-grid .compare-card ul{font-size:13px}
 .intro-quote{background:var(--surface);border-left:4px solid var(--accent);padding:18px 22px;margin:18px 0;font-style:italic;color:var(--text2);border-radius:var(--radius-sm)}
 .data-table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;background:var(--surface);border-radius:var(--radius-sm);overflow:hidden}
+.dt-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:18px 0;max-width:100%}
+
 .data-table th{background:var(--accent);color:#fff;padding:10px 12px;text-align:left;font-weight:600;font-size:12.5px}
 .data-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);font-size:13.5px}
 .data-table tr:last-child td{border-bottom:none}
@@ -317,7 +319,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Что нужно для логистики</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Компонент</th><th>Минимум</th><th>Комфорт</th></tr></thead>
 <tbody>
 <tr><td>Авто</td><td>Грузопассажирский универсал или пикап</td><td>Грузовой фургон 3–5 тонн</td></tr>
@@ -326,7 +328,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Приёмка</td><td>Бланк квитанции + телефон для фото</td><td>Планшет с фотофиксацией и подписью клиента</td></tr>
 <tr><td>Планирование маршрутов</td><td>Таблица заказов на день</td><td>CRM или приложение с оптимизацией</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <div class="risk-box">
 <div class="box-title">Главный риск логистики: повреждение ковра в пути</div>
@@ -360,7 +362,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Выездной формат — минимальный комплект</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Оборудование</th><th>Назначение</th><th>Ориентир цены</th></tr></thead>
 <tbody>
 <tr><td>Экстракторная машина</td><td>Впрыск-выход моющего раствора</td><td>250–700 тыс. ₸</td></tr>
@@ -370,7 +372,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Химия на старте</td><td>Средства для разных типов тканей</td><td>100–200 тыс. ₸</td></tr>
 <tr><td>Авто универсал б/у</td><td>Транспорт и выезд</td><td>1 500–2 500 тыс. ₸</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p>Итого выездной комплект с авто: <strong>2 000–4 000 тыс. ₸</strong>. Ограничение — нельзя брать крупные шерстяные ковры и сильно загрязнённые вещи, требующие полного погружения и центрифугирования.</p>
 
@@ -379,7 +381,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Простой цех — стандартная модель для КЗ</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Оборудование</th><th>Назначение</th><th>Ориентир цены</th></tr></thead>
 <tbody>
 <tr><td>Центрифуга для ковров</td><td>Отжим воды после мойки</td><td>3 000–7 000 тыс. ₸</td></tr>
@@ -390,13 +392,13 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Грузовое авто б/у (ГАЗель, Sprinter)</td><td>Забор-доставка крупных ковров</td><td>3 500–6 000 тыс. ₸</td></tr>
 <tr><td>Первая партия химии</td><td>На 2–3 месяца работы</td><td>200–400 тыс. ₸</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p>Итого цех с авто: <strong>12 000–20 000 тыс. ₸</strong>. Плюс ремонт помещения, электрика, канализация — ещё 2–4 млн ₸.</p>
 
 <h3>Полный комплекс — промышленная модель</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Оборудование</th><th>Назначение</th><th>Ориентир цены</th></tr></thead>
 <tbody>
 <tr><td>Автоматический тоннель для ковров</td><td>Потоковая промывка</td><td>10 000–22 000 тыс. ₸</td></tr>
@@ -406,7 +408,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Парк авто 2–3 единицы</td><td>Полноценная логистика</td><td>8 000–15 000 тыс. ₸</td></tr>
 <tr><td>Складские системы хранения</td><td>Одновременно 100+ ковров</td><td>600–1 500 тыс. ₸</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p>Итого полный комплекс с автопарком: <strong>25 000–50 000 тыс. ₸</strong>. Плюс помещение 200+ м² с промышленными коммуникациями — ещё 8–15 млн ₸ на ремонт и подготовку.</p>
 
@@ -430,7 +432,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Типы ковров и режимы обработки</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Тип</th><th>Режим</th><th>Риски</th></tr></thead>
 <tbody>
 <tr><td>Синтетика (полипропилен, полиэстер)</td><td>Стандартная экстракторная промывка</td><td>Низкие, универсальная технология</td></tr>
@@ -441,7 +443,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Вискоза</td><td>Почти не подлежит влажной чистке</td><td>Пятна воды, деформация ворса</td></tr>
 <tr><td>Антикварные и коллекционные</td><td>Специальная реставрационная технология</td><td>Не брать без опыта и страховки</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3>Химия: что определяет результат</h3>
 
@@ -467,7 +469,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Требования к цеху для ковровой чистки</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Параметр</th><th>Простой цех</th><th>Полный комплекс</th></tr></thead>
 <tbody>
 <tr><td>Площадь</td><td>80–150 м²</td><td>200–400 м²</td></tr>
@@ -479,7 +481,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Пол</td><td>Бетонный с уклоном к сливу</td><td>Промышленный с гидроизоляцией</td></tr>
 <tr><td>Вентиляция</td><td>Приточно-вытяжная</td><td>С рекуперацией и осушением</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <div class="warn-box">
 <div class="box-title">Почему нельзя открыть цех «в любом подвале с водой»</div>
@@ -509,7 +511,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Сценарий 1: Выездной формат</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <tbody>
 <tr><td>Стартовые вложения</td><td>2–4 млн ₸</td></tr>
 <tr><td>Оборотка на 3–4 мес</td><td>500–900 тыс. ₸</td></tr>
@@ -519,12 +521,12 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Чистая маржа</td><td>25–40%</td></tr>
 <tr><td>Окупаемость</td><td>10–18 месяцев</td></tr>
 </tbody>
-</table>
+</table></div>
 <p><em>Плюсы: низкий порог входа, быстрая окупаемость. Минусы: физический потолок по объёму, нельзя брать крупные и дорогие ковры, одиночный бизнес без масштабирования.</em></p>
 
 <h3>Сценарий 2: Простой цех</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <tbody>
 <tr><td>Стартовые вложения</td><td>12–20 млн ₸</td></tr>
 <tr><td>Оборотка на 4–6 мес</td><td>2–4 млн ₸</td></tr>
@@ -534,12 +536,12 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Чистая маржа</td><td>18–28%</td></tr>
 <tr><td>Окупаемость</td><td>20–32 месяца</td></tr>
 </tbody>
-</table>
+</table></div>
 <p><em>Плюсы: любые ковры, включая шерсть и крупные, возможность B2B. Минусы: выше постоянные расходы, нужно помещение с коммуникациями, больше персонала.</em></p>
 
 <h3>Сценарий 3: Полный комплекс</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <tbody>
 <tr><td>Стартовые вложения</td><td>25–50 млн ₸</td></tr>
 <tr><td>Оборотка на 6 мес</td><td>5–8 млн ₸</td></tr>
@@ -549,12 +551,12 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Чистая маржа</td><td>20–30%</td></tr>
 <tr><td>Окупаемость</td><td>24–42 месяца</td></tr>
 </tbody>
-</table>
+</table></div>
 <p><em>Плюсы: промышленный объём, премиум-качество, сильный B2B. Минусы: высокий порог, чувствительность к загрузке, нужна команда с опытом.</em></p>
 
 <h3>Структура операционных расходов</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Статья</th><th>Доля в выручке</th></tr></thead>
 <tbody>
 <tr><td>ФОТ с налогами</td><td>25–35%</td></tr>
@@ -566,7 +568,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Налоги (УСН)</td><td>3%</td></tr>
 <tr><td>Прочие расходы</td><td>3–5%</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <div class="info-box">
 <div class="box-title">Что сильнее всего влияет на окупаемость</div>
@@ -661,7 +663,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Годовой календарь загрузки</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Период</th><th>Загрузка</th><th>Что происходит</th></tr></thead>
 <tbody>
 <tr><td>Март–май</td><td>Пик (100%)</td><td>Весенняя генеральная уборка, подготовка к Наурызу и майским событиям</td></tr>
@@ -670,7 +672,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Декабрь</td><td>Средняя (60%)</td><td>Подготовка к Новому году, тои, семейные события</td></tr>
 <tr><td>Январь–февраль</td><td>Низкая (35–45%)</td><td>Холод, логистика сложнее, меньше запросов</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3>Четыре способа закрыть провалы</h3>
 

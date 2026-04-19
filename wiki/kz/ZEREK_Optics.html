@@ -75,6 +75,8 @@ ul.bullets li{margin-bottom:8px}
 .compare-card li{margin-bottom:6px}
 .intro-quote{background:var(--surface);border-left:4px solid var(--accent);padding:18px 22px;margin:18px 0;font-style:italic;color:var(--text2);border-radius:var(--radius-sm)}
 .data-table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;background:var(--surface);border-radius:var(--radius-sm);overflow:hidden}
+.dt-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:18px 0;max-width:100%}
+
 .data-table th{background:var(--accent);color:#fff;padding:10px 12px;text-align:left;font-weight:600;font-size:12.5px}
 .data-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);font-size:13.5px}
 .data-table tr:last-child td{border-bottom:none}
@@ -311,7 +313,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 </ul>
 
 <h3>Категории оправ в салоне</h3>
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <tr><th>Категория</th><th>Бренды и производители</th><th>Целевая аудитория</th></tr>
 <tr><td>Эконом</td><td>Китай, Корея без бренда, собственные марки</td><td>Школьники, пенсионеры, первая оправа</td></tr>
 <tr><td>Средний</td><td>Корея (брендовые), Турция, Польша</td><td>Массовый покупатель, работающие</td></tr>
@@ -319,7 +321,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Люкс</td><td>Дизайнерские бренды (Gucci, Prada, Cartier)</td><td>Премиум-аудитория крупных городов</td></tr>
 <tr><td>Детские</td><td>Специализированные производители</td><td>Школьники, гибкие прочные оправы</td></tr>
 <tr><td>Солнцезащитные</td><td>Ray-Ban, Oakley, бренды, Китай</td><td>Весна-лето, отдельная витрина</td></tr>
-</table>
+</table></div>
 
 <h3>Линзы — источник лояльности и стабильного дохода</h3>
 <ul class="bullets">
@@ -332,7 +334,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 </ul>
 
 <h3>Категории очковых линз</h3>
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <tr><th>Тип линзы</th><th>Для кого</th><th>Сегмент</th></tr>
 <tr><td>Однофокальная</td><td>Простая близорукость/дальнозоркость</td><td>Эконом-средний</td></tr>
 <tr><td>Асферическая</td><td>Тонкий профиль, средние+ диоптрии</td><td>Средний</td></tr>
@@ -342,7 +344,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Фотохромные (хамелеон)</td><td>Темнеют на солнце</td><td>Премиум</td></tr>
 <tr><td>Прогрессивные</td><td>Пресбиопия 40+, разные дистанции</td><td>Премиум</td></tr>
 <tr><td>Поликарбонат (небьющиеся)</td><td>Дети, спорт</td><td>Средний</td></tr>
-</table>
+</table></div>
 
 <h3>Контактные линзы</h3>
 <ul class="bullets">
@@ -565,13 +567,13 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 </ul>
 
 <h3>Состав команды по этапам</h3>
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <tr><th>Этап</th><th>Команда</th><th>Примечание</th></tr>
 <tr><td>Старт (1 точка, без мастерской)</td><td>Оптометрист, 1–2 консультанта</td><td>Владелец часто совмещает функции администратора</td></tr>
 <tr><td>Стабильная работа</td><td>Оптометрист, 2–3 консультанта, администратор</td><td>При потоке 20+ клиентов в день</td></tr>
 <tr><td>С мастерской</td><td>+ мастер изготовления</td><td>При потоке 40+ заказов в неделю</td></tr>
 <tr><td>Премиум-формат</td><td>Оптометрист высокой квалификации, консультант по стилю, мастер</td><td>ТЦ или медцентр</td></tr>
-</table>
+</table></div>
 
 <h3>Ставки в КЗ</h3>
 <p>Зарплаты варьируются по городам. Ориентир — <strong>hh.kz, локальные объявления</strong>. Модель оплаты консультантов — <strong>оклад + процент с продаж</strong> (2–5%). Мотивирует продавать комплекты и линзы с более высокой маржой.</p>

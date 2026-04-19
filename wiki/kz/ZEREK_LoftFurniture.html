@@ -85,6 +85,8 @@ ul.bullets li{margin-bottom:8px}
 .three-grid .compare-card ul{font-size:13px}
 .intro-quote{background:var(--surface);border-left:4px solid var(--accent);padding:18px 22px;margin:18px 0;font-style:italic;color:var(--text2);border-radius:var(--radius-sm)}
 .data-table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;background:var(--surface);border-radius:var(--radius-sm);overflow:hidden}
+.dt-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:18px 0;max-width:100%}
+
 .data-table th{background:var(--accent);color:#fff;padding:10px 12px;text-align:left;font-weight:600;font-size:12.5px}
 .data-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);font-size:13.5px}
 .data-table tr:last-child td{border-bottom:none}
@@ -313,7 +315,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Интерьерная лофт-мебель</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Изделие</th><th>Средний чек</th><th>Материалы</th></tr></thead>
 <tbody>
 <tr><td>ТВ-тумба лофт</td><td>90–280 тыс. ₸</td><td>Проф. труба + ЛДСП/массив</td></tr>
@@ -325,11 +327,11 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Кресло или диван в лофт-стиле</td><td>200–600 тыс. ₸</td><td>Каркас + мягкая обивка</td></tr>
 <tr><td>Комплект гостиной (ТВ + стеллажи + тумба)</td><td>500 тыс. – 1,8 млн ₸</td><td>Комплексный заказ</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3>Уличная и дачная продукция</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Изделие</th><th>Средний чек</th><th>Особенности</th></tr></thead>
 <tbody>
 <tr><td>Беседка 3×3 м с крышей</td><td>350 тыс. – 1,2 млн ₸</td><td>Каркас + кровельный материал + покраска антикор</td></tr>
@@ -341,11 +343,11 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Уличная лестница</td><td>250 тыс. – 1,2 млн ₸</td><td>Каркас + ступени + перила</td></tr>
 <tr><td>Теплица или зимний сад-каркас</td><td>400 тыс. – 2,5 млн ₸</td><td>Каркас + поликарбонат</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3>Городская и уличная мебель (для благоустройства)</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Изделие</th><th>Средний чек</th><th>Спецификации</th></tr></thead>
 <tbody>
 <tr><td>Скамья уличная парковая</td><td>45–160 тыс. ₸/шт</td><td>Металл + деревянные рейки, антикор</td></tr>
@@ -356,7 +358,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Элементы детской площадки</td><td>150 тыс. – 1,5 млн ₸ за элемент</td><td>Требует сертификации безопасности</td></tr>
 <tr><td>Спортивная площадка (воркаут)</td><td>3–15 млн ₸ за комплекс</td><td>Тендерные закупки, сертификация</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <div class="wood-box">
 <div class="box-title">Совмещение металла и дерева — особенность лофт-стиля</div>
@@ -470,7 +472,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Структура команды цеха</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Роль</th><th>Функции</th><th>Зарплата 2026</th></tr></thead>
 <tbody>
 <tr><td>Сварщик MIG/MAG</td><td>Основные работы, уличная мебель, каркасы</td><td>350–600 тыс. ₸ или сдельно</td></tr>
@@ -483,7 +485,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Монтажник (для крупных заказов)</td><td>Выезд и установка беседок, ограждений</td><td>300–500 тыс. ₸</td></tr>
 <tr><td>Менеджер по тендерам и B2B</td><td>Работа с госзакупками, договорами, сметами</td><td>400–800 тыс. ₸ или % с контракта</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <div class="risk-box">
 <div class="box-title">Главный риск — уход ключевого сварщика</div>
@@ -515,7 +517,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Уровень 1: Гаражная мастерская</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Оборудование</th><th>Назначение</th><th>Ориентир цены</th></tr></thead>
 <tbody>
 <tr><td>Сварочный аппарат MIG/MAG полуавтомат</td><td>Основная сварка</td><td>180–350 тыс. ₸</td></tr>
@@ -527,13 +529,13 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Пистолет покрасочный + компрессор</td><td>Покраска</td><td>80–200 тыс. ₸</td></tr>
 <tr><td>Инструмент, маска, расходники</td><td>Стандартный комплект</td><td>100–250 тыс. ₸</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p>Итого гаражный комплект: <strong>680 тыс. – 1,6 млн ₸</strong>. Плюс материалы на первые заказы 300–600 тыс. ₸. Можно начинать.</p>
 
 <h3>Уровень 2: Базовый цех</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Оборудование</th><th>Назначение</th><th>Ориентир цены</th></tr></thead>
 <tbody>
 <tr><td>Профессиональный полуавтомат (KEMPPI, Fronius, Telwin)</td><td>Основные работы</td><td>500 тыс. – 1,2 млн ₸</td></tr>
@@ -549,13 +551,13 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Авто грузовой для доставки</td><td>ГАЗель, Спринтер б/у</td><td>3,5–6 млн ₸</td></tr>
 <tr><td>Мелкая оснастка, расходники</td><td>Стандартный инвентарь</td><td>400–900 тыс. ₸</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p>Итого базовый цех: <strong>8,5–22,6 млн ₸</strong>. Плюс ремонт помещения с электрикой и вентиляцией 1,5–3 млн ₸.</p>
 
 <h3>Уровень 3: Полный цех с лазерной сваркой и порошковой покраской</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Оборудование</th><th>Назначение</th><th>Ориентир цены</th></tr></thead>
 <tbody>
 <tr><td>Аппарат ручной лазерной сварки 1500–2000 Вт</td><td>Премиум-сварка</td><td>2,5–6,6 млн ₸</td></tr>
@@ -568,7 +570,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Системы аспирации и фильтрации</td><td>Охрана труда промышленного уровня</td><td>2–5 млн ₸</td></tr>
 <tr><td>Автопарк 2–3 грузовых авто + монтажные</td><td>Логистика крупных заказов</td><td>10–20 млн ₸</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p>Полный цех с лазерной сваркой и порошковой покраской: <strong>40–97 млн ₸</strong>. Плюс ремонт промышленного цеха 500+ м² с коммуникациями — 5–12 млн ₸.</p>
 
@@ -591,7 +593,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Требования по уровням</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Параметр</th><th>Гаражный</th><th>Базовый цех</th><th>Полный цех</th></tr></thead>
 <tbody>
 <tr><td>Площадь</td><td>40–80 м²</td><td>150–300 м²</td><td>400–1000 м²</td></tr>
@@ -604,7 +606,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Разделение зон</td><td>Одно рабочее пространство</td><td>Сварка, резка, сборка, покраска</td><td>+ Отдельные зоны для лазера, порошковой, столярной</td></tr>
 <tr><td>Склад металла</td><td>На улице или в коридоре</td><td>Отдельная зона 20–40 м²</td><td>Крытый склад с системой хранения</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <div class="risk-box">
 <div class="box-title">Самая частая ошибка — несоответствие требованиям пожарной инспекции</div>
@@ -669,7 +671,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Структура операционных расходов</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Статья</th><th>Доля в выручке</th></tr></thead>
 <tbody>
 <tr><td>Металл (трубы, листы, уголок, профиль)</td><td>30–42%</td></tr>
@@ -683,7 +685,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Налоги (УСН 3%)</td><td>3%</td></tr>
 <tr><td>Прочие расходы</td><td>3–5%</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p>Чистая маржа: <strong>15–25%</strong> для базового и полного цеха. Для гаражного без накладных — <strong>25–40%</strong>, но ограничено физическими возможностями 1–2 человек.</p>
 

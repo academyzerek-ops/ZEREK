@@ -82,6 +82,8 @@ ul.bullets li{margin-bottom:8px}
 .three-grid .compare-card ul{font-size:13px}
 .intro-quote{background:var(--surface);border-left:4px solid var(--accent);padding:18px 22px;margin:18px 0;font-style:italic;color:var(--text2);border-radius:var(--radius-sm)}
 .data-table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;background:var(--surface);border-radius:var(--radius-sm);overflow:hidden}
+.dt-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:18px 0;max-width:100%}
+
 .data-table th{background:var(--accent);color:#fff;padding:10px 12px;text-align:left;font-weight:600;font-size:12.5px}
 .data-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);font-size:13.5px}
 .data-table tr:last-child td{border-bottom:none}
@@ -283,7 +285,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Какая площадь нужна ателье</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Формат</th><th>Минимум</th><th>Комфорт</th></tr></thead>
 <tbody>
 <tr><td>Ремонтное ателье 1 мастер</td><td>12–18 м²</td><td>20–25 м²</td></tr>
@@ -291,7 +293,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Смешанный формат</td><td>35–50 м²</td><td>50–80 м²</td></tr>
 <tr><td>Ателье пошива с примерочной</td><td>40–60 м²</td><td>70–120 м²</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p>Обязательные зоны: рабочая зона с машинами (8–12 м² на мастера), примерочная с зеркалом (2–4 м²), зона приёмки клиентов (4–8 м²), зона утюжки (3–5 м²), небольшая складская зона для заказов в работе (2–4 м²).</p>
 
@@ -384,7 +386,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Ориентиры цен в КЗ 2026</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Услуга</th><th>Средняя цена</th><th>Маржа</th></tr></thead>
 <tbody>
 <tr><td>Укорочение брюк / рукавов</td><td>2 000–4 000 ₸</td><td>Высокая 70–80%</td></tr>
@@ -400,7 +402,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Реставрация старой одежды</td><td>8 000–40 000 ₸</td><td>Высокая 60–70%</td></tr>
 <tr><td>Срочный ремонт (24–48 часов)</td><td>+40–60% наценка</td><td>Высокая</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p style="font-size:13px;color:var(--text3);margin-top:-8px"><em>Цены ориентировочные. В Алматы и Астане выше на 20–30%, в малых городах ниже.</em></p>
 
@@ -447,7 +449,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Минимальный комплект для ремонтного ателье на 1 мастера</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Оборудование</th><th>Назначение</th><th>Ориентир цены</th></tr></thead>
 <tbody>
 <tr><td>Промышленная швейная машина (Juki, Typical)</td><td>Основные работы</td><td>250 000–450 000 ₸</td></tr>
@@ -459,13 +461,13 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Первая партия фурнитуры и ниток</td><td>Молнии, пуговицы, нити, подкладка</td><td>80 000–200 000 ₸</td></tr>
 <tr><td>Освещение и стол для мастера</td><td>Рабочее место</td><td>40 000–120 000 ₸</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p>Итого минимальный комплект на 1 мастера: <strong>745 000–1 610 000 ₸</strong>. Плюс мелкий инвентарь и стартовые материалы — добавьте 200–400 тыс. ₸.</p>
 
 <h3>Дополнительное оборудование для пошива и расширения</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Оборудование</th><th>Назначение</th><th>Ориентир цены</th></tr></thead>
 <tbody>
 <tr><td>Петельная машина промышленная</td><td>Обмётка петель</td><td>250 000–500 000 ₸</td></tr>
@@ -475,7 +477,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Закройная машина электрическая</td><td>Раскрой ткани в несколько слоёв</td><td>120 000–300 000 ₸</td></tr>
 <tr><td>Промышленный пароманекен</td><td>Финишная отпарка</td><td>600 000–1 500 000 ₸</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p>Полный комплект на ателье смешанного формата с 3–4 мастерами: <strong>3 500 000–7 500 000 ₸</strong>.</p>
 
@@ -498,7 +500,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Структура команды по форматам</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Формат</th><th>Команда</th><th>ФОТ в месяц</th></tr></thead>
 <tbody>
 <tr><td>Ремонтное ателье (1 мастер)</td><td>Мастер + приёмщица (часто совмещает владелец)</td><td>300 000–500 000 ₸</td></tr>
@@ -506,7 +508,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Смешанный формат</td><td>Закройщик + 2–3 мастера + приёмщица + утюжник</td><td>1 200 000–2 200 000 ₸</td></tr>
 <tr><td>Ателье пошива</td><td>Закройщик + 3–5 мастеров разных специализаций + приёмщица</td><td>1 800 000–3 500 000 ₸</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3>Где искать мастеров</h3>
 
@@ -578,7 +580,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Структура операционных расходов</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Статья</th><th>Доля в выручке</th></tr></thead>
 <tbody>
 <tr><td>ФОТ с налогами (включая % мастерам)</td><td>35–50%</td></tr>
@@ -590,7 +592,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Налоги (УСН)</td><td>3%</td></tr>
 <tr><td>Прочие расходы</td><td>3–5%</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p>Чистая маржа при грамотной операционке: <strong>18–30%</strong>. Валовая маржа по ремонту — 65–80%, по пошиву — 35–55%. Ателье с преобладанием ремонта имеет более здоровую экономику на единицу мастера.</p>
 
@@ -726,7 +728,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Годовой календарь</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Период</th><th>Загрузка</th><th>Что востребовано</th></tr></thead>
 <tbody>
 <tr><td>Февраль–март</td><td>Пик (100%)</td><td>Подготовка к Наурызу, национальная одежда, подгонка весенних вещей</td></tr>
@@ -737,7 +739,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Декабрь</td><td>Пик короткий (90%)</td><td>Новогодние корпоративы, подгонка платьев и костюмов</td></tr>
 <tr><td>Январь</td><td>Низкая (25–35%)</td><td>Каникулы, мало активности, мертвый период</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3>Как закрывать провалы</h3>
 

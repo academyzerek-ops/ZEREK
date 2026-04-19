@@ -77,6 +77,8 @@ ul.bullets li{margin-bottom:8px}
 .compare-card li{margin-bottom:6px}
 .intro-quote{background:var(--surface);border-left:4px solid var(--accent);padding:18px 22px;margin:18px 0;font-style:italic;color:var(--text2);border-radius:var(--radius-sm)}
 .data-table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;background:var(--surface);border-radius:var(--radius-sm);overflow:hidden}
+.dt-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:18px 0;max-width:100%}
+
 .data-table th{background:var(--accent);color:#fff;padding:10px 12px;text-align:left;font-weight:600;font-size:12.5px}
 .data-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);font-size:13.5px}
 .data-table tr:last-child td{border-bottom:none}
@@ -119,7 +121,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <h3>Количество химчисток по городам КЗ</h3>
 <p style="font-size:13.5px;color:var(--text3)">Данные 2ГИС, апрель 2026. Реальное количество выше — частные мастера на дому и мелкие точки без вывески в каталог не попадают.</p>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Город</th><th>Химчисток</th><th>Плотность рынка</th></tr></thead>
 <tbody>
 <tr><td>Алматы</td><td>429</td><td>Перенасыщен</td></tr>
@@ -145,7 +147,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Рудный</td><td>4</td><td>Низкая</td></tr>
 <tr><td>Жезказган</td><td>3</td><td>Низкая</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <div class="info-box">
 <div class="box-title">Ключевой вывод</div>
@@ -336,7 +338,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <p>Не химчистка в классическом смысле, а профессиональная мокрая очистка со специальными машинами, программами и средствами. Подходит для шерсти, шёлка, пуховиков, некоторых видов кожи. Дешевле по оборудованию, безопаснее, но НЕ заменяет химчистку для всех тканей. Многие современные химчистки работают в связке: классическая химчистка + wetcleaning.</p>
 
 <h3>Минимальный комплект оборудования для старта</h3>
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Оборудование</th><th>Назначение</th><th>Ориентир по цене</th></tr></thead>
 <tbody>
 <tr><td>Машина химчистки</td><td>Основной процесс</td><td>8–25 млн ₸</td></tr>
@@ -347,7 +349,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Стеллажи и вешала</td><td>Хранение обработанных вещей</td><td>300–800 тыс. ₸</td></tr>
 <tr><td>Упаковочная линия</td><td>Чехлы, плечики, маркировка</td><td>150–400 тыс. ₸</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p style="font-size:13px;color:var(--text3);margin-top:-8px"><em>Цены ориентировочные, зависят от производителя (Китай / Италия / Германия), состояния (новое / б/у) и конфигурации.</em></p>
 
@@ -371,7 +373,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Обязательные требования к помещению</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Параметр</th><th>Минимум</th><th>Комфорт</th></tr></thead>
 <tbody>
 <tr><td>Общая площадь</td><td>60–80 м²</td><td>100–150 м²</td></tr>
@@ -383,7 +385,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Канализация</td><td>С системой сброса химстоков</td><td>С локальной очисткой</td></tr>
 <tr><td>Витринная зона</td><td>Наличие окна</td><td>Панорамная витрина</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3>Два формата размещения</h3>
 
@@ -429,7 +431,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Структура команды химчистки полного цикла</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Роль</th><th>Функции</th><th>Зарплата 2026</th></tr></thead>
 <tbody>
 <tr><td>Технолог</td><td>Приём решений по обработке, пятновыводка, контроль качества</td><td>350–600 тыс. ₸</td></tr>
@@ -438,7 +440,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Отпариватель-упаковщик</td><td>Финальная обработка, упаковка</td><td>200–300 тыс. ₸</td></tr>
 <tr><td>Курьер (для приёмок)</td><td>Развоз по точкам</td><td>200–280 тыс. ₸</td></tr>
 </tbody>
-</table>
+</table></div>
 <p style="font-size:13px;color:var(--text3);margin-top:-8px"><em>Ориентир по средним зарплатам в КЗ. В Алматы и Астане выше, в малых городах ниже.</em></p>
 
 <h3>Где берут технологов</h3>
@@ -474,7 +476,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Стартовые вложения по форматам</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Формат</th><th>Стартовые вложения</th><th>Оборотка на первые 4–6 мес</th></tr></thead>
 <tbody>
 <tr><td>Приёмка без производства</td><td>2–4 млн ₸</td><td>1–2 млн ₸</td></tr>
@@ -482,7 +484,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Химчистка полного цикла (среднее)</td><td>28–45 млн ₸</td><td>6–10 млн ₸</td></tr>
 <tr><td>Премиальная химчистка</td><td>45–80 млн ₸</td><td>10–15 млн ₸</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <div class="warn-box">
 <div class="box-title">Про оборотный капитал</div>
@@ -491,7 +493,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Структура операционных расходов</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Статья</th><th>Доля в выручке</th></tr></thead>
 <tbody>
 <tr><td>ФОТ с налогами</td><td>25–35%</td></tr>
@@ -503,7 +505,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Налоги (УСН)</td><td>3%</td></tr>
 <tr><td>Прочие расходы</td><td>3–5%</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <p>Чистая маржа при правильной операционке — 15–25%. Валовая маржа на услуге — 45–65%, но её съедают ФОТ и аренда. Низкая загрузка мощностей (производство используется на 30–40% вместо 70%+) автоматически убивает маржу, потому что постоянные расходы те же, а выручки меньше.</p>
 
@@ -629,7 +631,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 
 <h3>Годовой календарь загрузки</h3>
 
-<table class="data-table">
+<div class="dt-wrap"><table class="data-table">
 <thead><tr><th>Период</th><th>Загрузка</th><th>Что чистят</th></tr></thead>
 <tbody>
 <tr><td>Сентябрь–октябрь</td><td>Пик (100%)</td><td>Летние вещи на хранение, подготовка зимних, пуховики</td></tr>
@@ -638,7 +640,7 @@ document.addEventListener('click',function(e){var a=e.target.closest('a[href^="#
 <tr><td>Май</td><td>Средняя (50%)</td><td>Межсезонье, свадьбы начинают</td></tr>
 <tr><td>Июнь–август</td><td>Низкая (25–35%)</td><td>Только свадьбы, отдельные заказы, B2B</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3>Четыре способа закрыть летний провал</h3>
 
