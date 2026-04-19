@@ -217,6 +217,59 @@ var NICHES = [];
 var NicheConfig = null;
 
 /* ---------- step plan (dynamic) ---------- */
+// Локации, которые однозначно определяют физическую модель и не требуют
+// уточнения через шаг «локация» — если формат уже сообщил такой loc_type,
+// используем его как есть.
+var SELF_DEFINING_LOC = ['home','own_building','highway','online'];
+
+function effectiveLocOptions(){
+  // Какие локации реально доступны после выбора формата:
+  // — если у выбранного формата есть конкретный loc_type → возвращаем [loc_type]
+  //   (шаг локации тогда вообще пропускается).
+  // — иначе берём пересечение allowed_location_types ниши и loc_type'ов
+  //   доступных форматов; если форматов нет — allowed_location_types ниши.
+  if(!NicheConfig) return [];
+  var allowed = (NicheConfig.allowed_location_types || []).slice();
+  var formats = NicheConfig.formats || [];
+  if(QC.format_id){
+    var fm = formats.find(function(x){ return x.format_id === QC.format_id; });
+    if(fm && fm.loc_type){
+      return [fm.loc_type];
+    }
+  }
+  if(formats.length){
+    var fmtLocs = {};
+    formats.forEach(function(f){ if(f.loc_type) fmtLocs[f.loc_type] = true; });
+    var inter = allowed.filter(function(l){ return fmtLocs[l]; });
+    // объединение: показываем то, что есть и в формате и в allowed
+    if(inter.length) return inter;
+  }
+  return allowed;
+}
+
+function isHomeMode(){
+  // home через формат или явный пользовательский выбор
+  if(QC.loc_type === 'home') return true;
+  if(QC.format_id && NicheConfig){
+    var fm = (NicheConfig.formats||[]).find(function(x){ return x.format_id === QC.format_id; });
+    if(fm && fm.loc_type === 'home') return true;
+  }
+  return false;
+}
+
+function shouldSkipLocation(){
+  // (1) формат уже определил конкретный self-defining loc_type → не спрашиваем
+  // (2) effective options содержит ровно один вариант → нечего выбирать
+  if(QC.format_id && NicheConfig){
+    var fm = (NicheConfig.formats||[]).find(function(x){ return x.format_id === QC.format_id; });
+    if(fm && fm.loc_type && SELF_DEFINING_LOC.indexOf(fm.loc_type) !== -1){
+      return true;
+    }
+  }
+  var opts = effectiveLocOptions();
+  return opts.length <= 1;
+}
+
 function computeStepPlan(){
   // Базовые шаги
   var plan = ['city', 'niche'];
@@ -231,13 +284,17 @@ function computeStepPlan(){
   if(NicheConfig.formats && NicheConfig.formats.length){
     plan.push('format');
   }
-  // location (всегда)
-  plan.push('location');
+  // location (только если есть смысл выбирать)
+  if(!shouldSkipLocation()){
+    plan.push('location');
+  }
   // specific_questions (не-лицензионные)
   var nonLicenseQs = (NicheConfig.specific_questions || []).filter(function(q){ return !isLicenseQuestion(q); });
   if(nonLicenseQs.length) plan.push('specific');
-  // area
-  plan.push('area');
+  // area (скрываем если home или формат «без помещения»)
+  if(!shouldSkipArea()){
+    plan.push('area');
+  }
   // staff
   plan.push('staff');
   // capital
@@ -375,9 +432,17 @@ function allSpecificAnswered(){
 }
 
 function shouldSkipArea(){
-  return NicheConfig &&
-    NicheConfig.area_question_mode === 'hidden_if_home' &&
-    QC.loc_type === 'home';
+  if(!NicheConfig) return false;
+  // (1) home — площадь не имеет смысла (нет помещения)
+  if(isHomeMode()) return true;
+  // (2) формат с area_m2 = 0 (например, грузоперевозки на 1 машину) → площадь не нужна
+  if(QC.format_id){
+    var fm = (NicheConfig.formats||[]).find(function(x){ return x.format_id === QC.format_id; });
+    if(fm && (!fm.area_m2 || fm.area_m2 === 0)) return true;
+  }
+  // (3) ниша по конфигу скрывает площадь всегда
+  if(NicheConfig.area_question_mode === 'hidden_always') return true;
+  return false;
 }
 
 function isStaffAnswered(){
@@ -503,22 +568,39 @@ function selectFormat(fid, fname, clsTag){
   if(lv === 'эконом'){ QC.capex_level='эконом'; QC.cls='Эконом'; }
   else if(lv === 'премиум'){ QC.capex_level='премиум'; QC.cls='Премиум'; }
   else { QC.capex_level='стандарт'; QC.cls='Стандарт'; }
-  // set default area from format
+  // protect locality + area: формат сразу подтягивает loc_type и area_m2
   var fm = NicheConfig.formats.find(function(x){ return x.format_id === fid; });
-  if(fm && fm.area_m2 && !QC.area_m2){ QC.area_m2 = fm.area_m2; }
+  if(fm){
+    if(fm.loc_type){ QC.loc_type = fm.loc_type; }
+    if(fm.area_m2){ QC.area_m2 = fm.area_m2; }
+    else { QC.area_m2 = 0; }
+  }
+  // План шагов мог измениться — например, шаги «локация» / «площадь»
+  // могут стать ненужными после фиксации формата.
+  StepPlan = computeStepPlan();
   renderStep(); updateCta();
 }
 
 RENDERERS.location = function(root){
-  var allowed = NicheConfig.allowed_location_types || [];
-  var meta = NicheConfig.location_types_meta || {};
+  var opts = effectiveLocOptions();
+  var meta = (NicheConfig && NicheConfig.location_types_meta) || {};
+  // Дополним meta служебными типами на случай расхождения allowed/format
+  var fallback = {
+    'tc':{label:'Торговый центр',icon:'🏬'}, 'street':{label:'Улица',icon:'🏪'},
+    'home':{label:'Из дома',icon:'🏠'}, 'highway':{label:'Возле дороги',icon:'🛣️'},
+    'residential_complex':{label:'Коммерция в ЖК',icon:'🏢'},
+    'business_center':{label:'Бизнес-центр',icon:'🏢'},
+    'market':{label:'Рынок',icon:'🛍️'}, 'online':{label:'Онлайн',icon:'🌐'},
+    'residential_area':{label:'Спальный район',icon:'🏘️'},
+    'own_building':{label:'Отдельное здание',icon:'🏛️'}
+  };
   var html = '<div class="step">' +
     '<div class="step-kicker">Локация</div>' +
     '<h2>Где будет располагаться?</h2>' +
     '<div class="step-desc">От локации зависят аренда, трафик и конкуренция.</div>' +
     '<div class="options">';
-  allowed.forEach(function(loc){
-    var m = meta[loc] || {label: loc, icon: '📍'};
+  opts.forEach(function(loc){
+    var m = meta[loc] || fallback[loc] || {label: loc, icon: '📍'};
     var sel = (QC.loc_type === loc) ? ' selected' : '';
     html += '<div class="opt'+sel+'" onclick="selectLoc(\''+loc+'\')">' +
       '<div class="opt-icon">'+m.icon+'</div>' +
@@ -528,7 +610,12 @@ RENDERERS.location = function(root){
   html += '</div></div>';
   root.innerHTML = html;
 };
-function selectLoc(v){ QC.loc_type = v; renderStep(); updateCta(); }
+function selectLoc(v){
+  QC.loc_type = v;
+  // Если выбрали home — площадь надо скрыть, план пересчитываем.
+  StepPlan = computeStepPlan();
+  renderStep(); updateCta();
+}
 
 RENDERERS.specific = function(root){
   var qs = (NicheConfig.specific_questions || []).filter(function(q){ return !isLicenseQuestion(q); });
@@ -552,11 +639,7 @@ RENDERERS.specific = function(root){
 function setSpecific(qid, val){ QC.specific_answers[qid] = val; renderStep(); updateCta(); }
 
 RENDERERS.area = function(root){
-  if(shouldSkipArea()){
-    QC.area_m2 = 0;
-    // автопереход
-    stepIndex += 1; renderStep(); return;
-  }
+  // План плана уже исключает шаг, если shouldSkipArea() — здесь рендерим всегда.
   var html = '<div class="step">' +
     '<div class="step-kicker">Площадь</div>' +
     '<h2>Какая площадь помещения?</h2>' +
@@ -653,8 +736,8 @@ RENDERERS.confirm = function(root){
     ['Ниша', QC.niche_name || QC.niche_id],
     ['Формат', QC.format_name || QC.format_id],
     ['Уровень', QC.capex_level],
-    ['Локация', (NicheConfig.location_types_meta[QC.loc_type]||{}).label || QC.loc_type],
-    ['Площадь', shouldSkipArea() ? '—' : (QC.area_m2 + ' м²')],
+    ['Локация', ((NicheConfig.location_types_meta||{})[QC.loc_type]||{}).label || QC.loc_type || '—'],
+    ['Площадь', shouldSkipArea() ? (isHomeMode() ? 'дома' : '—') : (QC.area_m2 + ' м²')],
     ['Капитал', fmt(QC.capital) + ' ₸'],
   ];
   if(QC.has_license){ rows.push(['Лицензия', QC.has_license === 'yes' ? 'есть' : QC.has_license === 'in_progress' ? 'в процессе' : 'нет']); }
