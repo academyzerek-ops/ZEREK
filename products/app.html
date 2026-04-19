@@ -2820,7 +2820,7 @@ var WIKI_CATEGORIES = [
     { icon: '🥟', name: 'Полуфабрикаты', file: 'ZEREK_Semifood' },
     { icon: '💧', name: 'Розлив воды', file: 'ZEREK_Waterplant' }
   ]},
-  { title: 'Красота', niches: [
+  { title: 'Бьюти', niches: [
     { icon: '💈', name: 'Барбершоп', file: 'ZEREK_Barber' },
     { icon: '💅', name: 'Маникюр', file: 'ZEREK_Manicure' },
     { icon: '✨', name: 'Брови и ресницы', file: 'ZEREK_BrowLash' },
@@ -2831,7 +2831,8 @@ var WIKI_CATEGORIES = [
   ]},
   { title: 'Здоровье', niches: [
     { icon: '🦷', name: 'Стоматология', file: 'ZEREK_Dental' },
-    { icon: '💊', name: 'Аптека', file: 'ZEREK_Pharmacy' }
+    { icon: '💊', name: 'Аптека', file: 'ZEREK_Pharmacy' },
+    { icon: '👓', name: 'Оптика', file: 'ZEREK_Optics' }
   ]},
   { title: 'Спорт', niches: [
     { icon: '💪', name: 'Фитнес-клуб', file: 'ZEREK_Fitness' },
@@ -2846,9 +2847,13 @@ var WIKI_CATEGORIES = [
     { icon: '🔧', name: 'Автосервис', file: 'ZEREK_Autoservice' },
     { icon: '👶', name: 'Детский сад', file: 'ZEREK_Kindergarten' },
     { icon: '💐', name: 'Цветы', file: 'ZEREK_Flowers' },
-    { icon: '🚚', name: 'Грузоперевозки', file: 'ZEREK_Cargo' },
-    { icon: '👓', name: 'Оптика', file: 'ZEREK_Optics' },
-    { icon: '📦', name: 'ПВЗ', file: 'ZEREK_Pvz' }
+    { icon: '🚚', name: 'Грузоперевозки', file: 'ZEREK_Cargo' }
+  ]},
+  { title: 'Продажи', niches: [
+    { icon: '📦', name: 'ПВЗ', file: 'ZEREK_Pvz' },
+    { icon: '👓', name: 'Оптика', file: 'ZEREK_Optics' }
+  ]},
+  { title: 'Производство', niches: [
   ]}
 ];
 
@@ -2875,13 +2880,17 @@ function renderWikiList() {
   var container = document.getElementById('wiki-list');
   var niches = WIKI_CATEGORIES[wikiActiveCat].niches;
   var html = '';
-  for (var i = 0; i < niches.length; i++) {
-    var n = niches[i];
-    html += '<div class="wiki-item" onclick="openWiki(\'' + n.file + '\')">' +
-      '<div class="wiki-item-icon">' + n.icon + '</div>' +
-      '<div class="wiki-item-info"><div class="wiki-item-name">' + n.name + '</div></div>' +
-      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>' +
-      '</div>';
+  if (niches.length === 0) {
+    html = '<div class="wiki-empty" style="padding:32px 16px;text-align:center;color:#999;font-size:14px">Скоро появятся обзоры</div>';
+  } else {
+    for (var i = 0; i < niches.length; i++) {
+      var n = niches[i];
+      html += '<div class="wiki-item" onclick="openWiki(\'' + n.file + '\')">' +
+        '<div class="wiki-item-icon">' + n.icon + '</div>' +
+        '<div class="wiki-item-info"><div class="wiki-item-name">' + n.name + '</div></div>' +
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+        '</div>';
+    }
   }
   container.innerHTML = html;
 }
