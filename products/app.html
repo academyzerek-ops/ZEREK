@@ -958,6 +958,22 @@ p { line-height: 1.4; font-weight: 400; }
   display: flex;
   flex-direction: column;
 }
+.wiki-section-heading {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  padding: 24px 0 10px;
+  border-bottom: 0.5px solid var(--color-border);
+}
+.wiki-section-heading:first-child { padding-top: 8px; }
+.wiki-empty {
+  padding: 14px 0 20px;
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+  border-bottom: 0.5px solid var(--color-border);
+}
 .wiki-item {
   background: transparent;
   border: none;
@@ -1822,9 +1838,6 @@ p { line-height: 1.4; font-weight: 400; }
   <div class="screen-content">
     <div class="screen-title">Обзоры рынка</div>
     <div class="screen-subtitle">Бизнес-ниши Казахстана — аналитика и данные</div>
-    <div class="wiki-cat-pills" id="wiki-cat-pills">
-      <!-- rendered by JS -->
-    </div>
     <div class="wiki-list" id="wiki-list">
       <!-- rendered by JS -->
     </div>
@@ -2853,14 +2866,11 @@ var WIKI_CATEGORIES = [
     { icon: '🪣', name: 'Чистка ковров', file: 'ZEREK_CarpetClean' },
     { icon: '🪡', name: 'Ателье', file: 'ZEREK_Tailor' },
     { icon: '🚘', name: 'Автошкола', file: 'ZEREK_Driving' },
+    { icon: '📦', name: 'ПВЗ', file: 'ZEREK_Pvz' },
     { icon: '📊', name: 'Бухгалтерский аутсорсинг', file: 'ZEREK_Accounting' },
     { icon: '📐', name: 'Оценочные услуги', file: 'ZEREK_Evaluation' },
     { icon: '📜', name: 'Нотариальные услуги', file: 'ZEREK_Notary' },
     { icon: '🏠', name: 'Риэлторские услуги', file: 'ZEREK_Realtor' }
-  ]},
-  { title: 'Продажи', niches: [
-    { icon: '📦', name: 'ПВЗ', file: 'ZEREK_Pvz' },
-    { icon: '👓', name: 'Оптика', file: 'ZEREK_Optics' }
   ]},
   { title: 'Производство', niches: [
     { icon: '🪑', name: 'Производство корпусной мебели', file: 'ZEREK_Furniture' },
@@ -2868,34 +2878,22 @@ var WIKI_CATEGORIES = [
   ]}
 ];
 
-var wikiActiveCat = 0;
-
 function renderWiki() {
-  renderWikiPills();
   renderWikiList();
-}
-
-function renderWikiPills() {
-  var container = document.getElementById('wiki-cat-pills');
-  var html = '';
-  for (var c = 0; c < WIKI_CATEGORIES.length; c++) {
-    var cat = WIKI_CATEGORIES[c];
-    var active = c === wikiActiveCat ? ' active' : '';
-    html += '<div class="wiki-cat-pill' + active + '" onclick="selectWikiCat(' + c + ')">' +
-      '<div class="wiki-cat-pill-name">' + cat.title + '</div></div>';
-  }
-  container.innerHTML = html;
 }
 
 function renderWikiList() {
   var container = document.getElementById('wiki-list');
-  var niches = WIKI_CATEGORIES[wikiActiveCat].niches;
   var html = '';
-  if (niches.length === 0) {
-    html = '<div class="wiki-empty" style="padding:32px 16px;text-align:center;color:#999;font-size:14px">Скоро появятся обзоры</div>';
-  } else {
-    for (var i = 0; i < niches.length; i++) {
-      var n = niches[i];
+  for (var c = 0; c < WIKI_CATEGORIES.length; c++) {
+    var cat = WIKI_CATEGORIES[c];
+    html += '<div class="wiki-section-heading">' + cat.title + '</div>';
+    if (cat.niches.length === 0) {
+      html += '<div class="wiki-empty">Скоро появятся обзоры</div>';
+      continue;
+    }
+    for (var i = 0; i < cat.niches.length; i++) {
+      var n = cat.niches[i];
       html += '<div class="wiki-item" onclick="openWiki(\'' + n.file + '\')">' +
         '<div class="wiki-item-icon">' + n.icon + '</div>' +
         '<div class="wiki-item-info"><div class="wiki-item-name">' + n.name + '</div></div>' +
@@ -2904,12 +2902,6 @@ function renderWikiList() {
     }
   }
   container.innerHTML = html;
-}
-
-function selectWikiCat(idx) {
-  wikiActiveCat = idx;
-  renderWikiPills();
-  renderWikiList();
 }
 
 /* ============================================
