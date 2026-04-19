@@ -70,6 +70,9 @@ class FMReq(BaseModel):
     credit_amount: int = 0
     credit_rate: float = 0.22
     credit_term: int = 36
+    # --- Quick Check v2 adaptive answers (опц.) ---
+    specific_answers: Optional[dict] = None
+    capex_level: str = "стандарт"
 
 @app.get("/")
 def root():
@@ -491,11 +494,116 @@ def _compute_finmodel_data(params: dict) -> dict:
     }
 
 
+def _parse_pct(val):
+    """'30%' / '0.3' / 30 → 0.30. Возвращает None если не парсится."""
+    if val is None: return None
+    try:
+        s = str(val).strip().rstrip('%').replace(',', '.')
+        f = float(s)
+        return f / 100 if f > 1 else f
+    except Exception:
+        return None
+
+def _parse_int(val):
+    """'3-5' → 4 (midpoint), '200+' → 250, '100' → 100, '10-20' → 15."""
+    if val is None: return None
+    s = str(val).strip()
+    if not s or s.lower() == 'nan': return None
+    if s.endswith('+'):
+        try:
+            base = int(s.rstrip('+').strip())
+            return int(base * 1.25)
+        except Exception:
+            return None
+    if '-' in s:
+        try:
+            a, b = s.split('-', 1)
+            return (int(a.strip()) + int(b.strip())) // 2
+        except Exception:
+            pass
+    try:
+        return int(float(s))
+    except Exception:
+        return None
+
+# Маппинг qid → поле FMReq + парсер
+_FM_FIELD_MAP = {
+    # cogs / fudcost (%)
+    'O_FOODCOST': ('cogs_pct', _parse_pct),
+    'F_COGS':     ('cogs_pct', _parse_pct),
+    'D_COGS':     ('cogs_pct', _parse_pct),
+    'A_COGS':     ('cogs_pct', _parse_pct),
+    'H_COGS':     ('cogs_pct', _parse_pct),
+    # check / средний чек
+    'A_CHECK': ('check_med', _parse_int),
+    'O_CHECK': ('check_med', _parse_int),
+    'D_CHECK': ('check_med', _parse_int),
+    'E_CHECK': ('check_med', _parse_int),
+    'H_CHECK': ('check_med', _parse_int),
+    'P_CHECK_OR_RATE': ('check_med', _parse_int),
+    'F_CHECK_OR_UNIT': ('check_med', _parse_int),
+    'G_FEE':           ('check_med', _parse_int),
+    'B_REP_AVG_PRICE': ('check_med', _parse_int),
+    'B_PHOTO_CHECK':   ('check_med', _parse_int),
+    'B_FIT_SUB_PRICE': ('check_med', _parse_int),
+    'B_CC_RATE':       ('check_med', _parse_int),
+    # traffic / volume
+    'O_TRAFFIC': ('traffic_med', _parse_int),
+    'E_TRAFFIC': ('traffic_med', _parse_int),
+    'H_VOLUME':  ('traffic_med', _parse_int),
+    'F_VOLUME':  ('traffic_med', _parse_int),
+    'D_LOAD':    ('traffic_med', _parse_int),
+    'P_CLIENTS_PER_MONTH': ('traffic_med', _parse_int),
+    'G_KIDS_COUNT': ('traffic_med', _parse_int),
+    # rent
+    'A_RENT':     ('rent_override', _parse_int),
+    'O_RENT_VAL': ('rent_override', _parse_int),
+    'D_RENT':     ('rent_override', _parse_int),
+    'E_RENT':     ('rent_override', _parse_int),
+    'F_RENT':     ('rent_override', _parse_int),
+    'G_RENT':     ('rent_override', _parse_int),
+    'H_RENT':     ('rent_override', _parse_int),
+    'P_RENT':     ('rent_override', _parse_int),
+    # headcount
+    'A_CHAIRS':       ('headcount', _parse_int),
+    'D_POSTS':        ('headcount', _parse_int),
+    'O_STAFF_COUNT':  ('headcount', _parse_int),
+    'E_STAFF_COUNT':  ('headcount', _parse_int),
+    'G_STAFF_COUNT':  ('headcount', _parse_int),
+    'F_STAFF_COUNT':  ('headcount', _parse_int),
+    'H_STAFF_COUNT':  ('headcount', _parse_int),
+    'D_STAFF_COUNT':  ('headcount', _parse_int),
+    # credit
+    'U_CREDIT_AMOUNT': ('credit_amount', _parse_int),
+    'U_CREDIT_RATE':   ('credit_rate',   _parse_pct),
+    'U_CREDIT_TERM':   ('credit_term',   _parse_int),
+    # capex / working cap
+    'F_EQUIPMENT_CAPEX': ('capex',       _parse_int),
+    'E_INITIAL_STOCK':   ('working_cap', _parse_int),
+}
+
+def _apply_adaptive_answers(req: FMReq) -> FMReq:
+    """Применяет specific_answers к полям FMReq. Возвращает тот же объект."""
+    if not req.specific_answers:
+        return req
+    for qid, raw in (req.specific_answers or {}).items():
+        if qid not in _FM_FIELD_MAP:
+            continue
+        field, parser = _FM_FIELD_MAP[qid]
+        parsed = parser(raw)
+        if parsed is None:
+            continue
+        setattr(req, field, parsed)
+    return req
+
+
 @app.post("/finmodel")
 def generate_finmodel_endpoint(req: FMReq):
     """Генерирует xlsx финмодель из шаблона + данные из анкеты."""
     if not db: raise HTTPException(503, f"БД не загружена: {db_error}")
     try:
+        # 0. Применяем адаптивные ответы (specific_answers) к полям FMReq
+        _apply_adaptive_answers(req)
         # 1. Quick Check для базовых данных (рынок, налоги и т.д.)
         result = run_quick_check_v3(db=db, city_id=req.city_id, niche_id=req.niche_id,
             format_id=req.format_id, cls=req.cls, area_m2=req.area_m2, loc_type=req.loc_type,

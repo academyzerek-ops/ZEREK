@@ -215,6 +215,23 @@ var stepIndex = 0;
 var CITIES = [];
 var NICHES = [];
 var NicheConfig = null;
+var ExpressSurvey = null;          // /niche-survey response for tier=express
+
+// Quids которые рендерятся специализированными шагами (city/niche/format/...)
+// — их НЕ нужно показывать в обобщённом «specific» шаге.
+var SPECIAL_QIDS = [
+  'U_CITY','U_NICHE','U_CAPITAL',
+  'A_FORMAT','B_FORMAT','C_FORMAT','D_FORMAT','E_FORMAT','F_FORMAT','G_FORMAT','H_FORMAT','O_FORMAT','P_FORMAT',
+  'A_LOC','O_LOC','E_LOC','H_LOC',
+  'A_AREA','O_AREA','D_AREA','E_AREA','F_AREA','G_AREA','H_AREA',
+  'A_STAFF_MODE','P_STAFF',
+  'P_LICENSE','G_LICENSE'
+];
+
+function nonSpecialExpressQs(){
+  var qs = (ExpressSurvey && ExpressSurvey.questions) || [];
+  return qs.filter(function(q){ return SPECIAL_QIDS.indexOf(q.qid) === -1; });
+}
 
 /* ---------- step plan (dynamic) ---------- */
 // Локации, которые однозначно определяют физическую модель и не требуют
@@ -288,9 +305,12 @@ function computeStepPlan(){
   if(!shouldSkipLocation()){
     plan.push('location');
   }
-  // specific_questions (не-лицензионные)
-  var nonLicenseQs = (NicheConfig.specific_questions || []).filter(function(q){ return !isLicenseQuestion(q); });
-  if(nonLicenseQs.length) plan.push('specific');
+  // specific — обобщённый шаг для всех «не-специализированных» вопросов из
+  // /niche-survey?tier=express (после фильтрации SPECIAL_QIDS и лицензии).
+  var leftoverQs = nonSpecialExpressQs().filter(function(q){
+    return !isLicenseQuestionByQid(q.qid);
+  });
+  if(leftoverQs.length) plan.push('specific');
   // area (скрываем если home или формат «без помещения»)
   if(!shouldSkipArea()){
     plan.push('area');
@@ -306,6 +326,10 @@ function computeStepPlan(){
 
 function isLicenseQuestion(q){
   return ['Q_NOT_LIC','Q_IPO','Q_MED_LIC','Q_EDU_LIC'].indexOf(q.question_id) !== -1;
+}
+
+function isLicenseQuestionByQid(qid){
+  return ['B_MED_LIC','P_LICENSE','G_LICENSE'].indexOf(qid) !== -1;
 }
 
 /* ---------- init ---------- */
@@ -376,22 +400,28 @@ function nextStep(){
 function loadNicheConfigThen(cb){
   $('cta-btn').classList.add('disabled');
   $('cta-btn').textContent = 'Загружаем параметры ниши…';
+  // Параллельно конфиг ниши + express-анкета (data-driven вопросы)
+  var pending = 2; var hadError = null;
   apiGet('/niche-config/' + QC.niche_id, function(err, data){
+    if(err){ hadError = err; }
+    else { NicheConfig = data || {}; }
+    if(--pending === 0) finish();
+  });
+  apiGet('/niche-survey/' + QC.niche_id + '?tier=express', function(err, data){
+    if(err){ /* survey опционален — без него всё равно сработает специальные шаги */ }
+    else { ExpressSurvey = data || null; }
+    if(--pending === 0) finish();
+  });
+  function finish(){
     $('cta-btn').textContent = 'Далее';
-    if(err){
-      NicheConfig = null;
-      return showError('Не удалось загрузить конфиг ниши: ' + err.message);
-    }
-    NicheConfig = data || {};
+    if(hadError){ return showError('Не удалось загрузить конфиг ниши: ' + hadError.message); }
     if(NicheConfig.formats && NicheConfig.formats.length === 1){
       QC.format_id = NicheConfig.formats[0].format_id;
       QC.format_name = NicheConfig.formats[0].name || QC.format_id;
     }
-    // Инферим loc_type: если формат уже выбран — оттуда; если все форматы
-    // ниши имеют один loc_type — оттуда; иначе default_location_type.
     QC.loc_type = inferLocType();
     cb();
-  });
+  }
 }
 
 function inferLocType(){
@@ -445,10 +475,13 @@ function isStepValid(name){
 }
 
 function allSpecificAnswered(){
-  if(!NicheConfig) return true;
-  var qs = NicheConfig.specific_questions.filter(function(q){ return !isLicenseQuestion(q); });
+  // Все обобщённые «specific» вопросы (из express survey, не SPECIAL, не license)
+  var qs = nonSpecialExpressQs().filter(function(q){
+    return !isLicenseQuestionByQid(q.qid);
+  });
   for(var i=0;i<qs.length;i++){
-    if(!QC.specific_answers[qs[i].question_id]) return false;
+    var ans = QC.specific_answers[qs[i].qid];
+    if(ans == null || ans === '' || (Array.isArray(ans) && !ans.length)) return false;
   }
   return true;
 }
@@ -640,25 +673,103 @@ function selectLoc(v){
 }
 
 RENDERERS.specific = function(root){
-  var qs = (NicheConfig.specific_questions || []).filter(function(q){ return !isLicenseQuestion(q); });
-  var html = '<div class="step">' +
-    '<div class="step-kicker">Специфика</div>' +
-    '<h2>Детали под вашу нишу</h2>' +
-    '<div class="step-desc">Ответы влияют на то, какой расчёт подберём.</div>';
-  qs.forEach(function(q){
-    html += '<div class="section-label">'+q.question_text+'</div>' +
-      '<div class="radio-group">';
-    (q.options || []).forEach(function(opt){
-      var sel = (QC.specific_answers[q.question_id] === opt) ? ' selected' : '';
-      html += '<div class="radio'+sel+'" onclick="setSpecific(\''+q.question_id+'\',\''+opt.replace(/\'/g,"")+'\')">' +
-        '<div class="radio-dot"></div><div>'+opt+'</div></div>';
-    });
-    html += '</div>';
+  // Data-driven: рендерим все «не-специализированные» вопросы из express survey.
+  var qs = nonSpecialExpressQs().filter(function(q){
+    return !isLicenseQuestionByQid(q.qid);
   });
-  html += '</div>';
+  if(!qs.length){
+    // если делать нечего — auto-skip
+    stepIndex += 1; renderStep(); return;
+  }
+  var html = '<div class="step">' +
+    '<div class="step-kicker">Детали</div>' +
+    '<h2>Уточняющие вопросы под нишу</h2>' +
+    '<div class="step-desc">От ответов зависит расчёт. Вопросы подобраны под вашу нишу.</div>' +
+    '<form id="specific-form" onsubmit="event.preventDefault();">';
+  qs.forEach(function(q){
+    html += renderSpecificField(q);
+  });
+  html += '</form></div>';
   root.innerHTML = html;
 };
-function setSpecific(qid, val){ QC.specific_answers[qid] = val; renderStep(); updateCta(); }
+
+function renderSpecificField(q){
+  // Используем тот же универсальный renderer, что и финмодель,
+  // но с привязкой значения и select-стейтом.
+  var name = q.qid;
+  var current = QC.specific_answers[name];
+  var label = '<div class="section-label" style="margin-top:18px">'+escapeHtml(q.question_text)+
+              (q.unit ? ' <span style="color:var(--text-3);font-weight:400">('+q.unit+')</span>' : '')+'</div>';
+  if(q.input_type === 'radio' || q.input_type === 'select'){
+    var opts = q.options || [];
+    var radios = '<div class="radio-group">';
+    opts.forEach(function(opt){
+      var safe = String(opt).replace(/'/g,"\\'");
+      var sel = (current === opt) ? ' selected' : '';
+      radios += '<label class="radio'+sel+'" onclick="setSpecificV2(\''+name+'\',\''+safe+'\',event)">' +
+                '<div class="radio-dot"></div><div>'+escapeHtml(opt)+'</div></label>';
+    });
+    radios += '</div>';
+    return label + radios;
+  }
+  if(q.input_type === 'boolean'){
+    return label + '<div class="radio-group">' +
+      '<label class="radio'+(current==='yes' ? ' selected':'')+'" onclick="setSpecificV2(\''+name+'\',\'yes\',event)"><div class="radio-dot"></div><div>Да</div></label>' +
+      '<label class="radio'+(current==='no'  ? ' selected':'')+'" onclick="setSpecificV2(\''+name+'\',\'no\',event)"><div class="radio-dot"></div><div>Нет</div></label>' +
+    '</div>';
+  }
+  if(q.input_type === 'multi_select'){
+    var opts2 = q.options || [];
+    var arr = Array.isArray(current) ? current : [];
+    var multi = '<div class="radio-group">';
+    opts2.forEach(function(opt){
+      var safe = String(opt).replace(/'/g,"\\'");
+      var sel = (arr.indexOf(opt) !== -1) ? ' selected' : '';
+      multi += '<label class="radio'+sel+'" onclick="toggleSpecificMulti(\''+name+'\',\''+safe+'\',event)">' +
+               '<div class="radio-dot"></div><div>'+escapeHtml(opt)+'</div></label>';
+    });
+    multi += '</div>';
+    return label + multi;
+  }
+  if(q.input_type === 'number'){
+    return label + '<div class="num-in"><input type="number" inputmode="numeric" min="'+(q.min||0)+'" max="'+(q.max||9999999999)+'" step="'+(q.step||1)+'" placeholder="'+escapeHtml(q.placeholder||'')+'" value="'+(current||'')+'" oninput="setSpecificV2(\''+name+'\',this.value)"><span class="num-in-suffix">'+(q.unit||'')+'</span></div>';
+  }
+  if(q.input_type === 'range'){
+    var initial = current || q.placeholder || q.min || 0;
+    return label + '<div class="range-wrap"><div class="range-label"><span>значение</span><span class="range-val" id="sr-'+name+'">'+fmt(initial)+(q.unit?' '+q.unit:'')+'</span></div>' +
+      '<input type="range" min="'+(q.min||0)+'" max="'+(q.max||100)+'" step="'+(q.step||1)+'" value="'+initial+'" oninput="setSpecificRange(\''+name+'\',this.value,\''+(q.unit||'')+'\')"></div>';
+  }
+  return label + '<div class="num-in"><input type="text" value="'+(current||'')+'" oninput="setSpecificV2(\''+name+'\',this.value)" placeholder="'+escapeHtml(q.placeholder||'')+'"></div>';
+}
+
+function setSpecificV2(qid, val, evt){
+  QC.specific_answers[qid] = val;
+  if(evt){
+    var target = evt.currentTarget || evt.target.closest('.radio');
+    if(target && target.parentNode){
+      Array.prototype.forEach.call(target.parentNode.children, function(ch){ ch.classList.remove('selected'); });
+      target.classList.add('selected');
+    }
+  }
+  updateCta();
+}
+function setSpecificRange(qid, val, unit){
+  QC.specific_answers[qid] = val;
+  var lbl = $('sr-'+qid);
+  if(lbl) lbl.textContent = fmt(val) + (unit?' '+unit:'');
+  updateCta();
+}
+function toggleSpecificMulti(qid, val, evt){
+  if(!Array.isArray(QC.specific_answers[qid])) QC.specific_answers[qid] = [];
+  var arr = QC.specific_answers[qid];
+  var i = arr.indexOf(val);
+  if(i === -1) arr.push(val); else arr.splice(i,1);
+  if(evt){
+    var t = evt.currentTarget || evt.target.closest('.radio');
+    if(t) t.classList.toggle('selected', arr.indexOf(val) !== -1);
+  }
+  updateCta();
+}
 
 RENDERERS.area = function(root){
   // План плана уже исключает шаг, если shouldSkipArea() — здесь рендерим всегда.
