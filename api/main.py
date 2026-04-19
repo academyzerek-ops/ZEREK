@@ -12,7 +12,7 @@ import httpx
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE_DIR)
 
-from engine import ZerekDB, run_quick_check_v3, get_niche_config
+from engine import ZerekDB, run_quick_check_v3, get_niche_config, get_niche_survey
 from report import render_report_v4
 
 def clean(obj):
@@ -162,6 +162,17 @@ def niche_config(niche_id: str):
     try:
         cfg = get_niche_config(db, niche_id)
         return clean(cfg)
+    except Exception as e:
+        import traceback; traceback.print_exc()
+        raise HTTPException(500, str(e))
+
+@app.get("/niche-survey/{niche_id}")
+def niche_survey(niche_id: str, tier: str = "express"):
+    """Адаптивная анкета (упорядоченный список вопросов) для ниши и tier'а
+    (express|finmodel). Источник: data/kz/09_surveys.xlsx."""
+    if not db: raise HTTPException(503,"БД не загружена")
+    try:
+        return clean(get_niche_survey(db, niche_id, tier))
     except Exception as e:
         import traceback; traceback.print_exc()
         raise HTTPException(500, str(e))

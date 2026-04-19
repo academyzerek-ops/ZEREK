@@ -813,6 +813,7 @@ function submit(){
 }
 
 function renderResult(result){
+  window._lastResult = result;
   $('result-screen').classList.add('active');
   $('cta-wrap').style.display = 'none';
   if(!result){ return showResultError('Пустой ответ от API.'); }
@@ -835,10 +836,177 @@ function renderResult(result){
       card('Инвестиции', kpis.capex) +
       card('Оборотка', kpis.working_cap) +
     '</div>' +
+    '<div style="margin:16px 0">' +
+      '<button class="btn" onclick="openFinmodel()">Развернуть в финмодель</button>' +
+      '<div style="font-size:12px;color:var(--text-3);text-align:center;margin-top:8px">+ '+
+      'налоги, кредит, маркетинг, сезонность — расчёт на 36 месяцев</div>' +
+    '</div>' +
     '<div class="debug-toggle" onclick="toggleDebug()">Показать JSON-ответ ▾</div>' +
     '<div class="debug-json" id="debug-json" style="display:none">'+escapeHtml(JSON.stringify(result,null,2))+'</div>';
 
   $('result-screen').innerHTML = html;
+}
+
+/* ============================================================
+   FINMODEL extension — finmodel-only delta questions in one form
+   ============================================================ */
+var FinmodelSurvey = null;
+
+function openFinmodel(){
+  if(!QC.niche_id){ return; }
+  $('result-screen').classList.remove('active');
+  $('result-screen').innerHTML = '';
+  $('loading-screen').classList.add('active');
+  $('loading-screen').querySelector('.loading-title').textContent = 'Загружаем расширенную анкету…';
+
+  apiGet('/niche-survey/' + QC.niche_id + '?tier=finmodel', function(err, data){
+    $('loading-screen').classList.remove('active');
+    if(err){ return showResultError('Не удалось загрузить финмодель-анкету: ' + err.message); }
+    FinmodelSurvey = data;
+    renderFinmodelForm();
+  });
+}
+
+function renderFinmodelForm(){
+  var qs = (FinmodelSurvey && FinmodelSurvey.questions) || [];
+  // Делта: вопросы которые ещё не отвечены (qid не в QC.specific_answers
+  // и не дублируют отвеченные базовые QC.* поля).
+  var alreadyAnswered = collectAnsweredQids();
+  var extras = qs.filter(function(q){ return alreadyAnswered.indexOf(q.qid) === -1; });
+
+  if(!extras.length){
+    return showResultError('Все вопросы финмодели уже отвечены — нечего добавить.');
+  }
+
+  $('result-screen').classList.add('active');
+  var html =
+    '<div class="step-kicker" style="margin-bottom:8px">Финмодель</div>' +
+    '<h2>Дополнительные параметры для расчёта на 36 месяцев</h2>' +
+    '<div class="step-desc">Заполните 1-2 минуты. Можно пропустить — подставим типовое.</div>' +
+    '<form id="fin-form" onsubmit="event.preventDefault(); submitFinmodel();">';
+  extras.forEach(function(q){
+    html += renderQuestionField(q);
+  });
+  html += '<div style="margin-top:18px"><button type="submit" class="btn">Сохранить и пересчитать</button></div>' +
+          '<div style="text-align:center;margin-top:12px"><button type="button" onclick="backToResult()" class="btn-outline" style="background:transparent;color:var(--accent);padding:10px;font-weight:600">Вернуться к результату</button></div>' +
+          '</form>';
+  $('result-screen').innerHTML = html;
+}
+
+function backToResult(){
+  // Просто перерисуем текущий результат если есть.
+  if(window._lastResult){ renderResult(window._lastResult); }
+  else { $('result-screen').innerHTML = ''; }
+}
+
+function collectAnsweredQids(){
+  // Сопоставим существующие QC.* поля с qid'ами из каталога.
+  var map = {
+    U_CITY: QC.city_id, U_NICHE: QC.niche_id, U_CAPITAL: QC.capital,
+    A_FORMAT: QC.format_id, B_FORMAT: QC.format_id, C_FORMAT: QC.format_id,
+    D_FORMAT: QC.format_id, E_FORMAT: QC.format_id, F_FORMAT: QC.format_id,
+    G_FORMAT: QC.format_id, H_FORMAT: QC.format_id, O_FORMAT: QC.format_id,
+    P_FORMAT: QC.format_id,
+    A_LOC: QC.loc_type, B_LOC: QC.loc_type, O_LOC: QC.loc_type, E_LOC: QC.loc_type, H_LOC: QC.loc_type,
+    A_AREA: QC.area_m2, O_AREA: QC.area_m2, D_AREA: QC.area_m2, E_AREA: QC.area_m2,
+    F_AREA: QC.area_m2, G_AREA: QC.area_m2, H_AREA: QC.area_m2,
+    A_STAFF_MODE: QC.staff_mode,
+    P_LICENSE: QC.has_license, G_LICENSE: QC.has_license,
+  };
+  var done = [];
+  Object.keys(map).forEach(function(k){
+    if(map[k] != null && map[k] !== '' && map[k] !== 0) done.push(k);
+  });
+  Object.keys(QC.specific_answers || {}).forEach(function(k){ done.push(k); });
+  return done;
+}
+
+function renderQuestionField(q){
+  var name = q.qid;
+  var label = '<div class="section-label" style="margin-top:18px">'+escapeHtml(q.question_text)+
+              (q.unit ? ' <span style="color:var(--text-3);font-weight:400">('+q.unit+')</span>' : '')+'</div>';
+  if(q.input_type === 'radio' || q.input_type === 'select'){
+    var opts = q.options || [];
+    var radios = '<div class="radio-group">';
+    opts.forEach(function(opt){
+      var safe = String(opt).replace(/'/g,"\\'");
+      radios += '<label class="radio" data-q="'+name+'" data-v="'+safe+'" onclick="setFinAnswer(\''+name+'\',\''+safe+'\',event)">' +
+                '<div class="radio-dot"></div><div>'+escapeHtml(opt)+'</div></label>';
+    });
+    radios += '</div>';
+    return label + radios;
+  }
+  if(q.input_type === 'boolean'){
+    return label + '<div class="radio-group">' +
+      '<label class="radio" onclick="setFinAnswer(\''+name+'\',\'yes\',event)"><div class="radio-dot"></div><div>Да</div></label>' +
+      '<label class="radio" onclick="setFinAnswer(\''+name+'\',\'no\',event)"><div class="radio-dot"></div><div>Нет</div></label>' +
+    '</div>';
+  }
+  if(q.input_type === 'multi_select'){
+    var opts2 = q.options || [];
+    var multi = '<div class="radio-group">';
+    opts2.forEach(function(opt){
+      var safe = String(opt).replace(/'/g,"\\'");
+      multi += '<label class="radio" onclick="toggleFinMulti(\''+name+'\',\''+safe+'\',event)">' +
+               '<div class="radio-dot"></div><div>'+escapeHtml(opt)+'</div></label>';
+    });
+    multi += '</div>';
+    return label + multi;
+  }
+  if(q.input_type === 'number'){
+    return label + '<div class="num-in"><input type="number" inputmode="numeric" min="'+(q.min||0)+'" max="'+(q.max||9999999999)+'" step="'+(q.step||1)+'" placeholder="'+escapeHtml(q.placeholder||'')+'" oninput="setFinAnswer(\''+name+'\',this.value)"><span class="num-in-suffix">'+(q.unit||'')+'</span></div>';
+  }
+  if(q.input_type === 'range'){
+    return label + '<div class="range-wrap"><div class="range-label"><span>значение</span><span class="range-val" id="fr-'+name+'">'+fmt(q.placeholder||q.min||0)+(q.unit?' '+q.unit:'')+'</span></div>' +
+      '<input type="range" min="'+(q.min||0)+'" max="'+(q.max||100)+'" step="'+(q.step||1)+'" value="'+(q.placeholder||q.min||0)+'" oninput="setFinRange(\''+name+'\',this.value,\''+(q.unit||'')+'\')"></div>';
+  }
+  // fallback: number input
+  return label + '<div class="num-in"><input type="text" oninput="setFinAnswer(\''+name+'\',this.value)" placeholder="'+escapeHtml(q.placeholder||'')+'"></div>';
+}
+
+QC.fin_answers = QC.fin_answers || {};
+
+function setFinAnswer(qid, val, evt){
+  QC.fin_answers[qid] = val;
+  if(evt){
+    var labels = document.querySelectorAll('.radio[data-q="'+qid+'"], #fin-form .radio');
+    labels.forEach(function(l){
+      // unselect siblings in same parent radio-group
+    });
+    var target = evt.currentTarget || evt.target.closest('.radio');
+    if(target && target.parentNode){
+      Array.prototype.forEach.call(target.parentNode.children, function(ch){ ch.classList.remove('selected'); });
+      target.classList.add('selected');
+    }
+  }
+}
+function setFinRange(qid, val, unit){
+  QC.fin_answers[qid] = val;
+  var lbl = $('fr-'+qid);
+  if(lbl) lbl.textContent = fmt(val) + (unit?' '+unit:'');
+}
+function toggleFinMulti(qid, val, evt){
+  if(!Array.isArray(QC.fin_answers[qid])) QC.fin_answers[qid] = [];
+  var arr = QC.fin_answers[qid];
+  var i = arr.indexOf(val);
+  if(i === -1) arr.push(val); else arr.splice(i,1);
+  if(evt){
+    var t = evt.currentTarget || evt.target.closest('.radio');
+    if(t) t.classList.toggle('selected', arr.indexOf(val) !== -1);
+  }
+}
+
+function submitFinmodel(){
+  // Сливаем fin_answers в specific_answers и шлём ещё раз /quick-check
+  // (расчёт пока тот же, но user_inputs теперь полные).
+  Object.keys(QC.fin_answers || {}).forEach(function(k){
+    QC.specific_answers[k] = QC.fin_answers[k];
+  });
+  $('result-screen').innerHTML = '';
+  $('result-screen').classList.remove('active');
+  $('loading-screen').classList.add('active');
+  $('loading-screen').querySelector('.loading-title').textContent = 'Пересчитываем с финмодель-параметрами…';
+  submit();
 }
 
 function card(label, val){

@@ -96,6 +96,10 @@ class ZerekDB:
         self.niches_config = self._xl("07_niches.xlsx", "Ниши", 5)
         self.niches_questions = self._xl("07_niches.xlsx", "Специфичные вопросы", 5)
         self.niches_formats_fallback = self._xl("08_niche_formats.xlsx", "Форматы", 5)
+        # Quick Check v2 surveys (catalog + applicability + dependencies)
+        self.surveys_questions = self._xl("09_surveys.xlsx", "Вопросы", 5)
+        self.surveys_applic = self._xl("09_surveys.xlsx", "Применимость", 5)
+        self.surveys_deps = self._xl("09_surveys.xlsx", "Зависимости", 5)
         self.rent = self._xl("11_rent_benchmarks.xlsx", "Калькулятор для движка", 5)
         self.inflation = self._xl("13_macro_dynamics.xlsx", "Инфляция по регионам", 5)
         self.competitors = self._xl("14_competitors.xlsx", "Конкуренты по городам", 5)
@@ -1063,3 +1067,98 @@ def get_niche_config(db, niche_id: str) -> dict:
     }
 
     return config
+
+
+# ───────────────────────────────────────────────────────────────────────────
+# Quick Check v2 — Survey (per-niche question list)
+# ───────────────────────────────────────────────────────────────────────────
+
+def _question_to_dict(row) -> dict:
+    """Превращает строку из листа «Вопросы» в JSON-friendly dict."""
+    opts_raw = str(row.get("options", "") or "").strip()
+    options = [o.strip() for o in opts_raw.split("|")] if opts_raw and opts_raw.lower() != "nan" else []
+    def num(v):
+        try:
+            return float(v) if v is not None and str(v).lower() != "nan" else None
+        except Exception:
+            return None
+    return {
+        "qid":          str(row.get("qid", "")).strip(),
+        "question_text":str(row.get("question_text", "") or "").strip(),
+        "input_type":   str(row.get("input_type", "") or "").strip(),
+        "options":      options,
+        "placeholder":  str(row.get("placeholder", "") or "").strip(),
+        "min":          num(row.get("min")),
+        "max":          num(row.get("max")),
+        "step":         num(row.get("step")),
+        "unit":         str(row.get("unit", "") or "").strip(),
+        "help":         str(row.get("help", "") or "").strip(),
+    }
+
+
+def _dependencies_for(deps_df, qid: str) -> list:
+    """Список зависимостей для qid из листа «Зависимости»."""
+    if deps_df is None or deps_df.empty:
+        return []
+    rows = deps_df[deps_df["qid"].astype(str) == qid]
+    out = []
+    for _, r in rows.iterrows():
+        out.append({
+            "depends_on": str(r.get("depends_on", "") or "").strip(),
+            "condition":  str(r.get("condition", "") or "").strip(),
+            "action":     str(r.get("action", "") or "show").strip(),
+        })
+    return out
+
+
+def get_niche_survey(db, niche_id: str, tier: str = "express") -> dict:
+    """Возвращает упорядоченный список вопросов для указанной ниши и tier'а.
+
+    Структура ответа:
+      {
+        niche_id: "BARBER",
+        tier: "express",
+        questions: [
+          {qid, question_text, input_type, options, min, max, step, unit, help,
+           required, order, depends_on: [{depends_on, condition, action}, ...]},
+          ...
+        ]
+      }
+    """
+    tier = (tier or "express").lower()
+    if tier not in ("express", "finmodel"):
+        tier = "express"
+
+    catalog = getattr(db, "surveys_questions", pd.DataFrame())
+    applic  = getattr(db, "surveys_applic", pd.DataFrame())
+    deps    = getattr(db, "surveys_deps", pd.DataFrame())
+
+    out = {"niche_id": niche_id, "tier": tier, "questions": []}
+
+    if catalog is None or catalog.empty or applic is None or applic.empty:
+        return out
+
+    # 1. Берём строки applicability для (niche, tier) или wildcard niche='*'
+    mask = ((applic["niche_id"].astype(str) == niche_id) | (applic["niche_id"].astype(str) == "*")) \
+           & (applic["tier"].astype(str) == tier)
+    rows = applic[mask].copy()
+    if rows.empty:
+        return out
+
+    # 2. Сортируем по order
+    rows = rows.sort_values("order")
+
+    # 3. Для каждой строки — подтягиваем из каталога метаданные вопроса
+    catalog_idx = {str(r["qid"]).strip(): r for _, r in catalog.iterrows()}
+    for _, ar in rows.iterrows():
+        qid = str(ar.get("qid", "")).strip()
+        cat_row = catalog_idx.get(qid)
+        if cat_row is None:
+            continue
+        q = _question_to_dict(cat_row)
+        q["order"]      = int(ar.get("order") or 0)
+        q["required"]   = str(ar.get("required", "yes") or "yes").strip()
+        q["depends_on"] = _dependencies_for(deps, qid)
+        out["questions"].append(q)
+
+    return out
