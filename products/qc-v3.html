@@ -143,6 +143,47 @@ h2{font-size:22px;margin-bottom:6px}
 .b1-footer{text-align:center;padding:14px 0;color:var(--text-3);font-size:11px;letter-spacing:0.04em}
 .b1-footer strong{color:var(--text-2)}
 
+/* ─── BLOCK 2 — ПАСПОРТ БИЗНЕСА ─── */
+.b2-section{padding:16px;background:var(--surface);border-radius:var(--radius-lg);margin-bottom:12px}
+.b2-title{font-size:11px;font-weight:700;letter-spacing:0.12em;color:var(--text-3);text-transform:uppercase;margin-bottom:14px}
+
+.b2-niche{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}
+.b2-niche-icon{font-size:34px;line-height:1;width:42px;flex-shrink:0;text-align:center}
+.b2-niche-title{font-size:17px;font-weight:700;letter-spacing:-0.01em;line-height:1.2}
+.b2-niche-cls{font-size:12px;color:var(--text-3);margin-top:4px;text-transform:uppercase;letter-spacing:0.08em}
+
+.b2-meta{display:grid;grid-template-columns:1fr;gap:6px;padding:12px 0;border-top:0.5px solid var(--surface-2)}
+.b2-meta-row{display:flex;gap:10px;font-size:14px;color:var(--text-2)}
+.b2-meta-ic{flex-shrink:0}
+.b2-meta-val{color:var(--text)}
+
+.b2-staff{margin-top:10px}
+.b2-staff-title{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px}
+.b2-staff-row{display:flex;align-items:center;gap:12px;padding:8px 0;font-size:14px}
+.b2-staff-icons{flex-shrink:0;font-size:14px;letter-spacing:2px;min-width:130px}
+.b2-staff-label{color:var(--text-2)}
+.b2-staff-label strong{color:var(--text)}
+
+.b2-role{background:linear-gradient(135deg,rgba(124,108,255,0.18),rgba(124,108,255,0.08));border:1px solid rgba(124,108,255,0.35);border-radius:var(--radius);padding:12px 14px;margin-top:14px;display:flex;gap:10px;align-items:flex-start}
+.b2-role-ic{font-size:18px}
+.b2-role-body{flex:1}
+.b2-role-title{font-weight:700;font-size:14px;color:var(--accent);margin-bottom:3px}
+.b2-role-desc{font-size:13px;color:var(--text-2)}
+
+.b2-fin-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:14px;border-bottom:0.5px solid var(--surface-2)}
+.b2-fin-row:last-child{border-bottom:none}
+.b2-fin-label{color:var(--text-2)}
+.b2-fin-val{font-family:var(--mono);font-weight:700;color:var(--text)}
+.b2-fin-val.surplus{color:var(--green)}
+.b2-fin-val.deficit{color:var(--yellow)}
+.b2-fin-val.critical{color:var(--red)}
+
+.b2-critical-note{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.35);border-radius:var(--radius-sm);padding:10px 12px;margin-top:10px;font-size:13px;color:#fca5a5;line-height:1.5}
+.b2-match-note{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:var(--radius-sm);padding:10px 12px;margin-top:10px;font-size:13px;color:#86efac;line-height:1.5}
+
+.b2-confirm{text-align:center;padding:14px 16px;background:var(--surface-2);border-radius:var(--radius);margin-bottom:12px;font-size:13px;color:var(--text-2);line-height:1.55}
+.b2-confirm strong{color:var(--text)}
+
 .search-in{background:var(--surface);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px}
 .search-in input{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:15px}
 </style>
@@ -154,7 +195,7 @@ h2{font-size:22px;margin-bottom:6px}
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
     Назад
   </button>
-  <div class="brand"><strong>ZEREK</strong> · Экспресс-оценка · <span style="color:var(--accent);font-size:10px;font-weight:700">v3.0</span></div>
+  <div class="brand"><strong>ZEREK</strong> · Экспресс-оценка · <span style="color:var(--accent);font-size:10px;font-weight:700">v3.1</span></div>
   <div style="width:60px"></div>
 </div>
 
@@ -683,10 +724,13 @@ function renderResult(result){
   $('cta-wrap').style.display = 'none';
   if(!result){ return showResultError('Пустой ответ от API.'); }
 
-  // Есть Block 1 — рендерим по спецификации. Fallback на старый KPI-рендер, если его нет.
+  // Есть Block 1 — рендерим по спецификации. Block 2 идёт следом.
   var b1 = result.block1;
+  var b2 = result.block2;
   if(b1){
-    $('result-screen').innerHTML = renderBlock1Html(b1);
+    var html = renderBlock1Html(b1);
+    if(b2) html += renderBlock2Html(b2);
+    $('result-screen').innerHTML = html;
     return;
   }
   // fallback
@@ -764,6 +808,123 @@ function renderBlock1Html(b1){
 function metricCard(label, val){
   return '<div class="b1-metric"><div class="b1-metric-label">'+escapeHtml(label)+'</div>' +
          '<div class="b1-metric-val">'+escapeHtml(val || '—')+'</div></div>';
+}
+
+/* ─── Block 2 — Паспорт бизнеса ─── */
+function renderBlock2Html(b2){
+  if(!b2) return '';
+
+  var nicheBlock = '<div class="b2-niche">' +
+    '<div class="b2-niche-icon">'+escapeHtml(b2.niche_icon||'📋')+'</div>' +
+    '<div><div class="b2-niche-title">'+escapeHtml((b2.format_name_rus||'').toUpperCase())+'</div>' +
+      '<div class="b2-niche-cls">'+escapeHtml(b2.class_level_rus||'')+'-класс</div>' +
+    '</div></div>';
+
+  var metaRows = '<div class="b2-meta">' +
+    '<div class="b2-meta-row"><span class="b2-meta-ic">📍</span><span class="b2-meta-val">'+escapeHtml(b2.location_rus||'—')+'</span></div>';
+  if(b2.area_visible && b2.area_m2 > 0){
+    metaRows += '<div class="b2-meta-row"><span class="b2-meta-ic">📐</span><span class="b2-meta-val">'+b2.area_m2+' м²</span></div>';
+  }
+  metaRows += '</div>';
+
+  // Секция штата
+  var staffBlock;
+  if(b2.is_solo){
+    staffBlock = '<div class="b2-staff">' +
+      '<div class="b2-staff-title">Команда</div>' +
+      '<div class="b2-role"><div class="b2-role-ic">⭐</div><div class="b2-role-body">' +
+        '<div class="b2-role-title">Вы работаете один</div>' +
+        '<div class="b2-role-desc">Без сотрудников. Вся выручка = ваш доход минус расходы.</div>' +
+      '</div></div>' +
+    '</div>';
+  } else {
+    var rows = '';
+    (b2.typical_staff.masters || []).forEach(function(s){
+      rows += staffRowHtml(s.count, s.role);
+    });
+    (b2.typical_staff.assistants || []).forEach(function(s){
+      rows += staffRowHtml(s.count, s.role);
+    });
+    staffBlock = '<div class="b2-staff">' +
+      '<div class="b2-staff-title">Структура команды</div>' +
+      rows +
+      '<div class="b2-role">' +
+        '<div class="b2-role-ic">⭐</div>' +
+        '<div class="b2-role-body">' +
+          '<div class="b2-role-title">Ваша роль: '+escapeHtml((b2.entrepreneur_role||{}).label_rus||'—')+'</div>' +
+          '<div class="b2-role-desc">'+escapeHtml((b2.entrepreneur_role||{}).description_rus||'')+'</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  // Секция финансов
+  var fin = b2.finance || {};
+  var status = fin.capital_diff_status;
+  var diffVal = fin.capital_diff;
+  var diffLabel = '', diffClass = '';
+  if(status === 'surplus'){
+    diffLabel = '+' + fmt(diffVal) + ' ₸ профицит';
+    diffClass = 'surplus';
+  } else if(status === 'deficit' || status === 'critical_deficit'){
+    diffLabel = fmt(Math.abs(diffVal)) + ' ₸ дефицит';
+    diffClass = status === 'critical_deficit' ? 'critical' : 'deficit';
+  } else if(status === 'match'){
+    diffLabel = 'точно в бюджете';
+    diffClass = 'surplus';
+  }
+
+  var finRows = '<div class="b2-fin">';
+  if(fin.capital_own != null){
+    finRows += '<div class="b2-fin-row"><span class="b2-fin-label">Ваш капитал</span>' +
+               '<span class="b2-fin-val">'+fmt(fin.capital_own)+' ₸</span></div>';
+  } else {
+    finRows += '<div class="b2-fin-row"><span class="b2-fin-label">Ваш капитал</span>' +
+               '<span class="b2-fin-val" style="color:var(--text-3)">не указан</span></div>';
+  }
+  if(fin.capex_needed){
+    finRows += '<div class="b2-fin-row"><span class="b2-fin-label">Нужно для формата</span>' +
+               '<span class="b2-fin-val">'+fmt(fin.capex_needed)+' ₸</span></div>';
+  }
+  if(diffLabel){
+    finRows += '<div class="b2-fin-row"><span class="b2-fin-label">Разница</span>' +
+               '<span class="b2-fin-val '+diffClass+'">'+escapeHtml(diffLabel)+'</span></div>';
+  }
+  if(b2.payroll_type_rus && b2.payroll_type_rus !== '—'){
+    finRows += '<div class="b2-fin-row"><span class="b2-fin-label">Оплата сотрудникам</span>' +
+               '<span class="b2-fin-val" style="font-family:var(--sans);font-weight:600">'+escapeHtml(b2.payroll_type_rus)+'</span></div>';
+  }
+  if(b2.experience_rus && b2.experience_rus !== '—'){
+    finRows += '<div class="b2-fin-row"><span class="b2-fin-label">Опыт в нише</span>' +
+               '<span class="b2-fin-val" style="font-family:var(--sans);font-weight:600">'+escapeHtml(b2.experience_rus)+'</span></div>';
+  }
+  finRows += '</div>';
+
+  // Критические плашки
+  if(status === 'critical_deficit'){
+    finRows += '<div class="b2-critical-note"><strong>⚠️ Критичный дефицит капитала.</strong> Рассмотрите альтернативный формат или дополнительное финансирование.</div>';
+  } else if(fin.capital_own == null){
+    finRows += '<div class="b2-match-note">Капитал не указан — оценка рассчитана по бенчмарку формата.</div>';
+  }
+
+  var confirm = '<div class="b2-confirm">📋 Всё верно? Если параметр выше ошибочный — пройдите оценку заново, это сэкономит время.</div>';
+
+  return '<div class="b2-section">' +
+      '<div class="b2-title">Паспорт вашего бизнеса</div>' +
+      nicheBlock + metaRows +
+    '</div>' +
+    '<div class="b2-section">' + staffBlock + '</div>' +
+    '<div class="b2-section"><div class="b2-title">Финансовые параметры</div>' + finRows + '</div>' +
+    confirm;
+}
+
+function staffRowHtml(count, role){
+  var icons = Array(Math.min(count, 8)).fill('👤').join('');
+  if(count > 8) icons = '👤👤👤 ×'+count;
+  return '<div class="b2-staff-row">' +
+    '<div class="b2-staff-icons">'+icons+'</div>' +
+    '<div class="b2-staff-label"><strong>'+count+'</strong> '+escapeHtml(role)+'</div>' +
+  '</div>';
 }
 function showResultError(msg){
   $('result-screen').classList.add('active');

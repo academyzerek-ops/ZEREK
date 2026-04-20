@@ -15,7 +15,7 @@ sys.path.insert(0, BASE_DIR)
 from engine import (ZerekDB, run_quick_check_v3,
                     get_niche_config, get_niche_survey,
                     get_formats_v2, get_quickcheck_survey, get_entrepreneur_roles,
-                    compute_block1_verdict)
+                    compute_block1_verdict, compute_block2_passport)
 from report import render_report_v4
 
 def clean(obj):
@@ -167,6 +167,16 @@ def quick_check(req: QCReq):
         except Exception as e:
             import traceback; traceback.print_exc()
             # не блокируем ответ если блок 1 упал
+            pass
+        # Block 2 — Паспорт бизнеса
+        try:
+            block2_inputs = dict(req.specific_answers or {})
+            block2_inputs['loc_type'] = req.loc_type
+            block2 = compute_block2_passport(db, result, block2_inputs)
+            if isinstance(report, dict):
+                report['block2'] = block2
+        except Exception as e:
+            import traceback; traceback.print_exc()
             pass
         # Вставим v1-адаптивные поля если пришли
         if any(v is not None for v in adaptive.values()):
