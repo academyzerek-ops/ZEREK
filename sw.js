@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zerek-v21-real-cases';
+const CACHE_NAME = 'zerek-v23-block1-verdict';
 
 self.addEventListener('install', function(e) {
   self.skipWaiting();
