@@ -133,9 +133,8 @@ h2{font-size:22px;margin-bottom:6px}
 </div>
 <div id="result-screen"></div>
 
-<div class="cta-wrap" id="cta-wrap">
-  <button class="btn disabled" id="cta-btn" onclick="nextStep()">Далее</button>
-</div>
+<!-- CTA-кнопка убрана: переход по клику на опцию. Для шагов с вводом (capital, confirm) рендерится inline-кнопка. -->
+<div class="cta-wrap" id="cta-wrap" style="display:none"></div>
 
 <script>
 var API = 'https://web-production-921a5.up.railway.app';
@@ -200,7 +199,11 @@ function computeStepPlan(){
   plan.push('city');
   if(!QC.city_id) return plan;
   var ft = QC.format_type;
-  if(!['SOLO','HOME','MOBILE'].includes(ft)){
+  // Локация показывается только когда юзер реально выбирает:
+  //   - KIOSK: выбор из 4 вариантов
+  //   - STANDARD: выбор из allowed_locations
+  // Для SOLO/HOME/MOBILE/HIGHWAY/PRODUCTION — loc_type уже проставлен из формата, шаг скрыт.
+  if(ft === 'KIOSK' || ft === 'STANDARD'){
     plan.push('location');
   }
   plan.push('experience');
@@ -224,11 +227,18 @@ function renderStep(){
   $('wizard-screen').style.display = 'block';
   $('loading-screen').classList.remove('active');
   $('result-screen').classList.remove('active');
-  $('cta-wrap').style.display = '';
+  $('cta-wrap').style.display = 'none';  // CTA по умолчанию скрыт; рендереры сами добавляют inline-кнопку когда нужна
   $('back-btn').disabled = stepIndex === 0;
   var fn = RENDERERS[name] || function(root){ root.innerHTML = '<div class="result-err">Шаг «'+name+'» не реализован.</div>'; };
   fn($('wizard-screen'));
-  updateCta();
+}
+
+/** advance() — переходит к следующему шагу (рассчитанному по текущему QC). */
+function advance(){
+  StepPlan = computeStepPlan();
+  stepIndex += 1;
+  if(stepIndex >= StepPlan.length) stepIndex = StepPlan.length - 1;
+  renderStep();
 }
 
 function updateProgress(){
@@ -239,28 +249,12 @@ function updateProgress(){
   $('progress-total').textContent = 'из ' + total;
 }
 function goBack(){ if(stepIndex > 0){ stepIndex -= 1; renderStep(); } }
-function nextStep(){
-  if($('cta-btn').classList.contains('disabled')) return;
-  var curr = StepPlan[stepIndex];
-  if(curr === 'confirm'){ submit(); return; }
-  if(curr === 'format'){
-    loadNicheSurvey(function(){
-      StepPlan = computeStepPlan();
-      stepIndex += 1;
-      renderStep();
-    });
-    return;
-  }
-  stepIndex += 1;
-  StepPlan = computeStepPlan();
-  renderStep();
-}
 
 function loadNicheSurvey(cb){
-  $('cta-btn').classList.add('disabled');
-  $('cta-btn').textContent = 'Загружаем параметры…';
+  // Показываем мини-лоадер поверх wizard
+  $('wizard-screen').innerHTML = '<div class="step"><div class="spinner" style="margin:40px auto"></div>' +
+    '<div style="text-align:center;color:var(--text-2)">Загружаем параметры формата…</div></div>';
   apiGet('/quickcheck-survey/' + QC.niche_id + '?format_id=' + encodeURIComponent(QC.format_id), function(err, data){
-    $('cta-btn').textContent = 'Далее';
     if(err){ NicheSurvey = null; return showError('Не удалось загрузить: ' + err.message); }
     NicheSurvey = data;
     cb();
@@ -270,26 +264,6 @@ function loadNicheSurvey(cb){
 function showError(msg){
   $('wizard-screen').innerHTML = '<div class="result-err">'+escapeHtml(msg)+'</div>';
   $('cta-wrap').style.display = 'none';
-}
-function updateCta(){
-  var ok = isStepValid(StepPlan[stepIndex]);
-  var btn = $('cta-btn');
-  btn.classList.toggle('disabled', !ok);
-  btn.textContent = (StepPlan[stepIndex] === 'confirm') ? 'Запустить расчёт' : 'Далее';
-}
-function isStepValid(name){
-  switch(name){
-    case 'niche':      return !!QC.niche_id;
-    case 'format':     return !!QC.format_id;
-    case 'city':       return !!QC.city_id;
-    case 'location':   return !needsLocationChoice() || (!!QC.loc_type && (!needsLine() || !!QC.location_line));
-    case 'experience': return !!QC.experience;
-    case 'payroll':    return !!QC.payroll_type;
-    case 'role':       return !!QC.entrepreneur_role;
-    case 'capital':    return true;
-    case 'confirm':    return true;
-  }
-  return false;
 }
 function needsLocationChoice(){
   var ft = QC.format_type;
@@ -346,7 +320,7 @@ function selectNiche(nid){
   QC.format_id = ''; QC.format_type = ''; QC.class_level = '';
   QC.loc_type = ''; QC.location_line = '';
   NicheSurvey = null;
-  renderStep(); updateCta();
+  advance();
 }
 function filterNiches(q){
   q = (q||'').trim().toLowerCase();
@@ -417,7 +391,8 @@ function selectFormat(fid){
   else if(f.format_type === 'MOBILE') QC.loc_type = 'mobile';
   else QC.loc_type = '';
   QC.location_line = '';
-  renderStep(); updateCta();
+  // После выбора формата — подгружаем survey (для entrepreneur_roles), затем advance.
+  loadNicheSurvey(function(){ advance(); });
 }
 
 RENDERERS.city = function(root){
@@ -441,27 +416,32 @@ RENDERERS.city = function(root){
   '</div></div></div>';
   root.innerHTML = html;
 };
-function selectCity(cid, cname){ QC.city_id = cid; QC.city_name = cname; renderStep(); updateCta(); }
+function selectCity(cid, cname){ QC.city_id = cid; QC.city_name = cname; advance(); }
 
 RENDERERS.location = function(root){
+  // В StepPlan location есть только для KIOSK/STANDARD. Остальные (HIGHWAY/PRODUCTION/SOLO/HOME/MOBILE)
+  // уже проставлены из формата и этот шаг пропущен.
   var fmt = NicheSurvey && NicheSurvey.selected_format;
   var ft = QC.format_type;
   var locsMeta = (Configs.locations && Configs.locations.locations) || {};
 
-  if(ft === 'HIGHWAY'){
-    root.innerHTML = '<div class="step"><div class="step-kicker">Расположение</div>' +
-      '<h2>Где будет точка?</h2>' +
-      '<div class="auto-badge"><div class="auto-badge-ic">🛣️</div>' +
-      '<div class="auto-badge-text"><strong>Трасса / промзона</strong><br>Для этого формата локация очевидна — без выбора.</div></div></div>';
-    QC.loc_type = 'highway';
-    return;
-  }
-  if(ft === 'PRODUCTION'){
-    root.innerHTML = '<div class="step"><div class="step-kicker">Расположение</div>' +
-      '<h2>Где будет точка?</h2>' +
-      '<div class="auto-badge"><div class="auto-badge-ic">🏭</div>' +
-      '<div class="auto-badge-text"><strong>Промзона / своё здание</strong><br>Производство размещается в промзоне.</div></div></div>';
-    QC.loc_type = 'industrial';
+  // Если уже выбрана локация и нужна линия — рендерим режим выбора линии
+  if(QC.loc_type && needsLine() && !QC.location_line){
+    var lines = (Configs.locations.line_modifier && Configs.locations.line_modifier.lines) || {};
+    var mSel = locsMeta[QC.loc_type] || {};
+    var htmlL = '<div class="step">' +
+      '<div class="step-kicker">Линия</div>' +
+      '<h2>Какая линия у помещения?</h2>' +
+      '<div class="step-desc">Локация: '+escapeHtml(mSel.label_rus||QC.loc_type)+'. 2-я линия дешевле, но с меньшим трафиком.</div>' +
+      '<div class="radio-group">';
+    ['line_1','line_2'].forEach(function(lid){
+      var lm = lines[lid] || {};
+      htmlL += '<label class="radio" onclick="selectLine(\''+lid+'\')">' +
+        '<div class="radio-dot"></div><div><div class="radio-label">'+escapeHtml(lm.label_rus||lid)+'</div></div>' +
+      '</label>';
+    });
+    htmlL += '</div></div>';
+    root.innerHTML = htmlL;
     return;
   }
 
@@ -471,7 +451,6 @@ RENDERERS.location = function(root){
   } else {
     opts = (fmt && fmt.allowed_locations) || [];
   }
-
   var html = '<div class="step">' +
     '<div class="step-kicker">Расположение</div>' +
     '<h2>Где будет точка?</h2>' +
@@ -479,41 +458,31 @@ RENDERERS.location = function(root){
     '<div class="options">';
   opts.forEach(function(loc){
     var m = locsMeta[loc] || {label_rus: loc};
-    var sel = (QC.loc_type === loc) ? ' selected' : '';
-    html += '<div class="opt'+sel+'" onclick="selectLoc(\''+loc+'\')">' +
+    html += '<div class="opt" onclick="selectLoc(\''+loc+'\')">' +
       '<div class="opt-icon">📍</div>' +
       '<div><div class="opt-label">'+escapeHtml(m.label_rus)+'</div>' +
       '<div class="opt-sub">'+escapeHtml(m.description_rus||'')+'</div></div>' +
     '</div>';
   });
-  html += '</div>';
-
-  if(QC.loc_type && needsLine()){
-    var lines = (Configs.locations.line_modifier && Configs.locations.line_modifier.lines) || {};
-    html += '<div class="section-label">Какая линия?</div><div class="radio-group">';
-    ['line_1','line_2'].forEach(function(lid){
-      var lm = lines[lid] || {};
-      var sel = (QC.location_line === lid) ? ' selected' : '';
-      html += '<label class="radio'+sel+'" onclick="selectLine(\''+lid+'\')">' +
-        '<div class="radio-dot"></div><div><div class="radio-label">'+escapeHtml(lm.label_rus||lid)+'</div></div>' +
-      '</label>';
-    });
-    html += '</div>';
-  } else if(QC.loc_type && QC.class_level === 'премиум'){
-    html += '<div class="step-note">Премиум-формат → линия автоматически 1-я.</div>';
-    QC.location_line = 'line_1';
-  }
-
-  html += '</div>';
+  html += '</div></div>';
   root.innerHTML = html;
 };
 function selectLoc(v){
   QC.loc_type = v;
-  if(QC.class_level === 'премиум') QC.location_line = 'line_1';
-  else if(!needsLine()) QC.location_line = '';
-  renderStep(); updateCta();
+  if(QC.class_level === 'премиум'){
+    QC.location_line = 'line_1';
+    advance();
+    return;
+  }
+  if(!needsLine()){
+    QC.location_line = '';
+    advance();
+    return;
+  }
+  // Нужна линия — перерисуем шаг с выбором линии
+  renderStep();
 }
-function selectLine(v){ QC.location_line = v; renderStep(); updateCta(); }
+function selectLine(v){ QC.location_line = v; advance(); }
 
 RENDERERS.experience = function(root){
   var opts = [
@@ -536,7 +505,7 @@ RENDERERS.experience = function(root){
   html += '</div></div>';
   root.innerHTML = html;
 };
-function selectExp(v){ QC.experience = v; renderStep(); updateCta(); }
+function selectExp(v){ QC.experience = v; advance(); }
 
 RENDERERS.payroll = function(root){
   var qc_q = ((Configs.questionnaire && Configs.questionnaire.questionnaire &&
@@ -568,7 +537,7 @@ RENDERERS.payroll = function(root){
   html += '</div></div>';
   root.innerHTML = html;
 };
-function selectPay(v){ QC.payroll_type = v; renderStep(); updateCta(); }
+function selectPay(v){ QC.payroll_type = v; advance(); }
 
 RENDERERS.role = function(root){
   var roles = (NicheSurvey && NicheSurvey.entrepreneur_roles) || [];
@@ -587,7 +556,7 @@ RENDERERS.role = function(root){
   html += '</div></div>';
   root.innerHTML = html;
 };
-function selectRole(v){ QC.entrepreneur_role = v; renderStep(); updateCta(); }
+function selectRole(v){ QC.entrepreneur_role = v; advance(); }
 
 RENDERERS.capital = function(root){
   var html = '<div class="step">' +
@@ -598,13 +567,14 @@ RENDERERS.capital = function(root){
     '<div class="num-in"><input type="number" inputmode="numeric" min="0" step="100000" placeholder="Необязательно" value="'+(QC.capital_own||'')+'" oninput="setCapOwn(this.value)"><span class="num-in-suffix">₸</span></div>' +
     '<div class="section-label">Сколько, по-вашему, нужно?</div>' +
     '<div class="num-in"><input type="number" inputmode="numeric" min="0" step="100000" placeholder="Необязательно" value="'+(QC.capital_needed||'')+'" oninput="setCapNeed(this.value)"><span class="num-in-suffix">₸</span></div>' +
+    '<div style="margin-top:14px"><button class="btn" onclick="advance()">Продолжить</button></div>' +
     '<div class="skip-btn" onclick="skipCapital()">Не знаю — рассчитайте типовое</div>' +
   '</div>';
   root.innerHTML = html;
 };
-function setCapOwn(v){ QC.capital_own = parseInt(v,10) || null; updateCta(); }
-function setCapNeed(v){ QC.capital_needed = parseInt(v,10) || null; updateCta(); }
-function skipCapital(){ QC.capital_own = null; QC.capital_needed = null; nextStep(); }
+function setCapOwn(v){ QC.capital_own = parseInt(v,10) || null; }
+function setCapNeed(v){ QC.capital_needed = parseInt(v,10) || null; }
+function skipCapital(){ QC.capital_own = null; QC.capital_needed = null; advance(); }
 
 RENDERERS.confirm = function(root){
   var locsMeta = (Configs.locations && Configs.locations.locations) || {};
@@ -634,7 +604,9 @@ RENDERERS.confirm = function(root){
     '<div class="step-desc">После запуска получите 3 сценария и топ-5 рисков.</div>' +
     '<table class="confirm-table">';
   rows.forEach(function(r){ html += '<tr><td>'+escapeHtml(r[0])+'</td><td>'+escapeHtml(r[1]||'—')+'</td></tr>'; });
-  html += '</table></div>';
+  html += '</table>' +
+    '<div style="margin-top:18px"><button class="btn" onclick="submit()">Запустить расчёт</button></div>' +
+  '</div>';
   root.innerHTML = html;
 };
 
