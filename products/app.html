@@ -3020,10 +3020,10 @@ var CITY_ICONS = {
 };
 
 function openQuickCheckNew() {
-  // Redirect to Quick Check v2 (адаптивная анкета по нише).
-  // Cache-buster query param forces Telegram WebView to load fresh after each deploy.
+  // Quick Check v3 — адаптивная анкета + Block 1 вердикт.
+  // Новое имя файла → новый URL → гарантированно свежая версия без кеша WebView.
   var v = 'v=' + Date.now();
-  window.location.href = 'quick-check-v2.html?' + v;
+  window.location.href = 'qc-v3.html?' + v;
 }
 
 function startQuickCheck() {

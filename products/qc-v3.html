@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0F0F0F">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<title>ZEREK — Экспресс-оценка</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0F0F0F;--surface:#1C1C1E;--surface-2:#2C2C2E;--surface-3:#3A3A3C;
+  --text:#FFFFFF;--text-2:#A0A0A5;--text-3:#6C6C70;
+  --accent:#7C6CFF;--accent-dim:rgba(124,108,255,0.15);
+  --green:#22c55e;--yellow:#eab308;--red:#ef4444;
+  --sans:-apple-system,BlinkMacSystemFont,"Inter","Roboto","Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --radius:16px;--radius-sm:10px;--radius-lg:20px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;overflow-x:hidden;max-width:100vw}
+body{padding:0 16px 40px;padding-bottom:max(40px,env(safe-area-inset-bottom,0))}
+button{font-family:inherit;border:none;background:none;color:inherit;cursor:pointer;padding:0}
+input,select{font-family:inherit;color:inherit}
+h1,h2,h3{margin:0;font-weight:700;letter-spacing:-0.02em}
+h2{font-size:22px;margin-bottom:6px}
+
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;position:sticky;top:0;background:linear-gradient(180deg,var(--bg) 85%,transparent);z-index:10}
+.back-btn{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:600;color:var(--accent);padding:6px 4px}
+.back-btn[disabled]{color:var(--text-3);cursor:default}
+.brand{font-size:13px;font-weight:700;letter-spacing:0.02em;color:var(--text-2);text-transform:uppercase}
+.brand strong{color:var(--text)}
+
+.progress-bar{height:4px;background:var(--surface-2);border-radius:2px;overflow:hidden;margin-bottom:6px}
+.progress-fill{height:100%;background:var(--accent);width:calc(var(--p,0) * 100%);transition:width 0.25s ease}
+.progress-text{display:flex;justify-content:space-between;font-size:12px;color:var(--text-3);font-weight:500;margin-bottom:20px}
+
+.step{animation:fadeUp 0.2s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.step-kicker{font-size:11px;font-weight:700;letter-spacing:0.12em;color:var(--accent);text-transform:uppercase;margin-bottom:8px}
+.step-desc{font-size:14px;color:var(--text-2);margin:4px 0 18px}
+.step-note{background:var(--accent-dim);border:1px solid rgba(124,108,255,0.3);color:var(--text);padding:12px 14px;border-radius:var(--radius-sm);font-size:13px;line-height:1.5;margin-bottom:14px}
+
+.options{display:flex;flex-direction:column;gap:8px;padding-bottom:20px}
+.opt{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface);border:1.5px solid transparent;border-radius:var(--radius);cursor:pointer;min-height:56px}
+.opt.selected{border-color:var(--accent);background:var(--accent-dim)}
+.opt-icon{font-size:22px;width:32px;flex-shrink:0;text-align:center}
+.opt-label{font-size:15px;font-weight:600}
+.opt-sub{font-size:12px;color:var(--text-3);margin-top:2px;line-height:1.4}
+.opt-badge{font-size:10px;color:var(--accent);background:var(--accent-dim);padding:2px 8px;border-radius:10px;display:inline-block;margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em}
+
+.category{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);padding:18px 0 8px;border-bottom:0.5px solid var(--surface-2);margin-bottom:8px}
+
+.radio-group{display:flex;flex-direction:column;gap:6px;padding-bottom:8px}
+.radio{display:flex;align-items:center;gap:10px;padding:14px;background:var(--surface);border:1.5px solid transparent;border-radius:var(--radius-sm);cursor:pointer;font-size:14px}
+.radio.selected{border-color:var(--accent);background:var(--accent-dim)}
+.radio-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--surface-3);flex-shrink:0}
+.radio.selected .radio-dot{border-color:var(--accent);background:radial-gradient(var(--accent) 0 4px,transparent 5px)}
+.radio-label{font-weight:600}
+.radio-sub{font-size:12px;color:var(--text-3);margin-top:3px}
+
+.num-in{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--surface);border-radius:var(--radius);margin-bottom:8px}
+.num-in input{flex:1;background:transparent;border:none;outline:none;font-family:var(--mono);font-weight:700;font-size:18px;color:var(--text);width:100%}
+.num-in-suffix{font-size:13px;color:var(--text-3);font-weight:600}
+
+.section-label{font-size:13px;font-weight:600;margin:18px 0 8px;color:var(--text-2)}
+
+.auto-badge{background:var(--surface-2);border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.auto-badge-ic{font-size:28px}
+.auto-badge-text{font-size:14px;color:var(--text-2);line-height:1.4}
+.auto-badge-text strong{color:var(--text)}
+
+.skip-btn{display:block;width:100%;padding:12px;text-align:center;background:var(--surface-2);border-radius:var(--radius);color:var(--accent);font-size:14px;font-weight:600;margin-top:8px;cursor:pointer}
+
+.confirm-table{width:100%;border-collapse:collapse;background:var(--surface);border-radius:var(--radius);overflow:hidden;margin-bottom:6px}
+.confirm-table td{padding:12px 16px;font-size:14px;border-bottom:1px solid var(--surface-2)}
+.confirm-table tr:last-child td{border-bottom:none}
+.confirm-table td:first-child{color:var(--text-2);width:45%}
+.confirm-table td:last-child{text-align:right;font-weight:600}
+
+.cta-wrap{position:sticky;bottom:0;padding:14px 0 16px;padding-bottom:max(16px,env(safe-area-inset-bottom,0));background:linear-gradient(0deg,var(--bg) 80%,transparent);margin-top:10px}
+.btn{width:100%;padding:15px 20px;background:var(--accent);color:#fff;font-size:16px;font-weight:700;border-radius:100px}
+.btn.disabled{background:var(--surface-2);color:var(--text-3)}
+
+#loading-screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;padding:40px 20px}
+#loading-screen.active{display:flex}
+.spinner{width:48px;height:48px;border:3px solid var(--surface-2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.9s linear infinite;margin-bottom:24px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-title{font-size:18px;font-weight:700;margin-bottom:6px}
+.loading-sub{font-size:13px;color:var(--text-2)}
+
+#result-screen{display:none}
+#result-screen.active{display:block}
+.result-err{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#fca5a5;padding:14px;border-radius:var(--radius);font-size:13px;margin-bottom:12px}
+
+/* ─── BLOCK 1 — ВЕРДИКТ ─── */
+.b1{padding-bottom:20px}
+.b1-section{padding:18px 16px;background:var(--surface);border-radius:var(--radius-lg);margin-bottom:12px}
+.b1-header{font-size:11px;font-weight:700;letter-spacing:0.12em;color:var(--text-3);text-transform:uppercase;margin-bottom:14px;text-align:center}
+
+/* светофор */
+.b1-traffic{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:18px}
+.b1-light{width:28px;height:28px;border-radius:50%;background:var(--surface-2);position:relative;transition:all 0.4s}
+.b1-light.green.active{background:var(--green);box-shadow:0 0 20px rgba(34,197,94,0.5)}
+.b1-light.yellow.active{background:var(--yellow);box-shadow:0 0 20px rgba(234,179,8,0.5)}
+.b1-light.red.active{background:var(--red);box-shadow:0 0 20px rgba(239,68,68,0.5)}
+.b1-connector{height:2px;width:24px;background:var(--surface-3);opacity:0.4}
+
+.b1-verdict-label{display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;font-weight:700;margin-bottom:14px}
+.b1-verdict-label .b1-dot{width:14px;height:14px;border-radius:50%}
+.b1-verdict-label.green{color:var(--green)}
+.b1-verdict-label.green .b1-dot{background:var(--green)}
+.b1-verdict-label.yellow{color:var(--yellow)}
+.b1-verdict-label.yellow .b1-dot{background:var(--yellow)}
+.b1-verdict-label.red{color:var(--red)}
+.b1-verdict-label.red .b1-dot{background:var(--red)}
+
+.b1-statement{font-size:15px;line-height:1.55;color:var(--text);text-align:center;font-weight:500;padding:0 6px}
+
+/* 4 главные цифры */
+.b1-metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.b1-metric{background:var(--bg);border-radius:var(--radius);padding:14px;text-align:center}
+.b1-metric-label{font-size:10px;font-weight:700;letter-spacing:0.1em;color:var(--text-3);text-transform:uppercase;margin-bottom:6px}
+.b1-metric-val{font-family:var(--mono);font-weight:700;font-size:17px;color:var(--text);line-height:1.2}
+.b1-metric.hero{grid-column:1 / -1;padding:16px;background:linear-gradient(135deg,rgba(124,108,255,0.12),rgba(124,108,255,0.06));border:1px solid rgba(124,108,255,0.3)}
+.b1-metric.hero .b1-metric-val{font-size:22px;color:var(--accent)}
+
+/* плюсы и риски */
+.b1-list{margin-top:4px}
+.b1-list-title{font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.b1-list-title.pluses{color:var(--green)}
+.b1-list-title.risks{color:var(--yellow)}
+.b1-item{display:flex;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--surface-2);font-size:13.5px;line-height:1.5}
+.b1-item:last-child{border-bottom:none}
+.b1-item-ic{flex-shrink:0;font-size:14px;line-height:1.4}
+.b1-item-text{color:var(--text-2)}
+.b1-item-text strong{color:var(--text)}
+
+.b1-footer{text-align:center;padding:14px 0;color:var(--text-3);font-size:11px;letter-spacing:0.04em}
+.b1-footer strong{color:var(--text-2)}
+
+.search-in{background:var(--surface);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px}
+.search-in input{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:15px}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <button class="back-btn" id="back-btn" onclick="goBack()">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    Назад
+  </button>
+  <div class="brand"><strong>ZEREK</strong> · Экспресс-оценка · <span style="color:var(--accent);font-size:10px;font-weight:700">v3.0</span></div>
+  <div style="width:60px"></div>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="progress-fill" style="--p:0"></div></div>
+<div class="progress-text"><span id="progress-step">Шаг 1</span><span id="progress-total">из 8</span></div>
+
+<div id="wizard-screen"></div>
+<div id="loading-screen">
+  <div class="spinner"></div>
+  <div class="loading-title">Запускаем расчёт…</div>
+  <div class="loading-sub">Это займёт до 10 секунд.</div>
+</div>
+<div id="result-screen"></div>
+
+<!-- CTA-кнопка убрана: переход по клику на опцию. Для шагов с вводом (capital, confirm) рендерится inline-кнопка. -->
+<div class="cta-wrap" id="cta-wrap" style="display:none"></div>
+
+<script>
+var API = 'https://web-production-921a5.up.railway.app';
+function $(id){ return document.getElementById(id); }
+function fmt(n){ if(n==null||isNaN(n)) return '—'; return Math.round(n).toLocaleString('ru-RU').replace(/,/g,' '); }
+function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+
+function apiGet(path, cb){
+  var x=new XMLHttpRequest(); x.open('GET', API+path, true); x.timeout=30000;
+  x.onload=function(){ try{ cb(null, JSON.parse(x.responseText)); }catch(e){ cb(e); } };
+  x.onerror=function(){ cb(new Error('network')); };
+  x.ontimeout=function(){ cb(new Error('timeout')); };
+  x.send();
+}
+function apiPost(path, body, cb){
+  var x=new XMLHttpRequest(); x.open('POST', API+path, true);
+  x.setRequestHeader('Content-Type','application/json'); x.timeout=60000;
+  x.onload=function(){ try{ cb(null, JSON.parse(x.responseText)); }catch(e){ cb(e, x.responseText); } };
+  x.onerror=function(){ cb(new Error('network')); };
+  x.ontimeout=function(){ cb(new Error('timeout')); };
+  x.send(JSON.stringify(body));
+}
+try { if (window.Telegram && window.Telegram.WebApp) { var tg=window.Telegram.WebApp; tg.ready && tg.ready(); tg.expand && tg.expand(); } } catch(e){}
+
+var QC = {
+  niche_id:'', niche_name:'', archetype:'', icon:'',
+  format_id:'', format_name:'', format_type:'', class_level:'',
+  city_id:'', city_name:'',
+  loc_type:'', location_line:'',
+  experience:'', payroll_type:'', entrepreneur_role:'',
+  capital_own:null, capital_needed:null,
+};
+var Configs = null;
+var Cities = [];
+var FormatsByNiche = {};
+var NicheSurvey = null;
+var StepPlan = [];
+var stepIndex = 0;
+
+function init(){
+  var pending = 2, firstErr = null;
+  apiGet('/configs', function(err, data){
+    if(err) firstErr = err; else Configs = data || {};
+    if(--pending === 0) finish();
+  });
+  apiGet('/cities', function(err, data){
+    if(err) firstErr = firstErr || err; else Cities = (data && data.cities) || [];
+    if(--pending === 0) finish();
+  });
+  function finish(){
+    if(firstErr){ return showError('Не удалось загрузить данные: ' + firstErr.message); }
+    StepPlan = computeStepPlan();
+    renderStep();
+  }
+}
+
+function computeStepPlan(){
+  var plan = ['niche'];
+  if(!QC.niche_id) return plan;
+  plan.push('format');
+  if(!QC.format_id) return plan;
+  plan.push('city');
+  if(!QC.city_id) return plan;
+  var ft = QC.format_type;
+  // Локация показывается только когда юзер реально выбирает:
+  //   - KIOSK: выбор из 4 вариантов
+  //   - STANDARD: выбор из allowed_locations
+  // Для SOLO/HOME/MOBILE/HIGHWAY/PRODUCTION — loc_type уже проставлен из формата, шаг скрыт.
+  if(ft === 'KIOSK' || ft === 'STANDARD'){
+    plan.push('location');
+  }
+  plan.push('experience');
+  if(['SOLO','HOME'].indexOf(ft) === -1 && hasStaff()){
+    plan.push('payroll');
+    plan.push('role');
+  }
+  plan.push('capital');
+  plan.push('confirm');
+  return plan;
+}
+
+function hasStaff(){
+  if(!NicheSurvey || !NicheSurvey.selected_format) return false;
+  return (NicheSurvey.selected_format.typical_staff || []).length > 0;
+}
+
+function renderStep(){
+  updateProgress();
+  var name = StepPlan[stepIndex];
+  $('wizard-screen').style.display = 'block';
+  $('loading-screen').classList.remove('active');
+  $('result-screen').classList.remove('active');
+  $('cta-wrap').style.display = 'none';  // CTA по умолчанию скрыт; рендереры сами добавляют inline-кнопку когда нужна
+  $('back-btn').disabled = stepIndex === 0;
+  var fn = RENDERERS[name] || function(root){ root.innerHTML = '<div class="result-err">Шаг «'+name+'» не реализован.</div>'; };
+  fn($('wizard-screen'));
+}
+
+/** advance() — переходит к следующему шагу (рассчитанному по текущему QC). */
+function advance(){
+  StepPlan = computeStepPlan();
+  stepIndex += 1;
+  if(stepIndex >= StepPlan.length) stepIndex = StepPlan.length - 1;
+  renderStep();
+}
+
+function updateProgress(){
+  var total = StepPlan.length;
+  var p = stepIndex / Math.max(1, total-1);
+  $('progress-fill').style.setProperty('--p', p);
+  $('progress-step').textContent = 'Шаг ' + (stepIndex+1);
+  $('progress-total').textContent = 'из ' + total;
+}
+function goBack(){ if(stepIndex > 0){ stepIndex -= 1; renderStep(); } }
+
+function loadNicheSurvey(cb){
+  // Показываем мини-лоадер поверх wizard
+  $('wizard-screen').innerHTML = '<div class="step"><div class="spinner" style="margin:40px auto"></div>' +
+    '<div style="text-align:center;color:var(--text-2)">Загружаем параметры формата…</div></div>';
+  apiGet('/quickcheck-survey/' + QC.niche_id + '?format_id=' + encodeURIComponent(QC.format_id), function(err, data){
+    if(err){ NicheSurvey = null; return showError('Не удалось загрузить: ' + err.message); }
+    NicheSurvey = data;
+    cb();
+  });
+}
+
+function showError(msg){
+  $('wizard-screen').innerHTML = '<div class="result-err">'+escapeHtml(msg)+'</div>';
+  $('cta-wrap').style.display = 'none';
+}
+function needsLocationChoice(){
+  var ft = QC.format_type;
+  return ['KIOSK','STANDARD'].indexOf(ft) !== -1;
+}
+function needsLine(){
+  if(!QC.loc_type || QC.class_level === 'премиум') return false;
+  var lm = (Configs && Configs.locations && Configs.locations.line_modifier) || {};
+  var enabled = lm.enabled_for_locations || [];
+  return enabled.indexOf(QC.loc_type) !== -1;
+}
+
+var RENDERERS = {};
+
+RENDERERS.niche = function(root){
+  var niches = (Configs.niches && Configs.niches.niches) || {};
+  var cats = (Configs.niches && Configs.niches.categories) || {};
+  var byCat = {};
+  Object.keys(niches).forEach(function(nid){
+    var n = niches[nid]; var c = n.category || 'other';
+    if(!byCat[c]) byCat[c] = [];
+    byCat[c].push({id:nid, name:n.name_rus, icon:n.icon, archetype:n.archetype});
+  });
+  var catOrder = Object.keys(cats).sort(function(a,b){ return (cats[a].order||99)-(cats[b].order||99); });
+  catOrder = catOrder.filter(function(c){ return byCat[c]; });
+  Object.keys(byCat).forEach(function(c){ if(catOrder.indexOf(c) === -1) catOrder.push(c); });
+
+  var html = '<div class="step">' +
+    '<div class="step-kicker">Ниша</div>' +
+    '<h2>Какой бизнес открываете?</h2>' +
+    '<div class="step-desc">'+Object.keys(niches).length+' ниш по категориям. Выберите одну.</div>' +
+    '<div class="search-in"><input id="niche-search" placeholder="Поиск ниши…" oninput="filterNiches(this.value)" autocomplete="off"></div>' +
+    '<div id="niche-list">';
+  catOrder.forEach(function(c){
+    var m = cats[c] || {};
+    html += '<div class="category">'+escapeHtml(m.label_rus||c)+'</div>';
+    byCat[c].forEach(function(n){
+      var sel = (QC.niche_id === n.id) ? ' selected' : '';
+      html += '<div class="opt niche-opt'+sel+'" data-name="'+escapeHtml(n.name.toLowerCase())+'" onclick="selectNiche(\''+n.id+'\')">' +
+        '<div class="opt-icon">'+(n.icon||'📋')+'</div>' +
+        '<div><div class="opt-label">'+escapeHtml(n.name)+'</div></div>' +
+      '</div>';
+    });
+  });
+  html += '</div></div>';
+  root.innerHTML = html;
+};
+function selectNiche(nid){
+  QC.niche_id = nid;
+  var n = (Configs.niches.niches||{})[nid] || {};
+  QC.niche_name = n.name_rus || nid;
+  QC.archetype = n.archetype || '';
+  QC.icon = n.icon || '';
+  QC.format_id = ''; QC.format_type = ''; QC.class_level = '';
+  QC.loc_type = ''; QC.location_line = '';
+  NicheSurvey = null;
+  advance();
+}
+function filterNiches(q){
+  q = (q||'').trim().toLowerCase();
+  document.querySelectorAll('.niche-opt').forEach(function(el){
+    var n = el.getAttribute('data-name') || '';
+    el.style.display = (!q || n.indexOf(q) !== -1) ? '' : 'none';
+  });
+}
+
+RENDERERS.format = function(root){
+  if(FormatsByNiche[QC.niche_id]){
+    renderFormatList(root, FormatsByNiche[QC.niche_id]);
+    return;
+  }
+  root.innerHTML = '<div class="step"><div class="step-kicker">Формат</div><h2>Загружаем форматы…</h2></div>';
+  apiGet('/formats-v2/' + QC.niche_id, function(err, data){
+    if(err){ showError('Не удалось загрузить форматы: ' + err.message); return; }
+    FormatsByNiche[QC.niche_id] = (data && data.formats) || [];
+    renderFormatList(root, FormatsByNiche[QC.niche_id]);
+  });
+};
+function renderFormatList(root, fmts){
+  var locsMeta = (Configs.locations && Configs.locations.locations) || {};
+  var html = '<div class="step">' +
+    '<div class="step-kicker">Формат</div>' +
+    '<h2>Выберите формат</h2>' +
+    '<div class="step-desc">Формат определяет масштаб, CAPEX и типовой штат.</div>' +
+    '<div class="options">';
+  fmts.forEach(function(f){
+    var sel = (QC.format_id === f.format_id) ? ' selected' : '';
+    var staffCnt = (f.typical_staff || []).reduce(function(a,s){ return a+(s.count||0); }, 0);
+    var staffText = staffCnt > 0 ? staffCnt + ' сотр.' : 'работаете сами';
+    var extra = [];
+    if(f['class']) extra.push(f['class']);
+    if(f.area_m2 > 0) extra.push(Math.round(f.area_m2) + ' м²');
+    extra.push(staffText);
+    var locHint = '';
+    if(f.format_type === 'HIGHWAY') locHint = '🛣️ Трасса';
+    else if(f.format_type === 'PRODUCTION') locHint = '🏭 Промзона';
+    else if(f.format_type === 'KIOSK') locHint = '🏬 ТЦ / БЦ';
+    else if(f.format_type === 'HOME') locHint = '🏠 Из дома';
+    else if(f.format_type === 'MOBILE') locHint = '🚚 Выезд';
+    else if(f.format_type === 'SOLO') locHint = '💼 Аренда в салоне';
+    else if(f.allowed_locations && f.allowed_locations[0]){
+      var ll = locsMeta[f.allowed_locations[0]];
+      if(ll) locHint = '📍 ' + ll.label_rus;
+    }
+    html += '<div class="opt'+sel+'" onclick="selectFormat(\''+f.format_id+'\')">' +
+      '<div class="opt-icon">📐</div>' +
+      '<div style="flex:1"><div class="opt-label">'+escapeHtml(f.format_name)+'</div>' +
+      '<div class="opt-sub">CAPEX ≈ '+fmt(f.capex_standard)+' ₸ · ' + extra.join(' · ') + '</div>' +
+      (locHint ? '<span class="opt-badge">'+locHint+'</span>' : '') +
+      '</div></div>';
+  });
+  html += '</div></div>';
+  root.innerHTML = html;
+}
+function selectFormat(fid){
+  var f = (FormatsByNiche[QC.niche_id] || []).find(function(x){ return x.format_id === fid; });
+  if(!f) return;
+  QC.format_id = fid; QC.format_name = f.format_name;
+  QC.format_type = f.format_type || 'STANDARD';
+  QC.class_level = f['class'] || '';
+  if(f.format_type === 'HIGHWAY') QC.loc_type = 'highway';
+  else if(f.format_type === 'PRODUCTION') QC.loc_type = 'industrial';
+  else if(f.format_type === 'SOLO') QC.loc_type = 'rent_in_salon';
+  else if(f.format_type === 'HOME') QC.loc_type = 'home';
+  else if(f.format_type === 'MOBILE') QC.loc_type = 'mobile';
+  else QC.loc_type = '';
+  QC.location_line = '';
+  // После выбора формата — подгружаем survey (для entrepreneur_roles), затем advance.
+  loadNicheSurvey(function(){ advance(); });
+}
+
+RENDERERS.city = function(root){
+  var html = '<div class="step">' +
+    '<div class="step-kicker">Город</div>' +
+    '<h2>В каком городе?</h2>' +
+    '<div class="step-desc">От города зависят аренда, налоги и конкуренция.</div>' +
+    '<div class="options">';
+  Cities.forEach(function(c){
+    var sel = (QC.city_id === c.city_id) ? ' selected' : '';
+    var name = c['Город'] || c.city_id;
+    var safe = escapeHtml(name).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    html += '<div class="opt'+sel+'" onclick="selectCity(\''+c.city_id+'\',\''+safe+'\')">' +
+      '<div class="opt-icon">📍</div>' +
+      '<div class="opt-label">'+escapeHtml(name)+'</div>' +
+    '</div>';
+  });
+  html += '<div class="opt" onclick="selectCity(\'OTHER\',\'Другой город\')">' +
+    '<div class="opt-icon">🗺️</div>' +
+    '<div class="opt-label">Другой город Казахстана</div>' +
+  '</div></div></div>';
+  root.innerHTML = html;
+};
+function selectCity(cid, cname){ QC.city_id = cid; QC.city_name = cname; advance(); }
+
+RENDERERS.location = function(root){
+  // В StepPlan location есть только для KIOSK/STANDARD. Остальные (HIGHWAY/PRODUCTION/SOLO/HOME/MOBILE)
+  // уже проставлены из формата и этот шаг пропущен.
+  var fmt = NicheSurvey && NicheSurvey.selected_format;
+  var ft = QC.format_type;
+  var locsMeta = (Configs.locations && Configs.locations.locations) || {};
+
+  // Если уже выбрана локация и нужна линия — рендерим режим выбора линии
+  if(QC.loc_type && needsLine() && !QC.location_line){
+    var lines = (Configs.locations.line_modifier && Configs.locations.line_modifier.lines) || {};
+    var mSel = locsMeta[QC.loc_type] || {};
+    var htmlL = '<div class="step">' +
+      '<div class="step-kicker">Линия</div>' +
+      '<h2>Какая линия у помещения?</h2>' +
+      '<div class="step-desc">Локация: '+escapeHtml(mSel.label_rus||QC.loc_type)+'. 2-я линия дешевле, но с меньшим трафиком.</div>' +
+      '<div class="radio-group">';
+    ['line_1','line_2'].forEach(function(lid){
+      var lm = lines[lid] || {};
+      htmlL += '<label class="radio" onclick="selectLine(\''+lid+'\')">' +
+        '<div class="radio-dot"></div><div><div class="radio-label">'+escapeHtml(lm.label_rus||lid)+'</div></div>' +
+      '</label>';
+    });
+    htmlL += '</div></div>';
+    root.innerHTML = htmlL;
+    return;
+  }
+
+  var opts;
+  if(ft === 'KIOSK'){
+    opts = ['mall_premium','mall_standard','bc_premium','bc_standard'];
+  } else {
+    opts = (fmt && fmt.allowed_locations) || [];
+  }
+  var html = '<div class="step">' +
+    '<div class="step-kicker">Расположение</div>' +
+    '<h2>Где будет точка?</h2>' +
+    '<div class="step-desc">Тип локации влияет на аренду и трафик.</div>' +
+    '<div class="options">';
+  opts.forEach(function(loc){
+    var m = locsMeta[loc] || {label_rus: loc};
+    html += '<div class="opt" onclick="selectLoc(\''+loc+'\')">' +
+      '<div class="opt-icon">📍</div>' +
+      '<div><div class="opt-label">'+escapeHtml(m.label_rus)+'</div>' +
+      '<div class="opt-sub">'+escapeHtml(m.description_rus||'')+'</div></div>' +
+    '</div>';
+  });
+  html += '</div></div>';
+  root.innerHTML = html;
+};
+function selectLoc(v){
+  QC.loc_type = v;
+  if(QC.class_level === 'премиум'){
+    QC.location_line = 'line_1';
+    advance();
+    return;
+  }
+  if(!needsLine()){
+    QC.location_line = '';
+    advance();
+    return;
+  }
+  // Нужна линия — перерисуем шаг с выбором линии
+  renderStep();
+}
+function selectLine(v){ QC.location_line = v; advance(); }
+
+RENDERERS.experience = function(root){
+  var opts = [
+    {id:'none',        label:'Нет опыта — открываю с нуля',           sub:'Риск выше среднего'},
+    {id:'some',        label:'1–2 года в найме в этой нише',           sub:'Базовый — типовая оценка'},
+    {id:'experienced', label:'3+ лет опыта или был свой бизнес',       sub:'Риск ниже'},
+  ];
+  var html = '<div class="step">' +
+    '<div class="step-kicker">Опыт</div>' +
+    '<h2>Есть ли опыт в этом бизнесе?</h2>' +
+    '<div class="step-desc">Влияет на риск-оценку сценариев.</div>' +
+    '<div class="radio-group">';
+  opts.forEach(function(o){
+    var sel = (QC.experience === o.id) ? ' selected' : '';
+    html += '<label class="radio'+sel+'" onclick="selectExp(\''+o.id+'\')">' +
+      '<div class="radio-dot"></div>' +
+      '<div><div class="radio-label">'+escapeHtml(o.label)+'</div><div class="radio-sub">'+escapeHtml(o.sub)+'</div></div>' +
+    '</label>';
+  });
+  html += '</div></div>';
+  root.innerHTML = html;
+};
+function selectExp(v){ QC.experience = v; advance(); }
+
+RENDERERS.payroll = function(root){
+  var qc_q = ((Configs.questionnaire && Configs.questionnaire.questionnaire &&
+               Configs.questionnaire.questionnaire.quickcheck &&
+               Configs.questionnaire.questionnaire.quickcheck.questions) || [])
+             .find(function(q){ return q.id === 'q6_payroll_type'; });
+  var byNiche = (qc_q && qc_q.default_by_niche) || {};
+  var suggested = byNiche[QC.niche_id] || byNiche.default || 'mixed';
+  if(!QC.payroll_type) QC.payroll_type = suggested;
+
+  var opts = [
+    {id:'salary', label:'Оклад (фиксированная зарплата)'},
+    {id:'piece',  label:'Сдельно / процент с выручки'},
+    {id:'mixed',  label:'Смешанно (оклад + %)'},
+  ];
+  var sug = opts.find(function(o){return o.id===suggested;});
+  var html = '<div class="step">' +
+    '<div class="step-kicker">Оплата труда</div>' +
+    '<h2>Как платите сотрудникам?</h2>' +
+    '<div class="step-desc">Суммы рассчитаются по бенчмаркам ZEREK.</div>' +
+    (sug ? '<div class="step-note">Типовой выбор для этой ниши: <strong>'+escapeHtml(sug.label)+'</strong></div>' : '') +
+    '<div class="radio-group">';
+  opts.forEach(function(o){
+    var sel = (QC.payroll_type === o.id) ? ' selected' : '';
+    html += '<label class="radio'+sel+'" onclick="selectPay(\''+o.id+'\')">' +
+      '<div class="radio-dot"></div><div class="radio-label">'+escapeHtml(o.label)+'</div>' +
+    '</label>';
+  });
+  html += '</div></div>';
+  root.innerHTML = html;
+};
+function selectPay(v){ QC.payroll_type = v; advance(); }
+
+RENDERERS.role = function(root){
+  var roles = (NicheSurvey && NicheSurvey.entrepreneur_roles) || [];
+  if(!roles.length){ stepIndex += 1; renderStep(); return; }
+  var html = '<div class="step">' +
+    '<div class="step-kicker">Роль владельца</div>' +
+    '<h2>Какую роль берёте на себя?</h2>' +
+    '<div class="step-desc">От этого зависит ФОТ и ваш личный доход.</div>' +
+    '<div class="radio-group">';
+  roles.forEach(function(r){
+    var sel = (QC.entrepreneur_role === r.id) ? ' selected' : '';
+    html += '<label class="radio'+sel+'" onclick="selectRole(\''+r.id+'\')">' +
+      '<div class="radio-dot"></div><div class="radio-label">'+escapeHtml(r.label_rus)+'</div>' +
+    '</label>';
+  });
+  html += '</div></div>';
+  root.innerHTML = html;
+};
+function selectRole(v){ QC.entrepreneur_role = v; advance(); }
+
+RENDERERS.capital = function(root){
+  var html = '<div class="step">' +
+    '<div class="step-kicker">Капитал</div>' +
+    '<h2>Ваш стартовый капитал</h2>' +
+    '<div class="step-desc">Можно пропустить — мы рассчитаем типовое.</div>' +
+    '<div class="section-label">Сколько готовы вложить?</div>' +
+    '<div class="num-in"><input type="number" inputmode="numeric" min="0" step="100000" placeholder="Необязательно" value="'+(QC.capital_own||'')+'" oninput="setCapOwn(this.value)"><span class="num-in-suffix">₸</span></div>' +
+    '<div class="section-label">Сколько, по-вашему, нужно?</div>' +
+    '<div class="num-in"><input type="number" inputmode="numeric" min="0" step="100000" placeholder="Необязательно" value="'+(QC.capital_needed||'')+'" oninput="setCapNeed(this.value)"><span class="num-in-suffix">₸</span></div>' +
+    '<div style="margin-top:14px"><button class="btn" onclick="advance()">Продолжить</button></div>' +
+    '<div class="skip-btn" onclick="skipCapital()">Не знаю — рассчитайте типовое</div>' +
+  '</div>';
+  root.innerHTML = html;
+};
+function setCapOwn(v){ QC.capital_own = parseInt(v,10) || null; }
+function setCapNeed(v){ QC.capital_needed = parseInt(v,10) || null; }
+function skipCapital(){ QC.capital_own = null; QC.capital_needed = null; advance(); }
+
+RENDERERS.confirm = function(root){
+  var locsMeta = (Configs.locations && Configs.locations.locations) || {};
+  var locLabel = (locsMeta[QC.loc_type] || {}).label_rus || QC.loc_type || '—';
+  var lineLabel = QC.location_line === 'line_1' ? '1-я линия' : QC.location_line === 'line_2' ? '2-я линия' : null;
+  var expL = {none:'Нет опыта',some:'1–2 года',experienced:'3+ лет'};
+  var payL = {salary:'Оклад',piece:'Сдельно',mixed:'Смешанно'};
+  var roles = (NicheSurvey && NicheSurvey.entrepreneur_roles) || [];
+  var roleRow = (roles.find(function(r){return r.id === QC.entrepreneur_role;}) || {}).label_rus || null;
+
+  var rows = [
+    ['Ниша', (QC.icon?QC.icon+' ':'')+QC.niche_name],
+    ['Формат', QC.format_name + (QC.class_level?' · '+QC.class_level:'')],
+    ['Город', QC.city_name],
+    ['Локация', locLabel + (lineLabel?' · '+lineLabel:'')],
+    ['Опыт', expL[QC.experience] || '—'],
+  ];
+  if(QC.payroll_type && ['SOLO','HOME'].indexOf(QC.format_type) === -1) rows.push(['Оплата труда', payL[QC.payroll_type] || '—']);
+  if(roleRow) rows.push(['Роль владельца', roleRow]);
+  if(QC.capital_own) rows.push(['Готов вложить', fmt(QC.capital_own) + ' ₸']);
+  if(QC.capital_needed) rows.push(['Ожидаемая потребность', fmt(QC.capital_needed) + ' ₸']);
+  if(!QC.capital_own && !QC.capital_needed) rows.push(['Капитал', '— рассчитает ZEREK']);
+
+  var html = '<div class="step">' +
+    '<div class="step-kicker">Проверка</div>' +
+    '<h2>Всё верно?</h2>' +
+    '<div class="step-desc">После запуска получите 3 сценария и топ-5 рисков.</div>' +
+    '<table class="confirm-table">';
+  rows.forEach(function(r){ html += '<tr><td>'+escapeHtml(r[0])+'</td><td>'+escapeHtml(r[1]||'—')+'</td></tr>'; });
+  html += '</table>' +
+    '<div style="margin-top:18px"><button class="btn" onclick="submit()">Запустить расчёт</button></div>' +
+  '</div>';
+  root.innerHTML = html;
+};
+
+function submit(){
+  $('wizard-screen').style.display = 'none';
+  $('cta-wrap').style.display = 'none';
+  $('loading-screen').classList.add('active');
+
+  var clsMap = {'эконом':'Эконом','стандарт':'Стандарт','премиум':'Премиум'};
+  var capexLevel = (QC.class_level || 'стандарт').toLowerCase();
+  var body = {
+    city_id: QC.city_id === 'OTHER' ? 'ALMATY' : QC.city_id,
+    niche_id: QC.niche_id,
+    format_id: QC.format_id,
+    cls: clsMap[capexLevel] || 'Стандарт',
+    capex_level: capexLevel,
+    area_m2: (NicheSurvey && NicheSurvey.selected_format && NicheSurvey.selected_format.area_m2) || 0,
+    loc_type: QC.loc_type,
+    capital: QC.capital_own || QC.capital_needed || 0,
+    staff_mode: (QC.entrepreneur_role && QC.entrepreneur_role !== 'owner_only') ? 'self' : 'hired',
+    specific_answers: {
+      location_line: QC.location_line, experience: QC.experience,
+      payroll_type: QC.payroll_type, entrepreneur_role: QC.entrepreneur_role,
+      capital_own: QC.capital_own, capital_needed: QC.capital_needed,
+      archetype: QC.archetype, format_type: QC.format_type,
+    },
+  };
+  apiPost('/quick-check', body, function(err, resp, raw){
+    $('loading-screen').classList.remove('active');
+    if(err){ return showResultError('Ошибка расчёта: ' + err.message + (raw ? '\n' + raw : '')); }
+    renderResult(resp && resp.result);
+  });
+}
+
+function renderResult(result){
+  window._lastResult = result;
+  $('result-screen').classList.add('active');
+  $('cta-wrap').style.display = 'none';
+  if(!result){ return showResultError('Пустой ответ от API.'); }
+
+  // Есть Block 1 — рендерим по спецификации. Fallback на старый KPI-рендер, если его нет.
+  var b1 = result.block1;
+  if(b1){
+    $('result-screen').innerHTML = renderBlock1Html(b1);
+    return;
+  }
+  // fallback
+  var kpis = extractKpis(result);
+  $('result-screen').innerHTML =
+    '<div class="b1-section">' +
+      '<div class="b1-metrics"><div class="b1-metric"><div class="b1-metric-label">Выручка/мес</div><div class="b1-metric-val">'+kpis.revenue+'</div></div>' +
+      '<div class="b1-metric"><div class="b1-metric-label">Прибыль/мес</div><div class="b1-metric-val">'+kpis.profit+'</div></div></div>' +
+    '</div>';
+}
+
+function renderBlock1Html(b1){
+  var color = b1.color || 'yellow';
+  var colorRus = {green:'ЗЕЛЁНЫЙ', yellow:'ЖЁЛТЫЙ', red:'КРАСНЫЙ'}[color];
+
+  var light = (
+    '<div class="b1-traffic">' +
+      '<div class="b1-light green'+(color==='green' ? ' active':'')+'"></div>' +
+      '<div class="b1-connector"></div>' +
+      '<div class="b1-light yellow'+(color==='yellow' ? ' active':'')+'"></div>' +
+      '<div class="b1-connector"></div>' +
+      '<div class="b1-light red'+(color==='red' ? ' active':'')+'"></div>' +
+    '</div>'
+  );
+
+  var verdictBlock = (
+    '<div class="b1-section">' +
+      '<div class="b1-header">ZEREK Экспресс-оценка</div>' +
+      light +
+      '<div class="b1-verdict-label '+color+'"><span class="b1-dot"></span>ВАША ОЦЕНКА: '+colorRus+'</div>' +
+      '<div class="b1-statement">«'+escapeHtml(b1.verdict_statement||'')+'»</div>' +
+    '</div>'
+  );
+
+  var m = b1.main_metrics || {};
+  var metricsBlock = (
+    '<div class="b1-section">' +
+      '<div class="b1-header">Главные цифры</div>' +
+      '<div class="b1-metrics">' +
+        metricCard('Выручка/мес', m.revenue_range) +
+        metricCard('Прибыль/мес', m.profit_range) +
+        metricCard('Окупаемость', m.breakeven_range) +
+        '<div class="b1-metric hero">' +
+          '<div class="b1-metric-label">Ваш доход/мес</div>' +
+          '<div class="b1-metric-val">'+escapeHtml(m.entrepreneur_income_range || '—')+'</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>'
+  );
+
+  var strengths = (b1.strengths || []).map(function(s){
+    return '<div class="b1-item"><span class="b1-item-ic">✅</span><div class="b1-item-text">'+escapeHtml(s)+'</div></div>';
+  }).join('');
+  var risks = (b1.risks || []).map(function(r){
+    return '<div class="b1-item"><span class="b1-item-ic">⚠️</span><div class="b1-item-text">'+escapeHtml(r)+'</div></div>';
+  }).join('');
+
+  var listsBlock = (
+    '<div class="b1-section">' +
+      '<div class="b1-list">' +
+        '<div class="b1-list-title pluses">Что работает на вас</div>' +
+        (strengths || '<div class="b1-item-text" style="color:var(--text-3)">Нет выделенных плюсов</div>') +
+      '</div>' +
+      '<div class="b1-list" style="margin-top:18px">' +
+        '<div class="b1-list-title risks">Что требует внимания</div>' +
+        (risks || '<div class="b1-item-text" style="color:var(--text-3)">Критичных рисков не обнаружено</div>') +
+      '</div>' +
+    '</div>'
+  );
+
+  var footer = '<div class="b1-footer">Оценка <strong>'+(b1.score||0)+'/'+(b1.max_score||23)+'</strong> · дальше — детальный отчёт</div>';
+
+  return '<div class="b1">' + verdictBlock + metricsBlock + listsBlock + footer + '</div>';
+}
+function metricCard(label, val){
+  return '<div class="b1-metric"><div class="b1-metric-label">'+escapeHtml(label)+'</div>' +
+         '<div class="b1-metric-val">'+escapeHtml(val || '—')+'</div></div>';
+}
+function showResultError(msg){
+  $('result-screen').classList.add('active');
+  $('cta-wrap').style.display = 'none';
+  $('result-screen').innerHTML = '<div class="result-err">'+escapeHtml(msg)+'</div>';
+}
+function extractKpis(r){
+  var out = { heroLabel:'Окупаемость', heroVal:'—', heroUnit:'', revenue:'—', profit:'—', capex:'—', working_cap:'—', verdict:'' };
+  try {
+    var payback = r.payback_months || (r.block1 && r.block1.payback_months) || null;
+    if(payback){ out.heroVal = payback + ' мес'; out.heroUnit = 'срок окупаемости'; }
+    var rev = r.revenue_month || (r.unit && r.unit.revenue_month) || null;
+    var pr  = r.profit_month  || (r.unit && r.unit.profit_month) || null;
+    var cap = r.capex_total   || (r.unit && r.unit.capex_total) || null;
+    var wc  = r.working_cap   || (r.unit && r.unit.working_cap) || null;
+    if(rev) out.revenue = fmt(rev)+' ₸';
+    if(pr)  out.profit  = fmt(pr)+' ₸';
+    if(cap) out.capex   = fmt(cap)+' ₸';
+    if(wc)  out.working_cap = fmt(wc)+' ₸';
+    out.verdict = (r.verdict || (r.block1 && r.block1.verdict) || '');
+  } catch(e){}
+  return out;
+}
+
+init();
+</script>
+</body>
+</html>
