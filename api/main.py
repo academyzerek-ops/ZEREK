@@ -16,7 +16,10 @@ from engine import (ZerekDB, run_quick_check_v3,
                     get_niche_config, get_niche_survey,
                     get_formats_v2, get_quickcheck_survey, get_entrepreneur_roles,
                     compute_block1_verdict, compute_block2_passport,
-                    compute_block5_pnl, compute_block10_next_steps)
+                    compute_block3_market, compute_block4_unit_economics,
+                    compute_block5_pnl, compute_block6_capital,
+                    compute_block7_scenarios, compute_block8_stress_test,
+                    compute_block9_risks, compute_block10_next_steps)
 from report import render_report_v4
 
 def clean(obj):
@@ -180,14 +183,41 @@ def quick_check(req: QCReq):
         except Exception as e:
             import traceback; traceback.print_exc()
             pass
+        # Block 3 — Рынок и конкуренты
+        try:
+            report['block3'] = compute_block3_market(db, result, block1_inputs)
+        except Exception:
+            import traceback; traceback.print_exc()
+        # Block 4 — Юнит-экономика
+        try:
+            report['block4'] = compute_block4_unit_economics(db, result, block1_inputs, block2=block2_obj)
+        except Exception:
+            import traceback; traceback.print_exc()
         # Block 5 — P&L за год
         try:
-            block5 = compute_block5_pnl(db, result, block1_inputs)
-            if isinstance(report, dict):
-                report['block5'] = block5
-        except Exception as e:
+            report['block5'] = compute_block5_pnl(db, result, block1_inputs)
+        except Exception:
             import traceback; traceback.print_exc()
-            pass
+        # Block 6 — Стартовый капитал
+        try:
+            report['block6'] = compute_block6_capital(db, result, block1_inputs, block2=block2_obj)
+        except Exception:
+            import traceback; traceback.print_exc()
+        # Block 7 — Траектория на 24 мес
+        try:
+            report['block7'] = compute_block7_scenarios(db, result, block1_inputs)
+        except Exception:
+            import traceback; traceback.print_exc()
+        # Block 8 — Стресс-тест
+        try:
+            report['block8'] = compute_block8_stress_test(db, result, block1_inputs)
+        except Exception:
+            import traceback; traceback.print_exc()
+        # Block 9 — Риски ниши
+        try:
+            report['block9'] = compute_block9_risks(db, result, block1_inputs)
+        except Exception:
+            import traceback; traceback.print_exc()
         # Block 10 — Следующие шаги
         try:
             block1_obj = report.get('block1') if isinstance(report, dict) else None
@@ -195,9 +225,8 @@ def quick_check(req: QCReq):
                                                  block1=block1_obj, block2=block2_obj)
             if isinstance(report, dict):
                 report['block10'] = block10
-        except Exception as e:
+        except Exception:
             import traceback; traceback.print_exc()
-            pass
         # Вставим v1-адаптивные поля если пришли
         if any(v is not None for v in adaptive.values()):
             if isinstance(report, dict):

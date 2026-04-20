@@ -1413,6 +1413,602 @@ def compute_block1_verdict(result, adaptive):
 
 
 # ═══════════════════════════════════════════════
+# BLOCK 3 — РЫНОК И КОНКУРЕНТЫ
+# ═══════════════════════════════════════════════
+
+def compute_block3_market(db, result, adaptive):
+    inp = result.get('input', {}) or {}
+    risks = result.get('risks', {}) or {}
+    comp = risks.get('competitors') or {}
+
+    competitors_count = _safe_int(comp.get('competitors_count')) or _safe_int(comp.get('n')) or 0
+    city_name = inp.get('city_name', '') or inp.get('city_id', '')
+    city_pop = _safe_int(inp.get('city_population'), 0)
+
+    density = (competitors_count / (city_pop / 10000)) if city_pop else 0
+    benchmark_density = 0.75
+    saturation_pct = (density / benchmark_density * 100) if benchmark_density else 0
+
+    # Цвет насыщенности
+    if saturation_pct <= 60:
+        sat_color = 'green'; sat_text = 'Рынок недонасыщен — есть пространство для входа даже без сильного УТП'
+    elif saturation_pct <= 110:
+        sat_color = 'yellow'; sat_text = 'Рынок умеренно насыщен — есть пространство для входа при сильном УТП'
+    elif saturation_pct <= 150:
+        sat_color = 'orange'; sat_text = 'Рынок насыщен — для успеха нужен чёткий отличительный фактор (локация, сервис, цена)'
+    else:
+        sat_color = 'red'; sat_text = 'Рынок перенасыщен — высокий риск долгой окупаемости из-за конкуренции'
+
+    # Платёжеспособность — упрощённо, на коэффициенте города
+    city_coef = get_city_check_coef(inp.get('city_id', '')) or 1.0
+    affordability_index = city_coef  # проксирует «городской чек ÷ бенчмарк»
+    if affordability_index >= 1.15:
+        afford_text = f'Платёжеспособность на {int((affordability_index-1)*100)}% выше средней КЗ — можно закладывать премиум-чек'
+    elif affordability_index >= 1.0:
+        afford_text = 'Платёжеспособность на уровне средней КЗ — стандартные цены рынка работают хорошо'
+    elif affordability_index >= 0.85:
+        afford_text = f'Платёжеспособность на {int((1-affordability_index)*100)}% ниже средней КЗ — учтите при ценообразовании'
+    else:
+        afford_text = f'Платёжеспособность на {int((1-affordability_index)*100)}% ниже средней КЗ — премиум-форматы рискованны'
+
+    # Конкуренты — список если есть
+    competitors_list = []
+    if isinstance(comp.get('top'), list):
+        for c in comp['top'][:5]:
+            competitors_list.append({
+                'name': c.get('name') or c.get('title') or '—',
+                'rating': c.get('rating'),
+                'reviews': c.get('reviews') or c.get('reviews_count'),
+                'district': c.get('district') or '',
+            })
+
+    return {
+        'city': city_name,
+        'saturation': {
+            'competitors_count': competitors_count,
+            'density_city': round(density, 2),
+            'density_benchmark': benchmark_density,
+            'pct_of_benchmark': int(saturation_pct),
+            'color': sat_color,
+            'text_rus': sat_text,
+        },
+        'competitors_list': competitors_list,
+        'affordability': {
+            'city_coef': round(affordability_index, 2),
+            'text_rus': afford_text,
+        },
+    }
+
+
+# ═══════════════════════════════════════════════
+# BLOCK 4 — ЮНИТ-ЭКОНОМИКА
+# ═══════════════════════════════════════════════
+
+def _archetype_of(db, niche_id):
+    configs = getattr(db, 'configs', {}) or {}
+    return ((configs.get('niches', {}) or {}).get('niches', {}) or {}).get(niche_id, {}).get('archetype', '')
+
+
+def compute_block4_unit_economics(db, result, adaptive, block2=None):
+    inp = result.get('input', {}) or {}
+    fin = result.get('financials', {}) or {}
+    staff = result.get('staff', {}) or {}
+    tax = result.get('tax', {}) or {}
+    arch = _archetype_of(db, inp.get('niche_id', ''))
+
+    avg_check = _safe_int(fin.get('check_med'), 0) or 3000
+    traffic = _safe_int(fin.get('traffic_med'), 0) or 30
+    cogs_pct = _safe_float(fin.get('cogs_pct'), 0.30)
+    tax_rate = (tax.get('rate_pct', 3) or 3) / 100
+    rent_month = _safe_int(fin.get('rent_month'), 0)
+    fot_month = _safe_int(staff.get('fot_full_med'), 0)
+    opex_month = _safe_int(fin.get('opex_med'), 0)
+
+    # Количество юнитов
+    staff_total = 0
+    if block2:
+        staff_total = ((block2.get('typical_staff') or {}).get('total')) or 0
+    if staff_total == 0:
+        staff_total = max(1, _safe_int(staff.get('headcount'), 1))
+
+    work_days = 26
+
+    # Архетип-специфичный unit
+    if arch == 'A':  # услуги с мастерами
+        unit_label = 'мастер в месяц'
+        masters_count = max(staff_total, 1)
+        checks_per_day = max(int(traffic / masters_count), 1)
+        load_pct = 0.80
+        gross_rev_per_unit = int(checks_per_day * avg_check * work_days * load_pct)
+        # распределение одного чека
+        piece_rate = int(avg_check * 0.40)
+        materials = int(avg_check * 0.12)
+        rent_share = int(rent_month / masters_count / (checks_per_day * work_days)) if masters_count else 0
+        overhead_share = int(opex_month * 0.5 / masters_count / (checks_per_day * work_days)) if masters_count else 0
+        tax_per_check = int(avg_check * tax_rate)
+        business = max(0, avg_check - piece_rate - materials - rent_share - overhead_share - tax_per_check)
+        breakdown = [
+            {'label':'Мастеру (сдельно)', 'amount':piece_rate, 'pct': round(piece_rate/avg_check*100)},
+            {'label':'Материалы', 'amount':materials, 'pct': round(materials/avg_check*100)},
+            {'label':'Аренда (доля)', 'amount':rent_share, 'pct': round(rent_share/avg_check*100)},
+            {'label':'Прочие OPEX', 'amount':overhead_share, 'pct': round(overhead_share/avg_check*100)},
+            {'label':'Налог', 'amount':tax_per_check, 'pct': round(tax_per_check/avg_check*100)},
+            {'label':'Бизнесу', 'amount':business, 'pct': round(business/avg_check*100)},
+        ]
+        # breakeven по загрузке
+        fixed_per_master = int((rent_month + opex_month * 0.5) / masters_count) if masters_count else 0
+        var_margin = avg_check - piece_rate - materials - tax_per_check
+        min_checks_month = int(fixed_per_master / var_margin) if var_margin > 0 else 9999
+        min_load = min_checks_month / max(checks_per_day * work_days, 1)
+        planned_checks = int(checks_per_day * work_days * load_pct)
+        safety = planned_checks / max(min_checks_month, 1)
+        metrics = {
+            'checks_per_day': checks_per_day, 'avg_check': avg_check,
+            'load_pct': int(load_pct*100), 'work_days': work_days,
+            'gross_revenue_per_unit': gross_rev_per_unit,
+            'breakeven_value': min_checks_month,
+            'breakeven_label': f'{min_checks_month} услуг/мес на мастера',
+            'planned_value': planned_checks,
+            'planned_label': f'{planned_checks} услуг планируется',
+            'safety_margin': round(safety, 1),
+            'min_load_pct': int(min_load*100),
+        }
+    elif arch == 'B':  # общепит — один чек
+        unit_label = 'один чек'
+        food_cost = int(avg_check * cogs_pct)
+        fot_per_check = int(fot_month / max(traffic*work_days, 1))
+        rent_per_check = int(rent_month / max(traffic*work_days, 1))
+        overhead_per_check = int(opex_month * 0.4 / max(traffic*work_days, 1))
+        tax_per_check = int(avg_check * tax_rate)
+        business = max(0, avg_check - food_cost - fot_per_check - rent_per_check - overhead_per_check - tax_per_check)
+        breakdown = [
+            {'label':'Food cost', 'amount':food_cost, 'pct': round(food_cost/avg_check*100)},
+            {'label':'ФОТ на чек', 'amount':fot_per_check, 'pct': round(fot_per_check/avg_check*100)},
+            {'label':'Аренда (доля)', 'amount':rent_per_check, 'pct': round(rent_per_check/avg_check*100)},
+            {'label':'Прочие OPEX', 'amount':overhead_per_check, 'pct': round(overhead_per_check/avg_check*100)},
+            {'label':'Налог', 'amount':tax_per_check, 'pct': round(tax_per_check/avg_check*100)},
+            {'label':'Бизнесу', 'amount':business, 'pct': round(business/avg_check*100)},
+        ]
+        fixed_costs = fot_month + rent_month + int(opex_month * 0.6)
+        var_margin = avg_check - food_cost - tax_per_check
+        be_checks_day = int(fixed_costs / max(var_margin * work_days, 1)) if var_margin > 0 else 0
+        safety = traffic / max(be_checks_day, 1)
+        metrics = {
+            'avg_check': avg_check,
+            'breakeven_value': be_checks_day,
+            'breakeven_label': f'{be_checks_day} чеков/день',
+            'planned_value': traffic,
+            'planned_label': f'{traffic} чеков/день',
+            'safety_margin': round(safety, 1),
+        }
+    elif arch == 'C':  # retail
+        unit_label = '100 ₸ выручки'
+        markup_pct = 50
+        cogs_pct_r = 100 / (100 + markup_pct) if markup_pct else 0.5
+        c_cogs = int(100 * cogs_pct_r)
+        c_fot = int(100 * 0.10)
+        c_rent = int(100 * 0.12)
+        c_over = int(100 * 0.08)
+        c_tax = int(100 * tax_rate)
+        c_loss = int(100 * 0.05)
+        c_bus = max(0, 100 - c_cogs - c_fot - c_rent - c_over - c_tax - c_loss)
+        breakdown = [
+            {'label':'Закупка (COGS)', 'amount':c_cogs, 'pct':c_cogs},
+            {'label':'ФОТ', 'amount':c_fot, 'pct':c_fot},
+            {'label':'Аренда', 'amount':c_rent, 'pct':c_rent},
+            {'label':'Прочие OPEX', 'amount':c_over, 'pct':c_over},
+            {'label':'Налог', 'amount':c_tax, 'pct':c_tax},
+            {'label':'Списания/порча', 'amount':c_loss, 'pct':c_loss},
+            {'label':'Бизнесу', 'amount':c_bus, 'pct':c_bus},
+        ]
+        metrics = {
+            'markup_pct': markup_pct, 'inventory_turnover_days': 28, 'gross_margin_pct': 100-c_cogs,
+            'breakeven_label': 'По обороту запасов',
+            'planned_label': f'Средний чек ~{_fmt_kzt(avg_check)}',
+            'safety_margin': 2.0,
+        }
+    elif arch == 'D':  # абонементы
+        unit_label = 'один клиент (LTV)'
+        monthly_fee = avg_check  # в D-архетипе это абонемент
+        churn_pct = 0.08
+        lifetime = 1 / churn_pct
+        ltv = int(monthly_fee * lifetime * 0.6)  # с учётом gross_margin
+        marketing = int(opex_month * 0.25) or 150_000
+        new_per_month = max(int(marketing / 12000), 1)
+        cac = int(marketing / new_per_month)
+        ltv_cac = round(ltv / max(cac, 1), 2)
+        payback = round(cac / (monthly_fee * 0.6), 1) if monthly_fee else 0
+        breakdown = [
+            {'label':'LTV клиента', 'amount':ltv, 'pct':100},
+        ]
+        metrics = {
+            'monthly_fee': monthly_fee, 'churn_pct': int(churn_pct*100), 'lifetime_months': round(lifetime,1),
+            'ltv': ltv, 'cac': cac, 'ltv_cac_ratio': ltv_cac, 'payback_months': payback,
+            'breakeven_label': 'LTV/CAC > 3', 'planned_label': f'LTV/CAC = {ltv_cac}',
+            'safety_margin': round(ltv_cac/3, 1),
+        }
+    elif arch == 'E':  # проектный
+        unit_label = 'один проект'
+        project = avg_check  # для E avg_check = средний чек проекта
+        mat = int(project * 0.40); fotp = int(project * 0.20)
+        rent_p = int(project * 0.10); over = int(project * 0.05); taxp = int(project * tax_rate)
+        bus = max(0, project - mat - fotp - rent_p - over - taxp)
+        breakdown = [
+            {'label':'Материалы', 'amount':mat, 'pct':40},
+            {'label':'ФОТ', 'amount':fotp, 'pct':20},
+            {'label':'Аренда (доля)', 'amount':rent_p, 'pct':10},
+            {'label':'Прочие OPEX', 'amount':over, 'pct':5},
+            {'label':'Налог', 'amount':taxp, 'pct':round(taxp/project*100)},
+            {'label':'Бизнесу', 'amount':bus, 'pct':round(bus/project*100)},
+        ]
+        projects_per_month = max(1, int(traffic))  # traffic проксирует projects/month
+        min_projects = max(1, int((rent_month + fot_month) / max(bus, 1)))
+        safety = projects_per_month / max(min_projects, 1)
+        metrics = {
+            'avg_project': project, 'projects_per_month': projects_per_month,
+            'breakeven_value': min_projects,
+            'breakeven_label': f'{min_projects} проектов/мес',
+            'planned_value': projects_per_month,
+            'planned_label': f'{projects_per_month} проектов/мес',
+            'safety_margin': round(safety, 1),
+        }
+    else:  # F — мощность
+        unit_label = 'одна единица мощности'
+        capacity = max(staff_total, 1)
+        per_unit_revenue = int((fin.get('revenue_year1') or 0) / 12 / capacity) if capacity else 0
+        occupancy = 0.65
+        breakdown = [
+            {'label':'Переменные затраты', 'amount':int(avg_check*0.30), 'pct':30},
+            {'label':'ФОТ (сдельно)', 'amount':int(avg_check*0.25), 'pct':25},
+            {'label':'Аренда (доля)', 'amount':int(avg_check*0.14), 'pct':14},
+            {'label':'Коммуналка', 'amount':int(avg_check*0.08), 'pct':8},
+            {'label':'Прочие', 'amount':int(avg_check*0.05), 'pct':5},
+            {'label':'Налог', 'amount':int(avg_check*tax_rate), 'pct':round(tax_rate*100)},
+            {'label':'Бизнесу', 'amount':int(avg_check*0.18), 'pct':18},
+        ]
+        metrics = {
+            'capacity_units': capacity,
+            'avg_check': avg_check,
+            'occupancy_pct': int(occupancy*100),
+            'per_unit_revenue_month': per_unit_revenue,
+            'breakeven_label': 'Заполняемость ≥35%',
+            'planned_label': f'Заполняемость {int(occupancy*100)}%',
+            'safety_margin': round(occupancy/0.35, 1),
+        }
+
+    return {
+        'archetype': arch,
+        'unit_label': unit_label,
+        'avg_check': avg_check,
+        'breakdown': breakdown,
+        'metrics': metrics,
+    }
+
+
+# ═══════════════════════════════════════════════
+# BLOCK 6 — СТАРТОВЫЙ КАПИТАЛ (CAPEX)
+# ═══════════════════════════════════════════════
+
+def compute_block6_capital(db, result, adaptive, block2=None):
+    capex = result.get('capex', {}) or {}
+    capex_needed = _safe_int(capex.get('capex_med')) or _safe_int(capex.get('capex_total'))
+    if capex_needed < 500_000 and block2:
+        capex_needed = (block2.get('finance') or {}).get('capex_needed') or capex_needed
+    capital_own = _safe_int(adaptive.get('capital_own')) if adaptive.get('capital_own') else None
+
+    # Структура CAPEX — из breakdown если есть
+    breakdown_src = capex.get('breakdown') or {}
+    if isinstance(breakdown_src, dict) and breakdown_src:
+        capex_structure = [
+            {'label':k, 'amount':_safe_int(v, 0), 'pct':int(_safe_int(v, 0)/max(capex_needed,1)*100)}
+            for k,v in breakdown_src.items() if _safe_int(v, 0) > 0
+        ]
+    else:
+        # синтетика по типовому распределению
+        items = [
+            ('Оборудование', 0.32),
+            ('Ремонт / обустройство', 0.22),
+            ('Первичные закупки', 0.15),
+            ('Маркетинг на старт', 0.10),
+            ('Оборотный капитал (3 мес)', 0.12),
+            ('Депозит + 1-я аренда', 0.04),
+            ('Юр.расходы, лицензии', 0.05),
+        ]
+        capex_structure = [{'label':l, 'amount':int(capex_needed*p), 'pct':int(p*100)} for l,p in items]
+
+    # Дефицит / профицит
+    if capital_own is None:
+        diff_status = 'not_specified'; diff = None; diff_pct = None; actions = []
+    else:
+        diff = capital_own - capex_needed
+        diff_pct = (diff / capex_needed * 100) if capex_needed else 0
+        if diff >= 0:
+            diff_status = 'surplus' if diff_pct > 5 else 'match'
+            actions = ['Отложить профицит в резервный фонд (3-6 мес OPEX)', 'Увеличить маркетинговый бюджет на старт'] if diff_status == 'surplus' else []
+        else:
+            diff_status = 'critical_deficit' if abs(diff_pct) > 30 else 'deficit'
+            gap = abs(diff)
+            credit_monthly = int(gap * 0.035)  # 22% / 36 мес аннуитет
+            actions = [
+                f'Урезать формат до эконом-класса (бюджет ≈ {_fmt_kzt(int(capex_needed*0.5))})',
+                f'Кредит {_fmt_kzt(gap)} на 24 мес (платёж ~{_fmt_kzt(credit_monthly)}/мес)',
+                'Найти партнёра с долей 20%',
+                'Грант Astana Hub / Bastau Business до 5 млн ₸',
+            ]
+
+    return {
+        'capex_needed': capex_needed,
+        'capital_own': capital_own,
+        'diff': diff,
+        'diff_pct': round(diff_pct, 1) if diff_pct is not None else None,
+        'diff_status': diff_status,
+        'capex_structure': capex_structure,
+        'actions': actions,
+    }
+
+
+# ═══════════════════════════════════════════════
+# BLOCK 7 — ТРАЕКТОРИЯ БИЗНЕСА НА 24 МЕСЯЦА
+# ═══════════════════════════════════════════════
+
+def compute_block7_scenarios(db, result, adaptive):
+    scenarios = result.get('scenarios', {}) or {}
+    cashflow = result.get('cashflow') or []
+
+    # Помесячная траектория для каждого сценария (24 мес)
+    def build_traj(scale):
+        arr = []
+        cumulative = 0
+        for m in range(24):
+            # Берём базовый cashflow, применяем множитель; если cashflow < 12 — экстраполируем
+            if m < len(cashflow):
+                mp = _safe_int(cashflow[m].get('прибыль'), 0) * scale
+            elif cashflow:
+                # Второй год — берём средний последнего кв. × рост 7%
+                last_q_avg = sum(_safe_int(cashflow[-i].get('прибыль'), 0) for i in range(1, min(4, len(cashflow))+1)) / min(3, len(cashflow))
+                mp = int(last_q_avg * scale * (1.07 ** ((m-12)/12)))
+            else:
+                mp = 0
+            cumulative += int(mp)
+            arr.append({'month': m+1, 'profit': int(mp), 'cumulative': cumulative})
+        return arr
+
+    pess = build_traj(0.75)
+    base = build_traj(1.00)
+    opt = build_traj(1.25)
+
+    # Ключевые точки
+    def find_points(arr, capex_total):
+        breakeven = None  # первый месяц где profit > 0
+        roi_back = None   # первый месяц где cumulative >= capex_total
+        for p in arr:
+            if breakeven is None and p['profit'] > 0:
+                breakeven = p['month']
+            if roi_back is None and p['cumulative'] >= capex_total:
+                roi_back = p['month']
+            if breakeven and roi_back: break
+        return {'breakeven_month': breakeven, 'roi_month': roi_back}
+
+    capex_total = _safe_int((result.get('capex') or {}).get('capex_med'), 0) or _safe_int((result.get('capex') or {}).get('capex_total'), 0)
+    return {
+        'scenarios': {
+            'pess': {'traj': pess, **find_points(pess, capex_total)},
+            'base': {'traj': base, **find_points(base, capex_total)},
+            'opt':  {'traj': opt,  **find_points(opt,  capex_total)},
+        },
+        'capex_total': capex_total,
+    }
+
+
+# ═══════════════════════════════════════════════
+# BLOCK 8 — СТРЕСС-ТЕСТ
+# ═══════════════════════════════════════════════
+
+def compute_block8_stress_test(db, result, adaptive):
+    """Анализ чувствительности к параметрам. Считаем импакт падения/роста на прибыль."""
+    fin = result.get('financials', {}) or {}
+    scenarios = result.get('scenarios', {}) or {}
+    base_profit_year = _safe_int((scenarios.get('base') or {}).get('прибыль_год'), 0) or _safe_int(fin.get('profit_year1'), 0) or 1
+    base_profit_month = base_profit_year // 12
+
+    # Оцениваем импакт каждого параметра на -20%
+    avg_check = _safe_int(fin.get('check_med'), 0) or 3000
+    traffic = _safe_int(fin.get('traffic_med'), 0) or 30
+    rent = _safe_int(fin.get('rent_month'), 0) or 150_000
+    fot = _safe_int(result.get('staff', {}).get('fot_full_med'), 0) or 300_000
+    cogs_pct = _safe_float(fin.get('cogs_pct'), 0.30)
+
+    # Простой расчёт чувствительности (операционная прибыль = rev - cogs - opex)
+    base_rev = avg_check * traffic * 26
+    base_cogs = base_rev * cogs_pct
+    base_opex = rent + fot + int((fin.get('opex_med') or 0) * 0.5)
+    base_op_profit = max(base_rev - base_cogs - base_opex, 1)
+
+    def impact(new_rev=None, new_cogs=None, new_opex=None):
+        r = new_rev if new_rev is not None else base_rev
+        c = new_cogs if new_cogs is not None else base_cogs
+        o = new_opex if new_opex is not None else base_opex
+        new_profit = r - c - o
+        return round((new_profit - base_op_profit) / base_op_profit * 100)
+
+    sensitivities = [
+        {'param':'Загрузка / трафик', 'change':-20, 'impact_pct': impact(new_rev=base_rev*0.80, new_cogs=base_cogs*0.80)},
+        {'param':'Средний чек',        'change':-20, 'impact_pct': impact(new_rev=base_rev*0.80, new_cogs=base_cogs*0.80)},
+        {'param':'ФОТ (рост)',         'change':+20, 'impact_pct': impact(new_opex=base_opex + fot*0.20)},
+        {'param':'Аренда (рост)',      'change':+30, 'impact_pct': impact(new_opex=base_opex + rent*0.30)},
+        {'param':'Маркетинг (нет)',    'change':-100,'impact_pct': impact(new_rev=base_rev*0.90, new_cogs=base_cogs*0.90)},
+        {'param':'Налог (рост)',       'change':+50, 'impact_pct': impact(new_opex=base_opex + int(base_rev*0.015))},
+    ]
+    # Порядок по абсолютному импакту
+    sensitivities.sort(key=lambda x: x['impact_pct'])
+
+    # Точки смерти
+    var_margin = base_rev - base_cogs
+    death_points = [
+        {'param':'Загрузка / трафик', 'threshold': f'падение до <{int(base_opex/var_margin*100)}% ведёт в минус' if var_margin else '—'},
+        {'param':'Средний чек',        'threshold': f'падение на >{int((1 - base_opex/(base_rev*(1-cogs_pct)))*100)}% ведёт в минус' if base_rev else '—'},
+        {'param':'ФОТ',                'threshold': f'рост на >{int((base_op_profit)/(fot or 1)*100)}% ведёт в минус' if fot else '—'},
+    ]
+
+    # Критичный параметр — с наибольшим отрицательным импактом
+    critical = sensitivities[0]
+
+    recommendations_by_param = {
+        'Загрузка / трафик': [
+            'Минимум 3 первых месяца — фокус на маркетинге',
+            'Следите за загрузкой еженедельно с 1-й недели',
+            'Если загрузка <45% к 3-му мес — срочно пересматривайте маркетинг',
+        ],
+        'Средний чек': [
+            'Разработать upsell / апсейлы (пакеты, комплексные услуги)',
+            'Регулярно пересматривать прайс раз в 3 мес',
+            'Не бояться поднимать цену на 5-10% после набора базы',
+        ],
+        'ФОТ (рост)': [
+            'Сдельная система мотивации — привязана к выручке',
+            'Не брать сотрудников про запас',
+            'Готовить замену ключевым мастерам',
+        ],
+    }
+    recs = recommendations_by_param.get(critical['param'], ['Следите за параметром ежемесячно'])
+
+    return {
+        'base_profit_month': base_profit_month,
+        'base_profit_year': base_profit_year,
+        'sensitivities': sensitivities,
+        'death_points': death_points,
+        'critical_param': critical,
+        'recommendations': recs,
+    }
+
+
+# ═══════════════════════════════════════════════
+# BLOCK 9 — РИСКИ НИШИ
+# ═══════════════════════════════════════════════
+
+def compute_block9_risks(db, result, adaptive):
+    """Читает insight-файл ниши и извлекает топ-5 рисков. Fallback — generic риски по архетипу."""
+    import os, re
+    inp = result.get('input', {}) or {}
+    niche_id = inp.get('niche_id', '')
+
+    repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    insight_path = os.path.join(repo_root, 'knowledge', 'niches', f'{niche_id}_insight.md')
+
+    # Generic риски по архетипу (fallback)
+    arch = _archetype_of(db, niche_id)
+    generic_risks = {
+        'A': [
+            {'title':'Уход мастера с клиентской базой', 'probability':'ВЫСОКАЯ', 'impact':'КРИТИЧНОЕ',
+             'text':'В нишах услуг клиенты привязаны к мастеру. Уход мастера может забрать 40-60% его клиентов.',
+             'mitigation':'Программа удержания мастеров. CRM салона, не личная. Минимум 2 мастера на 1 позицию.'},
+            {'title':'Открытие конкурента в радиусе 300м', 'probability':'СРЕДНЯЯ', 'impact':'ЗАМЕТНОЕ',
+             'text':'Бьюти-ниши стадно растут. Новый конкурент в районе может забрать 20-30% трафика.',
+             'mitigation':'Долгосрочный договор аренды. Программа лояльности. Работа с соцсетями.'},
+            {'title':'Сезонная просадка янв-фев', 'probability':'ВЫСОКАЯ', 'impact':'ТЕРПИМОЕ',
+             'text':'После новогодних расходов спрос падает. Просадка до −25%.',
+             'mitigation':'Запас оборотки на 2 мес. Сезонные акции и пакеты.'},
+            {'title':'Проблемы с аксессуарами / расходниками', 'probability':'СРЕДНЯЯ', 'impact':'ТЕРПИМОЕ',
+             'text':'Курс, логистика, импорт — срывы поставок материалов.',
+             'mitigation':'Запас расходников на 2 мес. 2-3 поставщика вместо одного.'},
+            {'title':'Регулирование (СЭС, лицензии)', 'probability':'НИЗКАЯ', 'impact':'КРИТИЧНОЕ',
+             'text':'Проверки СЭС, претензии по документам, особенно для мед.ниш.',
+             'mitigation':'Проверить все разрешения ДО открытия. Договор с юристом.'},
+        ],
+        'B': [
+            {'title':'Скачок food cost', 'probability':'ВЫСОКАЯ', 'impact':'КРИТИЧНОЕ',
+             'text':'Продукты дорожают неравномерно. Food cost может вырасти с 30% до 40% без предупреждения.',
+             'mitigation':'Контракты с поставщиками. Регулярный пересмотр меню.'},
+            {'title':'Уход шеф-повара / бариста', 'probability':'СРЕДНЯЯ', 'impact':'ЗАМЕТНОЕ',
+             'text':'Ключевой повар уходит — качество падает, клиенты замечают.',
+             'mitigation':'Документированные рецепты. Сменность. Не один ключевой человек.'},
+            {'title':'Зависимость от агрегаторов', 'probability':'ВЫСОКАЯ', 'impact':'ЗАМЕТНОЕ',
+             'text':'Комиссии 20-30%. Агрегатор может поменять условия.',
+             'mitigation':'Развивать собственный канал (соцсети, сайт, колл-центр).'},
+            {'title':'СЭС / отзывы о санитарии', 'probability':'СРЕДНЯЯ', 'impact':'КРИТИЧНОЕ',
+             'text':'Одна жалоба в 2ГИС о «тухлой еде» режет трафик надолго.',
+             'mitigation':'Строгие стандарты. Регулярный аудит. Быстрая работа с негативом.'},
+            {'title':'Сезонная просадка / курортность', 'probability':'СРЕДНЯЯ', 'impact':'ТЕРПИМОЕ',
+             'text':'Летом — свадьбы, зимой — корпоративы; в другие месяцы провалы 20%.',
+             'mitigation':'Планировать запас. Промо в провальные месяцы.'},
+        ],
+        'C': [
+            {'title':'Порча и списания товара', 'probability':'ВЫСОКАЯ', 'impact':'ЗАМЕТНОЕ',
+             'text':'Для скоропорта — 3-10% потерь. Для непродовольственного — до 5% на бой/порчу.',
+             'mitigation':'Ротация запасов FIFO. Скидки на товар к истечению срока.'},
+            {'title':'Заморозка оборотного капитала', 'probability':'ВЫСОКАЯ', 'impact':'ЗАМЕТНОЕ',
+             'text':'Товар лежит — деньги не работают. Плохо оборачивающиеся позиции — яд.',
+             'mitigation':'ABC-анализ. Сокращать ассортимент непопулярных позиций.'},
+            {'title':'Сезонные пики (цветы, новый год)', 'probability':'СРЕДНЯЯ', 'impact':'ТЕРПИМОЕ',
+             'text':'В пиковые даты — дефицит товара, в межсезонье — излишки.',
+             'mitigation':'Планирование закупок за 2 мес. Предзаказы.'},
+        ],
+        'D':[
+            {'title':'Высокий churn (отток)', 'probability':'ВЫСОКАЯ', 'impact':'КРИТИЧНОЕ',
+             'text':'В абонементных нишах отток 5-15% в месяц — норма, но может взлететь.',
+             'mitigation':'Удержание: программы лояльности. CRM. Работа с неактивными.'},
+            {'title':'Рост CAC (стоимости привлечения)', 'probability':'СРЕДНЯЯ', 'impact':'ЗАМЕТНОЕ',
+             'text':'Реклама дорожает, конкуренция растёт — CAC может удвоиться за год.',
+             'mitigation':'Развивать органику. Сарафан, реферальные программы.'},
+            {'title':'Зависимость от единичных тренеров / преподавателей', 'probability':'СРЕДНЯЯ', 'impact':'КРИТИЧНОЕ',
+             'text':'Сильный тренер забирает группу к себе — катастрофа для студии.',
+             'mitigation':'Множественные тренеры в каждом направлении. Командная культура.'},
+        ],
+        'E':[
+            {'title':'Кассовый разрыв на проектах', 'probability':'ВЫСОКАЯ', 'impact':'КРИТИЧНОЕ',
+             'text':'Клиент платит в конце, а вам платить сегодня. Риск разрыва.',
+             'mitigation':'Предоплаты 30-50%. Запас оборотки. Договора с чётким графиком.'},
+            {'title':'Клиент уходит не заплатив / претензии', 'probability':'СРЕДНЯЯ', 'impact':'ЗАМЕТНОЕ',
+             'text':'Спор по качеству → недоплата или возврат.',
+             'mitigation':'Акты приёмки на каждом этапе. Юр.договор. Страхование.'},
+            {'title':'Колебания маржи на материалы', 'probability':'СРЕДНЯЯ', 'impact':'ТЕРПИМОЕ',
+             'text':'Закупочные цены растут быстрее чем вы обновляете прайс.',
+             'mitigation':'Фиксация цены при подписании. Пересмотр прайс-листа раз в 3 мес.'},
+        ],
+        'F':[
+            {'title':'Простой мощности', 'probability':'ВЫСОКАЯ', 'impact':'ЗАМЕТНОЕ',
+             'text':'Постоянные затраты идут, а мощность простаивает — деньги горят.',
+             'mitigation':'Минимум маркетинга на старте. Гибкая занятость персонала.'},
+            {'title':'Поломки оборудования', 'probability':'СРЕДНЯЯ', 'impact':'КРИТИЧНОЕ',
+             'text':'Ключевой агрегат сломался — бизнес встал.',
+             'mitigation':'Запас запчастей. Договор с сервисом. Резервное оборудование.'},
+            {'title':'Регуляторные ограничения (экология, санитария)', 'probability':'СРЕДНЯЯ', 'impact':'КРИТИЧНОЕ',
+             'text':'Новые требования → доп.инвестиции или закрытие.',
+             'mitigation':'Следить за законодательством. Соответствие изначально.'},
+        ],
+    }
+
+    risks_out = []
+    if os.path.exists(insight_path):
+        try:
+            with open(insight_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            # Ищем секцию рисков (простой парсинг по заголовкам)
+            m = re.search(r'#+\s*(Риски|Подводные камни|Причины провала)[\s\S]*?(?=\n#+ |\Z)', content, re.IGNORECASE)
+            if m:
+                section = m.group(0)
+                items = re.findall(r'(?:^|\n)[-*\d.]+\s+\*\*([^*]+)\*\*([\s\S]*?)(?=\n[-*\d.]+|\n#+|\Z)', section)
+                for title, body in items[:5]:
+                    body_text = re.sub(r'\n\s*', ' ', body).strip()[:240]
+                    risks_out.append({
+                        'title': title.strip(),
+                        'probability': 'СРЕДНЯЯ', 'impact': 'ЗАМЕТНОЕ',
+                        'text': body_text, 'mitigation': '',
+                    })
+        except Exception:
+            pass
+
+    if not risks_out:
+        risks_out = generic_risks.get(arch, generic_risks['A'])[:5]
+
+    return {
+        'niche_id': niche_id,
+        'source': 'insight' if len(risks_out) and (not generic_risks.get(arch) or risks_out[0].get('title') != generic_risks[arch][0]['title']) else 'generic',
+        'risks': risks_out,
+    }
+
+
+# ═══════════════════════════════════════════════
 # BLOCK 5 — P&L ЗА ГОД (Quick Check report, стр. 5)
 # Три сценария + ключевые мультипликаторы + доход предпринимателя
 # ═══════════════════════════════════════════════
