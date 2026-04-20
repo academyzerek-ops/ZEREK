@@ -585,6 +585,37 @@ ul, ol { list-style: none; }
   border-top: 1px solid var(--border);
   flex-wrap: wrap;
 }
+/* --- Список глав (читать прямо на сайте) --- */
+.chapters-block {
+  margin-top: 28px;
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 32px;
+}
+.chapters-title {
+  font-size: 13px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text-3);
+  margin-bottom: 18px;
+}
+.chapters-mod + .chapters-mod { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 18px; }
+.chapters-mod-label {
+  font-size: 14px; font-weight: 700; color: var(--text-1);
+  margin-bottom: 10px;
+}
+.chapters-list {
+  margin: 0; padding: 0 0 0 20px;
+  display: grid; gap: 6px;
+}
+.chapters-list li { list-style: decimal; color: var(--text-3); font-size: 14px; }
+.chapters-list li a {
+  color: var(--text-1); text-decoration: none;
+  border-bottom: 1px dashed transparent; transition: border-color 0.15s, color 0.15s;
+}
+.chapters-list li a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+@media (max-width: 680px) {
+  .chapters-block { padding: 20px 18px; }
+}
 .meta-item {
   display: flex; align-items: center; gap: 8px;
   font-family: 'JetBrains Mono', monospace;
@@ -842,6 +873,21 @@ ul, ol { list-style: none; }
   background: var(--bg);
 }
 .case-card-lesson strong { color: var(--text); }
+.case-card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+.case-card-link:hover .case-card-read { color: var(--accent); }
+.case-card-read {
+  display: inline-block;
+  margin-top: 14px;
+  font-size: 13px; font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 0.02em;
+  transition: color .15s var(--ease);
+}
 
 /* ═══ PRIVACY ═══ */
 .privacy-section { max-width: 720px; }
