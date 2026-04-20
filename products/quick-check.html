@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0F0F0F">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<title>ZEREK — Экспресс-оценка v2</title>
+<meta http-equiv="Pragma" content="no-cache">
+<title>ZEREK — Экспресс-оценка</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,60 +28,53 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 input,select{font-family:inherit;color:inherit}
 h1,h2,h3{margin:0;font-weight:700;letter-spacing:-0.02em}
 h2{font-size:22px;margin-bottom:6px}
-p{margin:0}
 
-/* Top bar */
 .top-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;position:sticky;top:0;background:linear-gradient(180deg,var(--bg) 85%,transparent);z-index:10}
 .back-btn{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:600;color:var(--accent);padding:6px 4px}
-.back-btn svg{width:18px;height:18px}
 .back-btn[disabled]{color:var(--text-3);cursor:default}
 .brand{font-size:13px;font-weight:700;letter-spacing:0.02em;color:var(--text-2);text-transform:uppercase}
 .brand strong{color:var(--text)}
-.brand-v{color:var(--accent);font-weight:700}
 
-/* Progress */
 .progress-bar{height:4px;background:var(--surface-2);border-radius:2px;overflow:hidden;margin-bottom:6px}
 .progress-fill{height:100%;background:var(--accent);width:calc(var(--p,0) * 100%);transition:width 0.25s ease}
 .progress-text{display:flex;justify-content:space-between;font-size:12px;color:var(--text-3);font-weight:500;margin-bottom:20px}
-.progress-text strong{color:var(--text-2);font-weight:600}
 
-/* Wizard */
 .step{animation:fadeUp 0.2s ease both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .step-kicker{font-size:11px;font-weight:700;letter-spacing:0.12em;color:var(--accent);text-transform:uppercase;margin-bottom:8px}
 .step-desc{font-size:14px;color:var(--text-2);margin:4px 0 18px}
 .step-note{background:var(--accent-dim);border:1px solid rgba(124,108,255,0.3);color:var(--text);padding:12px 14px;border-radius:var(--radius-sm);font-size:13px;line-height:1.5;margin-bottom:14px}
-.step-note strong{color:var(--accent)}
 
 .options{display:flex;flex-direction:column;gap:8px;padding-bottom:20px}
-.opt{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface);border:1.5px solid transparent;border-radius:var(--radius);cursor:pointer;transition:border-color 0.15s,background 0.15s,transform 0.1s;min-height:56px}
-.opt:active{transform:scale(0.985)}
+.opt{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface);border:1.5px solid transparent;border-radius:var(--radius);cursor:pointer;min-height:56px}
 .opt.selected{border-color:var(--accent);background:var(--accent-dim)}
 .opt-icon{font-size:22px;width:32px;flex-shrink:0;text-align:center}
-.opt-label{font-size:15px;font-weight:600;color:var(--text)}
-.opt-sub{font-size:12px;color:var(--text-3);margin-top:2px}
+.opt-label{font-size:15px;font-weight:600}
+.opt-sub{font-size:12px;color:var(--text-3);margin-top:2px;line-height:1.4}
+.opt-badge{font-size:10px;color:var(--accent);background:var(--accent-dim);padding:2px 8px;border-radius:10px;display:inline-block;margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em}
 
-.toggles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:18px}
-.toggle{padding:12px 8px;background:var(--surface);border:1.5px solid transparent;border-radius:var(--radius-sm);text-align:center;font-size:13px;font-weight:600;cursor:pointer}
-.toggle.selected{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
+.category{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);padding:18px 0 8px;border-bottom:0.5px solid var(--surface-2);margin-bottom:8px}
 
-.range-wrap{padding:14px 16px;background:var(--surface);border-radius:var(--radius);margin-bottom:18px}
-.range-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:13px;color:var(--text-2);font-weight:600}
-.range-val{font-family:var(--mono);font-weight:700;color:var(--text);font-size:16px}
-input[type="range"]{-webkit-appearance:none;width:100%;height:4px;background:var(--surface-3);border-radius:2px;outline:none}
-input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;background:var(--accent);border-radius:50%;cursor:pointer;border:3px solid var(--bg)}
+.radio-group{display:flex;flex-direction:column;gap:6px;padding-bottom:8px}
+.radio{display:flex;align-items:center;gap:10px;padding:14px;background:var(--surface);border:1.5px solid transparent;border-radius:var(--radius-sm);cursor:pointer;font-size:14px}
+.radio.selected{border-color:var(--accent);background:var(--accent-dim)}
+.radio-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--surface-3);flex-shrink:0}
+.radio.selected .radio-dot{border-color:var(--accent);background:radial-gradient(var(--accent) 0 4px,transparent 5px)}
+.radio-label{font-weight:600}
+.radio-sub{font-size:12px;color:var(--text-3);margin-top:3px}
 
-.num-in{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--surface);border-radius:var(--radius);margin-bottom:18px}
+.num-in{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--surface);border-radius:var(--radius);margin-bottom:8px}
 .num-in input{flex:1;background:transparent;border:none;outline:none;font-family:var(--mono);font-weight:700;font-size:18px;color:var(--text);width:100%}
 .num-in-suffix{font-size:13px;color:var(--text-3);font-weight:600}
 
-.radio-group{display:flex;flex-direction:column;gap:6px;padding-bottom:18px}
-.radio{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--surface);border:1.5px solid transparent;border-radius:var(--radius-sm);cursor:pointer;font-size:14px}
-.radio.selected{border-color:var(--accent);background:var(--accent-dim)}
-.radio-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--surface-3);flex-shrink:0;transition:border-color 0.15s}
-.radio.selected .radio-dot{border-color:var(--accent);background:radial-gradient(var(--accent) 0 4px,transparent 5px)}
+.section-label{font-size:13px;font-weight:600;margin:18px 0 8px;color:var(--text-2)}
 
-.section-label{font-size:13px;font-weight:600;margin-bottom:8px;color:var(--text-2)}
+.auto-badge{background:var(--surface-2);border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.auto-badge-ic{font-size:28px}
+.auto-badge-text{font-size:14px;color:var(--text-2);line-height:1.4}
+.auto-badge-text strong{color:var(--text)}
+
+.skip-btn{display:block;width:100%;padding:12px;text-align:center;background:var(--surface-2);border-radius:var(--radius);color:var(--accent);font-size:14px;font-weight:600;margin-top:8px;cursor:pointer}
 
 .confirm-table{width:100%;border-collapse:collapse;background:var(--surface);border-radius:var(--radius);overflow:hidden;margin-bottom:6px}
 .confirm-table td{padding:12px 16px;font-size:14px;border-bottom:1px solid var(--surface-2)}
@@ -89,11 +83,9 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;hei
 .confirm-table td:last-child{text-align:right;font-weight:600}
 
 .cta-wrap{position:sticky;bottom:0;padding:14px 0 16px;padding-bottom:max(16px,env(safe-area-inset-bottom,0));background:linear-gradient(0deg,var(--bg) 80%,transparent);margin-top:10px}
-.btn{width:100%;padding:15px 20px;background:var(--accent);color:#fff;font-size:16px;font-weight:700;border-radius:100px;cursor:pointer;transition:opacity 0.15s,transform 0.1s;letter-spacing:-0.01em}
-.btn:active{opacity:0.85;transform:scale(0.99)}
-.btn.disabled{background:var(--surface-2);color:var(--text-3);cursor:default}
+.btn{width:100%;padding:15px 20px;background:var(--accent);color:#fff;font-size:16px;font-weight:700;border-radius:100px}
+.btn.disabled{background:var(--surface-2);color:var(--text-3)}
 
-/* Loading */
 #loading-screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;padding:40px 20px}
 #loading-screen.active{display:flex}
 .spinner{width:48px;height:48px;border:3px solid var(--surface-2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.9s linear infinite;margin-bottom:24px}
@@ -101,7 +93,6 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;hei
 .loading-title{font-size:18px;font-weight:700;margin-bottom:6px}
 .loading-sub{font-size:13px;color:var(--text-2)}
 
-/* Result */
 #result-screen{display:none}
 #result-screen.active{display:block}
 .result-hero{text-align:center;padding:22px 16px;background:var(--surface);border-radius:var(--radius-lg);margin-bottom:14px}
@@ -110,42 +101,36 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;hei
 .result-hero-val.yellow{color:var(--yellow)}
 .result-hero-val.red{color:var(--red)}
 .result-hero-unit{font-size:13px;color:var(--text-2);margin-top:8px}
-
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
 .result-card{background:var(--surface);border-radius:var(--radius);padding:14px 16px}
 .result-card-label{font-size:11px;font-weight:700;letter-spacing:0.08em;color:var(--text-3);text-transform:uppercase;margin-bottom:4px}
-.result-card-val{font-family:var(--mono);font-weight:700;font-size:18px;color:var(--text)}
-
+.result-card-val{font-family:var(--mono);font-weight:700;font-size:18px}
 .result-err{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#fca5a5;padding:14px;border-radius:var(--radius);font-size:13px;margin-bottom:12px}
 
-#wizard-screen.hidden,#loading-screen.hidden,#result-screen.hidden{display:none!important}
-
-.debug-toggle{font-size:11px;color:var(--text-3);text-align:center;padding:8px;cursor:pointer}
-.debug-json{background:var(--surface-2);border-radius:8px;padding:10px;font-family:var(--mono);font-size:11px;white-space:pre-wrap;word-break:break-all;color:var(--text-2);max-height:240px;overflow:auto;margin-top:8px}
+.search-in{background:var(--surface);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px}
+.search-in input{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:15px}
 </style>
 </head>
 <body>
 
 <div class="top-bar">
   <button class="back-btn" id="back-btn" onclick="goBack()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
     Назад
   </button>
-  <div class="brand">ZEREK · <span class="brand-v">V2</span> · <strong>Экспресс-оценка</strong></div>
+  <div class="brand"><strong>ZEREK</strong> · Экспресс-оценка</div>
   <div style="width:60px"></div>
 </div>
 
 <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="--p:0"></div></div>
-<div class="progress-text"><span id="progress-step">Шаг 1</span><span id="progress-total">из 10</span></div>
+<div class="progress-text"><span id="progress-step">Шаг 1</span><span id="progress-total">из 8</span></div>
 
 <div id="wizard-screen"></div>
-
 <div id="loading-screen">
   <div class="spinner"></div>
   <div class="loading-title">Запускаем расчёт…</div>
-  <div class="loading-sub">ZEREK анализирует цифры — это займёт до 10 секунд.</div>
+  <div class="loading-sub">Это займёт до 10 секунд.</div>
 </div>
-
 <div id="result-screen"></div>
 
 <div class="cta-wrap" id="cta-wrap">
@@ -153,23 +138,13 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;hei
 </div>
 
 <script>
-/* ====================================================================
-   Quick Check v2 — адаптивная анкета под конфиг ниши.
-   Data flow:
-     1. GET /cities, /niches
-     2. GET /niche-config/{niche_id} после выбора ниши
-     3. POST /quick-check с новыми полями (has_license, staff_mode, staff_count, specific_answers)
-   ==================================================================== */
-
 var API = 'https://web-production-921a5.up.railway.app';
-
-/* ---------- helpers ---------- */
 function $(id){ return document.getElementById(id); }
 function fmt(n){ if(n==null||isNaN(n)) return '—'; return Math.round(n).toLocaleString('ru-RU').replace(/,/g,' '); }
+function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
 
 function apiGet(path, cb){
-  var x=new XMLHttpRequest(); x.open('GET', API+path, true);
-  x.timeout=30000;
+  var x=new XMLHttpRequest(); x.open('GET', API+path, true); x.timeout=30000;
   x.onload=function(){ try{ cb(null, JSON.parse(x.responseText)); }catch(e){ cb(e); } };
   x.onerror=function(){ cb(new Error('network')); };
   x.ontimeout=function(){ cb(new Error('timeout')); };
@@ -177,745 +152,516 @@ function apiGet(path, cb){
 }
 function apiPost(path, body, cb){
   var x=new XMLHttpRequest(); x.open('POST', API+path, true);
-  x.setRequestHeader('Content-Type','application/json');
-  x.timeout=60000;
+  x.setRequestHeader('Content-Type','application/json'); x.timeout=60000;
   x.onload=function(){ try{ cb(null, JSON.parse(x.responseText)); }catch(e){ cb(e, x.responseText); } };
   x.onerror=function(){ cb(new Error('network')); };
   x.ontimeout=function(){ cb(new Error('timeout')); };
   x.send(JSON.stringify(body));
 }
-
 try { if (window.Telegram && window.Telegram.WebApp) { var tg=window.Telegram.WebApp; tg.ready && tg.ready(); tg.expand && tg.expand(); } } catch(e){}
 
-/* ---------- state ---------- */
 var QC = {
-  // answers
-  city_id: '',
-  city_name: '',
-  niche_id: '',
-  niche_name: '',
-  format_id: '',
-  format_name: '',
-  cls: 'Стандарт',           // "эконом"/"стандарт"/"премиум" → маппинг
-  capex_level: 'стандарт',
-  loc_type: '',
-  area_m2: 0,
-  capital: 0,
-  has_license: null,          // "yes"/"no"/"in_progress"
-  staff_mode: null,           // "self"/"hired"
-  staff_count: null,
-  specific_answers: {},
+  niche_id:'', niche_name:'', archetype:'', icon:'',
+  format_id:'', format_name:'', format_type:'', class_level:'',
+  city_id:'', city_name:'',
+  loc_type:'', location_line:'',
+  experience:'', payroll_type:'', entrepreneur_role:'',
+  capital_own:null, capital_needed:null,
 };
-
-// Дерево шагов: имена функций-рендеров. Пересчитывается динамически в computeStepPlan()
+var Configs = null;
+var Cities = [];
+var FormatsByNiche = {};
+var NicheSurvey = null;
 var StepPlan = [];
 var stepIndex = 0;
 
-// city and niches catalogs
-var CITIES = [];
-var NICHES = [];
-var NicheConfig = null;
-var ExpressSurvey = null;          // /niche-survey response for tier=express
-
-// Quids которые рендерятся специализированными шагами (city/niche/format/...)
-// — их НЕ нужно показывать в обобщённом «specific» шаге.
-var SPECIAL_QIDS = [
-  'U_CITY','U_NICHE','U_CAPITAL',
-  'A_FORMAT','B_FORMAT','C_FORMAT','D_FORMAT','E_FORMAT','F_FORMAT','G_FORMAT','H_FORMAT','O_FORMAT','P_FORMAT',
-  'A_LOC','O_LOC','E_LOC','H_LOC',
-  'A_AREA','O_AREA','D_AREA','E_AREA','F_AREA','G_AREA','H_AREA',
-  'A_STAFF_MODE','P_STAFF',
-  'P_LICENSE','G_LICENSE'
-];
-
-function nonSpecialExpressQs(){
-  var qs = (ExpressSurvey && ExpressSurvey.questions) || [];
-  return qs.filter(function(q){ return SPECIAL_QIDS.indexOf(q.qid) === -1; });
-}
-
-/* ---------- step plan (dynamic) ---------- */
-// Локации, которые однозначно определяют физическую модель и не требуют
-// уточнения через шаг «локация» — если формат уже сообщил такой loc_type,
-// используем его как есть.
-var SELF_DEFINING_LOC = ['home','own_building','highway','online'];
-
-function effectiveLocOptions(){
-  // Какие локации реально доступны после выбора формата:
-  // — если у выбранного формата есть конкретный loc_type → возвращаем [loc_type]
-  //   (шаг локации тогда вообще пропускается).
-  // — иначе берём пересечение allowed_location_types ниши и loc_type'ов
-  //   доступных форматов; если форматов нет — allowed_location_types ниши.
-  if(!NicheConfig) return [];
-  var allowed = (NicheConfig.allowed_location_types || []).slice();
-  var formats = NicheConfig.formats || [];
-  if(QC.format_id){
-    var fm = formats.find(function(x){ return x.format_id === QC.format_id; });
-    if(fm && fm.loc_type){
-      return [fm.loc_type];
-    }
+function init(){
+  var pending = 2, firstErr = null;
+  apiGet('/configs', function(err, data){
+    if(err) firstErr = err; else Configs = data || {};
+    if(--pending === 0) finish();
+  });
+  apiGet('/cities', function(err, data){
+    if(err) firstErr = firstErr || err; else Cities = (data && data.cities) || [];
+    if(--pending === 0) finish();
+  });
+  function finish(){
+    if(firstErr){ return showError('Не удалось загрузить данные: ' + firstErr.message); }
+    StepPlan = computeStepPlan();
+    renderStep();
   }
-  if(formats.length){
-    var fmtLocs = {};
-    formats.forEach(function(f){ if(f.loc_type) fmtLocs[f.loc_type] = true; });
-    var inter = allowed.filter(function(l){ return fmtLocs[l]; });
-    // объединение: показываем то, что есть и в формате и в allowed
-    if(inter.length) return inter;
-  }
-  return allowed;
-}
-
-function isHomeMode(){
-  // home через формат или явный пользовательский выбор
-  if(QC.loc_type === 'home') return true;
-  if(QC.format_id && NicheConfig){
-    var fm = (NicheConfig.formats||[]).find(function(x){ return x.format_id === QC.format_id; });
-    if(fm && fm.loc_type === 'home') return true;
-  }
-  return false;
-}
-
-function shouldSkipLocation(){
-  // (1) формат уже определил конкретный self-defining loc_type → не спрашиваем
-  // (2) effective options содержит ровно один вариант → нечего выбирать
-  if(QC.format_id && NicheConfig){
-    var fm = (NicheConfig.formats||[]).find(function(x){ return x.format_id === QC.format_id; });
-    if(fm && fm.loc_type && SELF_DEFINING_LOC.indexOf(fm.loc_type) !== -1){
-      return true;
-    }
-  }
-  var opts = effectiveLocOptions();
-  return opts.length <= 1;
 }
 
 function computeStepPlan(){
-  // Базовые шаги
-  var plan = ['city', 'niche'];
-  if(!NicheConfig){ return plan; }
-
-  // license (если требуется или опциональна с вопросом)
-  if(NicheConfig.requires_license === 'mandatory' ||
-     (NicheConfig.requires_license === 'optional' && NicheConfig.specific_questions.some(isLicenseQuestion))){
-    plan.push('license');
-  }
-  // format (всегда показываем если есть форматы)
-  if(NicheConfig.formats && NicheConfig.formats.length){
-    plan.push('format');
-  }
-  // location (только если есть смысл выбирать)
-  if(!shouldSkipLocation()){
+  var plan = ['niche'];
+  if(!QC.niche_id) return plan;
+  plan.push('format');
+  if(!QC.format_id) return plan;
+  plan.push('city');
+  if(!QC.city_id) return plan;
+  var ft = QC.format_type;
+  if(!['SOLO','HOME','MOBILE'].includes(ft)){
     plan.push('location');
   }
-  // specific — обобщённый шаг для всех «не-специализированных» вопросов из
-  // /niche-survey?tier=express (после фильтрации SPECIAL_QIDS и лицензии).
-  var leftoverQs = nonSpecialExpressQs().filter(function(q){
-    return !isLicenseQuestionByQid(q.qid);
-  });
-  if(leftoverQs.length) plan.push('specific');
-  // area (скрываем если home или формат «без помещения»)
-  if(!shouldSkipArea()){
-    plan.push('area');
+  plan.push('experience');
+  if(['SOLO','HOME'].indexOf(ft) === -1 && hasStaff()){
+    plan.push('payroll');
+    plan.push('role');
   }
-  // staff
-  plan.push('staff');
-  // capital
   plan.push('capital');
-  // confirm
   plan.push('confirm');
   return plan;
 }
 
-function isLicenseQuestion(q){
-  return ['Q_NOT_LIC','Q_IPO','Q_MED_LIC','Q_EDU_LIC'].indexOf(q.question_id) !== -1;
-}
-
-function isLicenseQuestionByQid(qid){
-  return ['B_MED_LIC','P_LICENSE','G_LICENSE'].indexOf(qid) !== -1;
-}
-
-/* ---------- init ---------- */
-function init(){
-  apiGet('/cities', function(err, resp){
-    if(err){ return showError('Не удалось загрузить список городов: ' + err.message); }
-    CITIES = (resp && resp.cities) || [];
-    apiGet('/niches', function(err2, resp2){
-      if(err2){ return showError('Не удалось загрузить список ниш: ' + err2.message); }
-      NICHES = (resp2 && resp2.niches) || [];
-      StepPlan = computeStepPlan();
-      renderStep();
-    });
-  });
+function hasStaff(){
+  if(!NicheSurvey || !NicheSurvey.selected_format) return false;
+  return (NicheSurvey.selected_format.typical_staff || []).length > 0;
 }
 
 function renderStep(){
-  var name = StepPlan[stepIndex];
   updateProgress();
-  var wiz = $('wizard-screen');
-  wiz.style.display = 'block';
+  var name = StepPlan[stepIndex];
+  $('wizard-screen').style.display = 'block';
   $('loading-screen').classList.remove('active');
   $('result-screen').classList.remove('active');
   $('cta-wrap').style.display = '';
   $('back-btn').disabled = stepIndex === 0;
-
-  var renderer = RENDERERS[name];
-  if(!renderer){ wiz.innerHTML = '<div class="step-note">Шаг «'+name+'» не реализован.</div>'; return; }
-  renderer(wiz);
+  var fn = RENDERERS[name] || function(root){ root.innerHTML = '<div class="result-err">Шаг «'+name+'» не реализован.</div>'; };
+  fn($('wizard-screen'));
   updateCta();
 }
 
 function updateProgress(){
   var total = StepPlan.length;
-  var p = (stepIndex) / Math.max(1, total-1);
+  var p = stepIndex / Math.max(1, total-1);
   $('progress-fill').style.setProperty('--p', p);
   $('progress-step').textContent = 'Шаг ' + (stepIndex+1);
   $('progress-total').textContent = 'из ' + total;
 }
-
-function goBack(){
-  if(stepIndex === 0) return;
-  stepIndex -= 1;
-  renderStep();
-}
-
+function goBack(){ if(stepIndex > 0){ stepIndex -= 1; renderStep(); } }
 function nextStep(){
   if($('cta-btn').classList.contains('disabled')) return;
-
-  var curName = StepPlan[stepIndex];
-  if(curName === 'niche'){
-    // после выбора ниши — тянем конфиг, потом пересчитываем план
-    loadNicheConfigThen(function(){
+  var curr = StepPlan[stepIndex];
+  if(curr === 'confirm'){ submit(); return; }
+  if(curr === 'format'){
+    loadNicheSurvey(function(){
       StepPlan = computeStepPlan();
       stepIndex += 1;
       renderStep();
     });
     return;
   }
-  if(curName === 'confirm'){
-    submit();
-    return;
-  }
   stepIndex += 1;
+  StepPlan = computeStepPlan();
   renderStep();
 }
 
-function loadNicheConfigThen(cb){
+function loadNicheSurvey(cb){
   $('cta-btn').classList.add('disabled');
-  $('cta-btn').textContent = 'Загружаем параметры ниши…';
-  // Параллельно конфиг ниши + express-анкета (data-driven вопросы)
-  var pending = 2; var hadError = null;
-  apiGet('/niche-config/' + QC.niche_id, function(err, data){
-    if(err){ hadError = err; }
-    else { NicheConfig = data || {}; }
-    if(--pending === 0) finish();
-  });
-  apiGet('/niche-survey/' + QC.niche_id + '?tier=express', function(err, data){
-    if(err){ /* survey опционален — без него всё равно сработает специальные шаги */ }
-    else { ExpressSurvey = data || null; }
-    if(--pending === 0) finish();
-  });
-  function finish(){
+  $('cta-btn').textContent = 'Загружаем параметры…';
+  apiGet('/quickcheck-survey/' + QC.niche_id + '?format_id=' + encodeURIComponent(QC.format_id), function(err, data){
     $('cta-btn').textContent = 'Далее';
-    if(hadError){ return showError('Не удалось загрузить конфиг ниши: ' + hadError.message); }
-    if(NicheConfig.formats && NicheConfig.formats.length === 1){
-      QC.format_id = NicheConfig.formats[0].format_id;
-      QC.format_name = NicheConfig.formats[0].name || QC.format_id;
-    }
-    QC.loc_type = inferLocType();
+    if(err){ NicheSurvey = null; return showError('Не удалось загрузить: ' + err.message); }
+    NicheSurvey = data;
     cb();
-  }
-}
-
-function inferLocType(){
-  if(!NicheConfig) return '';
-  // 1. Выбранный формат — мастер.
-  if(QC.format_id){
-    var fm = (NicheConfig.formats||[]).find(function(x){ return x.format_id === QC.format_id; });
-    if(fm && fm.loc_type) return fm.loc_type;
-  }
-  // 2. Все форматы делят один и тот же loc_type → берём его.
-  var formats = NicheConfig.formats || [];
-  if(formats.length){
-    var locs = {};
-    formats.forEach(function(f){ if(f.loc_type) locs[f.loc_type] = true; });
-    var keys = Object.keys(locs);
-    if(keys.length === 1) return keys[0];
-  }
-  // 3. Если уже выбрано пользователем — не перезатираем.
-  if(QC.loc_type) return QC.loc_type;
-  // 4. Дефолт из конфига ниши.
-  return NicheConfig.default_location_type || '';
+  });
 }
 
 function showError(msg){
-  $('wizard-screen').innerHTML = '<div class="result-err">'+msg+'</div>';
+  $('wizard-screen').innerHTML = '<div class="result-err">'+escapeHtml(msg)+'</div>';
   $('cta-wrap').style.display = 'none';
 }
-
 function updateCta(){
-  var name = StepPlan[stepIndex];
-  var ok = isStepValid(name);
+  var ok = isStepValid(StepPlan[stepIndex]);
   var btn = $('cta-btn');
   btn.classList.toggle('disabled', !ok);
-  btn.textContent = (name === 'confirm') ? 'Запустить расчёт' : 'Далее';
+  btn.textContent = (StepPlan[stepIndex] === 'confirm') ? 'Запустить расчёт' : 'Далее';
 }
-
 function isStepValid(name){
   switch(name){
-    case 'city':     return !!QC.city_id;
-    case 'niche':    return !!QC.niche_id;
-    case 'license':  return QC.has_license != null || (NicheConfig && NicheConfig.requires_license !== 'mandatory');
-    case 'format':   return !!QC.format_id;
-    case 'location': return !!QC.loc_type;
-    case 'specific': return allSpecificAnswered();
-    case 'area':     return shouldSkipArea() || (QC.area_m2 > 0);
-    case 'staff':    return isStaffAnswered();
-    case 'capital':  return QC.capital > 0;
-    case 'confirm':  return true;
+    case 'niche':      return !!QC.niche_id;
+    case 'format':     return !!QC.format_id;
+    case 'city':       return !!QC.city_id;
+    case 'location':   return !needsLocationChoice() || (!!QC.loc_type && (!needsLine() || !!QC.location_line));
+    case 'experience': return !!QC.experience;
+    case 'payroll':    return !!QC.payroll_type;
+    case 'role':       return !!QC.entrepreneur_role;
+    case 'capital':    return true;
+    case 'confirm':    return true;
   }
   return false;
 }
-
-function allSpecificAnswered(){
-  // Все обобщённые «specific» вопросы (из express survey, не SPECIAL, не license)
-  var qs = nonSpecialExpressQs().filter(function(q){
-    return !isLicenseQuestionByQid(q.qid);
-  });
-  for(var i=0;i<qs.length;i++){
-    var ans = QC.specific_answers[qs[i].qid];
-    if(ans == null || ans === '' || (Array.isArray(ans) && !ans.length)) return false;
-  }
-  return true;
+function needsLocationChoice(){
+  var ft = QC.format_type;
+  return ['KIOSK','STANDARD'].indexOf(ft) !== -1;
+}
+function needsLine(){
+  if(!QC.loc_type || QC.class_level === 'премиум') return false;
+  var lm = (Configs && Configs.locations && Configs.locations.line_modifier) || {};
+  var enabled = lm.enabled_for_locations || [];
+  return enabled.indexOf(QC.loc_type) !== -1;
 }
 
-function shouldSkipArea(){
-  if(!NicheConfig) return false;
-  // (1) home — площадь не имеет смысла (нет помещения)
-  if(isHomeMode()) return true;
-  // (2) формат с area_m2 = 0 (например, грузоперевозки на 1 машину) → площадь не нужна
-  if(QC.format_id){
-    var fm = (NicheConfig.formats||[]).find(function(x){ return x.format_id === QC.format_id; });
-    if(fm && (!fm.area_m2 || fm.area_m2 === 0)) return true;
-  }
-  // (3) ниша по конфигу скрывает площадь всегда
-  if(NicheConfig.area_question_mode === 'hidden_always') return true;
-  return false;
-}
-
-function isStaffAnswered(){
-  if(!NicheConfig) return true;
-  var mode = NicheConfig.staff_question_mode;
-  if(mode === 'hidden') return true;
-  if(mode === 'self_only'){ QC.staff_mode = 'self'; return true; }
-  if(mode === 'hired_only'){ QC.staff_mode = 'hired'; return QC.staff_count != null && QC.staff_count > 0; }
-  if(mode === 'choice'){
-    if(QC.staff_mode === 'self') return true;
-    if(QC.staff_mode === 'hired') return QC.staff_count != null && QC.staff_count > 0;
-    return false;
-  }
-  return true;
-}
-
-/* ==========================
-   RENDERERS — по шагам
-   ========================== */
 var RENDERERS = {};
+
+RENDERERS.niche = function(root){
+  var niches = (Configs.niches && Configs.niches.niches) || {};
+  var cats = (Configs.niches && Configs.niches.categories) || {};
+  var byCat = {};
+  Object.keys(niches).forEach(function(nid){
+    var n = niches[nid]; var c = n.category || 'other';
+    if(!byCat[c]) byCat[c] = [];
+    byCat[c].push({id:nid, name:n.name_rus, icon:n.icon, archetype:n.archetype});
+  });
+  var catOrder = Object.keys(cats).sort(function(a,b){ return (cats[a].order||99)-(cats[b].order||99); });
+  catOrder = catOrder.filter(function(c){ return byCat[c]; });
+  Object.keys(byCat).forEach(function(c){ if(catOrder.indexOf(c) === -1) catOrder.push(c); });
+
+  var html = '<div class="step">' +
+    '<div class="step-kicker">Ниша</div>' +
+    '<h2>Какой бизнес открываете?</h2>' +
+    '<div class="step-desc">'+Object.keys(niches).length+' ниш по категориям. Выберите одну.</div>' +
+    '<div class="search-in"><input id="niche-search" placeholder="Поиск ниши…" oninput="filterNiches(this.value)" autocomplete="off"></div>' +
+    '<div id="niche-list">';
+  catOrder.forEach(function(c){
+    var m = cats[c] || {};
+    html += '<div class="category">'+escapeHtml(m.label_rus||c)+'</div>';
+    byCat[c].forEach(function(n){
+      var sel = (QC.niche_id === n.id) ? ' selected' : '';
+      html += '<div class="opt niche-opt'+sel+'" data-name="'+escapeHtml(n.name.toLowerCase())+'" onclick="selectNiche(\''+n.id+'\')">' +
+        '<div class="opt-icon">'+(n.icon||'📋')+'</div>' +
+        '<div><div class="opt-label">'+escapeHtml(n.name)+'</div></div>' +
+      '</div>';
+    });
+  });
+  html += '</div></div>';
+  root.innerHTML = html;
+};
+function selectNiche(nid){
+  QC.niche_id = nid;
+  var n = (Configs.niches.niches||{})[nid] || {};
+  QC.niche_name = n.name_rus || nid;
+  QC.archetype = n.archetype || '';
+  QC.icon = n.icon || '';
+  QC.format_id = ''; QC.format_type = ''; QC.class_level = '';
+  QC.loc_type = ''; QC.location_line = '';
+  NicheSurvey = null;
+  renderStep(); updateCta();
+}
+function filterNiches(q){
+  q = (q||'').trim().toLowerCase();
+  document.querySelectorAll('.niche-opt').forEach(function(el){
+    var n = el.getAttribute('data-name') || '';
+    el.style.display = (!q || n.indexOf(q) !== -1) ? '' : 'none';
+  });
+}
+
+RENDERERS.format = function(root){
+  if(FormatsByNiche[QC.niche_id]){
+    renderFormatList(root, FormatsByNiche[QC.niche_id]);
+    return;
+  }
+  root.innerHTML = '<div class="step"><div class="step-kicker">Формат</div><h2>Загружаем форматы…</h2></div>';
+  apiGet('/formats-v2/' + QC.niche_id, function(err, data){
+    if(err){ showError('Не удалось загрузить форматы: ' + err.message); return; }
+    FormatsByNiche[QC.niche_id] = (data && data.formats) || [];
+    renderFormatList(root, FormatsByNiche[QC.niche_id]);
+  });
+};
+function renderFormatList(root, fmts){
+  var locsMeta = (Configs.locations && Configs.locations.locations) || {};
+  var html = '<div class="step">' +
+    '<div class="step-kicker">Формат</div>' +
+    '<h2>Выберите формат</h2>' +
+    '<div class="step-desc">Формат определяет масштаб, CAPEX и типовой штат.</div>' +
+    '<div class="options">';
+  fmts.forEach(function(f){
+    var sel = (QC.format_id === f.format_id) ? ' selected' : '';
+    var staffCnt = (f.typical_staff || []).reduce(function(a,s){ return a+(s.count||0); }, 0);
+    var staffText = staffCnt > 0 ? staffCnt + ' сотр.' : 'работаете сами';
+    var extra = [];
+    if(f['class']) extra.push(f['class']);
+    if(f.area_m2 > 0) extra.push(Math.round(f.area_m2) + ' м²');
+    extra.push(staffText);
+    var locHint = '';
+    if(f.format_type === 'HIGHWAY') locHint = '🛣️ Трасса';
+    else if(f.format_type === 'PRODUCTION') locHint = '🏭 Промзона';
+    else if(f.format_type === 'KIOSK') locHint = '🏬 ТЦ / БЦ';
+    else if(f.format_type === 'HOME') locHint = '🏠 Из дома';
+    else if(f.format_type === 'MOBILE') locHint = '🚚 Выезд';
+    else if(f.format_type === 'SOLO') locHint = '💼 Аренда в салоне';
+    else if(f.allowed_locations && f.allowed_locations[0]){
+      var ll = locsMeta[f.allowed_locations[0]];
+      if(ll) locHint = '📍 ' + ll.label_rus;
+    }
+    html += '<div class="opt'+sel+'" onclick="selectFormat(\''+f.format_id+'\')">' +
+      '<div class="opt-icon">📐</div>' +
+      '<div style="flex:1"><div class="opt-label">'+escapeHtml(f.format_name)+'</div>' +
+      '<div class="opt-sub">CAPEX ≈ '+fmt(f.capex_standard)+' ₸ · ' + extra.join(' · ') + '</div>' +
+      (locHint ? '<span class="opt-badge">'+locHint+'</span>' : '') +
+      '</div></div>';
+  });
+  html += '</div></div>';
+  root.innerHTML = html;
+}
+function selectFormat(fid){
+  var f = (FormatsByNiche[QC.niche_id] || []).find(function(x){ return x.format_id === fid; });
+  if(!f) return;
+  QC.format_id = fid; QC.format_name = f.format_name;
+  QC.format_type = f.format_type || 'STANDARD';
+  QC.class_level = f['class'] || '';
+  if(f.format_type === 'HIGHWAY') QC.loc_type = 'highway';
+  else if(f.format_type === 'PRODUCTION') QC.loc_type = 'industrial';
+  else if(f.format_type === 'SOLO') QC.loc_type = 'rent_in_salon';
+  else if(f.format_type === 'HOME') QC.loc_type = 'home';
+  else if(f.format_type === 'MOBILE') QC.loc_type = 'mobile';
+  else QC.loc_type = '';
+  QC.location_line = '';
+  renderStep(); updateCta();
+}
 
 RENDERERS.city = function(root){
   var html = '<div class="step">' +
     '<div class="step-kicker">Город</div>' +
-    '<h2>Где планируется бизнес?</h2>' +
-    '<div class="step-desc">От города зависят налоги, аренда и конкуренция.</div>' +
+    '<h2>В каком городе?</h2>' +
+    '<div class="step-desc">От города зависят аренда, налоги и конкуренция.</div>' +
     '<div class="options">';
-  CITIES.forEach(function(c){
+  Cities.forEach(function(c){
     var sel = (QC.city_id === c.city_id) ? ' selected' : '';
-    html += '<div class="opt'+sel+'" onclick="selectCity(\''+c.city_id+'\',\''+(c['Город']||c.city_id).replace(/\'/g,"")+'\')">' +
+    var name = c['Город'] || c.city_id;
+    var safe = escapeHtml(name).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    html += '<div class="opt'+sel+'" onclick="selectCity(\''+c.city_id+'\',\''+safe+'\')">' +
       '<div class="opt-icon">📍</div>' +
-      '<div><div class="opt-label">'+(c['Город']||c.city_id)+'</div></div>' +
+      '<div class="opt-label">'+escapeHtml(name)+'</div>' +
     '</div>';
   });
-  html += '</div></div>';
+  html += '<div class="opt" onclick="selectCity(\'OTHER\',\'Другой город\')">' +
+    '<div class="opt-icon">🗺️</div>' +
+    '<div class="opt-label">Другой город Казахстана</div>' +
+  '</div></div></div>';
   root.innerHTML = html;
 };
-function selectCity(cid, cname){ QC.city_id=cid; QC.city_name=cname; renderStep(); updateCta(); }
+function selectCity(cid, cname){ QC.city_id = cid; QC.city_name = cname; renderStep(); updateCta(); }
 
-RENDERERS.niche = function(root){
+RENDERERS.location = function(root){
+  var fmt = NicheSurvey && NicheSurvey.selected_format;
+  var ft = QC.format_type;
+  var locsMeta = (Configs.locations && Configs.locations.locations) || {};
+
+  if(ft === 'HIGHWAY'){
+    root.innerHTML = '<div class="step"><div class="step-kicker">Расположение</div>' +
+      '<h2>Где будет точка?</h2>' +
+      '<div class="auto-badge"><div class="auto-badge-ic">🛣️</div>' +
+      '<div class="auto-badge-text"><strong>Трасса / промзона</strong><br>Для этого формата локация очевидна — без выбора.</div></div></div>';
+    QC.loc_type = 'highway';
+    return;
+  }
+  if(ft === 'PRODUCTION'){
+    root.innerHTML = '<div class="step"><div class="step-kicker">Расположение</div>' +
+      '<h2>Где будет точка?</h2>' +
+      '<div class="auto-badge"><div class="auto-badge-ic">🏭</div>' +
+      '<div class="auto-badge-text"><strong>Промзона / своё здание</strong><br>Производство размещается в промзоне.</div></div></div>';
+    QC.loc_type = 'industrial';
+    return;
+  }
+
+  var opts;
+  if(ft === 'KIOSK'){
+    opts = ['mall_premium','mall_standard','bc_premium','bc_standard'];
+  } else {
+    opts = (fmt && fmt.allowed_locations) || [];
+  }
+
   var html = '<div class="step">' +
-    '<div class="step-kicker">Ниша</div>' +
-    '<h2>Какой бизнес открываете?</h2>' +
-    '<div class="step-desc">Для каждой ниши — свои вопросы. Выберите из списка.</div>' +
+    '<div class="step-kicker">Расположение</div>' +
+    '<h2>Где будет точка?</h2>' +
+    '<div class="step-desc">Тип локации влияет на аренду и трафик.</div>' +
     '<div class="options">';
-  NICHES.forEach(function(n){
-    var sel = (QC.niche_id === n.niche_id) ? ' selected' : '';
-    html += '<div class="opt'+sel+'" onclick="selectNiche(\''+n.niche_id+'\',\''+(n.name||n.niche_id).replace(/\'/g,"")+'\')">' +
-      '<div class="opt-icon">'+(n.icon||'📋')+'</div>' +
-      '<div><div class="opt-label">'+(n.name||n.niche_id)+'</div></div>' +
+  opts.forEach(function(loc){
+    var m = locsMeta[loc] || {label_rus: loc};
+    var sel = (QC.loc_type === loc) ? ' selected' : '';
+    html += '<div class="opt'+sel+'" onclick="selectLoc(\''+loc+'\')">' +
+      '<div class="opt-icon">📍</div>' +
+      '<div><div class="opt-label">'+escapeHtml(m.label_rus)+'</div>' +
+      '<div class="opt-sub">'+escapeHtml(m.description_rus||'')+'</div></div>' +
     '</div>';
   });
-  html += '</div></div>';
-  root.innerHTML = html;
-};
-function selectNiche(nid, nname){ QC.niche_id=nid; QC.niche_name=nname; NicheConfig=null; renderStep(); updateCta(); }
+  html += '</div>';
 
-RENDERERS.license = function(root){
-  var mandatory = NicheConfig.requires_license === 'mandatory';
-  var html = '<div class="step">' +
-    '<div class="step-kicker">Лицензия</div>' +
-    '<h2>'+(mandatory ? 'Нужна лицензия' : 'Лицензия может понадобиться')+'</h2>' +
-    '<div class="step-desc">'+(NicheConfig.license_description || 'Лицензируемая деятельность.')+'</div>' +
-    '<div class="step-note">'+(mandatory
-      ? 'Без лицензии запуск невозможен. Это важно учесть на этапе оценки.'
-      : 'Лицензия не обязательна на старте, но расширит возможности бизнеса.')+'</div>';
-
-  var licenseQ = NicheConfig.specific_questions.find(isLicenseQuestion);
-  if(licenseQ){
-    html += '<div class="section-label">'+licenseQ.question_text+'</div>' +
-      '<div class="radio-group">';
-    licenseQ.options.forEach(function(opt){
-      var mapped = mapLicenseOption(opt);
-      var sel = (QC.has_license === mapped) ? ' selected' : '';
-      html += '<div class="radio'+sel+'" onclick="selectLicense(\''+mapped+'\')">' +
-        '<div class="radio-dot"></div><div>'+opt+'</div></div>';
+  if(QC.loc_type && needsLine()){
+    var lines = (Configs.locations.line_modifier && Configs.locations.line_modifier.lines) || {};
+    html += '<div class="section-label">Какая линия?</div><div class="radio-group">';
+    ['line_1','line_2'].forEach(function(lid){
+      var lm = lines[lid] || {};
+      var sel = (QC.location_line === lid) ? ' selected' : '';
+      html += '<label class="radio'+sel+'" onclick="selectLine(\''+lid+'\')">' +
+        '<div class="radio-dot"></div><div><div class="radio-label">'+escapeHtml(lm.label_rus||lid)+'</div></div>' +
+      '</label>';
     });
     html += '</div>';
-  } else {
-    // optional без явного вопроса → помечаем "yes", чтобы не блочить
-    QC.has_license = 'no';
+  } else if(QC.loc_type && QC.class_level === 'премиум'){
+    html += '<div class="step-note">Премиум-формат → линия автоматически 1-я.</div>';
+    QC.location_line = 'line_1';
   }
 
   html += '</div>';
-  root.innerHTML = html;
-};
-function mapLicenseOption(opt){
-  var l = (opt||'').toLowerCase();
-  if(l.indexOf('да')===0 || l.indexOf('есть')===0) return 'yes';
-  if(l.indexOf('нет')===0) return 'no';
-  if(l.indexOf('процесс')!==-1 || l.indexOf('планир')!==-1 || l.indexOf('позже')!==-1) return 'in_progress';
-  return 'no';
-}
-function selectLicense(v){ QC.has_license=v; renderStep(); updateCta(); }
-
-RENDERERS.format = function(root){
-  var formats = (NicheConfig && NicheConfig.formats) || [];
-  var useClasses = NicheConfig.class_grades_applicable === 'yes';
-  var html = '<div class="step">' +
-    '<div class="step-kicker">Формат</div>' +
-    '<h2>Выберите формат</h2>' +
-    '<div class="step-desc">'+(useClasses
-      ? 'Выберите близкий вам формат — от эконома до премиума.'
-      : 'Типовые форматы этой ниши.')+'</div>' +
-    '<div class="options">';
-  formats.forEach(function(f){
-    var sel = (QC.format_id === f.format_id) ? ' selected' : '';
-    var classTag = f['class'] ? (' · ' + f['class']) : '';
-    var areaTag  = f.area_m2 ? (' · ' + Math.round(f.area_m2) + ' м²') : '';
-    html += '<div class="opt'+sel+'" onclick="selectFormat(\''+f.format_id+'\',\''+((f.name||f.format_id).replace(/\'/g,""))+'\',\''+(f['class']||'')+'\')">' +
-      '<div class="opt-icon">📐</div>' +
-      '<div><div class="opt-label">'+(f.name || f.format_id)+'</div>' +
-      '<div class="opt-sub">CAPEX ≈ '+fmt(f.capex_standard)+' ₸'+classTag+areaTag+'</div></div>' +
-    '</div>';
-  });
-  html += '</div></div>';
-  root.innerHTML = html;
-};
-function selectFormat(fid, fname, clsTag){
-  QC.format_id = fid; QC.format_name = fname;
-  // map class → capex_level / cls
-  var lv = (clsTag||'').toLowerCase();
-  if(lv === 'эконом'){ QC.capex_level='эконом'; QC.cls='Эконом'; }
-  else if(lv === 'премиум'){ QC.capex_level='премиум'; QC.cls='Премиум'; }
-  else { QC.capex_level='стандарт'; QC.cls='Стандарт'; }
-  // protect locality + area: формат сразу подтягивает loc_type и area_m2
-  var fm = NicheConfig.formats.find(function(x){ return x.format_id === fid; });
-  if(fm){
-    if(fm.loc_type){ QC.loc_type = fm.loc_type; }
-    if(fm.area_m2){ QC.area_m2 = fm.area_m2; }
-    else { QC.area_m2 = 0; }
-  }
-  // План шагов мог измениться — например, шаги «локация» / «площадь»
-  // могут стать ненужными после фиксации формата.
-  StepPlan = computeStepPlan();
-  renderStep(); updateCta();
-}
-
-RENDERERS.location = function(root){
-  var opts = effectiveLocOptions();
-  var meta = (NicheConfig && NicheConfig.location_types_meta) || {};
-  // Дополним meta служебными типами на случай расхождения allowed/format
-  var fallback = {
-    'tc':{label:'Торговый центр',icon:'🏬'}, 'street':{label:'Улица',icon:'🏪'},
-    'home':{label:'Из дома',icon:'🏠'}, 'highway':{label:'Возле дороги',icon:'🛣️'},
-    'residential_complex':{label:'Коммерция в ЖК',icon:'🏢'},
-    'business_center':{label:'Бизнес-центр',icon:'🏢'},
-    'market':{label:'Рынок',icon:'🛍️'}, 'online':{label:'Онлайн',icon:'🌐'},
-    'residential_area':{label:'Спальный район',icon:'🏘️'},
-    'own_building':{label:'Отдельное здание',icon:'🏛️'}
-  };
-  var html = '<div class="step">' +
-    '<div class="step-kicker">Локация</div>' +
-    '<h2>Где будет располагаться?</h2>' +
-    '<div class="step-desc">От локации зависят аренда, трафик и конкуренция.</div>' +
-    '<div class="options">';
-  opts.forEach(function(loc){
-    var m = meta[loc] || fallback[loc] || {label: loc, icon: '📍'};
-    var sel = (QC.loc_type === loc) ? ' selected' : '';
-    html += '<div class="opt'+sel+'" onclick="selectLoc(\''+loc+'\')">' +
-      '<div class="opt-icon">'+m.icon+'</div>' +
-      '<div><div class="opt-label">'+m.label+'</div></div>' +
-    '</div>';
-  });
-  html += '</div></div>';
   root.innerHTML = html;
 };
 function selectLoc(v){
   QC.loc_type = v;
-  // Если выбрали home — площадь надо скрыть, план пересчитываем.
-  StepPlan = computeStepPlan();
+  if(QC.class_level === 'премиум') QC.location_line = 'line_1';
+  else if(!needsLine()) QC.location_line = '';
   renderStep(); updateCta();
 }
+function selectLine(v){ QC.location_line = v; renderStep(); updateCta(); }
 
-RENDERERS.specific = function(root){
-  // Data-driven: рендерим все «не-специализированные» вопросы из express survey.
-  var qs = nonSpecialExpressQs().filter(function(q){
-    return !isLicenseQuestionByQid(q.qid);
+RENDERERS.experience = function(root){
+  var opts = [
+    {id:'none',        label:'Нет опыта — открываю с нуля',           sub:'Риск выше среднего'},
+    {id:'some',        label:'1–2 года в найме в этой нише',           sub:'Базовый — типовая оценка'},
+    {id:'experienced', label:'3+ лет опыта или был свой бизнес',       sub:'Риск ниже'},
+  ];
+  var html = '<div class="step">' +
+    '<div class="step-kicker">Опыт</div>' +
+    '<h2>Есть ли опыт в этом бизнесе?</h2>' +
+    '<div class="step-desc">Влияет на риск-оценку сценариев.</div>' +
+    '<div class="radio-group">';
+  opts.forEach(function(o){
+    var sel = (QC.experience === o.id) ? ' selected' : '';
+    html += '<label class="radio'+sel+'" onclick="selectExp(\''+o.id+'\')">' +
+      '<div class="radio-dot"></div>' +
+      '<div><div class="radio-label">'+escapeHtml(o.label)+'</div><div class="radio-sub">'+escapeHtml(o.sub)+'</div></div>' +
+    '</label>';
   });
-  if(!qs.length){
-    // если делать нечего — auto-skip
-    stepIndex += 1; renderStep(); return;
-  }
+  html += '</div></div>';
+  root.innerHTML = html;
+};
+function selectExp(v){ QC.experience = v; renderStep(); updateCta(); }
+
+RENDERERS.payroll = function(root){
+  var qc_q = ((Configs.questionnaire && Configs.questionnaire.questionnaire &&
+               Configs.questionnaire.questionnaire.quickcheck &&
+               Configs.questionnaire.questionnaire.quickcheck.questions) || [])
+             .find(function(q){ return q.id === 'q6_payroll_type'; });
+  var byNiche = (qc_q && qc_q.default_by_niche) || {};
+  var suggested = byNiche[QC.niche_id] || byNiche.default || 'mixed';
+  if(!QC.payroll_type) QC.payroll_type = suggested;
+
+  var opts = [
+    {id:'salary', label:'Оклад (фиксированная зарплата)'},
+    {id:'piece',  label:'Сдельно / процент с выручки'},
+    {id:'mixed',  label:'Смешанно (оклад + %)'},
+  ];
+  var sug = opts.find(function(o){return o.id===suggested;});
   var html = '<div class="step">' +
-    '<div class="step-kicker">Детали</div>' +
-    '<h2>Уточняющие вопросы под нишу</h2>' +
-    '<div class="step-desc">От ответов зависит расчёт. Вопросы подобраны под вашу нишу.</div>' +
-    '<form id="specific-form" onsubmit="event.preventDefault();">';
-  qs.forEach(function(q){
-    html += renderSpecificField(q);
+    '<div class="step-kicker">Оплата труда</div>' +
+    '<h2>Как платите сотрудникам?</h2>' +
+    '<div class="step-desc">Суммы рассчитаются по бенчмаркам ZEREK.</div>' +
+    (sug ? '<div class="step-note">Типовой выбор для этой ниши: <strong>'+escapeHtml(sug.label)+'</strong></div>' : '') +
+    '<div class="radio-group">';
+  opts.forEach(function(o){
+    var sel = (QC.payroll_type === o.id) ? ' selected' : '';
+    html += '<label class="radio'+sel+'" onclick="selectPay(\''+o.id+'\')">' +
+      '<div class="radio-dot"></div><div class="radio-label">'+escapeHtml(o.label)+'</div>' +
+    '</label>';
   });
-  html += '</form></div>';
+  html += '</div></div>';
   root.innerHTML = html;
 };
+function selectPay(v){ QC.payroll_type = v; renderStep(); updateCta(); }
 
-function renderSpecificField(q){
-  // Используем тот же универсальный renderer, что и финмодель,
-  // но с привязкой значения и select-стейтом.
-  var name = q.qid;
-  var current = QC.specific_answers[name];
-  var label = '<div class="section-label" style="margin-top:18px">'+escapeHtml(q.question_text)+
-              (q.unit ? ' <span style="color:var(--text-3);font-weight:400">('+q.unit+')</span>' : '')+'</div>';
-  if(q.input_type === 'radio' || q.input_type === 'select'){
-    var opts = q.options || [];
-    var radios = '<div class="radio-group">';
-    opts.forEach(function(opt){
-      var safe = String(opt).replace(/'/g,"\\'");
-      var sel = (current === opt) ? ' selected' : '';
-      radios += '<label class="radio'+sel+'" onclick="setSpecificV2(\''+name+'\',\''+safe+'\',event)">' +
-                '<div class="radio-dot"></div><div>'+escapeHtml(opt)+'</div></label>';
-    });
-    radios += '</div>';
-    return label + radios;
-  }
-  if(q.input_type === 'boolean'){
-    return label + '<div class="radio-group">' +
-      '<label class="radio'+(current==='yes' ? ' selected':'')+'" onclick="setSpecificV2(\''+name+'\',\'yes\',event)"><div class="radio-dot"></div><div>Да</div></label>' +
-      '<label class="radio'+(current==='no'  ? ' selected':'')+'" onclick="setSpecificV2(\''+name+'\',\'no\',event)"><div class="radio-dot"></div><div>Нет</div></label>' +
-    '</div>';
-  }
-  if(q.input_type === 'multi_select'){
-    var opts2 = q.options || [];
-    var arr = Array.isArray(current) ? current : [];
-    var multi = '<div class="radio-group">';
-    opts2.forEach(function(opt){
-      var safe = String(opt).replace(/'/g,"\\'");
-      var sel = (arr.indexOf(opt) !== -1) ? ' selected' : '';
-      multi += '<label class="radio'+sel+'" onclick="toggleSpecificMulti(\''+name+'\',\''+safe+'\',event)">' +
-               '<div class="radio-dot"></div><div>'+escapeHtml(opt)+'</div></label>';
-    });
-    multi += '</div>';
-    return label + multi;
-  }
-  if(q.input_type === 'number'){
-    return label + '<div class="num-in"><input type="number" inputmode="numeric" min="'+(q.min||0)+'" max="'+(q.max||9999999999)+'" step="'+(q.step||1)+'" placeholder="'+escapeHtml(q.placeholder||'')+'" value="'+(current||'')+'" oninput="setSpecificV2(\''+name+'\',this.value)"><span class="num-in-suffix">'+(q.unit||'')+'</span></div>';
-  }
-  if(q.input_type === 'range'){
-    var initial = current || q.placeholder || q.min || 0;
-    return label + '<div class="range-wrap"><div class="range-label"><span>значение</span><span class="range-val" id="sr-'+name+'">'+fmt(initial)+(q.unit?' '+q.unit:'')+'</span></div>' +
-      '<input type="range" min="'+(q.min||0)+'" max="'+(q.max||100)+'" step="'+(q.step||1)+'" value="'+initial+'" oninput="setSpecificRange(\''+name+'\',this.value,\''+(q.unit||'')+'\')"></div>';
-  }
-  return label + '<div class="num-in"><input type="text" value="'+(current||'')+'" oninput="setSpecificV2(\''+name+'\',this.value)" placeholder="'+escapeHtml(q.placeholder||'')+'"></div>';
-}
-
-function setSpecificV2(qid, val, evt){
-  QC.specific_answers[qid] = val;
-  if(evt){
-    var target = evt.currentTarget || evt.target.closest('.radio');
-    if(target && target.parentNode){
-      Array.prototype.forEach.call(target.parentNode.children, function(ch){ ch.classList.remove('selected'); });
-      target.classList.add('selected');
-    }
-  }
-  updateCta();
-}
-function setSpecificRange(qid, val, unit){
-  QC.specific_answers[qid] = val;
-  var lbl = $('sr-'+qid);
-  if(lbl) lbl.textContent = fmt(val) + (unit?' '+unit:'');
-  updateCta();
-}
-function toggleSpecificMulti(qid, val, evt){
-  if(!Array.isArray(QC.specific_answers[qid])) QC.specific_answers[qid] = [];
-  var arr = QC.specific_answers[qid];
-  var i = arr.indexOf(val);
-  if(i === -1) arr.push(val); else arr.splice(i,1);
-  if(evt){
-    var t = evt.currentTarget || evt.target.closest('.radio');
-    if(t) t.classList.toggle('selected', arr.indexOf(val) !== -1);
-  }
-  updateCta();
-}
-
-RENDERERS.area = function(root){
-  // План плана уже исключает шаг, если shouldSkipArea() — здесь рендерим всегда.
+RENDERERS.role = function(root){
+  var roles = (NicheSurvey && NicheSurvey.entrepreneur_roles) || [];
+  if(!roles.length){ stepIndex += 1; renderStep(); return; }
   var html = '<div class="step">' +
-    '<div class="step-kicker">Площадь</div>' +
-    '<h2>Какая площадь помещения?</h2>' +
-    '<div class="step-desc">Нужна для расчёта аренды, коммуналки, уборки.</div>' +
-    '<div class="num-in">' +
-      '<input id="area-input" type="number" inputmode="numeric" min="0" step="5" placeholder="Например, 60" value="'+(QC.area_m2||'')+'" oninput="setArea(this.value)">' +
-      '<span class="num-in-suffix">м²</span>' +
-    '</div>' +
-    '<div class="step-note">Если точно не знаете — укажите ориентир. Типовая площадь этой ниши ≈ '+fmt(typicalArea())+' м².</div>' +
-  '</div>';
+    '<div class="step-kicker">Роль владельца</div>' +
+    '<h2>Какую роль берёте на себя?</h2>' +
+    '<div class="step-desc">От этого зависит ФОТ и ваш личный доход.</div>' +
+    '<div class="radio-group">';
+  roles.forEach(function(r){
+    var sel = (QC.entrepreneur_role === r.id) ? ' selected' : '';
+    html += '<label class="radio'+sel+'" onclick="selectRole(\''+r.id+'\')">' +
+      '<div class="radio-dot"></div><div class="radio-label">'+escapeHtml(r.label_rus)+'</div>' +
+    '</label>';
+  });
+  html += '</div></div>';
   root.innerHTML = html;
 };
-function setArea(v){ QC.area_m2 = parseInt(v,10) || 0; updateCta(); }
-function typicalArea(){
-  var f = (NicheConfig && NicheConfig.formats) || [];
-  if(!f.length) return 50;
-  var vals = f.map(function(x){return parseFloat(x.area_m2)||0;}).filter(function(v){return v>0;});
-  if(!vals.length) return 50;
-  return Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length);
-}
-
-RENDERERS.staff = function(root){
-  var mode = NicheConfig.staff_question_mode;
-  var html = '<div class="step">' +
-    '<div class="step-kicker">Команда</div>' +
-    '<h2>Кто будет работать?</h2>';
-
-  if(mode === 'hidden'){
-    html += '<div class="step-desc">Для этой ниши команда обязательна с первого дня — мы учтём типовой штат в расчёте.</div>' +
-            '<div class="step-note">Этот шаг не требует ответа — команда подтягивается из типовой модели для ниши.</div>';
-    root.innerHTML = html + '</div>';
-    QC.staff_mode = 'hired';
-    return;
-  }
-
-  if(mode === 'self_only'){
-    html += '<div class="step-desc">Вы работаете сами — отдельный штат не нужен на старте.</div>' +
-            '<div class="step-note"><strong>Совет:</strong> даже если работаете сами, заложите 1 помощника на крупный поток.</div>';
-    QC.staff_mode = 'self';
-    root.innerHTML = html + '</div>';
-    return;
-  }
-
-  // choice или hired_only
-  if(mode === 'choice'){
-    html += '<div class="step-desc">Сами будете работать или наймёте?</div>' +
-      '<div class="radio-group">' +
-        '<div class="radio '+(QC.staff_mode==='self' ? 'selected':'')+'" onclick="setStaffMode(\'self\')">' +
-          '<div class="radio-dot"></div><div>Работаю сам</div></div>' +
-        '<div class="radio '+(QC.staff_mode==='hired' ? 'selected':'')+'" onclick="setStaffMode(\'hired\')">' +
-          '<div class="radio-dot"></div><div>Нанимаю сотрудников</div></div>' +
-      '</div>';
-  }
-
-  if(mode === 'hired_only' || QC.staff_mode === 'hired'){
-    if(mode === 'hired_only'){
-      QC.staff_mode = 'hired';
-      html += '<div class="step-desc">Оцените типовой штат для запуска.</div>';
-    }
-    html += '<div class="section-label">Сколько сотрудников?</div>' +
-      '<div class="num-in">' +
-      '<input type="number" inputmode="numeric" min="1" step="1" placeholder="Например, 3" value="'+(QC.staff_count||'')+'" oninput="setStaffCount(this.value)">' +
-      '<span class="num-in-suffix">человек</span>' +
-    '</div>';
-  }
-
-  html += '</div>';
-  root.innerHTML = html;
-};
-function setStaffMode(v){ QC.staff_mode = v; if(v==='self') QC.staff_count = null; renderStep(); updateCta(); }
-function setStaffCount(v){ QC.staff_count = parseInt(v,10) || 0; updateCta(); }
+function selectRole(v){ QC.entrepreneur_role = v; renderStep(); updateCta(); }
 
 RENDERERS.capital = function(root){
-  var min = 500000, max = 100000000;
-  var cur = QC.capital || 5000000;
   var html = '<div class="step">' +
     '<div class="step-kicker">Капитал</div>' +
-    '<h2>Сколько готовы вложить?</h2>' +
-    '<div class="step-desc">С учётом кредитов и займов. ZEREK подскажет, хватит ли.</div>' +
-    '<div class="range-wrap">' +
-      '<div class="range-label"><span>Стартовый капитал</span><span class="range-val" id="cap-val">'+fmt(cur)+' ₸</span></div>' +
-      '<input id="capital-range" type="range" min="'+min+'" max="'+max+'" step="500000" value="'+cur+'" oninput="setCapital(this.value)">' +
-    '</div>' +
-    '<div class="step-note">Тип: <strong>'+(QC.capex_level||'стандарт')+'</strong>. При необходимости можно изменить формат на предыдущем шаге.</div>' +
+    '<h2>Ваш стартовый капитал</h2>' +
+    '<div class="step-desc">Можно пропустить — мы рассчитаем типовое.</div>' +
+    '<div class="section-label">Сколько готовы вложить?</div>' +
+    '<div class="num-in"><input type="number" inputmode="numeric" min="0" step="100000" placeholder="Необязательно" value="'+(QC.capital_own||'')+'" oninput="setCapOwn(this.value)"><span class="num-in-suffix">₸</span></div>' +
+    '<div class="section-label">Сколько, по-вашему, нужно?</div>' +
+    '<div class="num-in"><input type="number" inputmode="numeric" min="0" step="100000" placeholder="Необязательно" value="'+(QC.capital_needed||'')+'" oninput="setCapNeed(this.value)"><span class="num-in-suffix">₸</span></div>' +
+    '<div class="skip-btn" onclick="skipCapital()">Не знаю — рассчитайте типовое</div>' +
   '</div>';
   root.innerHTML = html;
-  setCapital(cur);
 };
-function setCapital(v){ QC.capital = parseInt(v,10)||0; $('cap-val').textContent = fmt(QC.capital)+' ₸'; updateCta(); }
+function setCapOwn(v){ QC.capital_own = parseInt(v,10) || null; updateCta(); }
+function setCapNeed(v){ QC.capital_needed = parseInt(v,10) || null; updateCta(); }
+function skipCapital(){ QC.capital_own = null; QC.capital_needed = null; nextStep(); }
 
 RENDERERS.confirm = function(root){
+  var locsMeta = (Configs.locations && Configs.locations.locations) || {};
+  var locLabel = (locsMeta[QC.loc_type] || {}).label_rus || QC.loc_type || '—';
+  var lineLabel = QC.location_line === 'line_1' ? '1-я линия' : QC.location_line === 'line_2' ? '2-я линия' : null;
+  var expL = {none:'Нет опыта',some:'1–2 года',experienced:'3+ лет'};
+  var payL = {salary:'Оклад',piece:'Сдельно',mixed:'Смешанно'};
+  var roles = (NicheSurvey && NicheSurvey.entrepreneur_roles) || [];
+  var roleRow = (roles.find(function(r){return r.id === QC.entrepreneur_role;}) || {}).label_rus || null;
+
   var rows = [
-    ['Город', QC.city_name || QC.city_id],
-    ['Ниша', QC.niche_name || QC.niche_id],
-    ['Формат', QC.format_name || QC.format_id],
-    ['Уровень', QC.capex_level],
-    ['Локация', ((NicheConfig.location_types_meta||{})[QC.loc_type]||{}).label || QC.loc_type || '—'],
-    ['Площадь', shouldSkipArea() ? (isHomeMode() ? 'дома' : '—') : (QC.area_m2 + ' м²')],
-    ['Капитал', fmt(QC.capital) + ' ₸'],
+    ['Ниша', (QC.icon?QC.icon+' ':'')+QC.niche_name],
+    ['Формат', QC.format_name + (QC.class_level?' · '+QC.class_level:'')],
+    ['Город', QC.city_name],
+    ['Локация', locLabel + (lineLabel?' · '+lineLabel:'')],
+    ['Опыт', expL[QC.experience] || '—'],
   ];
-  if(QC.has_license){ rows.push(['Лицензия', QC.has_license === 'yes' ? 'есть' : QC.has_license === 'in_progress' ? 'в процессе' : 'нет']); }
-  if(QC.staff_mode){ rows.push(['Команда', QC.staff_mode === 'self' ? 'работаю сам' : (QC.staff_mode + (QC.staff_count ? (', ' + QC.staff_count + ' чел') : ''))]); }
-  Object.keys(QC.specific_answers || {}).forEach(function(qid){
-    var q = NicheConfig.specific_questions.find(function(x){ return x.question_id === qid; });
-    rows.push([(q && q.question_text) || qid, QC.specific_answers[qid]]);
-  });
+  if(QC.payroll_type && ['SOLO','HOME'].indexOf(QC.format_type) === -1) rows.push(['Оплата труда', payL[QC.payroll_type] || '—']);
+  if(roleRow) rows.push(['Роль владельца', roleRow]);
+  if(QC.capital_own) rows.push(['Готов вложить', fmt(QC.capital_own) + ' ₸']);
+  if(QC.capital_needed) rows.push(['Ожидаемая потребность', fmt(QC.capital_needed) + ' ₸']);
+  if(!QC.capital_own && !QC.capital_needed) rows.push(['Капитал', '— рассчитает ZEREK']);
 
   var html = '<div class="step">' +
     '<div class="step-kicker">Проверка</div>' +
     '<h2>Всё верно?</h2>' +
-    '<div class="step-desc">Убедитесь, что ответы корректные — и запустим расчёт.</div>' +
+    '<div class="step-desc">После запуска получите 3 сценария и топ-5 рисков.</div>' +
     '<table class="confirm-table">';
-  rows.forEach(function(r){
-    html += '<tr><td>'+r[0]+'</td><td>'+(r[1]||'—')+'</td></tr>';
-  });
+  rows.forEach(function(r){ html += '<tr><td>'+escapeHtml(r[0])+'</td><td>'+escapeHtml(r[1]||'—')+'</td></tr>'; });
   html += '</table></div>';
   root.innerHTML = html;
 };
 
-/* ==========================
-   Submit
-   ========================== */
 function submit(){
   $('wizard-screen').style.display = 'none';
   $('cta-wrap').style.display = 'none';
   $('loading-screen').classList.add('active');
 
+  var clsMap = {'эконом':'Эконом','стандарт':'Стандарт','премиум':'Премиум'};
+  var capexLevel = (QC.class_level || 'стандарт').toLowerCase();
   var body = {
-    city_id: QC.city_id,
+    city_id: QC.city_id === 'OTHER' ? 'ALMATY' : QC.city_id,
     niche_id: QC.niche_id,
     format_id: QC.format_id,
-    cls: QC.cls || 'Стандарт',
-    area_m2: QC.area_m2 || 0,
+    cls: clsMap[capexLevel] || 'Стандарт',
+    capex_level: capexLevel,
+    area_m2: (NicheSurvey && NicheSurvey.selected_format && NicheSurvey.selected_format.area_m2) || 0,
     loc_type: QC.loc_type,
-    capital: QC.capital || 0,
-    capex_level: QC.capex_level || 'стандарт',
-    // v2 fields
-    has_license: QC.has_license,
-    staff_mode: QC.staff_mode,
-    staff_count: QC.staff_count,
-    specific_answers: QC.specific_answers && Object.keys(QC.specific_answers).length ? QC.specific_answers : null,
+    capital: QC.capital_own || QC.capital_needed || 0,
+    staff_mode: (QC.entrepreneur_role && QC.entrepreneur_role !== 'owner_only') ? 'self' : 'hired',
+    specific_answers: {
+      location_line: QC.location_line, experience: QC.experience,
+      payroll_type: QC.payroll_type, entrepreneur_role: QC.entrepreneur_role,
+      capital_own: QC.capital_own, capital_needed: QC.capital_needed,
+      archetype: QC.archetype, format_type: QC.format_type,
+    },
   };
-
   apiPost('/quick-check', body, function(err, resp, raw){
     $('loading-screen').classList.remove('active');
     if(err){ return showResultError('Ошибка расчёта: ' + err.message + (raw ? '\n' + raw : '')); }
@@ -928,217 +674,28 @@ function renderResult(result){
   $('result-screen').classList.add('active');
   $('cta-wrap').style.display = 'none';
   if(!result){ return showResultError('Пустой ответ от API.'); }
-
   var kpis = extractKpis(result);
   var cls = (kpis.verdict || '').toLowerCase();
-  var verdictColor = cls.indexOf('зелён')!==-1 || cls.indexOf('green')!==-1 ? '' :
-                     cls.indexOf('красн')!==-1 || cls.indexOf('red')!==-1   ? 'red' :
-                     'yellow';
-
-  var html =
+  var color = cls.indexOf('зелён')!==-1 ? '' : cls.indexOf('красн')!==-1 ? 'red' : 'yellow';
+  $('result-screen').innerHTML =
     '<div class="result-hero">' +
-      '<div class="result-hero-label">'+(kpis.heroLabel || 'Окупаемость')+'</div>' +
-      '<div class="result-hero-val '+verdictColor+'">'+(kpis.heroVal || '—')+'</div>' +
+      '<div class="result-hero-label">'+(kpis.heroLabel||'Окупаемость')+'</div>' +
+      '<div class="result-hero-val '+color+'">'+(kpis.heroVal||'—')+'</div>' +
       (kpis.heroUnit ? '<div class="result-hero-unit">'+kpis.heroUnit+'</div>' : '') +
     '</div>' +
     '<div class="result-grid">' +
-      card('Выручка/мес', kpis.revenue) +
-      card('Прибыль/мес', kpis.profit) +
-      card('Инвестиции', kpis.capex) +
-      card('Оборотка', kpis.working_cap) +
-    '</div>' +
-    '<div style="margin:16px 0">' +
-      '<button class="btn" onclick="openFinmodel()">Развернуть в финмодель</button>' +
-      '<div style="font-size:12px;color:var(--text-3);text-align:center;margin-top:8px">+ '+
-      'налоги, кредит, маркетинг, сезонность — расчёт на 36 месяцев</div>' +
-    '</div>' +
-    '<div class="debug-toggle" onclick="toggleDebug()">Показать JSON-ответ ▾</div>' +
-    '<div class="debug-json" id="debug-json" style="display:none">'+escapeHtml(JSON.stringify(result,null,2))+'</div>';
-
-  $('result-screen').innerHTML = html;
-}
-
-/* ============================================================
-   FINMODEL extension — finmodel-only delta questions in one form
-   ============================================================ */
-var FinmodelSurvey = null;
-
-function openFinmodel(){
-  if(!QC.niche_id){ return; }
-  $('result-screen').classList.remove('active');
-  $('result-screen').innerHTML = '';
-  $('loading-screen').classList.add('active');
-  $('loading-screen').querySelector('.loading-title').textContent = 'Загружаем расширенную анкету…';
-
-  apiGet('/niche-survey/' + QC.niche_id + '?tier=finmodel', function(err, data){
-    $('loading-screen').classList.remove('active');
-    if(err){ return showResultError('Не удалось загрузить финмодель-анкету: ' + err.message); }
-    FinmodelSurvey = data;
-    renderFinmodelForm();
-  });
-}
-
-function renderFinmodelForm(){
-  var qs = (FinmodelSurvey && FinmodelSurvey.questions) || [];
-  // Делта: вопросы которые ещё не отвечены (qid не в QC.specific_answers
-  // и не дублируют отвеченные базовые QC.* поля).
-  var alreadyAnswered = collectAnsweredQids();
-  var extras = qs.filter(function(q){ return alreadyAnswered.indexOf(q.qid) === -1; });
-
-  if(!extras.length){
-    return showResultError('Все вопросы финмодели уже отвечены — нечего добавить.');
-  }
-
-  $('result-screen').classList.add('active');
-  var html =
-    '<div class="step-kicker" style="margin-bottom:8px">Финмодель</div>' +
-    '<h2>Дополнительные параметры для расчёта на 36 месяцев</h2>' +
-    '<div class="step-desc">Заполните 1-2 минуты. Можно пропустить — подставим типовое.</div>' +
-    '<form id="fin-form" onsubmit="event.preventDefault(); submitFinmodel();">';
-  extras.forEach(function(q){
-    html += renderQuestionField(q);
-  });
-  html += '<div style="margin-top:18px"><button type="submit" class="btn">Сохранить и пересчитать</button></div>' +
-          '<div style="text-align:center;margin-top:12px"><button type="button" onclick="backToResult()" class="btn-outline" style="background:transparent;color:var(--accent);padding:10px;font-weight:600">Вернуться к результату</button></div>' +
-          '</form>';
-  $('result-screen').innerHTML = html;
-}
-
-function backToResult(){
-  // Просто перерисуем текущий результат если есть.
-  if(window._lastResult){ renderResult(window._lastResult); }
-  else { $('result-screen').innerHTML = ''; }
-}
-
-function collectAnsweredQids(){
-  // Сопоставим существующие QC.* поля с qid'ами из каталога.
-  var map = {
-    U_CITY: QC.city_id, U_NICHE: QC.niche_id, U_CAPITAL: QC.capital,
-    A_FORMAT: QC.format_id, B_FORMAT: QC.format_id, C_FORMAT: QC.format_id,
-    D_FORMAT: QC.format_id, E_FORMAT: QC.format_id, F_FORMAT: QC.format_id,
-    G_FORMAT: QC.format_id, H_FORMAT: QC.format_id, O_FORMAT: QC.format_id,
-    P_FORMAT: QC.format_id,
-    A_LOC: QC.loc_type, B_LOC: QC.loc_type, O_LOC: QC.loc_type, E_LOC: QC.loc_type, H_LOC: QC.loc_type,
-    A_AREA: QC.area_m2, O_AREA: QC.area_m2, D_AREA: QC.area_m2, E_AREA: QC.area_m2,
-    F_AREA: QC.area_m2, G_AREA: QC.area_m2, H_AREA: QC.area_m2,
-    A_STAFF_MODE: QC.staff_mode,
-    P_LICENSE: QC.has_license, G_LICENSE: QC.has_license,
-  };
-  var done = [];
-  Object.keys(map).forEach(function(k){
-    if(map[k] != null && map[k] !== '' && map[k] !== 0) done.push(k);
-  });
-  Object.keys(QC.specific_answers || {}).forEach(function(k){ done.push(k); });
-  return done;
-}
-
-function renderQuestionField(q){
-  var name = q.qid;
-  var label = '<div class="section-label" style="margin-top:18px">'+escapeHtml(q.question_text)+
-              (q.unit ? ' <span style="color:var(--text-3);font-weight:400">('+q.unit+')</span>' : '')+'</div>';
-  if(q.input_type === 'radio' || q.input_type === 'select'){
-    var opts = q.options || [];
-    var radios = '<div class="radio-group">';
-    opts.forEach(function(opt){
-      var safe = String(opt).replace(/'/g,"\\'");
-      radios += '<label class="radio" data-q="'+name+'" data-v="'+safe+'" onclick="setFinAnswer(\''+name+'\',\''+safe+'\',event)">' +
-                '<div class="radio-dot"></div><div>'+escapeHtml(opt)+'</div></label>';
-    });
-    radios += '</div>';
-    return label + radios;
-  }
-  if(q.input_type === 'boolean'){
-    return label + '<div class="radio-group">' +
-      '<label class="radio" onclick="setFinAnswer(\''+name+'\',\'yes\',event)"><div class="radio-dot"></div><div>Да</div></label>' +
-      '<label class="radio" onclick="setFinAnswer(\''+name+'\',\'no\',event)"><div class="radio-dot"></div><div>Нет</div></label>' +
+      '<div class="result-card"><div class="result-card-label">Выручка/мес</div><div class="result-card-val">'+kpis.revenue+'</div></div>' +
+      '<div class="result-card"><div class="result-card-label">Прибыль/мес</div><div class="result-card-val">'+kpis.profit+'</div></div>' +
+      '<div class="result-card"><div class="result-card-label">Инвестиции</div><div class="result-card-val">'+kpis.capex+'</div></div>' +
+      '<div class="result-card"><div class="result-card-label">Оборотка</div><div class="result-card-val">'+kpis.working_cap+'</div></div>' +
     '</div>';
-  }
-  if(q.input_type === 'multi_select'){
-    var opts2 = q.options || [];
-    var multi = '<div class="radio-group">';
-    opts2.forEach(function(opt){
-      var safe = String(opt).replace(/'/g,"\\'");
-      multi += '<label class="radio" onclick="toggleFinMulti(\''+name+'\',\''+safe+'\',event)">' +
-               '<div class="radio-dot"></div><div>'+escapeHtml(opt)+'</div></label>';
-    });
-    multi += '</div>';
-    return label + multi;
-  }
-  if(q.input_type === 'number'){
-    return label + '<div class="num-in"><input type="number" inputmode="numeric" min="'+(q.min||0)+'" max="'+(q.max||9999999999)+'" step="'+(q.step||1)+'" placeholder="'+escapeHtml(q.placeholder||'')+'" oninput="setFinAnswer(\''+name+'\',this.value)"><span class="num-in-suffix">'+(q.unit||'')+'</span></div>';
-  }
-  if(q.input_type === 'range'){
-    return label + '<div class="range-wrap"><div class="range-label"><span>значение</span><span class="range-val" id="fr-'+name+'">'+fmt(q.placeholder||q.min||0)+(q.unit?' '+q.unit:'')+'</span></div>' +
-      '<input type="range" min="'+(q.min||0)+'" max="'+(q.max||100)+'" step="'+(q.step||1)+'" value="'+(q.placeholder||q.min||0)+'" oninput="setFinRange(\''+name+'\',this.value,\''+(q.unit||'')+'\')"></div>';
-  }
-  // fallback: number input
-  return label + '<div class="num-in"><input type="text" oninput="setFinAnswer(\''+name+'\',this.value)" placeholder="'+escapeHtml(q.placeholder||'')+'"></div>';
 }
-
-QC.fin_answers = QC.fin_answers || {};
-
-function setFinAnswer(qid, val, evt){
-  QC.fin_answers[qid] = val;
-  if(evt){
-    var labels = document.querySelectorAll('.radio[data-q="'+qid+'"], #fin-form .radio');
-    labels.forEach(function(l){
-      // unselect siblings in same parent radio-group
-    });
-    var target = evt.currentTarget || evt.target.closest('.radio');
-    if(target && target.parentNode){
-      Array.prototype.forEach.call(target.parentNode.children, function(ch){ ch.classList.remove('selected'); });
-      target.classList.add('selected');
-    }
-  }
-}
-function setFinRange(qid, val, unit){
-  QC.fin_answers[qid] = val;
-  var lbl = $('fr-'+qid);
-  if(lbl) lbl.textContent = fmt(val) + (unit?' '+unit:'');
-}
-function toggleFinMulti(qid, val, evt){
-  if(!Array.isArray(QC.fin_answers[qid])) QC.fin_answers[qid] = [];
-  var arr = QC.fin_answers[qid];
-  var i = arr.indexOf(val);
-  if(i === -1) arr.push(val); else arr.splice(i,1);
-  if(evt){
-    var t = evt.currentTarget || evt.target.closest('.radio');
-    if(t) t.classList.toggle('selected', arr.indexOf(val) !== -1);
-  }
-}
-
-function submitFinmodel(){
-  // Сливаем fin_answers в specific_answers и шлём ещё раз /quick-check
-  // (расчёт пока тот же, но user_inputs теперь полные).
-  Object.keys(QC.fin_answers || {}).forEach(function(k){
-    QC.specific_answers[k] = QC.fin_answers[k];
-  });
-  $('result-screen').innerHTML = '';
-  $('result-screen').classList.remove('active');
-  $('loading-screen').classList.add('active');
-  $('loading-screen').querySelector('.loading-title').textContent = 'Пересчитываем с финмодель-параметрами…';
-  submit();
-}
-
-function card(label, val){
-  return '<div class="result-card"><div class="result-card-label">'+label+'</div><div class="result-card-val">'+(val||'—')+'</div></div>';
-}
-
-function escapeHtml(s){ return String(s||'').replace(/[&<>]/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
-
-function toggleDebug(){
-  var el = $('debug-json');
-  el.style.display = el.style.display === 'none' ? 'block' : 'none';
-}
-
 function showResultError(msg){
   $('result-screen').classList.add('active');
   $('cta-wrap').style.display = 'none';
   $('result-screen').innerHTML = '<div class="result-err">'+escapeHtml(msg)+'</div>';
 }
-
 function extractKpis(r){
-  // r — ответ render_report_v4. Попробуем аккуратно вытащить ключевые числа.
   var out = { heroLabel:'Окупаемость', heroVal:'—', heroUnit:'', revenue:'—', profit:'—', capex:'—', working_cap:'—', verdict:'' };
   try {
     var payback = r.payback_months || (r.block1 && r.block1.payback_months) || null;
