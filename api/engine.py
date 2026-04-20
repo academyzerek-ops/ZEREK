@@ -1413,6 +1413,425 @@ def compute_block1_verdict(result, adaptive):
 
 
 # ═══════════════════════════════════════════════
+# BLOCK 5 — P&L ЗА ГОД (Quick Check report, стр. 5)
+# Три сценария + ключевые мультипликаторы + доход предпринимателя
+# ═══════════════════════════════════════════════
+
+def _cogs_label_by_archetype(archetype):
+    return {
+        'A': 'Расходные материалы',
+        'B': 'Food cost',
+        'C': 'Себестоимость товара',
+        'D': 'Расходники',
+        'E': 'Материалы проектов',
+        'F': 'Переменные материалы',
+    }.get(archetype, 'Материалы / COGS')
+
+
+def _scenario_pnl_row(revenue_y, cogs_pct, fot_monthly, rent_monthly, marketing_monthly, other_opex_monthly, tax_rate):
+    """Собирает годовую P&L строку для одного сценария."""
+    cogs_y = int(revenue_y * (cogs_pct or 0.30))
+    fot_y = int(fot_monthly * 12)
+    rent_y = int(rent_monthly * 12)
+    marketing_y = int(marketing_monthly * 12)
+    other_y = int(other_opex_monthly * 12)
+    tax_y = int(revenue_y * (tax_rate or 0.03))
+    net_profit = revenue_y - cogs_y - fot_y - rent_y - marketing_y - other_y - tax_y
+    return {
+        'revenue':   revenue_y,
+        'cogs':      cogs_y,
+        'fot':       fot_y,
+        'rent':      rent_y,
+        'marketing': marketing_y,
+        'other_opex':other_y,
+        'tax':       tax_y,
+        'net_profit':net_profit,
+    }
+
+
+def compute_block5_pnl(db, result, adaptive):
+    """Блок 5 — P&L за год по 3 сценариям + ключевые мультипликаторы."""
+    adaptive = adaptive or {}
+    fin = result.get('financials', {}) or {}
+    scenarios = result.get('scenarios', {}) or {}
+    staff = result.get('staff', {}) or {}
+    tax = result.get('tax', {}) or {}
+    inp = result.get('input', {}) or {}
+    capex_block = result.get('capex', {}) or {}
+    owner_eco = result.get('owner_economics', {}) or {}
+
+    # Получаем архетип ниши
+    archetype = ''
+    configs = getattr(db, 'configs', {}) or {}
+    niches_cfg = (configs.get('niches', {}) or {}).get('niches', {}) or {}
+    niche_id = inp.get('niche_id', '')
+    if niche_id:
+        archetype = (niches_cfg.get(niche_id, {}) or {}).get('archetype', '')
+
+    # Базовые месячные параметры
+    fot_monthly = _safe_int(staff.get('fot_full_med'), 0) or _safe_int(staff.get('fot_net_med'), 0)
+    rent_monthly = _safe_int(fin.get('rent_month'), 0)
+    opex_total = _safe_int(fin.get('opex_med'), 0)
+    # marketing + прочее — делим opex
+    marketing_monthly = int(opex_total * 0.2) if opex_total else 100_000
+    other_opex_monthly = max(0, opex_total - rent_monthly - marketing_monthly) if opex_total else 100_000
+    cogs_pct = _safe_float(fin.get('cogs_pct'), 0.30)
+    tax_rate = (tax.get('rate_pct', 3) or 3) / 100
+
+    # Выручка по сценариям (годовая)
+    rev_year_base = _safe_int((scenarios.get('base') or {}).get('выручка_год'), 0)
+    rev_year_pess = _safe_int((scenarios.get('pess') or {}).get('выручка_год'), 0)
+    rev_year_opt  = _safe_int((scenarios.get('opt')  or {}).get('выручка_год'), 0)
+
+    if rev_year_base == 0:
+        # Фолбэк из financials
+        rev_year_base = _safe_int(fin.get('revenue_year1'), 0)
+        rev_year_pess = int(rev_year_base * 0.75)
+        rev_year_opt  = int(rev_year_base * 1.25)
+
+    # ВАЖНО: ФОТ и аренда фиксированы; COGS пропорционально; маркетинг — как базовый
+    pnl_base = _scenario_pnl_row(rev_year_base, cogs_pct, fot_monthly, rent_monthly, marketing_monthly, other_opex_monthly, tax_rate)
+    pnl_pess = _scenario_pnl_row(rev_year_pess, cogs_pct, fot_monthly, rent_monthly, marketing_monthly, other_opex_monthly, tax_rate)
+    # Оптимист: ФОТ чуть выше (сдельщики получают больше)
+    fot_opt = int(fot_monthly * 1.15)
+    pnl_opt  = _scenario_pnl_row(rev_year_opt, cogs_pct, fot_opt, rent_monthly, marketing_monthly, other_opex_monthly, tax_rate)
+
+    # Мультипликаторы (по базовому сценарию)
+    def _safe_div(a, b):
+        return (a / b) if b else 0
+    gross_margin = _safe_div(rev_year_base - pnl_base['cogs'], rev_year_base)
+    op_margin = _safe_div(rev_year_base - pnl_base['cogs'] - pnl_base['fot'] - pnl_base['rent'] - pnl_base['marketing'] - pnl_base['other_opex'], rev_year_base)
+    net_margin = _safe_div(pnl_base['net_profit'], rev_year_base)
+
+    # ROI годовой
+    capital_own = _safe_int(adaptive.get('capital_own')) if adaptive.get('capital_own') else 0
+    total_investment = capital_own or _safe_int(capex_block.get('capex_med'), 0) or _safe_int(capex_block.get('capex_total'), 0)
+    if total_investment < 500_000:
+        for k in ('capex_high', 'total', 'capital'):
+            v = _safe_int(capex_block.get(k), 0)
+            if v >= 500_000:
+                total_investment = v; break
+    annual_roi = _safe_div(pnl_base['net_profit'], total_investment or 1)
+    if total_investment < 500_000:
+        annual_roi = None  # нечего считать
+
+    # Доход предпринимателя
+    ent_role_id = adaptive.get('entrepreneur_role') or 'owner_only'
+    role_salary_monthly = 0
+    role_breakdown = []
+    if ent_role_id != 'owner_only' and ent_role_id != 'owner_multi':
+        # Грубая оценка ставки: FOT / headcount. Фолбэк на 200K если нет данных.
+        raw_hc = (_safe_int(staff.get('headcount'), 0)
+                  or (len(staff.get('roles') or [])))
+        headcount = max(raw_hc, 1)
+        role_salary_monthly = int(fot_monthly / headcount) if fot_monthly else 0
+        if role_salary_monthly == 0:
+            # fallback на типовую ставку для мастера в городе
+            role_salary_monthly = 200_000
+        role_breakdown.append({'role': ent_role_id.replace('owner_plus_', ''), 'salary_monthly': role_salary_monthly})
+    elif ent_role_id == 'owner_multi':
+        role_salary_monthly = max(int(fot_monthly * 0.35), 300_000)
+        role_breakdown.append({'role': 'multi', 'salary_monthly': role_salary_monthly})
+
+    profit_monthly_base = pnl_base['net_profit'] // 12
+    # если владелец закрыл ставку — прибыль уменьшилась на эту ставку (ФОТ был меньше), но
+    # для упрощения оставим текущий расчёт и добавим ставку в доход.
+    income_from_business = profit_monthly_base
+    entrepreneur_income_monthly = role_salary_monthly + income_from_business
+
+    return {
+        'archetype': archetype,
+        'cogs_label_rus': _cogs_label_by_archetype(archetype),
+        'scenarios': {
+            'pess': pnl_pess,
+            'base': pnl_base,
+            'opt':  pnl_opt,
+        },
+        'margins': {
+            'gross':     gross_margin,
+            'operating': op_margin,
+            'net':       net_margin,
+        },
+        'annual_roi': annual_roi,
+        'total_investment': total_investment,
+        'entrepreneur_income': {
+            'role_salary_monthly': role_salary_monthly,
+            'profit_monthly':       income_from_business,
+            'total_monthly':        entrepreneur_income_monthly,
+            'total_yearly':         entrepreneur_income_monthly * 12,
+            'role_breakdown':       role_breakdown,
+        },
+    }
+
+
+# ═══════════════════════════════════════════════
+# BLOCK 10 — СЛЕДУЮЩИЕ ШАГИ (Quick Check report, финал)
+# План действий / условия / альтернативы по вердикту + CTA upsell
+# ═══════════════════════════════════════════════
+
+def _green_action_plan(block2, block1):
+    """4 недельных блока чек-листа для Green."""
+    fin = (block2 or {}).get('finance', {})
+    capex = fin.get('capex_needed') or 0
+    capex_equipment = int(capex * 0.40)
+    capex_inventory = int(capex * 0.15)
+    capex_rent_setup = int(capex * 0.22)
+    format_type = (block2 or {}).get('format_type', '')
+    is_solo = (block2 or {}).get('is_solo', False)
+    staff_total = ((block2 or {}).get('staff_after_entrepreneur') or {}).get('total', 0)
+
+    # Неделя 1-2: Юридический старт
+    plan = [
+        {
+            'week_range': '1-2',
+            'title': 'Юридический старт',
+            'actions': [
+                'Открыть ИП (Самозанятый / УСН 3%)',
+                'Открыть банковский счёт',
+                ('Проверить договор аренды (3+ лет, фиксированная индексация)'
+                 if format_type in ('STANDARD','KIOSK') else 'Подготовить договора с клиентами / поставщиками'),
+            ]
+        },
+    ]
+    # Неделя 3-4: Закупка
+    plan.append({
+        'week_range': '3-4',
+        'title': 'Закупка оборудования и материалов',
+        'actions': [
+            f'Закупить оборудование (бюджет ≈ {_fmt_kzt(capex_equipment)})',
+            f'Первичные закупки материалов (≈ {_fmt_kzt(capex_inventory)})',
+        ],
+    })
+    # Неделя 5-6: Подготовка помещения + найм
+    if format_type not in ('HOME', 'SOLO'):
+        actions_prep = [f'Ремонт и обустройство (≈ {_fmt_kzt(capex_rent_setup)})', 'Вывеска, брендинг, 2GIS-регистрация']
+        if staff_total > 0:
+            staff_rus = []
+            for s in ((block2 or {}).get('staff_after_entrepreneur', {}).get('masters', []) or []):
+                staff_rus.append(f"{s.get('count',0)} {s.get('role','')}")
+            for s in ((block2 or {}).get('staff_after_entrepreneur', {}).get('assistants', []) or []):
+                staff_rus.append(f"{s.get('count',0)} {s.get('role','')}")
+            if staff_rus:
+                actions_prep.append('Найм сотрудников: ' + ', '.join(staff_rus))
+        plan.append({'week_range': '5-6', 'title': 'Подготовка помещения и команды', 'actions': actions_prep})
+    else:
+        plan.append({
+            'week_range': '5-6', 'title': 'Подготовка рабочего места',
+            'actions': ['Обустройство рабочего места', 'Страховка инструментов'],
+        })
+
+    # Неделя 7-8: Маркетинг до открытия
+    plan.append({
+        'week_range': '7-8',
+        'title': 'Запуск маркетинга ДО открытия',
+        'actions': [
+            'Таргетированная реклама (Instagram / TikTok)',
+            'Договорённости с блогерами города',
+            'Приём предзаписей',
+        ],
+    })
+
+    # Открытие и дальше
+    plan.append({
+        'week_range': 'Запуск',
+        'title': 'Первые недели работы',
+        'actions': [
+            ('Следить за загрузкой мастеров еженедельно'
+             if format_type not in ('HOME','SOLO','MOBILE') else 'Отслеживать конверсию заявок в сделки'),
+            'Отзывы в 2GIS — просить клиентов с 1-го дня',
+            'Еженедельный контроль unit-экономики (выручка/чек/COGS)',
+        ],
+    })
+
+    return plan
+
+
+def _yellow_conditions(block1, block2):
+    """3 условия перехода в зелёную зону — из top-3 слабых параметров."""
+    weak = (((block1 or {}).get('scoring') or {}).get('weakest') or [])[:3]
+    fin = (block2 or {}).get('finance', {})
+    conditions = []
+    for w in weak:
+        label = w.get('label', '')
+        if label == 'Капитал vs бенчмарк':
+            gap = -(fin.get('capital_diff') or 0)
+            if gap <= 0:
+                # капитал достаточен (дефицита нет) — условие не про деньги
+                conditions.append({
+                    'title': 'Резервный фонд: обеспечить запас оборотки',
+                    'options': ['Заложить 3-6 мес OPEX как резерв', 'Не вкладывать весь капитал в CAPEX', 'Иметь отдельный счёт для резерва'],
+                })
+            else:
+                monthly_credit = int(gap * 0.035)
+                conditions.append({
+                    'title': f'Найти дополнительные {_fmt_kzt(gap)} капитала',
+                    'options': [
+                        'Партнёр с долей 15-20%',
+                        f'Кредит в банке (платёж ~{_fmt_kzt(monthly_credit)}/мес на 36 мес)',
+                        'Грант Astana Hub / Bastau Business',
+                    ],
+                })
+        elif label == 'Точка безубыточности':
+            months = w.get('months') or 12
+            reserve = int(((fin.get('capex_needed') or 0) * 0.12) * max(months, 6))
+            if reserve < 1_000_000: reserve = 1_000_000
+            conditions.append({
+                'title': f'Обеспечить запас кассы на первые {months} мес',
+                'options': [f'Резерв оборотки ≈ {_fmt_kzt(reserve)}', 'Не брать целиком кредит "в дело"', 'Иметь 3-6 мес зарплаты на свою семью'],
+            })
+        elif label == 'Маркетинговый бюджет':
+            conditions.append({
+                'title': 'Увеличить маркетинговый бюджет на старте',
+                'options': ['Заложить минимум 200-500 тыс ₸ в первые 3 месяца', 'Таргет + локальный офлайн-маркетинг', 'Не экономить на SMM и отзывах'],
+            })
+        elif label == 'Насыщенность рынка':
+            conditions.append({
+                'title': 'Разработать сильное УТП перед запуском',
+                'options': ['Выделить 2-3 отличия от конкурентов', 'Проработать цена-качество через сегмент', 'Определить «нелёгкую» аудиторию для вас'],
+            })
+        elif label == 'Опыт предпринимателя':
+            conditions.append({
+                'title': 'Компенсировать отсутствие опыта',
+                'options': ['Найти ментора или партнёра с опытом 3+ лет в нише', 'Начать с SOLO-формата до освоения', 'Пройти курс ZEREK Academy (Архитектор)'],
+            })
+        elif label == 'Соответствие формата городу':
+            conditions.append({
+                'title': 'Пересмотреть класс формата под город',
+                'options': ['Рассмотреть стандарт-формат вместо премиума', 'Проверить платёжеспособность ЦА', 'Проанализировать успешных конкурентов в регионе'],
+            })
+        else:
+            conditions.append({
+                'title': w.get('note', label),
+                'options': [w.get('note', 'Требуется внимание')],
+            })
+    return conditions[:3]
+
+
+def _red_alternatives(block1, block2, result, db):
+    """3 категории альтернатив — формат / город / роль."""
+    inp = result.get('input', {}) or {}
+    niche_id = inp.get('niche_id', '')
+    format_id = inp.get('format_id', '')
+    city_name = inp.get('city_name', '') or '—'
+    format_name = (block2 or {}).get('format_name_rus', format_id)
+
+    alt_formats = []
+    all_formats = _formats_from_fallback_xlsx(db, niche_id)
+    current_capex = 0
+    for f in all_formats:
+        if f.get('format_id') == format_id:
+            current_capex = _safe_int(f.get('capex_standard'), 0)
+            break
+    for f in all_formats:
+        if f.get('format_id') == format_id: continue
+        cx = _safe_int(f.get('capex_standard'), 0)
+        if cx < current_capex:
+            alt_formats.append(f"{f.get('format_name')} (~{_fmt_kzt(cx)})")
+        if len(alt_formats) >= 2: break
+
+    return [
+        {
+            'category': 'ФОРМАТ',
+            'title': f'Формат {format_name} слишком тяжёл для текущих параметров',
+            'options': alt_formats if alt_formats else ['Рассмотрите формат уровнем ниже (эконом вместо стандарта)'],
+        },
+        {
+            'category': 'ГОРОД',
+            'title': 'Смена города',
+            'options': [
+                f'Текущий город — {city_name}. Премиум-форматы работают в Алматы, Астане, Шымкенте',
+                'Пересчитайте для города с большей платёжеспособной аудиторией',
+            ],
+        },
+        {
+            'category': 'РОЛЬ',
+            'title': 'Измените роль предпринимателя',
+            'options': [
+                'Закройте собой хотя бы одну ставку — снизит ФОТ',
+                'Для бьюти-формата: работайте мастером, не только управляйте',
+                'Для магазина: закройте роль кассира или менеджера закупок',
+            ],
+        },
+    ]
+
+
+def _upsell_block(color, block1, block2):
+    """Апсейл финмодели + bizplan, текст зависит от вердикта."""
+    # Прогресс заполнения финмодели: 8 полей QC / 21 полей всего → ~55-65% с учётом повторов
+    fm_pct = 60
+    bp_pct = 45
+    texts = {
+        'green':  'Персональный прогноз на 3 года с денежным потоком, налогами, графиком кредита.',
+        'yellow': 'Финмодель поможет точно посчитать сколько нужно партнёру и как распределить дефицит.',
+        'red':    'Финмодель объяснит почему не окупается и даст 2-3 альтернативных сценария.',
+    }
+    return {
+        'finmodel': {
+            'name_rus': 'Финансовая модель',
+            'price_kzt': 9000,
+            'description_rus': texts.get(color, texts['green']),
+            'prefilled_pct': fm_pct,
+        },
+        'bizplan': {
+            'name_rus': 'Бизнес-план',
+            'price_kzt': 15000,
+            'description_rus': 'Готовый документ для банка, гранта или инвестора. Персонализирован под цель.',
+            'prefilled_pct': bp_pct,
+        },
+    }
+
+
+def _final_farewell(color, block2):
+    """Финальное напутствие. Шаблонное — AI версию подключим позже."""
+    niche = (block2 or {}).get('niche_name_rus', 'бизнес')
+    if color == 'green':
+        return (f'Ваш {niche.lower()} имеет хорошие шансы окупиться в заявленные сроки. '
+                'Главное сейчас — не расслабляться на этапе подготовки и сразу выстраивать сильный маркетинг. '
+                'Удачи с запуском — возвращайтесь за финмоделью когда будете готовы проработать детали.')
+    if color == 'yellow':
+        return ('Ваша идея в зоне перехода — если закроете упомянутые условия, бизнес окупится. '
+                'Без этих условий — риск большой. Подумайте неделю, пересчитайте варианты — и возвращайтесь.')
+    return ('В текущей конфигурации идея рискованна, но это не значит отказаться от ниши. '
+            'Смените формат или город — цифры могут заработать. ZEREK поможет пересчитать любой вариант.')
+
+
+def compute_block10_next_steps(db, result, adaptive, block1=None, block2=None):
+    """Блок 10 — план действий / условия / альтернативы + апсейл + финальное напутствие."""
+    color = (block1 or {}).get('color', 'yellow')
+
+    out = {
+        'color': color,
+        'farewell_rus': _final_farewell(color, block2),
+        'upsell': _upsell_block(color, block1, block2),
+    }
+
+    if color == 'green':
+        out['action_plan'] = _green_action_plan(block2, block1)
+        out['headline_rus'] = '✅ Ваша идея реалистична. Можете входить.'
+        out['cta_buttons'] = [
+            {'label_rus': 'Купить Финансовую модель — 9 000 ₸', 'action': 'buy_finmodel'},
+            {'label_rus': 'Скачать PDF отчёта', 'action': 'download_pdf'},
+        ]
+    elif color == 'yellow':
+        out['conditions'] = _yellow_conditions(block1, block2)
+        out['headline_rus'] = f'⚠️ Идея возможна при устранении {len(out["conditions"])} условий.'
+        out['cta_buttons'] = [
+            {'label_rus': 'Пересмотреть параметры', 'action': 'restart_survey'},
+            {'label_rus': 'Купить Финмодель — 9 000 ₸', 'action': 'buy_finmodel'},
+        ]
+    else:  # red
+        out['alternatives'] = _red_alternatives(block1, block2, result, db)
+        out['headline_rus'] = '🚨 В текущей конфигурации бизнес не окупится.'
+        out['cta_buttons'] = [
+            {'label_rus': 'Пересчитать с другим форматом', 'action': 'change_format'},
+            {'label_rus': 'Пересчитать с другим городом', 'action': 'change_city'},
+            {'label_rus': 'Подробный анализ провала (9 000 ₸)', 'action': 'buy_finmodel'},
+        ]
+
+    return out
+
+
+# ═══════════════════════════════════════════════
 # BLOCK 2 — ПАСПОРТ БИЗНЕСА (Quick Check report, стр. 2)
 # Спецификация «ZEREK Quick Check — Блок 2» v1.0
 # ═══════════════════════════════════════════════

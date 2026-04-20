@@ -15,7 +15,8 @@ sys.path.insert(0, BASE_DIR)
 from engine import (ZerekDB, run_quick_check_v3,
                     get_niche_config, get_niche_survey,
                     get_formats_v2, get_quickcheck_survey, get_entrepreneur_roles,
-                    compute_block1_verdict, compute_block2_passport)
+                    compute_block1_verdict, compute_block2_passport,
+                    compute_block5_pnl, compute_block10_next_steps)
 from report import render_report_v4
 
 def clean(obj):
@@ -169,12 +170,31 @@ def quick_check(req: QCReq):
             # не блокируем ответ если блок 1 упал
             pass
         # Block 2 — Паспорт бизнеса
+        block2_obj = None
         try:
             block2_inputs = dict(req.specific_answers or {})
             block2_inputs['loc_type'] = req.loc_type
-            block2 = compute_block2_passport(db, result, block2_inputs)
+            block2_obj = compute_block2_passport(db, result, block2_inputs)
             if isinstance(report, dict):
-                report['block2'] = block2
+                report['block2'] = block2_obj
+        except Exception as e:
+            import traceback; traceback.print_exc()
+            pass
+        # Block 5 — P&L за год
+        try:
+            block5 = compute_block5_pnl(db, result, block1_inputs)
+            if isinstance(report, dict):
+                report['block5'] = block5
+        except Exception as e:
+            import traceback; traceback.print_exc()
+            pass
+        # Block 10 — Следующие шаги
+        try:
+            block1_obj = report.get('block1') if isinstance(report, dict) else None
+            block10 = compute_block10_next_steps(db, result, block1_inputs,
+                                                 block1=block1_obj, block2=block2_obj)
+            if isinstance(report, dict):
+                report['block10'] = block10
         except Exception as e:
             import traceback; traceback.print_exc()
             pass

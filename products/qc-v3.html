@@ -184,6 +184,78 @@ h2{font-size:22px;margin-bottom:6px}
 .b2-confirm{text-align:center;padding:14px 16px;background:var(--surface-2);border-radius:var(--radius);margin-bottom:12px;font-size:13px;color:var(--text-2);line-height:1.55}
 .b2-confirm strong{color:var(--text)}
 
+/* ─── BLOCK 5 — P&L ЗА ГОД ─── */
+.b5-section{padding:18px 16px;background:var(--surface);border-radius:var(--radius-lg);margin-bottom:12px}
+.b5-title{font-size:11px;font-weight:700;letter-spacing:0.12em;color:var(--text-3);text-transform:uppercase;margin-bottom:14px}
+.b5-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:10px}
+.b5-table thead th{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-3);padding:8px 4px;text-align:right}
+.b5-table thead th:first-child{text-align:left}
+.b5-table td{padding:7px 4px;border-bottom:0.5px solid var(--surface-2);text-align:right;font-family:var(--mono);font-weight:600}
+.b5-table td:first-child{text-align:left;font-family:var(--sans);font-weight:500;color:var(--text-2)}
+.b5-row-rev td{color:var(--green)}
+.b5-row-cost td{color:var(--text-2)}
+.b5-row-cost td:first-child{color:var(--text-2)}
+.b5-row-profit{border-top:2px solid var(--text-2)}
+.b5-row-profit td{color:var(--text);font-weight:800;padding-top:10px}
+.b5-row-profit td:first-child{font-family:var(--sans);font-weight:700;letter-spacing:-0.01em}
+
+.b5-mults{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.b5-mult{padding:12px;background:var(--bg);border-radius:var(--radius-sm)}
+.b5-mult-label{font-size:10px;font-weight:700;letter-spacing:0.08em;color:var(--text-3);text-transform:uppercase;margin-bottom:4px}
+.b5-mult-val{font-family:var(--mono);font-weight:700;font-size:17px;color:var(--text)}
+.b5-mult-sub{font-size:11px;color:var(--text-3);margin-top:2px}
+.b5-roi{grid-column:1 / -1;text-align:center;padding:14px;background:linear-gradient(135deg,rgba(124,108,255,0.14),rgba(124,108,255,0.06));border:1px solid rgba(124,108,255,0.25)}
+.b5-roi .b5-mult-val{font-size:26px;color:var(--accent)}
+
+.b5-income{margin-top:14px;padding:14px;background:linear-gradient(135deg,rgba(34,197,94,0.10),rgba(34,197,94,0.04));border:1px solid rgba(34,197,94,0.28);border-radius:var(--radius)}
+.b5-income-title{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#86efac;margin-bottom:10px;text-align:center}
+.b5-income-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:var(--text-2)}
+.b5-income-row strong{font-family:var(--mono);font-weight:700;color:var(--text)}
+.b5-income-total{border-top:1px solid rgba(34,197,94,0.3);padding-top:8px;margin-top:6px;font-size:14px;color:var(--text)}
+.b5-income-total strong{font-size:17px;color:var(--green)}
+
+/* ─── BLOCK 10 — СЛЕДУЮЩИЕ ШАГИ ─── */
+.b10-section{padding:18px 16px;background:var(--surface);border-radius:var(--radius-lg);margin-bottom:12px}
+.b10-headline{font-size:15px;font-weight:700;line-height:1.4;padding:14px;background:var(--surface-2);border-radius:var(--radius);margin-bottom:12px}
+.b10-headline.green{background:rgba(34,197,94,0.12);color:#86efac}
+.b10-headline.yellow{background:rgba(234,179,8,0.12);color:#fde68a}
+.b10-headline.red{background:rgba(239,68,68,0.12);color:#fca5a5}
+
+.b10-title{font-size:11px;font-weight:700;letter-spacing:0.12em;color:var(--text-3);text-transform:uppercase;margin-bottom:14px}
+
+.b10-week{padding:12px 0;border-bottom:0.5px solid var(--surface-2)}
+.b10-week:last-child{border-bottom:none}
+.b10-week-range{display:inline-block;padding:3px 10px;background:var(--accent-dim);color:var(--accent);border-radius:12px;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px}
+.b10-week-title{font-size:14px;font-weight:700;margin-bottom:6px}
+.b10-week-action{font-size:13px;color:var(--text-2);padding:3px 0 3px 14px;position:relative}
+.b10-week-action:before{content:'•';color:var(--accent);position:absolute;left:2px}
+
+.b10-cond{padding:12px 0;border-bottom:0.5px solid var(--surface-2)}
+.b10-cond:last-child{border-bottom:none}
+.b10-cond-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--yellow);color:#1a1a1a;font-size:12px;font-weight:800;margin-right:8px}
+.b10-cond-title{font-size:14px;font-weight:700;margin-bottom:6px}
+.b10-cond-opt{font-size:13px;color:var(--text-2);padding:3px 0 3px 14px;position:relative}
+.b10-cond-opt:before{content:'•';color:var(--yellow);position:absolute;left:2px}
+
+.b10-alt{padding:12px 0;border-bottom:0.5px solid var(--surface-2)}
+.b10-alt:last-child{border-bottom:none}
+.b10-alt-cat{display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--red);margin-bottom:4px}
+.b10-alt-title{font-size:14px;font-weight:700;margin-bottom:6px}
+.b10-alt-opt{font-size:13px;color:var(--text-2);padding:3px 0 3px 14px;position:relative}
+.b10-alt-opt:before{content:'→';color:var(--red);position:absolute;left:0}
+
+.b10-upsell{margin-top:8px;padding:14px;border:1px solid var(--accent);border-radius:var(--radius);background:linear-gradient(135deg,rgba(124,108,255,0.14),rgba(124,108,255,0.05))}
+.b10-upsell-title{font-size:14px;font-weight:700;color:var(--accent);margin-bottom:4px}
+.b10-upsell-desc{font-size:13px;color:var(--text-2);line-height:1.5;margin-bottom:8px}
+.b10-upsell-meta{font-size:12px;color:var(--text-3)}
+
+.b10-cta{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.b10-cta-btn{padding:14px 16px;border-radius:100px;font-size:14px;font-weight:700;text-align:center;cursor:pointer}
+.b10-cta-btn.primary{background:var(--accent);color:#fff}
+.b10-cta-btn.secondary{background:var(--surface-2);color:var(--text);border:1px solid var(--surface-3)}
+
+.b10-farewell{padding:16px;background:var(--surface-2);border-radius:var(--radius);margin-top:12px;font-size:14px;line-height:1.6;color:var(--text-2)}
+
 .search-in{background:var(--surface);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px}
 .search-in input{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:15px}
 </style>
@@ -195,7 +267,7 @@ h2{font-size:22px;margin-bottom:6px}
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
     Назад
   </button>
-  <div class="brand"><strong>ZEREK</strong> · Экспресс-оценка · <span style="color:var(--accent);font-size:10px;font-weight:700">v3.1</span></div>
+  <div class="brand"><strong>ZEREK</strong> · Экспресс-оценка · <span style="color:var(--accent);font-size:10px;font-weight:700">v3.2</span></div>
   <div style="width:60px"></div>
 </div>
 
@@ -724,12 +796,16 @@ function renderResult(result){
   $('cta-wrap').style.display = 'none';
   if(!result){ return showResultError('Пустой ответ от API.'); }
 
-  // Есть Block 1 — рендерим по спецификации. Block 2 идёт следом.
+  // Есть Block 1 — рендерим по спецификации. Block 2 + 5 + 10 идут следом.
   var b1 = result.block1;
   var b2 = result.block2;
+  var b5 = result.block5;
+  var b10 = result.block10;
   if(b1){
     var html = renderBlock1Html(b1);
     if(b2) html += renderBlock2Html(b2);
+    if(b5) html += renderBlock5Html(b5);
+    if(b10) html += renderBlock10Html(b10);
     $('result-screen').innerHTML = html;
     return;
   }
@@ -925,6 +1001,176 @@ function staffRowHtml(count, role){
     '<div class="b2-staff-icons">'+icons+'</div>' +
     '<div class="b2-staff-label"><strong>'+count+'</strong> '+escapeHtml(role)+'</div>' +
   '</div>';
+}
+
+/* ─── Block 5 — P&L за год ─── */
+function renderBlock5Html(b5){
+  if(!b5) return '';
+  var sc = b5.scenarios || {};
+  var pess = sc.pess || {}, base = sc.base || {}, opt = sc.opt || {};
+
+  function fmtM(v){ return v==null ? '—' : (Math.abs(v) >= 1e6 ? (v/1e6).toFixed(1).replace('.',',') + ' млн' : Math.round(v/1000) + ' тыс'); }
+  function fmtPct(v){ return v==null ? '—' : Math.round(v*100)+'%'; }
+
+  var cogsLabel = b5.cogs_label_rus || 'Материалы';
+
+  var table = '<table class="b5-table">' +
+    '<thead><tr><th></th><th>Пессимист</th><th>База</th><th>Оптимист</th></tr></thead>' +
+    '<tbody>' +
+      '<tr class="b5-row-rev"><td>Выручка</td><td>'+fmtM(pess.revenue)+'</td><td>'+fmtM(base.revenue)+'</td><td>'+fmtM(opt.revenue)+'</td></tr>' +
+      '<tr class="b5-row-cost"><td>– ФОТ</td><td>'+fmtM(pess.fot)+'</td><td>'+fmtM(base.fot)+'</td><td>'+fmtM(opt.fot)+'</td></tr>' +
+      '<tr class="b5-row-cost"><td>– '+escapeHtml(cogsLabel)+'</td><td>'+fmtM(pess.cogs)+'</td><td>'+fmtM(base.cogs)+'</td><td>'+fmtM(opt.cogs)+'</td></tr>' +
+      '<tr class="b5-row-cost"><td>– Аренда</td><td>'+fmtM(pess.rent)+'</td><td>'+fmtM(base.rent)+'</td><td>'+fmtM(opt.rent)+'</td></tr>' +
+      '<tr class="b5-row-cost"><td>– Маркетинг</td><td>'+fmtM(pess.marketing)+'</td><td>'+fmtM(base.marketing)+'</td><td>'+fmtM(opt.marketing)+'</td></tr>' +
+      '<tr class="b5-row-cost"><td>– Прочие OPEX</td><td>'+fmtM(pess.other_opex)+'</td><td>'+fmtM(base.other_opex)+'</td><td>'+fmtM(opt.other_opex)+'</td></tr>' +
+      '<tr class="b5-row-cost"><td>– Налог</td><td>'+fmtM(pess.tax)+'</td><td>'+fmtM(base.tax)+'</td><td>'+fmtM(opt.tax)+'</td></tr>' +
+      '<tr class="b5-row-profit"><td>Чистая прибыль</td><td>'+fmtM(pess.net_profit)+'</td><td>'+fmtM(base.net_profit)+'</td><td>'+fmtM(opt.net_profit)+'</td></tr>' +
+    '</tbody></table>';
+
+  var m = b5.margins || {};
+  var roiVal = b5.annual_roi != null ? fmtPct(b5.annual_roi) : '—';
+  var mults = '<div class="b5-mults">' +
+    multCard('Маржа валовая', fmtPct(m.gross), 'после материалов') +
+    multCard('Маржа операц.', fmtPct(m.operating), 'после всех OPEX') +
+    multCard('Маржа чистая', fmtPct(m.net), 'после налога') +
+    '<div class="b5-mult b5-roi"><div class="b5-mult-label">ROI годовой</div>' +
+      '<div class="b5-mult-val">'+roiVal+'</div>' +
+      '<div class="b5-mult-sub">на стартовый капитал</div></div>' +
+  '</div>';
+
+  var inc = b5.entrepreneur_income || {};
+  var incRows = '';
+  if(inc.role_salary_monthly > 0){
+    incRows += '<div class="b5-income-row"><span>Ставка в штате</span><strong>'+fmt(inc.role_salary_monthly)+' ₸/мес</strong></div>';
+  } else {
+    incRows += '<div class="b5-income-row"><span>Ставка в штате</span><strong>0 (не работаю операционно)</strong></div>';
+  }
+  incRows += '<div class="b5-income-row"><span>Прибыль бизнеса</span><strong>'+fmt(inc.profit_monthly)+' ₸/мес</strong></div>' +
+    '<div class="b5-income-row b5-income-total"><span>ИТОГО / мес</span><strong>'+fmt(inc.total_monthly)+' ₸</strong></div>';
+
+  var incomeBlock = '<div class="b5-income">' +
+    '<div class="b5-income-title">💰 Ваш доход предпринимателя</div>' +
+    incRows +
+  '</div>';
+
+  return '<div class="b5-section">' +
+    '<div class="b5-title">Финансы за год — 3 сценария</div>' +
+    table +
+  '</div>' +
+  '<div class="b5-section">' +
+    '<div class="b5-title">Ключевые мультипликаторы (базовый)</div>' +
+    mults +
+    incomeBlock +
+  '</div>';
+}
+function multCard(label, val, sub){
+  return '<div class="b5-mult"><div class="b5-mult-label">'+escapeHtml(label)+'</div>' +
+    '<div class="b5-mult-val">'+val+'</div>' +
+    (sub ? '<div class="b5-mult-sub">'+escapeHtml(sub)+'</div>' : '') +
+  '</div>';
+}
+
+/* ─── Block 10 — Следующие шаги ─── */
+function renderBlock10Html(b10){
+  if(!b10) return '';
+  var color = b10.color || 'yellow';
+  var html = '<div class="b10-section">' +
+    '<div class="b10-title">Что делать дальше?</div>' +
+    '<div class="b10-headline '+color+'">'+escapeHtml(b10.headline_rus||'')+'</div>';
+
+  if(b10.action_plan){
+    html += '<div class="b10-title" style="margin-top:12px">План действий на ближайшие 60 дней</div>';
+    b10.action_plan.forEach(function(w){
+      html += '<div class="b10-week">' +
+        '<div class="b10-week-range">Неделя '+escapeHtml(w.week_range)+'</div>' +
+        '<div class="b10-week-title">'+escapeHtml(w.title)+'</div>';
+      (w.actions || []).forEach(function(a){
+        html += '<div class="b10-week-action">'+escapeHtml(a)+'</div>';
+      });
+      html += '</div>';
+    });
+  }
+
+  if(b10.conditions){
+    html += '<div class="b10-title" style="margin-top:12px">Условия для перехода в зелёную зону</div>';
+    b10.conditions.forEach(function(c, i){
+      html += '<div class="b10-cond">' +
+        '<div class="b10-cond-title"><span class="b10-cond-num">'+(i+1)+'</span>'+escapeHtml(c.title)+'</div>';
+      (c.options || []).forEach(function(o){
+        html += '<div class="b10-cond-opt">'+escapeHtml(o)+'</div>';
+      });
+      html += '</div>';
+    });
+  }
+
+  if(b10.alternatives){
+    html += '<div class="b10-title" style="margin-top:12px">Что нужно пересмотреть</div>';
+    b10.alternatives.forEach(function(a){
+      html += '<div class="b10-alt">' +
+        '<div class="b10-alt-cat">'+escapeHtml(a.category)+'</div>' +
+        '<div class="b10-alt-title">'+escapeHtml(a.title)+'</div>';
+      (a.options || []).forEach(function(o){
+        html += '<div class="b10-alt-opt">'+escapeHtml(o)+'</div>';
+      });
+      html += '</div>';
+    });
+  }
+
+  html += '</div>';  // close first section
+
+  // Upsell
+  var up = b10.upsell || {};
+  if(up.finmodel){
+    var fm = up.finmodel;
+    html += '<div class="b10-section">' +
+      '<div class="b10-title">Хотите углубить анализ?</div>' +
+      '<div class="b10-upsell">' +
+        '<div class="b10-upsell-title">🎯 '+escapeHtml(fm.name_rus)+' — '+fmt(fm.price_kzt)+' ₸</div>' +
+        '<div class="b10-upsell-desc">'+escapeHtml(fm.description_rus||'')+'</div>' +
+        '<div class="b10-upsell-meta">Для вас уже заполнено '+fm.prefilled_pct+'%</div>' +
+      '</div>';
+    if(up.bizplan){
+      var bp = up.bizplan;
+      html += '<div class="b10-upsell" style="margin-top:10px">' +
+        '<div class="b10-upsell-title">📄 '+escapeHtml(bp.name_rus)+' — '+fmt(bp.price_kzt)+' ₸</div>' +
+        '<div class="b10-upsell-desc">'+escapeHtml(bp.description_rus||'')+'</div>' +
+        '<div class="b10-upsell-meta">Для вас уже заполнено '+bp.prefilled_pct+'%</div>' +
+      '</div>';
+    }
+
+    // CTA
+    if(b10.cta_buttons && b10.cta_buttons.length){
+      html += '<div class="b10-cta">';
+      b10.cta_buttons.forEach(function(b, i){
+        var cls = i === 0 ? 'primary' : 'secondary';
+        html += '<div class="b10-cta-btn '+cls+'" onclick="handleCta(\''+escapeHtml(b.action)+'\')">'+escapeHtml(b.label_rus)+'</div>';
+      });
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+
+  // Farewell
+  html += '<div class="b10-farewell">'+escapeHtml(b10.farewell_rus||'')+'</div>';
+
+  return html;
+}
+function handleCta(action){
+  if(action === 'buy_finmodel' || action === 'buy_bizplan'){
+    alert('Покупка скоро будет доступна. Пока напиши боту @zerekai_bot.');
+  } else if(action === 'restart_survey' || action === 'change_format' || action === 'change_city'){
+    // Сбросить состояние и начать с начала
+    QC = {niche_id:'', niche_name:'', archetype:'', icon:'', format_id:'', format_name:'', format_type:'',
+          class_level:'', city_id:'', city_name:'', loc_type:'', location_line:'',
+          experience:'', payroll_type:'', entrepreneur_role:'', capital_own:null, capital_needed:null};
+    NicheSurvey = null;
+    stepIndex = 0;
+    StepPlan = computeStepPlan();
+    $('result-screen').classList.remove('active');
+    renderStep();
+  } else if(action === 'download_pdf'){
+    alert('Скачивание PDF скоро будет доступно. Пока сделай скриншот страницы.');
+  }
 }
 function showResultError(msg){
   $('result-screen').classList.add('active');
