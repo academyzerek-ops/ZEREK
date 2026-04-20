@@ -1,0 +1,108 @@
+# ZEREK — 57 ниш × архетип × категория + русские имена
+# Версия: 1.0
+# Архетипы: A/B/C/D/E/F (см. archetypes.yaml)
+
+niches:
+
+  # ============================================================================
+  # АРХЕТИП A — Услуги с мастерами (15)
+  # ============================================================================
+  BARBER:        {name_rus: "Барбершоп",            category: beauty,      archetype: A, icon: "💈"}
+  BEAUTY:        {name_rus: "Салон красоты",        category: beauty,      archetype: A, icon: "💄"}
+  MANICURE:      {name_rus: "Маникюр",              category: beauty,      archetype: A, icon: "💅"}
+  BROW:          {name_rus: "Брови и ресницы",      category: beauty,      archetype: A, icon: "✨"}
+  LASH:          {name_rus: "Ресницы",              category: beauty,      archetype: A, icon: "👁️"}
+  SUGARING:      {name_rus: "Шугаринг",             category: beauty,      archetype: A, icon: "🌸"}
+  MASSAGE:       {name_rus: "Массажный салон",      category: beauty,      archetype: A, icon: "💆"}
+  COSMETOLOGY:   {name_rus: "Косметология",         category: beauty,      archetype: A, icon: "🧴"}
+  DENTAL:        {name_rus: "Стоматология",         category: health,      archetype: A, icon: "🦷"}
+  OPTICS:        {name_rus: "Оптика",               category: health,      archetype: A, icon: "👓"}
+  TAILOR:        {name_rus: "Ателье",               category: services,    archetype: A, icon: "🪡"}
+  REPAIR_PHONE:  {name_rus: "Ремонт телефонов",     category: services,    archetype: A, icon: "📱"}
+  PHOTO:         {name_rus: "Фотостудия",           category: services,    archetype: A, icon: "📸"}
+  DETAILING:     {name_rus: "Детейлинг",            category: auto,        archetype: A, icon: "✨"}
+  NOTARY:        {name_rus: "Нотариус",             category: b2b,         archetype: A, icon: "📜"}
+
+  # ============================================================================
+  # АРХЕТИП B — Общепит (11)
+  # ============================================================================
+  COFFEE:        {name_rus: "Кофейня",              category: food,        archetype: B, icon: "☕"}
+  BAKERY:        {name_rus: "Пекарня",              category: food,        archetype: B, icon: "🥐"}
+  CONFECTION:    {name_rus: "Кондитерская",         category: food,        archetype: B, icon: "🎂"}
+  DONER:         {name_rus: "Донерная",             category: food,        archetype: B, icon: "🌯"}
+  FASTFOOD:      {name_rus: "Фастфуд",              category: food,        archetype: B, icon: "🍔"}
+  PIZZA:         {name_rus: "Пиццерия",             category: food,        archetype: B, icon: "🍕"}
+  SUSHI:         {name_rus: "Суши",                 category: food,        archetype: B, icon: "🍣"}
+  BUBBLETEA:     {name_rus: "Островок напитков",    category: food,        archetype: B, icon: "🧋"}
+  CANTEEN:       {name_rus: "Столовая",             category: food,        archetype: B, icon: "🍲"}
+  SEMIFOOD:      {name_rus: "Полуфабрикаты",        category: food,        archetype: B, icon: "🥟"}
+  CATERING:      {name_rus: "Кейтеринг",            category: food,        archetype: B, icon: "🍽️"}
+
+  # ============================================================================
+  # АРХЕТИП C — Розничная торговля (9)
+  # ============================================================================
+  MEATSHOP:      {name_rus: "Мясная лавка",         category: retail,      archetype: C, icon: "🥩"}
+  FRUITSVEGS:    {name_rus: "Овощи и фрукты",       category: retail,      archetype: C, icon: "🥦"}
+  FLOWERS:       {name_rus: "Цветочный магазин",    category: retail,      archetype: C, icon: "💐"}
+  AUTOPARTS:     {name_rus: "Автозапчасти",         category: auto,        archetype: C, icon: "🔩"}
+  BUILDMAT:      {name_rus: "Строительные материалы", category: retail,    archetype: C, icon: "🧱"}
+  PETSHOP:       {name_rus: "Зоомагазин",           category: retail,      archetype: C, icon: "🐾"}
+  PHARMACY:      {name_rus: "Аптека",               category: health,      archetype: C, icon: "💊"}
+  GROCERY:       {name_rus: "Продуктовый магазин",  category: retail,      archetype: C, icon: "🛒"}
+  WATERPLANT:    {name_rus: "Розлив воды",          category: retail,      archetype: C, icon: "💧"}
+
+  # ============================================================================
+  # АРХЕТИП D — Абонементы / подписка (10)
+  # ============================================================================
+  FITNESS:         {name_rus: "Фитнес-клуб",          category: sport,       archetype: D, icon: "💪"}
+  YOGA:            {name_rus: "Йога-студия",          category: sport,       archetype: D, icon: "🧘"}
+  LANGUAGES:       {name_rus: "Языковая школа",       category: education,   archetype: D, icon: "🌐"}
+  KIDSCENTER:      {name_rus: "Детский центр",        category: education,   archetype: D, icon: "🧸"}
+  KINDERGARTEN:    {name_rus: "Частный детский сад",  category: education,   archetype: D, icon: "👶"}
+  ACCOUNTING:      {name_rus: "Бухгалтерский аутсорсинг", category: b2b,     archetype: D, icon: "📊"}
+  CROSSFIT:        {name_rus: "Кроссфит",             category: sport,       archetype: D, icon: "🏋️"}
+  MARTIAL_ARTS:    {name_rus: "Единоборства",         category: sport,       archetype: D, icon: "🥊"}
+  FOOTBALL_SCHOOL: {name_rus: "Футбольная школа",     category: sport,       archetype: D, icon: "⚽"}
+  GROUP_FITNESS:   {name_rus: "Групповой фитнес",     category: sport,       archetype: D, icon: "🧘"}
+
+  # ============================================================================
+  # АРХЕТИП E — Проектный / заказной (6)
+  # ============================================================================
+  REALTOR:       {name_rus: "Риэлторские услуги",   category: b2b,         archetype: E, icon: "🏠"}
+  EVALUATION:    {name_rus: "Оценочные услуги",     category: b2b,         archetype: E, icon: "📐"}
+  FURNITURE:     {name_rus: "Производство корпусной мебели", category: production, archetype: E, icon: "🪑"}
+  LOFTFURNITURE: {name_rus: "Производство лофт-мебели", category: production, archetype: E, icon: "🛋️"}
+  PRINTING:      {name_rus: "Типография",           category: production,  archetype: E, icon: "🖨️"}
+  CARGO:         {name_rus: "Грузоперевозки",       category: services,    archetype: E, icon: "🚚"}
+
+  # ============================================================================
+  # АРХЕТИП F — Мощность / пропускная способность (11)
+  # ============================================================================
+  AUTOSERVICE:   {name_rus: "Автосервис",           category: auto,        archetype: F, icon: "🔧"}
+  TIRESERVICE:   {name_rus: "Шиномонтаж",           category: auto,        archetype: F, icon: "🛞"}
+  CARWASH:       {name_rus: "Автомойка",            category: auto,        archetype: F, icon: "🚗"}
+  CLEAN:         {name_rus: "Клининг",              category: services,    archetype: F, icon: "🧹"}
+  CARPETCLEAN:   {name_rus: "Чистка ковров",        category: services,    archetype: F, icon: "🪣"}
+  DRYCLEAN:      {name_rus: "Химчистка одежды",     category: services,    archetype: F, icon: "🧺"}
+  LAUNDRY:       {name_rus: "Прачечная",            category: services,    archetype: F, icon: "🧼"}
+  COMPCLUB:      {name_rus: "Компьютерный клуб",    category: entertainment, archetype: F, icon: "🎮"}
+  DRIVING:       {name_rus: "Автошкола",            category: education,   archetype: F, icon: "🚘"}
+  HOTEL:         {name_rus: "Хостел",               category: hospitality, archetype: F, icon: "🏨"}
+  PVZ:           {name_rus: "Пункт выдачи заказов", category: services,    archetype: F, icon: "📦"}
+
+# ============================================================================
+# Группировка по категориям (для UI-группировки в выпадающем списке)
+# ============================================================================
+categories:
+  beauty:        {label_rus: "Красота и уход",        order: 1}
+  food:          {label_rus: "Общепит",               order: 2}
+  retail:        {label_rus: "Розничная торговля",    order: 3}
+  health:        {label_rus: "Здоровье",              order: 4}
+  services:     {label_rus: "Услуги",                order: 5}
+  auto:          {label_rus: "Авто",                  order: 6}
+  sport:         {label_rus: "Спорт и фитнес",        order: 7}
+  education:     {label_rus: "Образование и дети",    order: 8}
+  production:    {label_rus: "Производство",          order: 9}
+  b2b:           {label_rus: "B2B услуги",            order: 10}
+  hospitality:   {label_rus: "Гостиницы",             order: 11}
+  entertainment: {label_rus: "Развлечения",           order: 12}

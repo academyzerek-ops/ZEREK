@@ -1,11 +1,12 @@
 """
-Builds data/kz/08_niche_formats.xlsx — fallback format catalog for niches that
-don't (yet) have a per-niche niche_formats_{NICHE}.xlsx. The engine still
-prefers the per-niche xlsx when present; this file only supplies defaults so
-Quick Check v2 can render SOMETHING for every niche from the 58-roster.
+Builds data/kz/08_niche_formats.xlsx — fallback format catalog with v1.0 spec fields:
+  typical_staff, allowed_locations, format_type (SOLO/HOME/MOBILE/KIOSK/HIGHWAY/PRODUCTION/STANDARD).
 
-Sheet «Форматы», header on row 6 (pandas header=5):
-  niche_id | format_id | format_name | area_m2 | loc_type | capex_standard | class
+Format entries describe startup-level businesses only (per spec).
+Removed: HOTEL_3STAR, HOTEL_4STAR, TAILOR_FULL.
+Added: 7 SOLO formats (BEAUTY_SOLO / NAIL_SOLO / BROW_SOLO / LASH_SOLO / SUGAR_SOLO / MASSAGE_SOLO / COSM_SOLO).
+
+Run: python3 scripts/build_08_niche_formats.py
 """
 from __future__ import annotations
 
@@ -13,266 +14,280 @@ import os
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill
 
+
 # ---------------------------------------------------------------------------
-# Formats dataset — 2-3 entries per niche.
-#   (format_id_suffix, format_name, area_m2, loc_type, capex_standard, class_tag)
-# class_tag:  ""  (нет градации)  |  "эконом"  |  "стандарт"  |  "премиум"
+# FORMATS — (format_id, format_name, area_m2, capex_standard, class, format_type,
+#            allowed_locations|'*'|'auto', typical_staff)
+# class: "эконом" / "стандарт" / "премиум" / ""
+# format_type: STANDARD | SOLO | HOME | MOBILE | KIOSK | HIGHWAY | PRODUCTION
+# allowed_locations: comma-separated list or '*' (любая из 12) or 'auto' (скрыт)
+# typical_staff: "роль:кол-во|роль2:кол-во2" или пусто для SOLO
 # ---------------------------------------------------------------------------
 
 FORMATS = {
-    # ---------- ОБЩЕПИТ ----------
-    "BAKERY": [
-        ("BAKERY_SMALL",    "Мини-пекарня с витриной",           45,  "street",          12000000, "эконом"),
-        ("BAKERY_FULL",     "Пекарня-кафе",                      80,  "street",          22000000, "стандарт"),
-        ("BAKERY_PRODUCTION","Производство + доставка B2B",     120, "own_building",    32000000, "премиум"),
-    ],
-    "CANTEEN": [
-        ("CANTEEN_BC",      "Столовая в бизнес-центре",          90,  "business_center", 14000000, "стандарт"),
-        ("CANTEEN_ENTER",   "Столовая при предприятии",         140, "own_building",    20000000, "стандарт"),
-    ],
-    "CATERING": [
-        ("CATERING_HOME",   "Домашний кейтеринг",                35,  "home",             3000000, "эконом"),
-        ("CATERING_STUDIO", "Студия-цех",                        80, "own_building",    15000000, "стандарт"),
-        ("CATERING_EVENT",  "Крупный event-кейтеринг",          150, "own_building",    40000000, "премиум"),
-    ],
-    "COFFEE": [
-        ("COFFEE_KIOSK",    "Островок / кофе с собой",          12, "tc",                6000000, "эконом"),
-        ("COFFEE_CAFE",     "Кофейня-кафе",                     60, "street",           18000000, "стандарт"),
-        ("COFFEE_SPECIAL",  "Specialty coffee",                 80, "street",           32000000, "премиум"),
-    ],
-    "CONFECTION": [
-        ("CONFECT_HOME",    "Домашний кондитер",                20, "home",              1500000, "эконом"),
-        ("CONFECT_WORKSHOP","Кондитерский цех",                 60, "street",           12000000, "стандарт"),
-    ],
-    "DONER": [
-        ("DONER_TAKEOUT",   "Донерная навынос",                 18, "street",            5500000, "эконом"),
-        ("DONER_CAFE",      "Донерная с залом",                 55, "street",           14000000, "стандарт"),
-    ],
-    "FASTFOOD": [
-        ("FASTFOOD_TAKE",   "Формат take-away",                 25, "tc",                7000000, "эконом"),
-        ("FASTFOOD_CAFE",   "Фастфуд с залом",                  70, "street",           18000000, "стандарт"),
-    ],
-    "PIZZA": [
-        ("PIZZA_DELIVERY",  "Доставка пиццы",                   30, "street",            9000000, "эконом"),
-        ("PIZZA_CAFE",      "Пиццерия с залом",                 80, "street",           22000000, "стандарт"),
-    ],
-    "SUSHI": [
-        ("SUSHI_DELIVERY",  "Доставка суши",                    30, "street",            9000000, "эконом"),
-        ("SUSHI_BAR",       "Суши-бар с залом",                 75, "street",           26000000, "стандарт"),
-    ],
-    "BUBBLETEA": [
-        ("BUBBLE_KIOSK",    "Островок в ТЦ",                    10, "tc",                4500000, "эконом"),
-        ("BUBBLE_CAFE",     "Бабл-ти с залом",                  40, "street",           12000000, "стандарт"),
-    ],
-    "MEATSHOP": [
-        ("MEAT_SMALL",      "Небольшая лавка",                  25, "street",            5500000, "эконом"),
-        ("MEAT_STANDARD",   "Полноценная мясная лавка",         50, "street",           12000000, "стандарт"),
-    ],
-    "FRUITSVEGS": [
-        ("FV_KIOSK",        "Киоск",                            10, "market",            2500000, "эконом"),
-        ("FV_STORE",        "Овощной магазин",                  40, "street",            7000000, "стандарт"),
-    ],
-    "SEMIFOOD": [
-        ("SEMI_HOME",       "Домашнее производство",            25, "home",              2500000, "эконом"),
-        ("SEMI_WORKSHOP",   "Мини-цех",                         70, "own_building",     14000000, "стандарт"),
-    ],
-    "WATERPLANT": [
-        ("WATER_MINI",      "Мини-линия розлива",              100, "own_building",     18000000, "стандарт"),
-        ("WATER_FULL",      "Завод розлива",                   300, "own_building",     55000000, "премиум"),
-    ],
-    "PETSHOP": [
-        ("PET_SMALL",       "Зоомагазин мини",                  30, "street",            5000000, "эконом"),
-        ("PET_FULL",        "Полноценный зоомагазин",           80, "tc",               14000000, "стандарт"),
-    ],
-
-    # ---------- БЬЮТИ ----------
+    # ---------- АРХЕТИП A — Услуги с мастерами ----------
     "BARBER": [
-        ("BARBER_SOLO",     "Барбер на одно кресло",            15, "street",            1800000, "эконом"),
-        ("BARBER_STANDARD", "Барбершоп 3-5 кресел",             45, "street",            7500000, "стандарт"),
-        ("BARBER_PREMIUM",  "Премиум барбершоп",                80, "street",           18000000, "премиум"),
+        ("BARBER_SOLO",     "Барбер-одиночка",         15,  1800000,  "эконом",    "SOLO",     "rent_in_salon", ""),
+        ("BARBER_STANDARD", "Барбершоп 3-5 кресел",    45,  7500000,  "стандарт",  "STANDARD", "city_center,residential,residential_complex,mall_standard", "барбер:4|администратор:1"),
+        ("BARBER_PREMIUM",  "Премиум барбершоп",       80, 18000000,  "премиум",   "STANDARD", "city_center,mall_premium,bc_premium", "барбер:5|администратор:1|бариста:1"),
     ],
     "BEAUTY": [
-        ("BEAUTY_MINI",     "Салон на 3 кресла",                40, "street",            6000000, "эконом"),
-        ("BEAUTY_STANDARD", "Полноценный салон",                80, "street",           16000000, "стандарт"),
-        ("BEAUTY_PREMIUM",  "Премиум салон",                   120, "street",           32000000, "премиум"),
+        ("BEAUTY_SOLO",     "Мастер в чужом салоне",    0,   400000,  "эконом",    "SOLO", "rent_in_salon", ""),
+        ("BEAUTY_STANDARD", "Салон красоты",           80, 16000000,  "стандарт",  "STANDARD", "city_center,residential,residential_complex,mall_standard", "парикмахер:2|мастер_маникюра:2|косметолог:1|администратор:1"),
+        ("BEAUTY_PREMIUM",  "Премиум салон",          120, 32000000,  "премиум",   "STANDARD", "city_center,mall_premium,bc_premium", "парикмахер:3|мастер_маникюра:2|косметолог:2|администратор:2"),
     ],
     "MANICURE": [
-        ("NAIL_HOME",       "На дому",                          10, "home",              350000, "эконом"),
-        ("NAIL_CABINET",    "Кабинет 1-2 мастера",              20, "street",           2200000, "стандарт"),
-        ("NAIL_SALON",      "Студия маникюра",                  50, "street",           9000000, "премиум"),
+        ("NAIL_HOME",       "Мастер на дому",          10,   350000,  "эконом",    "HOME", "auto", ""),
+        ("NAIL_SOLO",       "Мастер в чужом салоне",    0,   300000,  "эконом",    "SOLO", "rent_in_salon", ""),
+        ("NAIL_CABINET",    "Кабинет 1-2 мастера",     20,  2200000,  "стандарт",  "STANDARD", "residential,residential_complex,mall_standard", "мастер_маникюра:2"),
+        ("NAIL_SALON",      "Студия маникюра",         50,  9000000,  "премиум",   "STANDARD", "city_center,mall_premium,mall_standard", "мастер_маникюра:4|администратор:1"),
     ],
     "BROW": [
-        ("BROW_HOME",       "На дому",                           8, "home",              300000, "эконом"),
-        ("BROW_CABINET",    "Свой кабинет",                     18, "street",           2000000, "стандарт"),
+        ("BROW_HOME",       "Мастер на дому",           8,   300000,  "эконом",    "HOME", "auto", ""),
+        ("BROW_SOLO",       "Мастер в чужом салоне",    0,   250000,  "эконом",    "SOLO", "rent_in_salon", ""),
+        ("BROW_CABINET",    "Свой кабинет",            18,  2000000,  "стандарт",  "STANDARD", "residential,residential_complex,mall_standard", "мастер:2"),
     ],
     "LASH": [
-        ("LASH_HOME",       "На дому",                           8, "home",              300000, "эконом"),
-        ("LASH_CABINET",    "Свой кабинет",                     18, "street",           2000000, "стандарт"),
+        ("LASH_HOME",       "Мастер на дому",           8,   300000,  "эконом",    "HOME", "auto", ""),
+        ("LASH_SOLO",       "Мастер в чужом салоне",    0,   250000,  "эконом",    "SOLO", "rent_in_salon", ""),
+        ("LASH_CABINET",    "Свой кабинет",            18,  2000000,  "стандарт",  "STANDARD", "residential,residential_complex,mall_standard", "мастер:2"),
     ],
     "SUGARING": [
-        ("SUGAR_HOME",      "На дому",                          10, "home",              350000, "эконом"),
-        ("SUGAR_CABINET",   "Кабинет шугаринга",                20, "street",           2500000, "стандарт"),
+        ("SUGAR_HOME",      "Мастер на дому",          10,   350000,  "эконом",    "HOME", "auto", ""),
+        ("SUGAR_SOLO",      "Мастер в чужом салоне",    0,   300000,  "эконом",    "SOLO", "rent_in_salon", ""),
+        ("SUGAR_CABINET",   "Кабинет шугаринга",       20,  2500000,  "стандарт",  "STANDARD", "residential,residential_complex,mall_standard", "мастер:2"),
     ],
     "MASSAGE": [
-        ("MASSAGE_HOME",    "Выезд на дом",                     10, "home",              300000, "эконом"),
-        ("MASSAGE_STUDIO",  "Массажная студия",                 40, "street",            7000000, "стандарт"),
+        ("MASSAGE_HOME",    "Выезд на дом",            10,   300000,  "эконом",    "HOME", "auto", ""),
+        ("MASSAGE_SOLO",    "Мастер в чужом салоне",    0,   400000,  "эконом",    "SOLO", "rent_in_salon", ""),
+        ("MASSAGE_STUDIO",  "Массажная студия",        40,  7000000,  "стандарт",  "STANDARD", "residential,residential_complex,mall_standard", "массажист:2|администратор:1"),
     ],
     "COSMETOLOGY": [
-        ("COSM_CABINET",    "Кабинет косметолога",              25, "street",            6000000, "стандарт"),
-        ("COSM_CLINIC",     "Мини-клиника",                     60, "street",           22000000, "премиум"),
+        ("COSM_SOLO",       "Косметолог в чужом салоне", 0,  800000,  "эконом",    "SOLO", "rent_in_salon", ""),
+        ("COSM_CABINET",    "Кабинет косметолога",     25,  6000000,  "стандарт",  "STANDARD", "residential,residential_complex,mall_standard,bc_standard", "косметолог:1|администратор:1"),
+        ("COSM_CLINIC",     "Мини-клиника",            60, 22000000,  "премиум",   "STANDARD", "city_center,mall_premium,bc_premium", "косметолог:2|врач:1|администратор:1"),
     ],
-
-    # ---------- ЗДОРОВЬЕ ----------
     "DENTAL": [
-        ("DENTAL_1CH",      "Кабинет на 1 кресло",              30, "street",           12000000, "эконом"),
-        ("DENTAL_CLINIC",   "Клиника на 3-5 кресел",            80, "street",           45000000, "стандарт"),
-    ],
-    "PHARMACY": [
-        ("PHARM_SMALL",     "Небольшая аптека",                 40, "residential_area", 10000000, "стандарт"),
-        ("PHARM_FULL",      "Сетевая аптека",                   80, "street",           22000000, "стандарт"),
+        ("DENTAL_1CH",      "Кабинет 1 кресло",        30, 12000000,  "эконом",    "STANDARD", "residential,residential_complex,bc_standard", "стоматолог:1|ассистент:1|администратор:1"),
+        ("DENTAL_CLINIC",   "Клиника 3-5 кресел",      80, 45000000,  "стандарт",  "STANDARD", "city_center,residential,mall_standard", "стоматолог:3|ассистент:3|администратор:1"),
     ],
     "OPTICS": [
-        ("OPTICS_TC",       "Оптика в ТЦ",                      40, "tc",               16000000, "стандарт"),
-        ("OPTICS_STREET",   "Оптика-улица с залом",             70, "street",           24000000, "премиум"),
-    ],
-
-    # ---------- СПОРТ ----------
-    "FITNESS": [
-        ("FIT_STUDIO",      "Студия 100 м²",                   100, "residential_area", 14000000, "эконом"),
-        ("FIT_CLUB",        "Фитнес-клуб 500 м²",              500, "own_building",     80000000, "стандарт"),
-    ],
-    "YOGA": [
-        ("YOGA_STUDIO",     "Йога-студия",                      80, "residential_complex", 6000000, "стандарт"),
-    ],
-    "HOTEL": [
-        ("HOTEL_HOSTEL",    "Хостел 20 койко-мест",            150, "own_building",     18000000, "эконом"),
-        ("HOTEL_3STAR",     "Мини-отель 2-3★",                 400, "own_building",    90000000, "стандарт"),
-        ("HOTEL_4STAR",     "Отель 4-5★",                     1200, "own_building",   320000000, "премиум"),
-    ],
-
-    # ---------- УСЛУГИ ----------
-    "AUTOSERVICE": [
-        ("AUTOSERV_1POST",  "Автосервис 1-2 поста",             80, "highway",           5000000, "эконом"),
-        ("AUTOSERV_FULL",   "СТО 3-6 постов",                  200, "highway",          20000000, "стандарт"),
-    ],
-    "TIRESERVICE": [
-        ("TIRE_SMALL",      "Шиномонтаж 1 пост",                40, "highway",           3000000, "эконом"),
-        ("TIRE_STANDARD",   "Шиномонтаж 2-3 поста",             80, "highway",           8000000, "стандарт"),
-    ],
-    "CARWASH": [
-        ("WASH_SELF",       "Самомойка",                       250, "highway",          28000000, "эконом"),
-        ("WASH_MANUAL",     "Ручная мойка 2-3 поста",          120, "highway",          14000000, "стандарт"),
-        ("WASH_PREMIUM",    "Премиум автомойка",               160, "own_building",     32000000, "премиум"),
-    ],
-    "DETAILING": [
-        ("DETAIL_BOX1",     "Одиночный бокс",                   80, "highway",           6500000, "стандарт"),
-        ("DETAIL_STUDIO",   "Детейлинг-студия",                150, "own_building",     22000000, "премиум"),
-    ],
-    "AUTOPARTS": [
-        ("PARTS_STORE",     "Магазин автозапчастей",            80, "street",           12000000, "стандарт"),
-    ],
-    "CLEAN": [
-        ("CLEAN_SOLO",      "Клининг-ИП",                       10, "home",              500000, "эконом"),
-        ("CLEAN_TEAM",      "Клининговая бригада",              60, "business_center",   4000000, "стандарт"),
-    ],
-    "CARPETCLEAN": [
-        ("CARPET_WORKSHOP", "Цех чистки ковров",               120, "own_building",     10000000, "стандарт"),
-    ],
-    "DRYCLEAN": [
-        ("DRY_APPR",        "Приёмка / пункт",                  20, "residential_complex", 2500000, "эконом"),
-        ("DRY_FULL",        "Химчистка с оборудованием",        80, "street",           18000000, "стандарт"),
-    ],
-    "LAUNDRY": [
-        ("LAUNDRY_SELF",    "Прачечная самообслуживания",       60, "residential_complex", 14000000, "стандарт"),
-        ("LAUNDRY_FULL",    "Промышленная прачечная",          200, "own_building",     42000000, "премиум"),
-    ],
-    "KINDERGARTEN": [
-        ("KG_HOME",         "Домашний сад 8-12 детей",          70, "residential_area",  2500000, "эконом"),
-        ("KG_STANDARD",     "Частный сад 30+ детей",           200, "own_building",     18000000, "стандарт"),
-    ],
-    "KIDSCENTER": [
-        ("KIDS_STUDIO",     "Развивающая студия",               80, "residential_area",  5000000, "стандарт"),
-        ("KIDS_LARGE",      "Центр с несколькими программами", 200, "street",          16000000, "премиум"),
-    ],
-    "LANGUAGES": [
-        ("LANG_HOME",       "Репетиторство из дома",            15, "home",              400000, "эконом"),
-        ("LANG_MICRO",      "Мини-школа на 2-3 аудитории",      60, "business_center",   3500000, "стандарт"),
-        ("LANG_FULL",       "Языковая школа",                  150, "street",           14000000, "премиум"),
-    ],
-    "DRIVING": [
-        ("DRIVE_SMALL",     "Автошкола 2-3 машины",             50, "street",           12000000, "эконом"),
-        ("DRIVE_FULL",      "Автошкола 8+ машин",              120, "street",           32000000, "стандарт"),
-    ],
-    "CARGO": [
-        ("CARGO_SOLO",      "1 машина",                          0, "home",              8000000, "эконом"),
-        ("CARGO_FLEET",     "Парк 5+ машин",                     0, "own_building",     45000000, "стандарт"),
-    ],
-    "PVZ": [
-        ("PVZ_SMALL",       "ПВЗ 15 м²",                        15, "street",            2500000, "стандарт"),
-        ("PVZ_FULL",        "ПВЗ 35 м²",                        35, "residential_complex", 4500000, "стандарт"),
-    ],
-    "REPAIR_PHONE": [
-        ("REPAIR_POINT",    "Точка ремонта",                    12, "tc",                1800000, "эконом"),
-        ("REPAIR_STUDIO",   "Мастерская",                       25, "street",            4500000, "стандарт"),
+        ("OPTICS_TC",       "Оптика в ТЦ",             40, 16000000,  "стандарт",  "STANDARD", "mall_premium,mall_standard", "продавец:2|офтальмолог:1"),
+        ("OPTICS_STREET",   "Оптика-улица",            70, 24000000,  "премиум",   "STANDARD", "city_center,residential,residential_complex", "продавец:2|офтальмолог:1|администратор:1"),
     ],
     "TAILOR": [
-        ("TAILOR_HOME",     "Ателье на дому",                   15, "home",               500000, "эконом"),
-        ("TAILOR_MINI",     "Мини-ателье",                      25, "street",            2500000, "стандарт"),
-        ("TAILOR_FULL",     "Полное ателье",                    60, "street",            9000000, "премиум"),
+        ("TAILOR_HOME",     "Ателье на дому",          15,   500000,  "эконом",    "HOME", "auto", ""),
+        ("TAILOR_MINI",     "Мини-ателье",             25,  2500000,  "стандарт",  "STANDARD", "residential,residential_complex,mall_standard,market", "закройщик:1|швея:1"),
+    ],
+    "REPAIR_PHONE": [
+        ("REPAIR_POINT",    "Точка в ТЦ",              12,  1800000,  "эконом",    "KIOSK", "mall_premium,mall_standard,bc_standard", "мастер:1"),
+        ("REPAIR_STUDIO",   "Мастерская",              25,  4500000,  "стандарт",  "STANDARD", "city_center,residential,mall_standard", "мастер:2"),
     ],
     "PHOTO": [
-        ("PHOTO_HOME",      "Выездной фотограф",                 0, "home",              1500000, "эконом"),
-        ("PHOTO_STUDIO",    "Фотостудия с интерьерами",         60, "street",           10000000, "стандарт"),
+        ("PHOTO_HOME",      "Выездной фотограф",        0,  1500000,  "эконом",    "MOBILE", "auto", ""),
+        ("PHOTO_STUDIO",    "Фотостудия с интерьерами", 60, 10000000, "стандарт",  "STANDARD", "city_center,residential_complex,bc_standard,industrial", "фотограф:1|администратор:1"),
     ],
-    "FLOWERS": [
-        ("FLOWER_KIOSK",    "Цветочный киоск",                  12, "street",            2500000, "эконом"),
-        ("FLOWER_STUDIO",   "Цветочная студия",                 40, "street",            8000000, "стандарт"),
-    ],
-    "PRINTING": [
-        ("PRINT_SMALL",     "Мини-типография",                  40, "street",            6500000, "стандарт"),
-        ("PRINT_FULL",      "Полноценная типография",          150, "own_building",     38000000, "премиум"),
-    ],
-
-    # ---------- ТОРГОВЛЯ ----------
-    "GROCERY": [
-        ("GROC_KIOSK",      "Киоск / минимаркет",               25, "residential_area",  3500000, "эконом"),
-        ("GROC_STANDARD",   "Минимаркет",                       80, "residential_area", 14000000, "стандарт"),
-        ("GROC_SUPER",      "Супермаркет",                     250, "street",           48000000, "премиум"),
-    ],
-    "BUILDMAT": [
-        ("BUILD_SMALL",     "Небольшой магазин",                80, "street",           12000000, "стандарт"),
-        ("BUILD_FULL",      "Полноценный строймаркет",         250, "own_building",     48000000, "премиум"),
-    ],
-    "COMPCLUB": [
-        ("CC_SMALL",        "Клуб 10-15 мест",                  80, "residential_area", 18000000, "стандарт"),
-        ("CC_LARGE",        "Киберарена 30+ мест",             200, "street",           60000000, "премиум"),
-    ],
-
-    # ---------- ПРОИЗВОДСТВО МЕБЕЛИ ----------
-    "FURNITURE": [
-        ("FURN_SMALL",      "Цех мебели на заказ",             120, "own_building",     14000000, "стандарт"),
-        ("FURN_FULL",       "Мебельное производство",          300, "own_building",     42000000, "премиум"),
-    ],
-    "LOFTFURNITURE": [
-        ("LOFT_SMALL",      "Мастерская лофт-мебели",          120, "own_building",     12000000, "стандарт"),
-        ("LOFT_FULL",       "Цех металлоконструкций",          250, "own_building",     32000000, "премиум"),
-    ],
-
-    # ---------- B2B-УСЛУГИ ----------
-    "ACCOUNTING": [
-        ("ACC_SOLO",        "Самозанятый бухгалтер",             0, "home",              250000, "эконом"),
-        ("ACC_AGENCY",      "Бухгалтерское агентство",          40, "business_center",   3500000, "стандарт"),
-    ],
-    "REALTOR": [
-        ("REAL_SOLO",       "Независимый риэлтор",               0, "home",              200000, "эконом"),
-        ("REAL_AGENCY",     "Агентство недвижимости",           50, "business_center",   4500000, "стандарт"),
+    "DETAILING": [
+        ("DETAIL_BOX1",     "Одиночный бокс",          80,  6500000,  "стандарт",  "HIGHWAY", "auto", "детейлер:2"),
+        ("DETAIL_STUDIO",   "Детейлинг-студия",       150, 22000000,  "премиум",   "STANDARD", "city_center,industrial,highway", "детейлер:3|администратор:1"),
     ],
     "NOTARY": [
-        ("NOTARY_OFFICE",   "Нотариальная контора",             30, "business_center",   5500000, "стандарт"),
+        ("NOTARY_OFFICE",   "Нотариальная контора",    30,  5500000,  "стандарт",  "STANDARD", "city_center,bc_premium,bc_standard", "нотариус:1|помощник:1"),
+    ],
+
+    # ---------- АРХЕТИП B — Общепит ----------
+    "COFFEE": [
+        ("COFFEE_KIOSK",    "Островок / кофе с собой", 12,  6000000,  "эконом",    "KIOSK", "mall_premium,mall_standard,bc_premium,bc_standard", "бариста:2"),
+        ("COFFEE_CAFE",     "Кофейня-кафе",            60, 18000000,  "стандарт",  "STANDARD", "city_center,residential,residential_complex,mall_standard", "бариста:3|кассир:1"),
+        ("COFFEE_SPECIAL",  "Specialty coffee",        80, 32000000,  "премиум",   "STANDARD", "city_center,mall_premium,bc_premium", "бариста:3|кассир:1|администратор:1"),
+    ],
+    "BAKERY": [
+        ("BAKERY_SMALL",    "Мини-пекарня с витриной", 45, 12000000,  "эконом",    "STANDARD", "residential,residential_complex,market", "пекарь:2|продавец:1"),
+        ("BAKERY_FULL",     "Пекарня-кафе",            80, 22000000,  "стандарт",  "STANDARD", "city_center,residential,residential_complex,mall_standard", "пекарь:3|продавец:2"),
+        ("BAKERY_PRODUCTION","Производство + B2B",    120, 32000000,  "премиум",   "PRODUCTION", "auto", "пекарь:4|менеджер_b2b:1|водитель:1"),
+    ],
+    "CONFECTION": [
+        ("CONFECT_HOME",    "Домашний кондитер",       20,  1500000,  "эконом",    "HOME", "auto", ""),
+        ("CONFECT_WORKSHOP","Кондитерский цех",        60, 12000000,  "стандарт",  "STANDARD", "residential,residential_complex,industrial", "кондитер:3|помощник:1"),
+    ],
+    "DONER": [
+        ("DONER_TAKEOUT",   "Донерная навынос",        18,  5500000,  "эконом",    "STANDARD", "residential,residential_complex,market", "повар:2|кассир:1"),
+        ("DONER_CAFE",      "Донерная с залом",        55, 14000000,  "стандарт",  "STANDARD", "city_center,residential,mall_standard", "повар:3|кассир:1|официант:1"),
+    ],
+    "FASTFOOD": [
+        ("FASTFOOD_TAKE",   "Такаут в ТЦ",             25,  7000000,  "эконом",    "KIOSK", "mall_premium,mall_standard,bc_standard", "повар:2|кассир:1"),
+        ("FASTFOOD_CAFE",   "Фастфуд с залом",         70, 18000000,  "стандарт",  "STANDARD", "city_center,residential,mall_standard", "повар:3|кассир:2|официант:1"),
+    ],
+    "PIZZA": [
+        ("PIZZA_DELIVERY",  "Доставка пиццы",          30,  9000000,  "эконом",    "MOBILE", "auto", "пиццмейкер:2|курьер:2"),
+        ("PIZZA_CAFE",      "Пиццерия с залом",        80, 22000000,  "стандарт",  "STANDARD", "city_center,residential,mall_standard", "пиццмейкер:3|кассир:1|официант:2"),
+    ],
+    "SUSHI": [
+        ("SUSHI_DELIVERY",  "Доставка суши",           30,  9000000,  "эконом",    "MOBILE", "auto", "сушист:2|курьер:2"),
+        ("SUSHI_BAR",       "Суши-бар с залом",        75, 26000000,  "стандарт",  "STANDARD", "city_center,residential,mall_standard", "сушист:3|кассир:1|официант:2"),
+    ],
+    "BUBBLETEA": [
+        ("BUBBLE_KIOSK",    "Островок в ТЦ",           10,  4500000,  "эконом",    "KIOSK", "mall_premium,mall_standard,bc_premium,bc_standard", "бариста:2"),
+        ("BUBBLE_CAFE",     "Бабл-ти с залом",         40, 12000000,  "стандарт",  "STANDARD", "city_center,mall_standard,residential_complex", "бариста:3|кассир:1"),
+    ],
+    "CANTEEN": [
+        ("CANTEEN_BC",      "Столовая в БЦ",           90, 14000000,  "стандарт",  "STANDARD", "bc_standard,bc_premium", "повар:3|кассир:2|помощник:2"),
+        ("CANTEEN_ENTER",   "Столовая при предприятии",140, 20000000,  "стандарт",  "PRODUCTION", "auto", "повар:4|кассир:2|помощник:2"),
+    ],
+    "SEMIFOOD": [
+        ("SEMI_HOME",       "Домашнее производство",   25,  2500000,  "эконом",    "HOME", "auto", ""),
+        ("SEMI_WORKSHOP",   "Мини-цех",                70, 14000000,  "стандарт",  "PRODUCTION", "auto", "повар:3|помощник:2|менеджер:1"),
+    ],
+    "CATERING": [
+        ("CATERING_HOME",   "Домашний кейтеринг",      35,  3000000,  "эконом",    "MOBILE", "auto", ""),
+        ("CATERING_STUDIO", "Студия-цех",              80, 15000000,  "стандарт",  "MOBILE", "auto", "повар:3|помощник:2|менеджер:1"),
+        ("CATERING_EVENT",  "Event-кейтеринг",        150, 40000000,  "премиум",   "MOBILE", "auto", "повар:5|помощник:4|менеджер:2|логист:1"),
+    ],
+
+    # ---------- АРХЕТИП C — Розничная торговля ----------
+    "MEATSHOP": [
+        ("MEAT_SMALL",      "Небольшая лавка",         25,  5500000,  "эконом",    "STANDARD", "residential,market,residential_complex", "продавец:1|разделщик:1"),
+        ("MEAT_STANDARD",   "Мясная лавка",            50, 12000000,  "стандарт",  "STANDARD", "residential,residential_complex,market", "продавец:2|разделщик:1"),
+    ],
+    "FRUITSVEGS": [
+        ("FV_KIOSK",        "Киоск",                   10,  2500000,  "эконом",    "STANDARD", "market,residential,residential_complex", "продавец:1"),
+        ("FV_STORE",        "Магазин",                 40,  7000000,  "стандарт",  "STANDARD", "residential,residential_complex,market", "продавец:2"),
+    ],
+    "FLOWERS": [
+        ("FLOWER_KIOSK",    "Цветочный киоск",         12,  2500000,  "эконом",    "STANDARD", "city_center,residential,market,residential_complex", "флорист:1"),
+        ("FLOWER_STUDIO",   "Цветочная студия",        40,  8000000,  "стандарт",  "STANDARD", "city_center,residential,residential_complex,mall_standard", "флорист:2|курьер:1"),
+    ],
+    "AUTOPARTS": [
+        ("PARTS_STORE",     "Магазин автозапчастей",   80, 12000000,  "стандарт",  "STANDARD", "residential,market,industrial,highway", "продавец:2|консультант:1"),
+    ],
+    "BUILDMAT": [
+        ("BUILD_SMALL",     "Небольшой магазин",       80, 12000000,  "стандарт",  "STANDARD", "residential,industrial,market", "продавец:2|водитель:1"),
+        ("BUILD_FULL",      "Строймаркет",            250, 48000000,  "премиум",   "STANDARD", "industrial,highway,suburb", "продавец:3|водитель:2|менеджер:1"),
+    ],
+    "PETSHOP": [
+        ("PET_SMALL",       "Зоомагазин мини",         30,  5000000,  "эконом",    "STANDARD", "residential,residential_complex,market", "продавец:1"),
+        ("PET_FULL",        "Зоомагазин",              80, 14000000,  "стандарт",  "STANDARD", "residential,mall_standard,residential_complex", "продавец:2|грумер:1"),
+    ],
+    "PHARMACY": [
+        ("PHARM_SMALL",     "Небольшая аптека",        40, 10000000,  "эконом",    "STANDARD", "residential,residential_complex,suburb", "фармацевт:2"),
+        ("PHARM_FULL",      "Сетевая аптека",          80, 22000000,  "стандарт",  "STANDARD", "city_center,residential,mall_standard", "фармацевт:3|кассир:1"),
+    ],
+    "GROCERY": [
+        ("GROC_KIOSK",      "Минимаркет",              25,  3500000,  "эконом",    "STANDARD", "residential,residential_complex,suburb", "продавец:2"),
+        ("GROC_STANDARD",   "Минимаркет",              80, 14000000,  "стандарт",  "STANDARD", "residential,residential_complex,market", "продавец:3|кассир:1"),
+        ("GROC_SUPER",      "Супермаркет",            250, 48000000,  "премиум",   "STANDARD", "city_center,residential,mall_standard", "продавец:5|кассир:3|менеджер:1"),
+    ],
+    "WATERPLANT": [
+        ("WATER_MINI",      "Мини-линия розлива",     100, 18000000,  "стандарт",  "PRODUCTION", "auto", "оператор:2|водитель:1|менеджер:1"),
+        ("WATER_FULL",      "Завод розлива",          300, 55000000,  "премиум",   "PRODUCTION", "auto", "оператор:4|водитель:2|менеджер:1|логист:1"),
+    ],
+
+    # ---------- АРХЕТИП D — Абонементы / подписка ----------
+    "FITNESS": [
+        ("FIT_STUDIO",      "Студия 100 м²",          100, 14000000,  "эконом",    "STANDARD", "residential,residential_complex,mall_standard", "тренер:2|администратор:1"),
+        ("FIT_CLUB",        "Фитнес-клуб 500 м²",     500, 80000000,  "стандарт",  "PRODUCTION", "auto", "тренер:5|администратор:3|уборщик:2"),
+    ],
+    "YOGA": [
+        ("YOGA_STUDIO",     "Йога-студия",             80,  6000000,  "стандарт",  "STANDARD", "residential_complex,city_center,mall_standard", "тренер:2|администратор:1"),
+    ],
+    "LANGUAGES": [
+        ("LANG_HOME",       "Репетитор из дома",       15,   400000,  "эконом",    "HOME", "auto", ""),
+        ("LANG_MICRO",      "Мини-школа",              60,  3500000,  "стандарт",  "STANDARD", "residential,residential_complex,bc_standard", "преподаватель:3|администратор:1"),
+        ("LANG_FULL",       "Языковая школа",         150, 14000000,  "премиум",   "STANDARD", "city_center,mall_standard,bc_standard", "преподаватель:5|администратор:1|методист:1"),
+    ],
+    "KIDSCENTER": [
+        ("KIDS_STUDIO",     "Развивающая студия",      80,  5000000,  "стандарт",  "STANDARD", "residential,residential_complex,mall_standard", "педагог:3|администратор:1"),
+        ("KIDS_LARGE",      "Центр с несколькими программами",200, 16000000, "премиум", "STANDARD", "city_center,residential,mall_standard", "педагог:5|администратор:1|методист:1"),
+    ],
+    "KINDERGARTEN": [
+        ("KG_HOME",         "Домашний сад 8-12 детей", 70,  2500000,  "эконом",    "HOME", "auto", ""),
+        ("KG_STANDARD",     "Частный сад 30+ детей",  200, 18000000,  "стандарт",  "PRODUCTION", "auto", "воспитатель:4|повар:1|медсестра:1|администратор:1"),
+    ],
+    "ACCOUNTING": [
+        ("ACC_SOLO",        "Самозанятый бухгалтер",    0,   250000,  "эконом",    "SOLO", "rent_in_salon", ""),
+        ("ACC_AGENCY",      "Бухгалтерское агентство", 40,  3500000,  "стандарт",  "STANDARD", "bc_standard,bc_premium,city_center", "бухгалтер:3|менеджер:1"),
+    ],
+    "CROSSFIT": [
+        ("CROSSFIT_STUDIO", "Кроссфит-зал",           200, 18000000,  "стандарт",  "PRODUCTION", "auto", "тренер:3|администратор:1"),
+    ],
+    "MARTIAL_ARTS": [
+        ("MMA_STUDIO",      "Зал единоборств",        150, 10000000,  "стандарт",  "STANDARD", "residential,industrial,mall_standard", "тренер:3|администратор:1"),
+    ],
+    "FOOTBALL_SCHOOL": [
+        ("FB_SMALL",        "Детская футбольная школа",  0, 3000000,  "эконом",    "MOBILE", "auto", "тренер:3|администратор:1"),
+    ],
+    "GROUP_FITNESS": [
+        ("GF_STUDIO",       "Студия групповых",       100,  8000000,  "стандарт",  "STANDARD", "residential_complex,mall_standard,city_center", "тренер:3|администратор:1"),
+    ],
+
+    # ---------- АРХЕТИП E — Проектный / заказной ----------
+    "REALTOR": [
+        ("REAL_SOLO",       "Независимый риэлтор",      0,   200000,  "эконом",    "SOLO", "rent_in_salon", ""),
+        ("REAL_AGENCY",     "Агентство недвижимости",  50,  4500000,  "стандарт",  "STANDARD", "bc_standard,bc_premium,city_center", "риэлтор:3|менеджер:1"),
     ],
     "EVALUATION": [
-        ("EVAL_SOLO",       "Оценщик-самозанятый",               0, "home",              400000, "эконом"),
-        ("EVAL_AGENCY",     "Оценочная компания",               30, "business_center",   3000000, "стандарт"),
+        ("EVAL_SOLO",       "Оценщик-самозанятый",      0,   400000,  "эконом",    "SOLO", "rent_in_salon", ""),
+        ("EVAL_AGENCY",     "Оценочная компания",      30,  3000000,  "стандарт",  "STANDARD", "bc_standard,bc_premium,city_center", "оценщик:2|помощник:1"),
+    ],
+    "FURNITURE": [
+        ("FURN_SMALL",      "Цех мебели на заказ",    120, 14000000,  "стандарт",  "PRODUCTION", "auto", "столяр:3|монтажник:1|дизайнер:1"),
+        ("FURN_FULL",       "Мебельное производство", 300, 42000000,  "премиум",   "PRODUCTION", "auto", "столяр:5|монтажник:2|дизайнер:1|менеджер:1"),
+    ],
+    "LOFTFURNITURE": [
+        ("LOFT_SMALL",      "Мастерская лофт-мебели", 120, 12000000,  "стандарт",  "PRODUCTION", "auto", "сварщик:2|столяр:1|монтажник:1"),
+        ("LOFT_FULL",       "Цех металлоконструкций", 250, 32000000,  "премиум",   "PRODUCTION", "auto", "сварщик:3|столяр:1|монтажник:2|менеджер:1"),
+    ],
+    "PRINTING": [
+        ("PRINT_SMALL",     "Мини-типография",         40,  6500000,  "стандарт",  "STANDARD", "city_center,industrial,bc_standard", "оператор:2|менеджер:1"),
+        ("PRINT_FULL",      "Полноценная типография",150, 38000000,  "премиум",   "PRODUCTION", "auto", "оператор:3|менеджер:1|дизайнер:1|водитель:1"),
+    ],
+    "CARGO": [
+        ("CARGO_SOLO",      "1 машина (InDrive)",       0,  8000000,  "эконом",    "MOBILE", "auto", ""),
+        ("CARGO_FLEET",     "Парк 5+ машин",            0, 45000000,  "стандарт",  "MOBILE", "auto", "водитель:5|диспетчер:1|механик:1"),
+    ],
+
+    # ---------- АРХЕТИП F — Мощность / пропускная ----------
+    "AUTOSERVICE": [
+        ("AUTOSERV_1POST",  "Автосервис 1-2 поста",    80,  5000000,  "эконом",    "HIGHWAY", "auto", "автослесарь:2"),
+        ("AUTOSERV_FULL",   "СТО 3-6 постов",         200, 20000000,  "стандарт",  "HIGHWAY", "auto", "автослесарь:4|приёмщик:1|менеджер:1"),
+    ],
+    "TIRESERVICE": [
+        ("TIRE_SMALL",      "Шиномонтаж 1 пост",       40,  3000000,  "эконом",    "HIGHWAY", "auto", "шиномонтажник:2"),
+        ("TIRE_STANDARD",   "Шиномонтаж 2-3 поста",    80,  8000000,  "стандарт",  "HIGHWAY", "auto", "шиномонтажник:3|приёмщик:1"),
+    ],
+    "CARWASH": [
+        ("WASH_SELF",       "Самомойка",              250, 28000000,  "эконом",    "HIGHWAY", "auto", "оператор:1"),
+        ("WASH_MANUAL",     "Ручная мойка",           120, 14000000,  "стандарт",  "HIGHWAY", "auto", "мойщик:3|администратор:1"),
+    ],
+    "CLEAN": [
+        ("CLEAN_SOLO",      "Клининг-ИП",              10,   500000,  "эконом",    "SOLO", "rent_in_salon", ""),
+        ("CLEAN_TEAM",      "Клининговая бригада",     60,  4000000,  "стандарт",  "MOBILE", "auto", "уборщик:4|менеджер:1"),
+    ],
+    "CARPETCLEAN": [
+        ("CARPET_WORKSHOP", "Цех чистки ковров",      120, 10000000,  "стандарт",  "MOBILE", "auto", "оператор:2|водитель:1"),
+    ],
+    "DRYCLEAN": [
+        ("DRY_APPR",        "Приёмка / пункт",         20,  2500000,  "эконом",    "STANDARD", "residential,residential_complex,mall_standard", "приёмщик:1"),
+        ("DRY_FULL",        "Химчистка с оборудованием", 80, 18000000, "стандарт", "PRODUCTION", "auto", "оператор:2|приёмщик:1|менеджер:1"),
+    ],
+    "LAUNDRY": [
+        ("LAUNDRY_SELF",    "Прачечная самообслуживания", 60, 14000000, "стандарт", "STANDARD", "residential_complex,bc_standard,market", "оператор:1"),
+        ("LAUNDRY_FULL",    "Промышленная прачечная",  200, 42000000,  "премиум",   "PRODUCTION", "auto", "оператор:3|водитель:1|менеджер:1"),
+    ],
+    "COMPCLUB": [
+        ("CC_SMALL",        "Клуб 10-15 мест",         80, 18000000,  "стандарт",  "STANDARD", "residential,residential_complex,mall_standard", "администратор:2"),
+        ("CC_LARGE",        "Киберарена 30+ мест",    200, 60000000,  "премиум",   "PRODUCTION", "auto", "администратор:3|техник:1|менеджер:1"),
+    ],
+    "DRIVING": [
+        ("DRIVE_SMALL",     "Автошкола 2-3 машины",    50, 12000000,  "эконом",    "STANDARD", "residential,bc_standard,city_center", "инструктор:2|администратор:1"),
+        ("DRIVE_FULL",      "Автошкола 8+ машин",     120, 32000000,  "стандарт",  "STANDARD", "residential,city_center,suburb", "инструктор:5|администратор:1|методист:1"),
+    ],
+    "HOTEL": [
+        ("HOTEL_HOSTEL",    "Хостел 20 койко-мест",   150, 18000000,  "эконом",    "PRODUCTION", "auto", "администратор:2|горничная:2"),
+    ],
+    "PVZ": [
+        ("PVZ_SMALL",       "ПВЗ 15 м²",               15,  2500000,  "эконом",    "STANDARD", "residential,residential_complex,market", "оператор:1"),
+        ("PVZ_FULL",        "ПВЗ 35 м²",               35,  4500000,  "стандарт",  "STANDARD", "residential,residential_complex,bc_standard", "оператор:2"),
     ],
 }
 
@@ -280,15 +295,17 @@ FORMATS = {
 def build_rows():
     out = []
     for niche_id, lst in FORMATS.items():
-        for fid, fname, area, loc, capex, cls in lst:
+        for (fid, fname, area, capex, cls, ftype, allowed_locs, staff) in lst:
             out.append({
-                "niche_id": niche_id,
-                "format_id": fid,
-                "format_name": fname,
-                "area_m2": area,
-                "loc_type": loc,
-                "capex_standard": capex,
-                "class": cls,
+                "niche_id":          niche_id,
+                "format_id":         fid,
+                "format_name":       fname,
+                "area_m2":           area,
+                "capex_standard":    capex,
+                "class":             cls,
+                "format_type":       ftype,
+                "allowed_locations": allowed_locs,
+                "typical_staff":     staff,
             })
     return out
 
@@ -299,13 +316,13 @@ def write_workbook(out_path: str) -> None:
     ws.title = "Форматы"
 
     title_font = Font(bold=True, size=14)
-    ws.cell(row=1, column=1, value="ZEREK — Форматы ниш (fallback catalog).").font = title_font
-    ws.cell(row=2, column=1, value="Используется Quick Check v2 когда в per-niche xlsx нет форматов.")
-    ws.cell(row=3, column=1, value=f"Ниш с форматами: {len(FORMATS)}")
-    ws.cell(row=4, column=1, value="class: эконом / стандарт / премиум ('' если без градации).")
+    ws.cell(row=1, column=1, value="ZEREK — Форматы ниш (v1.0 spec)").font = title_font
+    ws.cell(row=2, column=1, value="format_type ∈ SOLO|HOME|MOBILE|KIOSK|HIGHWAY|PRODUCTION|STANDARD")
+    ws.cell(row=3, column=1, value="allowed_locations: CSV из config/locations.yaml или 'auto' (скрыт)")
+    ws.cell(row=4, column=1, value="typical_staff: формат 'роль:n|роль2:m' или пусто для SOLO")
 
-    headers = ["niche_id", "format_id", "format_name", "area_m2", "loc_type",
-               "capex_standard", "class"]
+    headers = ["niche_id", "format_id", "format_name", "area_m2", "capex_standard",
+               "class", "format_type", "allowed_locations", "typical_staff"]
     header_fill = PatternFill(start_color="1F1F2E", end_color="1F1F2E", fill_type="solid")
     header_font = Font(bold=True, color="FFFFFF")
     for col_idx, h in enumerate(headers, start=1):
@@ -313,18 +330,26 @@ def write_workbook(out_path: str) -> None:
         c.font = header_font
         c.fill = header_fill
 
-    for i, row in enumerate(build_rows(), start=7):
+    rows = build_rows()
+    for i, row in enumerate(rows, start=7):
         for j, h in enumerate(headers, start=1):
             ws.cell(row=i, column=j, value=row.get(h, ""))
 
-    widths = {1: 16, 2: 22, 3: 40, 4: 10, 5: 18, 6: 18, 7: 12}
+    widths = {1: 16, 2: 22, 3: 36, 4: 10, 5: 18, 6: 12, 7: 14, 8: 60, 9: 54}
     for col, w in widths.items():
         ws.column_dimensions[ws.cell(row=6, column=col).column_letter].width = w
 
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     wb.save(out_path)
-    total = sum(len(v) for v in FORMATS.values())
-    print(f"✅ {out_path} — {len(FORMATS)} ниш, {total} форматов")
+    print(f"✅ {out_path}")
+    print(f"   Ниш: {len(FORMATS)}")
+    print(f"   Форматов: {len(rows)}")
+    # Статистика по format_type
+    type_counts = {}
+    for r in rows:
+        t = r["format_type"]
+        type_counts[t] = type_counts.get(t, 0) + 1
+    print(f"   По типам: {type_counts}")
 
 
 if __name__ == "__main__":

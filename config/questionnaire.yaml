@@ -1,0 +1,430 @@
+# ZEREK — Структура анкеты
+# Версия: 1.0
+# 8 вопросов Quick Check + 13-15 FinModel + 7 BizPlan
+
+questionnaire:
+
+  # =============================================================================
+  # QUICK CHECK — 8 вопросов (3-5 минут, 5 000 ₸)
+  # =============================================================================
+
+  quickcheck:
+    title_rus: "Экспресс-оценка ZEREK"
+    price_kzt: 5000
+    target_audience: "Стартапы — открывающиеся бизнесы"
+    estimated_duration_minutes: 4
+
+    questions:
+
+      # -------------------------------------------------------------------------
+      - id: q1_niche
+        order: 1
+        required: true
+        type: niche_select
+        label_rus: "Выберите нишу бизнеса"
+        help_rus: "57 ниш, сгруппированы по категориям"
+        source: "config/niches.yaml"
+        triggers:
+          - set: archetype
+          - load_formats_for_niche
+
+      # -------------------------------------------------------------------------
+      - id: q2_format
+        order: 2
+        required: true
+        type: format_select
+        label_rus: "Выберите формат"
+        help_rus: "Формат определяет масштаб бизнеса, CAPEX и типовой штат"
+        source: "data/08_niche_formats.xlsx (по niche_id)"
+        card_display:
+          - format_name
+          - class
+          - area_m2
+          - typical_location
+        triggers:
+          - set: format_id
+          - set: class_level
+          - set: typical_staff
+          - set: loc_type
+          - load_location_rules
+          - load_staff_roles
+
+      # -------------------------------------------------------------------------
+      - id: q3_city
+        order: 3
+        required: true
+        type: city_select
+        label_rus: "В каком городе будете работать?"
+        help_rus: "22 города + опция «Другой»"
+        source: "data/2gis_competitors.csv"
+        fallback_option:
+          id: "OTHER"
+          name_rus: "Другой город Казахстана"
+          coefficient: 1.0
+        triggers:
+          - apply_city_coefficients
+          - load_competitor_count
+
+      # -------------------------------------------------------------------------
+      - id: q4_location
+        order: 4
+        required: conditional
+        type: location_select
+        label_rus: "Где будет расположена точка?"
+        help_rus: "Выбор локации влияет на аренду и трафик"
+
+        visibility_logic:
+          hide_if:
+            - "format_id IN home_formats (из locations.yaml)"
+            - "format_id IN mobile_formats (из locations.yaml)"
+
+          auto_badge_if:
+            - condition: "format_id IN rent_in_salon_formats"
+              badge_rus: "Аренда в салоне — локация определяется салоном"
+              implied_value: "rent_in_salon"
+            - condition: "format_id IN highway_formats"
+              badge_rus: "Трасса / промзона"
+              implied_value: "highway"
+            - condition: "format_id IN production_formats"
+              badge_rus: "Промзона / своё здание"
+              implied_value: "industrial"
+
+          restricted_choice_if:
+            - condition: "format_id IN kiosk_formats"
+              allowed_locations:
+                - mall_premium
+                - mall_standard
+                - bc_premium
+                - bc_standard
+
+          open_choice_otherwise:
+            source: "format.allowed_locations в 08_niche_formats.xlsx"
+
+        sub_question:
+          id: q4b_line
+          label_rus: "Какая линия?"
+          show_if: "selected_location.supports_line_modifier == true AND class_level != 'премиум'"
+          auto_value_if: "class_level == 'премиум'"
+          auto_value: "line_1"
+          auto_message_rus: "Для премиум-формата линия = 1-я (автоматически)"
+          options:
+            - id: line_1
+              label_rus: "1-я линия (фасад, вывеска на главную улицу)"
+            - id: line_2
+              label_rus: "2-я линия (во дворе, в переулке, боковая улица)"
+
+      # -------------------------------------------------------------------------
+      - id: q5_experience
+        order: 5
+        required: true
+        type: single_select
+        label_rus: "Есть ли у вас опыт в этом бизнесе?"
+        help_rus: "Влияет на риск-оценку сценариев"
+        options:
+          - id: none
+            label_rus: "Нет опыта — открываю с нуля"
+            risk_multiplier: 1.3
+          - id: some
+            label_rus: "1–2 года опыта в найме в этой нише"
+            risk_multiplier: 1.0
+          - id: experienced
+            label_rus: "3+ лет опыта / уже был свой бизнес в этой нише"
+            risk_multiplier: 0.8
+
+      # -------------------------------------------------------------------------
+      - id: q6_payroll_type
+        order: 6
+        required: conditional
+        type: single_select
+        label_rus: "Как планируете платить сотрудникам?"
+        help_rus: "Конкретные суммы рассчитаются по бенчмаркам ZEREK"
+
+        visibility_logic:
+          hide_if: "format.typical_staff is empty (SOLO-формат)"
+
+        options:
+          - id: salary
+            label_rus: "Оклад (фиксированная зарплата)"
+          - id: piece
+            label_rus: "Сдельно / процент с выручки"
+          - id: mixed
+            label_rus: "Смешанно (оклад + %)"
+
+        default_by_niche:
+          BARBER: piece
+          MANICURE: piece
+          MASSAGE: piece
+          COFFEE: mixed
+          CANTEEN: salary
+          PHARMACY: salary
+          AUTOSERVICE: piece
+          CARWASH: piece
+          FITNESS: mixed
+          LANGUAGES: piece
+          default: mixed
+
+      # -------------------------------------------------------------------------
+      - id: q7_entrepreneur_role
+        order: 7
+        required: conditional
+        type: dynamic_select
+        label_rus: "Какую роль вы берёте на себя в бизнесе?"
+        help_rus: "От этого зависит ФОТ и ваш личный доход"
+
+        visibility_logic:
+          hide_if: "format.typical_staff is empty (SOLO-формат)"
+
+        options_generation:
+          description: "Генерируется из typical_staff формата"
+          base_options:
+            - id: owner_only
+              label_template_rus: "Только владелец (нанимаю всех: {staff_list})"
+              fot_full: true
+              entrepreneur_income_source: "profit_only"
+          per_role_options:
+            - id_template: "owner_plus_{role}"
+              label_template_rus: "Владелец + {role_rus} (закрываю ставку {role_rus})"
+              fot_reduction: "subtract_one_{role}_rate"
+              entrepreneur_income_source: "role_rate_plus_profit"
+          combo_option_if_multiple_roles:
+            - id: owner_plus_all
+              label_template_rus: "Владелец работает на нескольких позициях"
+              shown_only_if: "len(roles) >= 2"
+
+        example:
+          format: BARBER_STANDARD
+          typical_staff: "4 барбера + 1 администратор"
+          generated_options:
+            - "Только владелец (нанимаю всех: 4 барбера + 1 администратор)"
+            - "Владелец + барбер (закрываю 1 ставку барбера)"
+            - "Владелец + администратор (закрываю ставку админа)"
+            - "Владелец работает на нескольких позициях (барбер + админ)"
+
+      # -------------------------------------------------------------------------
+      - id: q8_capital
+        order: 8
+        required: false
+        type: capital_optional
+        label_rus: "Ваш стартовый капитал"
+        help_rus: "Можно пропустить — мы рассчитаем типовое значение для вашего формата"
+
+        fields:
+          - id: capital_own
+            label_rus: "Сколько готовы вложить?"
+            placeholder_rus: "Необязательно"
+            type: currency
+          - id: capital_needed_estimate
+            label_rus: "Сколько, по-вашему, нужно?"
+            placeholder_rus: "Необязательно"
+            type: currency
+
+        skip_button:
+          label_rus: "Не знаю — рассчитайте типовое"
+          action: "use_capex_benchmark"
+
+        engine_logic:
+          both_empty: "взять capex_standard формата × city_coefficient как базу"
+          only_own: "сравнить с бенчмарком, показать дефицит/профицит"
+          only_needed: "сравнить ожидание клиента с бенчмарком"
+          both_filled: "трёхстороннее сравнение: клиент_готов vs клиент_нужно vs бенчмарк ZEREK"
+
+
+  # =============================================================================
+  # FINMODEL — +13–15 вопросов поверх Quick Check (10–15 минут, 9 000 ₸)
+  # =============================================================================
+
+  finmodel:
+    title_rus: "Финансовая модель ZEREK"
+    price_kzt: 9000
+    inherits_from: quickcheck
+    estimated_duration_minutes: 12
+    progress_bar_message_rus: "Уже заполнено: 40%. Осталось: 15 вопросов (~10 минут)"
+
+    blocks:
+
+      # --- Блок A: Финансовая детализация ---
+      block_a_financial:
+        title_rus: "Финансовые параметры"
+        questions:
+          - id: fm_a1_horizon
+            required: true
+            type: single_select
+            label_rus: "Горизонт планирования"
+            options:
+              - {id: "12m", label_rus: "12 месяцев"}
+              - {id: "24m", label_rus: "24 месяца"}
+              - {id: "36m", label_rus: "36 месяцев"}
+            default: "36m"
+
+          - id: fm_a2_tax_regime
+            required: true
+            type: single_select
+            label_rus: "Налоговый режим"
+            options:
+              - {id: "self_employed", label_rus: "Самозанятый"}
+              - {id: "usn_3", label_rus: "УСН 3% (базовый)"}
+              - {id: "usn_4", label_rus: "УСН 4% (г. Алматы, отдельные виды)"}
+              - {id: "our", label_rus: "ОУР (общий режим с НДС)"}
+
+          - id: fm_a3_payroll_detail
+            required: conditional
+            type: percent
+            label_rus: "Доля сдельной части в ФОТ (%)"
+            show_if: "quickcheck.payroll_type == 'mixed'"
+            range: [0, 100]
+
+          - id: fm_a4_marketing_budget
+            required: true
+            type: percent_or_currency
+            label_rus: "Маркетинговый бюджет"
+            help_rus: "В процентах от выручки или фиксированная сумма в месяц"
+
+          - id: fm_a5_other_opex
+            required: false
+            type: collapsed_block
+            label_rus: "Прочие расходы"
+            help_rus: "Коммуналка, связь, охрана, бухгалтерия. По умолчанию — бенчмарк ZEREK"
+            sub_fields:
+              - utilities_monthly
+              - communication_monthly
+              - security_monthly
+              - accounting_monthly
+
+      # --- Блок B: Операционная модель (ветвится по архетипу) ---
+      block_b_operational:
+        title_rus: "Операционная модель"
+        questions_source: "config/archetypes.yaml[archetype].finmodel_operational_questions"
+
+      # --- Блок C: Капитал и финансирование ---
+      block_c_capital:
+        title_rus: "Источники капитала"
+        questions:
+          - id: fm_c1_capital_source
+            required: true
+            type: multi_select
+            label_rus: "Источник стартового капитала"
+            options:
+              - {id: "own", label_rus: "Свои средства"}
+              - {id: "credit", label_rus: "Банковский кредит"}
+              - {id: "investor", label_rus: "Инвестор / партнёр"}
+              - {id: "grant", label_rus: "Грант / госпрограмма"}
+
+          - id: fm_c2_credit_terms
+            required: conditional
+            show_if: "'credit' in fm_c1_capital_source"
+            type: group
+            fields:
+              - {id: credit_amount, label_rus: "Сумма кредита (₸)", type: currency}
+              - {id: credit_rate, label_rus: "Годовая ставка (%)", type: percent}
+              - {id: credit_term_months, label_rus: "Срок (мес)", type: number}
+              - {id: credit_grace_months, label_rus: "Отсрочка платежа (мес)", type: number}
+
+          - id: fm_c3_reserve_fund
+            required: false
+            type: percent
+            label_rus: "Резервный фонд (% от OPEX)"
+            default: 10
+
+          - id: fm_c4_breakeven_expectation
+            required: false
+            type: number
+            label_rus: "Ваше ожидание по точке безубыточности (месяц)"
+            help_rus: "Для валидации — сравним с нашим расчётом"
+
+
+  # =============================================================================
+  # BIZPLAN — +7 текстовых вопросов (20–30 минут, 15 000 ₸)
+  # =============================================================================
+
+  bizplan:
+    title_rus: "Бизнес-план ZEREK"
+    price_kzt: 15000
+    inherits_from: finmodel
+    estimated_duration_minutes: 25
+    progress_bar_message_rus: "Финансовая часть готова. Осталось: 7 вопросов описания (~15 минут)"
+
+    questions:
+      - id: bp_1_mission
+        required: true
+        type: textarea
+        label_rus: "Миссия и идея бизнеса"
+        help_rus: "Что вы предлагаете клиентам и чем это отличается от конкурентов"
+        min_chars: 100
+        ai_assist: true
+
+      - id: bp_2_team
+        required: true
+        type: textarea
+        label_rus: "Команда и опыт"
+        help_rus: "Ключевые люди, их компетенции и вклад в бизнес"
+        ai_assist: true
+
+      - id: bp_3_audience
+        required: true
+        type: textarea
+        label_rus: "Целевая аудитория"
+        help_rus: "Кто ваши клиенты, какие у них боли и потребности"
+        ai_assist: true
+
+      - id: bp_4_competitors
+        required: true
+        type: textarea
+        label_rus: "Анализ конкурентов"
+        help_rus: "3–5 ключевых конкурентов в вашей нише и городе. Ваше отличие"
+        ai_assist: true
+        auto_prefill_source: "2gis_competitors.csv"
+
+      - id: bp_5_marketing_plan
+        required: true
+        type: textarea
+        label_rus: "План маркетинга"
+        help_rus: "Каналы привлечения клиентов, маркетинговая стратегия"
+        ai_assist: true
+
+      - id: bp_6_risks
+        required: true
+        type: textarea
+        label_rus: "Риски и план митигации"
+        help_rus: "3–5 главных рисков бизнеса и как вы планируете их закрывать"
+        ai_assist: true
+        auto_prefill_source: "niche_risks from insight file"
+
+      - id: bp_7_document_goal
+        required: true
+        type: single_select
+        label_rus: "Для какой цели нужен бизнес-план?"
+        help_rus: "AI подстроит акценты документа"
+        options:
+          - id: "bank"
+            label_rus: "Получение кредита в банке"
+            ai_focus: "возврат кредита, залоги, финансовая история, cash flow"
+          - id: "grant"
+            label_rus: "Грант / государственная программа"
+            ai_focus: "социальный эффект, создание рабочих мест, локальная выгода"
+          - id: "investor"
+            label_rus: "Привлечение инвестора"
+            ai_focus: "масштабирование, рост, exit strategy, TAM/SAM"
+          - id: "personal"
+            label_rus: "Личное планирование / для себя"
+            ai_focus: "баланс всех блоков, реалистичность, подробные риски"
+
+
+# =============================================================================
+# СТРУКТУРА ХРАНЕНИЯ ДАННЫХ
+# =============================================================================
+
+storage_schema:
+  session:
+    - session_id: uuid
+    - user_id: telegram_id
+    - created_at: timestamp
+    - niche_id: string
+    - format_id: string
+    - archetype: char(1)
+    - quickcheck_data: json
+    - finmodel_data: json (null до апгрейда)
+    - bizplan_data: json (null до апгрейда)
+    - payments:
+        - quickcheck_paid_at: timestamp
+        - finmodel_paid_at: timestamp (null)
+        - bizplan_paid_at: timestamp (null)

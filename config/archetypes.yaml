@@ -1,0 +1,311 @@
+# ZEREK — 6 архетипов бизнесов
+# Версия: 1.0
+# Каждый архетип: формула выручки + метрики + список ниш
+
+archetypes:
+
+  # ============================================================================
+  A:
+    name_rus: "Услуги с мастерами"
+    description_rus: "Мастер × загрузка × чек × дней"
+    revenue_formula: "masters * load_pct * avg_check * work_days_per_month"
+    key_metrics:
+      - masters_count       # из typical_staff формата
+      - avg_load_pct        # бенчмарк ниши (60–90%)
+      - avg_check           # бенчмарк ниши × coef города
+      - work_days_per_month # по режиму формата (22–30)
+    niches:
+      - BARBER
+      - BEAUTY
+      - MANICURE
+      - BROW
+      - LASH
+      - SUGARING
+      - MASSAGE
+      - COSMETOLOGY
+      - DENTAL
+      - OPTICS
+      - TAILOR
+      - REPAIR_PHONE
+      - PHOTO
+      - DETAILING
+      - NOTARY
+    finmodel_operational_questions:
+      - id: op_a1_load_hours
+        label_rus: "Среднее рабочее время мастера в день (часов)"
+        type: number
+        range: [4, 12]
+        default: 8
+      - id: op_a2_seasonality
+        label_rus: "Сезонность (какие месяцы провальные)"
+        type: multi_select
+        options:
+          - {id: "winter", label_rus: "Декабрь–Февраль"}
+          - {id: "summer", label_rus: "Июнь–Август"}
+          - {id: "holidays", label_rus: "Праздники"}
+          - {id: "none", label_rus: "Без провалов"}
+      - id: op_a3_complex_share
+        label_rus: "Доля комплексных услуг (%)"
+        type: percent
+        range: [0, 100]
+        default: 30
+      - id: op_a4_consumables_per_service
+        label_rus: "Расходники на 1 услугу (₸)"
+        type: currency
+        default: null  # бенчмарк из ниши
+      - id: op_a5_amortization_years
+        label_rus: "Срок амортизации оборудования (лет)"
+        type: number
+        default: 5
+
+  # ============================================================================
+  B:
+    name_rus: "Общепит / F&B"
+    description_rus: "Чеков × средний чек × food cost %"
+    revenue_formula: "checks_per_day * avg_check * work_days_per_month"
+    key_metrics:
+      - seats_capacity       # посадка из формата
+      - avg_checks_per_day
+      - avg_check
+      - food_cost_pct
+    niches:
+      - COFFEE
+      - BAKERY
+      - CONFECTION
+      - DONER
+      - FASTFOOD
+      - PIZZA
+      - SUSHI
+      - BUBBLETEA
+      - CANTEEN
+      - SEMIFOOD
+      - CATERING
+    finmodel_operational_questions:
+      - id: op_b1_food_cost
+        label_rus: "Food cost (% от выручки)"
+        type: percent
+        range: [15, 50]
+        default: 30
+      - id: op_b2_delivery_share
+        label_rus: "Доля доставки (%)"
+        type: percent
+        range: [0, 100]
+        default: 0
+      - id: op_b3_delivery_channel
+        label_rus: "Каналы доставки"
+        type: multi_select
+        show_if: "op_b2_delivery_share > 0"
+        options:
+          - {id: "inhouse", label_rus: "Своя доставка"}
+          - {id: "aggregator", label_rus: "Агрегаторы (Glovo, Wolt, Яндекс.Еда)"}
+          - {id: "takeaway", label_rus: "Самовывоз"}
+      - id: op_b4_table_turnover
+        label_rus: "Оборот столика в день"
+        type: number
+        show_if: "format has dine_in seats"
+        default: 3
+      - id: op_b5_seasonality
+        label_rus: "Сезонность"
+        type: multi_select
+        options:
+          - {id: "winter", label_rus: "Зимний спад"}
+          - {id: "summer", label_rus: "Летний спад"}
+          - {id: "peak_summer", label_rus: "Летний пик (терраса)"}
+          - {id: "none", label_rus: "Без сезонности"}
+      - id: op_b6_waste_pct
+        label_rus: "Списания (% от выручки)"
+        type: percent
+        default: 5
+
+  # ============================================================================
+  C:
+    name_rus: "Розничная торговля"
+    description_rus: "Оборот × наценка × чеков"
+    revenue_formula: "inventory_turnover * markup_pct * traffic * conversion"
+    key_metrics:
+      - inventory_value_kzt
+      - markup_avg_pct
+      - checks_per_day
+      - avg_check
+    niches:
+      - MEATSHOP
+      - FRUITSVEGS
+      - FLOWERS
+      - AUTOPARTS
+      - BUILDMAT
+      - PETSHOP
+      - PHARMACY
+      - GROCERY
+      - WATERPLANT
+    finmodel_operational_questions:
+      - id: op_c1_inventory_turnover_days
+        label_rus: "Оборачиваемость запасов (дней)"
+        type: number
+        range: [7, 120]
+        default: 30
+      - id: op_c2_markup_avg_pct
+        label_rus: "Средняя наценка (%)"
+        type: percent
+        range: [10, 300]
+        default: 50
+      - id: op_c3_top_skus_share
+        label_rus: "Доля ходовых позиций (%)"
+        type: percent
+        default: 80
+      - id: op_c4_seasonality
+        label_rus: "Сезонность"
+        type: multi_select
+        options:
+          - {id: "summer_fruits", label_rus: "Лето (овощи/фрукты)"}
+          - {id: "holidays", label_rus: "Праздники (цветы)"}
+          - {id: "back_to_school", label_rus: "Сентябрь"}
+          - {id: "none", label_rus: "Без сезонности"}
+      - id: op_c5_shrinkage_pct
+        label_rus: "Потери / порча (%)"
+        type: percent
+        default: 3
+
+  # ============================================================================
+  D:
+    name_rus: "Абонементы / подписка"
+    description_rus: "Активная база × ARPU × удержание"
+    revenue_formula: "active_base * arpu_monthly * (1 - monthly_churn)"
+    key_metrics:
+      - active_subscribers
+      - arpu_monthly
+      - monthly_churn_pct
+      - trial_to_paid_conversion
+    niches:
+      - FITNESS
+      - YOGA
+      - LANGUAGES
+      - KIDSCENTER
+      - KINDERGARTEN
+      - ACCOUNTING
+      - CROSSFIT
+      - MARTIAL_ARTS
+      - FOOTBALL_SCHOOL
+      - GROUP_FITNESS
+    finmodel_operational_questions:
+      - id: op_d1_monthly_churn
+        label_rus: "Ежемесячный отток клиентов (%)"
+        type: percent
+        range: [2, 30]
+        default: 8
+      - id: op_d2_trial_conversion
+        label_rus: "Конверсия «пробное занятие → абонемент» (%)"
+        type: percent
+        default: 40
+      - id: op_d3_seasonality
+        label_rus: "Сезонность"
+        type: multi_select
+        options:
+          - {id: "summer_out", label_rus: "Летний отток (отпуска)"}
+          - {id: "new_year", label_rus: "Январский прирост"}
+          - {id: "back_to_school", label_rus: "Сентябрьский пик"}
+          - {id: "none", label_rus: "Без выраженной сезонности"}
+      - id: op_d4_drop_in_share
+        label_rus: "Доля разовых посещений (%)"
+        type: percent
+        default: 15
+      - id: op_d5_ltv_months
+        label_rus: "Средний срок жизни клиента (мес)"
+        type: number
+        default: 10
+
+  # ============================================================================
+  E:
+    name_rus: "Проектный / заказной"
+    description_rus: "Проектов × чек × маржа"
+    revenue_formula: "projects_per_month * avg_project_value * margin_pct"
+    key_metrics:
+      - projects_per_month
+      - avg_project_value
+      - margin_pct
+      - sales_cycle_days
+    niches:
+      - REALTOR
+      - EVALUATION
+      - FURNITURE
+      - LOFTFURNITURE
+      - PRINTING
+      - CARGO
+    finmodel_operational_questions:
+      - id: op_e1_sales_cycle_days
+        label_rus: "Цикл сделки (дней)"
+        type: number
+        default: 14
+      - id: op_e2_funnel_conversion
+        label_rus: "Конверсия воронки (%)"
+        type: percent
+        default: 20
+      - id: op_e3_margin_pct
+        label_rus: "Средняя маржа проекта (%)"
+        type: percent
+        default: 30
+      - id: op_e4_seasonality
+        label_rus: "Сезонность"
+        type: multi_select
+        options:
+          - {id: "summer", label_rus: "Летний всплеск"}
+          - {id: "winter", label_rus: "Зимний спад"}
+          - {id: "none", label_rus: "Без сезонности"}
+      - id: op_e5_prepay_pct
+        label_rus: "Доля предоплаты (%)"
+        type: percent
+        default: 50
+
+  # ============================================================================
+  F:
+    name_rus: "Мощность / пропускная способность"
+    description_rus: "Единиц мощности × заполняемость × чек"
+    revenue_formula: "capacity_units * utilization_pct * avg_check * time_blocks_per_day"
+    key_metrics:
+      - capacity_units        # постов, машин, мест, коек
+      - utilization_pct
+      - avg_check
+      - time_blocks_per_day
+    niches:
+      - AUTOSERVICE
+      - TIRESERVICE
+      - CARWASH
+      - CLEAN
+      - CARPETCLEAN
+      - DRYCLEAN
+      - LAUNDRY
+      - COMPCLUB
+      - DRIVING
+      - HOTEL
+      - PVZ
+    finmodel_operational_questions:
+      - id: op_f1_peak_utilization
+        label_rus: "Пиковая заполняемость (%)"
+        type: percent
+        default: 85
+      - id: op_f2_avg_utilization
+        label_rus: "Среднегодовая заполняемость (%)"
+        type: percent
+        default: 60
+      - id: op_f3_seasonality
+        label_rus: "Сезонность"
+        type: multi_select
+        options:
+          - {id: "summer_peak", label_rus: "Летний пик"}
+          - {id: "winter_peak", label_rus: "Зимний пик"}
+          - {id: "winter_low", label_rus: "Зимний провал"}
+          - {id: "none", label_rus: "Без сезонности"}
+      - id: op_f4_variable_cost_per_unit
+        label_rus: "Переменные затраты на единицу (₸)"
+        type: currency
+        default: null
+      - id: op_f5_downtime_days_per_year
+        label_rus: "Простой/ремонт (дней в год)"
+        type: number
+        default: 15
+      - id: op_f6_capacity_growth_plan
+        label_rus: "План расширения мощности"
+        type: single_select
+        options:
+          - {id: "none", label_rus: "Не планирую расширение"}
+          - {id: "year_2", label_rus: "Год 2 — +50% мощности"}
+          - {id: "year_3", label_rus: "Год 3 — +100% мощности"}

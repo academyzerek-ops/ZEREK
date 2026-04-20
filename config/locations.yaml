@@ -1,0 +1,188 @@
+# ZEREK — 12 типов локаций + rent_in_salon + модификатор «Линия»
+# Версия: 1.0
+
+locations:
+
+  # ============================================================================
+  # 12 базовых типов
+  # ============================================================================
+  city_center:
+    label_rus: "Центр города"
+    description_rus: "Высокая аренда, высокий трафик"
+    supports_line_modifier: true
+    rent_coefficient: 1.5
+    traffic_level: high
+
+  residential:
+    label_rus: "Спальный район"
+    description_rus: "Средняя аренда, локальный трафик"
+    supports_line_modifier: true
+    rent_coefficient: 0.8
+    traffic_level: medium
+
+  residential_complex:
+    label_rus: "Жилой комплекс / 1 этаж новостройки"
+    description_rus: "Средняя аренда, локальный трафик"
+    supports_line_modifier: true
+    rent_coefficient: 0.9
+    traffic_level: medium
+
+  mall_premium:
+    label_rus: "ТЦ премиум"
+    description_rus: "Mega, Esentai, Dostyk Plaza и аналоги"
+    supports_line_modifier: false
+    rent_coefficient: 1.8
+    traffic_level: very_high
+
+  mall_standard:
+    label_rus: "ТЦ стандарт"
+    description_rus: "Локальные торговые дома 300–500 м²"
+    supports_line_modifier: false
+    rent_coefficient: 1.2
+    traffic_level: high
+
+  bc_premium:
+    label_rus: "БЦ премиум"
+    description_rus: "Современные башни класса А"
+    supports_line_modifier: false
+    rent_coefficient: 1.6
+    traffic_level: medium
+
+  bc_standard:
+    label_rus: "БЦ стандарт"
+    description_rus: "Обычные офисные здания"
+    supports_line_modifier: true
+    rent_coefficient: 1.0
+    traffic_level: low
+
+  market:
+    label_rus: "Рынок / базар"
+    description_rus: "Низкая аренда, ценовая аудитория"
+    supports_line_modifier: false
+    rent_coefficient: 0.5
+    traffic_level: high
+
+  highway:
+    label_rus: "Трасса / выезд из города"
+    description_rus: "Авто-трафик, без пешего"
+    supports_line_modifier: false
+    rent_coefficient: 0.6
+    traffic_level: medium
+
+  industrial:
+    label_rus: "Промзона"
+    description_rus: "Очень низкая аренда, без трафика"
+    supports_line_modifier: false
+    rent_coefficient: 0.3
+    traffic_level: none
+
+  park:
+    label_rus: "Парк / зона отдыха"
+    description_rus: "Сезонный трафик"
+    supports_line_modifier: false
+    rent_coefficient: 0.8
+    traffic_level: medium
+
+  suburb:
+    label_rus: "Пригород / село"
+    description_rus: "Очень низкая аренда, слабый поток"
+    supports_line_modifier: false
+    rent_coefficient: 0.4
+    traffic_level: low
+
+  # ============================================================================
+  # Специальный тип — аренда в чужом салоне
+  # ============================================================================
+  rent_in_salon:
+    label_rus: "Аренда в салоне"
+    description_rus: "Аренда кресла/кабинета в чужом салоне. Локация определяется салоном"
+    special: true
+    supports_line_modifier: false
+    rent_coefficient: 1.0           # фиксированная аренда рабочего места (не %)
+    rent_flat_monthly_kzt: 80000    # типовая аренда рабочего места
+    traffic_level: medium
+    skip_location_question: true
+    skip_area_question: true
+    skip_staff_question: true
+
+# ============================================================================
+# Модификатор «Линия» (1-я / 2-я)
+# ============================================================================
+line_modifier:
+  enabled_for_locations:
+    - city_center
+    - residential
+    - residential_complex
+    - bc_standard
+  not_applied_to_locations:
+    - mall_premium
+    - mall_standard
+    - bc_premium
+    - market
+    - highway
+    - industrial
+    - park
+    - suburb
+    - rent_in_salon
+  premium_auto_rule:
+    description_rus: "Для премиум-форматов линия автоматически = 1-я (без выбора)"
+  lines:
+    line_1:
+      label_rus: "1-я линия (фасад, вывеска на главную улицу)"
+      rent_multiplier: 1.0
+      traffic_multiplier: 1.0
+    line_2:
+      label_rus: "2-я линия (во дворе, в переулке, боковая улица)"
+      rent_multiplier: 0.7
+      traffic_multiplier: 0.5
+
+# ============================================================================
+# Группировка форматов по правилам видимости (§4 спецификации)
+# ============================================================================
+format_type_rules:
+  SOLO:
+    description_rus: "Работает один. Сотрудники/тип оплаты/роль — скрыты."
+    hide_fields:
+      - payroll_type
+      - entrepreneur_role
+
+  HOME:
+    description_rus: "Работает у себя дома. Локация/площадь/аренда скрыты."
+    hide_fields:
+      - location
+      - location_line
+      - area_m2
+      - rent
+
+  MOBILE:
+    description_rus: "Ядро бизнеса — выезд/доставка. Локация скрыта, площадь только если есть цех."
+    hide_fields:
+      - location
+      - location_line
+    conditional_area: true  # показываем если > 0
+
+  KIOSK:
+    description_rus: "Островок в ТЦ/БЦ. Фиксированный выбор локаций."
+    allowed_locations:
+      - mall_premium
+      - mall_standard
+      - bc_premium
+      - bc_standard
+    hide_fields:
+      - location_line
+
+  HIGHWAY:
+    description_rus: "Трасса/промзона, авто-трафик. Локация = авто-бейдж без выбора."
+    auto_location: highway
+    hide_fields:
+      - location_line
+
+  PRODUCTION:
+    description_rus: "Цех, производство. Локация = авто-бейдж «Промзона/своё здание»."
+    auto_location: industrial
+    hide_fields:
+      - location_line
+
+  STANDARD:
+    description_rus: "Обычный формат — открытый выбор из allowed_locations формата."
+    # никаких ограничений, всё как в формате

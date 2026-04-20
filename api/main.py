@@ -12,7 +12,9 @@ import httpx
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE_DIR)
 
-from engine import ZerekDB, run_quick_check_v3, get_niche_config, get_niche_survey
+from engine import (ZerekDB, run_quick_check_v3,
+                    get_niche_config, get_niche_survey,
+                    get_formats_v2, get_quickcheck_survey, get_entrepreneur_roles)
 from report import render_report_v4
 
 def clean(obj):
@@ -176,6 +178,35 @@ def niche_survey(niche_id: str, tier: str = "express"):
     if not db: raise HTTPException(503,"БД не загружена")
     try:
         return clean(get_niche_survey(db, niche_id, tier))
+    except Exception as e:
+        import traceback; traceback.print_exc()
+        raise HTTPException(500, str(e))
+
+# ───────────────────────────────────────────────────────────────────────────
+# v1.0 spec — Quick Check / FinModel / BizPlan survey endpoints
+# ───────────────────────────────────────────────────────────────────────────
+
+@app.get("/configs")
+def configs():
+    """Возвращает config/*.yaml как JSON (niches / archetypes / locations / questionnaire).
+    Используется фронтом для построения адаптивной анкеты."""
+    if not db: raise HTTPException(503,"БД не загружена")
+    return clean(getattr(db, "configs", {}))
+
+@app.get("/formats-v2/{niche_id}")
+def formats_v2(niche_id: str):
+    """Форматы ниши с расширенными полями v1.0 спецификации:
+    format_type, allowed_locations, typical_staff."""
+    if not db: raise HTTPException(503,"БД не загружена")
+    return {"formats": clean(get_formats_v2(db, niche_id))}
+
+@app.get("/quickcheck-survey/{niche_id}")
+def quickcheck_survey(niche_id: str, format_id: str = None):
+    """Полная конфигурация Quick Check анкеты (8 вопросов) для ниши.
+    Если указан format_id — добавляет сгенерированные варианты роли предпринимателя."""
+    if not db: raise HTTPException(503,"БД не загружена")
+    try:
+        return clean(get_quickcheck_survey(db, niche_id, format_id))
     except Exception as e:
         import traceback; traceback.print_exc()
         raise HTTPException(500, str(e))

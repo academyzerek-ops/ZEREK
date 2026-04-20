@@ -100,6 +100,8 @@ class ZerekDB:
         self.surveys_questions = self._xl("09_surveys.xlsx", "Вопросы", 5)
         self.surveys_applic = self._xl("09_surveys.xlsx", "Применимость", 5)
         self.surveys_deps = self._xl("09_surveys.xlsx", "Зависимости", 5)
+        # v1.0 spec: config YAMLs (niches/archetypes/locations/questionnaire)
+        self._load_yaml_configs()
         self.rent = self._xl("11_rent_benchmarks.xlsx", "Калькулятор для движка", 5)
         self.inflation = self._xl("13_macro_dynamics.xlsx", "Инфляция по регионам", 5)
         self.competitors = self._xl("14_competitors.xlsx", "Конкуренты по городам", 5)
@@ -1109,6 +1111,151 @@ def _dependencies_for(deps_df, qid: str) -> list:
             "action":     str(r.get("action", "") or "show").strip(),
         })
     return out
+
+
+def _load_yaml_configs_on(self):
+    """Загружает config/*.yaml в self.configs. Вызывается из _load_common."""
+    try:
+        import yaml
+    except ImportError:
+        self.configs = {}
+        print("⚠️ PyYAML не установлен — config/*.yaml пропущен")
+        return
+    repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    config_dir = os.path.join(repo_root, "config")
+    self.configs = {}
+    for name in ("niches", "archetypes", "locations", "questionnaire"):
+        path = os.path.join(config_dir, f"{name}.yaml")
+        if not os.path.exists(path):
+            continue
+        try:
+            with open(path, "r", encoding="utf-8") as fh:
+                self.configs[name] = yaml.safe_load(fh) or {}
+        except Exception as e:
+            print(f"⚠️ Не удалось прочитать {path}: {e}")
+            self.configs[name] = {}
+
+# bind as method on ZerekDB
+ZerekDB._load_yaml_configs = _load_yaml_configs_on
+
+
+# ───────────────────────────────────────────────────────────────────────────
+# v1.0 spec — formats from 08_niche_formats.xlsx with extended fields
+# ───────────────────────────────────────────────────────────────────────────
+
+def get_formats_v2(db, niche_id: str) -> list:
+    """Читает 08_niche_formats.xlsx и возвращает форматы ниши с расширенными полями:
+       format_type, allowed_locations, typical_staff (разбит в список)."""
+    df = getattr(db, "niches_formats_fallback", pd.DataFrame())
+    if df is None or df.empty or "niche_id" not in df.columns:
+        return []
+    rows = df[df["niche_id"].astype(str) == niche_id]
+    out = []
+    for _, r in rows.iterrows():
+        staff_raw = str(r.get("typical_staff", "") or "").strip()
+        staff = []
+        if staff_raw and staff_raw.lower() != "nan":
+            for chunk in staff_raw.split("|"):
+                if ":" in chunk:
+                    role, count = chunk.split(":", 1)
+                    try:
+                        staff.append({"role": role.strip(), "count": int(count.strip())})
+                    except Exception:
+                        pass
+        allowed_raw = str(r.get("allowed_locations", "") or "").strip()
+        allowed = [a.strip() for a in allowed_raw.split(",")] if allowed_raw and allowed_raw not in ("auto", "nan") else []
+        out.append({
+            "format_id":         str(r.get("format_id", "") or "").strip(),
+            "format_name":       str(r.get("format_name", "") or "").strip(),
+            "area_m2":           _safe_float(r.get("area_m2", 0)),
+            "capex_standard":    _safe_int(r.get("capex_standard", 0)),
+            "class":             str(r.get("class", "") or "").strip().lower(),
+            "format_type":       str(r.get("format_type", "STANDARD") or "STANDARD").strip(),
+            "allowed_locations": allowed if allowed_raw != "auto" else [],
+            "auto_location":     allowed_raw == "auto",
+            "typical_staff":     staff,
+        })
+    return [f for f in out if f["format_id"]]
+
+
+def get_entrepreneur_roles(typical_staff: list) -> list:
+    """Из typical_staff генерирует варианты роли предпринимателя."""
+    if not typical_staff:
+        return []
+    staff_parts = [f"{s['count']} {s['role']}" for s in typical_staff]
+    staff_list_text = " + ".join(staff_parts)
+    opts = [
+        {
+            "id": "owner_only",
+            "label_rus": f"Только владелец (нанимаю всех: {staff_list_text})",
+            "fot_reduction_role": None,
+        }
+    ]
+    # Per-role options: one per unique role
+    unique_roles = []
+    for s in typical_staff:
+        if s["role"] not in unique_roles:
+            unique_roles.append(s["role"])
+    for role in unique_roles:
+        opts.append({
+            "id": f"owner_plus_{role}",
+            "label_rus": f"Владелец + {role} (закрываю 1 ставку)",
+            "fot_reduction_role": role,
+        })
+    if len(unique_roles) >= 2:
+        opts.append({
+            "id": "owner_multi",
+            "label_rus": "Владелец работает на нескольких позициях",
+            "fot_reduction_role": "multi",
+        })
+    return opts
+
+
+def get_quickcheck_survey(db, niche_id: str, format_id: str = None) -> dict:
+    """Возвращает полную конфигурацию Quick Check анкеты (8 вопросов) для ниши.
+
+    Если format_id указан — добавляет резолвенные метаданные (allowed_locations
+    отфильтрованные, entrepreneur_roles сгенерированные). Фронт применяет
+    visibility logic на основе format_type.
+    """
+    configs = getattr(db, "configs", {})
+    niches_cfg = configs.get("niches", {}).get("niches", {})
+    archetypes_cfg = configs.get("archetypes", {}).get("archetypes", {})
+    locations_cfg = configs.get("locations", {}).get("locations", {})
+    questionnaire_cfg = configs.get("questionnaire", {}).get("questionnaire", {})
+    qc_cfg = questionnaire_cfg.get("quickcheck", {})
+
+    niche_meta = niches_cfg.get(niche_id, {})
+    archetype = niche_meta.get("archetype", "")
+    archetype_meta = archetypes_cfg.get(archetype, {})
+
+    formats = get_formats_v2(db, niche_id)
+    selected_format = None
+    if format_id:
+        for f in formats:
+            if f["format_id"] == format_id:
+                selected_format = f
+                break
+
+    entrepreneur_roles = []
+    if selected_format:
+        entrepreneur_roles = get_entrepreneur_roles(selected_format.get("typical_staff", []))
+
+    return {
+        "niche_id": niche_id,
+        "niche_name": niche_meta.get("name_rus", niche_id),
+        "archetype": archetype,
+        "archetype_name": archetype_meta.get("name_rus", ""),
+        "revenue_formula": archetype_meta.get("revenue_formula", ""),
+        "category": niche_meta.get("category", ""),
+        "icon": niche_meta.get("icon", ""),
+        "questions": qc_cfg.get("questions", []),
+        "formats": formats,
+        "selected_format_id": format_id,
+        "selected_format": selected_format,
+        "entrepreneur_roles": entrepreneur_roles,
+        "locations_meta": locations_cfg,
+    }
 
 
 def get_niche_survey(db, niche_id: str, tier: str = "express") -> dict:
