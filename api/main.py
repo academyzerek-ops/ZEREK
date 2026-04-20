@@ -14,7 +14,8 @@ sys.path.insert(0, BASE_DIR)
 
 from engine import (ZerekDB, run_quick_check_v3,
                     get_niche_config, get_niche_survey,
-                    get_formats_v2, get_quickcheck_survey, get_entrepreneur_roles)
+                    get_formats_v2, get_quickcheck_survey, get_entrepreneur_roles,
+                    compute_block1_verdict)
 from report import render_report_v4
 
 def clean(obj):
@@ -151,7 +152,23 @@ def quick_check(req: QCReq):
             "staff_count": req.staff_count,
             "specific_answers": req.specific_answers,
         }
-        # Вставим только если что-то пришло (v1 клиент ничего не меняет)
+        # Block 1 — Вердикт (главная страница отчёта). Передаём specific_answers
+        # из v1.0 анкеты, чтобы достать experience / entrepreneur_role / capital_own.
+        try:
+            block1_inputs = dict(req.specific_answers or {})
+            block1_inputs.update({
+                'has_license': req.has_license,
+                'staff_mode': req.staff_mode,
+                'staff_count': req.staff_count,
+            })
+            block1 = compute_block1_verdict(result, block1_inputs)
+            if isinstance(report, dict):
+                report['block1'] = block1
+        except Exception as e:
+            import traceback; traceback.print_exc()
+            # не блокируем ответ если блок 1 упал
+            pass
+        # Вставим v1-адаптивные поля если пришли
         if any(v is not None for v in adaptive.values()):
             if isinstance(report, dict):
                 report.setdefault("user_inputs", {}).update({k: v for k, v in adaptive.items() if v is not None})

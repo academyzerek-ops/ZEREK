@@ -1113,6 +1113,305 @@ def _dependencies_for(deps_df, qid: str) -> list:
     return out
 
 
+# ═══════════════════════════════════════════════
+# BLOCK 1 — ВЕРДИКТ (Quick Check report, первая страница)
+# Согласно спецификации «ZEREK Quick Check — Блок 1» v1.0
+# ═══════════════════════════════════════════════
+
+def _fmt_range_kzt(low, high):
+    """Форматирует диапазон в 'X–Y тыс/млн ₸' для главных цифр."""
+    if low is None or high is None:
+        return '—'
+    if low == high:
+        return _fmt_kzt(low)
+    return f"{_fmt_kzt_short(low)}–{_fmt_kzt_short(high)}"
+
+def _fmt_kzt(v):
+    if v is None: return '—'
+    v = int(v)
+    if abs(v) >= 1_000_000:
+        return f"{v/1_000_000:.1f} млн ₸".replace('.0 млн','  млн').rstrip().replace('.',',')
+    if abs(v) >= 1_000:
+        return f"{v//1_000} тыс ₸"
+    return f"{v} ₸"
+
+def _fmt_kzt_short(v):
+    if v is None: return '—'
+    v = int(v)
+    if abs(v) >= 1_000_000:
+        return f"{v/1_000_000:.1f}".rstrip('0').rstrip('.') + ' млн'
+    if abs(v) >= 1_000:
+        return f"{v//1_000} тыс"
+    return f"{v}"
+
+
+def _score_capital(capital_own, capex_needed):
+    if not capex_needed:
+        return {'score': 1, 'label': 'Капитал vs бенчмарк', 'note': 'Нет данных по CAPEX бенчмарку'}
+    if not capital_own:
+        return {'score': 1, 'label': 'Капитал vs бенчмарк', 'note': 'Клиент не указал капитал — нейтрально'}
+    ratio = capital_own / capex_needed
+    if ratio >= 1.2:  return {'score': 3, 'label': 'Капитал vs бенчмарк', 'note': f'Профицит: капитал на {int((ratio-1)*100)}% выше бенчмарка', 'ratio': ratio}
+    if ratio >= 0.95: return {'score': 2, 'label': 'Капитал vs бенчмарк', 'note': 'Бюджет соответствует бенчмарку', 'ratio': ratio}
+    if ratio >= 0.75: return {'score': 1, 'label': 'Капитал vs бенчмарк', 'note': f'Дефицит {int((1-ratio)*100)}% — терпимо', 'ratio': ratio, 'gap_kzt': int(capex_needed - capital_own)}
+    return {'score': 0, 'label': 'Капитал vs бенчмарк', 'note': f'Дефицит критичный: {int((1-ratio)*100)}%', 'ratio': ratio, 'gap_kzt': int(capex_needed - capital_own)}
+
+
+def _score_roi(profit_year, total_investment):
+    # Валидация: total_investment должен быть разумным (хотя бы 500K ₸ для любого малого бизнеса)
+    if not total_investment or total_investment < 500_000:
+        return {'score': 1, 'label': 'ROI годовой', 'note': 'Не хватает данных о капитале'}
+    roi = (profit_year or 0) / total_investment
+    # Ограничение на абсурдные значения (баг в движке — cap на 10x годовой)
+    if roi > 10:
+        return {'score': 1, 'label': 'ROI годовой', 'note': 'Требуется уточнение расчётов'}
+    pct = int(round(roi * 100))
+    if roi >= 0.45: return {'score': 3, 'label': 'ROI годовой', 'note': f'ROI {pct}% — выше среднего для малого бизнеса', 'roi': roi}
+    if roi >= 0.30: return {'score': 2, 'label': 'ROI годовой', 'note': f'ROI {pct}% — нормальный', 'roi': roi}
+    if roi >= 0.15: return {'score': 1, 'label': 'ROI годовой', 'note': f'ROI {pct}% — ниже нормы, но положительный', 'roi': roi}
+    return {'score': 0, 'label': 'ROI годовой', 'note': f'ROI {pct}% — не окупает капитал', 'roi': roi}
+
+
+def _score_breakeven(breakeven_months):
+    if breakeven_months is None:
+        return {'score': 0, 'label': 'Точка безубыточности', 'note': 'Бизнес не окупается за 18 мес'}
+    if breakeven_months <= 6:  return {'score': 3, 'label': 'Точка безубыточности', 'note': f'Окупаемость {breakeven_months} мес — быстрая', 'months': breakeven_months}
+    if breakeven_months <= 12: return {'score': 2, 'label': 'Точка безубыточности', 'note': f'Окупаемость {breakeven_months} мес', 'months': breakeven_months}
+    if breakeven_months <= 18: return {'score': 1, 'label': 'Точка безубыточности', 'note': f'Окупаемость {breakeven_months} мес — долго', 'months': breakeven_months}
+    return {'score': 0, 'label': 'Точка безубыточности', 'note': f'Окупаемость {breakeven_months} мес — слишком долго', 'months': breakeven_months}
+
+
+def _score_saturation(competitors_count, city_population, niche_id):
+    """density = competitors / (population/10K). Бенчмарк — условный (1.0 для retail, 0.8 общий)."""
+    if not competitors_count or not city_population:
+        return {'score': 2, 'label': 'Насыщенность рынка', 'note': 'Нет данных о конкурентах'}
+    density = competitors_count / (city_population / 10000)
+    benchmark = 0.8
+    ratio = density / benchmark
+    if ratio <= 0.6: return {'score': 3, 'label': 'Насыщенность рынка', 'note': f'Рынок недонасыщен: {round(density,1)} конкурентов на 10K жителей', 'density': density}
+    if ratio <= 1.0: return {'score': 2, 'label': 'Насыщенность рынка', 'note': f'Норма: {round(density,1)} конкурентов на 10K', 'density': density}
+    if ratio <= 1.5: return {'score': 1, 'label': 'Насыщенность рынка', 'note': f'Перенасыщен: {round(density,1)} конкурентов на 10K', 'density': density}
+    return {'score': 0, 'label': 'Насыщенность рынка', 'note': f'Высокая конкуренция: {round(density,1)} на 10K', 'density': density}
+
+
+def _score_experience(exp):
+    if exp == 'experienced': return {'score': 3, 'label': 'Опыт предпринимателя', 'note': '3+ лет опыта снижает риск первого года'}
+    if exp == 'some':        return {'score': 2, 'label': 'Опыт предпринимателя', 'note': '1-2 года опыта — стандартно'}
+    if exp == 'none':        return {'score': 0, 'label': 'Опыт предпринимателя', 'note': 'Нет опыта — риск первого года до 45%'}
+    return {'score': 1, 'label': 'Опыт предпринимателя', 'note': 'Опыт не указан'}
+
+
+def _score_marketing(tier='express'):
+    # В Quick Check нейтрально (1 балл из 2). FinModel переопределит.
+    return {'score': 1, 'label': 'Маркетинговый бюджет', 'note': 'В экспресс-оценке не спрашиваем — нейтральный балл', 'max': 2}
+
+
+def _score_stress(profit_base, profit_pess):
+    if profit_base is None or profit_pess is None:
+        return {'score': 1, 'label': 'Устойчивость к стрессу'}
+    if profit_pess > 0:
+        drop = (profit_base - profit_pess) / profit_base if profit_base else 0
+        if drop < 0.30: return {'score': 3, 'label': 'Устойчивость к стрессу', 'note': 'Бизнес устойчив к падению ключевого параметра на 20%'}
+        if drop < 0.50: return {'score': 2, 'label': 'Устойчивость к стрессу', 'note': 'Умеренно устойчив — падение выручки терпимое'}
+        return {'score': 1, 'label': 'Устойчивость к стрессу', 'note': 'Хрупкая модель — небольшое падение трафика больно бьёт'}
+    return {'score': 0, 'label': 'Устойчивость к стрессу', 'note': 'При падении параметра на 20% — убыток'}
+
+
+def _score_format_city(format_id, format_class, city_population):
+    # Матрица «формат-класс × размер города»
+    small = (city_population or 0) < 150_000
+    mid = 150_000 <= (city_population or 0) < 300_000
+    cls = (format_class or '').lower()
+    if cls == 'премиум' and small:
+        return {'score': 0, 'label': 'Соответствие формата городу', 'note': 'Премиум-формат в малом городе — узкая ЦА'}
+    if cls == 'премиум' and mid:
+        return {'score': 1, 'label': 'Соответствие формата городу', 'note': 'Премиум-формат в среднем городе — ограниченная ЦА'}
+    return {'score': 3, 'label': 'Соответствие формата городу', 'note': 'Формат подходит для города'}
+
+
+def _verdict_statement_template(color, top_weak, top_strong, roi_pct, breakeven_months):
+    """Шаблонный вердикт (fallback когда Gemini не подключён)."""
+    strong_name = (top_strong or {}).get('label', '')
+    weak_name = (top_weak or {}).get('label', '')
+    weak_note = (top_weak or {}).get('note', '')
+
+    if color == 'green':
+        if top_weak and top_weak.get('score', 0) <= 1:
+            bm = f' Окупаемость {breakeven_months} мес — держите запас кассы.' if breakeven_months else ''
+            return f'Бизнес реалистичен и окупается.{bm}'
+        return f'Бизнес реалистичен и окупается. Главное преимущество — {strong_name.lower()}.'
+
+    if color == 'yellow':
+        return f'Бизнес возможен, но требует внимания. Главный риск — {weak_name.lower()}: {weak_note.lower()}.'
+
+    # red
+    return f'В текущей конфигурации бизнес не окупается в разумные сроки. Требуется пересмотр — главный слабый пункт: {weak_name.lower()}.'
+
+
+def _strength_text(p):
+    """Тезис для плюса."""
+    n = p.get('note') or ''
+    return n if n else p.get('label', '')
+
+def _risk_text(p, context):
+    """Тезис для риска — с конкретной рекомендацией."""
+    label = p.get('label', '')
+    if label == 'Капитал vs бенчмарк':
+        gap = p.get('gap_kzt')
+        if gap:
+            return f'Дефицит капитала {_fmt_kzt(gap)} — найдите дополнительное финансирование или урежьте формат.'
+        return p.get('note') or 'Бюджет не соответствует формату.'
+    if label == 'Точка безубыточности':
+        months = p.get('months')
+        if months and months >= 12:
+            return f'Окупаемость {months} мес — заложите запас кассы на первые 6-12 мес.'
+        return p.get('note') or 'Окупаемость долгая — нужен запас.'
+    if label == 'Насыщенность рынка':
+        return (p.get('note') or '') + ' — без сильного УТП сложно взять долю.'
+    if label == 'Опыт предпринимателя':
+        return 'Отсутствие опыта повышает риск первого года. Найдите ментора или партнёра с опытом в нише.'
+    if label == 'Устойчивость к стрессу':
+        return 'Бизнес чувствителен к падению ключевого параметра. Маркетинг и удержание клиентов в первые 6 мес — приоритет.'
+    if label == 'Соответствие формата городу':
+        return 'Премиум-формат в выбранном городе — узкая платёжеспособная ЦА. Рассмотрите стандартный класс.'
+    if label == 'ROI годовой':
+        return 'ROI ниже среднего. Пересмотрите CAPEX или ожидаемую выручку.'
+    if label == 'Маркетинговый бюджет':
+        return 'Маркетинг будет ключевым — не экономьте на первом старте.'
+    return p.get('note') or label
+
+
+def compute_block1_verdict(result, adaptive):
+    """Главная функция. Принимает результат run_quick_check_v3 + adaptive-ответы
+    (из specific_answers v1.0 спеки: experience, entrepreneur_role, capital_own, capital_needed)
+    и возвращает блок 1 вердикта."""
+    adaptive = adaptive or {}
+    inp = result.get('input', {}) or {}
+    fin = result.get('financials', {}) or {}
+    capex_block = result.get('capex', {}) or {}
+    scenarios = result.get('scenarios', {}) or {}
+    breakeven = result.get('breakeven', {}) or {}
+    payback = result.get('payback', {}) or {}
+    risks_block = result.get('risks', {}) or {}
+    owner_eco = result.get('owner_economics', {}) or {}
+    # Собираем total_investment из всех возможных ключей capex
+    total_investment = (
+        _safe_int(capex_block.get('capex_total'), 0)
+        + _safe_int(owner_eco.get('working_capital'), 0)
+    )
+    if total_investment < 500_000:
+        # Фолбэк: ищем в других ключах
+        for k in ('capex_med', 'capex', 'total_investment', 'capex_high'):
+            v = _safe_int(capex_block.get(k), 0)
+            if v >= 500_000:
+                total_investment = v
+                break
+
+    # ── Собираем скоринг ──
+    capex_needed = _safe_int(capex_block.get('capex_med')) or _safe_int(capex_block.get('capex_total'))
+    capital_own = _safe_int(adaptive.get('capital_own')) if adaptive.get('capital_own') else 0
+    profit_year = _safe_int(fin.get('profit_year1'), 0)
+    breakeven_months = payback.get('месяц') or breakeven.get('месяц')
+    city_pop = _safe_int(inp.get('city_population'), 0)
+    competitors_count = 0
+    comp_block = risks_block.get('competitors') or {}
+    if isinstance(comp_block, dict):
+        competitors_count = _safe_int(comp_block.get('competitors_count')) or _safe_int(comp_block.get('n'))
+    exp = adaptive.get('experience') or ''
+
+    profit_base = _safe_int((scenarios.get('base') or {}).get('прибыль_среднемес'), 0)
+    profit_pess = _safe_int((scenarios.get('pess') or {}).get('прибыль_среднемес'), 0)
+
+    format_class = inp.get('class') or inp.get('cls') or ''
+    format_id = inp.get('format_id', '')
+
+    scoring_items = [
+        _score_capital(capital_own, capex_needed),
+        _score_roi(profit_year, total_investment),
+        _score_breakeven(breakeven_months),
+        _score_saturation(competitors_count, city_pop, inp.get('niche_id', '')),
+        _score_experience(exp),
+        _score_marketing('express'),
+        _score_stress(profit_base, profit_pess),
+        _score_format_city(format_id, format_class, city_pop),
+    ]
+    total_score = sum(it.get('score', 0) for it in scoring_items)
+    max_score = sum(it.get('max', 3) for it in scoring_items)
+
+    # ── Цвет ──
+    if total_score >= 17:   color = 'green'
+    elif total_score >= 12: color = 'yellow'
+    else:                   color = 'red'
+
+    # Топ-3 strong / weak
+    sorted_desc = sorted(scoring_items, key=lambda x: -x.get('score', 0))
+    sorted_asc  = sorted(scoring_items, key=lambda x: x.get('score', 0))
+    strengths_items = sorted_desc[:3]
+    risks_items = sorted_asc[:3]
+
+    # ── Главные цифры (диапазоны) ──
+    rev_base = _safe_int((scenarios.get('base') or {}).get('выручка_год'), 0) // 12
+    rev_pess = _safe_int((scenarios.get('pess') or {}).get('выручка_год'), 0) // 12
+    rev_opt  = _safe_int((scenarios.get('opt')  or {}).get('выручка_год'), 0) // 12
+    prof_base = profit_base
+    prof_pess = profit_pess
+    bk_base = _safe_int(payback.get('месяц'))
+    sc_pess_pb = (scenarios.get('pess') or {}).get('окупаемость')
+    if isinstance(sc_pess_pb, dict):
+        bk_pess = _safe_int(sc_pess_pb.get('месяц'))
+    else:
+        bk_pess = _safe_int(sc_pess_pb)
+
+    # Ваш доход предпринимателя
+    ent_role = adaptive.get('entrepreneur_role') or 'owner_only'
+    role_salary = 0
+    if ent_role and ent_role != 'owner_only':
+        # Получим ставку роли — upper bound по FOT / headcount
+        fot_med = _safe_int(result.get('staff', {}).get('fot_net_med'))
+        role_salary = fot_med  # грубая оценка
+    ent_income_base = prof_base + role_salary
+    ent_income_pess = max(0, prof_pess + role_salary)
+
+    main_metrics = {
+        'revenue_range':        _fmt_range_kzt(rev_pess, rev_base),
+        'profit_range':         _fmt_range_kzt(prof_pess, prof_base) if prof_pess >= 0 else f'0–{_fmt_kzt_short(prof_base)}',
+        'breakeven_range':      (f"{bk_base}–{bk_pess} мес" if bk_pess and bk_pess != bk_base else (f"{bk_base} мес" if bk_base else '—')),
+        'entrepreneur_income_range': _fmt_range_kzt(ent_income_pess, ent_income_base),
+    }
+
+    # ── Вердикт-предложение (шаблон) ──
+    statement = _verdict_statement_template(color, risks_items[0] if risks_items else None,
+                                            strengths_items[0] if strengths_items else None,
+                                            None, bk_base)
+
+    # ── Тексты плюсов и рисков ──
+    strengths_texts = [_strength_text(p) for p in strengths_items if p.get('score', 0) >= 2]
+    # если плюсов меньше 3 — допишем generic
+    while len(strengths_texts) < 3 and strengths_items:
+        p = strengths_items[len(strengths_texts) % len(strengths_items)]
+        t = _strength_text(p)
+        if t not in strengths_texts:
+            strengths_texts.append(t)
+        else:
+            break
+    risks_texts = [_risk_text(p, {'city': inp.get('city_name', '')}) for p in risks_items]
+
+    return {
+        'color': color,
+        'score': total_score,
+        'max_score': max_score,
+        'verdict_statement': statement,
+        'main_metrics': main_metrics,
+        'strengths': strengths_texts[:3],
+        'risks': risks_texts[:3],
+        'scoring': {
+            'items': scoring_items,
+            'strongest': strengths_items[:3],
+            'weakest': risks_items[:3],
+        },
+    }
+
+
 def _load_yaml_configs_on(self):
     """Загружает config/*.yaml в self.configs. Вызывается из _load_common."""
     try:

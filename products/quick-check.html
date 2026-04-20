@@ -95,17 +95,53 @@ h2{font-size:22px;margin-bottom:6px}
 
 #result-screen{display:none}
 #result-screen.active{display:block}
-.result-hero{text-align:center;padding:22px 16px;background:var(--surface);border-radius:var(--radius-lg);margin-bottom:14px}
-.result-hero-label{font-size:11px;font-weight:700;letter-spacing:0.12em;color:var(--text-3);text-transform:uppercase;margin-bottom:8px}
-.result-hero-val{font-family:var(--mono);font-weight:700;font-size:34px;color:var(--green);line-height:1.1}
-.result-hero-val.yellow{color:var(--yellow)}
-.result-hero-val.red{color:var(--red)}
-.result-hero-unit{font-size:13px;color:var(--text-2);margin-top:8px}
-.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-.result-card{background:var(--surface);border-radius:var(--radius);padding:14px 16px}
-.result-card-label{font-size:11px;font-weight:700;letter-spacing:0.08em;color:var(--text-3);text-transform:uppercase;margin-bottom:4px}
-.result-card-val{font-family:var(--mono);font-weight:700;font-size:18px}
 .result-err{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#fca5a5;padding:14px;border-radius:var(--radius);font-size:13px;margin-bottom:12px}
+
+/* ─── BLOCK 1 — ВЕРДИКТ ─── */
+.b1{padding-bottom:20px}
+.b1-section{padding:18px 16px;background:var(--surface);border-radius:var(--radius-lg);margin-bottom:12px}
+.b1-header{font-size:11px;font-weight:700;letter-spacing:0.12em;color:var(--text-3);text-transform:uppercase;margin-bottom:14px;text-align:center}
+
+/* светофор */
+.b1-traffic{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:18px}
+.b1-light{width:28px;height:28px;border-radius:50%;background:var(--surface-2);position:relative;transition:all 0.4s}
+.b1-light.green.active{background:var(--green);box-shadow:0 0 20px rgba(34,197,94,0.5)}
+.b1-light.yellow.active{background:var(--yellow);box-shadow:0 0 20px rgba(234,179,8,0.5)}
+.b1-light.red.active{background:var(--red);box-shadow:0 0 20px rgba(239,68,68,0.5)}
+.b1-connector{height:2px;width:24px;background:var(--surface-3);opacity:0.4}
+
+.b1-verdict-label{display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;font-weight:700;margin-bottom:14px}
+.b1-verdict-label .b1-dot{width:14px;height:14px;border-radius:50%}
+.b1-verdict-label.green{color:var(--green)}
+.b1-verdict-label.green .b1-dot{background:var(--green)}
+.b1-verdict-label.yellow{color:var(--yellow)}
+.b1-verdict-label.yellow .b1-dot{background:var(--yellow)}
+.b1-verdict-label.red{color:var(--red)}
+.b1-verdict-label.red .b1-dot{background:var(--red)}
+
+.b1-statement{font-size:15px;line-height:1.55;color:var(--text);text-align:center;font-weight:500;padding:0 6px}
+
+/* 4 главные цифры */
+.b1-metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.b1-metric{background:var(--bg);border-radius:var(--radius);padding:14px;text-align:center}
+.b1-metric-label{font-size:10px;font-weight:700;letter-spacing:0.1em;color:var(--text-3);text-transform:uppercase;margin-bottom:6px}
+.b1-metric-val{font-family:var(--mono);font-weight:700;font-size:17px;color:var(--text);line-height:1.2}
+.b1-metric.hero{grid-column:1 / -1;padding:16px;background:linear-gradient(135deg,rgba(124,108,255,0.12),rgba(124,108,255,0.06));border:1px solid rgba(124,108,255,0.3)}
+.b1-metric.hero .b1-metric-val{font-size:22px;color:var(--accent)}
+
+/* плюсы и риски */
+.b1-list{margin-top:4px}
+.b1-list-title{font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.b1-list-title.pluses{color:var(--green)}
+.b1-list-title.risks{color:var(--yellow)}
+.b1-item{display:flex;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--surface-2);font-size:13.5px;line-height:1.5}
+.b1-item:last-child{border-bottom:none}
+.b1-item-ic{flex-shrink:0;font-size:14px;line-height:1.4}
+.b1-item-text{color:var(--text-2)}
+.b1-item-text strong{color:var(--text)}
+
+.b1-footer{text-align:center;padding:14px 0;color:var(--text-3);font-size:11px;letter-spacing:0.04em}
+.b1-footer strong{color:var(--text-2)}
 
 .search-in{background:var(--surface);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px}
 .search-in input{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:15px}
@@ -646,21 +682,88 @@ function renderResult(result){
   $('result-screen').classList.add('active');
   $('cta-wrap').style.display = 'none';
   if(!result){ return showResultError('Пустой ответ от API.'); }
+
+  // Есть Block 1 — рендерим по спецификации. Fallback на старый KPI-рендер, если его нет.
+  var b1 = result.block1;
+  if(b1){
+    $('result-screen').innerHTML = renderBlock1Html(b1);
+    return;
+  }
+  // fallback
   var kpis = extractKpis(result);
-  var cls = (kpis.verdict || '').toLowerCase();
-  var color = cls.indexOf('зелён')!==-1 ? '' : cls.indexOf('красн')!==-1 ? 'red' : 'yellow';
   $('result-screen').innerHTML =
-    '<div class="result-hero">' +
-      '<div class="result-hero-label">'+(kpis.heroLabel||'Окупаемость')+'</div>' +
-      '<div class="result-hero-val '+color+'">'+(kpis.heroVal||'—')+'</div>' +
-      (kpis.heroUnit ? '<div class="result-hero-unit">'+kpis.heroUnit+'</div>' : '') +
-    '</div>' +
-    '<div class="result-grid">' +
-      '<div class="result-card"><div class="result-card-label">Выручка/мес</div><div class="result-card-val">'+kpis.revenue+'</div></div>' +
-      '<div class="result-card"><div class="result-card-label">Прибыль/мес</div><div class="result-card-val">'+kpis.profit+'</div></div>' +
-      '<div class="result-card"><div class="result-card-label">Инвестиции</div><div class="result-card-val">'+kpis.capex+'</div></div>' +
-      '<div class="result-card"><div class="result-card-label">Оборотка</div><div class="result-card-val">'+kpis.working_cap+'</div></div>' +
+    '<div class="b1-section">' +
+      '<div class="b1-metrics"><div class="b1-metric"><div class="b1-metric-label">Выручка/мес</div><div class="b1-metric-val">'+kpis.revenue+'</div></div>' +
+      '<div class="b1-metric"><div class="b1-metric-label">Прибыль/мес</div><div class="b1-metric-val">'+kpis.profit+'</div></div></div>' +
     '</div>';
+}
+
+function renderBlock1Html(b1){
+  var color = b1.color || 'yellow';
+  var colorRus = {green:'ЗЕЛЁНЫЙ', yellow:'ЖЁЛТЫЙ', red:'КРАСНЫЙ'}[color];
+
+  var light = (
+    '<div class="b1-traffic">' +
+      '<div class="b1-light green'+(color==='green' ? ' active':'')+'"></div>' +
+      '<div class="b1-connector"></div>' +
+      '<div class="b1-light yellow'+(color==='yellow' ? ' active':'')+'"></div>' +
+      '<div class="b1-connector"></div>' +
+      '<div class="b1-light red'+(color==='red' ? ' active':'')+'"></div>' +
+    '</div>'
+  );
+
+  var verdictBlock = (
+    '<div class="b1-section">' +
+      '<div class="b1-header">ZEREK Экспресс-оценка</div>' +
+      light +
+      '<div class="b1-verdict-label '+color+'"><span class="b1-dot"></span>ВАША ОЦЕНКА: '+colorRus+'</div>' +
+      '<div class="b1-statement">«'+escapeHtml(b1.verdict_statement||'')+'»</div>' +
+    '</div>'
+  );
+
+  var m = b1.main_metrics || {};
+  var metricsBlock = (
+    '<div class="b1-section">' +
+      '<div class="b1-header">Главные цифры</div>' +
+      '<div class="b1-metrics">' +
+        metricCard('Выручка/мес', m.revenue_range) +
+        metricCard('Прибыль/мес', m.profit_range) +
+        metricCard('Окупаемость', m.breakeven_range) +
+        '<div class="b1-metric hero">' +
+          '<div class="b1-metric-label">Ваш доход/мес</div>' +
+          '<div class="b1-metric-val">'+escapeHtml(m.entrepreneur_income_range || '—')+'</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>'
+  );
+
+  var strengths = (b1.strengths || []).map(function(s){
+    return '<div class="b1-item"><span class="b1-item-ic">✅</span><div class="b1-item-text">'+escapeHtml(s)+'</div></div>';
+  }).join('');
+  var risks = (b1.risks || []).map(function(r){
+    return '<div class="b1-item"><span class="b1-item-ic">⚠️</span><div class="b1-item-text">'+escapeHtml(r)+'</div></div>';
+  }).join('');
+
+  var listsBlock = (
+    '<div class="b1-section">' +
+      '<div class="b1-list">' +
+        '<div class="b1-list-title pluses">Что работает на вас</div>' +
+        (strengths || '<div class="b1-item-text" style="color:var(--text-3)">Нет выделенных плюсов</div>') +
+      '</div>' +
+      '<div class="b1-list" style="margin-top:18px">' +
+        '<div class="b1-list-title risks">Что требует внимания</div>' +
+        (risks || '<div class="b1-item-text" style="color:var(--text-3)">Критичных рисков не обнаружено</div>') +
+      '</div>' +
+    '</div>'
+  );
+
+  var footer = '<div class="b1-footer">Оценка <strong>'+(b1.score||0)+'/'+(b1.max_score||23)+'</strong> · дальше — детальный отчёт</div>';
+
+  return '<div class="b1">' + verdictBlock + metricsBlock + listsBlock + footer + '</div>';
+}
+function metricCard(label, val){
+  return '<div class="b1-metric"><div class="b1-metric-label">'+escapeHtml(label)+'</div>' +
+         '<div class="b1-metric-val">'+escapeHtml(val || '—')+'</div></div>';
 }
 function showResultError(msg){
   $('result-screen').classList.add('active');
