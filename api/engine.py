@@ -1442,19 +1442,39 @@ def _score_capital(capital_own, capex_needed):
 
 
 def _score_roi(profit_year, total_investment):
-    # Валидация: total_investment должен быть разумным (хотя бы 500K ₸ для любого малого бизнеса)
+    """Скоринг годового ROI.
+
+    - total_investment < 500K → 1 балл «недостаточно данных».
+    - roi > 3.0 (300%) → sanity-cap: ROI=300%, 1 балл «проверьте капитал».
+    - пороги из defaults.yaml (SCORING_ROI = [hi, mid, lo] = [0.45, 0.30, 0.15]).
+    """
     if not total_investment or total_investment < 500_000:
-        return {'score': 1, 'label': 'ROI годовой', 'note': 'Не хватает данных о капитале'}
+        return {'score': 1, 'label': 'ROI годовой',
+                'note': 'Недостаточно данных о капитале'}
     roi = (profit_year or 0) / total_investment
-    # Ограничение на абсурдные значения (баг в движке — cap на 10x годовой)
-    if roi > 10:
-        return {'score': 1, 'label': 'ROI годовой', 'note': 'Требуется уточнение расчётов'}
+    # Sanity-cap: ROI >300% — всегда ошибка входных данных/расчёта.
+    if roi > 3.0:
+        return {'score': 1, 'label': 'ROI годовой',
+                'note': 'ROI > 300% — проверьте указанный капитал',
+                'roi': 3.0,
+                'roi_raw': round(roi, 2)}
     pct = int(round(roi * 100))
     t_hi, t_mid, t_lo = SCORING_ROI
-    if roi >= t_hi:  return {'score': 3, 'label': 'ROI годовой', 'note': f'ROI {pct}% — выше среднего для малого бизнеса', 'roi': roi}
-    if roi >= t_mid: return {'score': 2, 'label': 'ROI годовой', 'note': f'ROI {pct}% — нормальный', 'roi': roi}
-    if roi >= t_lo:  return {'score': 1, 'label': 'ROI годовой', 'note': f'ROI {pct}% — ниже нормы, но положительный', 'roi': roi}
-    return {'score': 0, 'label': 'ROI годовой', 'note': f'ROI {pct}% — не окупает капитал', 'roi': roi}
+    if roi >= t_hi:
+        return {'score': 3, 'label': 'ROI годовой',
+                'note': f'ROI {pct}% — выше среднего для малого бизнеса',
+                'roi': roi}
+    if roi >= t_mid:
+        return {'score': 2, 'label': 'ROI годовой',
+                'note': f'ROI {pct}% — нормальный',
+                'roi': roi}
+    if roi >= t_lo:
+        return {'score': 1, 'label': 'ROI годовой',
+                'note': f'ROI {pct}% — ниже нормы, но положительный',
+                'roi': roi}
+    return {'score': 0, 'label': 'ROI годовой',
+            'note': f'ROI {pct}% — не окупает капитал',
+            'roi': roi}
 
 
 def _score_breakeven(breakeven_months):
@@ -1606,19 +1626,6 @@ def compute_block1_verdict(result, adaptive):
     payback = result.get('payback', {}) or {}
     risks_block = result.get('risks', {}) or {}
     owner_eco = result.get('owner_economics', {}) or {}
-    # Собираем total_investment из всех возможных ключей capex
-    total_investment = (
-        _safe_int(capex_block.get('capex_total'), 0)
-        + _safe_int(owner_eco.get('working_capital'), 0)
-    )
-    if total_investment < 500_000:
-        # Фолбэк: ищем в других ключах
-        for k in ('capex_med', 'capex', 'total_investment', 'capex_high'):
-            v = _safe_int(capex_block.get(k), 0)
-            if v >= 500_000:
-                total_investment = v
-                break
-
     # ── Собираем скоринг ──
     # CAPEX-бенчмарк: приоритет — 08_niche_formats.xlsx.capex_standard (проброшен
     # в result.input). Фолбэк: capex_block.capex_med / capex_total из per-niche
@@ -1636,6 +1643,17 @@ def compute_block1_verdict(result, adaptive):
             capital_own = int(capital_own_raw) or None
         except (TypeError, ValueError):
             capital_own = None
+
+    # total_investment для ROI = фактически вложенный капитал (capital_own),
+    # либо CAPEX-бенчмарк из 08 (правильный знаменатель), либо capex_total
+    # per-niche (запасной вариант). См. баг #2.
+    total_investment = (capital_own or 0) or capex_standard_08 or _safe_int(capex_block.get('capex_total'), 0)
+    if total_investment < 500_000:
+        for k in ('capex_med', 'capex', 'total_investment', 'capex_high'):
+            v = _safe_int(capex_block.get(k), 0)
+            if v >= 500_000:
+                total_investment = v
+                break
     profit_year = _safe_int(fin.get('profit_year1'), 0)
     breakeven_months = payback.get('месяц') or breakeven.get('месяц')
     city_pop = _safe_int(inp.get('city_population'), 0)
@@ -2514,16 +2532,26 @@ def compute_block5_pnl(db, result, adaptive):
     net_margin = _safe_div(pnl_base['net_profit'], rev_year_base)
 
     # ROI годовой
+    # total_investment = capital_own (если указан) или capex_standard из 08
+    # (правильный знаменатель, см. баг #2). Фолбэк — capex_med из per-niche
+    # (часто занижен). Если < 500K или ROI > 300% — отдельная ветка.
     capital_own = _safe_int(adaptive.get('capital_own')) if adaptive.get('capital_own') else 0
-    total_investment = capital_own or _safe_int(capex_block.get('capex_med'), 0) or _safe_int(capex_block.get('capex_total'), 0)
+    capex_standard_08 = _safe_int(inp.get('capex_standard'), 0)
+    total_investment = (capital_own
+                        or capex_standard_08
+                        or _safe_int(capex_block.get('capex_med'), 0)
+                        or _safe_int(capex_block.get('capex_total'), 0))
     if total_investment < 500_000:
         for k in ('capex_high', 'total', 'capital'):
             v = _safe_int(capex_block.get(k), 0)
             if v >= 500_000:
                 total_investment = v; break
-    annual_roi = _safe_div(pnl_base['net_profit'], total_investment or 1)
     if total_investment < 500_000:
         annual_roi = None  # нечего считать
+    else:
+        raw_roi = _safe_div(pnl_base['net_profit'], total_investment)
+        # Sanity-cap на абсурдные ROI (обычно признак неверного знаменателя).
+        annual_roi = min(raw_roi, 3.0) if raw_roi > 3.0 else raw_roi
 
     # Доход предпринимателя
     # Ставка роли = одна позиция из ФОТ (уже вычтена выше из pnl_base.fot, так
