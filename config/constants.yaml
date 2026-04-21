@@ -1,0 +1,179 @@
+# ZEREK — жёсткие константы КЗ 2026
+# Этот файл — единый источник истины для числовых параметров,
+# которые не должны зависеть от ниши, формата или города.
+# Версия: 1.0
+
+# ------------------------------------------------------------------
+# Налоговые константы 2026
+# ------------------------------------------------------------------
+mrp_2026: 4325                 # месячный расчётный показатель
+mzp_2026: 85000                # минимальная заработная плата
+nds_rate: 0.16                 # ставка НДС
+
+taxes:
+  default_tax_rate_pct: 3      # дефолтная ставка УСН в городах без явного решения
+  fallback_tax_rate_pct: 4     # применяется когда город не найден в city_ud_rates
+
+# ------------------------------------------------------------------
+# Параметры собственника (ИП на УСН)
+# ------------------------------------------------------------------
+owner:
+  closure_pocket_kzt: 200000   # порог «точка закрытия»: ниже — смысла вести бизнес нет
+  growth_pocket_kzt: 600000    # порог «точка роста»: уровень для масштабирования
+  social_rate: 0.22            # соцплатежи ИП (ОПВ+ОПВР+ОСМС+СО) ~18-22% от базы
+  social_base_mrp: 50          # база расчёта = 50 МРП
+  fot_multiplier: 1.175        # налоги работодателя на ФОТ (gross = net × multiplier)
+
+# ------------------------------------------------------------------
+# Канонический справочник городов
+# Формат id: lower_snake_latin.
+# legacy_ids — старые варианты, поддерживаемые при миграции.
+# check_coef — ценовой коэффициент города (база = 1.00).
+# ------------------------------------------------------------------
+cities:
+  - id: almaty
+    name_rus: "Алматы"
+    region_rus: "г. Алматы"
+    type: megacity
+    check_coef: 1.05
+    legacy_ids: [ALA, ALMATY, almaty]
+
+  - id: astana
+    name_rus: "Астана"
+    region_rus: "г. Астана"
+    type: megacity
+    check_coef: 1.05
+    legacy_ids: [AST, ASTANA, astana]
+
+  - id: shymkent
+    name_rus: "Шымкент"
+    region_rus: "г. Шымкент"
+    type: megacity
+    check_coef: 0.97
+    legacy_ids: [SHY, SHYMKENT, shymkent]
+
+  - id: aktobe
+    name_rus: "Актобе"
+    region_rus: "Актюбинская область"
+    type: regional_capital
+    check_coef: 1.00
+    legacy_ids: [AKT, AKTOBE, aktobe]
+
+  - id: karaganda
+    name_rus: "Караганда"
+    region_rus: "Карагандинская область"
+    type: regional_capital
+    check_coef: 1.00
+    legacy_ids: [KAR, KARAGANDA, karaganda]
+
+  - id: atyrau
+    name_rus: "Атырау"
+    region_rus: "Атырауская область"
+    type: regional_capital
+    check_coef: 1.03
+    legacy_ids: [ATY, ATYRAU, atyrau]
+
+  - id: aktau
+    name_rus: "Актау"
+    region_rus: "Мангистауская область"
+    type: regional_capital
+    check_coef: 1.00
+    legacy_ids: [AKA, AKTAU, aktau]
+
+  - id: kostanay
+    name_rus: "Костанай"
+    region_rus: "Костанайская область"
+    type: regional_capital
+    check_coef: 0.97
+    legacy_ids: [KOS, KOSTANAY, kostanay]
+
+  - id: pavlodar
+    name_rus: "Павлодар"
+    region_rus: "Павлодарская область"
+    type: regional_capital
+    check_coef: 0.97
+    legacy_ids: [PAV, PAVLODAR, pavlodar]
+
+  - id: semey
+    name_rus: "Семей"
+    region_rus: "область Абай"
+    type: regional_capital
+    check_coef: 0.95
+    legacy_ids: [SEM, SEMEY, semey]
+
+  - id: oskemen
+    name_rus: "Усть-Каменогорск"
+    region_rus: "Восточно-Казахстанская область"
+    type: regional_capital
+    check_coef: 1.00
+    legacy_ids: [OSK, USKAMAN, ust_kamenogorsk, oskemen]
+
+  - id: taraz
+    name_rus: "Тараз"
+    region_rus: "Жамбылская область"
+    type: regional_capital
+    check_coef: 0.95
+    legacy_ids: [TAR, TARAZ, taraz]
+
+  - id: turkestan
+    name_rus: "Туркестан"
+    region_rus: "Туркестанская область"
+    type: regional_capital
+    check_coef: 0.95
+    legacy_ids: [TURKESTAN, turkestan]
+
+  - id: petropavl
+    name_rus: "Петропавловск"
+    region_rus: "Северо-Казахстанская область"
+    type: regional_capital
+    check_coef: 0.95
+    legacy_ids: [PET, PETROPAVL, petropavlovsk, petropavl]
+
+  - id: kokshetau
+    name_rus: "Кокшетау"
+    region_rus: "Акмолинская область"
+    type: regional_capital
+    check_coef: 0.95
+    legacy_ids: [KOK, KOKSHETAU, kokshetau]
+
+  - id: kyzylorda
+    name_rus: "Кызылорда"
+    region_rus: "Кызылординская область"
+    type: regional_capital
+    check_coef: 0.95
+    legacy_ids: [KZO, KYZYLORDA, kyzylorda]
+
+  - id: uralsk
+    name_rus: "Уральск"
+    region_rus: "Западно-Казахстанская область"
+    type: regional_capital
+    check_coef: 1.00
+    legacy_ids: [URA, URALSK, uralsk]
+
+  - id: taldykorgan
+    name_rus: "Талдыкорган"
+    region_rus: "Алматинская область"
+    type: regional_capital
+    check_coef: 0.97
+    legacy_ids: [TAL, TALDYKORGAN, taldykorgan]
+
+# ------------------------------------------------------------------
+# Средние зарплаты по городам (для генератора бизнес-плана Бастау)
+# Канонические ID. Источник — БНС РК, оценка 2026.
+# ------------------------------------------------------------------
+grant_bp_avg_wage:
+  astana:      400000
+  almaty:      420000
+  shymkent:    270000
+  aktobe:      320000
+  karaganda:   330000
+  atyrau:      380000
+  pavlodar:    310000
+  kostanay:    290000
+  aktau:       370000
+  semey:       280000
+  uralsk:      300000
+  taldykorgan: 275000
+  turkestan:   250000
+  kokshetau:   285000
+  petropavl:   290000

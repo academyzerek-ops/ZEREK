@@ -1,0 +1,61 @@
+# ZEREK — расчётные дефолты Quick Check
+# Используется движком engine.py когда в per-niche xlsx нет данных.
+# Версия: 1.0
+
+quick_check:
+
+  # Дефолты для пустых ячеек в финансовых листах per-niche xlsx
+  financial_defaults:
+    cogs_pct: 0.30             # себестоимость / выручка
+    margin_pct: 0.70           # обратная cogs_pct (для совместимости)
+    deposit_months: 2          # депозит аренды (мес.)
+    loss_pct: 0.02             # потери / брак
+    sez_month: 0               # месячные расходы на СЭЗ (если есть)
+    rampup_months: 3           # период разгона (мес.)
+    rampup_start_pct: 0.50     # стартовая доля выручки
+    repeat_pct: 0.40            # повторные клиенты
+    traffic_growth_yr: 0.07
+    check_growth_yr: 0.08
+    rent_growth_yr: 0.10
+    fot_growth_yr: 0.08
+    inflation_yr: 0.10
+    deprec_years: 7
+
+  # Сезонность по умолчанию (12 мес.), если в xlsx нет per-niche
+  default_seasonality: [0.85, 0.85, 0.90, 1.00, 1.05, 1.10, 1.10, 1.05, 1.00, 0.95, 0.95, 1.20]
+
+  # Коэффициенты трёх сценариев (трафик / чек / аренда)
+  scenario_coefficients:
+    pessimistic: {traffic_k: 0.75, check_k: 0.90, rent_k: 1.00}
+    base:        {traffic_k: 1.00, check_k: 1.00, rent_k: 1.00}
+    optimistic:  {traffic_k: 1.25, check_k: 1.10, rent_k: 1.00}
+    # Отдельный набор для calc_stress_test
+    stress_bad:  {traffic_k: 0.75, check_k: 0.90, rent_k: 1.20}
+
+  # Растяжка пессимистического сценария в Block 7 (прибыль × scale)
+  block7_scale:
+    pess: 0.75
+    base: 1.00
+    opt:  1.25
+
+  # Бенчмарки насыщения рынка (на 10 000 жителей)
+  benchmarks:
+    competitor_density_per_10k: 0.8    # Block 1 (вердикт)
+    retail_density_per_10k: 0.75       # Block 3 (рынок)
+
+  # Пороги вердикта Block 1 (суммарный score → цвет)
+  block1_verdict:
+    thresholds: [17, 12]               # green ≥17, yellow ≥12, иначе red
+
+  # Пороги отдельных скоринг-функций (Block 1)
+  scoring_thresholds:
+    capital_ratio:          [1.2, 0.95, 0.75]      # score 3 / 2 / 1
+    roi:                    [0.45, 0.30, 0.15]
+    breakeven_months:       [6, 12, 18]
+    saturation_ratio:       [0.6, 1.0, 1.5]
+    stress_drop:            [0.30, 0.50]
+    city_population_tiers:  [150000, 300000]       # малый / средний / крупный
+
+  # Рабочие дни
+  work_days_in_month: 30
+  work_days_unit_economics: 26
