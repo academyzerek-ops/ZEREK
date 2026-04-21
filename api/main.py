@@ -310,7 +310,7 @@ def get_survey(niche_id:str):
 
 @app.get("/niche-risks/{niche_id}")
 def get_niche_risks(niche_id: str, debug: int = 0):
-    """Структурированные риски ниши через Gemini (из knowledge/niches/*_insight.md)."""
+    """Структурированные риски ниши через Gemini (из knowledge/kz/niches/*_insight.md)."""
     from gemini_rag import extract_niche_risks
     diag = {} if debug else None
     risks = extract_niche_risks(niche_id.upper(), diag=diag)

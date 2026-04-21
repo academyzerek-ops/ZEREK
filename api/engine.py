@@ -1893,7 +1893,7 @@ def compute_block9_risks(db, result, adaptive):
     niche_id = inp.get('niche_id', '')
 
     repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    insight_path = os.path.join(repo_root, 'knowledge', 'niches', f'{niche_id}_insight.md')
+    insight_path = os.path.join(repo_root, 'knowledge', 'kz', 'niches', f'{niche_id}_insight.md')
 
     # Generic риски по архетипу (fallback)
     arch = _archetype_of(db, niche_id)
