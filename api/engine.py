@@ -299,8 +299,34 @@ class ZerekDB:
         return df[mask_fid]
 
     def get_available_niches(self) -> list:
-        """Список загруженных ниш с названиями и иконками (из файлов в data/niches/)."""
-        return list(self.niche_registry.values())
+        """Список ниш из config/niches.yaml с полем `available`.
+
+        Возвращает ВСЕ ниши из yaml (а не только загруженные xlsx), с пометкой
+        available=true|false. Фронт сам решает, скрывать ли недоступные.
+        Для ниш с available=true подтягиваются иконка/имя/кол-во форматов из
+        niche_registry (загруженных xlsx); для остальных — из yaml.
+        """
+        niches_cfg = ((self.configs or {}).get("niches", {}) or {}).get("niches", {}) or {}
+        out = []
+        for nid, meta in niches_cfg.items():
+            meta = meta or {}
+            reg = self.niche_registry.get(nid, {}) or {}
+            out.append({
+                "niche_id": nid,
+                "name": reg.get("name") or meta.get("name_rus", nid),
+                "icon": reg.get("icon") or meta.get("icon", "📋"),
+                "category": meta.get("category", ""),
+                "archetype": meta.get("archetype", ""),
+                "formats_count": reg.get("formats_count", 0),
+                "available": bool(meta.get("available", False)),
+            })
+        return out
+
+    def is_niche_available(self, niche_id: str) -> bool:
+        """Доступна ли ниша для расчёта Quick Check."""
+        niches_cfg = ((self.configs or {}).get("niches", {}) or {}).get("niches", {}) or {}
+        meta = niches_cfg.get(niche_id, {}) or {}
+        return bool(meta.get("available", False))
 
     def get_formats_for_niche(self, niche_id: str) -> list:
         """Список форматов для ниши (уникальные format_id)."""

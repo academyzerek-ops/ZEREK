@@ -125,11 +125,15 @@ def get_cities():
 @app.get("/niches")
 def get_niches():
     if not db: raise HTTPException(503,"БД не загружена")
+    # Возвращаем ВСЕ ниши из niches.yaml с полем `available`. Фронт сам
+    # решает, скрыть ли available=false или показать с пометкой.
     return {"niches":clean(db.get_available_niches())}
 
 @app.get("/formats/{niche_id}")
 def get_formats(niche_id: str):
     if not db: raise HTTPException(503,"БД не загружена")
+    if not db.is_niche_available(niche_id):
+        raise HTTPException(400, "Ниша пока недоступна для расчёта")
     f=db.get_formats_for_niche(niche_id)
     if not f: raise HTTPException(404,f"Ниша {niche_id} не найдена")
     return {"formats":clean(f)}
@@ -155,6 +159,9 @@ CAPEX_TO_CLS = {"эконом":"Эконом","стандарт":"Стандар
 @app.post("/quick-check")
 def quick_check(req: QCReq):
     if not db: raise HTTPException(503,f"БД не загружена: {db_error}")
+    # Блокируем расчёт по недоступной нише
+    if not db.is_niche_available(req.niche_id):
+        raise HTTPException(400, "Ниша пока недоступна для расчёта")
     try:
         cls = CAPEX_TO_CLS.get((req.capex_level or "").strip().lower(), req.cls)
         # v2 adaptive fields (has_license / staff_mode / staff_count / specific_answers)
@@ -254,6 +261,8 @@ def quick_check(req: QCReq):
 def niche_config(niche_id: str):
     """Конфиг адаптивной анкеты Quick Check v2 для указанной ниши."""
     if not db: raise HTTPException(503,"БД не загружена")
+    if not db.is_niche_available(niche_id):
+        raise HTTPException(400, "Ниша пока недоступна для расчёта")
     try:
         cfg = get_niche_config(db, niche_id)
         return clean(cfg)
@@ -266,6 +275,8 @@ def niche_survey(niche_id: str, tier: str = "express"):
     """Адаптивная анкета (упорядоченный список вопросов) для ниши и tier'а
     (express|finmodel). Источник: data/kz/09_surveys.xlsx."""
     if not db: raise HTTPException(503,"БД не загружена")
+    if not db.is_niche_available(niche_id):
+        raise HTTPException(400, "Ниша пока недоступна для расчёта")
     try:
         return clean(get_niche_survey(db, niche_id, tier))
     except Exception as e:
@@ -288,6 +299,8 @@ def formats_v2(niche_id: str):
     """Форматы ниши с расширенными полями v1.0 спецификации:
     format_type, allowed_locations, typical_staff."""
     if not db: raise HTTPException(503,"БД не загружена")
+    if not db.is_niche_available(niche_id):
+        raise HTTPException(400, "Ниша пока недоступна для расчёта")
     return {"formats": clean(get_formats_v2(db, niche_id))}
 
 @app.get("/quickcheck-survey/{niche_id}")
@@ -295,6 +308,8 @@ def quickcheck_survey(niche_id: str, format_id: str = None):
     """Полная конфигурация Quick Check анкеты (8 вопросов) для ниши.
     Если указан format_id — добавляет сгенерированные варианты роли предпринимателя."""
     if not db: raise HTTPException(503,"БД не загружена")
+    if not db.is_niche_available(niche_id):
+        raise HTTPException(400, "Ниша пока недоступна для расчёта")
     try:
         return clean(get_quickcheck_survey(db, niche_id, format_id))
     except Exception as e:
