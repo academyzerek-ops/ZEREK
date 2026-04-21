@@ -617,7 +617,22 @@ def render_finmodel_report(data: dict) -> str:
 # ═══════════════════════════════════════
 
 if __name__ == "__main__":
-    import json
+    import json, os as _os, yaml as _yaml
+    # Сезонность для демо — читаем каноническую из config/defaults.yaml,
+    # чтобы не дублировать числа в коде.
+    _cfg_path = _os.path.join(
+        _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+        "config", "defaults.yaml",
+    )
+    try:
+        with open(_cfg_path, "r", encoding="utf-8") as _fh:
+            _defaults_cfg = _yaml.safe_load(_fh) or {}
+        _seasonality = (_defaults_cfg.get("quick_check", {}) or {}).get(
+            "default_seasonality",
+            [0.85, 0.85, 0.90, 1.00, 1.05, 1.10, 1.10, 1.05, 1.00, 0.95, 0.95, 1.20],
+        )
+    except Exception:
+        _seasonality = [0.85, 0.85, 0.90, 1.00, 1.05, 1.10, 1.10, 1.05, 1.00, 0.95, 0.95, 1.20]
     mock = {
         "input": {"business_name": "Кофейня-кафе", "city": "Астана", "format_id": "COFFEE_FULL", "niche_id": "COFFEE", "entity_type": "ИП", "tax_regime": "УСН", "tax_rate": 0.03, "horizon_months": 36, "start_date": "2026-04"},
         "capex": {"equipment": 3200000, "renovation": 1500000, "furniture": 400000, "first_stock": 200000, "permits": 100000, "deposit": 960000, "total": 6360000},
@@ -625,7 +640,7 @@ if __name__ == "__main__":
         "pl_monthly": [{"month": i+1, "label": f"{'Апр Май Июн Июл Авг Сен Окт Ноя Дек Янв Фев Мар'.split()[i%12]} {'2026' if i<9 else '2027' if i<21 else '2028'}", "revenue": int(1650000*(0.5+i*0.02)), "cogs": int(580000*(0.5+i*0.02)), "gross_profit": int(1070000*(0.5+i*0.02)), "opex": 680000, "ebitda": int(390000*(0.5+i*0.02)-200000), "tax": int(50000*(0.5+i*0.02)), "net_profit": int(340000*(0.5+i*0.02)-200000)} for i in range(36)],
         "cashflow_monthly": [{"month": i+1, "label": f"М{i+1}", "inflow": int(1650000*(0.5+i*0.02)), "outflow": int(1300000 if i>0 else 7600000), "net_cf": int(350000*(0.5+i*0.02)-200000 if i>0 else -6000000), "cumulative_cf": int(-6000000+sum(350000*(0.5+j*0.02)-200000 for j in range(1,i+1)))} for i in range(36)],
         "sensitivity": {"revenue_change": [-30,-20,-10,0,10,20,30], "profit_at_change": [-180000,-40000,100000,260000,420000,580000,740000], "rent_change": [-30,-20,-10,0,10,20,30], "profit_at_rent_change": [400000,350000,300000,260000,210000,160000,110000]},
-        "seasonality": [0.85, 0.80, 0.90, 1.00, 1.05, 0.90, 0.85, 0.80, 0.95, 1.10, 1.15, 1.20],
+        "seasonality": _seasonality,
         "staff": [{"role": "Бариста", "count": 2, "salary": 180000, "is_owner": False}, {"role": "Управляющий (вы)", "count": 1, "salary": 0, "is_owner": True}],
         "opex_breakdown": {"rent": 480000, "fot": 360000, "cogs_avg": 580000, "marketing": 50000, "utilities": 35000, "software": 15000, "transport": 0, "other": 20000},
         "risks": ["Высокая конкуренция — в Астане 200+ кофеен", "Рост аренды в ТЦ (5-10%/год)", "Сезонное падение спроса летом"],

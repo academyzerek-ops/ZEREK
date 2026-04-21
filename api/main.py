@@ -19,8 +19,22 @@ from engine import (ZerekDB, run_quick_check_v3,
                     compute_block3_market, compute_block4_unit_economics,
                     compute_block5_pnl, compute_block6_capital,
                     compute_block7_scenarios, compute_block8_stress_test,
-                    compute_block9_risks, compute_block10_next_steps)
+                    compute_block9_risks, compute_block10_next_steps,
+                    FINMODEL_DEFAULTS_CFG, DEFAULTS_CFG)
 from report import render_report_v4
+
+
+# ───────────────────────────────────────────────────────────────────
+# Дефолты финмодели — читаются из config/finmodel_defaults.yaml
+# ───────────────────────────────────────────────────────────────────
+_FM = (FINMODEL_DEFAULTS_CFG.get("finmodel", {}) or {})
+_FM_OPEX = _FM.get("opex", {}) or {}
+_FM_FOT = _FM.get("fot", {}) or {}
+_FM_CAPEX = _FM.get("capex", {}) or {}
+_FM_CREDIT = _FM.get("credit", {}) or {}
+_FM_GROWTH = _FM.get("growth", {}) or {}
+_FM_SEASONALITY = _FM.get("default_seasonality",
+    [0.85, 0.85, 0.90, 1.00, 1.05, 1.10, 1.10, 1.05, 1.00, 0.95, 0.95, 1.20])
 
 def clean(obj):
     if isinstance(obj, dict): return {k: clean(v) for k, v in obj.items()}
@@ -111,11 +125,18 @@ def get_cities():
 @app.get("/niches")
 def get_niches():
     if not db: raise HTTPException(503,"БД не загружена")
-    return {"niches":clean(db.get_available_niches())}
+    # Временный фильтр до обновления фронта: возвращаем только ниши
+    # с available=true. Поле `available` сохраняем в ответе, чтобы фронт
+    # мог использовать его в будущем.
+    all_niches = db.get_available_niches()
+    visible = [n for n in all_niches if n.get("available")]
+    return {"niches":clean(visible)}
 
 @app.get("/formats/{niche_id}")
 def get_formats(niche_id: str):
     if not db: raise HTTPException(503,"БД не загружена")
+    if not db.is_niche_available(niche_id):
+        raise HTTPException(400, "Ниша пока недоступна для расчёта")
     f=db.get_formats_for_niche(niche_id)
     if not f: raise HTTPException(404,f"Ниша {niche_id} не найдена")
     return {"formats":clean(f)}
@@ -141,6 +162,9 @@ CAPEX_TO_CLS = {"эконом":"Эконом","стандарт":"Стандар
 @app.post("/quick-check")
 def quick_check(req: QCReq):
     if not db: raise HTTPException(503,f"БД не загружена: {db_error}")
+    # Блокируем расчёт по недоступной нише
+    if not db.is_niche_available(req.niche_id):
+        raise HTTPException(400, "Эта ниша пока недоступна для расчёта")
     try:
         cls = CAPEX_TO_CLS.get((req.capex_level or "").strip().lower(), req.cls)
         # v2 adaptive fields (has_license / staff_mode / staff_count / specific_answers)
@@ -240,6 +264,8 @@ def quick_check(req: QCReq):
 def niche_config(niche_id: str):
     """Конфиг адаптивной анкеты Quick Check v2 для указанной ниши."""
     if not db: raise HTTPException(503,"БД не загружена")
+    if not db.is_niche_available(niche_id):
+        raise HTTPException(400, "Ниша пока недоступна для расчёта")
     try:
         cfg = get_niche_config(db, niche_id)
         return clean(cfg)
@@ -252,6 +278,8 @@ def niche_survey(niche_id: str, tier: str = "express"):
     """Адаптивная анкета (упорядоченный список вопросов) для ниши и tier'а
     (express|finmodel). Источник: data/kz/09_surveys.xlsx."""
     if not db: raise HTTPException(503,"БД не загружена")
+    if not db.is_niche_available(niche_id):
+        raise HTTPException(400, "Ниша пока недоступна для расчёта")
     try:
         return clean(get_niche_survey(db, niche_id, tier))
     except Exception as e:
@@ -267,13 +295,30 @@ def configs():
     """Возвращает config/*.yaml как JSON (niches / archetypes / locations / questionnaire).
     Используется фронтом для построения адаптивной анкеты."""
     if not db: raise HTTPException(503,"БД не загружена")
-    return clean(getattr(db, "configs", {}))
+    cfg_raw = getattr(db, "configs", {}) or {}
+    # Временный фильтр до обновления фронта: оставляем в configs.niches.niches
+    # только записи с available=true. Поле `available` остаётся внутри каждой,
+    # чтобы фронт мог использовать его в будущем. Верхнеуровневый словарь
+    # копируем, не мутируя оригинал в БД.
+    niches_section_orig = cfg_raw.get("niches") or {}
+    raw_niches = niches_section_orig.get("niches") or {}
+    filtered_niches = {
+        nid: meta for nid, meta in raw_niches.items()
+        if isinstance(meta, dict) and bool(meta.get("available", False))
+    }
+    niches_section_copy = dict(niches_section_orig)
+    niches_section_copy["niches"] = filtered_niches
+    cfg_copy = dict(cfg_raw)
+    cfg_copy["niches"] = niches_section_copy
+    return clean(cfg_copy)
 
 @app.get("/formats-v2/{niche_id}")
 def formats_v2(niche_id: str):
     """Форматы ниши с расширенными полями v1.0 спецификации:
     format_type, allowed_locations, typical_staff."""
     if not db: raise HTTPException(503,"БД не загружена")
+    if not db.is_niche_available(niche_id):
+        raise HTTPException(400, "Ниша пока недоступна для расчёта")
     return {"formats": clean(get_formats_v2(db, niche_id))}
 
 @app.get("/quickcheck-survey/{niche_id}")
@@ -281,6 +326,8 @@ def quickcheck_survey(niche_id: str, format_id: str = None):
     """Полная конфигурация Quick Check анкеты (8 вопросов) для ниши.
     Если указан format_id — добавляет сгенерированные варианты роли предпринимателя."""
     if not db: raise HTTPException(503,"БД не загружена")
+    if not db.is_niche_available(niche_id):
+        raise HTTPException(400, "Ниша пока недоступна для расчёта")
     try:
         return clean(get_quickcheck_survey(db, niche_id, format_id))
     except Exception as e:
@@ -310,7 +357,7 @@ def get_survey(niche_id:str):
 
 @app.get("/niche-risks/{niche_id}")
 def get_niche_risks(niche_id: str, debug: int = 0):
-    """Структурированные риски ниши через Gemini (из knowledge/niches/*_insight.md)."""
+    """Структурированные риски ниши через Gemini (из knowledge/kz/niches/*_insight.md)."""
     from gemini_rag import extract_niche_risks
     diag = {} if debug else None
     risks = extract_niche_risks(niche_id.upper(), diag=diag)
@@ -468,33 +515,34 @@ def grant_bp_endpoint(req: GrantBPReq):
 # ── Финансовая модель (генерация xlsx) ──
 
 def _compute_finmodel_data(params: dict) -> dict:
-    """Вычисляет месячные P&L/CF из параметров (зеркало Excel-формул)."""
+    """Вычисляет месячные P&L/CF из параметров (зеркало Excel-формул).
+    Все дефолты читаются из config/finmodel_defaults.yaml."""
     from datetime import datetime
-    seasonality = [0.85, 0.85, 0.90, 1.00, 1.05, 1.10, 1.10, 1.05, 1.00, 0.95, 0.95, 1.20]
-    horizon = params.get('horizon', 36)
-    check0 = params.get('check_med', 1400)
-    traffic0 = params.get('traffic_med', 70)
-    work_days = params.get('work_days', 30)
-    tg = params.get('traffic_growth', 0.07)
-    cg = params.get('check_growth', 0.08)
-    cogs_pct = params.get('cogs_pct', 0.35)
-    loss_pct = params.get('loss_pct', 0.03)
-    rent = params.get('rent', 70000)
-    fot = params.get('fot_gross', 200000) * params.get('headcount', 2)
-    utilities = params.get('utilities', 15000)
-    marketing = params.get('marketing', 50000)
-    consumables = params.get('consumables', 3500)
-    software = params.get('software', 5000)
-    other = params.get('other', 10000)
-    capex = params.get('capex', 1500000)
-    deposit = rent * params.get('deposit_months', 2)
-    working_cap = params.get('working_cap', 1000000)
-    amort_monthly = capex / (params.get('amort_years', 7) * 12)
-    tax_rate = params.get('tax_rate', 0.03)
-    credit_amt = params.get('credit_amount', 0)
-    credit_rate = params.get('credit_rate', 0.22)
-    credit_term = params.get('credit_term', 36)
-    wacc = params.get('wacc', 0.20)
+    seasonality = _FM_SEASONALITY
+    horizon = params.get('horizon', _FM.get('horizon_months', 36))
+    check0 = params.get('check_med', _FM.get('check_med', 1400))
+    traffic0 = params.get('traffic_med', _FM.get('traffic_med', 70))
+    work_days = params.get('work_days', _FM.get('work_days', 30))
+    tg = params.get('traffic_growth', _FM_GROWTH.get('traffic_yr', 0.07))
+    cg = params.get('check_growth', _FM_GROWTH.get('check_yr', 0.08))
+    cogs_pct = params.get('cogs_pct', _FM.get('cogs_pct', 0.35))
+    loss_pct = params.get('loss_pct', _FM.get('loss_pct', 0.03))
+    rent = params.get('rent', _FM_OPEX.get('rent', 70000))
+    fot = params.get('fot_gross', _FM_FOT.get('fot_gross', 200000)) * params.get('headcount', _FM_FOT.get('headcount', 2))
+    utilities = params.get('utilities', _FM_OPEX.get('utilities', 15000))
+    marketing = params.get('marketing', _FM_OPEX.get('marketing', 50000))
+    consumables = params.get('consumables', _FM_OPEX.get('consumables', 3500))
+    software = params.get('software', _FM_OPEX.get('software', 5000))
+    other = params.get('other', _FM_OPEX.get('other', 10000))
+    capex = params.get('capex', _FM_CAPEX.get('default_kzt', 1500000))
+    deposit = rent * params.get('deposit_months', _FM_CAPEX.get('deposit_months', 2))
+    working_cap = params.get('working_cap', _FM_CAPEX.get('working_cap_kzt', 1000000))
+    amort_monthly = capex / (params.get('amort_years', _FM_CAPEX.get('amort_years', 7)) * 12)
+    tax_rate = params.get('tax_rate', _FM.get('tax_rate', 0.03))
+    credit_amt = params.get('credit_amount', _FM_CREDIT.get('default_amount', 0))
+    credit_rate = params.get('credit_rate', _FM_CREDIT.get('rate', 0.22))
+    credit_term = params.get('credit_term', _FM_CREDIT.get('term_months', 36))
+    wacc = params.get('wacc', _FM.get('wacc', 0.20))
     # Credit annuity
     credit_pmt = 0
     if credit_amt > 0 and credit_term > 0:
@@ -723,32 +771,32 @@ def generate_finmodel_endpoint(req: FMReq):
 
         params = {
             'entity_type': req.entity_type,
-            'tax_regime': tx.get('regime', 'УСН'),
-            'nds_payer': 'Нет',
+            'tax_regime': tx.get('regime', _FM.get('tax_regime', 'УСН')),
+            'nds_payer': _FM.get('nds_payer', 'Нет'),
             'tax_rate': (tx.get('rate_pct', 3) or 3) / 100,
-            'check_med': req.check_med if req.check_med > 0 else fin.get('check_med', 1400),
-            'traffic_med': req.traffic_med if req.traffic_med > 0 else fin.get('traffic_med', 70),
-            'work_days': 30,
-            'traffic_growth': 0.07,
-            'check_growth': 0.08,
-            'cogs_pct': req.cogs_pct if req.cogs_pct > 0 else fin.get('cogs_pct', 0.35),
-            'loss_pct': fin.get('loss_pct', 0.03),
-            'rent': req.rent_override or fin.get('rent_month', 70000),
-            'fot_gross': req.fot_gross,
-            'headcount': req.headcount,
-            'utilities': fin.get('utilities', 15000),
-            'marketing': fin.get('marketing', 50000),
-            'consumables': fin.get('consumables', 3500),
-            'software': fin.get('software', 5000),
-            'other': fin.get('transport', 10000),
-            'capex': req.capex if req.capex > 0 else result.get('capex', {}).get('capex_med', 1500000),
-            'deposit_months': 2,
-            'working_cap': req.working_cap,
-            'amort_years': 7,
+            'check_med':   req.check_med   if req.check_med   > 0 else fin.get('check_med',   _FM.get('check_med', 1400)),
+            'traffic_med': req.traffic_med if req.traffic_med > 0 else fin.get('traffic_med', _FM.get('traffic_med', 70)),
+            'work_days':      _FM.get('work_days', 30),
+            'traffic_growth': _FM_GROWTH.get('traffic_yr', 0.07),
+            'check_growth':   _FM_GROWTH.get('check_yr', 0.08),
+            'cogs_pct': req.cogs_pct if req.cogs_pct > 0 else fin.get('cogs_pct', _FM.get('cogs_pct', 0.35)),
+            'loss_pct':  fin.get('loss_pct',  _FM.get('loss_pct', 0.03)),
+            'rent':        req.rent_override or fin.get('rent_month', _FM_OPEX.get('rent', 70000)),
+            'fot_gross':   req.fot_gross,
+            'headcount':   req.headcount,
+            'utilities':   fin.get('utilities',   _FM_OPEX.get('utilities', 15000)),
+            'marketing':   fin.get('marketing',   _FM_OPEX.get('marketing', 50000)),
+            'consumables': fin.get('consumables', _FM_OPEX.get('consumables', 3500)),
+            'software':    fin.get('software',    _FM_OPEX.get('software', 5000)),
+            'other':       fin.get('transport',   _FM_OPEX.get('other', 10000)),
+            'capex':       req.capex if req.capex > 0 else result.get('capex', {}).get('capex_med', _FM_CAPEX.get('default_kzt', 1500000)),
+            'deposit_months': _FM_CAPEX.get('deposit_months', 2),
+            'working_cap':   req.working_cap,
+            'amort_years':   _FM_CAPEX.get('amort_years', 7),
             'credit_amount': req.credit_amount,
-            'credit_rate': req.credit_rate,
-            'credit_term': req.credit_term,
-            'wacc': 0.20,
+            'credit_rate':   req.credit_rate,
+            'credit_term':   req.credit_term,
+            'wacc':          _FM.get('wacc', 0.20),
             # Для заголовков
             'business_name': (req.niche_name + ': ' + req.format_name) if req.niche_name else req.format_id,
             'city': result.get('input', {}).get('city_name', req.city_id),

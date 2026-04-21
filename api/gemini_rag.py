@@ -6,7 +6,7 @@ import re
 
 KNOWLEDGE_DIR = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    "knowledge", "niches"
+    "knowledge", "kz", "niches"
 )
 
 # In-memory cache: niche_id → list[{title, body, protect}]

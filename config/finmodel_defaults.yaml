@@ -1,0 +1,65 @@
+# ZEREK — дефолты финансовой модели
+# Используется эндпоинтом /finmodel и рендером HTML-отчёта.
+# Версия: 1.0
+
+finmodel:
+
+  # Юрлицо и налоговый режим
+  entity_type: "ИП"
+  tax_regime: "УСН"
+  nds_payer: "Нет"
+  tax_rate: 0.03                 # если город не уточняет — 3%
+
+  # Горизонт модели (мес.)
+  horizon_months: 36
+
+  # Базовые операционные параметры (перекрываются анкетой)
+  check_med: 1400
+  traffic_med: 70
+  work_days: 30
+
+  # Годовые приросты (применяются помесячно в модели)
+  growth:
+    traffic_yr: 0.07
+    check_yr: 0.08
+    rent_yr: 0.10
+    fot_yr: 0.08
+    inflation_yr: 0.10
+
+  # Себестоимость и потери
+  cogs_pct: 0.35
+  loss_pct: 0.03
+
+  # OPEX по умолчанию (мес.)
+  opex:
+    rent: 70000
+    utilities: 15000
+    marketing: 50000
+    consumables: 3500
+    software: 5000
+    other: 10000
+
+  # ФОТ
+  fot:
+    fot_gross: 200000
+    headcount: 2
+    multiplier: 1.175
+
+  # CAPEX / стартовые инвестиции
+  capex:
+    default_kzt: 1500000
+    deposit_months: 2
+    working_cap_kzt: 1000000
+    amort_years: 7
+
+  # Кредит по умолчанию
+  credit:
+    default_amount: 0
+    rate: 0.22
+    term_months: 36
+
+  # Ставка дисконтирования
+  wacc: 0.20
+
+  # Сезонность по умолчанию (12 мес.). Совпадает с quick_check.default_seasonality.
+  default_seasonality: [0.85, 0.85, 0.90, 1.00, 1.05, 1.10, 1.10, 1.05, 1.00, 0.95, 0.95, 1.20]

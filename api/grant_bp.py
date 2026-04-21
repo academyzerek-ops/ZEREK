@@ -6,30 +6,61 @@ import os
 from io import BytesIO
 from docx import Document
 
-MRP_2026 = 4325
+
+# Константы 2026 берём из config/constants.yaml (единый источник истины).
+def _load_constants() -> dict:
+    path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "config", "constants.yaml",
+    )
+    try:
+        import yaml
+        with open(path, "r", encoding="utf-8") as fh:
+            return yaml.safe_load(fh) or {}
+    except Exception:
+        return {}
+
+
+_CONSTANTS = _load_constants()
+MRP_2026 = int(_CONSTANTS.get("mrp_2026", 4325))
 GRANT_400MRP = 400 * MRP_2026  # 1 730 000 ₸
+
 
 # ═══════════════════════════════════════════════
 # СПРАВОЧНИКИ
 # ═══════════════════════════════════════════════
 
-CITY_DATA = {
-    "astana":    {"name": "Астана",    "region": "город Астана",              "avg_wage": 400000},
-    "almaty":    {"name": "Алматы",    "region": "город Алматы",              "avg_wage": 420000},
-    "shymkent":  {"name": "Шымкент",   "region": "город Шымкент",             "avg_wage": 270000},
-    "aktobe":    {"name": "Актобе",    "region": "Актюбинская область",       "avg_wage": 320000},
-    "karaganda": {"name": "Караганда", "region": "Карагандинская область",    "avg_wage": 330000},
-    "atyrau":    {"name": "Атырау",    "region": "Атырауская область",       "avg_wage": 380000},
-    "pavlodar":  {"name": "Павлодар",  "region": "Павлодарская область",     "avg_wage": 310000},
-    "kostanay":  {"name": "Костанай",  "region": "Костанайская область",     "avg_wage": 290000},
-    "aktau":     {"name": "Актау",     "region": "Мангистауская область",    "avg_wage": 370000},
-    "semey":     {"name": "Семей",     "region": "область Абай",             "avg_wage": 280000},
-    "uralsk":    {"name": "Уральск",   "region": "Западно-Казахстанская область", "avg_wage": 300000},
-    "taldykorgan": {"name": "Талдыкорган", "region": "Алматинская область",  "avg_wage": 275000},
-    "turkestan": {"name": "Туркестан", "region": "Туркестанская область",    "avg_wage": 250000},
-    "kokshetau": {"name": "Кокшетау",  "region": "Акмолинская область",     "avg_wage": 285000},
-    "petropavl": {"name": "Петропавловск", "region": "Северо-Казахстанская область", "avg_wage": 290000},
-}
+
+def _build_city_data() -> dict:
+    """Собирает city_id → {name, region, avg_wage} из constants.yaml.
+    Ключи — только канонические ID; для legacy ID нормализуем на входе.
+    """
+    wages = _CONSTANTS.get("grant_bp_avg_wage", {}) or {}
+    out = {}
+    legacy_map = {}
+    for city in _CONSTANTS.get("cities", []) or []:
+        cid = city.get("id")
+        if not cid:
+            continue
+        out[cid] = {
+            "name":     city.get("name_rus", cid),
+            "region":   city.get("region_rus", cid),
+            "avg_wage": int(wages.get(cid, 300000)),
+        }
+        for legacy in city.get("legacy_ids", []) or []:
+            legacy_map[str(legacy)] = cid
+        legacy_map[cid] = cid
+    return out, legacy_map
+
+
+CITY_DATA, _CITY_LEGACY = _build_city_data()
+
+
+def _normalize_city_id(city_id: str) -> str:
+    if city_id is None:
+        return city_id
+    s = str(city_id).strip()
+    return _CITY_LEGACY.get(s, s)
 
 FORMAT_NAMES = {
     "COFFEE_KIOSK": "кофе-точка (кофе с собой)",
@@ -428,6 +459,8 @@ def generate_grant_bp(
         raise FileNotFoundError(f"Шаблон не найден: {template_path}")
 
     doc = Document(template_path)
+    # Legacy city_id → canonical
+    city_id = _normalize_city_id(city_id)
     city = CITY_DATA.get(city_id, {"name": city_id, "region": city_id, "avg_wage": 300000})
     niche = NICHE_DATA.get(niche_id, DEFAULT_NICHE)
     format_name = FORMAT_NAMES.get(format_id, format_id)

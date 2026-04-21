@@ -144,23 +144,28 @@ def _today_ru() -> str:
 
 
 # ═══════════════════════════════════════════════════════════
-# Справочники ниш
+# Справочники ниш — канон из config/niches.yaml
 # ═══════════════════════════════════════════════════════════
 
-NICHE_NAMES = {
-    "AUTOSERVICE": "Автосервис", "BAKERY": "Пекарня", "BARBER": "Барбершоп",
-    "BROW": "Брови", "CANTEEN": "Столовая", "CARWASH": "Автомойка",
-    "CLEAN": "Клининг", "COFFEE": "Кофейня", "CONFECTION": "Кондитерская",
-    "CYBERCLUB": "Компьютерный клуб", "DENTAL": "Стоматология",
-    "DONER": "Донерная", "DRYCLEAN": "Химчистка", "FASTFOOD": "Фастфуд",
-    "FITNESS": "Фитнес", "FLOWERS": "Цветы", "FRUITSVEGS": "Овощи и фрукты",
-    "FURNITURE": "Мебель", "GROCERY": "Продукты", "KINDERGARTEN": "Детский сад",
-    "LASH": "Ресницы", "MASSAGE": "Массаж", "NAIL": "Маникюр",
-    "PHARMA": "Аптека", "PIZZA": "Пиццерия", "PVZ": "ПВЗ",
-    "REPAIR_PHONE": "Ремонт телефонов", "SEMIFOOD": "Полуфабрикаты",
-    "SUGARING": "Шугаринг", "SUSHI": "Суши", "TAILOR": "Ателье",
-    "TIRE": "Шиномонтаж", "WATER": "Вода",
-}
+
+def _load_niche_names() -> dict:
+    """Читает niche_id → name_rus из config/niches.yaml."""
+    import os as _os
+    path = _os.path.join(
+        _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+        "config", "niches.yaml",
+    )
+    try:
+        import yaml as _yaml
+        with open(path, "r", encoding="utf-8") as fh:
+            cfg = _yaml.safe_load(fh) or {}
+        niches = (cfg.get("niches", {}) or {})
+        return {nid: meta.get("name_rus", nid) for nid, meta in niches.items() if isinstance(meta, dict)}
+    except Exception:
+        return {}
+
+
+NICHE_NAMES = _load_niche_names()
 
 
 # ═══════════════════════════════════════════════════════════
