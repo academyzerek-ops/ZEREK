@@ -913,16 +913,34 @@ def run_quick_check_v3(
             fin['revenue_med'] = int(float(fin['revenue_med']) * city_coef)
 
     # ── CAPEX ──
-    capex_med = _safe_int(capex_data.get('capex_med'), 0) * qty
+    # Базовые значения — из per-niche CAPEX-листа. Но canonical — 08.capex_standard.
+    capex_med_raw = _safe_int(capex_data.get('capex_med'), 0) * qty
     capex_min = _safe_int(capex_data.get('capex_min'), 0) * qty
     capex_max = _safe_int(capex_data.get('capex_max'), 0) * qty
+    capex_standard_08 = _safe_int(meta08.get('capex_standard'), 0) * qty
+    # Приоритет — 08.capex_standard, если он задан и заметно больше per-niche
+    # медианы (которая часто занижена: первая строка CAPEX-листа может
+    # соответствовать упрощённому варианту формата).
+    if capex_standard_08 > 0 and capex_standard_08 > capex_med_raw * 1.1:
+        capex_med = capex_standard_08
+        # Расширим диапазон ±25% для min/max, если он был слишком узким.
+        if capex_max < capex_med:
+            capex_max = int(capex_med * 1.25)
+        if capex_min < capex_med * 0.5:
+            capex_min = int(capex_med * 0.75)
+    else:
+        capex_med = capex_med_raw
     deposit_months = _safe_int(fin.get('deposit_months'), DEFAULTS['deposit_months'])
 
     rent_median_m2, _ = get_rent_median(db, city_id, loc_type)
     rent_month = rent_override if rent_override else _safe_int(fin.get('rent_med'), int(area_m2 * rent_median_m2))
     rent_month_total = rent_month * qty
     deposit = rent_month_total * deposit_months
-    capex_total = capex_med + deposit
+    # Оборотный капитал (working_cap_3m) — входит в стартовые вложения
+    # (помогает пережить период разгона без убытка), поэтому прибавляется
+    # к capex_total для payback.
+    working_cap = _safe_int(capex_data.get('working_cap_3m'), 0) * qty
+    capex_total = capex_med + deposit + working_cap
 
     # ── Капитал / инвестиции ──
     fot_med = _safe_int(staff.get('fot_net_med'), 0)
