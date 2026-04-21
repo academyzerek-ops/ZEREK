@@ -3,11 +3,40 @@ ZEREK — Генератор финансовой модели из шаблон
 Берёт шаблон Адиля, подставляет данные из анкеты/движка.
 v2: исправлен PARAM_MAP под реальную структуру шаблона,
     safe_write для merged cells.
+v3: дефолты параметров и сезонность вынесены в
+    config/finmodel_defaults.yaml. Сама логика generate_finmodel
+    не переписывалась — только источник дефолтных значений.
 """
 from openpyxl import load_workbook
 from openpyxl.cell.cell import MergedCell
 from datetime import datetime
 import os
+
+
+def _load_finmodel_defaults() -> dict:
+    """Читает config/finmodel_defaults.yaml. Возвращает {} при ошибке."""
+    path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "config", "finmodel_defaults.yaml",
+    )
+    try:
+        import yaml
+        with open(path, "r", encoding="utf-8") as fh:
+            return (yaml.safe_load(fh) or {}).get("finmodel", {}) or {}
+    except Exception:
+        return {}
+
+
+_FM_DEFAULTS = _load_finmodel_defaults()
+_FM_OPEX_DEFAULTS = _FM_DEFAULTS.get("opex", {}) or {}
+_FM_FOT_DEFAULTS = _FM_DEFAULTS.get("fot", {}) or {}
+_FM_CAPEX_DEFAULTS = _FM_DEFAULTS.get("capex", {}) or {}
+_FM_CREDIT_DEFAULTS = _FM_DEFAULTS.get("credit", {}) or {}
+_FM_GROWTH_DEFAULTS = _FM_DEFAULTS.get("growth", {}) or {}
+_FM_SEASONALITY_DEFAULT = _FM_DEFAULTS.get(
+    "default_seasonality",
+    [0.85, 0.85, 0.90, 1.00, 1.05, 1.10, 1.10, 1.05, 1.00, 0.95, 0.95, 1.20],
+)
 
 
 # Карта ячеек ПАРАМЕТРЫ — СТРОГО по реальному шаблону Адиля
@@ -79,38 +108,39 @@ def generate_finmodel(
     eq_note: str = '',
 ) -> str:
     if seasonality is None:
-        seasonality = [0.85, 0.85, 0.90, 1.00, 1.05, 1.10, 1.10, 1.05, 1.00, 0.95, 0.95, 1.20]
+        seasonality = _FM_SEASONALITY_DEFAULT
 
-    # Дефолты
+    # Дефолты — из config/finmodel_defaults.yaml (с жёсткими fallback-значениями
+    # на случай отсутствия yaml-файла).
     defaults = {
-        'entity_type': 'ИП',
-        'tax_regime': 'УСН',
-        'nds_payer': 'Нет',
-        'tax_rate': 0.03,
-        'horizon': 36,
-        'check_med': 1400,
-        'traffic_med': 70,
-        'work_days': 30,
-        'traffic_growth': 0.07,
-        'check_growth': 0.08,
-        'cogs_pct': 0.35,
-        'loss_pct': 0.03,
-        'rent': 70000,
-        'fot_gross': 200000,
-        'headcount': 2,
-        'utilities': 15000,
-        'marketing': 50000,
-        'consumables': 3500,
-        'software': 5000,
-        'other': 10000,
-        'capex': 1500000,
-        'deposit_months': 2,
-        'working_cap': 1000000,
-        'amort_years': 7,
-        'credit_amount': 0,
-        'credit_rate': 0.22,
-        'credit_term': 36,
-        'wacc': 0.20,
+        'entity_type':    _FM_DEFAULTS.get('entity_type', 'ИП'),
+        'tax_regime':     _FM_DEFAULTS.get('tax_regime', 'УСН'),
+        'nds_payer':      _FM_DEFAULTS.get('nds_payer', 'Нет'),
+        'tax_rate':       _FM_DEFAULTS.get('tax_rate', 0.03),
+        'horizon':        _FM_DEFAULTS.get('horizon_months', 36),
+        'check_med':      _FM_DEFAULTS.get('check_med', 1400),
+        'traffic_med':    _FM_DEFAULTS.get('traffic_med', 70),
+        'work_days':      _FM_DEFAULTS.get('work_days', 30),
+        'traffic_growth': _FM_GROWTH_DEFAULTS.get('traffic_yr', 0.07),
+        'check_growth':   _FM_GROWTH_DEFAULTS.get('check_yr', 0.08),
+        'cogs_pct':       _FM_DEFAULTS.get('cogs_pct', 0.35),
+        'loss_pct':       _FM_DEFAULTS.get('loss_pct', 0.03),
+        'rent':           _FM_OPEX_DEFAULTS.get('rent', 70000),
+        'fot_gross':      _FM_FOT_DEFAULTS.get('fot_gross', 200000),
+        'headcount':      _FM_FOT_DEFAULTS.get('headcount', 2),
+        'utilities':      _FM_OPEX_DEFAULTS.get('utilities', 15000),
+        'marketing':      _FM_OPEX_DEFAULTS.get('marketing', 50000),
+        'consumables':    _FM_OPEX_DEFAULTS.get('consumables', 3500),
+        'software':       _FM_OPEX_DEFAULTS.get('software', 5000),
+        'other':          _FM_OPEX_DEFAULTS.get('other', 10000),
+        'capex':          _FM_CAPEX_DEFAULTS.get('default_kzt', 1500000),
+        'deposit_months': _FM_CAPEX_DEFAULTS.get('deposit_months', 2),
+        'working_cap':    _FM_CAPEX_DEFAULTS.get('working_cap_kzt', 1000000),
+        'amort_years':    _FM_CAPEX_DEFAULTS.get('amort_years', 7),
+        'credit_amount':  _FM_CREDIT_DEFAULTS.get('default_amount', 0),
+        'credit_rate':    _FM_CREDIT_DEFAULTS.get('rate', 0.22),
+        'credit_term':    _FM_CREDIT_DEFAULTS.get('term_months', 36),
+        'wacc':           _FM_DEFAULTS.get('wacc', 0.20),
     }
 
     for k, v in defaults.items():
