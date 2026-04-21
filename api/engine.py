@@ -1403,16 +1403,42 @@ def _fmt_kzt_short(v):
 
 
 def _score_capital(capital_own, capex_needed):
+    """Баллы за капитал vs CAPEX-бенчмарк.
+
+    Правила:
+    - capital_own = None/неизвестно → 2 балла «не указан — расчёт условный».
+      НЕ штрафуем за отсутствие ответа, это не факт бизнеса.
+    - capex_needed = 0 → 1 балл «нет бенчмарка» (реально редко — 08 заполнен).
+    - capital >= capex*1.2 → 3 балла «капитал с запасом»
+    - capital в [capex*0.95, capex*1.2) → 2 балла «соответствует»
+    - capital в [capex*0.75, capex*0.95) → 1 балл «на грани»
+    - capital < capex*0.75 → 0 баллов «критический дефицит»
+    """
     if not capex_needed:
-        return {'score': 1, 'label': 'Капитал vs бенчмарк', 'note': 'Нет данных по CAPEX бенчмарку'}
-    if not capital_own:
-        return {'score': 1, 'label': 'Капитал vs бенчмарк', 'note': 'Клиент не указал капитал — нейтрально'}
+        return {'score': 1, 'label': 'Капитал vs бенчмарк',
+                'note': 'Нет данных по CAPEX бенчмарку'}
+    if capital_own is None or capital_own == 0:
+        return {'score': 2, 'label': 'Капитал vs бенчмарк',
+                'note': f'Капитал не указан — расчёт условный. Бенчмарк CAPEX {int(capex_needed):,} ₸.'.replace(',', ' ')}
     ratio = capital_own / capex_needed
     t_excel, t_match, t_low = SCORING_CAPITAL  # пороги: профицит / норма / терпимо
-    if ratio >= t_excel: return {'score': 3, 'label': 'Капитал vs бенчмарк', 'note': f'Профицит: капитал на {int((ratio-1)*100)}% выше бенчмарка', 'ratio': ratio}
-    if ratio >= t_match: return {'score': 2, 'label': 'Капитал vs бенчмарк', 'note': 'Бюджет соответствует бенчмарку', 'ratio': ratio}
-    if ratio >= t_low:   return {'score': 1, 'label': 'Капитал vs бенчмарк', 'note': f'Дефицит {int((1-ratio)*100)}% — терпимо', 'ratio': ratio, 'gap_kzt': int(capex_needed - capital_own)}
-    return {'score': 0, 'label': 'Капитал vs бенчмарк', 'note': f'Дефицит критичный: {int((1-ratio)*100)}%', 'ratio': ratio, 'gap_kzt': int(capex_needed - capital_own)}
+    if ratio >= t_excel:
+        return {'score': 3, 'label': 'Капитал vs бенчмарк',
+                'note': f'Капитал с запасом: на {int((ratio-1)*100)}% выше бенчмарка',
+                'ratio': ratio}
+    if ratio >= t_match:
+        return {'score': 2, 'label': 'Капитал vs бенчмарк',
+                'note': 'Капитал соответствует бенчмарку',
+                'ratio': ratio}
+    if ratio >= t_low:
+        return {'score': 1, 'label': 'Капитал vs бенчмарк',
+                'note': f'Капитал на грани: дефицит {int((1-ratio)*100)}%',
+                'ratio': ratio,
+                'gap_kzt': int(capex_needed - capital_own)}
+    return {'score': 0, 'label': 'Капитал vs бенчмарк',
+            'note': f'Критический дефицит капитала: {int((1-ratio)*100)}%',
+            'ratio': ratio,
+            'gap_kzt': int(capex_needed - capital_own)}
 
 
 def _score_roi(profit_year, total_investment):
@@ -1594,8 +1620,22 @@ def compute_block1_verdict(result, adaptive):
                 break
 
     # ── Собираем скоринг ──
-    capex_needed = _safe_int(capex_block.get('capex_med')) or _safe_int(capex_block.get('capex_total'))
-    capital_own = _safe_int(adaptive.get('capital_own')) if adaptive.get('capital_own') else 0
+    # CAPEX-бенчмарк: приоритет — 08_niche_formats.xlsx.capex_standard (проброшен
+    # в result.input). Фолбэк: capex_block.capex_med / capex_total из per-niche
+    # xlsx (часто занижен, если в CAPEX листе несколько строк под format_id).
+    capex_standard_08 = _safe_int(inp.get('capex_standard'), 0)
+    capex_med_perniche = _safe_int(capex_block.get('capex_med')) or _safe_int(capex_block.get('capex_total'))
+    capex_needed = capex_standard_08 if capex_standard_08 > 0 else capex_med_perniche
+    # capital_own: None если не передали, 0 если передали 0. Для скоринга
+    # отличаем «не указано» (None) от «указано 0».
+    capital_own_raw = adaptive.get('capital_own')
+    if capital_own_raw is None or capital_own_raw == '':
+        capital_own = None
+    else:
+        try:
+            capital_own = int(capital_own_raw) or None
+        except (TypeError, ValueError):
+            capital_own = None
     profit_year = _safe_int(fin.get('profit_year1'), 0)
     breakeven_months = payback.get('месяц') or breakeven.get('месяц')
     city_pop = _safe_int(inp.get('city_population'), 0)
