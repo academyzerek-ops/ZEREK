@@ -225,46 +225,8 @@ class ZerekDB:
         SHEETS = ['FORMATS','STAFF','FINANCIALS','CAPEX','GROWTH','TAXES',
                   'MARKET','LAUNCH','INSIGHTS','PRODUCTS','MARKETING','SUPPLIERS','SURVEY','LOCATIONS']
 
-        # Маппинг niche_id → название + иконка (для API и анкеты)
-        NICHE_NAMES = {
-            # Общепит
-            'COFFEE': 'Кофейня', 'BAKERY': 'Пекарня', 'DONER': 'Донерная',
-            'PIZZA': 'Пиццерия', 'SUSHI': 'Суши-бар', 'FASTFOOD': 'Фастфуд',
-            'CANTEEN': 'Столовая',
-            # Красота
-            'BARBER': 'Барбершоп', 'MANICURE': 'Маникюр', 'LASH': 'Ресницы',
-            'SUGARING': 'Шугаринг', 'BROW': 'Брови', 'MASSAGE': 'Массаж',
-            # Здоровье
-            'DENTAL': 'Стоматология', 'FITNESS': 'Фитнес',
-            # Авто
-            'CARWASH': 'Автомойка', 'AUTOSERVICE': 'Автосервис', 'TIRESERVICE': 'Шиномонтаж',
-            # Торговля
-            'GROCERY': 'Продуктовый магазин', 'PHARMACY': 'Аптека',
-            'FLOWERS': 'Цветочный магазин', 'FRUITSVEGS': 'Овощи и фрукты',
-            # Услуги
-            'CLEAN': 'Клининг', 'DRYCLEAN': 'Химчистка',
-            'REPAIR_PHONE': 'Ремонт телефонов', 'KINDERGARTEN': 'Частный детский сад',
-            'PVZ': 'Пункт выдачи заказов',
-            # Производство
-            'SEMIFOOD': 'Полуфабрикаты', 'CONFECTION': 'Кондитер на заказ',
-            'WATERPLANT': 'Производство воды',
-            # Другое
-            'TAILOR': 'Ателье', 'COMPCLUB': 'Компьютерный клуб',
-            'FURNITURE': 'Мебель на заказ',
-        }
-        NICHE_ICONS = {
-            'COFFEE': '☕', 'BAKERY': '🥐', 'DONER': '🌯',
-            'PIZZA': '🍕', 'SUSHI': '🍣', 'FASTFOOD': '🍔',
-            'CANTEEN': '🍽', 'BARBER': '💈', 'MANICURE': '💅',
-            'LASH': '👁', 'SUGARING': '✨', 'BROW': '✏',
-            'MASSAGE': '💆', 'DENTAL': '🦷', 'FITNESS': '🏋',
-            'CARWASH': '🚗', 'AUTOSERVICE': '🔧', 'TIRESERVICE': '🛞',
-            'GROCERY': '🛒', 'PHARMACY': '💊', 'FLOWERS': '💐',
-            'FRUITSVEGS': '🍎', 'CLEAN': '🧹', 'DRYCLEAN': '👔',
-            'REPAIR_PHONE': '📱', 'KINDERGARTEN': '👶', 'PVZ': '📦',
-            'SEMIFOOD': '🥟', 'CONFECTION': '🎂', 'WATERPLANT': '💧',
-            'TAILOR': '🧵', 'COMPCLUB': '🎮', 'FURNITURE': '🪑',
-        }
+        # Имена и иконки ниш — из config/niches.yaml (единый источник истины).
+        niches_cfg = ((getattr(self, "configs", {}) or {}).get("niches", {}) or {}).get("niches", {}) or {}
 
         self.niche_registry = {}  # {niche_id: {name, icon, formats_count}}
 
@@ -287,10 +249,11 @@ class ZerekDB:
             fmt_df = self.niche_data[niche_id].get('FORMATS', pd.DataFrame())
             fmt_count = len(fmt_df['format_id'].unique()) if not fmt_df.empty and 'format_id' in fmt_df.columns else 0
 
+            cfg_meta = niches_cfg.get(niche_id, {}) or {}
             self.niche_registry[niche_id] = {
                 'niche_id': niche_id,
-                'name': NICHE_NAMES.get(niche_id, niche_id),
-                'icon': NICHE_ICONS.get(niche_id, '📋'),
+                'name': cfg_meta.get('name_rus', niche_id),
+                'icon': cfg_meta.get('icon', '📋'),
                 'formats_count': fmt_count,
             }
 
@@ -722,17 +685,35 @@ def calc_closure_growth_points(owner_eco: dict) -> dict:
 
 def calc_stress_test(fin: dict, staff: dict, tax_rate: float,
                      rent_month_total: int, qty: int = 1) -> list:
-    """Настоящий стресс-тест: плохо / база / хорошо. «В карман» по каждому сценарию."""
+    """Настоящий стресс-тест: плохо / база / хорошо. «В карман» по каждому сценарию.
+
+    Коэффициенты читаются из config/defaults.yaml (quick_check.scenario_coefficients).
+    Для стрессового плохого сценария используется stress_bad (с rent_k > 1).
+    """
+    # Человекочитаемые описания для UI — построим из коэффициентов
+    def _desc(sc):
+        parts = []
+        t = sc.get('traffic_k', 1.0)
+        c = sc.get('check_k', 1.0)
+        r = sc.get('rent_k', 1.0)
+        if t != 1.0:
+            parts.append(f"трафик {'+' if t > 1 else '−'}{abs(int(round((t-1)*100)))}%")
+        if c != 1.0:
+            parts.append(f"чек {'+' if c > 1 else '−'}{abs(int(round((c-1)*100)))}%")
+        if r != 1.0:
+            parts.append(f"аренда {'+' if r > 1 else '−'}{abs(int(round((r-1)*100)))}%")
+        return ', '.join(parts).capitalize() if parts else 'Расчётные показатели'
+
     scenarios = [
-        {'key': 'bad',  'label': 'Если всё плохо',     'color': 'red',
-         'params': 'Трафик −25%, чек −10%, аренда +20%',
-         'traffic_k': 0.75, 'check_k': 0.90, 'rent_k': 1.20},
-        {'key': 'base', 'label': 'Базовый сценарий',   'color': 'blue',
-         'params': 'Расчётные показатели',
-         'traffic_k': 1.00, 'check_k': 1.00, 'rent_k': 1.00},
-        {'key': 'good', 'label': 'Если всё хорошо',    'color': 'green',
-         'params': 'Трафик +20%, чек +10%',
-         'traffic_k': 1.20, 'check_k': 1.10, 'rent_k': 1.00},
+        {'key': 'bad',  'label': 'Если всё плохо',   'color': 'red',
+         'params': _desc(SCENARIO_STRESS),
+         **SCENARIO_STRESS},
+        {'key': 'base', 'label': 'Базовый сценарий', 'color': 'blue',
+         'params': _desc(SCENARIO_BASE),
+         **SCENARIO_BASE},
+        {'key': 'good', 'label': 'Если всё хорошо',  'color': 'green',
+         'params': _desc(SCENARIO_OPT),
+         **SCENARIO_OPT},
     ]
     out = []
     for sc in scenarios:
@@ -862,9 +843,14 @@ def run_quick_check_v3(
     # Окупаемость по чистой прибыли в карман (месяцев)
     owner_payback_m = int(round(capex_total / owner_eco['net_in_pocket'])) if owner_eco['net_in_pocket'] > 0 else None
 
-    # ── 3 сценария (пессимист/база/оптимист) ──
+    # ── 3 сценария (пессимист/база/оптимист) — коэффициенты из defaults.yaml ──
     scenarios = {}
-    for label, traffic_k, check_k in [('pess',0.75,0.90),('base',1.0,1.0),('opt',1.25,1.10)]:
+    _scenario_coefs = [
+        ('pess', SCENARIO_PESS['traffic_k'], SCENARIO_PESS['check_k']),
+        ('base', SCENARIO_BASE['traffic_k'], SCENARIO_BASE['check_k']),
+        ('opt',  SCENARIO_OPT['traffic_k'],  SCENARIO_OPT['check_k']),
+    ]
+    for label, traffic_k, check_k in _scenario_coefs:
         fin_sc = dict(fin)
         fin_sc['traffic_med'] = int(_safe_int(fin.get('traffic_med'),50) * traffic_k)
         fin_sc['check_med'] = int(_safe_int(fin.get('check_med'),1000) * check_k)
@@ -1290,9 +1276,10 @@ def _score_capital(capital_own, capex_needed):
     if not capital_own:
         return {'score': 1, 'label': 'Капитал vs бенчмарк', 'note': 'Клиент не указал капитал — нейтрально'}
     ratio = capital_own / capex_needed
-    if ratio >= 1.2:  return {'score': 3, 'label': 'Капитал vs бенчмарк', 'note': f'Профицит: капитал на {int((ratio-1)*100)}% выше бенчмарка', 'ratio': ratio}
-    if ratio >= 0.95: return {'score': 2, 'label': 'Капитал vs бенчмарк', 'note': 'Бюджет соответствует бенчмарку', 'ratio': ratio}
-    if ratio >= 0.75: return {'score': 1, 'label': 'Капитал vs бенчмарк', 'note': f'Дефицит {int((1-ratio)*100)}% — терпимо', 'ratio': ratio, 'gap_kzt': int(capex_needed - capital_own)}
+    t_excel, t_match, t_low = SCORING_CAPITAL  # пороги: профицит / норма / терпимо
+    if ratio >= t_excel: return {'score': 3, 'label': 'Капитал vs бенчмарк', 'note': f'Профицит: капитал на {int((ratio-1)*100)}% выше бенчмарка', 'ratio': ratio}
+    if ratio >= t_match: return {'score': 2, 'label': 'Капитал vs бенчмарк', 'note': 'Бюджет соответствует бенчмарку', 'ratio': ratio}
+    if ratio >= t_low:   return {'score': 1, 'label': 'Капитал vs бенчмарк', 'note': f'Дефицит {int((1-ratio)*100)}% — терпимо', 'ratio': ratio, 'gap_kzt': int(capex_needed - capital_own)}
     return {'score': 0, 'label': 'Капитал vs бенчмарк', 'note': f'Дефицит критичный: {int((1-ratio)*100)}%', 'ratio': ratio, 'gap_kzt': int(capex_needed - capital_own)}
 
 
@@ -1305,31 +1292,39 @@ def _score_roi(profit_year, total_investment):
     if roi > 10:
         return {'score': 1, 'label': 'ROI годовой', 'note': 'Требуется уточнение расчётов'}
     pct = int(round(roi * 100))
-    if roi >= 0.45: return {'score': 3, 'label': 'ROI годовой', 'note': f'ROI {pct}% — выше среднего для малого бизнеса', 'roi': roi}
-    if roi >= 0.30: return {'score': 2, 'label': 'ROI годовой', 'note': f'ROI {pct}% — нормальный', 'roi': roi}
-    if roi >= 0.15: return {'score': 1, 'label': 'ROI годовой', 'note': f'ROI {pct}% — ниже нормы, но положительный', 'roi': roi}
+    t_hi, t_mid, t_lo = SCORING_ROI
+    if roi >= t_hi:  return {'score': 3, 'label': 'ROI годовой', 'note': f'ROI {pct}% — выше среднего для малого бизнеса', 'roi': roi}
+    if roi >= t_mid: return {'score': 2, 'label': 'ROI годовой', 'note': f'ROI {pct}% — нормальный', 'roi': roi}
+    if roi >= t_lo:  return {'score': 1, 'label': 'ROI годовой', 'note': f'ROI {pct}% — ниже нормы, но положительный', 'roi': roi}
     return {'score': 0, 'label': 'ROI годовой', 'note': f'ROI {pct}% — не окупает капитал', 'roi': roi}
 
 
 def _score_breakeven(breakeven_months):
+    t_fast, t_mid, t_slow = SCORING_BREAKEVEN
     if breakeven_months is None:
-        return {'score': 0, 'label': 'Точка безубыточности', 'note': 'Бизнес не окупается за 18 мес'}
-    if breakeven_months <= 6:  return {'score': 3, 'label': 'Точка безубыточности', 'note': f'Окупаемость {breakeven_months} мес — быстрая', 'months': breakeven_months}
-    if breakeven_months <= 12: return {'score': 2, 'label': 'Точка безубыточности', 'note': f'Окупаемость {breakeven_months} мес', 'months': breakeven_months}
-    if breakeven_months <= 18: return {'score': 1, 'label': 'Точка безубыточности', 'note': f'Окупаемость {breakeven_months} мес — долго', 'months': breakeven_months}
+        return {'score': 0, 'label': 'Точка безубыточности', 'note': f'Бизнес не окупается за {t_slow} мес'}
+    if breakeven_months <= t_fast: return {'score': 3, 'label': 'Точка безубыточности', 'note': f'Окупаемость {breakeven_months} мес — быстрая', 'months': breakeven_months}
+    if breakeven_months <= t_mid:  return {'score': 2, 'label': 'Точка безубыточности', 'note': f'Окупаемость {breakeven_months} мес', 'months': breakeven_months}
+    if breakeven_months <= t_slow: return {'score': 1, 'label': 'Точка безубыточности', 'note': f'Окупаемость {breakeven_months} мес — долго', 'months': breakeven_months}
     return {'score': 0, 'label': 'Точка безубыточности', 'note': f'Окупаемость {breakeven_months} мес — слишком долго', 'months': breakeven_months}
 
 
 def _score_saturation(competitors_count, city_population, niche_id):
-    """density = competitors / (population/10K). Бенчмарк — условный (1.0 для retail, 0.8 общий)."""
+    """Насыщенность рынка через плотность конкурентов на 10K жителей.
+
+    Приоритет — поле `density_per_10k` из get_competitors (сырой float из xlsx).
+    Фолбэк — пересчёт через `competitors_count / (population/10000)`.
+    Бенчмарк — из defaults.yaml (benchmarks.competitor_density_per_10k).
+    """
     if not competitors_count or not city_population:
         return {'score': 2, 'label': 'Насыщенность рынка', 'note': 'Нет данных о конкурентах'}
     density = competitors_count / (city_population / 10000)
-    benchmark = 0.8
-    ratio = density / benchmark
-    if ratio <= 0.6: return {'score': 3, 'label': 'Насыщенность рынка', 'note': f'Рынок недонасыщен: {round(density,1)} конкурентов на 10K жителей', 'density': density}
-    if ratio <= 1.0: return {'score': 2, 'label': 'Насыщенность рынка', 'note': f'Норма: {round(density,1)} конкурентов на 10K', 'density': density}
-    if ratio <= 1.5: return {'score': 1, 'label': 'Насыщенность рынка', 'note': f'Перенасыщен: {round(density,1)} конкурентов на 10K', 'density': density}
+    benchmark = BENCHMARK_COMPETITOR_DENSITY_10K
+    ratio = density / benchmark if benchmark else 0
+    t_low, t_mid, t_hi = SCORING_SATURATION
+    if ratio <= t_low: return {'score': 3, 'label': 'Насыщенность рынка', 'note': f'Рынок недонасыщен: {round(density,1)} конкурентов на 10K жителей', 'density': density}
+    if ratio <= t_mid: return {'score': 2, 'label': 'Насыщенность рынка', 'note': f'Норма: {round(density,1)} конкурентов на 10K', 'density': density}
+    if ratio <= t_hi:  return {'score': 1, 'label': 'Насыщенность рынка', 'note': f'Перенасыщен: {round(density,1)} конкурентов на 10K', 'density': density}
     return {'score': 0, 'label': 'Насыщенность рынка', 'note': f'Высокая конкуренция: {round(density,1)} на 10K', 'density': density}
 
 
@@ -1348,18 +1343,20 @@ def _score_marketing(tier='express'):
 def _score_stress(profit_base, profit_pess):
     if profit_base is None or profit_pess is None:
         return {'score': 1, 'label': 'Устойчивость к стрессу'}
+    t_stable, t_moderate = SCORING_STRESS_DROP
     if profit_pess > 0:
         drop = (profit_base - profit_pess) / profit_base if profit_base else 0
-        if drop < 0.30: return {'score': 3, 'label': 'Устойчивость к стрессу', 'note': 'Бизнес устойчив к падению ключевого параметра на 20%'}
-        if drop < 0.50: return {'score': 2, 'label': 'Устойчивость к стрессу', 'note': 'Умеренно устойчив — падение выручки терпимое'}
+        if drop < t_stable:   return {'score': 3, 'label': 'Устойчивость к стрессу', 'note': 'Бизнес устойчив к падению ключевого параметра на 20%'}
+        if drop < t_moderate: return {'score': 2, 'label': 'Устойчивость к стрессу', 'note': 'Умеренно устойчив — падение выручки терпимое'}
         return {'score': 1, 'label': 'Устойчивость к стрессу', 'note': 'Хрупкая модель — небольшое падение трафика больно бьёт'}
     return {'score': 0, 'label': 'Устойчивость к стрессу', 'note': 'При падении параметра на 20% — убыток'}
 
 
 def _score_format_city(format_id, format_class, city_population):
     # Матрица «формат-класс × размер города»
-    small = (city_population or 0) < 150_000
-    mid = 150_000 <= (city_population or 0) < 300_000
+    t_small, t_mid = SCORING_CITY_POP
+    small = (city_population or 0) < t_small
+    mid = t_small <= (city_population or 0) < t_mid
     cls = (format_class or '').lower()
     if cls == 'премиум' and small:
         return {'score': 0, 'label': 'Соответствие формата городу', 'note': 'Премиум-формат в малом городе — узкая ЦА'}
@@ -1477,10 +1474,11 @@ def compute_block1_verdict(result, adaptive):
     total_score = sum(it.get('score', 0) for it in scoring_items)
     max_score = sum(it.get('max', 3) for it in scoring_items)
 
-    # ── Цвет ──
-    if total_score >= 17:   color = 'green'
-    elif total_score >= 12: color = 'yellow'
-    else:                   color = 'red'
+    # ── Цвет (пороги из defaults.yaml: block1_verdict.thresholds) ──
+    _t_green, _t_yellow = BLOCK1_THRESHOLDS
+    if total_score >= _t_green:    color = 'green'
+    elif total_score >= _t_yellow: color = 'yellow'
+    else:                          color = 'red'
 
     # Топ-3 strong / weak
     sorted_desc = sorted(scoring_items, key=lambda x: -x.get('score', 0))
@@ -1912,9 +1910,9 @@ def compute_block7_scenarios(db, result, adaptive):
             arr.append({'month': m+1, 'profit': int(mp), 'cumulative': cumulative})
         return arr
 
-    pess = build_traj(0.75)
-    base = build_traj(1.00)
-    opt = build_traj(1.25)
+    pess = build_traj(B7_SCALE_PESS)
+    base = build_traj(B7_SCALE_BASE)
+    opt  = build_traj(B7_SCALE_OPT)
 
     # Ключевые точки
     def find_points(arr, capex_total):
