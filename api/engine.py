@@ -134,14 +134,14 @@ class ZerekDB:
             'PIZZA': 'Пиццерия', 'SUSHI': 'Суши-бар', 'FASTFOOD': 'Фастфуд',
             'CANTEEN': 'Столовая',
             # Красота
-            'BARBER': 'Барбершоп', 'NAIL': 'Маникюр', 'LASH': 'Ресницы',
+            'BARBER': 'Барбершоп', 'MANICURE': 'Маникюр', 'LASH': 'Ресницы',
             'SUGARING': 'Шугаринг', 'BROW': 'Брови', 'MASSAGE': 'Массаж',
             # Здоровье
             'DENTAL': 'Стоматология', 'FITNESS': 'Фитнес',
             # Авто
-            'CARWASH': 'Автомойка', 'AUTOSERVICE': 'Автосервис', 'TIRE': 'Шиномонтаж',
+            'CARWASH': 'Автомойка', 'AUTOSERVICE': 'Автосервис', 'TIRESERVICE': 'Шиномонтаж',
             # Торговля
-            'GROCERY': 'Продуктовый магазин', 'PHARMA': 'Аптека',
+            'GROCERY': 'Продуктовый магазин', 'PHARMACY': 'Аптека',
             'FLOWERS': 'Цветочный магазин', 'FRUITSVEGS': 'Овощи и фрукты',
             # Услуги
             'CLEAN': 'Клининг', 'DRYCLEAN': 'Химчистка',
@@ -149,23 +149,23 @@ class ZerekDB:
             'PVZ': 'Пункт выдачи заказов',
             # Производство
             'SEMIFOOD': 'Полуфабрикаты', 'CONFECTION': 'Кондитер на заказ',
-            'WATER': 'Производство воды',
+            'WATERPLANT': 'Производство воды',
             # Другое
-            'TAILOR': 'Ателье', 'CYBERCLUB': 'Компьютерный клуб',
+            'TAILOR': 'Ателье', 'COMPCLUB': 'Компьютерный клуб',
             'FURNITURE': 'Мебель на заказ',
         }
         NICHE_ICONS = {
             'COFFEE': '☕', 'BAKERY': '🥐', 'DONER': '🌯',
             'PIZZA': '🍕', 'SUSHI': '🍣', 'FASTFOOD': '🍔',
-            'CANTEEN': '🍽', 'BARBER': '💈', 'NAIL': '💅',
+            'CANTEEN': '🍽', 'BARBER': '💈', 'MANICURE': '💅',
             'LASH': '👁', 'SUGARING': '✨', 'BROW': '✏',
             'MASSAGE': '💆', 'DENTAL': '🦷', 'FITNESS': '🏋',
-            'CARWASH': '🚗', 'AUTOSERVICE': '🔧', 'TIRE': '🛞',
-            'GROCERY': '🛒', 'PHARMA': '💊', 'FLOWERS': '💐',
+            'CARWASH': '🚗', 'AUTOSERVICE': '🔧', 'TIRESERVICE': '🛞',
+            'GROCERY': '🛒', 'PHARMACY': '💊', 'FLOWERS': '💐',
             'FRUITSVEGS': '🍎', 'CLEAN': '🧹', 'DRYCLEAN': '👔',
             'REPAIR_PHONE': '📱', 'KINDERGARTEN': '👶', 'PVZ': '📦',
-            'SEMIFOOD': '🥟', 'CONFECTION': '🎂', 'WATER': '💧',
-            'TAILOR': '🧵', 'CYBERCLUB': '🎮', 'FURNITURE': '🪑',
+            'SEMIFOOD': '🥟', 'CONFECTION': '🎂', 'WATERPLANT': '💧',
+            'TAILOR': '🧵', 'COMPCLUB': '🎮', 'FURNITURE': '🪑',
         }
 
         self.niche_registry = {}  # {niche_id: {name, icon, formats_count}}

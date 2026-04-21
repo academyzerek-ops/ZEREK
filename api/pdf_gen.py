@@ -151,15 +151,15 @@ NICHE_NAMES = {
     "AUTOSERVICE": "Автосервис", "BAKERY": "Пекарня", "BARBER": "Барбершоп",
     "BROW": "Брови", "CANTEEN": "Столовая", "CARWASH": "Автомойка",
     "CLEAN": "Клининг", "COFFEE": "Кофейня", "CONFECTION": "Кондитерская",
-    "CYBERCLUB": "Компьютерный клуб", "DENTAL": "Стоматология",
+    "COMPCLUB": "Компьютерный клуб", "DENTAL": "Стоматология",
     "DONER": "Донерная", "DRYCLEAN": "Химчистка", "FASTFOOD": "Фастфуд",
     "FITNESS": "Фитнес", "FLOWERS": "Цветы", "FRUITSVEGS": "Овощи и фрукты",
     "FURNITURE": "Мебель", "GROCERY": "Продукты", "KINDERGARTEN": "Детский сад",
-    "LASH": "Ресницы", "MASSAGE": "Массаж", "NAIL": "Маникюр",
-    "PHARMA": "Аптека", "PIZZA": "Пиццерия", "PVZ": "ПВЗ",
+    "LASH": "Ресницы", "MASSAGE": "Массаж", "MANICURE": "Маникюр",
+    "PHARMACY": "Аптека", "PIZZA": "Пиццерия", "PVZ": "ПВЗ",
     "REPAIR_PHONE": "Ремонт телефонов", "SEMIFOOD": "Полуфабрикаты",
     "SUGARING": "Шугаринг", "SUSHI": "Суши", "TAILOR": "Ателье",
-    "TIRE": "Шиномонтаж", "WATER": "Вода",
+    "TIRESERVICE": "Шиномонтаж", "WATERPLANT": "Вода",
 }
 
 
