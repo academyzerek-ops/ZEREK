@@ -1441,23 +1441,41 @@ def _score_breakeven(breakeven_months):
     return {'score': 0, 'label': 'Точка безубыточности', 'note': f'Окупаемость {breakeven_months} мес — слишком долго', 'months': breakeven_months}
 
 
-def _score_saturation(competitors_count, city_population, niche_id):
+def _score_saturation(competitors_count, city_population, niche_id, density_per_10k=None):
     """Насыщенность рынка через плотность конкурентов на 10K жителей.
 
-    Приоритет — поле `density_per_10k` из get_competitors (сырой float из xlsx).
+    Приоритет — `density_per_10k` (готовый float из 14_competitors.xlsx).
     Фолбэк — пересчёт через `competitors_count / (population/10000)`.
     Бенчмарк — из defaults.yaml (benchmarks.competitor_density_per_10k).
     """
-    if not competitors_count or not city_population:
-        return {'score': 2, 'label': 'Насыщенность рынка', 'note': 'Нет данных о конкурентах'}
-    density = competitors_count / (city_population / 10000)
+    density = None
+    try:
+        if density_per_10k is not None and float(density_per_10k) > 0:
+            density = float(density_per_10k)
+    except Exception:
+        density = None
+    if density is None:
+        if not competitors_count or not city_population:
+            return {'score': 2, 'label': 'Насыщенность рынка', 'note': 'Нет данных о конкурентах'}
+        density = competitors_count / (city_population / 10000)
     benchmark = BENCHMARK_COMPETITOR_DENSITY_10K
     ratio = density / benchmark if benchmark else 0
     t_low, t_mid, t_hi = SCORING_SATURATION
-    if ratio <= t_low: return {'score': 3, 'label': 'Насыщенность рынка', 'note': f'Рынок недонасыщен: {round(density,1)} конкурентов на 10K жителей', 'density': density}
-    if ratio <= t_mid: return {'score': 2, 'label': 'Насыщенность рынка', 'note': f'Норма: {round(density,1)} конкурентов на 10K', 'density': density}
-    if ratio <= t_hi:  return {'score': 1, 'label': 'Насыщенность рынка', 'note': f'Перенасыщен: {round(density,1)} конкурентов на 10K', 'density': density}
-    return {'score': 0, 'label': 'Насыщенность рынка', 'note': f'Высокая конкуренция: {round(density,1)} на 10K', 'density': density}
+    if ratio <= t_low:
+        return {'score': 3, 'label': 'Насыщенность рынка',
+                'note': f'Рынок недонасыщен: {round(density,1)} конкурентов на 10K жителей',
+                'density': density}
+    if ratio <= t_mid:
+        return {'score': 2, 'label': 'Насыщенность рынка',
+                'note': f'Норма: {round(density,1)} конкурентов на 10K',
+                'density': density}
+    if ratio <= t_hi:
+        return {'score': 1, 'label': 'Насыщенность рынка',
+                'note': f'Высокая конкуренция: {round(density,1)} конкурентов на 10K',
+                'density': density}
+    return {'score': 0, 'label': 'Насыщенность рынка',
+            'note': f'Рынок перенасыщен: {round(density,1)} на 10K',
+            'density': density}
 
 
 def _score_experience(exp):
@@ -1581,10 +1599,21 @@ def compute_block1_verdict(result, adaptive):
     profit_year = _safe_int(fin.get('profit_year1'), 0)
     breakeven_months = payback.get('месяц') or breakeven.get('месяц')
     city_pop = _safe_int(inp.get('city_population'), 0)
+    if not city_pop:
+        city_pop = _safe_int((result.get('market', {}) or {}).get('population'), 0)
     competitors_count = 0
+    density_per_10k = 0.0
     comp_block = risks_block.get('competitors') or {}
     if isinstance(comp_block, dict):
         competitors_count = _safe_int(comp_block.get('competitors_count')) or _safe_int(comp_block.get('n'))
+        density_per_10k = _safe_float(comp_block.get('density_per_10k'), 0.0)
+    # Фолбэк — из market.competitors (то же содержимое, но иной путь).
+    if not density_per_10k:
+        mkt_comp = (result.get('market', {}) or {}).get('competitors') or {}
+        if isinstance(mkt_comp, dict):
+            density_per_10k = _safe_float(mkt_comp.get('density_per_10k'), 0.0)
+            if not competitors_count:
+                competitors_count = _safe_int(mkt_comp.get('competitors_count'))
     exp = adaptive.get('experience') or ''
 
     profit_base = _safe_int((scenarios.get('base') or {}).get('прибыль_среднемес'), 0)
@@ -1597,7 +1626,8 @@ def compute_block1_verdict(result, adaptive):
         _score_capital(capital_own, capex_needed),
         _score_roi(profit_year, total_investment),
         _score_breakeven(breakeven_months),
-        _score_saturation(competitors_count, city_pop, inp.get('niche_id', '')),
+        _score_saturation(competitors_count, city_pop, inp.get('niche_id', ''),
+                          density_per_10k=density_per_10k),
         _score_experience(exp),
         _score_marketing('express'),
         _score_stress(profit_base, profit_pess),
