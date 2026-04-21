@@ -125,9 +125,12 @@ def get_cities():
 @app.get("/niches")
 def get_niches():
     if not db: raise HTTPException(503,"БД не загружена")
-    # Возвращаем ВСЕ ниши из niches.yaml с полем `available`. Фронт сам
-    # решает, скрыть ли available=false или показать с пометкой.
-    return {"niches":clean(db.get_available_niches())}
+    # Временный фильтр до обновления фронта: возвращаем только ниши
+    # с available=true. Поле `available` сохраняем в ответе, чтобы фронт
+    # мог использовать его в будущем.
+    all_niches = db.get_available_niches()
+    visible = [n for n in all_niches if n.get("available")]
+    return {"niches":clean(visible)}
 
 @app.get("/formats/{niche_id}")
 def get_formats(niche_id: str):
@@ -161,7 +164,7 @@ def quick_check(req: QCReq):
     if not db: raise HTTPException(503,f"БД не загружена: {db_error}")
     # Блокируем расчёт по недоступной нише
     if not db.is_niche_available(req.niche_id):
-        raise HTTPException(400, "Ниша пока недоступна для расчёта")
+        raise HTTPException(400, "Эта ниша пока недоступна для расчёта")
     try:
         cls = CAPEX_TO_CLS.get((req.capex_level or "").strip().lower(), req.cls)
         # v2 adaptive fields (has_license / staff_mode / staff_count / specific_answers)
@@ -292,7 +295,22 @@ def configs():
     """Возвращает config/*.yaml как JSON (niches / archetypes / locations / questionnaire).
     Используется фронтом для построения адаптивной анкеты."""
     if not db: raise HTTPException(503,"БД не загружена")
-    return clean(getattr(db, "configs", {}))
+    cfg_raw = getattr(db, "configs", {}) or {}
+    # Временный фильтр до обновления фронта: оставляем в configs.niches.niches
+    # только записи с available=true. Поле `available` остаётся внутри каждой,
+    # чтобы фронт мог использовать его в будущем. Верхнеуровневый словарь
+    # копируем, не мутируя оригинал в БД.
+    niches_section_orig = cfg_raw.get("niches") or {}
+    raw_niches = niches_section_orig.get("niches") or {}
+    filtered_niches = {
+        nid: meta for nid, meta in raw_niches.items()
+        if isinstance(meta, dict) and bool(meta.get("available", False))
+    }
+    niches_section_copy = dict(niches_section_orig)
+    niches_section_copy["niches"] = filtered_niches
+    cfg_copy = dict(cfg_raw)
+    cfg_copy["niches"] = niches_section_copy
+    return clean(cfg_copy)
 
 @app.get("/formats-v2/{niche_id}")
 def formats_v2(niche_id: str):
