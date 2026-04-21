@@ -160,6 +160,54 @@ def _safe_float(val, default=0.0):
     return float(_safe(val, default))
 
 
+def _get_canonical_format_meta(db, niche_id: str, format_id: str) -> dict:
+    """Читает канонические атрибуты формата из 08_niche_formats.xlsx.
+
+    Возвращает {capex_standard, typical_staff, masters_count, area_m2,
+    format_type, format_name}. Если запись не найдена — пустой dict.
+
+    Источник истины для (a) CAPEX-бенчмарка и (b) «эталонного» кол-ва мастеров:
+    per-niche xlsx может содержать несколько строк под одним format_id
+    (разные варианты класса), и `get_format_row` всегда берёт первую.
+    08_niche_formats.xlsx даёт один канонический ориентир.
+    """
+    try:
+        df = getattr(db, 'niches_formats_fallback', None)
+    except Exception:
+        df = None
+    if df is None or getattr(df, 'empty', True):
+        return {}
+    try:
+        rows = df[(df['niche_id'].astype(str) == niche_id)
+                  & (df['format_id'].astype(str) == format_id)]
+    except Exception:
+        return {}
+    if rows.empty:
+        return {}
+    r = rows.iloc[0]
+    ts_raw = str(r.get('typical_staff', '') or '').strip()
+    # Кол-во «мастеров» = первая группа в typical_staff (основная роль,
+    # админы/ассистенты не считаются). Формат: 'роль:N|роль2:M'.
+    masters_count = 0
+    if ts_raw and ts_raw.lower() != 'nan':
+        first = ts_raw.split('|')[0]
+        if ':' in first:
+            try:
+                masters_count = int(first.split(':', 1)[1].strip())
+            except Exception:
+                masters_count = 0
+    return {
+        'niche_id': niche_id,
+        'format_id': format_id,
+        'format_name': str(r.get('format_name', '') or ''),
+        'capex_standard': _safe_int(r.get('capex_standard'), 0),
+        'typical_staff': ts_raw if ts_raw.lower() != 'nan' else '',
+        'masters_count': masters_count,
+        'area_m2': _safe_int(r.get('area_m2'), 0),
+        'format_type': str(r.get('format_type', '') or ''),
+    }
+
+
 # ═══════════════════════════════════════════════
 # 1. ЗАГРУЗКА БАЗЫ ДАННЫХ v3
 # ═══════════════════════════════════════════════
@@ -801,6 +849,53 @@ def run_quick_check_v3(
     failure = get_failure_pattern(db, niche_id)
     permits_list = get_permits(db, niche_id)
 
+    # ── Канонический мета-формат из 08_niche_formats.xlsx ──
+    # Источник истины для capex_standard и typical_staff (masters_canon).
+    meta08 = _get_canonical_format_meta(db, niche_id, format_id)
+
+    # ── Множитель «точек/мастеров» ──
+    # qty_points из FORMATS (если >1 — пользовательское масштабирование, например
+    # 4 автомоечных бокса). Иначе — masters_canon / masters_row, чтобы исправить
+    # занижение revenue в случаях когда per-niche FINANCIALS отражает меньший
+    # staff, чем канонический 08 (например BARBER_STANDARD: per-niche row = 2
+    # барбера, 08.typical_staff = 4 барбера + 1 админ).
+    qty_points_raw = _safe_int(fmt.get('qty_points'), 1) if fmt else 1
+    headcount_row = _safe_int(staff.get('headcount'), 1) if staff else 1
+    masters_canon = meta08.get('masters_count') or 0
+    if qty_points_raw > 1:
+        seats_mult = float(qty_points_raw)
+    elif masters_canon > 0 and headcount_row > 0 and masters_canon > headcount_row:
+        seats_mult = masters_canon / max(headcount_row, 1)
+    else:
+        seats_mult = 1.0
+
+    # Применяем множитель к финансам ниши: трафик и ФОТ масштабируются, чек
+    # остаётся таким же (это цена услуги/товара, не зависит от кол-ва мастеров).
+    if seats_mult > 1.0:
+        fin = dict(fin)
+        staff = dict(staff)
+        fin['traffic_med'] = int(_safe_int(fin.get('traffic_med'), 0) * seats_mult)
+        fin['traffic_min'] = int(_safe_int(fin.get('traffic_min'), 0) * seats_mult)
+        fin['traffic_max'] = int(_safe_int(fin.get('traffic_max'), 0) * seats_mult)
+        for k in ('fot_net_min','fot_net_med','fot_net_max',
+                  'fot_full_min','fot_full_med','fot_full_max'):
+            v = _safe_int(staff.get(k), 0)
+            if v > 0:
+                staff[k] = int(v * seats_mult)
+        # Аренда: скейлим по площади 08 vs per-niche area_med, но не сильнее,
+        # чем масштаб staff (чтобы не раздуть rent выше реальности).
+        try:
+            area_row = _safe_int(fmt.get('area_med'), 0) or _safe_int(fmt.get('area_max'), 0)
+            area_canon = _safe_int(meta08.get('area_m2'), 0)
+            if area_row > 0 and area_canon > area_row:
+                area_ratio = min(area_canon / area_row, seats_mult)
+                for k in ('rent_min','rent_med','rent_max'):
+                    v = _safe_int(fin.get(k), 0)
+                    if v > 0:
+                        fin[k] = int(v * area_ratio)
+        except Exception:
+            pass
+
     # ── Ставка налога по городу ──
     tax_rate = get_city_tax_rate(db, city_id) / 100
 
@@ -940,6 +1035,7 @@ def run_quick_check_v3(
         "input": {
             "city_id": city_id,
             "city_name": city.get("Город", ""),
+            "city_population": _safe_int(city.get("Население всего (чел.)")),
             "niche_id": niche_id,
             "format_id": format_id,
             "format_name": _safe(fmt.get('format_name'), format_id),
@@ -950,6 +1046,9 @@ def run_quick_check_v3(
             "qty": qty,
             "founder_works": founder_works,
             "start_month": start_month,
+            "capex_standard": _safe_int(meta08.get('capex_standard'), 0),
+            "masters_canon": _safe_int(meta08.get('masters_count'), 0),
+            "seats_mult": round(float(seats_mult), 2),
         },
 
         "market": {
