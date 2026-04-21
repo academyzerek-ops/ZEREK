@@ -940,13 +940,20 @@ def run_quick_check_v3(
         reserve_months = 0
 
     # ── Если учредитель сам работает — корректировка ФОТ ──
+    # Вычитаем ОДНУ ставку (по факту-количеству ставок = headcount × seats_mult
+    # если seats_mult применён). Так не получится «срезать полФОТа», когда
+    # row.headcount=2 но реальный штат 4.
     staff_adjusted = dict(staff)
     if founder_works and fot_med > 0:
-        headcount = _safe_int(staff.get('headcount'), 1)
-        if headcount > 0:
-            one_salary = fot_med // headcount
-            staff_adjusted['fot_net_med'] = max(0, fot_med - one_salary)
-            staff_adjusted['fot_full_med'] = 0  # пересчитает движок
+        headcount_row = _safe_int(staff.get('headcount'), 1)
+        effective_hc = max(int(round(headcount_row * max(seats_mult, 1.0))), headcount_row, 1)
+        one_salary = fot_med // effective_hc
+        staff_adjusted['fot_net_med'] = max(0, fot_med - one_salary)
+        # fot_full сбрасываем, чтобы пересчитался через multiplier
+        if _safe_int(staff.get('fot_full_med'), 0) > 0:
+            staff_adjusted['fot_full_med'] = max(0, _safe_int(staff.get('fot_full_med'), 0) - int(one_salary * DEFAULTS['fot_multiplier']))
+        else:
+            staff_adjusted['fot_full_med'] = 0
 
     # ── Cash Flow базовый ──
     cashflow = calc_cashflow(fin, staff_adjusted, capex_total, tax_rate, start_month, 12, qty)
@@ -1625,14 +1632,36 @@ def compute_block1_verdict(result, adaptive):
         bk_pess = _safe_int(sc_pess_pb)
 
     # Ваш доход предпринимателя
+    # При `owner_plus_*` владелец закрывает одну ставку (ставка роли = ФОТ /
+    # headcount). Прибыль уже посчитана с учётом всей ФОТ; чтобы не было
+    # двойного учёта, из прибыли ВЫЧИТАЕМ эту ставку, а потом прибавляем её
+    # обратно как «role_salary» (итог: доход = ставка + остаток прибыли).
     ent_role = adaptive.get('entrepreneur_role') or 'owner_only'
-    role_salary = 0
-    if ent_role and ent_role != 'owner_only':
-        # Получим ставку роли — upper bound по FOT / headcount
-        fot_med = _safe_int(result.get('staff', {}).get('fot_net_med'))
-        role_salary = fot_med  # грубая оценка
-    ent_income_base = prof_base + role_salary
-    ent_income_pess = max(0, prof_pess + role_salary)
+    staff_block = result.get('staff', {}) or {}
+    fot_full = _safe_int(staff_block.get('fot_full_med'), 0) or _safe_int(staff_block.get('fot_net_med'), 0)
+    hc = max(
+        _safe_int(staff_block.get('headcount'), 1) or 1,
+        _safe_int(inp.get('masters_canon'), 0) or 0,
+        1,
+    )
+    role_salary = int(fot_full / hc) if fot_full and hc else 0
+    if ent_role and ent_role not in ('owner_only', 'owner_multi') and role_salary > 0:
+        ent_income_base = max(0, prof_base - role_salary) + role_salary  # = prof_base
+        ent_income_pess = max(0, prof_pess - role_salary) + role_salary
+        # Упрощённо: доход = ставка + (прибыль − ставка) = прибыль.
+        # Это корректно когда headcount покрывает владельца. В отчёте
+        # показываем ставку и остаток отдельно.
+        ent_income_base = prof_base
+        ent_income_pess = max(0, prof_pess)
+    elif ent_role == 'owner_multi':
+        # Владелец совмещает несколько ставок — добавка ~35% ФОТ сверх профита.
+        bonus = int(fot_full * 0.35)
+        ent_income_base = prof_base + bonus
+        ent_income_pess = max(0, prof_pess + bonus)
+    else:
+        # owner_only — доход = чистая прибыль.
+        ent_income_base = prof_base
+        ent_income_pess = max(0, prof_pess)
 
     main_metrics = {
         'revenue_range':        _fmt_range_kzt(rev_pess, rev_base),
@@ -2358,7 +2387,29 @@ def compute_block5_pnl(db, result, adaptive):
         archetype = (niches_cfg.get(niche_id, {}) or {}).get('archetype', '')
 
     # Базовые месячные параметры
-    fot_monthly = _safe_int(staff.get('fot_full_med'), 0) or _safe_int(staff.get('fot_net_med'), 0)
+    # ВАЖНО: result.staff уже «подрезан» в run_quick_check_v3 на одну ставку
+    # если owner_plus_* (через founder_works_eff в main.py). Здесь НЕ
+    # вычитаем повторно, иначе ФОТ уйдёт в отрицательный двойной учёт.
+    fot_monthly_full = _safe_int(staff.get('fot_full_med'), 0) or _safe_int(staff.get('fot_net_med'), 0)
+    # Эффективное число ставок: masters_canon из 08 (4 барбера), либо row.headcount
+    # с учётом seats_mult если тот применён. Это уже «полное» число, не нужно
+    # множить повторно на seats_mult.
+    row_hc = _safe_int(staff.get('headcount'), 1) or 1
+    masters_canon = _safe_int(inp.get('masters_canon'), 0) or 0
+    seats_mult_in = float(_safe_float(inp.get('seats_mult'), 1.0) or 1.0)
+    effective_hc = max(masters_canon, int(round(row_hc * max(seats_mult_in, 1.0))), row_hc, 1)
+    ent_role_id = adaptive.get('entrepreneur_role') or 'owner_only'
+    # Доля одной ставки в полном (ещё не подрезанном) ФОТ.
+    # Если ФОТ уже подрезан (owner_plus_*), восстанавливаем full
+    # по соотношению: fot_unadj = fot_adj * hc / (hc - 1).
+    if ent_role_id not in ('owner_only', 'owner_multi') and fot_monthly_full > 0 and effective_hc > 1:
+        fot_unadj = int(fot_monthly_full * effective_hc / max(effective_hc - 1, 1))
+        one_role_salary_full = int(fot_unadj / effective_hc)
+    else:
+        fot_unadj = fot_monthly_full
+        one_role_salary_full = int(fot_unadj / effective_hc) if effective_hc else 0
+    # Для PNL используем ФОТ как есть (уже корректно учитывает owner_plus_*).
+    fot_monthly = fot_monthly_full
     rent_monthly = _safe_int(fin.get('rent_month'), 0)
     opex_total = _safe_int(fin.get('opex_med'), 0)
     # marketing + прочее — делим opex
@@ -2405,26 +2456,22 @@ def compute_block5_pnl(db, result, adaptive):
         annual_roi = None  # нечего считать
 
     # Доход предпринимателя
-    ent_role_id = adaptive.get('entrepreneur_role') or 'owner_only'
+    # Ставка роли = одна позиция из ФОТ (уже вычтена выше из pnl_base.fot, так
+    # что удвоения нет: profit_monthly + role_salary_monthly = чистый доход
+    # владельца без пересечений).
     role_salary_monthly = 0
     role_breakdown = []
-    if ent_role_id != 'owner_only' and ent_role_id != 'owner_multi':
-        # Грубая оценка ставки: FOT / headcount. Фолбэк на 200K если нет данных.
-        raw_hc = (_safe_int(staff.get('headcount'), 0)
-                  or (len(staff.get('roles') or [])))
-        headcount = max(raw_hc, 1)
-        role_salary_monthly = int(fot_monthly / headcount) if fot_monthly else 0
+    if ent_role_id not in ('owner_only', 'owner_multi'):
+        role_salary_monthly = one_role_salary_full
         if role_salary_monthly == 0:
-            # fallback на типовую ставку для мастера в городе
             role_salary_monthly = 200_000
-        role_breakdown.append({'role': ent_role_id.replace('owner_plus_', ''), 'salary_monthly': role_salary_monthly})
+        role_breakdown.append({'role': ent_role_id.replace('owner_plus_', ''),
+                               'salary_monthly': role_salary_monthly})
     elif ent_role_id == 'owner_multi':
-        role_salary_monthly = max(int(fot_monthly * 0.35), 300_000)
+        role_salary_monthly = max(int(fot_monthly_full * 0.35), 300_000)
         role_breakdown.append({'role': 'multi', 'salary_monthly': role_salary_monthly})
 
     profit_monthly_base = pnl_base['net_profit'] // 12
-    # если владелец закрыл ставку — прибыль уменьшилась на эту ставку (ФОТ был меньше), но
-    # для упрощения оставим текущий расчёт и добавим ставку в доход.
     income_from_business = profit_monthly_base
     entrepreneur_income_monthly = role_salary_monthly + income_from_business
 

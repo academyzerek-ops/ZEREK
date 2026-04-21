@@ -169,9 +169,13 @@ def quick_check(req: QCReq):
         cls = CAPEX_TO_CLS.get((req.capex_level or "").strip().lower(), req.cls)
         # v2 adaptive fields (has_license / staff_mode / staff_count / specific_answers)
         # пока просто протаскиваем в ответ для трассировки, не меняя расчёт.
+        # Маппинг: entrepreneur_role = owner_plus_* → founder_works=True, чтобы
+        # движок вычел одну ставку из ФОТ и не было двойного учёта.
+        ent_role = (req.specific_answers or {}).get('entrepreneur_role', '') or ''
+        founder_works_eff = req.founder_works or ent_role.startswith('owner_plus_')
         result = run_quick_check_v3(db=db, city_id=req.city_id, niche_id=req.niche_id,
             format_id=req.format_id, cls=cls, area_m2=req.area_m2, loc_type=req.loc_type,
-            capital=req.capital or 0, qty=req.qty, founder_works=req.founder_works,
+            capital=req.capital or 0, qty=req.qty, founder_works=founder_works_eff,
             rent_override=req.rent_override, start_month=req.start_month)
         report = render_report_v4(result)
         adaptive = {
