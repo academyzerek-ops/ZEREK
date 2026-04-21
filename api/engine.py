@@ -1588,8 +1588,14 @@ def compute_block3_market(db, result, adaptive):
     city_name = inp.get('city_name', '') or inp.get('city_id', '')
     city_pop = _safe_int(inp.get('city_population'), 0)
 
-    density = (competitors_count / (city_pop / 10000)) if city_pop else 0
-    benchmark_density = 0.75
+    # Приоритет — готовый density_per_10k из xlsx (через get_competitors).
+    # Фолбэк — пересчёт competitors_count / (population / 10000).
+    density_raw = _safe_float(comp.get('density_per_10k'), 0.0)
+    if density_raw > 0:
+        density = density_raw
+    else:
+        density = (competitors_count / (city_pop / 10000)) if city_pop else 0
+    benchmark_density = BENCHMARK_RETAIL_DENSITY_10K
     saturation_pct = (density / benchmark_density * 100) if benchmark_density else 0
 
     # Цвет насыщенности
@@ -2146,18 +2152,43 @@ def compute_block9_risks(db, result, adaptive):
         try:
             with open(insight_path, 'r', encoding='utf-8') as f:
                 content = f.read()
-            # Ищем секцию рисков (простой парсинг по заголовкам)
-            m = re.search(r'#+\s*(Риски|Подводные камни|Причины провала)[\s\S]*?(?=\n#+ |\Z)', content, re.IGNORECASE)
-            if m:
+            # Ищем секции рисков по реальным заголовкам insight-файлов.
+            # Форматы: `## Финансовые риски и ловушки`, `## Красные флаги`,
+            # `## Красные флаги (когда лучше не открывать)`,
+            # `## Типичные ошибки новичков`, плюс старые «Риски», «Подводные камни»,
+            # «Причины провала». Цифровые префиксы («## 5. Операционные риски»)
+            # тоже ловятся, поскольку regex матчит имя заголовка в любом месте строки.
+            header_pat = (
+                r'#+\s*(?:\d+\.\s*)?'
+                r'(Финансовые риски и ловушки'
+                r'|Красные флаги(?:\s*\([^)]*\))?'
+                r'|Типичные ошибки новичков'
+                r'|Операционные риски'
+                r'|Риски'
+                r'|Подводные камни'
+                r'|Причины провала)'
+            )
+            section_pat = header_pat + r'[\s\S]*?(?=\n#+\s|\Z)'
+            sections = re.findall(section_pat, content, re.IGNORECASE)
+            # re.findall с одной группой возвращает список групп — нам нужен
+            # сам текст блока; возьмём финдитер.
+            risks_out_local = []
+            for m in re.finditer(section_pat, content, re.IGNORECASE):
                 section = m.group(0)
-                items = re.findall(r'(?:^|\n)[-*\d.]+\s+\*\*([^*]+)\*\*([\s\S]*?)(?=\n[-*\d.]+|\n#+|\Z)', section)
-                for title, body in items[:5]:
+                items = re.findall(
+                    r'(?:^|\n)[-*\d.]+\s+\*\*([^*]+)\*\*([\s\S]*?)(?=\n[-*\d.]+|\n#+|\Z)',
+                    section,
+                )
+                for title, body in items:
                     body_text = re.sub(r'\n\s*', ' ', body).strip()[:240]
-                    risks_out.append({
+                    risks_out_local.append({
                         'title': title.strip(),
                         'probability': 'СРЕДНЯЯ', 'impact': 'ЗАМЕТНОЕ',
                         'text': body_text, 'mitigation': '',
                     })
+                if len(risks_out_local) >= 5:
+                    break
+            risks_out = risks_out_local[:5]
         except Exception:
             pass
 
