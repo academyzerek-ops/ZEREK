@@ -588,17 +588,17 @@ p { line-height: 1.4; font-weight: 400; }
 }
 .chat-input {
   flex: 1;
-  border: none;
+  border: 1px solid rgba(80, 110, 220, 0.18);
   border-radius: var(--radius-full);
   padding: 11px 18px;
   font-size: var(--font-base);
   font-family: var(--font-family);
   outline: none;
-  background: var(--color-bg-elevated);
+  background: #161e4a;
   color: var(--color-text-primary);
   transition: background 0.15s ease;
 }
-.chat-input::placeholder { color: var(--color-text-tertiary); }
+.chat-input::placeholder { color: rgba(243, 245, 247, 0.55); }
 /* Send button — белый круг, чёрная стрелка (Threads DM style) */
 .chat-send {
   width: 36px; height: 36px;
