@@ -12,42 +12,140 @@ from typing import Optional
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "kz")
 FORMATS_DIR = os.path.join(DATA_DIR, "niches")
+CONFIG_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config")
 
 SEASON_LABELS = ["Янв","Фев","Мар","Апр","Май","Июн","Июл","Авг","Сен","Окт","Ноя","Дек"]
-MRP_2026 = 4325
-MZP_2026 = 85000
 
-# Дефолты для пустых ячеек
+
+# ─────────────────────────────────────────────────────────────────────────
+# YAML-конфиги (константы, расчётные дефолты, дефолты финмодели)
+# Загружаются один раз при импорте модуля.
+# ─────────────────────────────────────────────────────────────────────────
+
+def _load_yaml(name: str) -> dict:
+    """Безопасно читает config/{name}.yaml. Возвращает {} при ошибке."""
+    path = os.path.join(CONFIG_DIR, f"{name}.yaml")
+    if not os.path.exists(path):
+        return {}
+    try:
+        import yaml
+        with open(path, "r", encoding="utf-8") as fh:
+            return yaml.safe_load(fh) or {}
+    except Exception as e:
+        print(f"⚠️ Не удалось прочитать {path}: {e}")
+        return {}
+
+
+CONSTANTS = _load_yaml("constants")
+DEFAULTS_CFG = _load_yaml("defaults")
+FINMODEL_DEFAULTS_CFG = _load_yaml("finmodel_defaults")
+
+# Базовые константы (с fallback на старые значения на случай отсутствия yaml)
+MRP_2026 = int(CONSTANTS.get("mrp_2026", 4325))
+MZP_2026 = int(CONSTANTS.get("mzp_2026", 85000))
+NDS_RATE = float(CONSTANTS.get("nds_rate", 0.16))
+
+_OWNER = CONSTANTS.get("owner", {}) or {}
+OWNER_CLOSURE_POCKET = int(_OWNER.get("closure_pocket_kzt", 200_000))
+OWNER_GROWTH_POCKET = int(_OWNER.get("growth_pocket_kzt", 600_000))
+OWNER_SOCIAL_RATE = float(_OWNER.get("social_rate", 0.22))
+OWNER_SOCIAL_BASE_MRP = int(_OWNER.get("social_base_mrp", 50))
+FOT_MULTIPLIER = float(_OWNER.get("fot_multiplier", 1.175))
+
+_TAXES = CONSTANTS.get("taxes", {}) or {}
+DEFAULT_TAX_RATE_PCT = float(_TAXES.get("default_tax_rate_pct", 3))
+FALLBACK_TAX_RATE_PCT = float(_TAXES.get("fallback_tax_rate_pct", 4))
+
+# Дефолты для пустых ячеек per-niche xlsx (читаются из defaults.yaml)
+_QC_DEFAULTS = (DEFAULTS_CFG.get("quick_check", {}) or {}).get("financial_defaults", {}) or {}
 DEFAULTS = {
-    'cogs_pct': 0.30,
-    'margin_pct': 0.70,
-    'deposit_months': 2,
-    'loss_pct': 0.02,
-    'sez_month': 0,
-    'rampup_months': 3,
-    'rampup_start_pct': 0.50,
-    'repeat_pct': 0.40,
-    'traffic_growth_yr': 0.07,
-    'check_growth_yr': 0.08,
-    'rent_growth_yr': 0.10,
-    'fot_growth_yr': 0.08,
-    'inflation_yr': 0.10,
-    'deprec_years': 7,
-    'fot_multiplier': 1.175,  # налоги работодателя
+    'cogs_pct':          float(_QC_DEFAULTS.get('cogs_pct', 0.30)),
+    'margin_pct':        float(_QC_DEFAULTS.get('margin_pct', 0.70)),
+    'deposit_months':    int(_QC_DEFAULTS.get('deposit_months', 2)),
+    'loss_pct':          float(_QC_DEFAULTS.get('loss_pct', 0.02)),
+    'sez_month':         int(_QC_DEFAULTS.get('sez_month', 0)),
+    'rampup_months':     int(_QC_DEFAULTS.get('rampup_months', 3)),
+    'rampup_start_pct':  float(_QC_DEFAULTS.get('rampup_start_pct', 0.50)),
+    'repeat_pct':        float(_QC_DEFAULTS.get('repeat_pct', 0.40)),
+    'traffic_growth_yr': float(_QC_DEFAULTS.get('traffic_growth_yr', 0.07)),
+    'check_growth_yr':   float(_QC_DEFAULTS.get('check_growth_yr', 0.08)),
+    'rent_growth_yr':    float(_QC_DEFAULTS.get('rent_growth_yr', 0.10)),
+    'fot_growth_yr':     float(_QC_DEFAULTS.get('fot_growth_yr', 0.08)),
+    'inflation_yr':      float(_QC_DEFAULTS.get('inflation_yr', 0.10)),
+    'deprec_years':      int(_QC_DEFAULTS.get('deprec_years', 7)),
+    'fot_multiplier':    FOT_MULTIPLIER,
 }
 
-# Ценовые коэффициенты по городам (база = Актобе 1.00)
-CITY_CHECK_COEF = {
-    'almaty': 1.05, 'astana': 1.05, 'atyrau': 1.03,
-    'aktobe': 1.00, 'karaganda': 1.00, 'uralsk': 1.00,
-    'ust_kamenogorsk': 1.00, 'aktau': 1.00,
-    'shymkent': 0.97, 'pavlodar': 0.97, 'kostanay': 0.97,
-    'semey': 0.95, 'taraz': 0.95, 'petropavlovsk': 0.95, 'kyzylorda': 0.95,
-}
+# Сценарные коэффициенты (пессимист/база/оптимист/стресс)
+_SC = ((DEFAULTS_CFG.get("quick_check", {}) or {}).get("scenario_coefficients", {}) or {})
+SCENARIO_PESS   = _SC.get("pessimistic", {'traffic_k': 0.75, 'check_k': 0.90, 'rent_k': 1.00})
+SCENARIO_BASE   = _SC.get("base",        {'traffic_k': 1.00, 'check_k': 1.00, 'rent_k': 1.00})
+SCENARIO_OPT    = _SC.get("optimistic",  {'traffic_k': 1.25, 'check_k': 1.10, 'rent_k': 1.00})
+SCENARIO_STRESS = _SC.get("stress_bad",  {'traffic_k': 0.75, 'check_k': 0.90, 'rent_k': 1.20})
+
+_B7_SCALE = ((DEFAULTS_CFG.get("quick_check", {}) or {}).get("block7_scale", {}) or {})
+B7_SCALE_PESS = float(_B7_SCALE.get("pess", 0.75))
+B7_SCALE_BASE = float(_B7_SCALE.get("base", 1.00))
+B7_SCALE_OPT  = float(_B7_SCALE.get("opt",  1.25))
+
+# Пороги вердикта / скоринга
+_V = ((DEFAULTS_CFG.get("quick_check", {}) or {}).get("block1_verdict", {}) or {})
+BLOCK1_THRESHOLDS = _V.get("thresholds", [17, 12])
+_ST = ((DEFAULTS_CFG.get("quick_check", {}) or {}).get("scoring_thresholds", {}) or {})
+SCORING_CAPITAL   = _ST.get("capital_ratio", [1.2, 0.95, 0.75])
+SCORING_ROI       = _ST.get("roi", [0.45, 0.30, 0.15])
+SCORING_BREAKEVEN = _ST.get("breakeven_months", [6, 12, 18])
+SCORING_SATURATION = _ST.get("saturation_ratio", [0.6, 1.0, 1.5])
+SCORING_STRESS_DROP = _ST.get("stress_drop", [0.30, 0.50])
+SCORING_CITY_POP    = _ST.get("city_population_tiers", [150_000, 300_000])
+
+# Бенчмарки плотности
+_BM = ((DEFAULTS_CFG.get("quick_check", {}) or {}).get("benchmarks", {}) or {})
+BENCHMARK_COMPETITOR_DENSITY_10K = float(_BM.get("competitor_density_per_10k", 0.8))
+BENCHMARK_RETAIL_DENSITY_10K     = float(_BM.get("retail_density_per_10k", 0.75))
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# Города: канонический ID + маппинг из legacy → canonical + check_coef
+# ─────────────────────────────────────────────────────────────────────────
+
+def _build_city_maps():
+    """Собирает: canonical→data, legacy→canonical, canonical→check_coef."""
+    canon_to_data = {}
+    legacy_to_canon = {}
+    coef_map = {}
+    for city in CONSTANTS.get("cities", []) or []:
+        cid = city.get("id")
+        if not cid:
+            continue
+        canon_to_data[cid] = city
+        coef_map[cid] = float(city.get("check_coef", 1.00))
+        # каждый legacy_id → canonical
+        for legacy in city.get("legacy_ids", []) or []:
+            legacy_to_canon[str(legacy)] = cid
+        # сам канонический id тоже нормализуется «в себя»
+        legacy_to_canon[cid] = cid
+    return canon_to_data, legacy_to_canon, coef_map
+
+
+CITY_CANON_TO_DATA, CITY_LEGACY_TO_CANON, CITY_CHECK_COEF = _build_city_maps()
+
+
+def normalize_city_id(city_id: str) -> str:
+    """Приводит любой (legacy или canonical) city_id к канонической форме.
+
+    Если id не найден — возвращает как есть, чтобы не ломать вызывающий код.
+    """
+    if city_id is None:
+        return city_id
+    s = str(city_id).strip()
+    return CITY_LEGACY_TO_CANON.get(s, s)
+
 
 def get_city_check_coef(city_id: str) -> float:
-    """Ценовой коэффициент города. Алматы/Астана +5%, мелкие -5%."""
-    return CITY_CHECK_COEF.get(city_id, 1.00)
+    """Ценовой коэффициент города. База = 1.00 (Актобе)."""
+    canon = normalize_city_id(city_id)
+    return CITY_CHECK_COEF.get(canon, 1.00)
 
 def _safe(val, default=0):
     """Безопасное чтение — None/NaN → дефолт."""
@@ -281,29 +379,32 @@ class ZerekDB:
 # ═══════════════════════════════════════════════
 
 def get_city(db: ZerekDB, city_id: str) -> dict:
+    cid = normalize_city_id(city_id)
     if db.cities.empty or "city_id" not in db.cities.columns:
-        return {"city_id": city_id, "Город": city_id, "Население всего (чел.)": 0}
-    rows = db.cities[db.cities["city_id"] == city_id]
+        return {"city_id": cid, "Город": cid, "Население всего (чел.)": 0}
+    rows = db.cities[db.cities["city_id"] == cid]
     if rows.empty:
-        return {"city_id": city_id, "Город": city_id, "Население всего (чел.)": 0}
+        return {"city_id": cid, "Город": cid, "Население всего (чел.)": 0}
     return rows.iloc[0].to_dict()
 
 def get_city_tax_rate(db: ZerekDB, city_id: str) -> float:
+    cid = normalize_city_id(city_id)
     if db.city_tax_rates.empty:
-        return 4.0
-    rows = db.city_tax_rates[db.city_tax_rates["city_id"] == city_id]
+        return FALLBACK_TAX_RATE_PCT
+    rows = db.city_tax_rates[db.city_tax_rates["city_id"] == cid]
     if rows.empty:
-        return 4.0
-    return float(rows.iloc[0].get("ud_rate_pct", 4.0))
+        return FALLBACK_TAX_RATE_PCT
+    return float(rows.iloc[0].get("ud_rate_pct", FALLBACK_TAX_RATE_PCT))
 
 def get_rent_median(db: ZerekDB, city_id: str, loc_type: str) -> tuple:
+    cid = normalize_city_id(city_id)
     if db.rent.empty:
         return (3000, 500)
     try:
         df = db.rent
-        rows = df[(df["city_id"] == city_id) & (df["loc_type"] == loc_type)]
+        rows = df[(df["city_id"] == cid) & (df["loc_type"] == loc_type)]
         if rows.empty:
-            rows = df[df["city_id"] == city_id]
+            rows = df[df["city_id"] == cid]
         if rows.empty:
             return (3000, 500)
         r = rows.iloc[0]
@@ -312,18 +413,53 @@ def get_rent_median(db: ZerekDB, city_id: str, loc_type: str) -> tuple:
         return (3000, 500)
 
 def get_competitors(db: ZerekDB, niche_id: str, city_id: str) -> dict:
+    """Возвращает словарь с уровнем насыщения, числом конкурентов и плотностью.
+
+    Добавлены поля `competitors_count` (int, нижняя граница диапазона из xlsx)
+    и `density_per_10k` (float, сырое значение из колонки «на 10 000»), чтобы
+    Block 1 и Block 3 могли работать с числами без повторного парсинга.
+    """
+    cid = normalize_city_id(city_id)
+    fallback = {
+        "уровень": 3,
+        "сигнал": "Нет данных о конкуренции",
+        "кол_во": "н/д",
+        "competitors_count": 0,
+        "density_per_10k": 0.0,
+        "лидеры": "",
+    }
     if db.competitors.empty:
-        return {"уровень": 3, "сигнал": "Нет данных о конкуренции", "кол_во": "н/д", "лидеры": ""}
+        return fallback
     try:
-        rows = db.competitors[(db.competitors["niche_id"] == niche_id) & (db.competitors["city_id"] == city_id)]
+        rows = db.competitors[(db.competitors["niche_id"] == niche_id) & (db.competitors["city_id"] == cid)]
     except KeyError:
-        return {"уровень": 3, "сигнал": "Нет данных о конкуренции", "кол_во": "н/д", "лидеры": ""}
+        return fallback
     if rows.empty:
-        return {"уровень": 3, "сигнал": "Нет данных о конкуренции", "кол_во": "н/д", "лидеры": ""}
+        return fallback
     row = rows.iloc[0]
     sat = _safe_int(row.get("Уровень насыщения (1-5)"), 3)
     signals = {1:"🟢 Рынок свободен",2:"🟢 Есть место",3:"🟡 Нужна дифференциация",4:"🟠 Высокая конкуренция",5:"🔴 Рынок насыщен"}
-    return {"уровень": sat, "сигнал": signals.get(sat,""), "кол_во": row.get("Кол-во конкурентов (оценка)",""), "лидеры": row.get("Лидеры рынка","")}
+    # «Кол-во конкурентов (оценка)» в xlsx — обычно диапазон «20-30» или число.
+    # Берём нижнюю границу как числовое значение.
+    raw_count = row.get("Кол-во конкурентов (оценка)", "")
+    count_int = 0
+    try:
+        s = str(raw_count).strip()
+        if s and s.lower() != "nan":
+            # если «20-30» — берём «20», иначе пробуем как число
+            count_int = int(s.split("-")[0].strip()) if "-" in s else int(float(s))
+    except Exception:
+        count_int = 0
+    # «Кол-во на 10 000 жителей» — готовый float из xlsx
+    density = _safe_float(row.get("Кол-во на 10 000 жителей"), 0.0)
+    return {
+        "уровень": sat,
+        "сигнал": signals.get(sat, ""),
+        "кол_во": raw_count,
+        "competitors_count": count_int,
+        "density_per_10k": density,
+        "лидеры": row.get("Лидеры рынка", ""),
+    }
 
 def get_failure_pattern(db: ZerekDB, niche_id: str) -> dict:
     if db.failure_patterns.empty:
@@ -491,23 +627,23 @@ def calc_payback(capex_total: int, cashflow: list) -> dict:
 # ═══════════════════════════════════════════════
 # PHASE 2 — OWNER ECONOMICS
 # «В карман собственнику» + точки закрытия/роста + стресс-тест
+# Пороги и ставки — из constants.yaml (OWNER_CLOSURE_POCKET,
+# OWNER_GROWTH_POCKET, OWNER_SOCIAL_RATE, OWNER_SOCIAL_BASE_MRP).
 # ═══════════════════════════════════════════════
-
-OWNER_CLOSURE_POCKET = 200_000   # ниже зарплаты наёмного продавца — смысла вести бизнес нет
-OWNER_GROWTH_POCKET = 600_000    # 3× закрытие — уровень, с которого можно масштабироваться
 
 
 def calc_owner_social_payments(declared_monthly_base: int = None) -> int:
     """
     Обязательные соцплатежи собственника-ИП на Упрощёнке (РК 2026):
     ОПВ 10% + ОПВР 3.5% + ОСМС ~5% от 1.4 МРП + СО 3.5% ≈ 18-22% от базы.
-    По умолчанию считаем базу = 50 МРП (≈216 250 ₸) — типично для активного ИП на УСН.
-    Возвращает ₸/мес.
+    База и ставка читаются из constants.yaml (owner.social_base_mrp × МРП;
+    owner.social_rate). Возвращает ₸/мес.
     """
+    cap = MRP_2026 * OWNER_SOCIAL_BASE_MRP
     if declared_monthly_base is None:
-        declared_monthly_base = MRP_2026 * 50
-    base = min(declared_monthly_base, MRP_2026 * 50)
-    return int(base * 0.22)
+        declared_monthly_base = cap
+    base = min(declared_monthly_base, cap)
+    return int(base * OWNER_SOCIAL_RATE)
 
 
 def calc_owner_economics(fin: dict, staff: dict, tax_rate: float,
@@ -635,6 +771,9 @@ def run_quick_check_v3(
     Quick Check v3 — полный расчёт из новых шаблонов (12 листов).
     Возвращает структурированный dict для отчёта.
     """
+
+    # Нормализуем city_id на входе: legacy (ALA/ALMATY/almaty) → canonical.
+    city_id = normalize_city_id(city_id)
 
     # ── Данные из шаблона ниши ──
     fmt = db.get_format_row(niche_id, 'FORMATS', format_id, cls)
