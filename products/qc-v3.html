@@ -1264,7 +1264,13 @@ function renderBlock4Html(b4){
 
   // Метрики разные по архетипу — покажем ключевые
   if(m.avg_check){ html += '<div class="blk-row"><span>Средний чек / юнит</span><strong>'+fmt(m.avg_check)+' ₸</strong></div>'; }
-  if(m.checks_per_day){ html += '<div class="blk-row"><span>Чеков в смену</span><strong>'+m.checks_per_day+'</strong></div>'; }
+  if(m.checks_per_day){
+    var cpdLabel = m.checks_per_day_note ? ('Чеков в смену ('+m.checks_per_day_note+')') : 'Чеков в смену';
+    html += '<div class="blk-row"><span>'+cpdLabel+'</span><strong>'+m.checks_per_day+'</strong></div>';
+    if(m.max_checks_per_day){
+      html += '<div class="blk-row"><span>Максимум при 100% загрузке</span><strong>'+m.max_checks_per_day+'</strong></div>';
+    }
+  }
   if(m.load_pct){ html += '<div class="blk-row"><span>Загрузка</span><strong>'+m.load_pct+'%</strong></div>'; }
   if(m.gross_revenue_per_unit){ html += '<div class="blk-row"><span>Валовая выручка</span><strong>'+fmt(m.gross_revenue_per_unit)+' ₸/мес</strong></div>'; }
   if(m.ltv){ html += '<div class="blk-row"><span>LTV клиента</span><strong>'+fmt(m.ltv)+' ₸</strong></div>'; }

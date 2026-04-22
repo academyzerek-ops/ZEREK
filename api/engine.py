@@ -2051,6 +2051,17 @@ def compute_block4_unit_economics(db, result, adaptive, block2=None):
             'safety_margin': round(safety, 1),
             'min_load_pct': int(min_load*100),
         }
+        # Для SOLO/HOME подсвечиваем что checks_per_day = медиана при типовой
+        # загрузке, а при 100% загрузке потолок выше (физический максимум
+        # мастера на дому — 5-7 клиенток/день, по wiki-обзору маникюра).
+        if is_solo_unit:
+            metrics['checks_per_day_note'] = 'медиана'
+            # Минимум 6 — физический потолок мастера на дому (wiki-данные).
+            metrics['max_checks_per_day'] = max(
+                int(round(checks_per_day / max(load_pct, 0.01))),
+                checks_per_day + 1,
+                6,
+            )
     elif arch == 'B':  # общепит — один чек
         unit_label = 'один чек'
         food_cost = int(avg_check * cogs_pct)
