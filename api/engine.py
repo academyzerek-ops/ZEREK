@@ -2556,41 +2556,45 @@ def compute_block8_stress_test(db, result, adaptive):
     fin = result.get('financials', {}) or {}
     scenarios = result.get('scenarios', {}) or {}
     tax = result.get('tax', {}) or {}
-    base_profit_year = _safe_int((scenarios.get('base') or {}).get('прибыль_год'), 0) or _safe_int(fin.get('profit_year1'), 0) or 1
+
+    # База: ЗРЕЛЫЙ РЕЖИМ (аксиома 2.6 спеки). Берём из pnl_aggregates.mature
+    # (построен в Шаге 3-5). Это revenue × 1.0 ramp × 1.0 season — стабильное
+    # значение после выхода на мощность, БЕЗ ramp-up и сезонности.
+    mature = (result.get('pnl_aggregates') or {}).get('mature') or {}
+    rev_mature_m = _safe_int(mature.get('revenue_monthly'), 0) or 1
+    materials_mature_m = _safe_int(mature.get('materials_monthly'), 0)
+    profit_mature_m = _safe_int(mature.get('profit_monthly'), 0)
+    fixed_monthly = _safe_int(mature.get('fixed_monthly'), 0)
+    cogs_pct = _safe_float(mature.get('cogs_pct'), _safe_float(fin.get('cogs_pct'), 0.30))
+    tax_rate = _safe_float(mature.get('tax_rate'), (tax.get('rate_pct', 3) or 3) / 100)
+
+    # Для UI-совместимости публикуем ещё и средний год (из scenarios.base).
+    base_profit_year = _safe_int((scenarios.get('base') or {}).get('прибыль_год'), 0) or 1
     base_profit_month = base_profit_year // 12
 
-    # Годовая выручка базового сценария (уже с city_coef и seats_mult).
-    rev_year = _safe_int((scenarios.get('base') or {}).get('выручка_год'), 0)
-    if rev_year <= 0:
-        rev_year = _safe_int(fin.get('revenue_year1'), 0) or 1
-    cogs_pct = _safe_float(fin.get('cogs_pct'), 0.30)
-    materials_year = int(rev_year * cogs_pct)
-    tax_rate = (tax.get('rate_pct', 3) or 3) / 100
-
-    # Годовые постоянные расходы (для death_points — порога прибыльности).
-    # FOT месячный из result.staff (уже подрезан для SOLO до 0), rent месячный
-    # из fin.rent_month, маркетинг и прочие — из xlsx или фолбэк в compute_block5_pnl.
-    fot_monthly = _safe_int(result.get('staff', {}).get('fot_full_med'), 0) or \
-                  _safe_int(result.get('staff', {}).get('fot_net_med'), 0)
-    rent_monthly = _safe_int(fin.get('rent_month'), 0)
-    marketing_monthly = _safe_int(fin.get('marketing_med'), 0) or _safe_int(fin.get('marketing'), 0)
-    other_opex_monthly = _safe_int(fin.get('other_opex_med'), 0)
-    # Для STANDARD/PREMIUM, если marketing/other_opex не в xlsx — фолбэк из opex_med
-    # (как в compute_block5_pnl).
-    opex_total = _safe_int(fin.get('opex_med'), 0)
-    if marketing_monthly <= 0:
-        marketing_monthly = int(opex_total * 0.2) if opex_total else 100_000
-    if other_opex_monthly <= 0:
-        other_opex_monthly = max(0, opex_total - rent_monthly - marketing_monthly) if opex_total else 100_000
-    fixed_year = (fot_monthly + rent_monthly + marketing_monthly + other_opex_monthly) * 12
+    rev_mature_y = rev_mature_m * 12
+    materials_mature_y = materials_mature_m * 12
+    fixed_year = fixed_monthly * 12
 
     def impact_traffic(delta_pct):
+        # Трафик −X%: revenue и materials падают пропорционально; налог от
+        # новой выручки; фиксированные не меняются.
         frac = abs(delta_pct) / 100.0
-        return -int(round(frac * (rev_year * (1 - tax_rate) - materials_year)))
+        rev_new_m = rev_mature_m * (1 - frac)
+        materials_new_m = materials_mature_m * (1 - frac)
+        tax_new_m = rev_new_m * tax_rate
+        profit_new_m = rev_new_m - materials_new_m - tax_new_m - fixed_monthly
+        return -int(round((profit_mature_m - profit_new_m) * 12))
 
     def impact_avg_check(delta_pct):
+        # Чек −X%: revenue падает, materials НЕ меняются (услуг столько же),
+        # налог от новой выручки.
         frac = abs(delta_pct) / 100.0
-        return -int(round(frac * rev_year * (1 - tax_rate)))
+        rev_new_m = rev_mature_m * (1 - frac)
+        materials_new_m = materials_mature_m  # без изменений
+        tax_new_m = rev_new_m * tax_rate
+        profit_new_m = rev_new_m - materials_new_m - tax_new_m - fixed_monthly
+        return -int(round((profit_mature_m - profit_new_m) * 12))
 
     # Для Quick Check оставляем только 2 ключевых параметра: Загрузка/трафик
     # и Средний чек. ФОТ/Аренда/Маркетинг/Налог — вторичные, уходят в FinModel.
@@ -2603,14 +2607,12 @@ def compute_block8_stress_test(db, result, adaptive):
     # Порядок по величине импакта (самый отрицательный первый).
     sensitivities.sort(key=lambda x: x['impact_annual'])
 
-    # Точки смерти — «какое падение обнуляет прибыль».
-    # Для трафика: fixed_year = revenue × (1 − tax − cogs), значит critical X:
-    #   revenue × (1 − X) × (1 − tax − cogs) = fixed_year
-    #   X = 1 − fixed_year / (revenue × (1 − tax − cogs))
-    var_margin_year = rev_year * (1 - tax_rate - cogs_pct)
+    # Точки смерти считаем от зрелого режима (пороги, когда прибыль = 0).
+    # Трафик:  rev_mature_y × (1 − X) × (1 − tax − cogs) = fixed_year
+    # Чек:     rev_mature_y × (1 − X) × (1 − tax) − materials_mature_y = fixed_year
+    var_margin_year = rev_mature_y * (1 - tax_rate - cogs_pct)
     traffic_threshold_pct = int(round((1 - fixed_year / var_margin_year) * 100)) if var_margin_year > 0 else 0
-    # Для чека: revenue × (1 − X) × (1 − tax) − materials − fixed = 0
-    check_margin_year = rev_year * (1 - tax_rate) - materials_year
+    check_margin_year = rev_mature_y * (1 - tax_rate) - materials_mature_y
     check_threshold_pct = int(round((1 - fixed_year / check_margin_year) * 100)) if check_margin_year > 0 else 0
     death_points = [
         {'param':'Загрузка / трафик',
