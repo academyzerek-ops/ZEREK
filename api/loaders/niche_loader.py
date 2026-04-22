@@ -491,25 +491,230 @@ def get_inflation_niche(db, niche_id):
 # ═══════════════════════════════════════════════════════════════════════
 
 
-def load_niche_yaml(niche_id):
-    """Читает `data/niches/{NICHE}_data.yaml` → dict.
+_YAML_CACHE = {}
 
-    Возвращает `None` если файла нет или YAML пустой. Подключается
-    как приоритетный источник в Этапе 7 (YAML-first). До Этапа 7
-    функция готова, но не вызывается — xlsx остаётся каноном.
+
+def load_niche_yaml(niche_id):
+    """Читает `data/niches/{NICHE}_data.yaml` → dict (с in-process кешем).
+
+    Возвращает `None` если файла нет или YAML пустой.
+    Подключается как приоритетный источник в Этапе 7 (YAML-first).
     """
+    if niche_id in _YAML_CACHE:
+        return _YAML_CACHE[niche_id]
     path = os.path.join(_REPO_ROOT, "data", "niches", f"{niche_id}_data.yaml")
     if not os.path.exists(path):
         _log.info("niche YAML not found for %s at %s", niche_id, path)
+        _YAML_CACHE[niche_id] = None
         return None
     try:
         import yaml
     except ImportError:
         _log.warning("PyYAML not installed; cannot load %s", path)
+        _YAML_CACHE[niche_id] = None
         return None
     try:
         with open(path, "r", encoding="utf-8") as fh:
-            return yaml.safe_load(fh) or None
+            data = yaml.safe_load(fh) or None
+        _YAML_CACHE[niche_id] = data
+        return data
     except Exception as e:
         _log.warning("failed to parse %s: %s", path, e)
+        _YAML_CACHE[niche_id] = None
         return None
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# YAML-first: маппер YAML format → flat-dict совместимый с xlsx-row
+# ═══════════════════════════════════════════════════════════════════════
+
+
+def _find_yaml_format(yaml_data, format_id, niche_id):
+    """Находит YAML-секцию формата по format_id.
+
+    format_id из xlsx — 'MANICURE_HOME', 'MANICURE_SOLO' и т.п.
+    YAML id — 'HOME', 'SOLO', 'STANDARD', 'PREMIUM'.
+    """
+    if not yaml_data or not yaml_data.get("formats"):
+        return None
+    short = format_id.replace(f"{niche_id}_", "", 1)
+    for f in yaml_data["formats"]:
+        if f.get("id") == short:
+            return f
+    return None
+
+
+# Маппинг YAML.tax_regime.type → русское название для xlsx-совместимости
+_TAX_REGIME_MAP = {
+    "ip_simplified": "Упрощёнка ИП",
+    "too_simplified": "Упрощёнка ТОО",
+    "too_oer": "ОУР ТОО",
+}
+
+
+def _map_yaml_to_financials(yaml_format, yaml_data):
+    """YAML format → плоский dict совместимый с xlsx FINANCIALS row.
+
+    Возвращает только non-None поля чтобы merge не затирал xlsx значения
+    которых нет в YAML (например loss_pct, sez_month, utilities).
+    """
+    avg = yaml_format.get("avg_check", {}) or {}
+    traffic = yaml_format.get("traffic", {}) or {}
+    market = yaml_format.get("marketing", {}) or {}
+    other = yaml_format.get("other_opex", {}) or {}
+    ramp = yaml_format.get("ramp_up", {}) or {}
+    seasonality = (yaml_data or {}).get("seasonality", {}) or {}
+    pattern = seasonality.get("pattern") or []
+
+    max_per_day = traffic.get("max_per_day")
+    load_min = traffic.get("load_min")
+    load_med = traffic.get("load_med")
+    load_max = traffic.get("load_max")
+
+    out = {
+        "check_min": avg.get("min"),
+        "check_med": avg.get("med"),
+        "check_max": avg.get("max"),
+        "cogs_pct": yaml_format.get("cogs_pct"),
+        "marketing":     market.get("med_monthly"),
+        "marketing_min": market.get("min_monthly"),
+        "marketing_med": market.get("med_monthly"),
+        "marketing_max": market.get("max_monthly"),
+        "other_opex_min": other.get("min_monthly"),
+        "other_opex_med": other.get("med_monthly"),
+        "other_opex_max": other.get("max_monthly"),
+        "rampup_months": ramp.get("months"),
+        "rampup_start_pct": ramp.get("start_pct"),
+    }
+    # Traffic — берём только если в YAML есть max_per_day + соответствующий load
+    if max_per_day is not None:
+        if load_min is not None:
+            out["traffic_min"] = int(round(max_per_day * load_min))
+        if load_med is not None:
+            out["traffic_med"] = int(round(max_per_day * load_med))
+        if load_max is not None:
+            out["traffic_max"] = int(round(max_per_day * load_max))
+    # Сезонность s01..s12 — если pattern в YAML заполнен (12 значений)
+    if len(pattern) == 12:
+        for i in range(12):
+            out[f"s{i+1:02d}"] = pattern[i]
+    # Drop None
+    return {k: v for k, v in out.items() if v is not None}
+
+
+def _map_yaml_to_staff(yaml_format):
+    """YAML format → плоский dict совместимый с xlsx STAFF row."""
+    fot = yaml_format.get("fot", {}) or {}
+    monthly = fot.get("monthly", 0)
+    headcount = fot.get("headcount", 0)
+    employer_pct = fot.get("employer_taxes_pct", 0.175)
+    out = {
+        "fot_net_med": monthly,
+        "fot_full_med": int(monthly * (1 + employer_pct)) if monthly else 0,
+        "headcount": headcount,
+    }
+    return out
+
+
+def _map_yaml_to_capex(yaml_format):
+    """YAML format → плоский dict совместимый с xlsx CAPEX row."""
+    capex = yaml_format.get("capex", {}) or {}
+    items = capex.get("items", {}) or {}
+    base = capex.get("base_total", 0)
+
+    def item_med(key):
+        return (items.get(key, {}) or {}).get("med", 0)
+
+    out = {
+        "capex_min": int(base * 0.8) if base else 0,
+        "capex_med": base,
+        "capex_max": int(base * 1.3) if base else 0,
+        "equipment":      item_med("equipment"),
+        "renovation":     item_med("renovation"),
+        "furniture":      item_med("furniture"),
+        "first_stock":    item_med("first_stock"),
+        "permits_sez":    item_med("permits"),
+        "working_cap_3m": item_med("working_capital"),
+        "marketing":      item_med("marketing_start"),
+        "deposit":        item_med("deposit"),
+        "legal":          item_med("legal"),
+    }
+    return {k: v for k, v in out.items() if v}  # drop zero/empty
+
+
+def _map_yaml_to_formats(yaml_format):
+    """YAML format → плоский dict совместимый с xlsx FORMATS row."""
+    out = {
+        "format_name": yaml_format.get("label_ru", ""),
+        "training_required": bool(
+            (yaml_format.get("capex", {}) or {}).get("training", {}).get("required", False)
+        ),
+    }
+    rent = yaml_format.get("rent", {}) or {}
+    if rent.get("area_m2"):
+        out["area_med"] = rent["area_m2"]
+    return {k: v for k, v in out.items() if v not in (None, "")}
+
+
+def _map_yaml_to_taxes(yaml_format):
+    """YAML format → плоский dict совместимый с xlsx TAXES row."""
+    tax = yaml_format.get("tax_regime", {}) or {}
+    return {
+        "tax_regime": _TAX_REGIME_MAP.get(tax.get("type"), "Упрощёнка"),
+    }
+
+
+_SHEET_MAPPERS = {
+    "FINANCIALS": _map_yaml_to_financials,
+    "STAFF":      lambda fmt, _data: _map_yaml_to_staff(fmt),
+    "CAPEX":      lambda fmt, _data: _map_yaml_to_capex(fmt),
+    "FORMATS":    lambda fmt, _data: _map_yaml_to_formats(fmt),
+    "TAXES":      lambda fmt, _data: _map_yaml_to_taxes(fmt),
+}
+
+
+# Форматы где xlsx — канон (баseline регрессии). YAML-overlay не применяется.
+# В Этапе 7 это только MANICURE_HOME (откалиброван за 7 раундов и в baseline).
+_YAML_SKIP_FORMATS = {"MANICURE_HOME"}
+
+
+def overlay_yaml_on_xlsx(xlsx_row, niche_id, sheet, format_id, cls=None):
+    """Накладывает YAML значения на xlsx-row для ниш с YAML-источником.
+
+    Стратегия:
+    - Не-MANICURE → xlsx как есть.
+    - MANICURE_HOME → xlsx как есть (baseline регрессии, калиброван 7 раундов).
+    - Остальные MANICURE форматы (SOLO/STANDARD/PREMIUM) → YAML-overlay
+      поверх xlsx (xlsx часто NaN или некалиброван для этих форматов).
+
+    Возвращает merged dict.
+    """
+    if niche_id != "MANICURE":
+        return xlsx_row
+    if format_id in _YAML_SKIP_FORMATS:
+        return xlsx_row
+
+    yaml_data = load_niche_yaml(niche_id)
+    if not yaml_data:
+        return xlsx_row
+
+    yaml_format = _find_yaml_format(yaml_data, format_id, niche_id)
+    if not yaml_format:
+        return xlsx_row
+
+    mapper = _SHEET_MAPPERS.get(sheet)
+    if not mapper:
+        return xlsx_row
+
+    yaml_row = mapper(yaml_format, yaml_data)
+    if not yaml_row:
+        return xlsx_row
+
+    merged = dict(xlsx_row) if xlsx_row else {}
+    for k, v in yaml_row.items():
+        merged[k] = v
+    # Гарантируем format_id и class в результирующем dict (нужны движку)
+    merged.setdefault("format_id", format_id)
+    if cls and "class" not in merged:
+        merged["class"] = cls
+    return merged

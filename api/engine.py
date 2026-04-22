@@ -1310,6 +1310,31 @@ def _load_yaml_configs_on(self):
 ZerekDB._load_yaml_configs = _load_yaml_configs_on
 
 
+# ═══════════════════════════════════════════════════════════════════════
+# YAML overlay для get_format_row (Этап 7 рефакторинга)
+#
+# Для MANICURE — после xlsx-чтения накладываем YAML значения из
+# data/niches/MANICURE_data.yaml. MANICURE_HOME пропускается (xlsx
+# калиброван за 7 раундов и в baseline регрессии). Остальные форматы
+# (SOLO/STANDARD/PREMIUM) получают YAML-overlay чтобы открыть ранее
+# недоступные расчёты (xlsx часто NaN для marketing_med/other_opex_med).
+# ═══════════════════════════════════════════════════════════════════════
+
+_original_get_format_row = ZerekDB.get_format_row
+
+
+def _get_format_row_with_yaml_overlay(self, niche_id: str, sheet: str,
+                                       format_id: str, cls: str) -> dict:
+    xlsx_row = _original_get_format_row(self, niche_id, sheet, format_id, cls)
+    if niche_id != "MANICURE":
+        return xlsx_row
+    from loaders.niche_loader import overlay_yaml_on_xlsx
+    return overlay_yaml_on_xlsx(xlsx_row, niche_id, sheet, format_id, cls)
+
+
+ZerekDB.get_format_row = _get_format_row_with_yaml_overlay
+
+
 # ───────────────────────────────────────────────────────────────────────────
 # v1.0 spec — formats from 08_niche_formats.xlsx with extended fields
 # ───────────────────────────────────────────────────────────────────────────

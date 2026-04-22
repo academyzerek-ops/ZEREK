@@ -45,9 +45,9 @@ formats:
     needs_location: false               # не нужна аренда
 
     avg_check:
-      min: 4500
-      med: 5250
-      max: 7500
+      min: 3500                         # синхронизировано с xlsx baseline (Этап 7)
+      med: 5000                         # совпадает с wiki: "3 кл/день × 5000 = 300К"
+      max: 6500
       currency: KZT
 
     traffic:
