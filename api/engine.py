@@ -1472,13 +1472,18 @@ def _score_capital(capital_own, capex_needed):
             'gap_kzt': int(capex_needed - capital_own)}
 
 
-def _score_roi(profit_year, total_investment):
+def _score_roi(profit_year, total_investment, is_solo=False):
     """Скоринг годового ROI.
 
+    - is_solo=True (HOME/SOLO форматы) → ROI не применим, полный балл 3/3
+      с пояснением. Self-employed зарабатывает трудом, не капиталом.
     - total_investment < 500K → 1 балл «недостаточно данных».
     - roi > 3.0 (300%) → sanity-cap: ROI=300%, 1 балл «проверьте капитал».
     - пороги из defaults.yaml (SCORING_ROI = [hi, mid, lo] = [0.45, 0.30, 0.15]).
     """
+    if is_solo:
+        return {'score': 3, 'label': 'ROI годовой',
+                'note': 'ROI не применим для формата self-employed'}
     if not total_investment or total_investment < 500_000:
         return {'score': 1, 'label': 'ROI годовой',
                 'note': 'Недостаточно данных о капитале'}
@@ -1718,9 +1723,13 @@ def compute_block1_verdict(result, adaptive):
     format_class = inp.get('class') or inp.get('cls') or ''
     format_id = inp.get('format_id', '')
 
+    format_id_upper = (format_id or '').upper()
+    is_solo_fmt_b1 = bool(inp.get('founder_works')) and (
+        format_id_upper.endswith('_HOME') or format_id_upper.endswith('_SOLO')
+    )
     scoring_items = [
         _score_capital(capital_own, capex_needed),
-        _score_roi(profit_year, total_investment),
+        _score_roi(profit_year, total_investment, is_solo=is_solo_fmt_b1),
         _score_breakeven(breakeven_months),
         _score_saturation(competitors_count, city_pop, inp.get('niche_id', ''),
                           density_per_10k=density_per_10k),
@@ -2605,7 +2614,25 @@ def compute_block5_pnl(db, result, adaptive):
             v = _safe_int(capex_block.get(k), 0)
             if v >= 500_000:
                 total_investment = v; break
-    if total_investment < 500_000:
+    # SOLO-формат (HOME/SOLO суффикс + founder_works): ROI как метрика не
+    # применим (капитал одноразовый на оборудование, доход — это труд мастера).
+    # Вместо ROI показываем окупаемость стартовых затрат в месяцах.
+    format_id_upper = (inp.get('format_id') or '').upper()
+    is_solo_fmt = bool(inp.get('founder_works')) and (
+        format_id_upper.endswith('_HOME') or format_id_upper.endswith('_SOLO')
+    )
+
+    payback_months = None
+    if is_solo_fmt:
+        annual_roi = None
+        # Окупаемость = стартовый капитал / средняя чистая прибыль в месяц.
+        # capex_block.total включает working_cap + депозит (правильный
+        # знаменатель payback). См. calc_payback в run_quick_check_v3.
+        startup_total = _safe_int(capex_block.get('total'), 0) or total_investment
+        monthly_profit = pnl_base['net_profit'] / 12 if pnl_base.get('net_profit') else 0
+        if monthly_profit > 0 and startup_total > 0:
+            payback_months = int(round(startup_total / monthly_profit))
+    elif total_investment < 500_000:
         annual_roi = None  # нечего считать
     else:
         raw_roi = _safe_div(pnl_base['net_profit'], total_investment)
@@ -2646,6 +2673,8 @@ def compute_block5_pnl(db, result, adaptive):
             'net':       net_margin,
         },
         'annual_roi': annual_roi,
+        'solo_mode': is_solo_fmt,
+        'payback_months': payback_months,
         'total_investment': total_investment,
         'entrepreneur_income': {
             'role_salary_monthly': role_salary_monthly,

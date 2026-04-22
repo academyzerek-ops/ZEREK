@@ -1066,15 +1066,22 @@ function renderBlock5Html(b5){
     '</tbody></table>';
 
   var m = b5.margins || {};
-  var roiVal = b5.annual_roi != null ? fmtPct(b5.annual_roi) : '—';
   var mults = '<div class="b5-mults">' +
     multCard('Маржа валовая', fmtPct(m.gross), 'после материалов') +
     multCard('Маржа операц.', fmtPct(m.operating), 'после всех OPEX') +
-    multCard('Маржа чистая', fmtPct(m.net), 'после налога') +
-    '<div class="b5-mult b5-roi"><div class="b5-mult-label">ROI годовой</div>' +
+    multCard('Маржа чистая', fmtPct(m.net), 'после налога');
+  if(b5.solo_mode){
+    var pb = b5.payback_months != null ? b5.payback_months + ' мес' : '—';
+    mults += '<div class="b5-mult b5-roi"><div class="b5-mult-label">Окупаемость</div>' +
+      '<div class="b5-mult-val">'+pb+'</div>' +
+      '<div class="b5-mult-sub">стартовых затрат</div></div>';
+  } else {
+    var roiVal = b5.annual_roi != null ? fmtPct(b5.annual_roi) : '—';
+    mults += '<div class="b5-mult b5-roi"><div class="b5-mult-label">ROI годовой</div>' +
       '<div class="b5-mult-val">'+roiVal+'</div>' +
-      '<div class="b5-mult-sub">на стартовый капитал</div></div>' +
-  '</div>';
+      '<div class="b5-mult-sub">на стартовый капитал</div></div>';
+  }
+  mults += '</div>';
 
   var inc = b5.entrepreneur_income || {};
   var incRows = '';
