@@ -836,18 +836,19 @@ function renderResult(result){
   if(!result){ return showResultError('Пустой ответ от API.'); }
 
   // Порядок блоков: сначала данные (паспорт → рынок → юнит-эко → P&L →
-  // капитал → траектория → стресс → риски), затем светофор-вердикт (block1)
-  // и следующие шаги (block10). Клиент сначала читает цифры, потом видит вывод.
+  // траектория/сезонность → стресс → риски → капитал), затем итоговый
+  // светофор-вердикт (block1) и следующие шаги / апсейл (block10).
+  // Клиент сначала читает все цифры, потом видит вывод.
   if(result.block1){
     var html = '';
     if(result.block2)  html += renderBlock2Html(result.block2);
     if(result.block3)  html += renderBlock3Html(result.block3);
     if(result.block4)  html += renderBlock4Html(result.block4);
     if(result.block5)  html += renderBlock5Html(result.block5);
-    if(result.block6)  html += renderBlock6Html(result.block6);
     if(result.block7)  html += renderBlock7Html(result.block7);
     if(result.block8)  html += renderBlock8Html(result.block8);
     if(result.block9)  html += renderBlock9Html(result.block9);
+    if(result.block6)  html += renderBlock6Html(result.block6);
     html += renderBlock1Html(result.block1);
     if(result.block10) html += renderBlock10Html(result.block10);
     $('result-screen').innerHTML = html;
