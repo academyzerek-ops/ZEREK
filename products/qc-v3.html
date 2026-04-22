@@ -304,6 +304,7 @@ h2{font-size:22px;margin-bottom:6px}
 .unit-row-amount{font-family:var(--mono);font-weight:700;color:var(--text);white-space:nowrap}
 .unit-row-bar{height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden;margin-left:44px}
 .unit-row-bar-inner{height:100%;border-radius:3px}
+.unit-breakeven-note{font-size:12px;color:var(--text-2);line-height:1.4;margin-top:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border-radius:6px}
 
 /* CAPEX-строка — двустрочная, чтобы длинные суммы (150 000) не обрезались. */
 .capex-row{display:flex;flex-direction:column;gap:6px;padding:8px 0;border-bottom:0.5px solid var(--surface-2)}
@@ -1329,7 +1330,8 @@ function renderBlock4Html(b4){
   html += '<div class="blk-hdr2">Точка безубыточности</div>' +
     (m.breakeven_label ? '<div class="blk-row"><span>Минимум</span><strong>'+escapeHtml(m.breakeven_label)+'</strong></div>' : '') +
     (m.planned_label   ? '<div class="blk-row"><span>Планируется</span><strong>'+escapeHtml(m.planned_label)+'</strong></div>' : '') +
-    (m.safety_margin   ? '<div class="blk-row"><span>Запас прочности</span><strong>×'+m.safety_margin+'</strong></div>' : '');
+    (m.safety_margin   ? '<div class="blk-row"><span>Запас прочности</span><strong>×'+m.safety_margin+'</strong></div>' : '') +
+    (m.breakeven_label ? '<div class="unit-breakeven-note">Это минимум услуг в месяц, чтобы покрыть все расходы и выйти в ноль. Всё, что больше — ваша прибыль.</div>' : '');
 
   return html + '</div>';
 }
