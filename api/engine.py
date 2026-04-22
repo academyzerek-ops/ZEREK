@@ -2804,8 +2804,12 @@ def compute_block5_pnl(db, result, adaptive):
 # План действий / условия / альтернативы по вердикту + CTA upsell
 # ═══════════════════════════════════════════════
 
-def _green_action_plan(block2, block1):
-    """4 недельных блока чек-листа для Green."""
+def _green_action_plan(block2, block1, adaptive=None, result=None):
+    """4 недельных блока чек-листа для Green.
+    Если в специфической анкете experience=none и у ниши training_required=True
+    (бьюти-сфера), в начало добавляется «Неделя 1-4: Обучение и практика»,
+    остальные недели сдвигаются на +4.
+    """
     fin = (block2 or {}).get('finance', {})
     capex = fin.get('capex_needed') or 0
     capex_equipment = int(capex * 0.40)
@@ -2884,6 +2888,33 @@ def _green_action_plan(block2, block1):
             'Еженедельный контроль unit-экономики (выручка/чек/COGS)',
         ],
     })
+
+    # Новичок в бьюти-нише (training_required + experience=none):
+    # обучение 4 недели идёт первым блоком, остальные недели сдвигаются.
+    training_required = bool(((result or {}).get('input') or {}).get('training_required'))
+    experience = ((adaptive or {}).get('experience') or '').lower()
+    if training_required and experience == 'none':
+        shift = 4
+        for block in plan:
+            wr = block.get('week_range', '')
+            if wr == 'Запуск':
+                block['week_range'] = f'{shift+9}-{shift+10}'
+            elif '-' in wr:
+                a, b = wr.split('-')
+                try:
+                    block['week_range'] = f'{int(a)+shift}-{int(b)+shift}'
+                except ValueError:
+                    pass
+        plan.insert(0, {
+            'week_range': '1-4',
+            'title': 'Обучение и практика',
+            'actions': [
+                'Выбрать школу / курсы по нише',
+                'Пройти базовый курс (для маникюра — гель-лак + укрепление)',
+                'Практика на моделях (бесплатно / со скидкой)',
+                'Собрать первичное портфолио для Instagram',
+            ],
+        })
 
     return plan
 
@@ -3048,7 +3079,7 @@ def compute_block10_next_steps(db, result, adaptive, block1=None, block2=None):
     }
 
     if color == 'green':
-        out['action_plan'] = _green_action_plan(block2, block1)
+        out['action_plan'] = _green_action_plan(block2, block1, adaptive=adaptive, result=result)
         out['headline_rus'] = '✅ Ваша идея реалистична. Можете входить.'
         out['cta_buttons'] = [
             {'label_rus': 'Купить Финансовую модель — 9 000 ₸', 'action': 'buy_finmodel'},
