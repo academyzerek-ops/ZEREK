@@ -978,30 +978,21 @@ def _dependencies_for(deps_df, qid: str) -> list:
 # ═══════════════════════════════════════════════
 
 def _fmt_range_kzt(low, high):
-    """Форматирует диапазон в 'X–Y тыс/млн ₸' для главных цифр."""
-    if low is None or high is None:
-        return '—'
-    if low == high:
-        return _fmt_kzt(low)
-    return f"{_fmt_kzt_short(low)}–{_fmt_kzt_short(high)}"
+    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
+    from renderers.quick_check_renderer import _fmt_range_kzt as _fn
+    return _fn(low, high)
+
 
 def _fmt_kzt(v):
-    if v is None: return '—'
-    v = int(v)
-    if abs(v) >= 1_000_000:
-        return f"{v/1_000_000:.1f} млн ₸".replace('.0 млн','  млн').rstrip().replace('.',',')
-    if abs(v) >= 1_000:
-        return f"{v//1_000} тыс ₸"
-    return f"{v} ₸"
+    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
+    from renderers.quick_check_renderer import _fmt_kzt as _fn
+    return _fn(v)
+
 
 def _fmt_kzt_short(v):
-    if v is None: return '—'
-    v = int(v)
-    if abs(v) >= 1_000_000:
-        return f"{v/1_000_000:.1f}".rstrip('0').rstrip('.') + ' млн'
-    if abs(v) >= 1_000:
-        return f"{v//1_000} тыс"
-    return f"{v}"
+    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
+    from renderers.quick_check_renderer import _fmt_kzt_short as _fn
+    return _fn(v)
 
 
 def _score_capital(capital_own, capex_needed):
@@ -1244,234 +1235,53 @@ def compute_block10_next_steps(db, result, adaptive, block1=None, block2=None):
 # ═══════════════════════════════════════════════
 
 def _parse_typical_staff(staff_str):
-    """'барбер:4|администратор:1' → [{role,count}]."""
-    out = []
-    if not staff_str: return out
-    for chunk in str(staff_str).split('|'):
-        if ':' in chunk:
-            role, count = chunk.split(':', 1)
-            try:
-                out.append({'role': role.strip(), 'count': int(count.strip())})
-            except Exception:
-                pass
-    return out
+    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
+    from renderers.quick_check_renderer import _parse_typical_staff as _fn
+    return _fn(staff_str)
 
 
 def _split_staff_into_groups(staff_list):
-    """Делит на masters/assistants. Мастер = первая роль; админы/помощники/ассистенты/курьеры — ассистенты."""
-    if not staff_list:
-        return {'masters': [], 'assistants': []}
-    assistant_keywords = ['администратор','админ','помощник','ассистент','курьер','уборщик','грумер','консультант','методист','водитель','диспетчер','механик']
-    masters, assistants = [], []
-    for s in staff_list:
-        role = s.get('role', '').lower()
-        if any(kw in role for kw in assistant_keywords):
-            assistants.append(s)
-        else:
-            masters.append(s)
-    # если все попали в ассистенты, первую группу считаем мастерами
-    if not masters and assistants:
-        masters = [assistants.pop(0)]
-    return {'masters': masters, 'assistants': assistants}
+    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
+    from renderers.quick_check_renderer import _split_staff_into_groups as _fn
+    return _fn(staff_list)
 
 
 def _subtract_entrepreneur_role(staff_list, role_name):
-    """Вычитает одну ставку указанной роли. role_name = 'барбер' / 'администратор' etc."""
-    if not role_name or role_name == 'multi':
-        return staff_list
-    out = []
-    subtracted = False
-    for s in staff_list:
-        if not subtracted and s.get('role', '').lower() == role_name.lower() and s.get('count', 0) > 0:
-            new_count = s['count'] - 1
-            if new_count > 0:
-                out.append({'role': s['role'], 'count': new_count})
-            subtracted = True
-        else:
-            out.append(dict(s))
-    return out
+    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
+    from renderers.quick_check_renderer import _subtract_entrepreneur_role as _fn
+    return _fn(staff_list, role_name)
 
 
 def _entrepreneur_role_text(role_id, staff_list):
-    """owner_only / owner_plus_{role} / owner_multi → (label, description)."""
-    if not role_id or role_id == 'owner_only':
-        total = sum(s.get('count', 0) for s in staff_list)
-        return {
-            'label_rus': 'Только владелец',
-            'description_rus': f'Нанимаю всех {total} сотрудников. Не работаю операционно.',
-            'subtract_role': None,
-        }
-    if role_id == 'owner_multi':
-        return {
-            'label_rus': 'Владелец на нескольких позициях',
-            'description_rus': 'Вы закрываете 2+ ставки. Детализация штата — в финмодели.',
-            'subtract_role': 'multi',
-        }
-    if role_id.startswith('owner_plus_'):
-        role = role_id[len('owner_plus_'):]
-        return {
-            'label_rus': f'Владелец + {role}',
-            'description_rus': f'Вы закрываете 1 ставку {role}',
-            'subtract_role': role,
-        }
-    return {'label_rus': role_id, 'description_rus': '', 'subtract_role': None}
+    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
+    from renderers.quick_check_renderer import _entrepreneur_role_text as _fn
+    return _fn(role_id, staff_list)
 
 
 def _payroll_label(pt):
-    return {
-        'salary': 'Оклад (фиксированная зарплата)',
-        'piece':  'Сдельно / процент с выручки',
-        'mixed':  'Смешанно (оклад + %)',
-    }.get(pt, '—')
+    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
+    from renderers.quick_check_renderer import _payroll_label as _fn
+    return _fn(pt)
 
 
 def _experience_label(exp):
-    return {
-        'none':        'Нет опыта — открываю с нуля',
-        'some':        '1–2 года опыта в найме',
-        'experienced': '3+ лет опыта / был свой бизнес',
-    }.get(exp, '—')
+    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
+    from renderers.quick_check_renderer import _experience_label as _fn
+    return _fn(exp)
 
 
 def _format_location(city_name, location_type, location_line, format_type, configs_locations):
-    """Собирает строку локации: «Город · Район · Линия» или спец.формулировки."""
-    # Спец-случаи по format_type
-    if format_type == 'HOME':
-        return f'{city_name} · На дому у мастера' if city_name else 'На дому у мастера'
-    if format_type == 'MOBILE':
-        return f'{city_name} · Выездной формат / доставка' if city_name else 'Выездной формат / доставка'
-    if format_type == 'SOLO' or location_type == 'rent_in_salon':
-        return f'Аренда в салоне{("  ·  " + city_name) if city_name else ""}'
-    if format_type == 'HIGHWAY':
-        return f'{city_name} · Трасса / промзона' if city_name else 'Трасса / промзона'
-    if format_type == 'PRODUCTION':
-        return f'{city_name} · Промзона / своё здание' if city_name else 'Промзона / своё здание'
-
-    loc_rus = ''
-    if configs_locations and location_type:
-        meta = configs_locations.get(location_type, {}) or {}
-        loc_rus = meta.get('label_rus', location_type)
-
-    parts = []
-    if city_name: parts.append(city_name)
-    if loc_rus: parts.append(loc_rus)
-    if location_line in ('line_1', 'line_2'):
-        parts.append('1-я линия' if location_line == 'line_1' else '2-я линия')
-    return ' · '.join(parts) if parts else '—'
+    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
+    from renderers.quick_check_renderer import _format_location as _fn
+    return _fn(city_name, location_type, location_line, format_type, configs_locations)
 
 
 def compute_block2_passport(db, result, adaptive):
-    """Собирает Блок 2 — «Паспорт бизнеса»: что именно оценивается."""
-    adaptive = adaptive or {}
-    inp = result.get('input', {}) or {}
-    niche_id = inp.get('niche_id') or ''
-    format_id = inp.get('format_id') or ''
+    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
+    from renderers.quick_check_renderer import compute_block2_passport as _fn
+    return _fn(db, result, adaptive)
 
-    configs = getattr(db, 'configs', {}) or {}
-    niches_cfg = (configs.get('niches', {}) or {}).get('niches', {}) or {}
-    locations_cfg = (configs.get('locations', {}) or {}).get('locations', {}) or {}
 
-    niche_meta = niches_cfg.get(niche_id, {}) or {}
-    niche_icon = niche_meta.get('icon', '📋')
-    niche_name_rus = niche_meta.get('name_rus', niche_id)
-
-    # Формат — из 08_niche_formats.xlsx
-    formats = _formats_from_fallback_xlsx(db, niche_id)
-    fm = next((f for f in formats if f.get('format_id') == format_id), {})
-    format_name_rus = fm.get('format_name', format_id)
-    class_level = (fm.get('class', '') or '').strip().lower()
-    area_m2 = _safe_int(fm.get('area_m2'), 0)
-    # format_type — из xlsx (если нет, дефолт STANDARD)
-    format_type = ''
-    df_fb = getattr(db, 'niches_formats_fallback', pd.DataFrame())
-    if df_fb is not None and not df_fb.empty and 'format_type' in df_fb.columns:
-        row = df_fb[(df_fb['niche_id'].astype(str) == niche_id) & (df_fb['format_id'].astype(str) == format_id)]
-        if not row.empty:
-            format_type = str(row.iloc[0].get('format_type', '') or '').strip()
-    if not format_type:
-        format_type = 'STANDARD'
-
-    # Штат из xlsx
-    typical_staff_raw = ''
-    if df_fb is not None and not df_fb.empty and 'typical_staff' in df_fb.columns:
-        row = df_fb[(df_fb['niche_id'].astype(str) == niche_id) & (df_fb['format_id'].astype(str) == format_id)]
-        if not row.empty:
-            typical_staff_raw = str(row.iloc[0].get('typical_staff', '') or '').strip()
-    staff_list = _parse_typical_staff(typical_staff_raw)
-    staff_groups = _split_staff_into_groups(staff_list)
-
-    # Роль предпринимателя — из adaptive
-    ent_role_id = adaptive.get('entrepreneur_role') or 'owner_only'
-    ent = _entrepreneur_role_text(ent_role_id, staff_list)
-    staff_after = _subtract_entrepreneur_role(staff_list, ent['subtract_role'])
-    staff_after_groups = _split_staff_into_groups(staff_after)
-
-    # Локация
-    city_name = inp.get('city_name', '') or ''
-    loc_type = inp.get('loc_type', '') or adaptive.get('loc_type', '')
-    loc_line = adaptive.get('location_line', '')
-    location_rus = _format_location(city_name, loc_type, loc_line, format_type, locations_cfg)
-
-    # Финансы
-    capex_block = result.get('capex', {}) or {}
-    capex_needed = _safe_int(capex_block.get('capex_med')) or _safe_int(capex_block.get('capex_total'))
-    # fallback на format.capex_standard если движок 0
-    if capex_needed < 500_000:
-        capex_needed = _safe_int(fm.get('capex_standard'), 0) or capex_needed
-    capital_own = _safe_int(adaptive.get('capital_own')) if adaptive.get('capital_own') else None
-
-    if capital_own is None:
-        capital_diff_status = 'not_specified'
-        capital_diff = None
-        capital_diff_pct = None
-    else:
-        capital_diff = capital_own - capex_needed
-        capital_diff_pct = (capital_diff / capex_needed) if capex_needed else 0
-        if capital_diff_pct >= 0.05:
-            capital_diff_status = 'surplus'
-        elif capital_diff_pct >= -0.05:
-            capital_diff_status = 'match'
-        elif capital_diff_pct >= -0.30:
-            capital_diff_status = 'deficit'
-        else:
-            capital_diff_status = 'critical_deficit'
-
-    return {
-        'niche_id': niche_id,
-        'niche_name_rus': niche_name_rus,
-        'niche_icon': niche_icon,
-        'format_id': format_id,
-        'format_name_rus': format_name_rus,
-        'class_level_rus': class_level or 'стандарт',
-        'area_m2': area_m2 if area_m2 > 0 and format_type not in ('HOME','SOLO','MOBILE') else 0,
-        'area_visible': area_m2 > 0 and format_type not in ('HOME','SOLO'),
-        'location_rus': location_rus,
-        'format_type': format_type,
-        'is_solo': format_type in ('SOLO', 'HOME') or not staff_list,
-        'typical_staff': {
-            'masters':    staff_groups['masters'],
-            'assistants': staff_groups['assistants'],
-            'total':      sum(s.get('count', 0) for s in staff_list),
-        },
-        'staff_after_entrepreneur': {
-            'masters':    staff_after_groups['masters'],
-            'assistants': staff_after_groups['assistants'],
-            'total':      sum(s.get('count', 0) for s in staff_after),
-        },
-        'entrepreneur_role': {
-            'id': ent_role_id,
-            'label_rus': ent['label_rus'],
-            'description_rus': ent['description_rus'],
-        },
-        'finance': {
-            'capital_own': capital_own,
-            'capex_needed': capex_needed,
-            'capital_diff': capital_diff,
-            'capital_diff_status': capital_diff_status,
-        },
-        'payroll_type_rus': _payroll_label(adaptive.get('payroll_type')),
-        'experience_rus': _experience_label(adaptive.get('experience')),
-    }
 
 
 def _load_yaml_configs_on(self):
