@@ -193,8 +193,10 @@ h2{font-size:22px;margin-bottom:6px}
 .b5-table col.b5-col-sc{width:22%}
 .b5-table thead th{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-3);padding:8px 4px;text-align:right;white-space:nowrap}
 .b5-table thead th:first-child{text-align:left}
-.b5-table td{padding:7px 4px;border-bottom:0.5px solid var(--surface-2);text-align:right;font-family:var(--mono);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.b5-table td:first-child{text-align:left;font-family:var(--sans);font-weight:500;color:var(--text-2);white-space:normal;overflow:visible}
+.b5-table td{padding:7px 6px;border-bottom:0.5px solid var(--surface-2);text-align:right;font-family:var(--mono);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.b5-table td:first-child{text-align:left;font-family:var(--sans);font-weight:500;color:var(--text-2);white-space:normal;overflow:visible;border-left:none !important}
+/* Вертикальные разделители между 3 сценарными колонками (Пессим./База/Оптим.) */
+.b5-table td:nth-child(n+2), .b5-table th:nth-child(n+2){border-left:1px solid var(--surface-2)}
 .b5-row-rev td{color:var(--green)}
 .b5-row-cost td{color:var(--text-2)}
 .b5-row-cost td:first-child{color:var(--text-2)}
