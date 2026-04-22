@@ -683,13 +683,9 @@ def get_city(db: ZerekDB, city_id: str) -> dict:
     return _fn(db, city_id)
 
 def get_city_tax_rate(db: ZerekDB, city_id: str) -> float:
-    cid = normalize_city_id(city_id)
-    if db.city_tax_rates.empty:
-        return FALLBACK_TAX_RATE_PCT
-    rows = db.city_tax_rates[db.city_tax_rates["city_id"] == cid]
-    if rows.empty:
-        return FALLBACK_TAX_RATE_PCT
-    return float(rows.iloc[0].get("ud_rate_pct", FALLBACK_TAX_RATE_PCT))
+    """Thin wrapper → loaders/tax_loader (Этап 2 рефакторинга)."""
+    from loaders.tax_loader import get_city_tax_rate as _fn
+    return _fn(db, city_id)
 
 def get_rent_median(db: ZerekDB, city_id: str, loc_type: str) -> tuple:
     cid = normalize_city_id(city_id)
