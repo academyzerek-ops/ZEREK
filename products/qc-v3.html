@@ -733,7 +733,7 @@ RENDERERS.payroll = function(root){
   var html = '<div class="step">' +
     '<div class="step-kicker">Оплата труда</div>' +
     '<h2>Как платите сотрудникам?</h2>' +
-    '<div class="step-desc">Суммы рассчитаются по бенчмаркам ZEREK.</div>' +
+    '<div class="step-desc">Суммы рассчитаются по средним данным ZEREK.</div>' +
     (sug ? '<div class="step-note">Типовой выбор для этой ниши: <strong>'+escapeHtml(sug.label)+'</strong></div>' : '') +
     '<div class="radio-group">';
   opts.forEach(function(o){
@@ -1032,7 +1032,7 @@ function renderBlock2Html(b2){
   if(status === 'critical_deficit'){
     finRows += '<div class="b2-critical-note"><strong>⚠️ Критичный дефицит капитала.</strong> Рассмотрите альтернативный формат или дополнительное финансирование.</div>';
   } else if(fin.capital_own == null){
-    finRows += '<div class="b2-match-note">Капитал не указан — оценка рассчитана по бенчмарку формата.</div>';
+    finRows += '<div class="b2-match-note">Капитал не указан — оценка рассчитана по средним данным для такого бизнеса в РК.</div>';
   }
 
   return '<div class="b2-section">' +
@@ -1237,7 +1237,7 @@ function renderBlock3Html(b3){
     '<div class="blk-row"><span>На 10 000 жителей</span><strong>'+s.density_city+'</strong></div>' +
     '<div class="blk-row"><span>Средняя плотность по РК</span><strong>'+s.density_benchmark+'</strong></div>' +
     '<div style="margin:14px 0 6px"><div class="bar-row-fill" style="height:12px"><div class="bar-row-fill-inner" style="width:'+satPct+'%;background:'+barColor(s.color)+'"></div></div></div>' +
-    '<div style="text-align:right;font-size:11px;color:var(--text-3)">'+s.pct_of_benchmark+'% от бенчмарка по РК</div>' +
+    '<div style="text-align:right;font-size:11px;color:var(--text-3)">'+s.pct_of_benchmark+'% от средних данных по РК</div>' +
     '<div class="blk-note" style="margin-top:10px"><span class="blk-pill '+(s.color||'yellow')+'">'+ (s.color==='green'?'Недонасыщен':s.color==='yellow'?'Норма':s.color==='orange'?'Перенасыщен':'Критично') +'</span> '+escapeHtml(s.text_rus||'')+'</div>';
   if(b3.competitors_list && b3.competitors_list.length){
     html += '<div class="blk-hdr2">Топ конкуренты</div>';
@@ -1333,7 +1333,7 @@ function renderBlock6Html(b6){
     else if(b6.diff_status === 'critical_deficit'){ diffLabel = fmt(Math.abs(b6.diff)) + ' ₸ дефицит (критичный)'; diffClass = 'red'; }
     html += '<div class="blk-row"><span>Разница</span><span class="blk-pill '+diffClass+'">'+escapeHtml(diffLabel)+'</span></div>';
   } else {
-    html += '<div class="blk-note">Капитал не указан — бюджет рассчитан по бенчмарку.</div>';
+    html += '<div class="blk-note">Капитал не указан — бюджет рассчитан по средним данным по РК.</div>';
   }
 
   if((b6.actions||[]).length){

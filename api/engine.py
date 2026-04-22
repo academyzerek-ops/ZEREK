@@ -1473,27 +1473,27 @@ def _score_capital(capital_own, capex_needed):
     - capital < capex*0.75 → 0 баллов «критический дефицит»
     """
     if not capex_needed:
-        return {'score': 1, 'label': 'Капитал vs бенчмарк',
-                'note': 'Нет данных по CAPEX бенчмарку'}
+        return {'score': 1, 'label': 'Капитал vs ориентир',
+                'note': 'Нет данных по ориентиру стартовых вложений'}
     if capital_own is None or capital_own == 0:
-        return {'score': 2, 'label': 'Капитал vs бенчмарк',
-                'note': f'Капитал не указан — расчёт условный. Бенчмарк CAPEX {int(capex_needed):,} ₸.'.replace(',', ' ')}
+        return {'score': 2, 'label': 'Капитал vs ориентир',
+                'note': f'Капитал не указан — расчёт условный. Ориентир стартовых вложений: {int(capex_needed):,} ₸.'.replace(',', ' ')}
     ratio = capital_own / capex_needed
     t_excel, t_match, t_low = SCORING_CAPITAL  # пороги: профицит / норма / терпимо
     if ratio >= t_excel:
-        return {'score': 3, 'label': 'Капитал vs бенчмарк',
-                'note': f'Капитал с запасом: на {int((ratio-1)*100)}% выше бенчмарка',
+        return {'score': 3, 'label': 'Капитал vs ориентир',
+                'note': f'Капитал с запасом: на {int((ratio-1)*100)}% выше ориентира',
                 'ratio': ratio}
     if ratio >= t_match:
-        return {'score': 2, 'label': 'Капитал vs бенчмарк',
-                'note': 'Капитал соответствует бенчмарку',
+        return {'score': 2, 'label': 'Капитал vs ориентир',
+                'note': 'Капитал соответствует ориентиру',
                 'ratio': ratio}
     if ratio >= t_low:
-        return {'score': 1, 'label': 'Капитал vs бенчмарк',
+        return {'score': 1, 'label': 'Капитал vs ориентир',
                 'note': f'Капитал на грани: дефицит {int((1-ratio)*100)}%',
                 'ratio': ratio,
                 'gap_kzt': int(capex_needed - capital_own)}
-    return {'score': 0, 'label': 'Капитал vs бенчмарк',
+    return {'score': 0, 'label': 'Капитал vs ориентир',
             'note': f'Критический дефицит капитала: {int((1-ratio)*100)}%',
             'ratio': ratio,
             'gap_kzt': int(capex_needed - capital_own)}
@@ -1658,7 +1658,7 @@ def _strength_text(p):
 def _risk_text(p, context):
     """Тезис для риска — с конкретной рекомендацией."""
     label = p.get('label', '')
-    if label == 'Капитал vs бенчмарк':
+    if label == 'Капитал vs ориентир':
         gap = p.get('gap_kzt')
         if gap:
             return f'Дефицит капитала {_fmt_kzt(gap)} — найдите дополнительное финансирование или урежьте формат.'
@@ -3008,7 +3008,7 @@ def _yellow_conditions(block1, block2):
     conditions = []
     for w in weak:
         label = w.get('label', '')
-        if label == 'Капитал vs бенчмарк':
+        if label == 'Капитал vs ориентир':
             gap = -(fin.get('capital_diff') or 0)
             if gap <= 0:
                 # капитал достаточен (дефицита нет) — условие не про деньги
