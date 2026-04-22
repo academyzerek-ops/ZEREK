@@ -10,14 +10,8 @@
 
 Извлечено из engine.py в Этапе 3 рефакторинга.
 
-NOTE (команда Ноа Этапа 3): просила убрать `death_points` полностью.
-Пока оставляем — удаление меняет JSON-структуру, что ломает регрессию.
-Решение — в Этапе 8 (cleanup) вместе с обновлением baseline.
-
-Также включает legacy `calc_stress_test` (3 сценария через owner_economics) —
-используется в run_quick_check_v3 для result.owner_economics.stress_test.
-Дублирует логику Block 8 через другой путь; на фронт не рендерится.
-Кандидат на удаление в Этапе 8.
+В Этапе 8 (cleanup) удалены:
+- death_points (Ноа решение Этапа 3, см. OQ-O — baseline обновлён)
 """
 import logging
 import os
@@ -97,20 +91,6 @@ def compute_block8_stress_test(result):
     ]
     sensitivities.sort(key=lambda x: x["impact_annual"])
 
-    # Точки смерти (пороги, когда прибыль = 0).
-    var_margin_year = rev_mature_y * (1 - tax_rate - cogs_pct)
-    traffic_threshold_pct = int(round((1 - fixed_year / var_margin_year) * 100)) if var_margin_year > 0 else 0
-    check_margin_year = rev_mature_y * (1 - tax_rate) - materials_mature_y
-    check_threshold_pct = int(round((1 - fixed_year / check_margin_year) * 100)) if check_margin_year > 0 else 0
-    death_points = [
-        {"param": "Загрузка / трафик",
-         "threshold": (f"падение на >{traffic_threshold_pct}% ведёт в минус"
-                       if traffic_threshold_pct > 0 else "—")},
-        {"param": "Средний чек",
-         "threshold": (f"падение на >{check_threshold_pct}% ведёт в минус"
-                       if check_threshold_pct > 0 else "—")},
-    ]
-
     critical = sensitivities[0]
 
     recommendations_by_param = {
@@ -136,7 +116,6 @@ def compute_block8_stress_test(result):
         "base_profit_month": base_profit_month,
         "base_profit_year": base_profit_year,
         "sensitivities": sensitivities,
-        "death_points": death_points,  # NOTE: Этап 8 может убрать (Noa request)
         "critical_param": critical,
         "recommendations": recs,
     }

@@ -68,8 +68,7 @@ def test_critical_param_is_traffic_for_solo():
     assert b8["critical_param"]["param"] == "Загрузка / трафик"
 
 
-def test_death_points_present():
-    """death_points пока есть (пока не удалены per Noa request, Stage 8)."""
+def test_death_points_removed():
+    """death_points удалены в Этапе 8 (per Noa OQ-O)."""
     b8 = compute_block8_stress_test(MANICURE_HOME_RESULT)
-    assert "death_points" in b8
-    assert len(b8["death_points"]) == 2
+    assert "death_points" not in b8
