@@ -187,11 +187,14 @@ h2{font-size:22px;margin-bottom:6px}
 /* ─── BLOCK 5 — P&L ЗА ГОД ─── */
 .b5-section{padding:18px 16px;background:var(--surface);border-radius:var(--radius-lg);margin-bottom:12px}
 .b5-title{font-size:11px;font-weight:700;letter-spacing:0.12em;color:var(--text-3);text-transform:uppercase;margin-bottom:14px}
-.b5-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:10px}
-.b5-table thead th{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-3);padding:8px 4px;text-align:right}
+.b5-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:10px;table-layout:fixed}
+/* Первая колонка (метка строки) чуть шире, 3 сценария — ровно одинаковые. */
+.b5-table col.b5-col-label{width:34%}
+.b5-table col.b5-col-sc{width:22%}
+.b5-table thead th{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-3);padding:8px 4px;text-align:right;white-space:nowrap}
 .b5-table thead th:first-child{text-align:left}
-.b5-table td{padding:7px 4px;border-bottom:0.5px solid var(--surface-2);text-align:right;font-family:var(--mono);font-weight:600}
-.b5-table td:first-child{text-align:left;font-family:var(--sans);font-weight:500;color:var(--text-2)}
+.b5-table td{padding:7px 4px;border-bottom:0.5px solid var(--surface-2);text-align:right;font-family:var(--mono);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.b5-table td:first-child{text-align:left;font-family:var(--sans);font-weight:500;color:var(--text-2);white-space:normal;overflow:visible}
 .b5-row-rev td{color:var(--green)}
 .b5-row-cost td{color:var(--text-2)}
 .b5-row-cost td:first-child{color:var(--text-2)}
@@ -1051,7 +1054,8 @@ function renderBlock5Html(b5){
   var cogsLabel = b5.cogs_label_rus || 'Материалы';
 
   var table = '<table class="b5-table">' +
-    '<thead><tr><th></th><th>Пессимист</th><th>База</th><th>Оптимист</th></tr></thead>' +
+    '<colgroup><col class="b5-col-label"><col class="b5-col-sc"><col class="b5-col-sc"><col class="b5-col-sc"></colgroup>' +
+    '<thead><tr><th></th><th>Пессим.</th><th>База</th><th>Оптим.</th></tr></thead>' +
     '<tbody>' +
       '<tr class="b5-row-rev"><td>Выручка</td><td>'+fmtM(pess.revenue)+'</td><td>'+fmtM(base.revenue)+'</td><td>'+fmtM(opt.revenue)+'</td></tr>' +
       '<tr class="b5-row-cost"><td>– ФОТ</td><td>'+fmtM(pess.fot)+'</td><td>'+fmtM(base.fot)+'</td><td>'+fmtM(opt.fot)+'</td></tr>' +
