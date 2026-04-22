@@ -835,9 +835,11 @@ function renderResult(result){
   $('cta-wrap').style.display = 'none';
   if(!result){ return showResultError('Пустой ответ от API.'); }
 
-  // 10 блоков отчёта по спецификации.
+  // Порядок блоков: сначала данные (паспорт → рынок → юнит-эко → P&L →
+  // капитал → траектория → стресс → риски), затем светофор-вердикт (block1)
+  // и следующие шаги (block10). Клиент сначала читает цифры, потом видит вывод.
   if(result.block1){
-    var html = renderBlock1Html(result.block1);
+    var html = '';
     if(result.block2)  html += renderBlock2Html(result.block2);
     if(result.block3)  html += renderBlock3Html(result.block3);
     if(result.block4)  html += renderBlock4Html(result.block4);
@@ -846,6 +848,7 @@ function renderResult(result){
     if(result.block7)  html += renderBlock7Html(result.block7);
     if(result.block8)  html += renderBlock8Html(result.block8);
     if(result.block9)  html += renderBlock9Html(result.block9);
+    html += renderBlock1Html(result.block1);
     if(result.block10) html += renderBlock10Html(result.block10);
     $('result-screen').innerHTML = html;
     return;
