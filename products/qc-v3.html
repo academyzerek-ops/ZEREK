@@ -1024,15 +1024,12 @@ function renderBlock2Html(b2){
     finRows += '<div class="b2-match-note">Капитал не указан — оценка рассчитана по бенчмарку формата.</div>';
   }
 
-  var confirm = '<div class="b2-confirm">📋 Всё верно? Если параметр выше ошибочный — пройдите оценку заново, это сэкономит время.</div>';
-
   return '<div class="b2-section">' +
       '<div class="b2-title">Паспорт вашего бизнеса</div>' +
       nicheBlock + metaRows +
     '</div>' +
     '<div class="b2-section">' + staffBlock + '</div>' +
-    '<div class="b2-section"><div class="b2-title">Финансовые параметры</div>' + finRows + '</div>' +
-    confirm;
+    '<div class="b2-section"><div class="b2-title">Финансовые параметры</div>' + finRows + '</div>';
 }
 
 function staffRowHtml(count, role){
