@@ -2403,9 +2403,11 @@ def compute_block8_stress_test(db, result, adaptive):
 
     # Для Quick Check оставляем только 2 ключевых параметра: Загрузка/трафик
     # и Средний чек. ФОТ/Аренда/Маркетинг/Налог — вторичные, уходят в FinModel.
+    # Разные проценты: трафик падает быстрее (-20%, сезонность/конкуренция),
+    # чек медленнее (-15%, ценовая стабильность).
     sensitivities = [
         {'param':'Загрузка / трафик', 'change':-20, 'impact_pct': impact(new_rev=base_rev*0.80, new_cogs=base_cogs*0.80)},
-        {'param':'Средний чек',        'change':-20, 'impact_pct': impact(new_rev=base_rev*0.80, new_cogs=base_cogs*0.80)},
+        {'param':'Средний чек',        'change':-15, 'impact_pct': impact(new_rev=base_rev*0.85, new_cogs=base_cogs*0.85)},
     ]
     # Порядок по абсолютному импакту
     sensitivities.sort(key=lambda x: x['impact_pct'])
