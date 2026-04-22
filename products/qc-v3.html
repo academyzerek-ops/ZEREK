@@ -1207,6 +1207,13 @@ function renderBlock10Html(b10){
 /* ─── Block 3 — Рынок и конкуренты ─── */
 function renderBlock3Html(b3){
   if(!b3) return '';
+  // HOME-форматы: 2GIS и агрегаторы не отражают рынок мастеров на дому.
+  // Показываем короткую заметку про Instagram/TikTok, без баров плотности.
+  if(b3.type === 'home_market_note'){
+    return '<div class="blk"><div class="blk-h">Рынок и конкуренты</div>' +
+      '<div class="blk-note">' + escapeHtml(b3.message || '') + '</div>' +
+    '</div>';
+  }
   var s = b3.saturation || {};
   var af = b3.affordability || {};
   var satPct = Math.min(s.pct_of_benchmark || 0, 200);

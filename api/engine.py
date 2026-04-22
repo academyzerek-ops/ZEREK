@@ -1881,6 +1881,18 @@ def compute_block3_market(db, result, adaptive):
     risks = result.get('risks', {}) or {}
     comp = risks.get('competitors') or {}
 
+    # HOME-форматы: 2GIS и агрегаторы не отражают реального рынка мастеров
+    # на дому (точки не публичные). Показываем ориентир, а не нули.
+    format_id_up = (inp.get('format_id') or '').upper()
+    if format_id_up.endswith('_HOME'):
+        return {
+            'type': 'home_market_note',
+            'message': ('Для мастера на дому конкуренция формируется в '
+                        'Instagram и TikTok. 2GIS и агрегаторы не отражают '
+                        'реального рынка домашних мастеров. Ищите конкурентов '
+                        'через хэштеги Instagram по вашему городу и району.'),
+        }
+
     competitors_count = _safe_int(comp.get('competitors_count')) or _safe_int(comp.get('n')) or 0
     city_name = inp.get('city_name', '') or inp.get('city_id', '')
     city_pop = _safe_int(inp.get('city_population'), 0)
