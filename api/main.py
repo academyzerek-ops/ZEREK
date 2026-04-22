@@ -165,159 +165,29 @@ CAPEX_TO_CLS = {"эконом":"Эконом","стандарт":"Стандар
 
 @app.post("/quick-check")
 def quick_check(req: QCReq):
-    if not db: raise HTTPException(503,f"БД не загружена: {db_error}")
-    # Блокируем расчёт по недоступной нише
-    if not db.is_niche_available(req.niche_id):
-        raise HTTPException(400, "Эта ниша пока недоступна для расчёта")
-    # start_month обязателен (1..12) — влияет на прогноз первого года
-    # (first_year_chart) и на средние годовые метрики (ramp + сезонность).
-    if req.start_month is None:
-        raise HTTPException(400, "Укажите месяц планируемого старта (start_month ∈ 1..12). Это влияет на прогноз первого года.")
-    if not isinstance(req.start_month, int) or req.start_month < 1 or req.start_month > 12:
-        raise HTTPException(400, f"start_month должен быть 1..12, получен: {req.start_month}")
+    """Quick Check 5 000 ₸ — фасад над QuickCheckCalculator.
+
+    Этап 4 рефакторинга: вся логика валидации, нормализации HOME/SOLO,
+    инъекции pnl_aggregates и overlay блоков 1-10 переехала в
+    api/calculators/quick_check.py. main.py только обёртка для FastAPI.
+
+    R-1 (pnl_aggregates injection) и R-6 (HOME/SOLO patches) закрыты.
+    """
+    if not db:
+        raise HTTPException(503, f"БД не загружена: {db_error}")
     try:
-        cls = CAPEX_TO_CLS.get((req.capex_level or "").strip().lower(), req.cls)
-        # Валидация HOME/SOLO: в xlsx FINANCIALS должны быть явно заданы
-        # marketing_med и other_opex_med — иначе движок раньше падал на
-        # фолбэк 100К/мес, что давало нереалистичные цифры для мастера
-        # на дому (см. ZEREK_QuickCheck_Calculation_Spec.md Р-2, 7.1).
-        _fmt_up = (req.format_id or '').upper()
-        if _fmt_up.endswith('_HOME') or _fmt_up.endswith('_SOLO'):
-            _fin_row = db.get_format_row(req.niche_id, 'FINANCIALS', req.format_id, cls) or {}
-            _mk = _fin_row.get('marketing_med') or _fin_row.get('marketing')
-            _ox = _fin_row.get('other_opex_med')
-            if not _mk or not _ox:
-                raise HTTPException(
-                    400,
-                    f"Ниша {req.niche_id} / формат {req.format_id} не откалибрована: "
-                    f"в FINANCIALS должны быть заданы marketing_med и other_opex_med. "
-                    f"Сейчас: marketing_med={_fin_row.get('marketing_med')}, "
-                    f"other_opex_med={_fin_row.get('other_opex_med')}."
-                )
-        # v2 adaptive fields (has_license / staff_mode / staff_count / specific_answers)
-        # пока просто протаскиваем в ответ для трассировки, не меняя расчёт.
-        # Маппинг: entrepreneur_role = owner_plus_* → founder_works=True, чтобы
-        # движок вычел одну ставку из ФОТ и не было двойного учёта.
-        ent_role = (req.specific_answers or {}).get('entrepreneur_role', '') or ''
-        # HOME/SOLO форматы по определению — self-employed: мастер и есть
-        # предприниматель. Принудительно включаем founder_works и дефолтим
-        # entrepreneur_role, чтобы ФОТ подрезался и «Ваш доход» не показывал
-        # «0 (не работаю операционно)».
-        fmt_id_upper = (req.format_id or '').upper()
-        is_solo_format = fmt_id_upper.endswith('_HOME') or fmt_id_upper.endswith('_SOLO')
-        if is_solo_format:
-            if not ent_role or ent_role == 'owner_only':
-                ent_role = 'owner_plus_master'
-                sa = dict(req.specific_answers or {})
-                sa['entrepreneur_role'] = 'owner_plus_master'
-                req.specific_answers = sa
-            founder_works_eff = True
-        else:
-            founder_works_eff = req.founder_works or ent_role.startswith('owner_plus_')
-        result = run_quick_check_v3(db=db, city_id=req.city_id, niche_id=req.niche_id,
-            format_id=req.format_id, cls=cls, area_m2=req.area_m2, loc_type=req.loc_type,
-            capital=req.capital or 0, qty=req.qty, founder_works=founder_works_eff,
-            rent_override=req.rent_override, start_month=req.start_month)
-        # Шаги 3-5 спеки: единые агрегаты P&L (зрелый режим + средний год).
-        # Кладём в result['pnl_aggregates'] — потребители: Block 5, Block 8,
-        # compute_unified_payback_months.
-        result['pnl_aggregates'] = compute_pnl_aggregates(result)
-        report = render_report_v4(result)
-        adaptive = {
-            "has_license": req.has_license,
-            "staff_mode": req.staff_mode,
-            "staff_count": req.staff_count,
-            "specific_answers": req.specific_answers,
-        }
-        # Block 1 — Вердикт (главная страница отчёта). Передаём specific_answers
-        # из v1.0 анкеты, чтобы достать experience / entrepreneur_role / capital_own.
-        try:
-            block1_inputs = dict(req.specific_answers or {})
-            block1_inputs.update({
-                'has_license': req.has_license,
-                'staff_mode': req.staff_mode,
-                'staff_count': req.staff_count,
-            })
-            block1 = compute_block1_verdict(result, block1_inputs)
-            if isinstance(report, dict):
-                report['block1'] = block1
-        except Exception as e:
-            import traceback; traceback.print_exc()
-            # не блокируем ответ если блок 1 упал
-            pass
-        # Block 2 — Паспорт бизнеса
-        block2_obj = None
-        try:
-            block2_inputs = dict(req.specific_answers or {})
-            block2_inputs['loc_type'] = req.loc_type
-            block2_obj = compute_block2_passport(db, result, block2_inputs)
-            if isinstance(report, dict):
-                report['block2'] = block2_obj
-        except Exception as e:
-            import traceback; traceback.print_exc()
-            pass
-        # Block 3 — Рынок и конкуренты
-        try:
-            report['block3'] = compute_block3_market(db, result, block1_inputs)
-        except Exception:
-            import traceback; traceback.print_exc()
-        # Block 4 — Юнит-экономика
-        try:
-            report['block4'] = compute_block4_unit_economics(db, result, block1_inputs, block2=block2_obj)
-        except Exception:
-            import traceback; traceback.print_exc()
-        # Block 5 — P&L за год
-        try:
-            report['block5'] = compute_block5_pnl(db, result, block1_inputs)
-            # Персонализированный прогноз первых 12 месяцев (часть 3 раунда):
-            # revenue × ramp × season по каждому месяцу, с календарной
-            # привязкой от start_month, + narrative про сезон старта.
-            # Кладём в block5.first_year_chart, чтобы фронт мог найти
-            # рядом с P&L.
-            report['block5']['first_year_chart'] = compute_first_year_chart(result)
-        except Exception:
-            import traceback; traceback.print_exc()
-        # Block 6 — Стартовый капитал
-        try:
-            report['block6'] = compute_block6_capital(db, result, block1_inputs, block2=block2_obj)
-        except Exception:
-            import traceback; traceback.print_exc()
-        # Block Season — сезонность выручки (заменяет Block 7 траекторию
-        # в Quick Check; траектория доступна в FinModel как раньше).
-        try:
-            report['block_season'] = compute_block_season(db, result, block1_inputs)
-        except Exception:
-            import traceback; traceback.print_exc()
-        # Block 8 — Стресс-тест
-        try:
-            report['block8'] = compute_block8_stress_test(db, result, block1_inputs)
-        except Exception:
-            import traceback; traceback.print_exc()
-        # Block 9 — Риски ниши
-        try:
-            report['block9'] = compute_block9_risks(db, result, block1_inputs)
-        except Exception:
-            import traceback; traceback.print_exc()
-        # Block 10 — Следующие шаги
-        try:
-            block1_obj = report.get('block1') if isinstance(report, dict) else None
-            block10 = compute_block10_next_steps(db, result, block1_inputs,
-                                                 block1=block1_obj, block2=block2_obj)
-            if isinstance(report, dict):
-                report['block10'] = block10
-        except Exception:
-            import traceback; traceback.print_exc()
-        # Вставим v1-адаптивные поля если пришли
-        if any(v is not None for v in adaptive.values()):
-            if isinstance(report, dict):
-                report.setdefault("user_inputs", {}).update({k: v for k, v in adaptive.items() if v is not None})
-        return {"status":"ok","result":clean(report)}
+        from calculators.quick_check import QuickCheckCalculator
+        report = QuickCheckCalculator(db).run(req)
+        return {"status": "ok", "result": clean(report)}
     except HTTPException:
-        # Валидационные 400-ки (HOME/SOLO не откалиброван и др.) — пропускаем как есть.
+        # Валидационные 400-ки из calculator (niche unavailable, start_month,
+        # HOME/SOLO marketing) — пропускаем как есть.
         raise
     except Exception as e:
-        import traceback; d=traceback.format_exc(); print("ОШИБКА:",d)
-        raise HTTPException(500,str(e)+"\n"+d[-500:])
+        import traceback
+        d = traceback.format_exc()
+        print("ОШИБКА:", d)
+        raise HTTPException(500, str(e) + "\n" + d[-500:])
 
 @app.get("/niche-config/{niche_id}")
 def niche_config(niche_id: str):
