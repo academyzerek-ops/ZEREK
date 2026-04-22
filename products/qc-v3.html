@@ -1083,13 +1083,19 @@ function renderBlock5Html(b5){
 
   var inc = b5.entrepreneur_income || {};
   var incRows = '';
-  if(inc.role_salary_monthly > 0){
-    incRows += '<div class="b5-income-row"><span>Ставка в штате</span><strong>'+fmt(inc.role_salary_monthly)+' ₸/мес</strong></div>';
+  // Для SOLO/HOME (solo_mode=true) мастер = сам предприниматель, штата нет —
+  // показываем одну строку «Ваш чистый доход». Иначе — ставка + прибыль + итого.
+  if(b5.solo_mode){
+    incRows += '<div class="b5-income-row b5-income-total"><span>Ваш чистый доход</span><strong>'+fmt(inc.total_monthly)+' ₸/мес</strong></div>';
   } else {
-    incRows += '<div class="b5-income-row"><span>Ставка в штате</span><strong>0 (не работаю операционно)</strong></div>';
+    if(inc.role_salary_monthly > 0){
+      incRows += '<div class="b5-income-row"><span>Ставка в штате</span><strong>'+fmt(inc.role_salary_monthly)+' ₸/мес</strong></div>';
+    } else {
+      incRows += '<div class="b5-income-row"><span>Ставка в штате</span><strong>0 (не работаю операционно)</strong></div>';
+    }
+    incRows += '<div class="b5-income-row"><span>Прибыль бизнеса</span><strong>'+fmt(inc.profit_monthly)+' ₸/мес</strong></div>' +
+      '<div class="b5-income-row b5-income-total"><span>ИТОГО / мес</span><strong>'+fmt(inc.total_monthly)+' ₸</strong></div>';
   }
-  incRows += '<div class="b5-income-row"><span>Прибыль бизнеса</span><strong>'+fmt(inc.profit_monthly)+' ₸/мес</strong></div>' +
-    '<div class="b5-income-row b5-income-total"><span>ИТОГО / мес</span><strong>'+fmt(inc.total_monthly)+' ₸</strong></div>';
 
   var incomeBlock = '<div class="b5-income">' +
     '<div class="b5-income-title">💰 Ваш доход предпринимателя</div>' +

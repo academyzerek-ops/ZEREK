@@ -2756,9 +2756,15 @@ def compute_block5_pnl(db, result, adaptive):
     # Ставка роли = одна позиция из ФОТ (уже вычтена выше из pnl_base.fot, так
     # что удвоения нет: profit_monthly + role_salary_monthly = чистый доход
     # владельца без пересечений).
+    # SOLO/HOME-форматы: мастер = сам предприниматель, штата нет. ФОТ уже
+    # подрезан до 0 в run_quick_check_v3, так что profit_monthly УЖЕ равен
+    # всему заработку владельца. Отдельная «ставка в штате» не имеет смысла
+    # и не показывается (role_salary_monthly=0 + solo_mode=True).
     role_salary_monthly = 0
     role_breakdown = []
-    if ent_role_id not in ('owner_only', 'owner_multi'):
+    if is_solo_fmt:
+        pass  # для SOLO ставка = 0, прибыль уже = весь заработок
+    elif ent_role_id not in ('owner_only', 'owner_multi'):
         role_salary_monthly = one_role_salary_full
         if role_salary_monthly == 0:
             role_salary_monthly = 200_000
