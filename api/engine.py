@@ -1407,6 +1407,12 @@ def run_quick_check_v3(
             "revenue_year1": total_rev_y1,
             "profit_year1": total_profit_y1,
             "tax_rate_pct": tax_rate * 100,
+            # Для first_year_chart (и др. потребителей): per-niche ramp-up
+            # и сезонность должны быть доступны в result.financials, иначе
+            # функции падают на DEFAULT_SEASONALITY/rampup_start_pct=0.50.
+            "rampup_months": _safe_int(fin.get('rampup_months'), DEFAULTS.get('rampup_months', 3)),
+            "rampup_start_pct": _safe_float(fin.get('rampup_start_pct'), DEFAULTS.get('rampup_start_pct', 0.50)),
+            **{f"s{m:02d}": _safe_float(fin.get(f"s{m:02d}"), 0.0) for m in range(1, 13)},
         },
 
         "breakeven": breakeven,
