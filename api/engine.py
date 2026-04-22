@@ -793,18 +793,9 @@ def render_report(result):
 # ═══════════════════════════════════════════════
 
 # Справочник типов локации для рендера в анкете v2.
-LOCATION_TYPES_META = {
-    "tc":                  {"label": "Торговый центр",           "icon": "🏬"},
-    "street":              {"label": "Улица / отдельный офис",   "icon": "🏪"},
-    "home":                {"label": "Из дома",                   "icon": "🏠"},
-    "highway":             {"label": "Возле дороги",              "icon": "🛣️"},
-    "residential_complex": {"label": "Коммерция в ЖК",            "icon": "🏢"},
-    "business_center":     {"label": "Бизнес-центр",              "icon": "🏢"},
-    "market":              {"label": "Рынок / павильон",          "icon": "🛍️"},
-    "online":              {"label": "Только онлайн",             "icon": "🌐"},
-    "residential_area":    {"label": "Спальный район",            "icon": "🏘️"},
-    "own_building":        {"label": "Отдельное здание",          "icon": "🏛️"},
-}
+# LOCATION_TYPES_META переехал в api/config.py (Этап 8.6).
+# Re-export для обратной совместимости (niche_loader импортирует отсюда).
+from config import LOCATION_TYPES_META  # noqa: F401, E402
 
 
 # ───────────────────────────────────────────────────────────────────────────

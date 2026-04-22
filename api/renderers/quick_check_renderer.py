@@ -38,18 +38,8 @@ _log = logging.getLogger("zerek.quick_check_renderer")
 # Справочники для рендера
 # ═══════════════════════════════════════════════════════════════════════
 
-LOCATION_TYPES_META = {
-    "tc":                  {"label": "Торговый центр",           "icon": "🏬"},
-    "street":              {"label": "Улица / отдельный офис",   "icon": "🏪"},
-    "home":                {"label": "Из дома",                   "icon": "🏠"},
-    "highway":             {"label": "Возле дороги",              "icon": "🛣️"},
-    "residential_complex": {"label": "Коммерция в ЖК",            "icon": "🏢"},
-    "business_center":     {"label": "Бизнес-центр",              "icon": "🏢"},
-    "market":              {"label": "Рынок / павильон",          "icon": "🛍️"},
-    "online":              {"label": "Только онлайн",             "icon": "🌐"},
-    "residential_area":    {"label": "Спальный район",            "icon": "🏘️"},
-    "own_building":        {"label": "Отдельное здание",          "icon": "🏛️"},
-}
+# LOCATION_TYPES_META переехал в api/config.py (Этап 8.6).
+from config import LOCATION_TYPES_META  # noqa: F401
 
 
 # ═══════════════════════════════════════════════════════════════════════
