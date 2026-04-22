@@ -104,6 +104,19 @@ _BM = ((DEFAULTS_CFG.get("quick_check", {}) or {}).get("benchmarks", {}) or {})
 BENCHMARK_COMPETITOR_DENSITY_10K = float(_BM.get("competitor_density_per_10k", 0.8))
 BENCHMARK_RETAIL_DENSITY_10K     = float(_BM.get("retail_density_per_10k", 0.75))
 
+# Русские подписи статей CAPEX (ключи из capex.breakdown в run_quick_check_v3).
+CAPEX_BREAKDOWN_LABELS_RUS = {
+    'equipment':   'Оборудование',
+    'renovation':  'Ремонт помещения',
+    'furniture':   'Мебель и интерьер',
+    'first_stock': 'Первый запас материалов',
+    'permits_sez': 'Разрешения и регистрация',
+    'working_cap': 'Оборотные средства',
+    'marketing':   'Стартовый маркетинг',
+    'deposit':     'Депозит за аренду',
+    'legal':       'Юридическое оформление',
+}
+
 
 # ─────────────────────────────────────────────────────────────────────────
 # Города: канонический ID + маппинг из legacy → canonical + check_coef
@@ -2110,7 +2123,8 @@ def compute_block6_capital(db, result, adaptive, block2=None):
     breakdown_src = capex.get('breakdown') or {}
     if isinstance(breakdown_src, dict) and breakdown_src:
         capex_structure = [
-            {'label':k, 'amount':_safe_int(v, 0), 'pct':int(_safe_int(v, 0)/max(capex_needed,1)*100)}
+            {'label':CAPEX_BREAKDOWN_LABELS_RUS.get(k, k), 'amount':_safe_int(v, 0),
+             'pct':int(_safe_int(v, 0)/max(capex_needed,1)*100)}
             for k,v in breakdown_src.items() if _safe_int(v, 0) > 0
         ]
     else:
