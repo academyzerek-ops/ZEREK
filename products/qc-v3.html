@@ -294,6 +294,16 @@ h2{font-size:22px;margin-bottom:6px}
 .stress-row-bar{height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden;max-width:60%}
 .stress-row-bar-inner{height:100%;border-radius:3px}
 
+/* Строка юнит-экономики — двустрочная, чтобы «В карман вам 4 463» не переносилось. */
+.unit-row{display:flex;flex-direction:column;gap:4px;padding:6px 0;border-bottom:0.5px solid var(--surface-2)}
+.unit-row:last-child{border-bottom:none}
+.unit-row-head{display:flex;align-items:baseline;gap:8px;font-size:13px}
+.unit-row-pct{font-family:var(--mono);font-weight:700;color:var(--text-2);min-width:36px;text-align:right;font-size:12px}
+.unit-row-label{flex:1;min-width:0;color:var(--text-2);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.unit-row-amount{font-family:var(--mono);font-weight:700;color:var(--text);white-space:nowrap}
+.unit-row-bar{height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden;margin-left:44px}
+.unit-row-bar-inner{height:100%;border-radius:3px}
+
 /* CAPEX-строка — двустрочная, чтобы длинные суммы (150 000) не обрезались. */
 .capex-row{display:flex;flex-direction:column;gap:6px;padding:8px 0;border-bottom:0.5px solid var(--surface-2)}
 .capex-row:last-child{border-bottom:none}
@@ -1296,16 +1306,20 @@ function renderBlock4Html(b4){
   if(m.ltv_cac_ratio){ html += '<div class="blk-row"><span>LTV / CAC</span><strong>'+m.ltv_cac_ratio+'</strong></div>'; }
   if(m.occupancy_pct){ html += '<div class="blk-row"><span>Заполняемость</span><strong>'+m.occupancy_pct+'%</strong></div>'; }
 
-  // Распределение одного чека
+  // Распределение одного чека — двустрочная вёрстка, чтобы длинные
+  // названия типа «В карман вам» + сумма не ломались на мобильных 320px.
   if((b4.breakdown||[]).length){
     html += '<div class="blk-hdr2">Куда уходят деньги с одного '+(b4.unit_label||'чека')+'</div>';
     b4.breakdown.forEach(function(it){
       var pct = it.pct||0;
       var color = (it.label === 'Бизнесу' || it.label === 'В карман вам') ? 'var(--green)' : 'var(--accent)';
-      html += '<div class="bar-row">' +
-        '<div class="bar-row-pct">'+pct+'%</div>' +
-        '<div class="bar-row-fill"><div class="bar-row-fill-inner" style="width:'+pct+'%;background:'+color+'"></div></div>' +
-        '<div class="bar-row-label"><span>'+escapeHtml(it.label)+'</span><span>'+fmt(it.amount)+'</span></div>' +
+      html += '<div class="unit-row">' +
+        '<div class="unit-row-head">' +
+          '<div class="unit-row-pct">'+pct+'%</div>' +
+          '<div class="unit-row-label">'+escapeHtml(it.label)+'</div>' +
+          '<div class="unit-row-amount">'+fmt(it.amount)+' ₸</div>' +
+        '</div>' +
+        '<div class="unit-row-bar"><div class="unit-row-bar-inner" style="width:'+pct+'%;background:'+color+'"></div></div>' +
       '</div>';
     });
   }
