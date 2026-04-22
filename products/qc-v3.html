@@ -848,7 +848,7 @@ function renderResult(result){
     if(result.block7)  html += renderBlock7Html(result.block7);
     if(result.block8)  html += renderBlock8Html(result.block8);
     if(result.block9)  html += renderBlock9Html(result.block9);
-    html += renderBlock1Html(result.block1);
+    html += renderBlock1Html(result.block1, result.block2);
     if(result.block10) html += renderBlock10Html(result.block10);
     $('result-screen').innerHTML = html;
     return;
@@ -862,9 +862,10 @@ function renderResult(result){
     '</div>';
 }
 
-function renderBlock1Html(b1){
+function renderBlock1Html(b1, b2){
   var color = b1.color || 'yellow';
   var colorRus = {green:'ЗЕЛЁНЫЙ', yellow:'ЖЁЛТЫЙ', red:'КРАСНЫЙ'}[color];
+  var isSolo = !!(b2 && b2.is_solo);
 
   var light = (
     '<div class="b1-traffic">' +
@@ -886,15 +887,19 @@ function renderBlock1Html(b1){
   );
 
   var m = b1.main_metrics || {};
+  // Для SOLO (founder_works + _HOME/_SOLO) прибыль бизнеса = доход
+  // предпринимателя (разделять бессмысленно): убираем «Прибыль/мес»
+  // и переименовываем «Ваш доход/мес» → «Ваш чистый доход/мес».
+  var heroIncomeLabel = isSolo ? 'Ваш чистый доход/мес' : 'Ваш доход/мес';
   var metricsBlock = (
     '<div class="b1-section">' +
       '<div class="b1-header">Главные цифры</div>' +
       '<div class="b1-metrics">' +
         metricCard('Выручка/мес', m.revenue_range) +
-        metricCard('Прибыль/мес', m.profit_range) +
+        (isSolo ? '' : metricCard('Прибыль/мес', m.profit_range)) +
         metricCard('Окупаемость', m.breakeven_range) +
         '<div class="b1-metric hero">' +
-          '<div class="b1-metric-label">Ваш доход/мес</div>' +
+          '<div class="b1-metric-label">'+heroIncomeLabel+'</div>' +
           '<div class="b1-metric-val">'+escapeHtml(m.entrepreneur_income_range || '—')+'</div>' +
         '</div>' +
       '</div>' +
