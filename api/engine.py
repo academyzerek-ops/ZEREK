@@ -688,20 +688,9 @@ def get_city_tax_rate(db: ZerekDB, city_id: str) -> float:
     return _fn(db, city_id)
 
 def get_rent_median(db: ZerekDB, city_id: str, loc_type: str) -> tuple:
-    cid = normalize_city_id(city_id)
-    if db.rent.empty:
-        return (3000, 500)
-    try:
-        df = db.rent
-        rows = df[(df["city_id"] == cid) & (df["loc_type"] == loc_type)]
-        if rows.empty:
-            rows = df[df["city_id"] == cid]
-        if rows.empty:
-            return (3000, 500)
-        r = rows.iloc[0]
-        return (int(r.get("rent_per_m2_median", 3000)), int(r.get("utilities_per_m2", 500)))
-    except KeyError:
-        return (3000, 500)
+    """Thin wrapper → loaders/rent_loader (Этап 2 рефакторинга)."""
+    from loaders.rent_loader import get_rent_median as _fn
+    return _fn(db, city_id, loc_type)
 
 def get_competitors(db: ZerekDB, niche_id: str, city_id: str) -> dict:
     """Возвращает словарь с уровнем насыщения, числом конкурентов и плотностью.
