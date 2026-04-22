@@ -518,11 +518,6 @@ def calc_closure_growth_points(owner_eco: dict) -> dict:
     return _fn(owner_eco)
 
 
-def calc_stress_test(fin: dict, staff: dict, tax_rate: float,
-                     rent_month_total: int, qty: int = 1) -> list:
-    """Thin wrapper → services/stress_service (Этап 3 рефакторинга)."""
-    from services.stress_service import calc_stress_test as _fn
-    return _fn(fin, staff, tax_rate, rent_month_total, qty)
 
 
 # ═══════════════════════════════════════════════
@@ -706,7 +701,6 @@ def run_quick_check_v3(
     # ── Phase 2: экономика собственника ──
     owner_eco = calc_owner_economics(fin, staff_adjusted, tax_rate, rent_month_total, qty)
     closure_growth = calc_closure_growth_points(owner_eco)
-    stress_test = calc_stress_test(fin, staff_adjusted, tax_rate, rent_month_total, qty)
     # Окупаемость по чистой прибыли в карман (месяцев)
     owner_payback_m = int(round(capex_total / owner_eco['net_in_pocket'])) if owner_eco['net_in_pocket'] > 0 else None
 
@@ -856,7 +850,6 @@ def run_quick_check_v3(
         "owner_economics": {
             **owner_eco,
             **closure_growth,
-            "stress_test": stress_test,
             "owner_payback_months": owner_payback_m,
         },
 

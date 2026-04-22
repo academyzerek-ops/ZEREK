@@ -21,14 +21,7 @@ _API_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _API_DIR not in sys.path:
     sys.path.insert(0, _API_DIR)
 
-from engine import (  # noqa: E402
-    SCENARIO_BASE,
-    SCENARIO_OPT,
-    SCENARIO_STRESS,
-    _safe_float,
-    _safe_int,
-)
-from services.economics_service import calc_owner_economics  # noqa: E402
+from engine import _safe_float, _safe_int  # noqa: E402
 
 _log = logging.getLogger("zerek.stress_service")
 
@@ -121,49 +114,3 @@ def compute_block8_stress_test(result):
     }
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# Legacy: calc_stress_test (3 сценария через calc_owner_economics)
-# Используется в run_quick_check_v3 → result.owner_economics.stress_test.
-# На фронт не рендерится; кандидат на удаление в Этапе 8.
-# ═══════════════════════════════════════════════════════════════════════
-
-
-def calc_stress_test(fin, staff, tax_rate, rent_month_total, qty=1):
-    """Legacy 3-сценарный стресс (плохо/база/хорошо) через owner_economics."""
-    def _desc(sc):
-        parts = []
-        t = sc.get("traffic_k", 1.0)
-        c = sc.get("check_k", 1.0)
-        r = sc.get("rent_k", 1.0)
-        if t != 1.0:
-            parts.append(f"трафик {'+' if t > 1 else '−'}{abs(int(round((t-1)*100)))}%")
-        if c != 1.0:
-            parts.append(f"чек {'+' if c > 1 else '−'}{abs(int(round((c-1)*100)))}%")
-        if r != 1.0:
-            parts.append(f"аренда {'+' if r > 1 else '−'}{abs(int(round((r-1)*100)))}%")
-        return ", ".join(parts).capitalize() if parts else "Расчётные показатели"
-
-    scenarios = [
-        {"key": "bad",  "label": "Если всё плохо",   "color": "red",
-         "params": _desc(SCENARIO_STRESS),
-         **SCENARIO_STRESS},
-        {"key": "base", "label": "Базовый сценарий", "color": "blue",
-         "params": _desc(SCENARIO_BASE),
-         **SCENARIO_BASE},
-        {"key": "good", "label": "Если всё хорошо",  "color": "green",
-         "params": _desc(SCENARIO_OPT),
-         **SCENARIO_OPT},
-    ]
-    out = []
-    for sc in scenarios:
-        eco = calc_owner_economics(
-            fin, staff, tax_rate, rent_month_total, qty,
-            traffic_k=sc["traffic_k"], check_k=sc["check_k"], rent_k=sc["rent_k"],
-        )
-        out.append({
-            "key": sc["key"], "label": sc["label"], "color": sc["color"],
-            "params": sc["params"],
-            "revenue": eco["revenue"],
-            "net_in_pocket": eco["net_in_pocket"],
-        })
-    return out
