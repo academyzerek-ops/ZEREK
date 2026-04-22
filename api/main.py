@@ -21,7 +21,7 @@ from engine import (ZerekDB, run_quick_check_v3,
                     compute_block_season,
                     compute_block8_stress_test,
                     compute_block9_risks, compute_block10_next_steps,
-                    compute_pnl_aggregates,
+                    compute_pnl_aggregates, compute_first_year_chart,
                     FINMODEL_DEFAULTS_CFG, DEFAULTS_CFG)
 from report import render_report_v4
 
@@ -269,6 +269,12 @@ def quick_check(req: QCReq):
         # Block 5 — P&L за год
         try:
             report['block5'] = compute_block5_pnl(db, result, block1_inputs)
+            # Персонализированный прогноз первых 12 месяцев (часть 3 раунда):
+            # revenue × ramp × season по каждому месяцу, с календарной
+            # привязкой от start_month, + narrative про сезон старта.
+            # Кладём в block5.first_year_chart, чтобы фронт мог найти
+            # рядом с P&L.
+            report['block5']['first_year_chart'] = compute_first_year_chart(result)
         except Exception:
             import traceback; traceback.print_exc()
         # Block 6 — Стартовый капитал

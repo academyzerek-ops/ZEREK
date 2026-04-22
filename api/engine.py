@@ -193,6 +193,101 @@ def compute_unified_payback_months(result, adaptive):
     return int(math.ceil(startup / monthly_income))
 
 
+_MONTH_NAMES_RUS_FULL = ['Янв','Фев','Мар','Апр','Май','Июн',
+                         'Июл','Авг','Сен','Окт','Ноя','Дек']
+_MONTH_NAMES_RUS_LONG = ['Январь','Февраль','Март','Апрель','Май','Июнь',
+                         'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь']
+
+
+def compute_first_year_chart(result):
+    """Персонализированный прогноз первых 12 месяцев работы.
+
+    Показывает помесячную выручку с учётом:
+    - Ramp-up: первые N месяцев выручка растёт линейно
+      от rampup_start_pct до 1.0.
+    - Сезонность ниши (s01..s12 из FINANCIALS или DEFAULT_SEASONALITY).
+    - Календарной привязки: месяц 1 = start_month, месяц 12 = start_month+11.
+
+    Возвращает:
+      start_month, start_month_label, months[12], narrative.
+
+    Для каждого месяца: n (1..12), calendar_label (Янв-Дек), revenue,
+    color ∈ {ramp, mature, mature_high, season_low}.
+
+    narrative — короткий сводный текст про разгон + старт vs сезон ниши.
+    """
+    inp = result.get('input', {}) or {}
+    fin = result.get('financials', {}) or {}
+    mature = (result.get('pnl_aggregates') or {}).get('mature') or {}
+
+    start_month = _safe_int(inp.get('start_month'), 4)
+    rev_mature_m = _safe_int(mature.get('revenue_monthly'), 0)
+    if rev_mature_m <= 0:
+        # Фолбэк: revenue из финансов (если pnl_aggregates не собран).
+        avg_check = _safe_int(fin.get('check_med'), 0) or 3000
+        traffic = _safe_int(fin.get('traffic_med'), 0) or 30
+        rev_mature_m = avg_check * traffic * 30
+
+    rampup_months = _safe_int(fin.get('rampup_months'), 3) or 3
+    rampup_start_pct = _safe_float(fin.get('rampup_start_pct'), 0.50) or 0.50
+
+    # Сезонность: per-niche s01..s12 если заполнены, иначе DEFAULT_SEASONALITY.
+    season = []
+    for m in range(1, 13):
+        v = _safe_float(fin.get(f's{m:02d}'), 0.0)
+        season.append(v if v > 0 else DEFAULT_SEASONALITY[m - 1])
+
+    def ramp_coef(m):
+        if m <= rampup_months:
+            return rampup_start_pct + (1.0 - rampup_start_pct) * m / rampup_months
+        return 1.0
+
+    def month_color(m, season_coef):
+        if m <= rampup_months:
+            return 'ramp'
+        if season_coef > 1.05:
+            return 'mature_high'
+        if season_coef < 0.95:
+            return 'season_low'
+        return 'mature'
+
+    months = []
+    for m in range(1, 13):
+        cal_m = ((start_month - 1 + m - 1) % 12) + 1
+        s_coef = season[cal_m - 1]
+        r_coef = ramp_coef(m)
+        rev = int(rev_mature_m * r_coef * s_coef)
+        months.append({
+            'n': m,
+            'calendar_label': _MONTH_NAMES_RUS_FULL[cal_m - 1],
+            'revenue': rev,
+            'color': month_color(m, s_coef),
+        })
+
+    # Narrative: разгон + «ваш старт попадает на…»
+    # Анализируем первые 2 календарных месяца старта — самый уязвимый
+    # период (ramp ещё не вышел на мощность, а сезонность уже влияет).
+    parts = [f'Первые {rampup_months} месяца — разгон. С {rampup_months + 1}-го месяца — выход на полную мощность.']
+    window_size = min(2, 12)
+    start_window_cal = [((start_month - 1 + i) % 12) + 1 for i in range(window_size)]
+    start_season_avg = sum(season[c - 1] for c in start_window_cal) / window_size
+    if start_season_avg >= 1.05:
+        parts.append('Ваш старт удачно попадает на сезонный пик — это ускорит выход на стабильный доход.')
+    elif start_season_avg <= 0.90:
+        parts.append('Ваш старт попадает на сезонную просадку — первые месяцы будут особенно тихими. Закладывайте подушку безопасности.')
+    elif start_season_avg <= 0.95:
+        parts.append('Ваш старт попадает на нейтральный/слабый сезон. Без дополнительных усилий по маркетингу разгон может затянуться.')
+    else:
+        parts.append('Ваш старт попадает на средний сезонный период — стандартный сценарий.')
+
+    return {
+        'start_month': start_month,
+        'start_month_label': _MONTH_NAMES_RUS_LONG[start_month - 1],
+        'months': months,
+        'narrative': ' '.join(parts),
+    }
+
+
 def compute_pnl_aggregates(result):
     """Шаги 3-5 спеки: зрелый месячный P&L + средние годовые показатели.
 
