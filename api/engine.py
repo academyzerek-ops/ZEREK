@@ -710,29 +710,9 @@ def run_quick_check_v3(
     # Окупаемость по чистой прибыли в карман (месяцев)
     owner_payback_m = int(round(capex_total / owner_eco['net_in_pocket'])) if owner_eco['net_in_pocket'] > 0 else None
 
-    # ── 3 сценария (пессимист/база/оптимист) — коэффициенты из defaults.yaml ──
-    scenarios = {}
-    _scenario_coefs = [
-        ('pess', SCENARIO_PESS['traffic_k'], SCENARIO_PESS['check_k']),
-        ('base', SCENARIO_BASE['traffic_k'], SCENARIO_BASE['check_k']),
-        ('opt',  SCENARIO_OPT['traffic_k'],  SCENARIO_OPT['check_k']),
-    ]
-    for label, traffic_k, check_k in _scenario_coefs:
-        fin_sc = dict(fin)
-        fin_sc['traffic_med'] = int(_safe_int(fin.get('traffic_med'),50) * traffic_k)
-        fin_sc['check_med'] = int(_safe_int(fin.get('check_med'),1000) * check_k)
-        sc_cf = calc_cashflow(fin_sc, staff_adjusted, capex_total, tax_rate, start_month, 12, qty)
-        sc_payback = calc_payback(capex_total, sc_cf)
-        sc_rev = sum(cf["выручка"] for cf in sc_cf)
-        sc_profit = sum(cf["прибыль"] for cf in sc_cf)
-        scenarios[label] = {
-            "трафик_день": fin_sc['traffic_med'],
-            "чек": fin_sc['check_med'],
-            "выручка_год": sc_rev,
-            "прибыль_год": sc_profit,
-            "прибыль_среднемес": int(sc_profit / 12),
-            "окупаемость": sc_payback,
-        }
+    # ── 3 сценария (пессимист/база/оптимист) — via services/scenario_service ──
+    from services.scenario_service import compute_3_scenarios
+    scenarios = compute_3_scenarios(fin, staff_adjusted, capex_total, tax_rate, start_month, qty)
 
     # ── Вердикт ──
     score = 0; reasons = []
