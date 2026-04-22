@@ -1138,6 +1138,7 @@ def run_quick_check_v3(
             "margin_pct": _safe_float(fin.get('margin_pct'), DEFAULTS['margin_pct']),
             "rent_month": rent_month_total,
             "opex_med": _safe_int(fin.get('opex_med')) * qty,
+            "marketing": _safe_int(fin.get('marketing')) * qty,
             "sez_month": _safe_int(fin.get('sez_month')),
             "revenue_year1": total_rev_y1,
             "profit_year1": total_profit_y1,
@@ -2575,8 +2576,17 @@ def compute_block5_pnl(db, result, adaptive):
     fot_monthly = fot_monthly_full
     rent_monthly = _safe_int(fin.get('rent_month'), 0)
     opex_total = _safe_int(fin.get('opex_med'), 0)
-    # marketing + прочее — делим opex
-    marketing_monthly = int(opex_total * 0.2) if opex_total else 100_000
+    # marketing + прочее — делим opex.
+    # Для HOME-форматов берём marketing из FINANCIALS.marketing (реальный
+    # SMM-бюджет мастера на дому, обычно 25-60К/мес) вместо универсального
+    # фолбэка 100К/мес, который непропорционален доходу мастера.
+    # STANDARD/PREMIUM — прежняя логика (opex_med*0.2 или 100К), не тронут.
+    fmt_id_upper_b5 = (inp.get('format_id') or '').upper()
+    fin_marketing = _safe_int(fin.get('marketing'), 0)
+    if fmt_id_upper_b5.endswith('_HOME') and fin_marketing > 0:
+        marketing_monthly = fin_marketing
+    else:
+        marketing_monthly = int(opex_total * 0.2) if opex_total else 100_000
     other_opex_monthly = max(0, opex_total - rent_monthly - marketing_monthly) if opex_total else 100_000
     cogs_pct = _safe_float(fin.get('cogs_pct'), 0.30)
     tax_rate = (tax.get('rate_pct', 3) or 3) / 100
