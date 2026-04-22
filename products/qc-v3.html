@@ -940,6 +940,11 @@ function renderResult(result){
     if(result.block3)  html += renderBlock3Html(result.block3);
     if(result.block4)  html += renderBlock4Html(result.block4);
     if(result.block5)  html += renderBlock5Html(result.block5);
+    // Персонализированный прогноз 12 мес (ramp + сезонность × start_month)
+    // идёт ПЕРЕД общей сезонностью ниши — сначала конкретика, потом
+    // эталонная картина.
+    var fyc = result.block5 && result.block5.first_year_chart;
+    if(fyc) html += renderFirstYearChartHtml(fyc);
     if(result.block_season) html += renderSeasonBlockHtml(result.block_season);
     if(result.block8)  html += renderBlock8Html(result.block8);
     if(result.block9)  html += renderBlock9Html(result.block9);
