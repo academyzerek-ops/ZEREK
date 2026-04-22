@@ -1384,6 +1384,7 @@ function renderBlock8Html(b8){
   html += '<div class="blk-row"><span>Базовая прибыль</span><strong>'+fmt(b8.base_profit_month)+' ₸/мес</strong></div>';
 
   html += '<div class="blk-hdr2">Что произойдёт при изменении параметра</div>';
+  html += '<div class="blk-note" style="margin-bottom:10px">Эти цифры показывают, насколько упадёт ваша прибыль за год, если один из параметров ухудшится. Например: падение среднего чека на 15% уменьшит годовую прибыль на указанную сумму.</div>';
   (b8.sensitivities||[]).forEach(function(s){
     var pct = s.impact_pct || 0;
     var width = Math.min(Math.abs(pct), 100);
