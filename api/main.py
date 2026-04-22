@@ -165,23 +165,24 @@ CAPEX_TO_CLS = {"эконом":"Эконом","стандарт":"Стандар
 
 @app.post("/quick-check")
 def quick_check(req: QCReq):
-    """Quick Check 5 000 ₸ — фасад над QuickCheckCalculator.
+    """Quick Check 5 000 ₸ — двухшаговый calc → render.
 
-    Этап 4 рефакторинга: вся логика валидации, нормализации HOME/SOLO,
-    инъекции pnl_aggregates и overlay блоков 1-10 переехала в
-    api/calculators/quick_check.py. main.py только обёртка для FastAPI.
+    Этап 4: вся логика валидации/нормализации/расчёта переехала в
+    api/calculators/quick_check.py.
 
-    R-1 (pnl_aggregates injection) и R-6 (HOME/SOLO patches) закрыты.
+    Этап 5: рендер (legacy block_1..block_12 + новый block1..block10
+    overlay) переехал в api/renderers/quick_check_renderer.render_for_api.
+    Calculator возвращает «сырой» calc_result, renderer превращает в API.
     """
     if not db:
         raise HTTPException(503, f"БД не загружена: {db_error}")
     try:
         from calculators.quick_check import QuickCheckCalculator
-        report = QuickCheckCalculator(db).run(req)
+        from renderers.quick_check_renderer import render_for_api
+        calc_result = QuickCheckCalculator(db).run(req)
+        report = render_for_api(calc_result)
         return {"status": "ok", "result": clean(report)}
     except HTTPException:
-        # Валидационные 400-ки из calculator (niche unavailable, start_month,
-        # HOME/SOLO marketing) — пропускаем как есть.
         raise
     except Exception as e:
         import traceback

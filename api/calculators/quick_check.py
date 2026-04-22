@@ -2,20 +2,23 @@
 
 Тонкий оркестратор: валидирует вход, нормализует HOME/SOLO патчи,
 вызывает run_quick_check_v3 (engine) для базовых расчётов, инъектит
-pnl_aggregates, рендерит report_v4 и накладывает блоки 1–10.
+pnl_aggregates, накладывает блоки 1–10.
 
 Цель Этапа 4 — убрать дублирование логики из main.py (R-1: pnl_aggregates
 инъекция, R-6: HOME/SOLO хот-патчи).
 
+Цель Этапа 5 — отделить calc от render. Calculator больше НЕ вызывает
+render_report_v4 — это делает renderer (renderers/quick_check_renderer.
+render_for_api) после calculator.
+
 Зависит от: engine (run_quick_check_v3 + compute_block*), services
-(compute_pnl_aggregates, compute_first_year_chart), renderers
-(render_report_v4 — пока в api/report.py до Этапа 5).
+(compute_pnl_aggregates, compute_first_year_chart).
 
 Контракт:
-- Принимает QCReq (Pydantic-модель из validators) либо совместимый объект
-  с теми же атрибутами.
-- Возвращает финальный dict для API: {block1..block10, block_1..block_12,
-  user_inputs, ...}. Никаких пост-обработок в main.py.
+- Принимает QCReq (Pydantic-модель) либо совместимый объект.
+- Возвращает calc_result dict с raw данными от engine + block1..block10
+  overlay + user_inputs. БЕЗ legacy block_1..block_12 (это renderer).
+- main.py вызывает renderer для финального форматирования.
 """
 import logging
 import os
@@ -42,7 +45,6 @@ from engine import (  # noqa: E402
     compute_pnl_aggregates,
     run_quick_check_v3,
 )
-from report import render_report_v4  # noqa: E402
 
 _log = logging.getLogger("zerek.quick_check_calculator")
 
@@ -69,7 +71,12 @@ class QuickCheckCalculator:
     # ════════════════════════════════════════════════════════════════════
 
     def run(self, req):
-        """Главный метод — оркестрирует все шаги от валидации до отчёта."""
+        """Главный метод — оркестрирует все шаги от валидации до calc_result.
+
+        Возвращает «сырой» calc_result (без legacy block_1..block_12).
+        Renderer (renderers/quick_check_renderer.render_for_api) превращает
+        его в финальный API-отчёт.
+        """
         # 1. Валидация + резолв cls
         cls = self._validate_and_resolve_cls(req)
         # 2. Нормализация HOME/SOLO (R-6)
@@ -78,13 +85,11 @@ class QuickCheckCalculator:
         result = self._compute_base(req, cls, founder_works_eff)
         # 4. Инъекция pnl_aggregates (R-1)
         result["pnl_aggregates"] = compute_pnl_aggregates(result)
-        # 5. Рендер базового отчёта (legacy block_1..block_12)
-        report = render_report_v4(result)
-        # 6. Overlay новых блоков (block1..block10) + first_year_chart
-        self._overlay_blocks(report, result, req)
-        # 7. user_inputs (адаптивные поля v2)
-        self._add_user_inputs(report, req)
-        return report
+        # 5. Overlay новых блоков (block1..block10 + block_season + first_year_chart)
+        self._overlay_blocks(result, req)
+        # 6. user_inputs (адаптивные поля v2)
+        self._add_user_inputs(result, req)
+        return result
 
     # ════════════════════════════════════════════════════════════════════
     # Внутренние шаги
@@ -168,11 +173,11 @@ class QuickCheckCalculator:
             start_month=req.start_month,
         )
 
-    def _overlay_blocks(self, report, result, req):
-        """Шаг 6: накладывает block1..block10 (новый формат) поверх report.
+    def _overlay_blocks(self, result, req):
+        """Шаг 5: накладывает block1..block10 (новый формат) внутрь result.
 
         Каждый блок в try/except — падение одного блока не должно ломать
-        весь отчёт (поведение из main.py сохраняется).
+        весь расчёт. Renderer потом скопирует эти ключи в финальный отчёт.
         """
         block1_inputs = dict(req.specific_answers or {})
         block1_inputs.update({
@@ -183,9 +188,7 @@ class QuickCheckCalculator:
 
         # Block 1 — Вердикт
         try:
-            block1 = compute_block1_verdict(result, block1_inputs)
-            if isinstance(report, dict):
-                report["block1"] = block1
+            result["block1"] = compute_block1_verdict(result, block1_inputs)
         except Exception:
             import traceback
             traceback.print_exc()
@@ -196,77 +199,74 @@ class QuickCheckCalculator:
             block2_inputs = dict(req.specific_answers or {})
             block2_inputs["loc_type"] = req.loc_type
             block2_obj = compute_block2_passport(self.db, result, block2_inputs)
-            if isinstance(report, dict):
-                report["block2"] = block2_obj
+            result["block2"] = block2_obj
         except Exception:
             import traceback
             traceback.print_exc()
 
         # Block 3 — Рынок
         try:
-            report["block3"] = compute_block3_market(self.db, result, block1_inputs)
+            result["block3"] = compute_block3_market(self.db, result, block1_inputs)
         except Exception:
             import traceback
             traceback.print_exc()
 
         # Block 4 — Юнит-экономика
         try:
-            report["block4"] = compute_block4_unit_economics(self.db, result, block1_inputs, block2=block2_obj)
+            result["block4"] = compute_block4_unit_economics(self.db, result, block1_inputs, block2=block2_obj)
         except Exception:
             import traceback
             traceback.print_exc()
 
         # Block 5 — P&L + first_year_chart
         try:
-            report["block5"] = compute_block5_pnl(self.db, result, block1_inputs)
-            report["block5"]["first_year_chart"] = compute_first_year_chart(result)
+            result["block5"] = compute_block5_pnl(self.db, result, block1_inputs)
+            result["block5"]["first_year_chart"] = compute_first_year_chart(result)
         except Exception:
             import traceback
             traceback.print_exc()
 
         # Block 6 — Стартовый капитал
         try:
-            report["block6"] = compute_block6_capital(self.db, result, block1_inputs, block2=block2_obj)
+            result["block6"] = compute_block6_capital(self.db, result, block1_inputs, block2=block2_obj)
         except Exception:
             import traceback
             traceback.print_exc()
 
         # Block Season
         try:
-            report["block_season"] = compute_block_season(self.db, result, block1_inputs)
+            result["block_season"] = compute_block_season(self.db, result, block1_inputs)
         except Exception:
             import traceback
             traceback.print_exc()
 
         # Block 8 — Стресс-тест
         try:
-            report["block8"] = compute_block8_stress_test(self.db, result, block1_inputs)
+            result["block8"] = compute_block8_stress_test(self.db, result, block1_inputs)
         except Exception:
             import traceback
             traceback.print_exc()
 
         # Block 9 — Риски ниши
         try:
-            report["block9"] = compute_block9_risks(self.db, result, block1_inputs)
+            result["block9"] = compute_block9_risks(self.db, result, block1_inputs)
         except Exception:
             import traceback
             traceback.print_exc()
 
         # Block 10 — Следующие шаги
         try:
-            block1_obj = report.get("block1") if isinstance(report, dict) else None
-            block10 = compute_block10_next_steps(
+            block1_obj = result.get("block1")
+            result["block10"] = compute_block10_next_steps(
                 self.db, result, block1_inputs,
                 block1=block1_obj, block2=block2_obj,
             )
-            if isinstance(report, dict):
-                report["block10"] = block10
         except Exception:
             import traceback
             traceback.print_exc()
 
-    def _add_user_inputs(self, report, req):
-        """Шаг 7: вставляет user_inputs (адаптивные поля v2)."""
+    def _add_user_inputs(self, result, req):
+        """Шаг 6: вставляет user_inputs (адаптивные поля v2)."""
         adaptive = {
             "has_license": req.has_license,
             "staff_mode": req.staff_mode,
@@ -274,7 +274,6 @@ class QuickCheckCalculator:
             "specific_answers": req.specific_answers,
         }
         if any(v is not None for v in adaptive.values()):
-            if isinstance(report, dict):
-                report.setdefault("user_inputs", {}).update(
-                    {k: v for k, v in adaptive.items() if v is not None}
-                )
+            result.setdefault("user_inputs", {}).update(
+                {k: v for k, v in adaptive.items() if v is not None}
+            )

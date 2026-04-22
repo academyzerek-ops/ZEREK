@@ -337,6 +337,38 @@ def compute_block2_passport(db, result, adaptive):
 
 
 # ═══════════════════════════════════════════════════════════════════════
+# render_for_api — главная точка рендера (Этап 5)
+# ═══════════════════════════════════════════════════════════════════════
+
+
+# Ключи нового формата (block1..block10 + block_season + user_inputs),
+# которые QuickCheckCalculator кладёт в calc_result. render_for_api
+# копирует их поверх legacy-структуры.
+_NEW_FORMAT_KEYS = (
+    "block1", "block2", "block3", "block4", "block5", "block6",
+    "block_season", "block8", "block9", "block10", "user_inputs",
+)
+
+
+def render_for_api(calc_result):
+    """Берёт calc_result от QuickCheckCalculator → возвращает финальный report для API.
+
+    Структура report:
+    - Legacy block_1..block_12 (через render_report_v4) — для PDF
+    - Новый block1..block10 + block_season + user_inputs (из calc_result) — для UI
+    - input, owner_economics, health (из render_report_v4)
+
+    Порядок ключей сохраняется идентичным предыдущей реализации
+    (когда render_report_v4 вызывался внутри calculator).
+    """
+    report = render_report_v4(calc_result)
+    for k in _NEW_FORMAT_KEYS:
+        if k in calc_result:
+            report[k] = calc_result[k]
+    return report
+
+
+# ═══════════════════════════════════════════════════════════════════════
 # render_report_v4 — legacy block_1..block_12 (для PDF и обратной совместимости)
 # ═══════════════════════════════════════════════════════════════════════
 
