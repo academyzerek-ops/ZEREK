@@ -1120,6 +1120,9 @@ def run_quick_check_v3(
                 "first_stock": _safe_int(capex_data.get('first_stock')) * qty,
                 "permits_sez": _safe_int(capex_data.get('permits_sez')) * qty,
                 "working_cap": _safe_int(capex_data.get('working_cap_3m')) * qty,
+                "marketing": _safe_int(capex_data.get('marketing')) * qty,
+                "deposit": _safe_int(capex_data.get('deposit')) * qty,
+                "legal": _safe_int(capex_data.get('legal')) * qty,
             },
             "investment_range": {
                 "min": capex_total,
