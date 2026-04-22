@@ -1148,6 +1148,9 @@ def run_quick_check_v3(
             "marketing_min": _safe_int(fin.get('marketing_min')) * qty,
             "marketing_med": _safe_int(fin.get('marketing_med')) * qty,
             "marketing_max": _safe_int(fin.get('marketing_max')) * qty,
+            "other_opex_min": _safe_int(fin.get('other_opex_min')) * qty,
+            "other_opex_med": _safe_int(fin.get('other_opex_med')) * qty,
+            "other_opex_max": _safe_int(fin.get('other_opex_max')) * qty,
             "sez_month": _safe_int(fin.get('sez_month')),
             "revenue_year1": total_rev_y1,
             "profit_year1": total_profit_y1,
@@ -2638,7 +2641,15 @@ def compute_block5_pnl(db, result, adaptive):
         marketing_monthly = fin_marketing
     else:
         marketing_monthly = int(opex_total * 0.2) if opex_total else 100_000
-    other_opex_monthly = max(0, opex_total - rent_monthly - marketing_monthly) if opex_total else 100_000
+    # other_opex для HOME-форматов: берём реальный other_opex_med из xlsx
+    # (для мастера на дому 3-8К/мес — телефон/интернет/мелочи), иначе
+    # фолбэк 100К/мес или доля от opex_total. Для STANDARD/PREMIUM —
+    # прежняя логика, чтобы не сломать цифры.
+    fin_other_opex = _safe_int(fin.get('other_opex_med'), 0)
+    if fmt_id_upper_b5.endswith('_HOME') and fin_other_opex > 0:
+        other_opex_monthly = fin_other_opex
+    else:
+        other_opex_monthly = max(0, opex_total - rent_monthly - marketing_monthly) if opex_total else 100_000
     cogs_pct = _safe_float(fin.get('cogs_pct'), 0.30)
     tax_rate = (tax.get('rate_pct', 3) or 3) / 100
 
