@@ -61,19 +61,9 @@ try:
 except Exception as e:
     db_error = str(e); print(f"ОШИБКА БД: {e}")
 
-class QCReq(BaseModel):
-    city_id: str; niche_id: str; format_id: str; cls: str = "Стандарт"
-    area_m2: float = 0; loc_type: str = ""; capital: Optional[int] = 0
-    qty: int = 1; founder_works: bool = False
-    # start_month — обязательный параметр (1..12). Pydantic принимает None
-    # для вежливого сообщения в endpoint-валидации (HTTP 400 вместо 422).
-    rent_override: Optional[int] = None; start_month: Optional[int] = None
-    capex_level: str = "стандарт"
-    # --- Quick Check v2 adaptive fields (optional, не меняют расчёт) ---
-    has_license: Optional[str] = None          # "yes" / "no" / "in_progress"
-    staff_mode: Optional[str] = None            # "self" / "hired"
-    staff_count: Optional[int] = None
-    specific_answers: Optional[dict] = None     # {"Q_CHAIRS": "3-5", ...}
+# QCReq переехал в api/validators/input_validator.py (Этап 6).
+# Re-export для обратной совместимости.
+from validators.input_validator import QCReq, QuickCheckRequest  # noqa: F401, E402
 
 class FMReq(BaseModel):
     """Запрос на генерацию финмодели — все параметры из анкеты."""
