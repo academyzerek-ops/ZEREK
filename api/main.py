@@ -12,18 +12,14 @@ import httpx
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE_DIR)
 
-from engine import (ZerekDB, run_quick_check_v3,
-                    get_niche_config, get_niche_survey,
-                    get_formats_v2, get_quickcheck_survey, get_entrepreneur_roles,
-                    compute_block1_verdict, compute_block2_passport,
-                    compute_block3_market, compute_block4_unit_economics,
-                    compute_block5_pnl, compute_block6_capital,
-                    compute_block_season,
-                    compute_block8_stress_test,
-                    compute_block9_risks, compute_block10_next_steps,
-                    compute_pnl_aggregates, compute_first_year_chart,
-                    FINMODEL_DEFAULTS_CFG, DEFAULTS_CFG)
-from report import render_report_v4
+from engine import ZerekDB, run_quick_check_v3, FINMODEL_DEFAULTS_CFG, DEFAULTS_CFG
+from loaders.niche_loader import (
+    get_formats_v2,
+    get_niche_config,
+    get_niche_survey,
+    get_quickcheck_survey,
+)
+from renderers.quick_check_renderer import render_report_v4
 
 
 # ───────────────────────────────────────────────────────────────────
@@ -148,7 +144,7 @@ def get_classes(niche_id: str, format_id: str):
 @app.get("/tax-rate/{city_id}")
 def get_tax_rate(city_id: str):
     if not db: raise HTTPException(503,"БД не загружена")
-    from engine import get_city_tax_rate
+    from loaders.tax_loader import get_city_tax_rate
     return {"city_id":city_id,"ud_rate_pct":get_city_tax_rate(db, city_id)}
 
 CAPEX_TO_CLS = {"эконом":"Эконом","стандарт":"Стандарт","бизнес":"Бизнес","премиум":"Премиум"}

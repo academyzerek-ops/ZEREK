@@ -28,10 +28,10 @@ from engine import (  # noqa: E402
     OWNER_GROWTH_POCKET,
     SEASON_LABELS,
     TRAINING_COSTS_BY_EXPERIENCE,
-    _fmt_kzt,
     _safe_float,
     _safe_int,
 )
+from renderers.quick_check_renderer import _fmt_kzt  # noqa: E402
 from loaders.niche_loader import _archetype_of  # noqa: E402
 from services.pricing_service import calc_owner_social_payments  # noqa: E402
 from services.seasonality_service import calc_revenue_monthly  # noqa: E402

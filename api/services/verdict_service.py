@@ -32,10 +32,10 @@ from engine import (  # noqa: E402
     SCORING_ROI,
     SCORING_SATURATION,
     SCORING_STRESS_DROP,
-    _fmt_kzt,
     _safe_float,
     _safe_int,
 )
+from renderers.quick_check_renderer import _fmt_kzt  # noqa: E402
 from services.economics_service import compute_unified_payback_months  # noqa: E402
 
 _log = logging.getLogger("zerek.verdict_service")

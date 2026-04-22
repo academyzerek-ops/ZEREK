@@ -30,22 +30,21 @@ if _API_DIR not in sys.path:
 
 from fastapi import HTTPException  # noqa: E402
 
-from engine import (  # noqa: E402
-    compute_block1_verdict,
-    compute_block2_passport,
-    compute_block3_market,
+from engine import run_quick_check_v3  # noqa: E402
+from models import CalcResult  # noqa: E402
+from renderers.quick_check_renderer import compute_block2_passport  # noqa: E402
+from services.action_plan_service import compute_block10_next_steps  # noqa: E402
+from services.economics_service import (  # noqa: E402
     compute_block4_unit_economics,
     compute_block5_pnl,
     compute_block6_capital,
-    compute_block8_stress_test,
-    compute_block9_risks,
-    compute_block10_next_steps,
-    compute_block_season,
-    compute_first_year_chart,
     compute_pnl_aggregates,
-    run_quick_check_v3,
 )
-from models import CalcResult  # noqa: E402
+from services.market_service import compute_block3_market  # noqa: E402
+from services.risk_service import compute_block9_risks  # noqa: E402
+from services.seasonality_service import compute_block_season, compute_first_year_chart  # noqa: E402
+from services.stress_service import compute_block8_stress_test  # noqa: E402
+from services.verdict_service import compute_block1_verdict  # noqa: E402
 from validators.input_validator import QuickCheckRequest  # noqa: E402
 
 _log = logging.getLogger("zerek.quick_check_calculator")
@@ -208,7 +207,7 @@ class QuickCheckCalculator:
 
         # Block 3 — Рынок
         try:
-            result["block3"] = compute_block3_market(self.db, result, block1_inputs)
+            result["block3"] = compute_block3_market(result)
         except Exception:
             import traceback
             traceback.print_exc()
@@ -235,16 +234,21 @@ class QuickCheckCalculator:
             import traceback
             traceback.print_exc()
 
-        # Block Season
+        # Block Season — нужен raw_fin (полная FINANCIALS-row с s01..s12)
         try:
-            result["block_season"] = compute_block_season(self.db, result, block1_inputs)
+            inp = result.get("input", {}) or {}
+            raw_fin = self.db.get_format_row(
+                inp.get("niche_id", ""), "FINANCIALS",
+                inp.get("format_id", ""), inp.get("class", "") or inp.get("cls", "")
+            ) if inp.get("niche_id") else {}
+            result["block_season"] = compute_block_season(raw_fin)
         except Exception:
             import traceback
             traceback.print_exc()
 
         # Block 8 — Стресс-тест
         try:
-            result["block8"] = compute_block8_stress_test(self.db, result, block1_inputs)
+            result["block8"] = compute_block8_stress_test(result)
         except Exception:
             import traceback
             traceback.print_exc()

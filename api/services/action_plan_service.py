@@ -17,8 +17,9 @@ _API_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _API_DIR not in sys.path:
     sys.path.insert(0, _API_DIR)
 
-from engine import _fmt_kzt, _safe_int  # noqa: E402
+from engine import _safe_int  # noqa: E402
 from loaders.niche_loader import _formats_from_fallback_xlsx  # noqa: E402
+from renderers.quick_check_renderer import _fmt_kzt  # noqa: E402
 
 _log = logging.getLogger("zerek.action_plan_service")
 

@@ -139,28 +139,10 @@ TRAINING_COSTS_BY_EXPERIENCE = {
 }
 
 
-def compute_unified_payback_months(result, adaptive):
-    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
-    from services.economics_service import compute_unified_payback_months as _fn
-    return _fn(result, adaptive)
-
-
 _MONTH_NAMES_RUS_FULL = ['Янв','Фев','Мар','Апр','Май','Июн',
                          'Июл','Авг','Сен','Окт','Ноя','Дек']
 _MONTH_NAMES_RUS_LONG = ['Январь','Февраль','Март','Апрель','Май','Июнь',
                          'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь']
-
-
-def compute_first_year_chart(result):
-    """Thin wrapper → services/seasonality_service (Этап 3 рефакторинга)."""
-    from services.seasonality_service import compute_first_year_chart as _fn
-    return _fn(result)
-
-
-def compute_pnl_aggregates(result):
-    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
-    from services.economics_service import compute_pnl_aggregates as _fn
-    return _fn(result)
 
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -189,17 +171,6 @@ def _build_city_maps():
 CITY_CANON_TO_DATA, CITY_LEGACY_TO_CANON, CITY_CHECK_COEF = _build_city_maps()
 
 
-def normalize_city_id(city_id: str) -> str:
-    """Thin wrapper → loaders/city_loader (Этап 2 рефакторинга)."""
-    from loaders.city_loader import normalize_city_id as _fn
-    return _fn(city_id)
-
-
-def get_city_check_coef(city_id: str) -> float:
-    """Thin wrapper → loaders/city_loader (Этап 2 рефакторинга)."""
-    from loaders.city_loader import get_city_check_coef as _fn
-    return _fn(city_id)
-
 def _safe(val, default=0):
     """Безопасное чтение — None/NaN → дефолт."""
     if val is None or (isinstance(val, float) and pd.isna(val)):
@@ -211,12 +182,6 @@ def _safe_int(val, default=0):
 
 def _safe_float(val, default=0.0):
     return float(_safe(val, default))
-
-
-def _get_canonical_format_meta(db, niche_id: str, format_id: str) -> dict:
-    """Thin wrapper → loaders/niche_loader (Этап 2 рефакторинга)."""
-    from loaders.niche_loader import _get_canonical_format_meta as _fn
-    return _fn(db, niche_id, format_id)
 
 
 # ═══════════════════════════════════════════════
@@ -426,64 +391,10 @@ class ZerekDB:
 # 2. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
 # ═══════════════════════════════════════════════
 
-def get_city(db: ZerekDB, city_id: str) -> dict:
-    """Thin wrapper → loaders/city_loader (Этап 2 рефакторинга)."""
-    from loaders.city_loader import get_city as _fn
-    return _fn(db, city_id)
-
-def get_city_tax_rate(db: ZerekDB, city_id: str) -> float:
-    """Thin wrapper → loaders/tax_loader (Этап 2 рефакторинга)."""
-    from loaders.tax_loader import get_city_tax_rate as _fn
-    return _fn(db, city_id)
-
-def get_rent_median(db: ZerekDB, city_id: str, loc_type: str) -> tuple:
-    """Thin wrapper → loaders/rent_loader (Этап 2 рефакторинга)."""
-    from loaders.rent_loader import get_rent_median as _fn
-    return _fn(db, city_id, loc_type)
-
-def get_competitors(db: ZerekDB, niche_id: str, city_id: str) -> dict:
-    """Thin wrapper → loaders/competitor_loader (Этап 2 рефакторинга)."""
-    from loaders.competitor_loader import get_competitors as _fn
-    return _fn(db, niche_id, city_id)
-
-def get_failure_pattern(db: ZerekDB, niche_id: str) -> dict:
-    """Thin wrapper → loaders/content_loader (Этап 2 рефакторинга)."""
-    from loaders.content_loader import get_failure_pattern as _fn
-    return _fn(db, niche_id)
-
-def get_permits(db: ZerekDB, niche_id: str) -> list:
-    """Thin wrapper → loaders/content_loader (Этап 2 рефакторинга)."""
-    from loaders.content_loader import get_permits as _fn
-    return _fn(db, niche_id)
-
 
 # ═══════════════════════════════════════════════
 # 3. РАСЧЁТНЫЕ ФУНКЦИИ
 # ═══════════════════════════════════════════════
-
-def calc_revenue_monthly(fin: dict, cal_month: int, razgon_month: int) -> int:
-    """Thin wrapper → services/seasonality_service (Этап 3 рефакторинга)."""
-    from services.seasonality_service import calc_revenue_monthly as _fn
-    return _fn(fin, cal_month, razgon_month)
-
-
-def calc_cashflow(fin: dict, staff: dict, capex_total: int, tax_rate: float,
-                  start_month: int = 1, months: int = 12, qty: int = 1) -> list:
-    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
-    from services.economics_service import calc_cashflow as _fn
-    return _fn(fin, staff, capex_total, tax_rate, start_month, months, qty)
-
-
-def calc_breakeven(fin: dict, staff: dict, tax_rate: float, qty: int = 1) -> dict:
-    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
-    from services.economics_service import calc_breakeven as _fn
-    return _fn(fin, staff, tax_rate, qty)
-
-
-def calc_payback(capex_total: int, cashflow: list) -> dict:
-    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
-    from services.economics_service import calc_payback as _fn
-    return _fn(capex_total, cashflow)
 
 
 # ═══════════════════════════════════════════════
@@ -492,32 +403,6 @@ def calc_payback(capex_total: int, cashflow: list) -> dict:
 # Пороги и ставки — из constants.yaml (OWNER_CLOSURE_POCKET,
 # OWNER_GROWTH_POCKET, OWNER_SOCIAL_RATE, OWNER_SOCIAL_BASE_MRP).
 # ═══════════════════════════════════════════════
-
-
-def calc_owner_social_payments(declared_monthly_base: int = None) -> int:
-    """Thin wrapper → services/pricing_service (Этап 3 рефакторинга)."""
-    from services.pricing_service import calc_owner_social_payments as _fn
-    return _fn(declared_monthly_base)
-
-
-def calc_owner_economics(fin: dict, staff: dict, tax_rate: float,
-                          rent_month_total: int, qty: int = 1,
-                          traffic_k: float = 1.0,
-                          check_k: float = 1.0,
-                          rent_k: float = 1.0,
-                          social: int = None) -> dict:
-    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
-    from services.economics_service import calc_owner_economics as _fn
-    return _fn(fin, staff, tax_rate, rent_month_total, qty,
-               traffic_k=traffic_k, check_k=check_k, rent_k=rent_k, social=social)
-
-
-def calc_closure_growth_points(owner_eco: dict) -> dict:
-    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
-    from services.economics_service import calc_closure_growth_points as _fn
-    return _fn(owner_eco)
-
-
 
 
 # ═══════════════════════════════════════════════
@@ -542,6 +427,20 @@ def run_quick_check_v3(
     Quick Check v3 — полный расчёт из новых шаблонов (12 листов).
     Возвращает структурированный dict для отчёта.
     """
+    # Lazy import — после Этапа 8 cleanup wrappers удалены, чтобы избежать
+    # циклов (services импортируют константы из engine на module-level).
+    from loaders.city_loader import (
+        get_city, get_city_check_coef, normalize_city_id,
+    )
+    from loaders.competitor_loader import get_competitors
+    from loaders.content_loader import get_failure_pattern, get_permits
+    from loaders.niche_loader import _get_canonical_format_meta
+    from loaders.rent_loader import get_rent_median
+    from loaders.tax_loader import get_city_tax_rate
+    from services.economics_service import (
+        calc_breakeven, calc_cashflow, calc_closure_growth_points,
+        calc_owner_economics, calc_payback,
+    )
 
     # Нормализуем city_id на входе: legacy (ALA/ALMATY/almaty) → canonical.
     city_id = normalize_city_id(city_id)
@@ -884,11 +783,6 @@ def run_quick_check_v3(
 # ═══════════════════════════════════════════════
 
 # Экспорт для старого кода (будет удалён после миграции)
-def get_inflation_region(db, city_id):
-    """Thin wrapper → loaders/city_loader (Этап 2 рефакторинга)."""
-    from loaders.city_loader import get_inflation_region as _fn
-    return _fn(db, city_id)
-
 def render_report(result):
     """Заглушка — будет переписан в report_v3.py"""
     return str(result)
@@ -913,56 +807,9 @@ LOCATION_TYPES_META = {
 }
 
 
-def _split_csv(val) -> list:
-    """Thin wrapper → loaders/niche_loader (Этап 2 рефакторинга)."""
-    from loaders.niche_loader import _split_csv as _fn
-    return _fn(val)
-
-
-def _niche_name_from_registry(db, niche_id: str) -> str:
-    """Thin wrapper → loaders/niche_loader (Этап 2 рефакторинга)."""
-    from loaders.niche_loader import _niche_name_from_registry as _fn
-    return _fn(db, niche_id)
-
-
-def _formats_from_per_niche_xlsx(db, niche_id: str) -> list:
-    """Thin wrapper → loaders/niche_loader (Этап 2 рефакторинга)."""
-    from loaders.niche_loader import _formats_from_per_niche_xlsx as _fn
-    return _fn(db, niche_id)
-
-
-def _formats_from_fallback_xlsx(db, niche_id: str) -> list:
-    """Thin wrapper → loaders/niche_loader (Этап 2 рефакторинга)."""
-    from loaders.niche_loader import _formats_from_fallback_xlsx as _fn
-    return _fn(db, niche_id)
-
-
-def _specific_questions_for_niche(db, niche_id: str, qids: list) -> list:
-    """Thin wrapper → loaders/niche_loader (Этап 2 рефакторинга)."""
-    from loaders.niche_loader import _specific_questions_for_niche as _fn
-    return _fn(db, niche_id, qids)
-
-
-def get_niche_config(db, niche_id: str) -> dict:
-    """Thin wrapper → loaders/niche_loader (Этап 2 рефакторинга)."""
-    from loaders.niche_loader import get_niche_config as _fn
-    return _fn(db, niche_id)
-
-
 # ───────────────────────────────────────────────────────────────────────────
 # Quick Check v2 — Survey (per-niche question list)
 # ───────────────────────────────────────────────────────────────────────────
-
-def _question_to_dict(row) -> dict:
-    """Thin wrapper → loaders/niche_loader (Этап 2 рефакторинга)."""
-    from loaders.niche_loader import _question_to_dict as _fn
-    return _fn(row)
-
-
-def _dependencies_for(deps_df, qid: str) -> list:
-    """Thin wrapper → loaders/niche_loader (Этап 2 рефакторинга)."""
-    from loaders.niche_loader import _dependencies_for as _fn
-    return _fn(deps_df, qid)
 
 
 # ═══════════════════════════════════════════════
@@ -970,133 +817,20 @@ def _dependencies_for(deps_df, qid: str) -> list:
 # Согласно спецификации «ZEREK Quick Check — Блок 1» v1.0
 # ═══════════════════════════════════════════════
 
-def _fmt_range_kzt(low, high):
-    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
-    from renderers.quick_check_renderer import _fmt_range_kzt as _fn
-    return _fn(low, high)
-
-
-def _fmt_kzt(v):
-    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
-    from renderers.quick_check_renderer import _fmt_kzt as _fn
-    return _fn(v)
-
-
-def _fmt_kzt_short(v):
-    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
-    from renderers.quick_check_renderer import _fmt_kzt_short as _fn
-    return _fn(v)
-
-
-def _score_capital(capital_own, capex_needed):
-    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
-    from services.verdict_service import _score_capital as _fn
-    return _fn(capital_own, capex_needed)
-
-
-def _score_roi(profit_year, total_investment, is_solo=False):
-    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
-    from services.verdict_service import _score_roi as _fn
-    return _fn(profit_year, total_investment, is_solo=is_solo)
-
-
-def _score_breakeven(breakeven_months):
-    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
-    from services.verdict_service import _score_breakeven as _fn
-    return _fn(breakeven_months)
-
-
-def _score_saturation(competitors_count, city_population, niche_id, density_per_10k=None):
-    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
-    from services.verdict_service import _score_saturation as _fn
-    return _fn(competitors_count, city_population, niche_id, density_per_10k=density_per_10k)
-
-
-def _score_experience(exp):
-    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
-    from services.verdict_service import _score_experience as _fn
-    return _fn(exp)
-
-
-def _score_marketing(tier='express'):
-    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
-    from services.verdict_service import _score_marketing as _fn
-    return _fn(tier)
-
-
-def _score_stress(profit_base, profit_pess):
-    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
-    from services.verdict_service import _score_stress as _fn
-    return _fn(profit_base, profit_pess)
-
-
-def _score_format_city(format_id, format_class, city_population):
-    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
-    from services.verdict_service import _score_format_city as _fn
-    return _fn(format_id, format_class, city_population)
-
-
-def _verdict_statement_template(color, top_weak, top_strong, roi_pct, breakeven_months):
-    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
-    from services.verdict_service import _verdict_statement_template as _fn
-    return _fn(color, top_weak, top_strong, roi_pct, breakeven_months)
-
-
-def _strength_text(p):
-    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
-    from services.verdict_service import _strength_text as _fn
-    return _fn(p)
-
-
-def _risk_text(p, context):
-    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
-    from services.verdict_service import _risk_text as _fn
-    return _fn(p, context)
-
-
-def compute_block1_verdict(result, adaptive):
-    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
-    from services.verdict_service import compute_block1_verdict as _fn
-    return _fn(result, adaptive)
-
-
-
 
 # ═══════════════════════════════════════════════
 # BLOCK 3 — РЫНОК И КОНКУРЕНТЫ
 # ═══════════════════════════════════════════════
-
-def compute_block3_market(db, result, adaptive):
-    """Thin wrapper → services/market_service (Этап 3 рефакторинга)."""
-    from services.market_service import compute_block3_market as _fn
-    return _fn(result)
 
 
 # ═══════════════════════════════════════════════
 # BLOCK 4 — ЮНИТ-ЭКОНОМИКА
 # ═══════════════════════════════════════════════
 
-def _archetype_of(db, niche_id):
-    """Thin wrapper → loaders/niche_loader (Этап 2 рефакторинга)."""
-    from loaders.niche_loader import _archetype_of as _fn
-    return _fn(db, niche_id)
-
-
-def compute_block4_unit_economics(db, result, adaptive, block2=None):
-    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
-    from services.economics_service import compute_block4_unit_economics as _fn
-    return _fn(db, result, adaptive, block2=block2)
-
-
 
 # ═══════════════════════════════════════════════
 # BLOCK 6 — СТАРТОВЫЙ КАПИТАЛ (CAPEX)
 # ═══════════════════════════════════════════════
-
-def compute_block6_capital(db, result, adaptive, block2=None):
-    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
-    from services.economics_service import compute_block6_capital as _fn
-    return _fn(db, result, adaptive, block2=block2)
 
 
 # ═══════════════════════════════════════════════
@@ -1131,11 +865,6 @@ def compute_block_season(db, result, adaptive):
 # BLOCK 8 — СТРЕСС-ТЕСТ
 # ═══════════════════════════════════════════════
 
-def compute_block8_stress_test(db, result, adaptive):
-    """Thin wrapper → services/stress_service (Этап 3 рефакторинга)."""
-    from services.stress_service import compute_block8_stress_test as _fn
-    return _fn(result)
-
 
 # ═══════════════════════════════════════════════
 # BLOCK 9 — РИСКИ НИШИ
@@ -1146,39 +875,10 @@ def compute_block8_stress_test(db, result, adaptive):
 # Здесь только тонкая обёртка для совместимости с импортами engine.
 
 
-def _filter_risks_by_format(risks_list, format_id):
-    """Thin wrapper → services/risk_service (Этап 3 рефакторинга)."""
-    from services.risk_service import _filter_risks_by_format as _fn
-    return _fn(risks_list, format_id)
-
-
-def compute_block9_risks(db, result, adaptive):
-    """Thin wrapper → services/risk_service (Этап 3 рефакторинга)."""
-    from services.risk_service import compute_block9_risks as _fn
-    return _fn(db, result, adaptive)
-
-
 # ═══════════════════════════════════════════════
 # BLOCK 5 — P&L ЗА ГОД (Quick Check report, стр. 5)
 # Три сценария + ключевые мультипликаторы + доход предпринимателя
 # ═══════════════════════════════════════════════
-
-def _cogs_label_by_archetype(archetype):
-    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
-    from services.economics_service import _cogs_label_by_archetype as _fn
-    return _fn(archetype)
-
-
-def _scenario_pnl_row(revenue_y, cogs_pct, fot_monthly, rent_monthly, marketing_monthly, other_opex_monthly, tax_rate):
-    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
-    from services.economics_service import _scenario_pnl_row as _fn
-    return _fn(revenue_y, cogs_pct, fot_monthly, rent_monthly, marketing_monthly, other_opex_monthly, tax_rate)
-
-
-def compute_block5_pnl(db, result, adaptive):
-    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
-    from services.economics_service import compute_block5_pnl as _fn
-    return _fn(db, result, adaptive)
 
 
 # ═══════════════════════════════════════════════
@@ -1186,95 +886,11 @@ def compute_block5_pnl(db, result, adaptive):
 # План действий / условия / альтернативы по вердикту + CTA upsell
 # ═══════════════════════════════════════════════
 
-def _green_action_plan(block2, block1, adaptive=None, result=None):
-    """Thin wrapper → services/action_plan_service (Этап 3 рефакторинга)."""
-    from services.action_plan_service import _green_action_plan as _fn
-    return _fn(block2, block1, adaptive=adaptive, result=result)
-
-
-def _yellow_conditions(block1, block2):
-    """Thin wrapper → services/action_plan_service (Этап 3 рефакторинга)."""
-    from services.action_plan_service import _yellow_conditions as _fn
-    return _fn(block1, block2)
-
-
-def _red_alternatives(block1, block2, result, db):
-    """Thin wrapper → services/action_plan_service (Этап 3 рефакторинга)."""
-    from services.action_plan_service import _red_alternatives as _fn
-    return _fn(block1, block2, result, db)
-
-
-def _upsell_block(color, block1, block2):
-    """Thin wrapper → services/action_plan_service (Этап 3 рефакторинга)."""
-    from services.action_plan_service import _upsell_block as _fn
-    return _fn(color, block1, block2)
-
-
-def _final_farewell(color, block2):
-    """Thin wrapper → services/action_plan_service (Этап 3 рефакторинга)."""
-    from services.action_plan_service import _final_farewell as _fn
-    return _fn(color, block2)
-
-
-def compute_block10_next_steps(db, result, adaptive, block1=None, block2=None):
-    """Thin wrapper → services/action_plan_service (Этап 3 рефакторинга)."""
-    from services.action_plan_service import compute_block10_next_steps as _fn
-    return _fn(db, result, adaptive, block1=block1, block2=block2)
-
 
 # ═══════════════════════════════════════════════
 # BLOCK 2 — ПАСПОРТ БИЗНЕСА (Quick Check report, стр. 2)
 # Спецификация «ZEREK Quick Check — Блок 2» v1.0
 # ═══════════════════════════════════════════════
-
-def _parse_typical_staff(staff_str):
-    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
-    from renderers.quick_check_renderer import _parse_typical_staff as _fn
-    return _fn(staff_str)
-
-
-def _split_staff_into_groups(staff_list):
-    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
-    from renderers.quick_check_renderer import _split_staff_into_groups as _fn
-    return _fn(staff_list)
-
-
-def _subtract_entrepreneur_role(staff_list, role_name):
-    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
-    from renderers.quick_check_renderer import _subtract_entrepreneur_role as _fn
-    return _fn(staff_list, role_name)
-
-
-def _entrepreneur_role_text(role_id, staff_list):
-    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
-    from renderers.quick_check_renderer import _entrepreneur_role_text as _fn
-    return _fn(role_id, staff_list)
-
-
-def _payroll_label(pt):
-    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
-    from renderers.quick_check_renderer import _payroll_label as _fn
-    return _fn(pt)
-
-
-def _experience_label(exp):
-    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
-    from renderers.quick_check_renderer import _experience_label as _fn
-    return _fn(exp)
-
-
-def _format_location(city_name, location_type, location_line, format_type, configs_locations):
-    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
-    from renderers.quick_check_renderer import _format_location as _fn
-    return _fn(city_name, location_type, location_line, format_type, configs_locations)
-
-
-def compute_block2_passport(db, result, adaptive):
-    """Thin wrapper → renderers/quick_check_renderer (Этап 5 рефакторинга)."""
-    from renderers.quick_check_renderer import compute_block2_passport as _fn
-    return _fn(db, result, adaptive)
-
-
 
 
 def _load_yaml_configs_on(self):
@@ -1332,25 +948,4 @@ ZerekDB.get_format_row = _get_format_row_with_yaml_overlay
 # v1.0 spec — formats from 08_niche_formats.xlsx with extended fields
 # ───────────────────────────────────────────────────────────────────────────
 
-def get_formats_v2(db, niche_id: str) -> list:
-    """Thin wrapper → loaders/niche_loader (Этап 2 рефакторинга)."""
-    from loaders.niche_loader import get_formats_v2 as _fn
-    return _fn(db, niche_id)
 
-
-def get_entrepreneur_roles(typical_staff: list) -> list:
-    """Thin wrapper → loaders/niche_loader (Этап 2 рефакторинга)."""
-    from loaders.niche_loader import get_entrepreneur_roles as _fn
-    return _fn(typical_staff)
-
-
-def get_quickcheck_survey(db, niche_id: str, format_id: str = None) -> dict:
-    """Thin wrapper → loaders/niche_loader (Этап 2 рефакторинга)."""
-    from loaders.niche_loader import get_quickcheck_survey as _fn
-    return _fn(db, niche_id, format_id)
-
-
-def get_niche_survey(db, niche_id: str, tier: str = "express") -> dict:
-    """Thin wrapper → loaders/niche_loader (Этап 2 рефакторинга)."""
-    from loaders.niche_loader import get_niche_survey as _fn
-    return _fn(db, niche_id, tier)
