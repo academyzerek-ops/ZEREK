@@ -281,6 +281,16 @@ h2{font-size:22px;margin-bottom:6px}
 .bar-row-label{font-size:13px;color:var(--text-2);font-weight:500;display:flex;justify-content:space-between;gap:8px}
 .bar-row-label span:last-child{font-family:var(--mono);font-weight:700;color:var(--text)}
 
+/* CAPEX-строка — двустрочная, чтобы длинные суммы (150 000) не обрезались. */
+.capex-row{display:flex;flex-direction:column;gap:6px;padding:8px 0;border-bottom:0.5px solid var(--surface-2)}
+.capex-row:last-child{border-bottom:none}
+.capex-row-head{display:flex;align-items:baseline;gap:10px;font-size:13px}
+.capex-row-pct{font-family:var(--mono);font-weight:700;color:var(--text-2);font-size:12px;min-width:36px;text-align:right}
+.capex-row-label{flex:1;min-width:0;color:var(--text-2);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.capex-row-amount{font-family:var(--mono);font-weight:700;color:var(--text);white-space:nowrap}
+.capex-row-bar{height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden;margin-left:46px}
+.capex-row-bar-inner{height:100%;background:var(--accent);border-radius:3px}
+
 /* Scenarios mini-chart (block 7) */
 .sc-chart{display:grid;grid-template-columns:repeat(24,1fr);gap:2px;align-items:flex-end;height:100px;padding:10px 0;border-bottom:1px solid var(--surface-2);border-top:1px solid var(--surface-2)}
 .sc-bar{background:var(--accent);border-radius:1px;min-height:2px;opacity:0.85}
@@ -1291,13 +1301,17 @@ function renderBlock6Html(b6){
   var html = '<div class="blk"><div class="blk-h">Стартовый капитал: структура CAPEX</div>';
   html += '<div class="blk-row"><span>Нужно для формата</span><strong>'+fmt(b6.capex_needed)+' ₸</strong></div>';
 
-  // Структура
+  // Структура — двустрочная вёрстка, чтобы суммы не обрезались при ширине 320px.
   html += '<div class="blk-hdr2">На что уйдут деньги</div>';
   (b6.capex_structure||[]).forEach(function(it){
-    html += '<div class="bar-row">' +
-      '<div class="bar-row-pct">'+it.pct+'%</div>' +
-      '<div class="bar-row-fill"><div class="bar-row-fill-inner" style="width:'+Math.min(it.pct*2,100)+'%"></div></div>' +
-      '<div class="bar-row-label"><span>'+escapeHtml(it.label)+'</span><span>'+fmt(it.amount)+'</span></div>' +
+    var barWidth = Math.min((it.pct||0) * 2, 100);
+    html += '<div class="capex-row">' +
+      '<div class="capex-row-head">' +
+        '<div class="capex-row-pct">'+(it.pct||0)+'%</div>' +
+        '<div class="capex-row-label">'+escapeHtml(it.label)+'</div>' +
+        '<div class="capex-row-amount">'+fmt(it.amount)+' ₸</div>' +
+      '</div>' +
+      '<div class="capex-row-bar"><div class="capex-row-bar-inner" style="width:'+barWidth+'%"></div></div>' +
     '</div>';
   });
 
