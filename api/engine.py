@@ -2378,23 +2378,20 @@ def compute_block8_stress_test(db, result, adaptive):
         new_profit = r - c - o
         return round((new_profit - base_op_profit) / base_op_profit * 100)
 
+    # Для Quick Check оставляем только 2 ключевых параметра: Загрузка/трафик
+    # и Средний чек. ФОТ/Аренда/Маркетинг/Налог — вторичные, уходят в FinModel.
     sensitivities = [
         {'param':'Загрузка / трафик', 'change':-20, 'impact_pct': impact(new_rev=base_rev*0.80, new_cogs=base_cogs*0.80)},
         {'param':'Средний чек',        'change':-20, 'impact_pct': impact(new_rev=base_rev*0.80, new_cogs=base_cogs*0.80)},
-        {'param':'ФОТ (рост)',         'change':+20, 'impact_pct': impact(new_opex=base_opex + fot*0.20)},
-        {'param':'Аренда (рост)',      'change':+30, 'impact_pct': impact(new_opex=base_opex + rent*0.30)},
-        {'param':'Маркетинг (нет)',    'change':-100,'impact_pct': impact(new_rev=base_rev*0.90, new_cogs=base_cogs*0.90)},
-        {'param':'Налог (рост)',       'change':+50, 'impact_pct': impact(new_opex=base_opex + int(base_rev*0.015))},
     ]
     # Порядок по абсолютному импакту
     sensitivities.sort(key=lambda x: x['impact_pct'])
 
-    # Точки смерти
+    # Точки смерти — только по 2 ключевым параметрам (ФОТ ушёл).
     var_margin = base_rev - base_cogs
     death_points = [
         {'param':'Загрузка / трафик', 'threshold': f'падение до <{int(base_opex/var_margin*100)}% ведёт в минус' if var_margin else '—'},
         {'param':'Средний чек',        'threshold': f'падение на >{int((1 - base_opex/(base_rev*(1-cogs_pct)))*100)}% ведёт в минус' if base_rev else '—'},
-        {'param':'ФОТ',                'threshold': f'рост на >{int((base_op_profit)/(fot or 1)*100)}% ведёт в минус' if fot else '—'},
     ]
 
     # Критичный параметр — с наибольшим отрицательным импактом
