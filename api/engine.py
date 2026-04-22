@@ -698,25 +698,14 @@ def get_competitors(db: ZerekDB, niche_id: str, city_id: str) -> dict:
     return _fn(db, niche_id, city_id)
 
 def get_failure_pattern(db: ZerekDB, niche_id: str) -> dict:
-    if db.failure_patterns.empty:
-        return {}
-    try:
-        rows = db.failure_patterns[db.failure_patterns["niche_id"] == niche_id]
-        if rows.empty:
-            return {}
-        return rows.iloc[0].to_dict()
-    except KeyError:
-        return {}
+    """Thin wrapper → loaders/content_loader (Этап 2 рефакторинга)."""
+    from loaders.content_loader import get_failure_pattern as _fn
+    return _fn(db, niche_id)
 
 def get_permits(db: ZerekDB, niche_id: str) -> list:
-    if db.permits.empty:
-        return []
-    try:
-        df = db.permits
-        rows = df[df["niche_id"].str.contains(niche_id, na=False) | (df["niche_id"] == "ALL")]
-        return rows.to_dict("records") if not rows.empty else []
-    except KeyError:
-        return []
+    """Thin wrapper → loaders/content_loader (Этап 2 рефакторинга)."""
+    from loaders.content_loader import get_permits as _fn
+    return _fn(db, niche_id)
 
 
 # ═══════════════════════════════════════════════
@@ -2686,12 +2675,10 @@ def _filter_risks_by_format(risks_list, format_id):
 
 def compute_block9_risks(db, result, adaptive):
     """Читает insight-файл ниши и извлекает топ-5 рисков. Fallback — generic риски по архетипу."""
-    import os, re
+    import re
+    from loaders.content_loader import load_insight_md
     inp = result.get('input', {}) or {}
     niche_id = inp.get('niche_id', '')
-
-    repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    insight_path = os.path.join(repo_root, 'knowledge', 'kz', 'niches', f'{niche_id}_insight.md')
 
     # Generic риски по архетипу (fallback)
     arch = _archetype_of(db, niche_id)
@@ -2777,10 +2764,9 @@ def compute_block9_risks(db, result, adaptive):
     }
 
     risks_out = []
-    if os.path.exists(insight_path):
+    content = load_insight_md(niche_id)
+    if content:
         try:
-            with open(insight_path, 'r', encoding='utf-8') as f:
-                content = f.read()
             # Ищем секции рисков по реальным заголовкам insight-файлов.
             # Форматы: `## Финансовые риски и ловушки`, `## Красные флаги`,
             # `## Красные флаги (когда лучше не открывать)`,
