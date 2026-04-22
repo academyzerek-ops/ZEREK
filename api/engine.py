@@ -1424,85 +1424,9 @@ def compute_block1_verdict(result, adaptive):
 # ═══════════════════════════════════════════════
 
 def compute_block3_market(db, result, adaptive):
-    inp = result.get('input', {}) or {}
-    risks = result.get('risks', {}) or {}
-    comp = risks.get('competitors') or {}
-
-    # HOME-форматы: 2GIS и агрегаторы не отражают реального рынка мастеров
-    # на дому (точки не публичные). Показываем ориентир, а не нули.
-    format_id_up = (inp.get('format_id') or '').upper()
-    if format_id_up.endswith('_HOME'):
-        return {
-            'type': 'home_market_note',
-            'message': ('Для мастера на дому конкуренция формируется в '
-                        'Instagram и TikTok. 2GIS и агрегаторы не отражают '
-                        'реального рынка домашних мастеров. Ищите конкурентов '
-                        'через хэштеги Instagram по вашему городу и району.'),
-        }
-
-    competitors_count = _safe_int(comp.get('competitors_count')) or _safe_int(comp.get('n')) or 0
-    city_name = inp.get('city_name', '') or inp.get('city_id', '')
-    city_pop = _safe_int(inp.get('city_population'), 0)
-
-    # Приоритет — готовый density_per_10k из xlsx (через get_competitors).
-    # Фолбэк — пересчёт competitors_count / (population / 10000).
-    density_raw = _safe_float(comp.get('density_per_10k'), 0.0)
-    if density_raw > 0:
-        density = density_raw
-    else:
-        density = (competitors_count / (city_pop / 10000)) if city_pop else 0
-    benchmark_density = BENCHMARK_RETAIL_DENSITY_10K
-    saturation_pct = (density / benchmark_density * 100) if benchmark_density else 0
-
-    # Цвет насыщенности
-    if saturation_pct <= 60:
-        sat_color = 'green'; sat_text = 'Рынок недонасыщен — есть пространство для входа даже без сильного УТП'
-    elif saturation_pct <= 110:
-        sat_color = 'yellow'; sat_text = 'Рынок умеренно насыщен — есть пространство для входа при сильном УТП'
-    elif saturation_pct <= 150:
-        sat_color = 'orange'; sat_text = 'Рынок насыщен — для успеха нужен чёткий отличительный фактор (локация, сервис, цена)'
-    else:
-        sat_color = 'red'; sat_text = 'Рынок перенасыщен — высокий риск долгой окупаемости из-за конкуренции'
-
-    # Платёжеспособность — упрощённо, на коэффициенте города
-    city_coef = get_city_check_coef(inp.get('city_id', '')) or 1.0
-    affordability_index = city_coef  # проксирует «городской чек ÷ бенчмарк»
-    if affordability_index >= 1.15:
-        afford_text = f'Платёжеспособность на {int((affordability_index-1)*100)}% выше средней по РК — можно закладывать премиум-чек'
-    elif affordability_index >= 1.0:
-        afford_text = 'Платёжеспособность на уровне средней по РК — стандартные цены рынка работают хорошо'
-    elif affordability_index >= 0.85:
-        afford_text = f'Платёжеспособность на {int((1-affordability_index)*100)}% ниже средней по РК — учтите при ценообразовании'
-    else:
-        afford_text = f'Платёжеспособность на {int((1-affordability_index)*100)}% ниже средней по РК — премиум-форматы рискованны'
-
-    # Конкуренты — список если есть
-    competitors_list = []
-    if isinstance(comp.get('top'), list):
-        for c in comp['top'][:5]:
-            competitors_list.append({
-                'name': c.get('name') or c.get('title') or '—',
-                'rating': c.get('rating'),
-                'reviews': c.get('reviews') or c.get('reviews_count'),
-                'district': c.get('district') or '',
-            })
-
-    return {
-        'city': city_name,
-        'saturation': {
-            'competitors_count': competitors_count,
-            'density_city': round(density, 2),
-            'density_benchmark': benchmark_density,
-            'pct_of_benchmark': int(saturation_pct),
-            'color': sat_color,
-            'text_rus': sat_text,
-        },
-        'competitors_list': competitors_list,
-        'affordability': {
-            'city_coef': round(affordability_index, 2),
-            'text_rus': afford_text,
-        },
-    }
+    """Thin wrapper → services/market_service (Этап 3 рефакторинга)."""
+    from services.market_service import compute_block3_market as _fn
+    return _fn(result)
 
 
 # ═══════════════════════════════════════════════
