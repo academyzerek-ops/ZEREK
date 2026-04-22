@@ -1751,7 +1751,14 @@ def compute_block1_verdict(result, adaptive):
     sorted_desc = sorted(scoring_items, key=lambda x: -x.get('score', 0))
     sorted_asc  = sorted(scoring_items, key=lambda x: x.get('score', 0))
     strengths_items = sorted_desc[:3]
-    risks_items = sorted_asc[:3]
+    # Для HOME-форматов пункт «Насыщенность рынка» противоречит блоку 3
+    # «рынок недонасыщен»: в HOME-сегменте клиенты находят мастеров через
+    # Instagram, а не по плотности салонов. Исключаем из рисков, чтобы не
+    # было противоречия «недонасыщен ↔ без УТП сложно взять долю».
+    risks_pool = sorted_asc
+    if is_solo_fmt_b1 or format_id_upper.endswith('_HOME'):
+        risks_pool = [it for it in risks_pool if it.get('label') != 'Насыщенность рынка']
+    risks_items = risks_pool[:3]
 
     # ── Главные цифры (диапазоны) ──
     rev_base = _safe_int((scenarios.get('base') or {}).get('выручка_год'), 0) // 12
