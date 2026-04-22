@@ -399,20 +399,15 @@ CITY_CANON_TO_DATA, CITY_LEGACY_TO_CANON, CITY_CHECK_COEF = _build_city_maps()
 
 
 def normalize_city_id(city_id: str) -> str:
-    """Приводит любой (legacy или canonical) city_id к канонической форме.
-
-    Если id не найден — возвращает как есть, чтобы не ломать вызывающий код.
-    """
-    if city_id is None:
-        return city_id
-    s = str(city_id).strip()
-    return CITY_LEGACY_TO_CANON.get(s, s)
+    """Thin wrapper → loaders/city_loader (Этап 2 рефакторинга)."""
+    from loaders.city_loader import normalize_city_id as _fn
+    return _fn(city_id)
 
 
 def get_city_check_coef(city_id: str) -> float:
-    """Ценовой коэффициент города. База = 1.00 (Актобе)."""
-    canon = normalize_city_id(city_id)
-    return CITY_CHECK_COEF.get(canon, 1.00)
+    """Thin wrapper → loaders/city_loader (Этап 2 рефакторинга)."""
+    from loaders.city_loader import get_city_check_coef as _fn
+    return _fn(city_id)
 
 def _safe(val, default=0):
     """Безопасное чтение — None/NaN → дефолт."""
@@ -683,13 +678,9 @@ class ZerekDB:
 # ═══════════════════════════════════════════════
 
 def get_city(db: ZerekDB, city_id: str) -> dict:
-    cid = normalize_city_id(city_id)
-    if db.cities.empty or "city_id" not in db.cities.columns:
-        return {"city_id": cid, "Город": cid, "Население всего (чел.)": 0}
-    rows = db.cities[db.cities["city_id"] == cid]
-    if rows.empty:
-        return {"city_id": cid, "Город": cid, "Население всего (чел.)": 0}
-    return rows.iloc[0].to_dict()
+    """Thin wrapper → loaders/city_loader (Этап 2 рефакторинга)."""
+    from loaders.city_loader import get_city as _fn
+    return _fn(db, city_id)
 
 def get_city_tax_rate(db: ZerekDB, city_id: str) -> float:
     cid = normalize_city_id(city_id)
@@ -1458,8 +1449,9 @@ def run_quick_check_v3(
 
 # Экспорт для старого кода (будет удалён после миграции)
 def get_inflation_region(db, city_id):
-    rows = db.inflation[db.inflation.get("region_id", db.inflation.columns[0]) == city_id] if not db.inflation.empty else pd.DataFrame()
-    return 10.0
+    """Thin wrapper → loaders/city_loader (Этап 2 рефакторинга)."""
+    from loaders.city_loader import get_inflation_region as _fn
+    return _fn(db, city_id)
 
 def render_report(result):
     """Заглушка — будет переписан в report_v3.py"""
