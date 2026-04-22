@@ -3072,6 +3072,13 @@ def compute_block10_next_steps(db, result, adaptive, block1=None, block2=None):
     """Блок 10 — план действий / условия / альтернативы + апсейл + финальное напутствие."""
     color = (block1 or {}).get('color', 'yellow')
 
+    # Город и формат для headline — говорим про направление, не про «вашу идею».
+    inp = (result or {}).get('input', {}) or {}
+    city_rus = inp.get('city_name') or ''
+    city_prefix = f'в {city_rus} ' if city_rus else ''
+    format_label = inp.get('format_name') or ''
+    format_phrase = f'в формате «{format_label}»' if format_label else ''
+
     out = {
         'color': color,
         'farewell_rus': _final_farewell(color, block2),
@@ -3080,21 +3087,30 @@ def compute_block10_next_steps(db, result, adaptive, block1=None, block2=None):
 
     if color == 'green':
         out['action_plan'] = _green_action_plan(block2, block1, adaptive=adaptive, result=result)
-        out['headline_rus'] = '✅ Ваша идея реалистична. Можете входить.'
+        out['headline_rus'] = (
+            f'✅ Это направление реалистично для заработка {city_prefix}{format_phrase}. '
+            f'Можно пробовать.'
+        ).replace('  ', ' ').strip()
         out['cta_buttons'] = [
             {'label_rus': 'Купить Финансовую модель — 9 000 ₸', 'action': 'buy_finmodel'},
             {'label_rus': 'Скачать PDF отчёта', 'action': 'download_pdf'},
         ]
     elif color == 'yellow':
         out['conditions'] = _yellow_conditions(block1, block2)
-        out['headline_rus'] = f'⚠️ Идея возможна при устранении {len(out["conditions"])} условий.'
+        out['headline_rus'] = (
+            '⚠️ Это направление возможно, но с оговорками. Обратите внимание '
+            'на пункты выше перед стартом.'
+        )
         out['cta_buttons'] = [
             {'label_rus': 'Пересмотреть параметры', 'action': 'restart_survey'},
             {'label_rus': 'Купить Финмодель — 9 000 ₸', 'action': 'buy_finmodel'},
         ]
     else:  # red
         out['alternatives'] = _red_alternatives(block1, block2, result, db)
-        out['headline_rus'] = '🚨 В текущей конфигурации бизнес не окупится.'
+        out['headline_rus'] = (
+            f'🚨 В этом формате{(" и регионе " + city_rus) if city_rus else ""} '
+            f'направление даст убыток по базовому сценарию. Пересмотрите параметры или формат.'
+        ).replace('  ', ' ').strip()
         out['cta_buttons'] = [
             {'label_rus': 'Пересчитать с другим форматом', 'action': 'change_format'},
             {'label_rus': 'Пересчитать с другим городом', 'action': 'change_city'},
