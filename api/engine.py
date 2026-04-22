@@ -1005,418 +1005,77 @@ def _fmt_kzt_short(v):
 
 
 def _score_capital(capital_own, capex_needed):
-    """Баллы за капитал vs CAPEX-бенчмарк.
-
-    Правила:
-    - capital_own = None/неизвестно → 2 балла «не указан — расчёт условный».
-      НЕ штрафуем за отсутствие ответа, это не факт бизнеса.
-    - capex_needed = 0 → 1 балл «нет бенчмарка» (реально редко — 08 заполнен).
-    - capital >= capex*1.2 → 3 балла «капитал с запасом»
-    - capital в [capex*0.95, capex*1.2) → 2 балла «соответствует»
-    - capital в [capex*0.75, capex*0.95) → 1 балл «на грани»
-    - capital < capex*0.75 → 0 баллов «критический дефицит»
-    """
-    if not capex_needed:
-        return {'score': 1, 'label': 'Капитал vs ориентир',
-                'note': 'Нет данных по ориентиру стартовых вложений'}
-    if capital_own is None or capital_own == 0:
-        return {'score': 2, 'label': 'Капитал vs ориентир',
-                'note': f'Капитал не указан — расчёт условный. Ориентир стартовых вложений: {int(capex_needed):,} ₸.'.replace(',', ' ')}
-    ratio = capital_own / capex_needed
-    t_excel, t_match, t_low = SCORING_CAPITAL  # пороги: профицит / норма / терпимо
-    if ratio >= t_excel:
-        return {'score': 3, 'label': 'Капитал vs ориентир',
-                'note': f'Капитал с запасом: на {int((ratio-1)*100)}% выше ориентира',
-                'ratio': ratio}
-    if ratio >= t_match:
-        return {'score': 2, 'label': 'Капитал vs ориентир',
-                'note': 'Капитал соответствует ориентиру',
-                'ratio': ratio}
-    if ratio >= t_low:
-        return {'score': 1, 'label': 'Капитал vs ориентир',
-                'note': f'Капитал на грани: дефицит {int((1-ratio)*100)}%',
-                'ratio': ratio,
-                'gap_kzt': int(capex_needed - capital_own)}
-    return {'score': 0, 'label': 'Капитал vs ориентир',
-            'note': f'Критический дефицит капитала: {int((1-ratio)*100)}%',
-            'ratio': ratio,
-            'gap_kzt': int(capex_needed - capital_own)}
+    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
+    from services.verdict_service import _score_capital as _fn
+    return _fn(capital_own, capex_needed)
 
 
 def _score_roi(profit_year, total_investment, is_solo=False):
-    """Скоринг годового ROI.
-
-    - is_solo=True (HOME/SOLO форматы) → ROI не применим, полный балл 3/3
-      с пояснением. Self-employed зарабатывает трудом, не капиталом.
-    - total_investment < 500K → 1 балл «недостаточно данных».
-    - roi > 3.0 (300%) → sanity-cap: ROI=300%, 1 балл «проверьте капитал».
-    - пороги из defaults.yaml (SCORING_ROI = [hi, mid, lo] = [0.45, 0.30, 0.15]).
-    """
-    if is_solo:
-        return {'score': 3, 'label': 'ROI годовой',
-                'note': 'Вы работаете сами — нет расходов на зарплату сотрудников'}
-    if not total_investment or total_investment < 500_000:
-        return {'score': 1, 'label': 'ROI годовой',
-                'note': 'Недостаточно данных о капитале'}
-    roi = (profit_year or 0) / total_investment
-    # Sanity-cap: ROI >300% — всегда ошибка входных данных/расчёта.
-    if roi > 3.0:
-        return {'score': 1, 'label': 'ROI годовой',
-                'note': 'ROI > 300% — проверьте указанный капитал',
-                'roi': 3.0,
-                'roi_raw': round(roi, 2)}
-    pct = int(round(roi * 100))
-    t_hi, t_mid, t_lo = SCORING_ROI
-    if roi >= t_hi:
-        return {'score': 3, 'label': 'ROI годовой',
-                'note': f'ROI {pct}% — выше среднего для малого бизнеса',
-                'roi': roi}
-    if roi >= t_mid:
-        return {'score': 2, 'label': 'ROI годовой',
-                'note': f'ROI {pct}% — нормальный',
-                'roi': roi}
-    if roi >= t_lo:
-        return {'score': 1, 'label': 'ROI годовой',
-                'note': f'ROI {pct}% — ниже нормы, но положительный',
-                'roi': roi}
-    return {'score': 0, 'label': 'ROI годовой',
-            'note': f'ROI {pct}% — не окупает капитал',
-            'roi': roi}
+    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
+    from services.verdict_service import _score_roi as _fn
+    return _fn(profit_year, total_investment, is_solo=is_solo)
 
 
 def _score_breakeven(breakeven_months):
-    t_fast, t_mid, t_slow = SCORING_BREAKEVEN
-    if breakeven_months is None:
-        return {'score': 0, 'label': 'Точка безубыточности', 'note': f'Бизнес не окупается за {t_slow} мес'}
-    if breakeven_months <= t_fast: return {'score': 3, 'label': 'Точка безубыточности', 'note': f'Окупаемость {breakeven_months} мес — быстрая', 'months': breakeven_months}
-    if breakeven_months <= t_mid:  return {'score': 2, 'label': 'Точка безубыточности', 'note': f'Окупаемость {breakeven_months} мес', 'months': breakeven_months}
-    if breakeven_months <= t_slow: return {'score': 1, 'label': 'Точка безубыточности', 'note': f'Окупаемость {breakeven_months} мес — долго', 'months': breakeven_months}
-    return {'score': 0, 'label': 'Точка безубыточности', 'note': f'Окупаемость {breakeven_months} мес — слишком долго', 'months': breakeven_months}
+    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
+    from services.verdict_service import _score_breakeven as _fn
+    return _fn(breakeven_months)
 
 
 def _score_saturation(competitors_count, city_population, niche_id, density_per_10k=None):
-    """Насыщенность рынка через плотность конкурентов на 10K жителей.
-
-    Приоритет — `density_per_10k` (готовый float из 14_competitors.xlsx).
-    Фолбэк — пересчёт через `competitors_count / (population/10000)`.
-    Бенчмарк — из defaults.yaml (benchmarks.competitor_density_per_10k).
-    """
-    density = None
-    try:
-        if density_per_10k is not None and float(density_per_10k) > 0:
-            density = float(density_per_10k)
-    except Exception:
-        density = None
-    if density is None:
-        if not competitors_count or not city_population:
-            return {'score': 2, 'label': 'Насыщенность рынка', 'note': 'Нет данных о конкурентах'}
-        density = competitors_count / (city_population / 10000)
-    benchmark = BENCHMARK_COMPETITOR_DENSITY_10K
-    ratio = density / benchmark if benchmark else 0
-    t_low, t_mid, t_hi = SCORING_SATURATION
-    if ratio <= t_low:
-        return {'score': 3, 'label': 'Насыщенность рынка',
-                'note': f'Рынок недонасыщен: {round(density,1)} конкурентов на 10K жителей',
-                'density': density}
-    if ratio <= t_mid:
-        return {'score': 2, 'label': 'Насыщенность рынка',
-                'note': f'Норма: {round(density,1)} конкурентов на 10K',
-                'density': density}
-    if ratio <= t_hi:
-        return {'score': 1, 'label': 'Насыщенность рынка',
-                'note': f'Высокая конкуренция: {round(density,1)} конкурентов на 10K',
-                'density': density}
-    return {'score': 0, 'label': 'Насыщенность рынка',
-            'note': f'Рынок перенасыщен: {round(density,1)} на 10K',
-            'density': density}
+    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
+    from services.verdict_service import _score_saturation as _fn
+    return _fn(competitors_count, city_population, niche_id, density_per_10k=density_per_10k)
 
 
 def _score_experience(exp):
-    if exp == 'experienced': return {'score': 3, 'label': 'Опыт предпринимателя', 'note': '3+ лет опыта снижает риск первого года'}
-    if exp == 'some':        return {'score': 2, 'label': 'Опыт предпринимателя', 'note': '1-2 года опыта — стандартно'}
-    if exp == 'none':        return {'score': 0, 'label': 'Опыт предпринимателя', 'note': 'Нет опыта — риск первого года до 45%'}
-    return {'score': 1, 'label': 'Опыт предпринимателя', 'note': 'Опыт не указан'}
+    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
+    from services.verdict_service import _score_experience as _fn
+    return _fn(exp)
 
 
 def _score_marketing(tier='express'):
-    """В Quick Check этот параметр не опрашивается — не штрафуем.
-
-    Полный балл (2/2) с явной меткой «оценивается в FinModel», чтобы итоговый
-    score не занижался из-за отсутствующих данных, которые по воронке
-    собираются только на следующем шаге (9 000 ₸ финансовая модель).
-    """
-    return {'score': 2, 'label': 'Маркетинговый бюджет',
-            'note': 'Параметр оценивается в FinModel — в экспресс-оценке полный балл',
-            'max': 2}
+    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
+    from services.verdict_service import _score_marketing as _fn
+    return _fn(tier)
 
 
 def _score_stress(profit_base, profit_pess):
-    if profit_base is None or profit_pess is None:
-        return {'score': 1, 'label': 'Устойчивость к стрессу'}
-    t_stable, t_moderate = SCORING_STRESS_DROP
-    if profit_pess > 0:
-        drop = (profit_base - profit_pess) / profit_base if profit_base else 0
-        if drop < t_stable:   return {'score': 3, 'label': 'Устойчивость к стрессу', 'note': 'Бизнес устойчив к падению ключевого параметра на 20%'}
-        if drop < t_moderate: return {'score': 2, 'label': 'Устойчивость к стрессу', 'note': 'Умеренно устойчив — падение выручки терпимое'}
-        return {'score': 1, 'label': 'Устойчивость к стрессу', 'note': 'Хрупкая модель — небольшое падение трафика больно бьёт'}
-    return {'score': 0, 'label': 'Устойчивость к стрессу', 'note': 'При падении параметра на 20% — убыток'}
+    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
+    from services.verdict_service import _score_stress as _fn
+    return _fn(profit_base, profit_pess)
 
 
 def _score_format_city(format_id, format_class, city_population):
-    # Матрица «формат-класс × размер города»
-    t_small, t_mid = SCORING_CITY_POP
-    small = (city_population or 0) < t_small
-    mid = t_small <= (city_population or 0) < t_mid
-    cls = (format_class or '').lower()
-    if cls == 'премиум' and small:
-        return {'score': 0, 'label': 'Соответствие формата городу', 'note': 'Премиум-формат в малом городе — узкая ЦА'}
-    if cls == 'премиум' and mid:
-        return {'score': 1, 'label': 'Соответствие формата городу', 'note': 'Премиум-формат в среднем городе — ограниченная ЦА'}
-    return {'score': 3, 'label': 'Соответствие формата городу', 'note': 'Формат подходит для города'}
+    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
+    from services.verdict_service import _score_format_city as _fn
+    return _fn(format_id, format_class, city_population)
 
 
 def _verdict_statement_template(color, top_weak, top_strong, roi_pct, breakeven_months):
-    """Шаблонный вердикт (fallback когда Gemini не подключён)."""
-    strong_name = (top_strong or {}).get('label', '')
-    weak_name = (top_weak or {}).get('label', '')
-    weak_note = (top_weak or {}).get('note', '')
-
-    if color == 'green':
-        if top_weak and top_weak.get('score', 0) <= 1:
-            bm = f' Окупаемость {breakeven_months} мес — держите запас кассы.' if breakeven_months else ''
-            return f'Бизнес реалистичен и окупается.{bm}'
-        return f'Бизнес реалистичен и окупается. Главное преимущество — {strong_name.lower()}.'
-
-    if color == 'yellow':
-        return f'Бизнес возможен, но требует внимания. Главный риск — {weak_name.lower()}: {weak_note.lower()}.'
-
-    # red
-    return f'В текущей конфигурации бизнес не окупается в разумные сроки. Требуется пересмотр — главный слабый пункт: {weak_name.lower()}.'
+    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
+    from services.verdict_service import _verdict_statement_template as _fn
+    return _fn(color, top_weak, top_strong, roi_pct, breakeven_months)
 
 
 def _strength_text(p):
-    """Тезис для плюса."""
-    n = p.get('note') or ''
-    return n if n else p.get('label', '')
+    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
+    from services.verdict_service import _strength_text as _fn
+    return _fn(p)
+
 
 def _risk_text(p, context):
-    """Тезис для риска — с конкретной рекомендацией."""
-    label = p.get('label', '')
-    if label == 'Капитал vs ориентир':
-        gap = p.get('gap_kzt')
-        if gap:
-            return f'Дефицит капитала {_fmt_kzt(gap)} — найдите дополнительное финансирование или урежьте формат.'
-        return p.get('note') or 'Бюджет не соответствует формату.'
-    if label == 'Точка безубыточности':
-        months = p.get('months')
-        if months and months >= 12:
-            return f'Окупаемость {months} мес — заложите запас кассы на первые 6-12 мес.'
-        return p.get('note') or 'Окупаемость долгая — нужен запас.'
-    if label == 'Насыщенность рынка':
-        return (p.get('note') or '') + ' — без сильного УТП сложно взять долю.'
-    if label == 'Опыт предпринимателя':
-        return 'Отсутствие опыта повышает риск первого года. Найдите ментора или партнёра с опытом в нише.'
-    if label == 'Устойчивость к стрессу':
-        return 'Бизнес чувствителен к падению ключевого параметра. Маркетинг и удержание клиентов в первые 6 мес — приоритет.'
-    if label == 'Соответствие формата городу':
-        return 'Премиум-формат в выбранном городе — узкая платёжеспособная ЦА. Рассмотрите стандартный класс.'
-    if label == 'ROI годовой':
-        return 'ROI ниже среднего. Пересмотрите стартовые вложения или ожидаемую выручку.'
-    if label == 'Маркетинговый бюджет':
-        return 'Маркетинг будет ключевым — не экономьте на первом старте.'
-    return p.get('note') or label
+    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
+    from services.verdict_service import _risk_text as _fn
+    return _fn(p, context)
 
 
 def compute_block1_verdict(result, adaptive):
-    """Главная функция. Принимает результат run_quick_check_v3 + adaptive-ответы
-    (из specific_answers v1.0 спеки: experience, entrepreneur_role, capital_own, capital_needed)
-    и возвращает блок 1 вердикта."""
-    adaptive = adaptive or {}
-    inp = result.get('input', {}) or {}
-    fin = result.get('financials', {}) or {}
-    capex_block = result.get('capex', {}) or {}
-    scenarios = result.get('scenarios', {}) or {}
-    breakeven = result.get('breakeven', {}) or {}
-    payback = result.get('payback', {}) or {}
-    risks_block = result.get('risks', {}) or {}
-    owner_eco = result.get('owner_economics', {}) or {}
-    # ── Собираем скоринг ──
-    # CAPEX-бенчмарк: приоритет — 08_niche_formats.xlsx.capex_standard (проброшен
-    # в result.input). Фолбэк: capex_block.capex_med / capex_total из per-niche
-    # xlsx (часто занижен, если в CAPEX листе несколько строк под format_id).
-    capex_standard_08 = _safe_int(inp.get('capex_standard'), 0)
-    capex_med_perniche = _safe_int(capex_block.get('capex_med')) or _safe_int(capex_block.get('capex_total'))
-    capex_needed = capex_standard_08 if capex_standard_08 > 0 else capex_med_perniche
-    # capital_own: None если не передали, 0 если передали 0. Для скоринга
-    # отличаем «не указано» (None) от «указано 0».
-    capital_own_raw = adaptive.get('capital_own')
-    if capital_own_raw is None or capital_own_raw == '':
-        capital_own = None
-    else:
-        try:
-            capital_own = int(capital_own_raw) or None
-        except (TypeError, ValueError):
-            capital_own = None
+    """Thin wrapper → services/verdict_service (Этап 3 рефакторинга)."""
+    from services.verdict_service import compute_block1_verdict as _fn
+    return _fn(result, adaptive)
 
-    # total_investment для ROI = фактически вложенный капитал (capital_own),
-    # либо CAPEX-бенчмарк из 08 (правильный знаменатель), либо capex_total
-    # per-niche (запасной вариант). См. баг #2.
-    total_investment = (capital_own or 0) or capex_standard_08 or _safe_int(capex_block.get('capex_total'), 0)
-    if total_investment < 500_000:
-        for k in ('capex_med', 'capex', 'total_investment', 'capex_high'):
-            v = _safe_int(capex_block.get(k), 0)
-            if v >= 500_000:
-                total_investment = v
-                break
-    profit_year = _safe_int(fin.get('profit_year1'), 0)
-    # Единая формула окупаемости (Шаг 6 спеки): ceil(capex_total /
-    # monthly_net_income_avg). Одна и та же helper используется в Block 1,
-    # Block 5, планах действий — НИКАКИХ fallback'ов.
-    breakeven_months = compute_unified_payback_months(result, adaptive)
-    city_pop = _safe_int(inp.get('city_population'), 0)
-    if not city_pop:
-        city_pop = _safe_int((result.get('market', {}) or {}).get('population'), 0)
-    competitors_count = 0
-    density_per_10k = 0.0
-    comp_block = risks_block.get('competitors') or {}
-    if isinstance(comp_block, dict):
-        competitors_count = _safe_int(comp_block.get('competitors_count')) or _safe_int(comp_block.get('n'))
-        density_per_10k = _safe_float(comp_block.get('density_per_10k'), 0.0)
-    # Фолбэк — из market.competitors (то же содержимое, но иной путь).
-    if not density_per_10k:
-        mkt_comp = (result.get('market', {}) or {}).get('competitors') or {}
-        if isinstance(mkt_comp, dict):
-            density_per_10k = _safe_float(mkt_comp.get('density_per_10k'), 0.0)
-            if not competitors_count:
-                competitors_count = _safe_int(mkt_comp.get('competitors_count'))
-    exp = adaptive.get('experience') or ''
 
-    profit_base = _safe_int((scenarios.get('base') or {}).get('прибыль_среднемес'), 0)
-    profit_pess = _safe_int((scenarios.get('pess') or {}).get('прибыль_среднемес'), 0)
-
-    format_class = inp.get('class') or inp.get('cls') or ''
-    format_id = inp.get('format_id', '')
-
-    format_id_upper = (format_id or '').upper()
-    is_solo_fmt_b1 = bool(inp.get('founder_works')) and (
-        format_id_upper.endswith('_HOME') or format_id_upper.endswith('_SOLO')
-    )
-    scoring_items = [
-        _score_capital(capital_own, capex_needed),
-        _score_roi(profit_year, total_investment, is_solo=is_solo_fmt_b1),
-        _score_breakeven(breakeven_months),
-        _score_saturation(competitors_count, city_pop, inp.get('niche_id', ''),
-                          density_per_10k=density_per_10k),
-        _score_experience(exp),
-        _score_marketing('express'),
-        _score_stress(profit_base, profit_pess),
-        _score_format_city(format_id, format_class, city_pop),
-    ]
-    total_score = sum(it.get('score', 0) for it in scoring_items)
-    max_score = sum(it.get('max', 3) for it in scoring_items)
-
-    # ── Цвет (пороги из defaults.yaml: block1_verdict.thresholds) ──
-    _t_green, _t_yellow = BLOCK1_THRESHOLDS
-    if total_score >= _t_green:    color = 'green'
-    elif total_score >= _t_yellow: color = 'yellow'
-    else:                          color = 'red'
-
-    # Топ-3 strong / weak
-    sorted_desc = sorted(scoring_items, key=lambda x: -x.get('score', 0))
-    sorted_asc  = sorted(scoring_items, key=lambda x: x.get('score', 0))
-    strengths_items = sorted_desc[:3]
-    # Для HOME-форматов пункт «Насыщенность рынка» противоречит блоку 3
-    # «рынок недонасыщен»: в HOME-сегменте клиенты находят мастеров через
-    # Instagram, а не по плотности салонов. Исключаем из рисков, чтобы не
-    # было противоречия «недонасыщен ↔ без УТП сложно взять долю».
-    risks_pool = sorted_asc
-    if is_solo_fmt_b1 or format_id_upper.endswith('_HOME'):
-        risks_pool = [it for it in risks_pool if it.get('label') != 'Насыщенность рынка']
-    risks_items = risks_pool[:3]
-
-    # ── Главные цифры (диапазоны) ──
-    rev_base = _safe_int((scenarios.get('base') or {}).get('выручка_год'), 0) // 12
-    rev_pess = _safe_int((scenarios.get('pess') or {}).get('выручка_год'), 0) // 12
-    rev_opt  = _safe_int((scenarios.get('opt')  or {}).get('выручка_год'), 0) // 12
-    prof_base = profit_base
-    prof_pess = profit_pess
-    # Окупаемость — через тот же unified helper (breakeven_months уже
-    # пересчитан выше). bk_pess ≈ bk_base × 1.3 (консервативная оценка
-    # для пессимистичного сценария).
-    bk_base = _safe_int(breakeven_months) if breakeven_months is not None else _safe_int(payback.get('месяц'))
-    sc_pess_pb = (scenarios.get('pess') or {}).get('окупаемость')
-    if isinstance(sc_pess_pb, dict):
-        bk_pess = _safe_int(sc_pess_pb.get('месяц'))
-    else:
-        bk_pess = _safe_int(sc_pess_pb)
-
-    # Ваш доход предпринимателя
-    # При `owner_plus_*` владелец закрывает одну ставку (ставка роли = ФОТ /
-    # headcount). Прибыль уже посчитана с учётом всей ФОТ; чтобы не было
-    # двойного учёта, из прибыли ВЫЧИТАЕМ эту ставку, а потом прибавляем её
-    # обратно как «role_salary» (итог: доход = ставка + остаток прибыли).
-    ent_role = adaptive.get('entrepreneur_role') or 'owner_only'
-    staff_block = result.get('staff', {}) or {}
-    fot_full = _safe_int(staff_block.get('fot_full_med'), 0) or _safe_int(staff_block.get('fot_net_med'), 0)
-    hc = max(
-        _safe_int(staff_block.get('headcount'), 1) or 1,
-        _safe_int(inp.get('masters_canon'), 0) or 0,
-        1,
-    )
-    role_salary = int(fot_full / hc) if fot_full and hc else 0
-    if ent_role and ent_role not in ('owner_only', 'owner_multi') and role_salary > 0:
-        ent_income_base = max(0, prof_base - role_salary) + role_salary  # = prof_base
-        ent_income_pess = max(0, prof_pess - role_salary) + role_salary
-        # Упрощённо: доход = ставка + (прибыль − ставка) = прибыль.
-        # Это корректно когда headcount покрывает владельца. В отчёте
-        # показываем ставку и остаток отдельно.
-        ent_income_base = prof_base
-        ent_income_pess = max(0, prof_pess)
-    elif ent_role == 'owner_multi':
-        # Владелец совмещает несколько ставок — добавка ~35% ФОТ сверх профита.
-        bonus = int(fot_full * 0.35)
-        ent_income_base = prof_base + bonus
-        ent_income_pess = max(0, prof_pess + bonus)
-    else:
-        # owner_only — доход = чистая прибыль.
-        ent_income_base = prof_base
-        ent_income_pess = max(0, prof_pess)
-
-    # main_metrics удалено: секция «Главные цифры» в Block 1 убрана с фронта
-    # в Round 4 bug#4 (после переноса светофора в конец). Цифры показываются
-    # в Block 5 (P&L) и Block 6 (CAPEX). Backend больше не формирует этот
-    # мёртвый payload.
-
-    # ── Вердикт-предложение (шаблон) ──
-    statement = _verdict_statement_template(color, risks_items[0] if risks_items else None,
-                                            strengths_items[0] if strengths_items else None,
-                                            None, bk_base)
-
-    # ── Тексты плюсов и рисков ──
-    strengths_texts = [_strength_text(p) for p in strengths_items if p.get('score', 0) >= 2]
-    # если плюсов меньше 3 — допишем generic
-    while len(strengths_texts) < 3 and strengths_items:
-        p = strengths_items[len(strengths_texts) % len(strengths_items)]
-        t = _strength_text(p)
-        if t not in strengths_texts:
-            strengths_texts.append(t)
-        else:
-            break
-    risks_texts = [_risk_text(p, {'city': inp.get('city_name', '')}) for p in risks_items]
-
-    return {
-        'color': color,
-        'score': total_score,
-        'max_score': max_score,
-        'verdict_statement': statement,
-        'strengths': strengths_texts[:3],
-        'risks': risks_texts[:3],
-        'scoring': {
-            'items': scoring_items,
-            'strongest': strengths_items[:3],
-            'weakest': risks_items[:3],
-        },
-    }
 
 
 # ═══════════════════════════════════════════════
