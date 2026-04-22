@@ -65,7 +65,9 @@ class QCReq(BaseModel):
     city_id: str; niche_id: str; format_id: str; cls: str = "Стандарт"
     area_m2: float = 0; loc_type: str = ""; capital: Optional[int] = 0
     qty: int = 1; founder_works: bool = False
-    rent_override: Optional[int] = None; start_month: int = 4
+    # start_month — обязательный параметр (1..12). Pydantic принимает None
+    # для вежливого сообщения в endpoint-валидации (HTTP 400 вместо 422).
+    rent_override: Optional[int] = None; start_month: Optional[int] = None
     capex_level: str = "стандарт"
     # --- Quick Check v2 adaptive fields (optional, не меняют расчёт) ---
     has_license: Optional[str] = None          # "yes" / "no" / "in_progress"
@@ -167,6 +169,12 @@ def quick_check(req: QCReq):
     # Блокируем расчёт по недоступной нише
     if not db.is_niche_available(req.niche_id):
         raise HTTPException(400, "Эта ниша пока недоступна для расчёта")
+    # start_month обязателен (1..12) — влияет на прогноз первого года
+    # (first_year_chart) и на средние годовые метрики (ramp + сезонность).
+    if req.start_month is None:
+        raise HTTPException(400, "Укажите месяц планируемого старта (start_month ∈ 1..12). Это влияет на прогноз первого года.")
+    if not isinstance(req.start_month, int) or req.start_month < 1 or req.start_month > 12:
+        raise HTTPException(400, f"start_month должен быть 1..12, получен: {req.start_month}")
     try:
         cls = CAPEX_TO_CLS.get((req.capex_level or "").strip().lower(), req.cls)
         # Валидация HOME/SOLO: в xlsx FINANCIALS должны быть явно заданы
