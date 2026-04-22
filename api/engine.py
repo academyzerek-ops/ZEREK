@@ -2983,9 +2983,11 @@ def compute_block5_pnl(db, result, adaptive):
     # ВАЖНО: ФОТ и аренда фиксированы; COGS пропорционально; маркетинг — как базовый
     pnl_base = _scenario_pnl_row(rev_year_base, cogs_pct, fot_monthly, rent_monthly, marketing_monthly, other_opex_monthly, tax_rate)
     pnl_pess = _scenario_pnl_row(rev_year_pess, cogs_pct, fot_monthly, rent_monthly, marketing_monthly, other_opex_monthly, tax_rate)
-    # Оптимист: ФОТ чуть выше (сдельщики получают больше)
-    fot_opt = int(fot_monthly * 1.15)
-    pnl_opt  = _scenario_pnl_row(rev_year_opt, cogs_pct, fot_opt, rent_monthly, marketing_monthly, other_opex_monthly, tax_rate)
+    # Аксиома 2.9 спеки: во всех 3 сценариях ФОТ, аренда, маркетинг —
+    # одинаковые. Меняются только traffic_k и check_k. Раньше оптимист
+    # увеличивал ФОТ на 15% («сдельщики получают больше»), что нарушало
+    # инвариант «фиксированные = константа» — убрано (Шаг 9).
+    pnl_opt  = _scenario_pnl_row(rev_year_opt, cogs_pct, fot_monthly, rent_monthly, marketing_monthly, other_opex_monthly, tax_rate)
 
     # Мультипликаторы (по базовому сценарию)
     def _safe_div(a, b):
