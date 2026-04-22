@@ -1868,11 +1868,10 @@ def compute_block1_verdict(result, adaptive):
                 total_investment = v
                 break
     profit_year = _safe_int(fin.get('profit_year1'), 0)
-    # Единая формула окупаемости (та же что в Block 5 / Block 6) —
-    # через helper. Fallback — старый payback.месяц из cashflow.
+    # Единая формула окупаемости (Шаг 6 спеки): ceil(capex_total /
+    # monthly_net_income_avg). Одна и та же helper используется в Block 1,
+    # Block 5, планах действий — НИКАКИХ fallback'ов.
     breakeven_months = compute_unified_payback_months(result, adaptive)
-    if breakeven_months is None:
-        breakeven_months = payback.get('месяц') or breakeven.get('месяц')
     city_pop = _safe_int(inp.get('city_population'), 0)
     if not city_pop:
         city_pop = _safe_int((result.get('market', {}) or {}).get('population'), 0)
