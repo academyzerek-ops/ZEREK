@@ -848,7 +848,7 @@ function renderResult(result){
     if(result.block7)  html += renderBlock7Html(result.block7);
     if(result.block8)  html += renderBlock8Html(result.block8);
     if(result.block9)  html += renderBlock9Html(result.block9);
-    html += renderBlock1Html(result.block1, result.block2);
+    html += renderBlock1Html(result.block1);
     if(result.block10) html += renderBlock10Html(result.block10);
     $('result-screen').innerHTML = html;
     return;
@@ -862,10 +862,9 @@ function renderResult(result){
     '</div>';
 }
 
-function renderBlock1Html(b1, b2){
+function renderBlock1Html(b1){
   var color = b1.color || 'yellow';
   var colorRus = {green:'ЗЕЛЁНЫЙ', yellow:'ЖЁЛТЫЙ', red:'КРАСНЫЙ'}[color];
-  var isSolo = !!(b2 && b2.is_solo);
 
   var light = (
     '<div class="b1-traffic">' +
@@ -886,25 +885,8 @@ function renderBlock1Html(b1, b2){
     '</div>'
   );
 
-  var m = b1.main_metrics || {};
-  // Для SOLO (founder_works + _HOME/_SOLO) прибыль бизнеса = доход
-  // предпринимателя (разделять бессмысленно): убираем «Прибыль/мес»
-  // и переименовываем «Ваш доход/мес» → «Ваш чистый доход/мес».
-  var heroIncomeLabel = isSolo ? 'Ваш чистый доход/мес' : 'Ваш доход/мес';
-  var metricsBlock = (
-    '<div class="b1-section">' +
-      '<div class="b1-header">Главные цифры</div>' +
-      '<div class="b1-metrics">' +
-        metricCard('Выручка/мес', m.revenue_range) +
-        (isSolo ? '' : metricCard('Прибыль/мес', m.profit_range)) +
-        metricCard('Окупаемость', m.breakeven_range) +
-        '<div class="b1-metric hero">' +
-          '<div class="b1-metric-label">'+heroIncomeLabel+'</div>' +
-          '<div class="b1-metric-val">'+escapeHtml(m.entrepreneur_income_range || '—')+'</div>' +
-        '</div>' +
-      '</div>' +
-    '</div>'
-  );
+  // Секция «Главные цифры» убрана — цифры уже показаны в Block 5 (P&L)
+  // и Block 6 (CAPEX). Block 1 = итоговый вердикт, не сводка.
 
   var strengths = (b1.strengths || []).map(function(s){
     return '<div class="b1-item"><span class="b1-item-ic">✅</span><div class="b1-item-text">'+escapeHtml(s)+'</div></div>';
@@ -926,9 +908,9 @@ function renderBlock1Html(b1, b2){
     '</div>'
   );
 
-  var footer = '<div class="b1-footer">Оценка <strong>'+(b1.score||0)+'/'+(b1.max_score||23)+'</strong> · дальше — детальный отчёт</div>';
-
-  return '<div class="b1">' + verdictBlock + metricsBlock + listsBlock + footer + '</div>';
+  // Футер «дальше — детальный отчёт» убран: после Bug #5 Block 1
+  // уходит в конец отчёта, «дальше» уже ничего нет.
+  return '<div class="b1">' + verdictBlock + listsBlock + '</div>';
 }
 function metricCard(label, val){
   return '<div class="b1-metric"><div class="b1-metric-label">'+escapeHtml(label)+'</div>' +
