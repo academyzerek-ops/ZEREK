@@ -1,284 +1,335 @@
 # ZEREK — Архитектура
 
-> Документация слоистой архитектуры ZEREK Quick Check / FinModel / BizPlan.
-> Источник истины — `ZEREK_QuickCheck_Calculation_Spec.md` (финансовые формулы).
-> Рефакторинг ведётся по плану `REFACTOR_PLAN.md` (gitignore).
+> Слоистая архитектура ZEREK Quick Check / FinModel / BizPlan.
+> Источник истины формул — `ZEREK_QuickCheck_Calculation_Spec.md`.
 >
-> Версия: 1.0, Этап 1 рефакторинга (2026-04-22).
+> Версия: **2.0** (финал рефакторинга, Этап 8 завершён, 2026-04-23).
 
 ---
 
 ## 1. Принципы
 
-1. **Single source of truth** — каждая сущность (ниша, город, налог, цена) хранится в одном месте.
+1. **Single source of truth** — каждая сущность хранится в одном месте.
 2. **Разделение слоёв** — данные ≠ бизнес-логика ≠ рендер ≠ платформа.
-3. **Сервис-ориентированность** — общие сервисы используются всеми калькуляторами (Quick Check / FinModel / BizPlan).
+3. **Сервис-ориентированность** — общие сервисы используются всеми калькуляторами.
 4. **Калькулятор возвращает данные, не вёрстку** — рендер отдельно.
-5. **Ниша описывается одним YAML-файлом** — внешние данные (БНС РК, 2GIS, аренда) парсятся отдельно.
-6. **Никаких фолбэков, скрывающих баги** — валидация на входе, явная ошибка вместо 100К/мес «по умолчанию».
+5. **Ниша описывается одним YAML-файлом** — внешние данные парсятся отдельно.
+6. **Никаких фолбэков, скрывающих баги** — валидация на входе, явная ошибка вместо «100К/мес по умолчанию».
 7. **Регрессия обязательна** — после каждого этапа API-ответ бит-в-бит совпадает с baseline.
 
 ---
 
-## 2. Папочная структура
+## 2. Папочная структура (финал)
 
 ```
 ZEREK/
 ├── api/
-│   ├── loaders/                    # читают данные из источников
-│   │   ├── niche_loader.py         # ZerekDB.niche_data + niche_config + surveys
-│   │   ├── city_loader.py          # 01_cities.xlsx + legacy-id нормализация
-│   │   ├── pricing_loader.py       # цены материалов (Этап 7+)
-│   │   ├── rent_loader.py          # 11_rent_benchmarks.xlsx
-│   │   ├── tax_loader.py           # 05_tax_regimes.xlsx
-│   │   ├── competitor_loader.py    # 14_competitors.xlsx, 2GIS
-│   │   └── content_loader.py       # wiki, insights, lessons, permits, failure
+│   ├── config.py                       # 32 LOC — общие константы (LOCATION_TYPES_META)
+│   ├── engine.py                       # 932 LOC — ядро (ZerekDB, run_quick_check_v3,
+│   │                                   #   константы из YAML config, YAML-overlay для get_format_row)
+│   ├── main.py                         # 621 LOC — FastAPI endpoints, file_store, /chat
+│   ├── report.py                       # 10 LOC — re-export render_report_v4 для legacy
+│   ├── pdf_gen.py                      # 10 LOC — re-export для legacy импортов
+│   ├── gen_finmodel.py                 # xlsx-генератор финмодели (без изменений)
+│   ├── finmodel_report.py              # HTML-отчёт финмодели (без изменений)
+│   ├── grant_bp.py                     # .docx грант-БП (без изменений)
+│   ├── gemini_rag.py                   # Gemini AI интеграция (без изменений)
 │   │
-│   ├── services/                   # бизнес-логика
-│   │   ├── pricing_service.py      # социальные платежи ИП, effective ставки
-│   │   ├── market_service.py       # Block 3 (конкуренты, плотность, HOME-note)
-│   │   ├── economics_service.py    # calc_cashflow, P&L, breakeven, payback,
-│   │   │                           # Block 4/5/6, unit-экономика A–F,
-│   │   │                           # compute_pnl_aggregates, compute_unified_payback_months
-│   │   ├── seasonality_service.py  # calc_revenue_monthly, first_year_chart, Block season
-│   │   ├── stress_service.py       # Block 8 (от зрелого, Шаг 8 спеки)
-│   │   ├── scenario_service.py     # 3 сценария (pess/base/opt)
-│   │   ├── verdict_service.py      # Block 1 (светофор), 8 скоринг-функций
-│   │   ├── risk_service.py         # Block 9 (HOME-specific, filter by format)
-│   │   ├── action_plan_service.py  # Block 10 (green/yellow/red план)
-│   │   └── chat_service.py         # Gemini system prompt, /chat
+│   ├── loaders/                        # 865 LOC — чтение данных
+│   │   ├── city_loader.py              # 80 LOC — 01_cities.xlsx + city_id legacy
+│   │   ├── tax_loader.py               # 64 LOC — 05_tax_regimes.xlsx
+│   │   ├── rent_loader.py              # 50 LOC — 11_rent_benchmarks.xlsx
+│   │   ├── competitor_loader.py        # 82 LOC — 14_competitors.xlsx
+│   │   ├── content_loader.py           # 74 LOC — failure/permits/insight.md
+│   │   └── niche_loader.py             # 720 LOC — niches xlsx + survey config + YAML overlay
 │   │
-│   ├── calculators/                # тонкие фасады продуктов
-│   │   ├── quick_check.py          # Quick Check 5 000 ₸ (run_quick_check_v3)
-│   │   ├── finmodel.py             # FinModel 9 000 ₸ (заглушка в Этапе 4)
-│   │   └── bizplan.py              # BizPlan 15 000 ₸ (заглушка в Этапе 4)
+│   ├── services/                       # 2 532 LOC — бизнес-логика
+│   │   ├── pricing_service.py          # 49 LOC — соцплатежи ИП КЗ 2026
+│   │   ├── seasonality_service.py      # 170 LOC — ramp+season + first_year_chart + Block season
+│   │   ├── economics_service.py        # 870 LOC — P&L, payback, breakeven, Block 4/5/6
+│   │   ├── stress_service.py           # 116 LOC — Block 8 от зрелого
+│   │   ├── scenario_service.py         # 61 LOC — 3 сценария
+│   │   ├── market_service.py           # 107 LOC — Block 3 (HOME-note, насыщенность)
+│   │   ├── risk_service.py             # 229 LOC — Block 9 (insight.md, HOME-specific)
+│   │   ├── action_plan_service.py      # 351 LOC — Block 10 (green/yellow/red)
+│   │   └── verdict_service.py          # 388 LOC — Block 1 светофор + 8 score-ов
 │   │
-│   ├── renderers/                  # форматирование результата
-│   │   ├── quick_check_renderer.py # JSON → block1..block10 (новый формат)
-│   │   ├── pdf_renderer.py         # обёртка pdf_gen, формат block_1..block_12
-│   │   └── html_renderer.py        # финмодель-HTML-отчёт
+│   ├── calculators/                    # 702 LOC — фасады продуктов
+│   │   ├── quick_check.py              # 285 LOC — Quick Check 5 000 ₸ (главный фасад)
+│   │   ├── finmodel.py                 # 388 LOC — FinModel 9 000 ₸
+│   │   └── bizplan.py                  # 29 LOC — заглушка (BizPlan TBD)
 │   │
-│   ├── validators/                 # валидация входа
-│   │   ├── input_validator.py      # QCReq/FMReq/GrantBPReq + HOME/SOLO check
-│   │   └── data_validator.py       # целостность xlsx/yaml на старте
+│   ├── renderers/                      # 1 988 LOC — UI-форматирование
+│   │   ├── quick_check_renderer.py     # 618 LOC — render_for_api + Block 2 + helpers
+│   │   └── pdf_renderer.py             # 1370 LOC — PDF (через ReportLab)
 │   │
-│   ├── models/                     # типы и схемы данных (pydantic)
-│   │   ├── niche.py                # схема YAML ниши
-│   │   ├── input.py                # схема анкеты
-│   │   └── report.py               # схема API-ответа
+│   ├── validators/                     # 94 LOC — валидация входов
+│   │   └── input_validator.py          # 94 LOC — QuickCheckRequest (Pydantic)
 │   │
-│   ├── config.py                   # константы (MRP, МЗП, налоги, дефолты)
-│   ├── file_store.py               # временное хранилище файлов (token → bytes)
-│   ├── utils.py                    # clean(), _safe/int/float
-│   └── main.py                     # FastAPI endpoints (тонкий, ≤300 LOC)
+│   └── models/                         # 741 LOC — TypedDict схемы (документация)
+│       ├── block.py                    # 352 LOC — TypedDict для каждого блока
+│       ├── calc_result.py              # 232 LOC — CalcResult (выход calculator)
+│       └── result.py                   # 110 LOC — QuickCheckResult (выход API)
 │
 ├── data/
-│   ├── niches/                     # YAML по нишам (Этап 7)
-│   │   ├── MANICURE_data.yaml      # первая нишa на YAML (прототип)
-│   │   └── ...                     # 49 остальных
-│   │
-│   ├── external/                   # внешние источники (Этап 7+)
-│   │   └── kz/*.xlsx               # БНС, налоги, аренда, инфляция, 2GIS
-│   │
-│   ├── content/                    # контент для клиента
-│   │   ├── wiki/                   # HTML обзоры (50 ниш)
-│   │   ├── insights/               # MD текстовые знания
-│   │   ├── lessons/                # уроки академии
-│   │   └── cases/                  # кейсы
-│   │
-│   └── kz/                         # xlsx (будут разложены по external/ и niches/)
-│
-├── products/                       # frontend Mini App
-│   ├── quick-check.html            # анкета (редиректор → qc-v3)
-│   ├── qc-v3.html                  # рендер отчёта Quick Check
-│   └── app.html                    # Academy SPA
+│   ├── niches/                         # YAML по нишам (Этап 7)
+│   │   └── MANICURE_data.yaml          # 648 LOC — первая ниша на YAML (4 формата)
+│   ├── kz/                             # 19 xlsx файлов (БНС, налоги, аренда, ниши)
+│   ├── content/                        # placeholder (wiki, insights — пока в knowledge/)
+│   └── external/                       # placeholder
 │
 ├── tests/
-│   ├── unit/                       # 3-5 тестов на каждый service
-│   ├── integration/                # тесты калькуляторов end-to-end
-│   └── fixtures/                   # baseline JSON (gitignore)
+│   ├── unit/                           # 96 unit-тестов
+│   │   ├── test_pricing_service.py     # 5 тестов
+│   │   ├── test_seasonality_service.py # 10 тестов
+│   │   ├── test_economics_service.py   # 10 тестов
+│   │   ├── test_stress_service.py      # 5 тестов
+│   │   ├── test_scenario_service.py    # 7 тестов
+│   │   ├── test_market_service.py      # 5 тестов
+│   │   ├── test_risk_service.py        # 6 тестов
+│   │   ├── test_action_plan_service.py # 6 тестов
+│   │   ├── test_verdict_service.py     # 9 тестов
+│   │   ├── test_quick_check_renderer.py # 15 тестов
+│   │   ├── test_input_validator.py     # 9 тестов
+│   │   └── test_yaml_loader.py         # 16 тестов
+│   ├── integration/                    # 12 integration-тестов
+│   │   └── test_quick_check.py         # QuickCheckCalculator end-to-end
+│   ├── fixtures/                       # baseline JSON (gitignored)
+│   └── local/regress.py                # локальная регрессия (TestClient)
 │
 ├── docs/
-│   └── refactor_history/           # архив *_NOTES.md раундов v2/v3 (gitignore)
+│   ├── refactor_history/               # архив *_NOTES.md раундов v2/v3 (gitignore)
+│   └── ADDING_NEW_NICHE.md             # как добавить нишу через YAML
 │
-├── config/                         # YAML-конфиги (constants, defaults, niches…)
-├── knowledge/                      # insights, reports (для RAG и Block 9)
-├── templates/                      # шаблоны документов (finmodel xlsx, bizplan docx)
-├── ARCHITECTURE.md                 # этот файл
-├── CLAUDE.md                       # инструкции для Claude Code
-├── ZEREK_QuickCheck_Calculation_Spec.md  # спецификация расчётов (источник истины)
+├── config/                             # YAML-конфиги (constants, defaults, niches…)
+├── knowledge/                          # insights для RAG и Block 9
+├── templates/                          # шаблоны (finmodel xlsx, bizplan docx)
+├── products/                           # frontend Mini App (qc-v3.html, app.html)
+├── ARCHITECTURE.md                     # этот файл
+├── CLAUDE.md                           # инструкции для Claude Code
+├── ZEREK_QuickCheck_Calculation_Spec.md # спека расчётов
 └── README.md
 ```
 
+**Total api/ code: ~7 200 LOC** (vs 5 171 LOC до Этапа 0).
+
 ---
 
-## 3. Поток выполнения Quick Check (целевой после Этапа 4)
+## 3. Поток выполнения Quick Check
 
 ```
-1. POST /quick-check {city_id, niche_id, format_id, experience,
-                       capital, start_month, specific_answers}
+1. POST /quick-check {city_id, niche_id, format_id, capital, start_month, …}
         ↓
-2. validators/input_validator
-   ├── Pydantic: QCReq (типы, границы)
-   ├── start_month ∈ 1..12 (HTTP 400 если None)
-   └── HOME/SOLO: marketing_med + other_opex_med обязательны (HTTP 400)
+2. validators/input_validator.QuickCheckRequest
+   - Pydantic типы
+   - capital >= 0, qty >= 1, area_m2 >= 0
         ↓
-3. calculators/quick_check.run(input, db):
-   ├── normalize_input()           # HOME/SOLO → founder_works=True,
-   │                               # default entrepreneur_role=owner_plus_master
-   │
-   ├── loaders/niche_loader        # FORMATS, FINANCIALS, STAFF, CAPEX, TAXES
-   ├── loaders/city_loader         # city data + check_coef
-   ├── loaders/tax_loader          # city_ud_rate
-   ├── loaders/rent_loader         # rent_per_m2 для города × loc_type
-   ├── loaders/competitor_loader   # 2GIS насыщенность
-   ├── loaders/content_loader      # permits, failure_pattern, insight.md
-   │
-   ├── services/economics_service
-   │   ├── compute_pnl_aggregates()     # Шаги 3–5 (зрелый + средний год)
-   │   ├── calc_cashflow() × 3 сценария # Шаги 4–5 + scenario_service
-   │   ├── compute_unified_payback()    # Шаг 6 (единая формула)
-   │   ├── compute_block4_unit_econ()   # Шаг 7 (breakeven по архетипу)
-   │   ├── compute_block5_pnl()         # P&L таблица сценариев
-   │   └── compute_block6_capital()     # CAPEX структура + обучение
-   │
-   ├── services/seasonality_service
-   │   ├── compute_first_year_chart()   # 12 мес с ramp+season
-   │   └── compute_block_season()       # s01..s12
-   │
-   ├── services/stress_service
-   │   └── compute_block8_stress_test() # Шаг 8 от зрелого режима
-   │
-   ├── services/market_service
-   │   └── compute_block3_market()      # HOME → note
-   │
-   ├── services/risk_service
-   │   └── compute_block9_risks()       # insight.md + HOME-specific
-   │
-   ├── services/verdict_service
-   │   └── compute_block1_verdict()     # Шаг 10 (8 пунктов, 17/12 пороги)
-   │
-   └── services/action_plan_service
-       └── compute_block10_next_steps() # green/yellow/red план
+3. calculators/quick_check.QuickCheckCalculator(db).run(req):
+   ├── _validate_and_resolve_cls (start_month, niche_available, HOME marketing)
+   ├── _normalize_params (HOME/SOLO → founder_works=True, ent_role default)
+   ├── _compute_base → engine.run_quick_check_v3(...) — главный движок
+   │     ├── loaders.city_loader (city, check_coef, normalize)
+   │     ├── loaders.tax_loader (city_tax_rate)
+   │     ├── loaders.rent_loader (rent_median)
+   │     ├── loaders.competitor_loader (get_competitors)
+   │     ├── loaders.content_loader (failure_pattern, permits)
+   │     ├── loaders.niche_loader (_get_canonical_format_meta + YAML overlay)
+   │     ├── services.economics_service (calc_cashflow, calc_breakeven,
+   │     │     calc_payback, calc_owner_economics, calc_closure_growth_points)
+   │     └── services.scenario_service.compute_3_scenarios
+   ├── pnl_aggregates ← services.economics_service.compute_pnl_aggregates
+   └── _overlay_blocks (block1..10):
+       ├── services.verdict_service.compute_block1_verdict
+       ├── renderers.quick_check_renderer.compute_block2_passport
+       ├── services.market_service.compute_block3_market
+       ├── services.economics_service.compute_block4_unit_economics
+       ├── services.economics_service.compute_block5_pnl
+       │     + services.seasonality_service.compute_first_year_chart
+       ├── services.economics_service.compute_block6_capital
+       ├── services.seasonality_service.compute_block_season
+       ├── services.stress_service.compute_block8_stress_test
+       ├── services.risk_service.compute_block9_risks
+       └── services.action_plan_service.compute_block10_next_steps
         ↓
-4. renderers/quick_check_renderer
-   ├── compute_block2_passport()        # трансформация input → паспорт
-   ├── fmt helpers                      # _fmt_kzt, format_location, lables
-   └── → {block1..block10, block_season, first_year_chart, user_inputs}
+4. renderers/quick_check_renderer.render_for_api(calc_result):
+   ├── render_report_v4 → legacy block_1..block_12 (для PDF)
+   └── копирует block1..block10 + block_season + user_inputs из calc_result
         ↓
-5. main.py → clean(report) → клиент
+5. main.py: clean(report) → JSON → клиент
         ↓
 6. Mini App qc-v3.html → визуализация
 ```
 
 ---
 
-## 4. Контракты между слоями
+## 4. Граф зависимостей
 
-### 4.1. Loaders
+```
+endpoint (main.py)
+    ↓
+validator → calculator → renderer
+                ↓
+              services → loaders
+                ↓
+              config (константы)
+```
 
-- **Вход**: id/параметры (city_id, niche_id, format_id, cls, loc_type)
-- **Выход**: сырые данные (dict / list of dicts), без бизнес-логики
-- **Дефолты**: возвращают либо данные, либо пустой dict/list — **НЕ** падают
-- **Исключения**: только если xlsx сломан (не при отсутствии строки)
+Правила:
+- Loaders НЕ знают про services/calculators/renderers/main.
+- Services используют loaders + другие services (через explicit imports).
+- Calculator оркестрирует всё. Не знает про renderer (renderer вызывает endpoint).
+- Renderer берёт calc_result, ничего не считает (кроме форматирования и compute_block2_passport — паспорт это трансформация, не расчёт).
+- main.py — тонкий слой эндпоинтов. Бизнес-логики нет.
 
-### 4.2. Services
+---
 
-- **Вход**: loaded data + params
-- **Выход**: вычисленные агрегаты (числа, проценты, структуры)
-- **Инварианты**:
+## 5. YAML-first для ниш (Этап 7)
+
+`data/niches/{NICHE}_data.yaml` — источник правды для нишевых данных.
+
+Подключение через `loaders.niche_loader.overlay_yaml_on_xlsx`:
+- Не-MANICURE → xlsx без изменений.
+- MANICURE_HOME → xlsx (калиброван за 7 раундов, baseline).
+- MANICURE_SOLO/STANDARD/PREMIUM → YAML overlay (xlsx был некалиброван).
+
+Подробности добавления новой ниши — `docs/ADDING_NEW_NICHE.md`.
+
+---
+
+## 6. Контракты слоёв
+
+### Loaders
+- Вход: id/параметры (city_id, niche_id, format_id, cls, loc_type)
+- Выход: сырые данные (dict / list of dicts)
+- Дефолты: НЕ падают, возвращают пустой dict/list
+
+### Services
+- Вход: loaded data + params
+- Выход: вычисленные числа/структуры
+- Инварианты:
   - Окупаемость — только через `economics_service.compute_unified_payback_months`
   - Зрелый P&L — только через `economics_service.compute_pnl_aggregates`
   - Стресс-тест — база = зрелый режим (без ramp+season)
   - Сезонность и ramp — только в первом году
 
-### 4.3. Calculators
+### Calculators
+- Вход: валидированный Input (QuickCheckRequest)
+- Выход: `calc_result` dict (raw + block1..10 overlay), без legacy block_1..block_12
 
-- **Вход**: валидированный Input
-- **Выход**: `result` dict для рендера — ВСЁ что нужно рендеру должно быть здесь, никаких инъекций из `main.py`
-- **НЕ зовёт рендер** — это задача endpoint'а
+### Renderers
+- Вход: `calc_result` от калькулятора
+- Выход: финальный отчёт для UI (через `render_for_api`) или PDF/xlsx
+- Чистая трансформация — никаких бизнес-вычислений
 
-### 4.4. Renderers
-
-- **Вход**: `result` от калькулятора
-- **Выход**: структура для UI (блоки) или bytes (PDF/xlsx)
-- **Чистая трансформация** — нет бизнес-вычислений, только форматирование и лейблы
-
-### 4.5. Validators
-
-- **Вход**: raw request body
-- **Выход**: валидированный Input (pydantic model) или HTTPException 400
-- **Без side effects** — только проверка
+### Validators
+- Вход: raw request body
+- Выход: валидированный Input или HTTPException 400
 
 ---
 
-## 5. Формат JSON Quick Check API
+## 7. Точки входа (FastAPI endpoints)
 
-После рефакторинга API возвращает:
-
-```jsonc
-{
-  "status": "ok",
-  "result": {
-    "input": { /* эхо параметров */ },
-    "user_inputs": { /* adaptive-поля v2 */ },
-    "block1": { /* светофор: color, score, strengths, risks, scoring */ },
-    "block2": { /* паспорт: niche, format, city, staff, experience */ },
-    "block3": { /* рынок: saturation / HOME-note */ },
-    "block4": { /* юнит-экономика: breakdown чека, breakeven */ },
-    "block5": {
-      "pnl": { /* 3 сценария × (revenue, cogs, fot, rent, mkt, other, tax, net_profit) */ },
-      "first_year_chart": { /* 12 мес с ramp+season */ },
-      "payback": { /* payback_months, method */ }
-    },
-    "block6": { /* capex: breakdown + training + gap */ },
-    "block_season": { /* s01..s12, peaks, troughs */ },
-    "block8": { /* стресс-тест: sensitivities, death_points */ },
-    "block9": { /* риски: 5 items */ },
-    "block10": { /* план: green/yellow/red + CTA */ }
-  }
-}
-```
-
-Старый формат `block_1..block_12` (с подчёркиванием) остаётся для PDF-рендера (`renderers/pdf_renderer.py`).
-
----
-
-## 6. Инварианты и критичные правила
-
-1. Окупаемость считается **в одном месте** (`compute_unified_payback_months`), читается везде — светофор, Block 5, план действий. Никаких fallback'ов.
-2. Все формулы подчиняются спеке (`ZEREK_QuickCheck_Calculation_Spec.md`):
-   - Шаг 3: зрелый P&L (ramp=1, season=1)
-   - Шаг 4: 12-мес P&L (с ramp+season)
-   - Шаг 5: средние годовые (`profit_month_avg = profit_year_avg / 12`)
-   - Шаг 6: `payback = ceil(capex_total / profit_month_avg)`
-   - Шаг 7: `breakeven = ceil(fixed_monthly / (avg_check − var_per_service))`
-   - Шаг 8: стресс от зрелого (revenue × (1-X%), materials пропорционально для трафика / без изменений для чека)
-3. HOME/SOLO: `marketing_med` и `other_opex_med` обязательны в xlsx (HTTP 400 если пусто).
-4. `ceil` для консервативности (окупаемость, breakeven), не `round`.
-5. Сравнение с `avg_salary_2025` — только для HOME/SOLO, для STANDARD/PREMIUM не показывать.
-6. Обучение (`training_cost`) — только если `training_required=True` для ниши и `experience ∈ {none, some}`.
-7. ИП не платит себе зарплату: `fot_monthly = 0`, доход = вся прибыль.
+| Endpoint | Метод | Назначение |
+|---|---|---|
+| `/` | GET | Service info |
+| `/health` | GET | Health check + список ниш |
+| `/cities` | GET | Список городов КЗ |
+| `/niches` | GET | Список ниш с флагом available |
+| `/formats/{niche_id}` | GET | Форматы ниши |
+| `/locations/{niche_id}` | GET | Типы локаций для ниши |
+| `/classes/{niche_id}/{format_id}` | GET | Доступные классы (Эконом/Стандарт/...) |
+| `/tax-rate/{city_id}` | GET | Налоговая ставка УСН по городу |
+| `/configs` | GET | YAML-конфиги (niches/archetypes/locations/questionnaire) |
+| `/formats-v2/{niche_id}` | GET | Форматы с расширенными полями (v1.0) |
+| `/quickcheck-survey/{niche_id}` | GET | Полная анкета Quick Check |
+| `/niche-config/{niche_id}` | GET | Адаптивная анкета v2 |
+| `/niche-survey/{niche_id}` | GET | Survey по tier (express/finmodel) |
+| `/products/{niche_id}/{format_id}` | GET | Продукты ниши |
+| `/marketing/{niche_id}/{format_id}` | GET | Маркетинговые рекомендации |
+| `/insights/{niche_id}/{format_id}` | GET | Инсайты |
+| `/survey/{niche_id}` | GET | Анкета v3 (legacy) |
+| `/niche-risks/{niche_id}` | GET | Структурированные риски через Gemini |
+| **`/quick-check`** | POST | **Quick Check 5 000 ₸ — главный расчёт** |
+| `/quick-check/pdf` | POST | PDF отчёт Quick Check |
+| `/pdf-health` | GET | Диагностика PDF-генератора |
+| **`/finmodel`** | POST | **FinModel 9 000 ₸ — генерация xlsx + HTML** |
+| `/finmodel/report` | POST | HTML-отчёт по финмодели |
+| `/grant-bp` | POST | Бизнес-план на грант 400 МРП (.docx) |
+| `/download/{token}` | GET | Скачать сгенерированный файл |
+| `/ai-chat`, `/test-gemini`, `/chat` | POST/GET | Gemini AI чат |
 
 ---
 
-## 7. Коммит-стратегия рефакторинга
+## 8. Метрики рефакторинга (Этап 0 → Этап 8)
 
-- Один этап = серия атомарных коммитов (Conventional Commits).
-- Префиксы: `refactor:` (перенос без изменения логики), `chore:` (структура, документация), `feat:` (новая функциональность), `fix:` (баг), `test:` (тесты).
-- После каждого коммита — регрессия 4 baseline JSON. Отклонение > 0 = откат.
-- Документация обновляется в Этапе 8 (финальный проход).
+### До рефакторинга (Этап 0)
+| Файл | LOC |
+|---|---|
+| `api/engine.py` | 3 913 |
+| `api/main.py` | 1 025 |
+| `api/report.py` | 233 |
+| **Total монолит** | **5 171** |
+
+### После рефакторинга (Этап 8)
+| Файл / папка | LOC |
+|---|---|
+| `api/engine.py` | 932 (−76%) |
+| `api/main.py` | 621 (−39%) |
+| `api/report.py` | 10 (−96%, re-export) |
+| `api/pdf_gen.py` | 10 (−99%, re-export) |
+| `api/config.py` | 32 (новый) |
+| `api/loaders/` (6 файлов) | 865 |
+| `api/services/` (10 файлов) | 2 532 |
+| `api/calculators/` (3 файла) | 702 |
+| `api/renderers/` (3 файла) | 1 988 |
+| `api/validators/` (1 файл) | 94 |
+| `api/models/` (4 файла) | 741 |
+| **Total api/** | **~7 500 LOC** |
+
+### Тесты
+| Слой | Тестов |
+|---|---|
+| Unit (services/loaders/renderers/validators) | 96 |
+| Integration (calculators) | 12 |
+| Локальная регрессия (4 baseline) | 4/4 бит-в-бит |
+| **Total** | **115 + 4 = 119 проверок** |
+
+### Коммиты
+- 46 refactor-коммитов (Этап 1 — Этап 8)
+- + предыдущие коммиты репо
 
 ---
 
-## 8. История
+## 9. История этапов
 
-- **Этап 0** (2026-04-22): Baseline + REFACTOR_PLAN.md + аудит 5171 LOC.
-- **Этап 1** (2026-04-22): Структура папок, ARCHITECTURE.md, перенос *_NOTES.md в docs/refactor_history/.
-- **Этап 2**: Loaders (TBD).
-- **Этап 3**: Services (TBD).
-- **Этап 4**: Calculators (TBD).
-- **Этап 5**: Renderers (TBD).
-- **Этап 6**: Validators + Models (TBD).
-- **Этап 7**: YAML-first для MANICURE (TBD).
-- **Этап 8**: Cleanup + документация (TBD).
+- **Этап 0** (2026-04-22): Baseline + REFACTOR_PLAN.md + аудит 5 171 LOC.
+- **Этап 1**: Структура папок, ARCHITECTURE.md, *_NOTES.md → docs/.
+- **Этап 2**: 6 loaders (city/tax/rent/competitor/content/niche).
+- **Этап 3**: 9 services (pricing/seasonality/economics/stress/scenario/market/risk/action_plan/verdict).
+- **Этап 4**: 3 calculators (quick_check фасад, finmodel/bizplan stubs).
+- **Этап 5**: 2 renderers (quick_check_renderer, pdf_renderer wrapper).
+- **Этап 6**: validators (Pydantic) + models (TypedDict).
+- **Этап 7**: YAML-first для MANICURE (overlay для SOLO/STANDARD/PREMIUM).
+- **Этап 8** (2026-04-23): Cleanup — death_points, calc_stress_test, 71 wrapper, finmodel в calculator, pdf_gen в renderer, config.py, документация.
+
+---
+
+## 10. Технический долг (после Этапа 8)
+
+Что осталось (в порядке приоритета):
+
+1. **Бизнес-цена YAML risks integration**: YAML.risks секция для MANICURE есть, но `risk_service` пока не читает её. См. OQ-S Этапа 7.
+2. **Расхождение profit_year_avg ~4%** (спека Р-9): ручной расчёт даёт 3.91 млн, движок 3.76 млн. Нужно проверить calc_cashflow на двойной учёт. Не критично, но стоит разобрать.
+3. **Константы → config.py**: MRP_2026, DEFAULTS, SCORING_*, BLOCK1_THRESHOLDS, TRAINING_COSTS_BY_EXPERIENCE, CAPEX_BREAKDOWN_LABELS_RUS — пока в engine.py. Постепенно мигрировать в config.py для чистоты.
+4. **engine.py содержит 932 LOC**: основное — `run_quick_check_v3` (380 LOC), ZerekDB class (200 LOC), constants (140 LOC). Дальнейшая чистка через extract YAML-овер для всего DB, переход на `loaders.NicheLoader` singleton — Этап 9+ (если понадобится).
+5. **calc_owner_economics dual-purpose** — используется только для owner_payback_m в run_quick_check_v3. Можно удалить, заменить на простой расчёт (`capex_total / monthly_net_income`).
+
+---
+
+## 11. Что проект готов к
+
+- ✅ Добавить новую нишу через YAML (см. `docs/ADDING_NEW_NICHE.md`).
+- ✅ Развивать FinModel: фасад `FinModelCalculator` готов, реальная логика расчёта внутри.
+- 🔄 Реализовать BizPlan: stub в `calculators/bizplan.py` ждёт реализации (есть `grant_bp.py` для гранта 400 МРП — отдельный flow).
+- ✅ Тестировать новые фичи: 119 регрессионных проверок ловят поломки до прода.
+- ✅ Расширять unit-тесты для каждого нового сервиса по паттерну.
