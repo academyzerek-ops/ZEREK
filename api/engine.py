@@ -105,6 +105,10 @@ BENCHMARK_COMPETITOR_DENSITY_10K = float(_BM.get("competitor_density_per_10k", 0
 BENCHMARK_RETAIL_DENSITY_10K     = float(_BM.get("retail_density_per_10k", 0.75))
 
 # Сезонность по умолчанию (12 мес), если у ниши нет s01..s12 в FINANCIALS.
+# Средняя зарплата по городам (для сравнения дохода self-employed с «работой по найму»).
+AVG_SALARY_2025 = (CONSTANTS.get("avg_salary_2025") or {})
+AVG_SALARY_DEFAULT = int(AVG_SALARY_2025.get("_default") or 430000)
+
 DEFAULT_SEASONALITY = list((DEFAULTS_CFG.get("quick_check", {}) or {}).get(
     "default_seasonality",
     [0.85, 0.85, 0.90, 1.00, 1.05, 1.10, 1.10, 1.05, 1.00, 0.95, 0.95, 1.20],
@@ -2868,6 +2872,27 @@ def compute_block5_pnl(db, result, adaptive):
     income_from_business = profit_monthly_base
     entrepreneur_income_monthly = role_salary_monthly + income_from_business
 
+    # Сравнение дохода SOLO/HOME-мастера со средней зарплатой по городу.
+    # Помогает контекстуализировать цифру («это как работа по найму в
+    # таком-то городе»). Только для is_solo_fmt.
+    region_note = None
+    if is_solo_fmt:
+        city_id = (inp.get('city_id') or '').lower()
+        avg_salary = int(AVG_SALARY_2025.get(city_id) or AVG_SALARY_DEFAULT)
+        city_rus = inp.get('city_name') or ''
+        salary_k = avg_salary // 1000
+        if entrepreneur_income_monthly >= avg_salary:
+            region_note = (
+                f'Выше средней зарплаты по {city_rus} (~{salary_k} тыс ₸). '
+                f'Неплохой уровень для самозанятости.'
+            )
+        else:
+            region_note = (
+                f'Ниже средней зарплаты по {city_rus} (~{salary_k} тыс ₸). '
+                f'Для старта и развития своего дела — рабочий вариант, '
+                f'дальше растёт через рост чека или расширение.'
+            )
+
     return {
         'archetype': archetype,
         'cogs_label_rus': _cogs_label_by_archetype(archetype),
@@ -2891,6 +2916,7 @@ def compute_block5_pnl(db, result, adaptive):
             'total_monthly':        entrepreneur_income_monthly,
             'total_yearly':         entrepreneur_income_monthly * 12,
             'role_breakdown':       role_breakdown,
+            'region_note':          region_note,
         },
     }
 
