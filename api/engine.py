@@ -1875,13 +1875,13 @@ def compute_block3_market(db, result, adaptive):
     city_coef = get_city_check_coef(inp.get('city_id', '')) or 1.0
     affordability_index = city_coef  # проксирует «городской чек ÷ бенчмарк»
     if affordability_index >= 1.15:
-        afford_text = f'Платёжеспособность на {int((affordability_index-1)*100)}% выше средней КЗ — можно закладывать премиум-чек'
+        afford_text = f'Платёжеспособность на {int((affordability_index-1)*100)}% выше средней по РК — можно закладывать премиум-чек'
     elif affordability_index >= 1.0:
-        afford_text = 'Платёжеспособность на уровне средней КЗ — стандартные цены рынка работают хорошо'
+        afford_text = 'Платёжеспособность на уровне средней по РК — стандартные цены рынка работают хорошо'
     elif affordability_index >= 0.85:
-        afford_text = f'Платёжеспособность на {int((1-affordability_index)*100)}% ниже средней КЗ — учтите при ценообразовании'
+        afford_text = f'Платёжеспособность на {int((1-affordability_index)*100)}% ниже средней по РК — учтите при ценообразовании'
     else:
-        afford_text = f'Платёжеспособность на {int((1-affordability_index)*100)}% ниже средней КЗ — премиум-форматы рискованны'
+        afford_text = f'Платёжеспособность на {int((1-affordability_index)*100)}% ниже средней по РК — премиум-форматы рискованны'
 
     # Конкуренты — список если есть
     competitors_list = []

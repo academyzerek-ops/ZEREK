@@ -383,7 +383,7 @@ def _draw_content_chrome(canv, doc):
     canv.setFont("DejaVuSans", 7.2)
     canv.setFillColor(COL_TEXT_DIM)
     canv.drawString(MARGIN_X, 10 * mm,
-                    "Экспресс-оценка на основе усреднённых данных рынка КЗ. Для запуска — детальная финмодель.")
+                    "Экспресс-оценка на основе усреднённых данных рынка РК. Для запуска — детальная финмодель.")
     canv.drawRightString(PAGE_W - MARGIN_X, 10 * mm, "zerek.cc")
     canv.restoreState()
 

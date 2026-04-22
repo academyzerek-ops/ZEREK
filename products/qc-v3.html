@@ -1213,9 +1213,9 @@ function renderBlock3Html(b3){
     '<div class="blk-hdr2">Насыщенность рынка</div>' +
     '<div class="blk-row"><span>Конкурентов в нише</span><strong>'+s.competitors_count+'</strong></div>' +
     '<div class="blk-row"><span>На 10 000 жителей</span><strong>'+s.density_city+'</strong></div>' +
-    '<div class="blk-row"><span>Средняя плотность КЗ</span><strong>'+s.density_benchmark+'</strong></div>' +
+    '<div class="blk-row"><span>Средняя плотность по РК</span><strong>'+s.density_benchmark+'</strong></div>' +
     '<div style="margin:14px 0 6px"><div class="bar-row-fill" style="height:12px"><div class="bar-row-fill-inner" style="width:'+satPct+'%;background:'+barColor(s.color)+'"></div></div></div>' +
-    '<div style="text-align:right;font-size:11px;color:var(--text-3)">'+s.pct_of_benchmark+'% от бенчмарка КЗ</div>' +
+    '<div style="text-align:right;font-size:11px;color:var(--text-3)">'+s.pct_of_benchmark+'% от бенчмарка по РК</div>' +
     '<div class="blk-note" style="margin-top:10px"><span class="blk-pill '+(s.color||'yellow')+'">'+ (s.color==='green'?'Недонасыщен':s.color==='yellow'?'Норма':s.color==='orange'?'Перенасыщен':'Критично') +'</span> '+escapeHtml(s.text_rus||'')+'</div>';
   if(b3.competitors_list && b3.competitors_list.length){
     html += '<div class="blk-hdr2">Топ конкуренты</div>';
