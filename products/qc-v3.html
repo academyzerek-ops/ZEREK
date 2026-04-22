@@ -52,6 +52,11 @@ h2{font-size:22px;margin-bottom:6px}
 .opt-label{font-size:15px;font-weight:600}
 .opt-sub{font-size:12px;color:var(--text-3);margin-top:2px;line-height:1.4}
 .opt-badge{font-size:10px;color:var(--accent);background:var(--accent-dim);padding:2px 8px;border-radius:10px;display:inline-block;margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em}
+/* Сетка месяцев (шаг «Когда планируете открыться»): 3 колонки × 4 ряда. */
+.month-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.month-opt{justify-content:center;min-height:48px;padding:10px 8px;text-align:center}
+.month-opt .opt-title{font-size:14px;font-weight:600}
+.month-opt.selected{border-color:var(--accent);background:var(--accent-dim)}
 
 .category{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);padding:18px 0 8px;border-bottom:0.5px solid var(--surface-2);margin-bottom:8px}
 
@@ -399,6 +404,8 @@ var QC = {
   loc_type:'', location_line:'',
   experience:'', payroll_type:'', entrepreneur_role:'',
   capital_own:null, capital_needed:null,
+  // Месяц старта (1=янв..12=дек). Null до выбора клиентом → валидация 400 на backend.
+  start_month: null,
 };
 var Configs = null;
 var Cities = [];
@@ -445,6 +452,7 @@ function computeStepPlan(){
     plan.push('role');
   }
   plan.push('capital');
+  plan.push('start_month');
   plan.push('confirm');
   return plan;
 }
@@ -809,6 +817,29 @@ function setCapOwn(v){ QC.capital_own = parseInt(v,10) || null; }
 function setCapNeed(v){ QC.capital_needed = parseInt(v,10) || null; }
 function skipCapital(){ QC.capital_own = null; QC.capital_needed = null; advance(); }
 
+// Выбор месяца старта. Возвращает сетку 3×4 с месяцами 1-12 (календарные
+// названия). QC.start_month хранится 1..12. Передаётся в /quick-check как
+// обязательное — сервер возвращает 400 если null.
+var MONTH_NAMES_RUS = ['Январь','Февраль','Март','Апрель','Май','Июнь',
+                       'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+RENDERERS.start_month = function(root){
+  var grid = '';
+  for(var i = 1; i <= 12; i++){
+    var sel = (QC.start_month === i) ? ' selected' : '';
+    grid += '<div class="opt month-opt'+sel+'" onclick="selectStartMonth('+i+')">' +
+              '<div class="opt-title">'+MONTH_NAMES_RUS[i-1]+'</div>' +
+            '</div>';
+  }
+  var html = '<div class="step">' +
+    '<div class="step-kicker">Старт</div>' +
+    '<h2>Когда планируете открыться?</h2>' +
+    '<div class="step-desc">Месяц влияет на прогноз первого года: разгон накладывается на сезонность ниши.</div>' +
+    '<div class="month-grid">'+grid+'</div>' +
+  '</div>';
+  root.innerHTML = html;
+};
+function selectStartMonth(m){ QC.start_month = m; advance(); }
+
 RENDERERS.confirm = function(root){
   var locsMeta = (Configs.locations && Configs.locations.locations) || {};
   var locLabel = (locsMeta[QC.loc_type] || {}).label_rus || QC.loc_type || '—';
@@ -830,6 +861,7 @@ RENDERERS.confirm = function(root){
   if(QC.capital_own) rows.push(['Готов вложить', fmt(QC.capital_own) + ' ₸']);
   if(QC.capital_needed) rows.push(['Ожидаемая потребность', fmt(QC.capital_needed) + ' ₸']);
   if(!QC.capital_own && !QC.capital_needed) rows.push(['Капитал', '— рассчитает ZEREK']);
+  if(QC.start_month) rows.push(['Планирую открыться', MONTH_NAMES_RUS[QC.start_month - 1]]);
 
   var html = '<div class="step">' +
     '<div class="step-kicker">Проверка</div>' +
@@ -859,6 +891,7 @@ function submit(){
     area_m2: (NicheSurvey && NicheSurvey.selected_format && NicheSurvey.selected_format.area_m2) || 0,
     loc_type: QC.loc_type,
     capital: QC.capital_own || QC.capital_needed || 0,
+    start_month: QC.start_month,
     staff_mode: (QC.entrepreneur_role && QC.entrepreneur_role !== 'owner_only') ? 'self' : 'hired',
     specific_answers: {
       location_line: QC.location_line, experience: QC.experience,
@@ -1483,7 +1516,8 @@ function handleCta(action){
     // Сбросить состояние и начать с начала
     QC = {niche_id:'', niche_name:'', archetype:'', icon:'', format_id:'', format_name:'', format_type:'',
           class_level:'', city_id:'', city_name:'', loc_type:'', location_line:'',
-          experience:'', payroll_type:'', entrepreneur_role:'', capital_own:null, capital_needed:null};
+          experience:'', payroll_type:'', entrepreneur_role:'', capital_own:null, capital_needed:null,
+          start_month: null};
     NicheSurvey = null;
     stepIndex = 0;
     StepPlan = computeStepPlan();
