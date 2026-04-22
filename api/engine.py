@@ -2453,6 +2453,49 @@ def compute_block8_stress_test(db, result, adaptive):
 # BLOCK 9 — РИСКИ НИШИ
 # ═══════════════════════════════════════════════
 
+# Фильтры рисков по формату: если title/text содержит любое ключевое слово
+# (case-insensitive), риск исключается. Для HOME-форматов общие риски про
+# аренду/помещение/найм не релевантны (мастер работает дома один).
+FORMAT_RISK_FILTERS = {
+    'MANICURE_HOME': {'exclude_keywords': ['аренд', 'помещен', 'найм', 'договор', 'уход мастер', 'наём']},
+    'BARBER_HOME':   {'exclude_keywords': ['аренд', 'помещен', 'найм', 'договор', 'уход мастер', 'наём']},
+    'BROW_HOME':     {'exclude_keywords': ['аренд', 'помещен', 'найм', 'договор', 'наём']},
+    'LASH_HOME':     {'exclude_keywords': ['аренд', 'помещен', 'найм', 'договор', 'наём']},
+    'SUGARING_HOME': {'exclude_keywords': ['аренд', 'помещен', 'найм', 'договор', 'наём']},
+}
+
+# Специфичные риски для мастера на дому (бьюти-ниши). Добавляются сверху
+# списка после фильтрации общих.
+HOME_SPECIFIC_RISKS = [
+    {'title': 'Зависимость от физсостояния', 'probability': 'СРЕДНЯЯ', 'impact': 'ВЫСОКОЕ',
+     'text': 'Болезнь, беременность, травма рук = ноль дохода. Подушка безопасности на 3 мес — must have.',
+     'mitigation': 'Отложить 3 мес OPEX. Страхование от нетрудоспособности.'},
+    {'title': 'Потолок дохода одного мастера', 'probability': 'ВЫСОКАЯ', 'impact': 'СРЕДНЕЕ',
+     'text': 'Максимум 5-7 клиенток в день физически. Рост выручки только через рост чека или второго мастера.',
+     'mitigation': 'Апсейл (укрепление, дизайн). План перехода в SOLO/STANDARD через 1-2 года.'},
+    {'title': 'Санитарные нормы без контроля', 'probability': 'СРЕДНЯЯ', 'impact': 'ВЫСОКОЕ',
+     'text': 'Дома проще забить на стерилизацию. Один случай грибка/инфекции — репутация уничтожена.',
+     'mitigation': 'Автоклав / сухожар. Инструменты одноразовые где можно. Фото стерилизации в сторис.'},
+]
+
+
+def _filter_risks_by_format(risks_list, format_id):
+    """Исключает риски, чей title/text содержит exclude_keywords формата."""
+    flt = FORMAT_RISK_FILTERS.get(format_id or '')
+    if not flt:
+        return risks_list
+    kws = [k.lower() for k in flt.get('exclude_keywords') or []]
+    if not kws:
+        return risks_list
+    out = []
+    for r in risks_list:
+        blob = ((r.get('title') or '') + ' ' + (r.get('text') or '')).lower()
+        if any(k in blob for k in kws):
+            continue
+        out.append(r)
+    return out
+
+
 def compute_block9_risks(db, result, adaptive):
     """Читает insight-файл ниши и извлекает топ-5 рисков. Fallback — generic риски по архетипу."""
     import os, re
@@ -2593,9 +2636,22 @@ def compute_block9_risks(db, result, adaptive):
     if not risks_out:
         risks_out = generic_risks.get(arch, generic_risks['A'])[:5]
 
+    source = 'insight' if len(risks_out) and (not generic_risks.get(arch) or risks_out[0].get('title') != generic_risks[arch][0]['title']) else 'generic'
+
+    # Фильтр по формату: убираем риски про аренду/найм/помещение для HOME.
+    format_id = (inp.get('format_id') or '').upper()
+    risks_out = _filter_risks_by_format(risks_out, format_id)
+
+    # Для HOME-форматов добавляем специфичные риски сверху (физсостояние,
+    # потолок одного мастера, санитария без контроля). Лимит 5 общий.
+    if format_id.endswith('_HOME'):
+        risks_out = HOME_SPECIFIC_RISKS + risks_out
+
+    risks_out = risks_out[:5]
+
     return {
         'niche_id': niche_id,
-        'source': 'insight' if len(risks_out) and (not generic_risks.get(arch) or risks_out[0].get('title') != generic_risks[arch][0]['title']) else 'generic',
+        'source': source,
         'risks': risks_out,
     }
 
