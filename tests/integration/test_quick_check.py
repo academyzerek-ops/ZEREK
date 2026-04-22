@@ -124,3 +124,65 @@ def test_barber_standard_aktobe_yellow():
     calc = QuickCheckCalculator(_db)
     report = calc.run(req)
     assert report["block1"]["color"] == "yellow"
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# Этап 7 — YAML overlay для MANICURE_SOLO/STANDARD/PREMIUM
+# Эти форматы раньше возвращали HTTP 400 (NaN в xlsx). Теперь работают.
+# ═══════════════════════════════════════════════════════════════════════
+
+
+def test_manicure_solo_works_after_yaml_overlay():
+    """MANICURE_SOLO теперь работает (YAML заполняет NaN xlsx)."""
+    req = _make_req(
+        format_id="MANICURE_SOLO",
+        area_m2=12, loc_type="tc", capital=2_000_000,
+        specific_answers={"experience": "pro", "entrepreneur_role": "owner_plus_master"},
+    )
+    calc = QuickCheckCalculator(_db)
+    report = calc.run(req)
+    assert "block1" in report
+    assert report["block1"]["color"] in ("green", "yellow", "red")
+    # YAML дал check_med=7000 — выше чем HOME (5000)
+    assert report["block5"]["scenarios"]["base"]["revenue"] > 0
+
+
+def test_manicure_standard_works_after_yaml_overlay():
+    """MANICURE_STANDARD теперь работает (YAML CAPEX 4.5M, marketing 175K)."""
+    req = _make_req(
+        format_id="MANICURE_STANDARD",
+        area_m2=35, loc_type="tc", capital=5_000_000,
+        specific_answers={"experience": "experienced", "entrepreneur_role": "owner_only"},
+    )
+    calc = QuickCheckCalculator(_db)
+    report = calc.run(req)
+    assert "block1" in report
+    # CAPEX из YAML = 4.5M (vs xlsx 600K)
+    assert report["block6"]["capex_needed"] >= 4_000_000
+
+
+def test_manicure_premium_works_after_yaml_overlay():
+    """MANICURE_PREMIUM теперь работает (YAML CAPEX 9.5M)."""
+    req = _make_req(
+        format_id="MANICURE_PREMIUM",
+        area_m2=60, loc_type="tc", capital=10_000_000,
+        specific_answers={"experience": "experienced", "entrepreneur_role": "owner_only"},
+    )
+    calc = QuickCheckCalculator(_db)
+    report = calc.run(req)
+    assert "block1" in report
+    # PREMIUM формат → ОУР ТОО налоговый режим
+    assert report["block5"] is not None
+
+
+def test_manicure_home_unchanged_after_yaml_overlay():
+    """MANICURE_HOME baseline остаётся бит-в-бит (YAML НЕ применяется)."""
+    calc = QuickCheckCalculator(_db)
+    report = calc.run(_make_req())  # default = MANICURE_HOME experience=none
+    # Те же значения что в baseline (Этап 0):
+    assert report["block1"]["color"] == "green"
+    assert report["block1"]["score"] == 17
+    # Stress traffic -20% = -963 900 ₸/год (бит-в-бит спека)
+    sens = report["block8"]["sensitivities"]
+    traffic = next(s for s in sens if s["param"] == "Загрузка / трафик")
+    assert traffic["impact_annual"] == -963_900
