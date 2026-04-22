@@ -140,57 +140,9 @@ TRAINING_COSTS_BY_EXPERIENCE = {
 
 
 def compute_unified_payback_months(result, adaptive):
-    """Единая окупаемость для UI (в целых месяцах, ceil — консервативно).
-    Используется и в Block 1 (светофор), и в Block 5 (карточка «Окупаемость»).
-
-    Формула: payback_months = ceil(startup_total / monthly_net_income_for_owner)
-      startup_total — capex.total (capex_med + deposit + working_cap) + обучение,
-      если ниша требует training_required и experience ∈ {none, some}.
-      monthly_net_income_for_owner — то что клиент реально получит в карман.
-      Для SOLO/HOME = net_profit/12 (ФОТ уже подрезан в run_quick_check_v3).
-      Для owner_plus_* = net_profit/12 + ставка роли (headcount = masters_canon).
-      Для owner_only/multi = net_profit/12.
-    """
-    inp = result.get('input', {}) or {}
-    capex = result.get('capex', {}) or {}
-    scenarios = result.get('scenarios', {}) or {}
-    staff = result.get('staff', {}) or {}
-    adaptive = adaptive or {}
-
-    # startup_total: capex.total уже включает working_cap + deposit.
-    startup = _safe_int(capex.get('total'), 0)
-    if startup <= 0:
-        startup = _safe_int(capex.get('capex_med'), 0) or _safe_int(inp.get('capex_standard'), 0)
-    # + обучение для бьюти-ниш с training_required и experience=none/some.
-    if bool(inp.get('training_required')):
-        exp = (adaptive.get('experience') or '').lower()
-        startup += TRAINING_COSTS_BY_EXPERIENCE.get(exp, 0)
-    if startup <= 0:
-        return None
-
-    # monthly_net_income_for_owner.
-    monthly_profit = _safe_int((scenarios.get('base') or {}).get('прибыль_среднемес'), 0)
-    if monthly_profit <= 0:
-        return None
-
-    fmt_up = (inp.get('format_id') or '').upper()
-    is_solo = bool(inp.get('founder_works')) and (fmt_up.endswith('_HOME') or fmt_up.endswith('_SOLO'))
-    monthly_income = monthly_profit
-    if not is_solo:
-        ent_role = (adaptive.get('entrepreneur_role') or 'owner_only').lower()
-        if ent_role.startswith('owner_plus_'):
-            fot_full = _safe_int(staff.get('fot_full_med'), 0) or _safe_int(staff.get('fot_net_med'), 0)
-            hc = max(
-                _safe_int(staff.get('headcount'), 1) or 1,
-                _safe_int(inp.get('masters_canon'), 0) or 0,
-                1,
-            )
-            role_salary = int(fot_full / hc) if fot_full else 0
-            monthly_income += role_salary
-
-    if monthly_income <= 0:
-        return None
-    return int(math.ceil(startup / monthly_income))
+    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
+    from services.economics_service import compute_unified_payback_months as _fn
+    return _fn(result, adaptive)
 
 
 _MONTH_NAMES_RUS_FULL = ['Янв','Фев','Мар','Апр','Май','Июн',
@@ -206,87 +158,9 @@ def compute_first_year_chart(result):
 
 
 def compute_pnl_aggregates(result):
-    """Шаги 3-5 спеки: зрелый месячный P&L + средние годовые показатели.
-
-    Возвращает dict:
-      mature — зрелый режим (ramp=1.0, season=1.0):
-        revenue_monthly, materials_monthly, tax_monthly, fixed_monthly,
-        profit_monthly, revenue_yearly, profit_yearly
-      yearly_avg — средний первый год (с ramp-up и сезонностью из
-        scenarios.base, вычисленных через calc_cashflow):
-        revenue_yearly, profit_yearly, profit_monthly
-      fixed_monthly — постоянные расходы / мес (для Шагов 6, 7, 8).
-
-    ВАЖНО: зрелая база НЕ зависит от start_month и сезонности.
-    Используется в стресс-тесте (Шаг 8) и breakeven (Шаг 7).
-    yearly_avg — для payback (Шаг 6) и Block 5 P&L таблицы.
-    """
-    inp = result.get('input', {}) or {}
-    fin = result.get('financials', {}) or {}
-    staff = result.get('staff', {}) or {}
-    tax = result.get('tax', {}) or {}
-    scenarios = result.get('scenarios', {}) or {}
-
-    avg_check = _safe_int(fin.get('check_med'), 0) or 3000
-    traffic = _safe_int(fin.get('traffic_med'), 0) or 30
-    cogs_pct = _safe_float(fin.get('cogs_pct'), 0.30)
-    tax_rate = (tax.get('rate_pct', 3) or 3) / 100
-    rent = _safe_int(fin.get('rent_month'), 0)
-    fot = (_safe_int(staff.get('fot_full_med'), 0)
-           or _safe_int(staff.get('fot_net_med'), 0))
-
-    # Маркетинг и прочие расходы. Для HOME/SOLO валидация в main.py
-    # гарантирует наличие marketing_med/other_opex_med. Для STANDARD/PREMIUM
-    # сохраняется существующий фолбэк через opex_med (до их калибровки).
-    fin_mk = _safe_int(fin.get('marketing_med'), 0) or _safe_int(fin.get('marketing'), 0)
-    fin_ox = _safe_int(fin.get('other_opex_med'), 0)
-    opex_med = _safe_int(fin.get('opex_med'), 0)
-    fmt_up = (inp.get('format_id') or '').upper()
-    is_home = fmt_up.endswith('_HOME') or fmt_up.endswith('_SOLO')
-    if is_home:
-        mk_monthly = fin_mk
-        ox_monthly = fin_ox
-    else:
-        mk_monthly = fin_mk if fin_mk > 0 else (int(opex_med * 0.2) if opex_med else 100_000)
-        ox_monthly = fin_ox if fin_ox > 0 else (
-            max(0, opex_med - rent - mk_monthly) if opex_med else 100_000)
-
-    # Шаг 3: зрелый месячный P&L.
-    rev_mature_m = avg_check * traffic * 30
-    materials_m = int(rev_mature_m * cogs_pct)
-    tax_m = int(rev_mature_m * tax_rate)
-    fixed_m = fot + rent + mk_monthly + ox_monthly
-    profit_mature_m = rev_mature_m - materials_m - tax_m - fixed_m
-
-    # Шаг 5: средний первый год (из scenarios.base, уже с ramp и сезонностью
-    # через calc_cashflow в run_quick_check_v3).
-    rev_year_avg = _safe_int((scenarios.get('base') or {}).get('выручка_год'), 0)
-    profit_year_avg = _safe_int((scenarios.get('base') or {}).get('прибыль_год'), 0)
-    profit_month_avg = profit_year_avg // 12 if profit_year_avg else 0
-
-    return {
-        'mature': {
-            'revenue_monthly':  rev_mature_m,
-            'materials_monthly': materials_m,
-            'tax_monthly':       tax_m,
-            'fixed_monthly':     fixed_m,
-            'profit_monthly':    profit_mature_m,
-            'revenue_yearly':    rev_mature_m * 12,
-            'profit_yearly':     profit_mature_m * 12,
-            'fot_monthly':       fot,
-            'rent_monthly':      rent,
-            'marketing_monthly': mk_monthly,
-            'other_opex_monthly': ox_monthly,
-            'cogs_pct':          cogs_pct,
-            'tax_rate':          tax_rate,
-        },
-        'yearly_avg': {
-            'revenue_yearly':  rev_year_avg,
-            'profit_yearly':   profit_year_avg,
-            'profit_monthly':  profit_month_avg,
-        },
-        'is_home': is_home,
-    }
+    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
+    from services.economics_service import compute_pnl_aggregates as _fn
+    return _fn(result)
 
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -595,116 +469,21 @@ def calc_revenue_monthly(fin: dict, cal_month: int, razgon_month: int) -> int:
 
 def calc_cashflow(fin: dict, staff: dict, capex_total: int, tax_rate: float,
                   start_month: int = 1, months: int = 12, qty: int = 1) -> list:
-    """Cash Flow на N месяцев. qty = кол-во боксов/точек."""
-    results = []
-    cumulative = -capex_total
-
-    fot = _safe_int(staff.get('fot_net_med'), 0)
-    # Если fot_full есть — используем, иначе считаем
-    fot_full = _safe_int(staff.get('fot_full_med'), 0)
-    if fot_full == 0 and fot > 0:
-        fot_full = int(fot * DEFAULTS['fot_multiplier'])
-
-    rent = _safe_int(fin.get('rent_med'), 0) * qty
-    cogs_pct = _safe_float(fin.get('cogs_pct'), DEFAULTS['cogs_pct'])
-    utilities = _safe_int(fin.get('utilities'), 0) * qty
-    marketing = _safe_int(fin.get('marketing'), 0)
-    consumables = _safe_int(fin.get('consumables'), 0) * qty
-    software = _safe_int(fin.get('software'), 0)
-    transport = _safe_int(fin.get('transport'), 0)
-    loss_pct = _safe_float(fin.get('loss_pct'), DEFAULTS['loss_pct'])
-    sez = _safe_int(fin.get('sez_month'), DEFAULTS['sez_month'])
-
-    for i in range(months):
-        razgon_month = i + 1
-        cal_month = ((start_month - 1 + i) % 12) + 1
-
-        rev = calc_revenue_monthly(fin, cal_month, razgon_month) * qty
-        cogs = int(rev * cogs_pct)
-        gross = rev - cogs
-        losses = int(rev * loss_pct)
-        tax = int(rev * tax_rate)
-
-        total_opex = fot_full + rent + utilities + marketing + consumables + software + transport + losses + sez + tax
-        profit = gross - total_opex
-        cumulative += profit
-
-        results.append({
-            "месяц": i + 1,
-            "кал_месяц": SEASON_LABELS[cal_month - 1],
-            "выручка": rev,
-            "cogs": cogs,
-            "валовая_прибыль": gross,
-            "фот": fot_full,
-            "аренда": rent,
-            "коммуналка": utilities,
-            "маркетинг": marketing,
-            "расходники": consumables,
-            "софт": software,
-            "транспорт": transport,
-            "потери": losses,
-            "сэз": sez,
-            "налог": tax,
-            "opex": total_opex,
-            "прибыль": profit,
-            "нарастающий": cumulative,
-        })
-
-    return results
+    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
+    from services.economics_service import calc_cashflow as _fn
+    return _fn(fin, staff, capex_total, tax_rate, start_month, months, qty)
 
 
 def calc_breakeven(fin: dict, staff: dict, tax_rate: float, qty: int = 1) -> dict:
-    """Точка безубыточности — включает ВСЕ постоянные расходы."""
-    check = _safe_int(fin.get('check_med'), 1000)
-    cogs_pct = _safe_float(fin.get('cogs_pct'), DEFAULTS['cogs_pct'])
-    loss_pct = _safe_float(fin.get('loss_pct'), DEFAULTS['loss_pct'])
-
-    fot_full = _safe_int(staff.get('fot_full_med'), 0)
-    if fot_full == 0:
-        fot_full = int(_safe_int(staff.get('fot_net_med'), 0) * DEFAULTS['fot_multiplier'])
-
-    rent = _safe_int(fin.get('rent_med'), 0) * qty
-    utilities = _safe_int(fin.get('utilities'), 0) * qty
-    marketing = _safe_int(fin.get('marketing'), 0)
-    consumables = _safe_int(fin.get('consumables'), 0) * qty
-    software = _safe_int(fin.get('software'), 0)
-    transport = _safe_int(fin.get('transport'), 0)
-    sez = _safe_int(fin.get('sez_month'), 0)
-
-    fixed = fot_full + rent + utilities + marketing + consumables + software + transport + sez
-    variable_pct = cogs_pct + loss_pct + tax_rate
-
-    if variable_pct >= 1.0:
-        return {"тб_₸": 0, "тб_чеков_день": 0, "запас_прочности_%": 0, "чек_для_тб": check, "fixed_total": fixed}
-
-    tb_revenue = int(fixed / (1 - variable_pct))
-    tb_checks_day = int(tb_revenue / 30 / check) if check > 0 else 0
-
-    # Выручка для запаса прочности = check * traffic * 30 (без разгона, полная мощность)
-    traffic = _safe_int(fin.get('traffic_med'), 50)
-    rev_full = check * traffic * 30 * qty
-    safety = round((rev_full - tb_revenue) / rev_full * 100, 1) if rev_full > 0 else 0
-
-    return {
-        "тб_₸": tb_revenue,
-        "тб_чеков_день": tb_checks_day,
-        "запас_прочности_%": safety,
-        "чек_для_тб": check,
-        "fixed_total": fixed,
-    }
+    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
+    from services.economics_service import calc_breakeven as _fn
+    return _fn(fin, staff, tax_rate, qty)
 
 
 def calc_payback(capex_total: int, cashflow: list) -> dict:
-    for cf in cashflow:
-        if cf["нарастающий"] >= 0:
-            return {"месяц": cf["месяц"], "статус": f"✅ Окупается на {cf['месяц']}-й месяц"}
-    avg_profit = sum(cf["прибыль"] for cf in cashflow[-3:]) / 3 if cashflow else 0
-    if avg_profit > 0:
-        remaining = abs(cashflow[-1]["нарастающий"])
-        extra = remaining / avg_profit
-        m = round(12 + extra, 1)
-        return {"месяц": m, "статус": f"⚠️ Окупаемость ~{m} мес."}
-    return {"месяц": None, "статус": "🔴 Не окупается при текущих параметрах"}
+    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
+    from services.economics_service import calc_payback as _fn
+    return _fn(capex_total, cashflow)
 
 
 # ═══════════════════════════════════════════════
@@ -727,72 +506,16 @@ def calc_owner_economics(fin: dict, staff: dict, tax_rate: float,
                           check_k: float = 1.0,
                           rent_k: float = 1.0,
                           social: int = None) -> dict:
-    """
-    Месячная экономика собственника с полной разбивкой OPEX.
-    Возвращает выручку, COGS, валовую, OPEX-разбивку, налог, соцплатежи и
-    «в карман». Коэффициенты *_k используются в стресс-тесте.
-    """
-    check = _safe_int(fin.get('check_med'), 1000) * check_k
-    traffic = _safe_float(fin.get('traffic_med'), 50) * traffic_k
-    revenue = int(check * traffic * 30 * qty)
-
-    cogs_pct = _safe_float(fin.get('cogs_pct'), DEFAULTS['cogs_pct'])
-    cogs = int(revenue * cogs_pct)
-    gross = revenue - cogs
-
-    fot_full = _safe_int(staff.get('fot_full_med'), 0)
-    if fot_full == 0:
-        fot_full = int(_safe_int(staff.get('fot_net_med'), 0) * DEFAULTS['fot_multiplier'])
-
-    rent = int(rent_month_total * rent_k)
-    utilities = _safe_int(fin.get('utilities'), 0) * qty
-    marketing = _safe_int(fin.get('marketing'), 0)
-    consumables = _safe_int(fin.get('consumables'), 0) * qty
-    software = _safe_int(fin.get('software'), 0)
-    transport = _safe_int(fin.get('transport'), 0)
-    sez = _safe_int(fin.get('sez_month'), DEFAULTS['sez_month'])
-    other = consumables + software + transport + sez
-
-    opex_total = fot_full + rent + marketing + utilities + other
-    profit_before_tax = gross - opex_total
-    tax_amount = int(revenue * tax_rate)
-    social_amount = social if social is not None else calc_owner_social_payments()
-    net_in_pocket = profit_before_tax - tax_amount - social_amount
-
-    return {
-        'revenue': revenue, 'cogs': cogs, 'gross': gross,
-        'opex_breakdown': {
-            'rent': rent,
-            'fot': fot_full,
-            'marketing': marketing,
-            'utilities': utilities,
-            'other': other,
-        },
-        'opex_total': opex_total,
-        'profit_before_tax': profit_before_tax,
-        'tax_amount': tax_amount,
-        'tax_rate_pct': round(tax_rate * 100, 2),
-        'social_payments': social_amount,
-        'net_in_pocket': net_in_pocket,
-    }
+    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
+    from services.economics_service import calc_owner_economics as _fn
+    return _fn(fin, staff, tax_rate, rent_month_total, qty,
+               traffic_k=traffic_k, check_k=check_k, rent_k=rent_k, social=social)
 
 
 def calc_closure_growth_points(owner_eco: dict) -> dict:
-    """Переводит пороги «в карман» в пороги месячной выручки при той же структуре затрат."""
-    pocket = owner_eco.get('net_in_pocket', 0)
-    revenue = owner_eco.get('revenue', 0)
-    if pocket <= 0 or revenue <= 0:
-        return {
-            'closure_pocket': OWNER_CLOSURE_POCKET, 'closure_revenue': 0,
-            'growth_pocket': OWNER_GROWTH_POCKET, 'growth_revenue': 0,
-        }
-    ratio = revenue / pocket
-    return {
-        'closure_pocket': OWNER_CLOSURE_POCKET,
-        'closure_revenue': int(OWNER_CLOSURE_POCKET * ratio),
-        'growth_pocket': OWNER_GROWTH_POCKET,
-        'growth_revenue': int(OWNER_GROWTH_POCKET * ratio),
-    }
+    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
+    from services.economics_service import calc_closure_growth_points as _fn
+    return _fn(owner_eco)
 
 
 def calc_stress_test(fin: dict, staff: dict, tax_rate: float,
@@ -1853,245 +1576,10 @@ def _archetype_of(db, niche_id):
 
 
 def compute_block4_unit_economics(db, result, adaptive, block2=None):
-    inp = result.get('input', {}) or {}
-    fin = result.get('financials', {}) or {}
-    staff = result.get('staff', {}) or {}
-    tax = result.get('tax', {}) or {}
-    arch = _archetype_of(db, inp.get('niche_id', ''))
+    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
+    from services.economics_service import compute_block4_unit_economics as _fn
+    return _fn(db, result, adaptive, block2=block2)
 
-    avg_check = _safe_int(fin.get('check_med'), 0) or 3000
-    traffic = _safe_int(fin.get('traffic_med'), 0) or 30
-    cogs_pct = _safe_float(fin.get('cogs_pct'), 0.30)
-    tax_rate = (tax.get('rate_pct', 3) or 3) / 100
-    rent_month = _safe_int(fin.get('rent_month'), 0)
-    fot_month = _safe_int(staff.get('fot_full_med'), 0)
-    opex_month = _safe_int(fin.get('opex_med'), 0)
-
-    # Количество юнитов
-    staff_total = 0
-    if block2:
-        staff_total = ((block2.get('typical_staff') or {}).get('total')) or 0
-    if staff_total == 0:
-        staff_total = max(1, _safe_int(staff.get('headcount'), 1))
-
-    work_days = 26
-
-    # SOLO-режим: мастер = сам предприниматель (HOME/SOLO форматы).
-    # В этом случае «Мастеру (сдельно)» и «Бизнесу» — это одно и то же лицо,
-    # разбивку упрощаем: материалы / аренда / налог → «В карман вам».
-    is_solo_unit = bool(inp.get('founder_works')) and (
-        (block2 or {}).get('is_solo') or
-        (inp.get('format_id') or '').upper().endswith(('_HOME', '_SOLO'))
-    )
-
-    # Архетип-специфичный unit
-    if arch == 'A':  # услуги с мастерами
-        unit_label = 'мастер в месяц'
-        masters_count = max(staff_total, 1)
-        checks_per_day = max(int(traffic / masters_count), 1)
-        load_pct = 0.80
-        gross_rev_per_unit = int(checks_per_day * avg_check * work_days * load_pct)
-        # распределение одного чека
-        materials = int(avg_check * 0.12)
-        rent_share = int(rent_month / masters_count / (checks_per_day * work_days)) if masters_count else 0
-        overhead_share = int(opex_month * 0.5 / masters_count / (checks_per_day * work_days)) if masters_count else 0
-        tax_per_check = int(avg_check * tax_rate)
-        if is_solo_unit:
-            # Без сдельной — мастер и предприниматель одно лицо.
-            in_pocket = max(0, avg_check - materials - rent_share - overhead_share - tax_per_check)
-            breakdown = [
-                {'label':'Материалы', 'amount':materials, 'pct': round(materials/avg_check*100)},
-                {'label':'Аренда (доля)', 'amount':rent_share, 'pct': round(rent_share/avg_check*100)},
-                {'label':'Прочие расходы', 'amount':overhead_share, 'pct': round(overhead_share/avg_check*100)},
-                {'label':'Налог', 'amount':tax_per_check, 'pct': round(tax_per_check/avg_check*100)},
-                {'label':'В карман вам', 'amount':in_pocket, 'pct': round(in_pocket/avg_check*100)},
-            ]
-            piece_rate = 0
-        else:
-            piece_rate = int(avg_check * 0.40)
-            business = max(0, avg_check - piece_rate - materials - rent_share - overhead_share - tax_per_check)
-            breakdown = [
-                {'label':'Мастеру (сдельно)', 'amount':piece_rate, 'pct': round(piece_rate/avg_check*100)},
-                {'label':'Материалы', 'amount':materials, 'pct': round(materials/avg_check*100)},
-                {'label':'Аренда (доля)', 'amount':rent_share, 'pct': round(rent_share/avg_check*100)},
-                {'label':'Прочие расходы', 'amount':overhead_share, 'pct': round(overhead_share/avg_check*100)},
-                {'label':'Налог', 'amount':tax_per_check, 'pct': round(tax_per_check/avg_check*100)},
-                {'label':'Бизнесу', 'amount':business, 'pct': round(business/avg_check*100)},
-            ]
-        # Breakeven по Шагу 7 спеки:
-        #   variable_per_service = avg_check × (cogs_pct + tax_rate)
-        #   contribution_margin = avg_check − piece_rate − variable_per_service
-        #   breakeven = ceil(fixed_monthly / contribution_margin)
-        # fixed_monthly берётся из pnl_aggregates.mature (fot + rent + marketing
-        # + other_opex). Это полный fixed, НЕ на одного мастера — для SOLO
-        # это корректно (один мастер); для STANDARD делим на masters_count.
-        pnl_agg = (result.get('pnl_aggregates') or {}).get('mature') or {}
-        fixed_monthly_total = _safe_int(pnl_agg.get('fixed_monthly'), 0)
-        if not fixed_monthly_total:
-            fixed_monthly_total = int(rent_month + opex_month * 0.5)
-        fixed_per_master = (fixed_monthly_total / masters_count) if masters_count else 0
-        var_margin = avg_check - piece_rate - materials - tax_per_check
-        if var_margin > 0 and fixed_per_master > 0:
-            min_checks_month = int(math.ceil(fixed_per_master / var_margin))
-        elif var_margin > 0:
-            min_checks_month = 0
-        else:
-            min_checks_month = 9999
-        min_load = min_checks_month / max(checks_per_day * work_days, 1)
-        planned_checks = int(checks_per_day * work_days * load_pct)
-        safety = planned_checks / max(min_checks_month, 1)
-        metrics = {
-            'checks_per_day': checks_per_day, 'avg_check': avg_check,
-            'load_pct': int(load_pct*100), 'work_days': work_days,
-            'gross_revenue_per_unit': gross_rev_per_unit,
-            'breakeven_value': min_checks_month,
-            'breakeven_label': f'{min_checks_month} услуг/мес на мастера',
-            'planned_value': planned_checks,
-            'planned_label': f'{planned_checks} услуг планируется',
-            'safety_margin': round(safety, 1),
-            'min_load_pct': int(min_load*100),
-        }
-        # Для SOLO/HOME подсвечиваем что checks_per_day = медиана при типовой
-        # загрузке, а при 100% загрузке потолок выше (физический максимум
-        # мастера на дому — 5-7 клиенток/день, по wiki-обзору маникюра).
-        if is_solo_unit:
-            metrics['checks_per_day_note'] = 'медиана'
-            # Минимум 6 — физический потолок мастера на дому (wiki-данные).
-            metrics['max_checks_per_day'] = max(
-                int(round(checks_per_day / max(load_pct, 0.01))),
-                checks_per_day + 1,
-                6,
-            )
-    elif arch == 'B':  # общепит — один чек
-        unit_label = 'один чек'
-        food_cost = int(avg_check * cogs_pct)
-        fot_per_check = int(fot_month / max(traffic*work_days, 1))
-        rent_per_check = int(rent_month / max(traffic*work_days, 1))
-        overhead_per_check = int(opex_month * 0.4 / max(traffic*work_days, 1))
-        tax_per_check = int(avg_check * tax_rate)
-        business = max(0, avg_check - food_cost - fot_per_check - rent_per_check - overhead_per_check - tax_per_check)
-        breakdown = [
-            {'label':'Food cost', 'amount':food_cost, 'pct': round(food_cost/avg_check*100)},
-            {'label':'ФОТ на чек', 'amount':fot_per_check, 'pct': round(fot_per_check/avg_check*100)},
-            {'label':'Аренда (доля)', 'amount':rent_per_check, 'pct': round(rent_per_check/avg_check*100)},
-            {'label':'Прочие расходы', 'amount':overhead_per_check, 'pct': round(overhead_per_check/avg_check*100)},
-            {'label':'Налог', 'amount':tax_per_check, 'pct': round(tax_per_check/avg_check*100)},
-            {'label':'Бизнесу', 'amount':business, 'pct': round(business/avg_check*100)},
-        ]
-        fixed_costs = fot_month + rent_month + int(opex_month * 0.6)
-        var_margin = avg_check - food_cost - tax_per_check
-        be_checks_day = int(fixed_costs / max(var_margin * work_days, 1)) if var_margin > 0 else 0
-        safety = traffic / max(be_checks_day, 1)
-        metrics = {
-            'avg_check': avg_check,
-            'breakeven_value': be_checks_day,
-            'breakeven_label': f'{be_checks_day} чеков/день',
-            'planned_value': traffic,
-            'planned_label': f'{traffic} чеков/день',
-            'safety_margin': round(safety, 1),
-        }
-    elif arch == 'C':  # retail
-        unit_label = '100 ₸ выручки'
-        markup_pct = 50
-        cogs_pct_r = 100 / (100 + markup_pct) if markup_pct else 0.5
-        c_cogs = int(100 * cogs_pct_r)
-        c_fot = int(100 * 0.10)
-        c_rent = int(100 * 0.12)
-        c_over = int(100 * 0.08)
-        c_tax = int(100 * tax_rate)
-        c_loss = int(100 * 0.05)
-        c_bus = max(0, 100 - c_cogs - c_fot - c_rent - c_over - c_tax - c_loss)
-        breakdown = [
-            {'label':'Закупка (COGS)', 'amount':c_cogs, 'pct':c_cogs},
-            {'label':'ФОТ', 'amount':c_fot, 'pct':c_fot},
-            {'label':'Аренда', 'amount':c_rent, 'pct':c_rent},
-            {'label':'Прочие расходы', 'amount':c_over, 'pct':c_over},
-            {'label':'Налог', 'amount':c_tax, 'pct':c_tax},
-            {'label':'Списания/порча', 'amount':c_loss, 'pct':c_loss},
-            {'label':'Бизнесу', 'amount':c_bus, 'pct':c_bus},
-        ]
-        metrics = {
-            'markup_pct': markup_pct, 'inventory_turnover_days': 28, 'gross_margin_pct': 100-c_cogs,
-            'breakeven_label': 'По обороту запасов',
-            'planned_label': f'Средний чек ~{_fmt_kzt(avg_check)}',
-            'safety_margin': 2.0,
-        }
-    elif arch == 'D':  # абонементы
-        unit_label = 'один клиент (LTV)'
-        monthly_fee = avg_check  # в D-архетипе это абонемент
-        churn_pct = 0.08
-        lifetime = 1 / churn_pct
-        ltv = int(monthly_fee * lifetime * 0.6)  # с учётом gross_margin
-        marketing = int(opex_month * 0.25) or 150_000
-        new_per_month = max(int(marketing / 12000), 1)
-        cac = int(marketing / new_per_month)
-        ltv_cac = round(ltv / max(cac, 1), 2)
-        payback = round(cac / (monthly_fee * 0.6), 1) if monthly_fee else 0
-        breakdown = [
-            {'label':'LTV клиента', 'amount':ltv, 'pct':100},
-        ]
-        metrics = {
-            'monthly_fee': monthly_fee, 'churn_pct': int(churn_pct*100), 'lifetime_months': round(lifetime,1),
-            'ltv': ltv, 'cac': cac, 'ltv_cac_ratio': ltv_cac, 'payback_months': payback,
-            'breakeven_label': 'LTV/CAC > 3', 'planned_label': f'LTV/CAC = {ltv_cac}',
-            'safety_margin': round(ltv_cac/3, 1),
-        }
-    elif arch == 'E':  # проектный
-        unit_label = 'один проект'
-        project = avg_check  # для E avg_check = средний чек проекта
-        mat = int(project * 0.40); fotp = int(project * 0.20)
-        rent_p = int(project * 0.10); over = int(project * 0.05); taxp = int(project * tax_rate)
-        bus = max(0, project - mat - fotp - rent_p - over - taxp)
-        breakdown = [
-            {'label':'Материалы', 'amount':mat, 'pct':40},
-            {'label':'ФОТ', 'amount':fotp, 'pct':20},
-            {'label':'Аренда (доля)', 'amount':rent_p, 'pct':10},
-            {'label':'Прочие расходы', 'amount':over, 'pct':5},
-            {'label':'Налог', 'amount':taxp, 'pct':round(taxp/project*100)},
-            {'label':'Бизнесу', 'amount':bus, 'pct':round(bus/project*100)},
-        ]
-        projects_per_month = max(1, int(traffic))  # traffic проксирует projects/month
-        min_projects = max(1, int((rent_month + fot_month) / max(bus, 1)))
-        safety = projects_per_month / max(min_projects, 1)
-        metrics = {
-            'avg_project': project, 'projects_per_month': projects_per_month,
-            'breakeven_value': min_projects,
-            'breakeven_label': f'{min_projects} проектов/мес',
-            'planned_value': projects_per_month,
-            'planned_label': f'{projects_per_month} проектов/мес',
-            'safety_margin': round(safety, 1),
-        }
-    else:  # F — мощность
-        unit_label = 'одна единица мощности'
-        capacity = max(staff_total, 1)
-        per_unit_revenue = int((fin.get('revenue_year1') or 0) / 12 / capacity) if capacity else 0
-        occupancy = 0.65
-        breakdown = [
-            {'label':'Переменные затраты', 'amount':int(avg_check*0.30), 'pct':30},
-            {'label':'ФОТ (сдельно)', 'amount':int(avg_check*0.25), 'pct':25},
-            {'label':'Аренда (доля)', 'amount':int(avg_check*0.14), 'pct':14},
-            {'label':'Коммуналка', 'amount':int(avg_check*0.08), 'pct':8},
-            {'label':'Прочие', 'amount':int(avg_check*0.05), 'pct':5},
-            {'label':'Налог', 'amount':int(avg_check*tax_rate), 'pct':round(tax_rate*100)},
-            {'label':'Бизнесу', 'amount':int(avg_check*0.18), 'pct':18},
-        ]
-        metrics = {
-            'capacity_units': capacity,
-            'avg_check': avg_check,
-            'occupancy_pct': int(occupancy*100),
-            'per_unit_revenue_month': per_unit_revenue,
-            'breakeven_label': 'Заполняемость ≥35%',
-            'planned_label': f'Заполняемость {int(occupancy*100)}%',
-            'safety_margin': round(occupancy/0.35, 1),
-        }
-
-    return {
-        'archetype': arch,
-        'unit_label': unit_label,
-        'avg_check': avg_check,
-        'breakdown': breakdown,
-        'metrics': metrics,
-    }
 
 
 # ═══════════════════════════════════════════════
@@ -2099,82 +1587,9 @@ def compute_block4_unit_economics(db, result, adaptive, block2=None):
 # ═══════════════════════════════════════════════
 
 def compute_block6_capital(db, result, adaptive, block2=None):
-    capex = result.get('capex', {}) or {}
-    inp = result.get('input', {}) or {}
-    capex_needed = _safe_int(capex.get('capex_med')) or _safe_int(capex.get('capex_total'))
-    if capex_needed < 500_000 and block2:
-        capex_needed = (block2.get('finance') or {}).get('capex_needed') or capex_needed
-    capital_own = _safe_int(adaptive.get('capital_own')) if adaptive.get('capital_own') else None
-
-    # Структура CAPEX — из breakdown если есть
-    breakdown_src = capex.get('breakdown') or {}
-    if isinstance(breakdown_src, dict) and breakdown_src:
-        capex_structure = [
-            {'label':CAPEX_BREAKDOWN_LABELS_RUS.get(k, k), 'amount':_safe_int(v, 0),
-             'pct':int(_safe_int(v, 0)/max(capex_needed,1)*100)}
-            for k,v in breakdown_src.items() if _safe_int(v, 0) > 0
-        ]
-    else:
-        # синтетика по типовому распределению
-        items = [
-            ('Оборудование', 0.32),
-            ('Ремонт / обустройство', 0.22),
-            ('Первичные закупки', 0.15),
-            ('Маркетинг на старт', 0.10),
-            ('Оборотный капитал (3 мес)', 0.12),
-            ('Депозит + 1-я аренда', 0.04),
-            ('Юр.расходы, лицензии', 0.05),
-        ]
-        capex_structure = [{'label':l, 'amount':int(capex_needed*p), 'pct':int(p*100)} for l,p in items]
-
-    # Обучение — отдельная статья для ниш с training_required=True
-    # (бьюти-сфера: MANICURE, BARBER, BROW, LASH, SUGARING и т.п.). Сумма
-    # зависит от уровня опыта мастера (specific_answers.experience):
-    # none=150К, some=40К, pro=0. Прибавляется к capex_needed и появляется
-    # строкой в capex_structure.
-    training_required = bool(inp.get('training_required'))
-    experience = (adaptive.get('experience') or '').lower()
-    training_cost = TRAINING_COSTS_BY_EXPERIENCE.get(experience, 0) if training_required else 0
-    if training_cost > 0:
-        capex_needed += training_cost
-        capex_structure.append({
-            'label': CAPEX_BREAKDOWN_LABELS_RUS['training'],
-            'amount': training_cost,
-            'pct': int(training_cost / max(capex_needed, 1) * 100),
-        })
-        # Пересчитаем pct у остальных статей под новый знаменатель
-        for it in capex_structure:
-            it['pct'] = int(it['amount'] / max(capex_needed, 1) * 100)
-
-    # Дефицит / профицит
-    if capital_own is None:
-        diff_status = 'not_specified'; diff = None; diff_pct = None; actions = []
-    else:
-        diff = capital_own - capex_needed
-        diff_pct = (diff / capex_needed * 100) if capex_needed else 0
-        if diff >= 0:
-            diff_status = 'surplus' if diff_pct > 5 else 'match'
-            actions = ['Отложить профицит в резервный фонд (3-6 мес расходов)', 'Увеличить маркетинговый бюджет на старт'] if diff_status == 'surplus' else []
-        else:
-            diff_status = 'critical_deficit' if abs(diff_pct) > 30 else 'deficit'
-            gap = abs(diff)
-            credit_monthly = int(gap * 0.035)  # 22% / 36 мес аннуитет
-            actions = [
-                f'Урезать формат до эконом-класса (бюджет ≈ {_fmt_kzt(int(capex_needed*0.5))})',
-                f'Кредит {_fmt_kzt(gap)} на 24 мес (платёж ~{_fmt_kzt(credit_monthly)}/мес)',
-                'Найти партнёра с долей 20%',
-                'Грант Astana Hub / Bastau Business до 5 млн ₸',
-            ]
-
-    return {
-        'capex_needed': capex_needed,
-        'capital_own': capital_own,
-        'diff': diff,
-        'diff_pct': round(diff_pct, 1) if diff_pct is not None else None,
-        'diff_status': diff_status,
-        'capex_structure': capex_structure,
-        'actions': actions,
-    }
+    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
+    from services.economics_service import compute_block6_capital as _fn
+    return _fn(db, result, adaptive, block2=block2)
 
 
 # ═══════════════════════════════════════════════
@@ -2535,228 +1950,21 @@ def compute_block9_risks(db, result, adaptive):
 # ═══════════════════════════════════════════════
 
 def _cogs_label_by_archetype(archetype):
-    return {
-        'A': 'Расходные материалы',
-        'B': 'Food cost',
-        'C': 'Себестоимость товара',
-        'D': 'Расходники',
-        'E': 'Материалы проектов',
-        'F': 'Переменные материалы',
-    }.get(archetype, 'Материалы / COGS')
+    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
+    from services.economics_service import _cogs_label_by_archetype as _fn
+    return _fn(archetype)
 
 
 def _scenario_pnl_row(revenue_y, cogs_pct, fot_monthly, rent_monthly, marketing_monthly, other_opex_monthly, tax_rate):
-    """Собирает годовую P&L строку для одного сценария."""
-    cogs_y = int(revenue_y * (cogs_pct or 0.30))
-    fot_y = int(fot_monthly * 12)
-    rent_y = int(rent_monthly * 12)
-    marketing_y = int(marketing_monthly * 12)
-    other_y = int(other_opex_monthly * 12)
-    tax_y = int(revenue_y * (tax_rate or 0.03))
-    net_profit = revenue_y - cogs_y - fot_y - rent_y - marketing_y - other_y - tax_y
-    return {
-        'revenue':   revenue_y,
-        'cogs':      cogs_y,
-        'fot':       fot_y,
-        'rent':      rent_y,
-        'marketing': marketing_y,
-        'other_opex':other_y,
-        'tax':       tax_y,
-        'net_profit':net_profit,
-    }
+    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
+    from services.economics_service import _scenario_pnl_row as _fn
+    return _fn(revenue_y, cogs_pct, fot_monthly, rent_monthly, marketing_monthly, other_opex_monthly, tax_rate)
 
 
 def compute_block5_pnl(db, result, adaptive):
-    """Блок 5 — P&L за год по 3 сценариям + ключевые мультипликаторы."""
-    adaptive = adaptive or {}
-    fin = result.get('financials', {}) or {}
-    scenarios = result.get('scenarios', {}) or {}
-    staff = result.get('staff', {}) or {}
-    tax = result.get('tax', {}) or {}
-    inp = result.get('input', {}) or {}
-    capex_block = result.get('capex', {}) or {}
-    owner_eco = result.get('owner_economics', {}) or {}
-
-    # Получаем архетип ниши
-    archetype = ''
-    configs = getattr(db, 'configs', {}) or {}
-    niches_cfg = (configs.get('niches', {}) or {}).get('niches', {}) or {}
-    niche_id = inp.get('niche_id', '')
-    if niche_id:
-        archetype = (niches_cfg.get(niche_id, {}) or {}).get('archetype', '')
-
-    # Базовые месячные параметры
-    # ВАЖНО: result.staff уже «подрезан» в run_quick_check_v3 на одну ставку
-    # если owner_plus_* (через founder_works_eff в main.py). Здесь НЕ
-    # вычитаем повторно, иначе ФОТ уйдёт в отрицательный двойной учёт.
-    fot_monthly_full = _safe_int(staff.get('fot_full_med'), 0) or _safe_int(staff.get('fot_net_med'), 0)
-    # Эффективное число ставок: masters_canon из 08 (4 барбера), либо row.headcount
-    # с учётом seats_mult если тот применён. Это уже «полное» число, не нужно
-    # множить повторно на seats_mult.
-    row_hc = _safe_int(staff.get('headcount'), 1) or 1
-    masters_canon = _safe_int(inp.get('masters_canon'), 0) or 0
-    seats_mult_in = float(_safe_float(inp.get('seats_mult'), 1.0) or 1.0)
-    effective_hc = max(masters_canon, int(round(row_hc * max(seats_mult_in, 1.0))), row_hc, 1)
-    ent_role_id = adaptive.get('entrepreneur_role') or 'owner_only'
-    # Доля одной ставки в полном (ещё не подрезанном) ФОТ.
-    # Если ФОТ уже подрезан (owner_plus_*), восстанавливаем full
-    # по соотношению: fot_unadj = fot_adj * hc / (hc - 1).
-    if ent_role_id not in ('owner_only', 'owner_multi') and fot_monthly_full > 0 and effective_hc > 1:
-        fot_unadj = int(fot_monthly_full * effective_hc / max(effective_hc - 1, 1))
-        one_role_salary_full = int(fot_unadj / effective_hc)
-    else:
-        fot_unadj = fot_monthly_full
-        one_role_salary_full = int(fot_unadj / effective_hc) if effective_hc else 0
-    # Для PNL используем ФОТ как есть (уже корректно учитывает owner_plus_*).
-    fot_monthly = fot_monthly_full
-    # Единые месячные значения из pnl_aggregates.mature (Шаг 3-5 спеки).
-    # Раньше здесь была своя логика фолбэков маркетинга/прочих, что давало
-    # разрыв между scenarios.base.прибыль (calc_cashflow) и pnl_base
-    # (_scenario_pnl_row), если xlsx не откалиброван (см. Р-2, Р-3).
-    mature = (result.get('pnl_aggregates') or {}).get('mature') or {}
-    rent_monthly = _safe_int(mature.get('rent_monthly'), _safe_int(fin.get('rent_month'), 0))
-    marketing_monthly = _safe_int(mature.get('marketing_monthly'), 0)
-    other_opex_monthly = _safe_int(mature.get('other_opex_monthly'), 0)
-    cogs_pct = _safe_float(mature.get('cogs_pct'), _safe_float(fin.get('cogs_pct'), 0.30))
-    tax_rate = _safe_float(mature.get('tax_rate'), (tax.get('rate_pct', 3) or 3) / 100)
-    fmt_id_upper_b5 = (inp.get('format_id') or '').upper()
-
-    # Выручка по сценариям (годовая)
-    rev_year_base = _safe_int((scenarios.get('base') or {}).get('выручка_год'), 0)
-    rev_year_pess = _safe_int((scenarios.get('pess') or {}).get('выручка_год'), 0)
-    rev_year_opt  = _safe_int((scenarios.get('opt')  or {}).get('выручка_год'), 0)
-
-    if rev_year_base == 0:
-        # Фолбэк из financials
-        rev_year_base = _safe_int(fin.get('revenue_year1'), 0)
-        rev_year_pess = int(rev_year_base * 0.75)
-        rev_year_opt  = int(rev_year_base * 1.25)
-
-    # ВАЖНО: ФОТ и аренда фиксированы; COGS пропорционально; маркетинг — как базовый
-    pnl_base = _scenario_pnl_row(rev_year_base, cogs_pct, fot_monthly, rent_monthly, marketing_monthly, other_opex_monthly, tax_rate)
-    pnl_pess = _scenario_pnl_row(rev_year_pess, cogs_pct, fot_monthly, rent_monthly, marketing_monthly, other_opex_monthly, tax_rate)
-    # Аксиома 2.9 спеки: во всех 3 сценариях ФОТ, аренда, маркетинг —
-    # одинаковые. Меняются только traffic_k и check_k. Раньше оптимист
-    # увеличивал ФОТ на 15% («сдельщики получают больше»), что нарушало
-    # инвариант «фиксированные = константа» — убрано (Шаг 9).
-    pnl_opt  = _scenario_pnl_row(rev_year_opt, cogs_pct, fot_monthly, rent_monthly, marketing_monthly, other_opex_monthly, tax_rate)
-
-    # Мультипликаторы (по базовому сценарию)
-    def _safe_div(a, b):
-        return (a / b) if b else 0
-    gross_margin = _safe_div(rev_year_base - pnl_base['cogs'], rev_year_base)
-    op_margin = _safe_div(rev_year_base - pnl_base['cogs'] - pnl_base['fot'] - pnl_base['rent'] - pnl_base['marketing'] - pnl_base['other_opex'], rev_year_base)
-    net_margin = _safe_div(pnl_base['net_profit'], rev_year_base)
-
-    # ROI годовой
-    # total_investment = capital_own (если указан) или capex_standard из 08
-    # (правильный знаменатель, см. баг #2). Фолбэк — capex_med из per-niche
-    # (часто занижен). Если < 500K или ROI > 300% — отдельная ветка.
-    capital_own = _safe_int(adaptive.get('capital_own')) if adaptive.get('capital_own') else 0
-    capex_standard_08 = _safe_int(inp.get('capex_standard'), 0)
-    total_investment = (capital_own
-                        or capex_standard_08
-                        or _safe_int(capex_block.get('capex_med'), 0)
-                        or _safe_int(capex_block.get('capex_total'), 0))
-    if total_investment < 500_000:
-        for k in ('capex_high', 'total', 'capital'):
-            v = _safe_int(capex_block.get(k), 0)
-            if v >= 500_000:
-                total_investment = v; break
-    # SOLO-формат (HOME/SOLO суффикс + founder_works): ROI как метрика не
-    # применим (капитал одноразовый на оборудование, доход — это труд мастера).
-    # Вместо ROI показываем окупаемость стартовых затрат в месяцах.
-    format_id_upper = (inp.get('format_id') or '').upper()
-    is_solo_fmt = bool(inp.get('founder_works')) and (
-        format_id_upper.endswith('_HOME') or format_id_upper.endswith('_SOLO')
-    )
-
-    payback_months = None
-    if is_solo_fmt:
-        annual_roi = None
-        # Окупаемость — через единый helper, чтобы число совпадало с
-        # Block 1 «светофор — держите запас кассы на N мес».
-        payback_months = compute_unified_payback_months(result, adaptive)
-    elif total_investment < 500_000:
-        annual_roi = None  # нечего считать
-    else:
-        raw_roi = _safe_div(pnl_base['net_profit'], total_investment)
-        # Sanity-cap на абсурдные ROI (обычно признак неверного знаменателя).
-        annual_roi = min(raw_roi, 3.0) if raw_roi > 3.0 else raw_roi
-
-    # Доход предпринимателя
-    # Ставка роли = одна позиция из ФОТ (уже вычтена выше из pnl_base.fot, так
-    # что удвоения нет: profit_monthly + role_salary_monthly = чистый доход
-    # владельца без пересечений).
-    # SOLO/HOME-форматы: мастер = сам предприниматель, штата нет. ФОТ уже
-    # подрезан до 0 в run_quick_check_v3, так что profit_monthly УЖЕ равен
-    # всему заработку владельца. Отдельная «ставка в штате» не имеет смысла
-    # и не показывается (role_salary_monthly=0 + solo_mode=True).
-    role_salary_monthly = 0
-    role_breakdown = []
-    if is_solo_fmt:
-        pass  # для SOLO ставка = 0, прибыль уже = весь заработок
-    elif ent_role_id not in ('owner_only', 'owner_multi'):
-        role_salary_monthly = one_role_salary_full
-        if role_salary_monthly == 0:
-            role_salary_monthly = 200_000
-        role_breakdown.append({'role': ent_role_id.replace('owner_plus_', ''),
-                               'salary_monthly': role_salary_monthly})
-    elif ent_role_id == 'owner_multi':
-        role_salary_monthly = max(int(fot_monthly_full * 0.35), 300_000)
-        role_breakdown.append({'role': 'multi', 'salary_monthly': role_salary_monthly})
-
-    profit_monthly_base = pnl_base['net_profit'] // 12
-    income_from_business = profit_monthly_base
-    entrepreneur_income_monthly = role_salary_monthly + income_from_business
-
-    # Сравнение дохода SOLO/HOME-мастера со средней зарплатой по городу.
-    # Помогает контекстуализировать цифру («это как работа по найму в
-    # таком-то городе»). Только для is_solo_fmt.
-    region_note = None
-    if is_solo_fmt:
-        city_id = (inp.get('city_id') or '').lower()
-        avg_salary = int(AVG_SALARY_2025.get(city_id) or AVG_SALARY_DEFAULT)
-        city_rus = inp.get('city_name') or ''
-        salary_k = avg_salary // 1000
-        if entrepreneur_income_monthly >= avg_salary:
-            region_note = (
-                f'Выше средней зарплаты по {city_rus} (~{salary_k} тыс ₸). '
-                f'Неплохой уровень для самозанятости.'
-            )
-        else:
-            region_note = (
-                f'Ниже средней зарплаты по {city_rus} (~{salary_k} тыс ₸). '
-                f'Для старта и развития своего дела — рабочий вариант, '
-                f'дальше растёт через рост чека или расширение.'
-            )
-
-    return {
-        'archetype': archetype,
-        'cogs_label_rus': _cogs_label_by_archetype(archetype),
-        'scenarios': {
-            'pess': pnl_pess,
-            'base': pnl_base,
-            'opt':  pnl_opt,
-        },
-        'margins': {
-            'gross':     gross_margin,
-            'operating': op_margin,
-            'net':       net_margin,
-        },
-        'annual_roi': annual_roi,
-        'solo_mode': is_solo_fmt,
-        'payback_months': payback_months,
-        'total_investment': total_investment,
-        'entrepreneur_income': {
-            'role_salary_monthly': role_salary_monthly,
-            'profit_monthly':       income_from_business,
-            'total_monthly':        entrepreneur_income_monthly,
-            'total_yearly':         entrepreneur_income_monthly * 12,
-            'role_breakdown':       role_breakdown,
-            'region_note':          region_note,
-        },
-    }
+    """Thin wrapper → services/economics_service (Этап 3 рефакторинга)."""
+    from services.economics_service import compute_block5_pnl as _fn
+    return _fn(db, result, adaptive)
 
 
 # ═══════════════════════════════════════════════
