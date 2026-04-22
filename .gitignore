@@ -9,3 +9,6 @@ tests/local/
 REFACTOR_PLAN.md
 REFACTOR_NOTES.md
 docs/refactor_history/
+
+# pytest
+.pytest_cache/
