@@ -693,53 +693,9 @@ def get_rent_median(db: ZerekDB, city_id: str, loc_type: str) -> tuple:
     return _fn(db, city_id, loc_type)
 
 def get_competitors(db: ZerekDB, niche_id: str, city_id: str) -> dict:
-    """Возвращает словарь с уровнем насыщения, числом конкурентов и плотностью.
-
-    Добавлены поля `competitors_count` (int, нижняя граница диапазона из xlsx)
-    и `density_per_10k` (float, сырое значение из колонки «на 10 000»), чтобы
-    Block 1 и Block 3 могли работать с числами без повторного парсинга.
-    """
-    cid = normalize_city_id(city_id)
-    fallback = {
-        "уровень": 3,
-        "сигнал": "Нет данных о конкуренции",
-        "кол_во": "н/д",
-        "competitors_count": 0,
-        "density_per_10k": 0.0,
-        "лидеры": "",
-    }
-    if db.competitors.empty:
-        return fallback
-    try:
-        rows = db.competitors[(db.competitors["niche_id"] == niche_id) & (db.competitors["city_id"] == cid)]
-    except KeyError:
-        return fallback
-    if rows.empty:
-        return fallback
-    row = rows.iloc[0]
-    sat = _safe_int(row.get("Уровень насыщения (1-5)"), 3)
-    signals = {1:"🟢 Рынок свободен",2:"🟢 Есть место",3:"🟡 Нужна дифференциация",4:"🟠 Высокая конкуренция",5:"🔴 Рынок насыщен"}
-    # «Кол-во конкурентов (оценка)» в xlsx — обычно диапазон «20-30» или число.
-    # Берём нижнюю границу как числовое значение.
-    raw_count = row.get("Кол-во конкурентов (оценка)", "")
-    count_int = 0
-    try:
-        s = str(raw_count).strip()
-        if s and s.lower() != "nan":
-            # если «20-30» — берём «20», иначе пробуем как число
-            count_int = int(s.split("-")[0].strip()) if "-" in s else int(float(s))
-    except Exception:
-        count_int = 0
-    # «Кол-во на 10 000 жителей» — готовый float из xlsx
-    density = _safe_float(row.get("Кол-во на 10 000 жителей"), 0.0)
-    return {
-        "уровень": sat,
-        "сигнал": signals.get(sat, ""),
-        "кол_во": raw_count,
-        "competitors_count": count_int,
-        "density_per_10k": density,
-        "лидеры": row.get("Лидеры рынка", ""),
-    }
+    """Thin wrapper → loaders/competitor_loader (Этап 2 рефакторинга)."""
+    from loaders.competitor_loader import get_competitors as _fn
+    return _fn(db, niche_id, city_id)
 
 def get_failure_pattern(db: ZerekDB, niche_id: str) -> dict:
     if db.failure_patterns.empty:
