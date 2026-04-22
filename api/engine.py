@@ -2941,32 +2941,17 @@ def compute_block5_pnl(db, result, adaptive):
         one_role_salary_full = int(fot_unadj / effective_hc) if effective_hc else 0
     # Для PNL используем ФОТ как есть (уже корректно учитывает owner_plus_*).
     fot_monthly = fot_monthly_full
-    rent_monthly = _safe_int(fin.get('rent_month'), 0)
-    opex_total = _safe_int(fin.get('opex_med'), 0)
-    # marketing + прочее — делим opex.
-    # Для HOME-форматов берём marketing из FINANCIALS.marketing (реальный
-    # SMM-бюджет мастера на дому, обычно 25-60К/мес) вместо универсального
-    # фолбэка 100К/мес, который непропорционален доходу мастера.
-    # STANDARD/PREMIUM — прежняя логика (opex_med*0.2 или 100К), не тронут.
+    # Единые месячные значения из pnl_aggregates.mature (Шаг 3-5 спеки).
+    # Раньше здесь была своя логика фолбэков маркетинга/прочих, что давало
+    # разрыв между scenarios.base.прибыль (calc_cashflow) и pnl_base
+    # (_scenario_pnl_row), если xlsx не откалиброван (см. Р-2, Р-3).
+    mature = (result.get('pnl_aggregates') or {}).get('mature') or {}
+    rent_monthly = _safe_int(mature.get('rent_monthly'), _safe_int(fin.get('rent_month'), 0))
+    marketing_monthly = _safe_int(mature.get('marketing_monthly'), 0)
+    other_opex_monthly = _safe_int(mature.get('other_opex_monthly'), 0)
+    cogs_pct = _safe_float(mature.get('cogs_pct'), _safe_float(fin.get('cogs_pct'), 0.30))
+    tax_rate = _safe_float(mature.get('tax_rate'), (tax.get('rate_pct', 3) or 3) / 100)
     fmt_id_upper_b5 = (inp.get('format_id') or '').upper()
-    # Приоритет: marketing_med (новая колонка Round 6 калибровки) → marketing
-    # (универсальный столбец) → фолбэк по opex.
-    fin_marketing = _safe_int(fin.get('marketing_med'), 0) or _safe_int(fin.get('marketing'), 0)
-    if fmt_id_upper_b5.endswith('_HOME') and fin_marketing > 0:
-        marketing_monthly = fin_marketing
-    else:
-        marketing_monthly = int(opex_total * 0.2) if opex_total else 100_000
-    # other_opex для HOME-форматов: берём реальный other_opex_med из xlsx
-    # (для мастера на дому 3-8К/мес — телефон/интернет/мелочи), иначе
-    # фолбэк 100К/мес или доля от opex_total. Для STANDARD/PREMIUM —
-    # прежняя логика, чтобы не сломать цифры.
-    fin_other_opex = _safe_int(fin.get('other_opex_med'), 0)
-    if fmt_id_upper_b5.endswith('_HOME') and fin_other_opex > 0:
-        other_opex_monthly = fin_other_opex
-    else:
-        other_opex_monthly = max(0, opex_total - rent_monthly - marketing_monthly) if opex_total else 100_000
-    cogs_pct = _safe_float(fin.get('cogs_pct'), 0.30)
-    tax_rate = (tax.get('rate_pct', 3) or 3) / 100
 
     # Выручка по сценариям (годовая)
     rev_year_base = _safe_int((scenarios.get('base') or {}).get('выручка_год'), 0)
