@@ -2391,48 +2391,85 @@ def compute_block7_scenarios(db, result, adaptive):
 # ═══════════════════════════════════════════════
 
 def compute_block8_stress_test(db, result, adaptive):
-    """Анализ чувствительности к параметрам. Считаем импакт падения/роста на прибыль."""
+    """Анализ чувствительности к параметрам. Возвращает импакт в рублях/год
+    (абсолютное изменение годовой прибыли) по формуле:
+
+    Трафик −X%:
+      ΔProfit = −(X/100) × [revenue × (1 − tax_rate) − materials]
+      (revenue и materials падают пропорционально, налог от новой выручки;
+      FOT/rent/marketing/other не меняются.)
+
+    Средний чек −X%:
+      ΔProfit = −(X/100) × revenue × (1 − tax_rate)
+      (revenue падает, materials НЕ меняются — услуг столько же; налог от
+      новой выручки.)
+    """
     fin = result.get('financials', {}) or {}
     scenarios = result.get('scenarios', {}) or {}
+    tax = result.get('tax', {}) or {}
     base_profit_year = _safe_int((scenarios.get('base') or {}).get('прибыль_год'), 0) or _safe_int(fin.get('profit_year1'), 0) or 1
     base_profit_month = base_profit_year // 12
 
-    # Оцениваем импакт каждого параметра на -20%
-    avg_check = _safe_int(fin.get('check_med'), 0) or 3000
-    traffic = _safe_int(fin.get('traffic_med'), 0) or 30
-    rent = _safe_int(fin.get('rent_month'), 0) or 150_000
-    fot = _safe_int(result.get('staff', {}).get('fot_full_med'), 0) or 300_000
+    # Годовая выручка базового сценария (уже с city_coef и seats_mult).
+    rev_year = _safe_int((scenarios.get('base') or {}).get('выручка_год'), 0)
+    if rev_year <= 0:
+        rev_year = _safe_int(fin.get('revenue_year1'), 0) or 1
     cogs_pct = _safe_float(fin.get('cogs_pct'), 0.30)
+    materials_year = int(rev_year * cogs_pct)
+    tax_rate = (tax.get('rate_pct', 3) or 3) / 100
 
-    # Простой расчёт чувствительности (операционная прибыль = rev - cogs - opex)
-    base_rev = avg_check * traffic * 26
-    base_cogs = base_rev * cogs_pct
-    base_opex = rent + fot + int((fin.get('opex_med') or 0) * 0.5)
-    base_op_profit = max(base_rev - base_cogs - base_opex, 1)
+    # Годовые постоянные расходы (для death_points — порога прибыльности).
+    # FOT месячный из result.staff (уже подрезан для SOLO до 0), rent месячный
+    # из fin.rent_month, маркетинг и прочие — из xlsx или фолбэк в compute_block5_pnl.
+    fot_monthly = _safe_int(result.get('staff', {}).get('fot_full_med'), 0) or \
+                  _safe_int(result.get('staff', {}).get('fot_net_med'), 0)
+    rent_monthly = _safe_int(fin.get('rent_month'), 0)
+    marketing_monthly = _safe_int(fin.get('marketing_med'), 0) or _safe_int(fin.get('marketing'), 0)
+    other_opex_monthly = _safe_int(fin.get('other_opex_med'), 0)
+    # Для STANDARD/PREMIUM, если marketing/other_opex не в xlsx — фолбэк из opex_med
+    # (как в compute_block5_pnl).
+    opex_total = _safe_int(fin.get('opex_med'), 0)
+    if marketing_monthly <= 0:
+        marketing_monthly = int(opex_total * 0.2) if opex_total else 100_000
+    if other_opex_monthly <= 0:
+        other_opex_monthly = max(0, opex_total - rent_monthly - marketing_monthly) if opex_total else 100_000
+    fixed_year = (fot_monthly + rent_monthly + marketing_monthly + other_opex_monthly) * 12
 
-    def impact(new_rev=None, new_cogs=None, new_opex=None):
-        r = new_rev if new_rev is not None else base_rev
-        c = new_cogs if new_cogs is not None else base_cogs
-        o = new_opex if new_opex is not None else base_opex
-        new_profit = r - c - o
-        return round((new_profit - base_op_profit) / base_op_profit * 100)
+    def impact_traffic(delta_pct):
+        frac = abs(delta_pct) / 100.0
+        return -int(round(frac * (rev_year * (1 - tax_rate) - materials_year)))
+
+    def impact_avg_check(delta_pct):
+        frac = abs(delta_pct) / 100.0
+        return -int(round(frac * rev_year * (1 - tax_rate)))
 
     # Для Quick Check оставляем только 2 ключевых параметра: Загрузка/трафик
     # и Средний чек. ФОТ/Аренда/Маркетинг/Налог — вторичные, уходят в FinModel.
     # Разные проценты: трафик падает быстрее (-20%, сезонность/конкуренция),
     # чек медленнее (-15%, ценовая стабильность).
     sensitivities = [
-        {'param':'Загрузка / трафик', 'change':-20, 'impact_pct': impact(new_rev=base_rev*0.80, new_cogs=base_cogs*0.80)},
-        {'param':'Средний чек',        'change':-15, 'impact_pct': impact(new_rev=base_rev*0.85, new_cogs=base_cogs*0.85)},
+        {'param':'Загрузка / трафик', 'change':-20, 'impact_annual': impact_traffic(-20)},
+        {'param':'Средний чек',        'change':-15, 'impact_annual': impact_avg_check(-15)},
     ]
-    # Порядок по абсолютному импакту
-    sensitivities.sort(key=lambda x: x['impact_pct'])
+    # Порядок по величине импакта (самый отрицательный первый).
+    sensitivities.sort(key=lambda x: x['impact_annual'])
 
-    # Точки смерти — только по 2 ключевым параметрам (ФОТ ушёл).
-    var_margin = base_rev - base_cogs
+    # Точки смерти — «какое падение обнуляет прибыль».
+    # Для трафика: fixed_year = revenue × (1 − tax − cogs), значит critical X:
+    #   revenue × (1 − X) × (1 − tax − cogs) = fixed_year
+    #   X = 1 − fixed_year / (revenue × (1 − tax − cogs))
+    var_margin_year = rev_year * (1 - tax_rate - cogs_pct)
+    traffic_threshold_pct = int(round((1 - fixed_year / var_margin_year) * 100)) if var_margin_year > 0 else 0
+    # Для чека: revenue × (1 − X) × (1 − tax) − materials − fixed = 0
+    check_margin_year = rev_year * (1 - tax_rate) - materials_year
+    check_threshold_pct = int(round((1 - fixed_year / check_margin_year) * 100)) if check_margin_year > 0 else 0
     death_points = [
-        {'param':'Загрузка / трафик', 'threshold': f'падение до <{int(base_opex/var_margin*100)}% ведёт в минус' if var_margin else '—'},
-        {'param':'Средний чек',        'threshold': f'падение на >{int((1 - base_opex/(base_rev*(1-cogs_pct)))*100)}% ведёт в минус' if base_rev else '—'},
+        {'param':'Загрузка / трафик',
+         'threshold': (f'падение на >{traffic_threshold_pct}% ведёт в минус'
+                       if traffic_threshold_pct > 0 else '—')},
+        {'param':'Средний чек',
+         'threshold': (f'падение на >{check_threshold_pct}% ведёт в минус'
+                       if check_threshold_pct > 0 else '—')},
     ]
 
     # Критичный параметр — с наибольшим отрицательным импактом

@@ -1399,20 +1399,17 @@ function renderBlock8Html(b8){
 
   html += '<div class="blk-hdr2">Что произойдёт при изменении параметра</div>';
   html += '<div class="blk-note" style="margin-bottom:10px">Эти цифры показывают, насколько упадёт ваша прибыль за год, если один из параметров ухудшится. Например: падение среднего чека на 15% уменьшит годовую прибыль на указанную сумму.</div>';
-  // Detect если impact — проценты (|v|≤100) или абсолютные рубли (больше).
+  // Импакт приходит из движка как абсолютные рубли в год (impact_annual).
+  // Ширина бара — по доле от максимального impact в списке.
   var sensList = b8.sensitivities || [];
-  var maxAbs = sensList.reduce(function(a,s){ return Math.max(a, Math.abs(s.impact_pct||0)); }, 1);
-  var asRubles = maxAbs > 200;
+  var maxAbs = sensList.reduce(function(a,s){ return Math.max(a, Math.abs(s.impact_annual||0)); }, 1);
   sensList.forEach(function(s){
-    var v = s.impact_pct || 0;
-    // Ширина бара: для % = |v|/100, для рублей — по доле от max в этом списке.
-    var widthPct = asRubles ? Math.min(Math.abs(v)/maxAbs*100, 100) : Math.min(Math.abs(v), 100);
-    var severityRatio = asRubles ? (Math.abs(v)/maxAbs) : (Math.abs(v)/100);
+    var v = s.impact_annual || 0;
+    var widthPct = Math.min(Math.abs(v)/maxAbs*100, 100);
+    var severityRatio = Math.abs(v)/maxAbs;
     var color = severityRatio >= 0.70 ? 'var(--red)' : severityRatio >= 0.45 ? '#fb923c' : v < 0 ? 'var(--yellow)' : 'var(--green)';
     var icon = severityRatio >= 0.70 ? '🚨' : severityRatio >= 0.45 ? '⚠️' : '';
-    var valueText = asRubles
-      ? ((v>0?'+':'−') + fmt(Math.abs(v)) + ' ₸/год')
-      : ((v>0?'+':'') + v + '%');
+    var valueText = (v>0?'+':'−') + fmt(Math.abs(v)) + ' ₸/год';
     html += '<div class="stress-row">' +
       '<div class="stress-row-head">' +
         '<div class="stress-row-label">'+escapeHtml(s.param)+' ('+(s.change>0?'+':'')+s.change+'%) '+icon+'</div>' +
