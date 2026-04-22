@@ -520,49 +520,9 @@ def calc_closure_growth_points(owner_eco: dict) -> dict:
 
 def calc_stress_test(fin: dict, staff: dict, tax_rate: float,
                      rent_month_total: int, qty: int = 1) -> list:
-    """Настоящий стресс-тест: плохо / база / хорошо. «В карман» по каждому сценарию.
-
-    Коэффициенты читаются из config/defaults.yaml (quick_check.scenario_coefficients).
-    Для стрессового плохого сценария используется stress_bad (с rent_k > 1).
-    """
-    # Человекочитаемые описания для UI — построим из коэффициентов
-    def _desc(sc):
-        parts = []
-        t = sc.get('traffic_k', 1.0)
-        c = sc.get('check_k', 1.0)
-        r = sc.get('rent_k', 1.0)
-        if t != 1.0:
-            parts.append(f"трафик {'+' if t > 1 else '−'}{abs(int(round((t-1)*100)))}%")
-        if c != 1.0:
-            parts.append(f"чек {'+' if c > 1 else '−'}{abs(int(round((c-1)*100)))}%")
-        if r != 1.0:
-            parts.append(f"аренда {'+' if r > 1 else '−'}{abs(int(round((r-1)*100)))}%")
-        return ', '.join(parts).capitalize() if parts else 'Расчётные показатели'
-
-    scenarios = [
-        {'key': 'bad',  'label': 'Если всё плохо',   'color': 'red',
-         'params': _desc(SCENARIO_STRESS),
-         **SCENARIO_STRESS},
-        {'key': 'base', 'label': 'Базовый сценарий', 'color': 'blue',
-         'params': _desc(SCENARIO_BASE),
-         **SCENARIO_BASE},
-        {'key': 'good', 'label': 'Если всё хорошо',  'color': 'green',
-         'params': _desc(SCENARIO_OPT),
-         **SCENARIO_OPT},
-    ]
-    out = []
-    for sc in scenarios:
-        eco = calc_owner_economics(
-            fin, staff, tax_rate, rent_month_total, qty,
-            traffic_k=sc['traffic_k'], check_k=sc['check_k'], rent_k=sc['rent_k'],
-        )
-        out.append({
-            'key': sc['key'], 'label': sc['label'], 'color': sc['color'],
-            'params': sc['params'],
-            'revenue': eco['revenue'],
-            'net_in_pocket': eco['net_in_pocket'],
-        })
-    return out
+    """Thin wrapper → services/stress_service (Этап 3 рефакторинга)."""
+    from services.stress_service import calc_stress_test as _fn
+    return _fn(fin, staff, tax_rate, rent_month_total, qty)
 
 
 # ═══════════════════════════════════════════════
@@ -1625,119 +1585,9 @@ def compute_block_season(db, result, adaptive):
 # ═══════════════════════════════════════════════
 
 def compute_block8_stress_test(db, result, adaptive):
-    """Анализ чувствительности к параметрам. Возвращает импакт в рублях/год
-    (абсолютное изменение годовой прибыли) по формуле:
-
-    Трафик −X%:
-      ΔProfit = −(X/100) × [revenue × (1 − tax_rate) − materials]
-      (revenue и materials падают пропорционально, налог от новой выручки;
-      FOT/rent/marketing/other не меняются.)
-
-    Средний чек −X%:
-      ΔProfit = −(X/100) × revenue × (1 − tax_rate)
-      (revenue падает, materials НЕ меняются — услуг столько же; налог от
-      новой выручки.)
-    """
-    fin = result.get('financials', {}) or {}
-    scenarios = result.get('scenarios', {}) or {}
-    tax = result.get('tax', {}) or {}
-
-    # База: ЗРЕЛЫЙ РЕЖИМ (аксиома 2.6 спеки). Берём из pnl_aggregates.mature
-    # (построен в Шаге 3-5). Это revenue × 1.0 ramp × 1.0 season — стабильное
-    # значение после выхода на мощность, БЕЗ ramp-up и сезонности.
-    mature = (result.get('pnl_aggregates') or {}).get('mature') or {}
-    rev_mature_m = _safe_int(mature.get('revenue_monthly'), 0) or 1
-    materials_mature_m = _safe_int(mature.get('materials_monthly'), 0)
-    profit_mature_m = _safe_int(mature.get('profit_monthly'), 0)
-    fixed_monthly = _safe_int(mature.get('fixed_monthly'), 0)
-    cogs_pct = _safe_float(mature.get('cogs_pct'), _safe_float(fin.get('cogs_pct'), 0.30))
-    tax_rate = _safe_float(mature.get('tax_rate'), (tax.get('rate_pct', 3) or 3) / 100)
-
-    # Для UI-совместимости публикуем ещё и средний год (из scenarios.base).
-    base_profit_year = _safe_int((scenarios.get('base') or {}).get('прибыль_год'), 0) or 1
-    base_profit_month = base_profit_year // 12
-
-    rev_mature_y = rev_mature_m * 12
-    materials_mature_y = materials_mature_m * 12
-    fixed_year = fixed_monthly * 12
-
-    def impact_traffic(delta_pct):
-        # Трафик −X%: revenue и materials падают пропорционально; налог от
-        # новой выручки; фиксированные не меняются.
-        frac = abs(delta_pct) / 100.0
-        rev_new_m = rev_mature_m * (1 - frac)
-        materials_new_m = materials_mature_m * (1 - frac)
-        tax_new_m = rev_new_m * tax_rate
-        profit_new_m = rev_new_m - materials_new_m - tax_new_m - fixed_monthly
-        return -int(round((profit_mature_m - profit_new_m) * 12))
-
-    def impact_avg_check(delta_pct):
-        # Чек −X%: revenue падает, materials НЕ меняются (услуг столько же),
-        # налог от новой выручки.
-        frac = abs(delta_pct) / 100.0
-        rev_new_m = rev_mature_m * (1 - frac)
-        materials_new_m = materials_mature_m  # без изменений
-        tax_new_m = rev_new_m * tax_rate
-        profit_new_m = rev_new_m - materials_new_m - tax_new_m - fixed_monthly
-        return -int(round((profit_mature_m - profit_new_m) * 12))
-
-    # Для Quick Check оставляем только 2 ключевых параметра: Загрузка/трафик
-    # и Средний чек. ФОТ/Аренда/Маркетинг/Налог — вторичные, уходят в FinModel.
-    # Разные проценты: трафик падает быстрее (-20%, сезонность/конкуренция),
-    # чек медленнее (-15%, ценовая стабильность).
-    sensitivities = [
-        {'param':'Загрузка / трафик', 'change':-20, 'impact_annual': impact_traffic(-20)},
-        {'param':'Средний чек',        'change':-15, 'impact_annual': impact_avg_check(-15)},
-    ]
-    # Порядок по величине импакта (самый отрицательный первый).
-    sensitivities.sort(key=lambda x: x['impact_annual'])
-
-    # Точки смерти считаем от зрелого режима (пороги, когда прибыль = 0).
-    # Трафик:  rev_mature_y × (1 − X) × (1 − tax − cogs) = fixed_year
-    # Чек:     rev_mature_y × (1 − X) × (1 − tax) − materials_mature_y = fixed_year
-    var_margin_year = rev_mature_y * (1 - tax_rate - cogs_pct)
-    traffic_threshold_pct = int(round((1 - fixed_year / var_margin_year) * 100)) if var_margin_year > 0 else 0
-    check_margin_year = rev_mature_y * (1 - tax_rate) - materials_mature_y
-    check_threshold_pct = int(round((1 - fixed_year / check_margin_year) * 100)) if check_margin_year > 0 else 0
-    death_points = [
-        {'param':'Загрузка / трафик',
-         'threshold': (f'падение на >{traffic_threshold_pct}% ведёт в минус'
-                       if traffic_threshold_pct > 0 else '—')},
-        {'param':'Средний чек',
-         'threshold': (f'падение на >{check_threshold_pct}% ведёт в минус'
-                       if check_threshold_pct > 0 else '—')},
-    ]
-
-    # Критичный параметр — с наибольшим отрицательным импактом
-    critical = sensitivities[0]
-
-    recommendations_by_param = {
-        'Загрузка / трафик': [
-            'Минимум 3 первых месяца — фокус на маркетинге',
-            'Следите за загрузкой еженедельно с 1-й недели',
-            'Если загрузка <45% к 3-му мес — срочно пересматривайте маркетинг',
-        ],
-        'Средний чек': [
-            'Разработать upsell / апсейлы (пакеты, комплексные услуги)',
-            'Регулярно пересматривать прайс раз в 3 мес',
-            'Не бояться поднимать цену на 5-10% после набора базы',
-        ],
-        'ФОТ (рост)': [
-            'Сдельная система мотивации — привязана к выручке',
-            'Не брать сотрудников про запас',
-            'Готовить замену ключевым мастерам',
-        ],
-    }
-    recs = recommendations_by_param.get(critical['param'], ['Следите за параметром ежемесячно'])
-
-    return {
-        'base_profit_month': base_profit_month,
-        'base_profit_year': base_profit_year,
-        'sensitivities': sensitivities,
-        'death_points': death_points,
-        'critical_param': critical,
-        'recommendations': recs,
-    }
+    """Thin wrapper → services/stress_service (Этап 3 рефакторинга)."""
+    from services.stress_service import compute_block8_stress_test as _fn
+    return _fn(result)
 
 
 # ═══════════════════════════════════════════════
