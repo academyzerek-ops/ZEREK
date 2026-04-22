@@ -2,3 +2,10 @@
 __pycache__/
 *.pyc
 .DS_Store
+
+# Refactor artifacts (Stage 0 baseline + planning notes)
+tests/fixtures/
+tests/local/
+REFACTOR_PLAN.md
+REFACTOR_NOTES.md
+docs/refactor_history/
