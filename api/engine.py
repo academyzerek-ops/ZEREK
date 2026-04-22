@@ -1936,6 +1936,14 @@ def compute_block4_unit_economics(db, result, adaptive, block2=None):
 
     work_days = 26
 
+    # SOLO-режим: мастер = сам предприниматель (HOME/SOLO форматы).
+    # В этом случае «Мастеру (сдельно)» и «Бизнесу» — это одно и то же лицо,
+    # разбивку упрощаем: материалы / аренда / налог → «В карман вам».
+    is_solo_unit = bool(inp.get('founder_works')) and (
+        (block2 or {}).get('is_solo') or
+        (inp.get('format_id') or '').upper().endswith(('_HOME', '_SOLO'))
+    )
+
     # Архетип-специфичный unit
     if arch == 'A':  # услуги с мастерами
         unit_label = 'мастер в месяц'
@@ -1944,20 +1952,32 @@ def compute_block4_unit_economics(db, result, adaptive, block2=None):
         load_pct = 0.80
         gross_rev_per_unit = int(checks_per_day * avg_check * work_days * load_pct)
         # распределение одного чека
-        piece_rate = int(avg_check * 0.40)
         materials = int(avg_check * 0.12)
         rent_share = int(rent_month / masters_count / (checks_per_day * work_days)) if masters_count else 0
         overhead_share = int(opex_month * 0.5 / masters_count / (checks_per_day * work_days)) if masters_count else 0
         tax_per_check = int(avg_check * tax_rate)
-        business = max(0, avg_check - piece_rate - materials - rent_share - overhead_share - tax_per_check)
-        breakdown = [
-            {'label':'Мастеру (сдельно)', 'amount':piece_rate, 'pct': round(piece_rate/avg_check*100)},
-            {'label':'Материалы', 'amount':materials, 'pct': round(materials/avg_check*100)},
-            {'label':'Аренда (доля)', 'amount':rent_share, 'pct': round(rent_share/avg_check*100)},
-            {'label':'Прочие OPEX', 'amount':overhead_share, 'pct': round(overhead_share/avg_check*100)},
-            {'label':'Налог', 'amount':tax_per_check, 'pct': round(tax_per_check/avg_check*100)},
-            {'label':'Бизнесу', 'amount':business, 'pct': round(business/avg_check*100)},
-        ]
+        if is_solo_unit:
+            # Без сдельной — мастер и предприниматель одно лицо.
+            in_pocket = max(0, avg_check - materials - rent_share - overhead_share - tax_per_check)
+            breakdown = [
+                {'label':'Материалы', 'amount':materials, 'pct': round(materials/avg_check*100)},
+                {'label':'Аренда (доля)', 'amount':rent_share, 'pct': round(rent_share/avg_check*100)},
+                {'label':'Прочие OPEX', 'amount':overhead_share, 'pct': round(overhead_share/avg_check*100)},
+                {'label':'Налог', 'amount':tax_per_check, 'pct': round(tax_per_check/avg_check*100)},
+                {'label':'В карман вам', 'amount':in_pocket, 'pct': round(in_pocket/avg_check*100)},
+            ]
+            piece_rate = 0
+        else:
+            piece_rate = int(avg_check * 0.40)
+            business = max(0, avg_check - piece_rate - materials - rent_share - overhead_share - tax_per_check)
+            breakdown = [
+                {'label':'Мастеру (сдельно)', 'amount':piece_rate, 'pct': round(piece_rate/avg_check*100)},
+                {'label':'Материалы', 'amount':materials, 'pct': round(materials/avg_check*100)},
+                {'label':'Аренда (доля)', 'amount':rent_share, 'pct': round(rent_share/avg_check*100)},
+                {'label':'Прочие OPEX', 'amount':overhead_share, 'pct': round(overhead_share/avg_check*100)},
+                {'label':'Налог', 'amount':tax_per_check, 'pct': round(tax_per_check/avg_check*100)},
+                {'label':'Бизнесу', 'amount':business, 'pct': round(business/avg_check*100)},
+            ]
         # breakeven по загрузке
         fixed_per_master = int((rent_month + opex_month * 0.5) / masters_count) if masters_count else 0
         var_margin = avg_check - piece_rate - materials - tax_per_check

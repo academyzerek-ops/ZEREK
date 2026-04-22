@@ -1245,7 +1245,7 @@ function renderBlock4Html(b4){
     html += '<div class="blk-hdr2">Куда уходят деньги с одного '+(b4.unit_label||'чека')+'</div>';
     b4.breakdown.forEach(function(it){
       var pct = it.pct||0;
-      var color = it.label === 'Бизнесу' ? 'var(--green)' : 'var(--accent)';
+      var color = (it.label === 'Бизнесу' || it.label === 'В карман вам') ? 'var(--green)' : 'var(--accent)';
       html += '<div class="bar-row">' +
         '<div class="bar-row-pct">'+pct+'%</div>' +
         '<div class="bar-row-fill"><div class="bar-row-fill-inner" style="width:'+pct+'%;background:'+color+'"></div></div>' +
