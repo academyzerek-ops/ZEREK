@@ -1301,7 +1301,8 @@ function renderBlock4Html(b4){
       html += '<div class="blk-row"><span>Максимум при 100% загрузке</span><strong>'+m.max_checks_per_day+'</strong></div>';
     }
   }
-  if(m.load_pct){ html += '<div class="blk-row"><span>Загрузка</span><strong>'+m.load_pct+'%</strong></div>'; }
+  // Строка «Загрузка» убрана (пункт 23 финального раунда) — клиенту
+  // релевантны только «Средний чек», «Чеков в смену», «Максимум», «Валовая».
   if(m.gross_revenue_per_unit){ html += '<div class="blk-row"><span>Валовая выручка</span><strong>'+fmt(m.gross_revenue_per_unit)+' ₸/мес</strong></div>'; }
   if(m.ltv){ html += '<div class="blk-row"><span>LTV клиента</span><strong>'+fmt(m.ltv)+' ₸</strong></div>'; }
   if(m.cac){ html += '<div class="blk-row"><span>CAC</span><strong>'+fmt(m.cac)+' ₸</strong></div>'; }
@@ -1436,15 +1437,11 @@ function renderBlock8Html(b8){
     '</div>';
   });
 
-  if((b8.death_points||[]).length){
-    html += '<div class="blk-hdr2">Точка «смерти» бизнеса</div>';
-    b8.death_points.forEach(function(d){
-      html += '<div class="blk-row"><span>'+escapeHtml(d.param)+'</span><span style="font-size:12px">'+escapeHtml(d.threshold)+'</span></div>';
-    });
-  }
+  // Секция «Точка смерти бизнеса» удалена (пункт 25 финального раунда) —
+  // пороги падения для Quick Check перегружены, это уровень FinModel.
 
   if(b8.critical_param){
-    html += '<div class="blk-hdr2">🚨 Критичный параметр</div>' +
+    html += '<div class="blk-hdr2">Критичный параметр</div>' +
       '<div class="blk-note"><strong>'+escapeHtml(b8.critical_param.param)+'</strong> — самая уязвимая метрика.</div>';
     if((b8.recommendations||[]).length){
       html += '<div style="margin-top:10px">';
