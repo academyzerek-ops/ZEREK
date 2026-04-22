@@ -216,6 +216,7 @@ h2{font-size:22px;margin-bottom:6px}
 .b5-income-row strong{font-family:var(--mono);font-weight:700;color:var(--text)}
 .b5-income-total{border-top:1px solid rgba(34,197,94,0.3);padding-top:8px;margin-top:6px;font-size:14px;color:var(--text)}
 .b5-income-total strong{font-size:17px;color:var(--green)}
+.b5-income-disclaimer{margin-top:10px;font-size:11px;color:var(--text-3);line-height:1.45;text-align:center}
 
 /* ─── BLOCK 10 — СЛЕДУЮЩИЕ ШАГИ ─── */
 .b10-section{padding:18px 16px;background:var(--surface);border-radius:var(--radius-lg);margin-bottom:12px}
@@ -1098,9 +1099,9 @@ function renderBlock5Html(b5){
   var inc = b5.entrepreneur_income || {};
   var incRows = '';
   // Для SOLO/HOME (solo_mode=true) мастер = сам предприниматель, штата нет —
-  // показываем одну строку «Ваш чистый доход». Иначе — ставка + прибыль + итого.
+  // показываем одну строку «Ориентировочный доход». Иначе — ставка + прибыль + итого.
   if(b5.solo_mode){
-    incRows += '<div class="b5-income-row b5-income-total"><span>Ваш чистый доход</span><strong>'+fmt(inc.total_monthly)+' ₸/мес</strong></div>';
+    incRows += '<div class="b5-income-row b5-income-total"><span>Ориентировочный доход по региону</span><strong>'+fmt(inc.total_monthly)+' ₸/мес</strong></div>';
   } else {
     if(inc.role_salary_monthly > 0){
       incRows += '<div class="b5-income-row"><span>Ставка в штате</span><strong>'+fmt(inc.role_salary_monthly)+' ₸/мес</strong></div>';
@@ -1108,12 +1109,15 @@ function renderBlock5Html(b5){
       incRows += '<div class="b5-income-row"><span>Ставка в штате</span><strong>0 (не работаю операционно)</strong></div>';
     }
     incRows += '<div class="b5-income-row"><span>Прибыль бизнеса</span><strong>'+fmt(inc.profit_monthly)+' ₸/мес</strong></div>' +
-      '<div class="b5-income-row b5-income-total"><span>ИТОГО / мес</span><strong>'+fmt(inc.total_monthly)+' ₸</strong></div>';
+      '<div class="b5-income-row b5-income-total"><span>Ориентир по региону</span><strong>'+fmt(inc.total_monthly)+' ₸/мес</strong></div>';
   }
+
+  var incomeDisclaimer = '<div class="b5-income-disclaimer">Это ориентир — реальный доход зависит от качества работы, рекламы и рисков, описанных ниже.</div>';
 
   var incomeBlock = '<div class="b5-income">' +
     '<div class="b5-income-title">💰 Ваш доход предпринимателя</div>' +
     incRows +
+    incomeDisclaimer +
   '</div>';
 
   return '<div class="b5-section">' +
