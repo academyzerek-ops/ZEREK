@@ -104,6 +104,12 @@ _BM = ((DEFAULTS_CFG.get("quick_check", {}) or {}).get("benchmarks", {}) or {})
 BENCHMARK_COMPETITOR_DENSITY_10K = float(_BM.get("competitor_density_per_10k", 0.8))
 BENCHMARK_RETAIL_DENSITY_10K     = float(_BM.get("retail_density_per_10k", 0.75))
 
+# Сезонность по умолчанию (12 мес), если у ниши нет s01..s12 в FINANCIALS.
+DEFAULT_SEASONALITY = list((DEFAULTS_CFG.get("quick_check", {}) or {}).get(
+    "default_seasonality",
+    [0.85, 0.85, 0.90, 1.00, 1.05, 1.10, 1.10, 1.05, 1.00, 0.95, 0.95, 1.20],
+))
+
 # Русские подписи статей CAPEX (ключи из capex.breakdown в run_quick_check_v3).
 CAPEX_BREAKDOWN_LABELS_RUS = {
     'equipment':   'Оборудование',
@@ -2205,6 +2211,46 @@ def compute_block6_capital(db, result, adaptive, block2=None):
         'diff_status': diff_status,
         'capex_structure': capex_structure,
         'actions': actions,
+    }
+
+
+# ═══════════════════════════════════════════════
+# BLOCK SEASON — СЕЗОННОСТЬ ВЫРУЧКИ ПО МЕСЯЦАМ
+# ═══════════════════════════════════════════════
+
+_MONTH_NAMES_RUS = ['янв','фев','мар','апр','май','июн',
+                    'июл','авг','сен','окт','ноя','дек']
+
+def compute_block_season(db, result, adaptive):
+    """Блок Сезонность — 12 коэффициентов × 100% от средней годовой выручки.
+    Источник: FINANCIALS.s01..s12 ниши если любой из них > 0; иначе
+    DEFAULT_SEASONALITY из config/defaults.yaml.quick_check.default_seasonality.
+    """
+    fin = result.get('financials', {}) or {}
+    inp = result.get('input', {}) or {}
+    # Пробуем per-niche из xlsx. Для этого нужен оригинальный fin с s01..s12.
+    # result.financials содержит только отобранные поля, поэтому читаем заново.
+    niche_id = inp.get('niche_id', '')
+    format_id = inp.get('format_id', '')
+    cls = inp.get('class', '') or inp.get('cls', '')
+    raw_fin = db.get_format_row(niche_id, 'FINANCIALS', format_id, cls) if niche_id else {}
+    coefs = []
+    for m in range(1, 13):
+        v = _safe_float((raw_fin or {}).get(f's{m:02d}'), 0.0)
+        coefs.append(v)
+    if not any(c > 0 for c in coefs):
+        coefs = list(DEFAULT_SEASONALITY)
+    # Пики — коэф > 1.05. Просадки — < 0.95.
+    peak_idx   = [i for i,c in enumerate(coefs) if c > 1.05]
+    trough_idx = [i for i,c in enumerate(coefs) if c < 0.95]
+    peaks   = [_MONTH_NAMES_RUS[i] for i in peak_idx]
+    troughs = [_MONTH_NAMES_RUS[i] for i in trough_idx]
+    return {
+        'coefs':    [round(c, 2) for c in coefs],
+        'months':   list(_MONTH_NAMES_RUS),
+        'peaks':    peaks,
+        'troughs':  troughs,
+        'source':   'niche' if any((raw_fin or {}).get(f's{m:02d}') for m in range(1,13)) else 'default',
     }
 
 

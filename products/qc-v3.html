@@ -284,6 +284,13 @@ h2{font-size:22px;margin-bottom:6px}
 .sc-bar.neg{background:var(--red)}
 .sc-legend{display:flex;gap:14px;font-size:11px;color:var(--text-3);margin-top:8px}
 .sc-legend .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:middle}
+/* Блок сезонности */
+.ssn-chart{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;align-items:end;padding:6px 0 2px}
+.ssn-col{display:flex;flex-direction:column;align-items:center;gap:4px}
+.ssn-bar-wrap{width:100%;height:90px;display:flex;align-items:flex-end;justify-content:center}
+.ssn-bar{width:100%;border-radius:3px 3px 0 0;min-height:4px}
+.ssn-pct{font-family:var(--mono);font-size:10px;color:var(--text-2);font-weight:700}
+.ssn-mo{font-size:10px;color:var(--text-3);text-transform:lowercase}
 
 /* Risks (block 9) */
 .risk-item{padding:12px 0;border-bottom:0.5px solid var(--surface-2)}
@@ -845,7 +852,7 @@ function renderResult(result){
     if(result.block3)  html += renderBlock3Html(result.block3);
     if(result.block4)  html += renderBlock4Html(result.block4);
     if(result.block5)  html += renderBlock5Html(result.block5);
-    if(result.block7)  html += renderBlock7Html(result.block7);
+    if(result.block_season) html += renderSeasonBlockHtml(result.block_season);
     if(result.block8)  html += renderBlock8Html(result.block8);
     if(result.block9)  html += renderBlock9Html(result.block9);
     if(result.block6)  html += renderBlock6Html(result.block6);
@@ -1302,38 +1309,31 @@ function renderBlock6Html(b6){
   return html + '</div>';
 }
 
-/* ─── Block 7 — Траектория 24 мес ─── */
-function renderBlock7Html(b7){
-  if(!b7) return '';
-  var sc = b7.scenarios || {};
-  var base = (sc.base||{}).traj||[];
-  var pess = (sc.pess||{}).traj||[];
-  var opt = (sc.opt||{}).traj||[];
-  var all = base.concat(pess).concat(opt);
-  var vmax = Math.max.apply(null, all.map(function(x){return Math.abs(x.cumulative);})) || 1;
-
-  function chart(traj, color){
-    var bars = traj.map(function(p){
-      var h = Math.max(4, Math.abs(p.cumulative)/vmax*95);
-      var cls = p.cumulative < 0 ? ' neg' : '';
-      return '<div class="sc-bar'+cls+'" style="height:'+h+'%;background:'+color+'"></div>';
-    }).join('');
-    return '<div class="sc-chart">'+bars+'</div>';
-  }
-
-  var html = '<div class="blk"><div class="blk-h">Траектория бизнеса на 24 месяца</div>';
-  html += '<div style="font-size:12px;color:var(--text-3);margin-bottom:6px">Базовый сценарий (накопленная прибыль)</div>' + chart(base, 'var(--accent)');
-  html += '<div style="font-size:12px;color:var(--text-3);margin-top:10px;margin-bottom:6px">Пессимист</div>' + chart(pess, 'var(--yellow)');
-  html += '<div style="font-size:12px;color:var(--text-3);margin-top:10px;margin-bottom:6px">Оптимист</div>' + chart(opt, 'var(--green)');
-
-  html += '<div class="blk-hdr2" style="margin-top:18px">Ключевые точки</div>';
-  html += '<table style="width:100%;font-size:13px;border-collapse:collapse">' +
-    '<tr><td style="color:var(--text-2);padding:6px 0"></td><td style="text-align:right;color:var(--yellow);font-weight:700">ПЕССИМ.</td><td style="text-align:right;color:var(--accent);font-weight:700">БАЗА</td><td style="text-align:right;color:var(--green);font-weight:700">ОПТИМ.</td></tr>' +
-    '<tr><td>Выход в ноль</td><td style="text-align:right;font-family:var(--mono);font-weight:700">'+(sc.pess.breakeven_month||'—')+' мес</td><td style="text-align:right;font-family:var(--mono);font-weight:700">'+(sc.base.breakeven_month||'—')+' мес</td><td style="text-align:right;font-family:var(--mono);font-weight:700">'+(sc.opt.breakeven_month||'—')+' мес</td></tr>' +
-    '<tr><td>Возврат инвестиций</td><td style="text-align:right;font-family:var(--mono);font-weight:700">'+(sc.pess.roi_month||'24+')+'</td><td style="text-align:right;font-family:var(--mono);font-weight:700">'+(sc.base.roi_month||'24+')+'</td><td style="text-align:right;font-family:var(--mono);font-weight:700">'+(sc.opt.roi_month||'24+')+'</td></tr>' +
-  '</table>';
-
-  return html + '</div>';
+/* ─── Сезонность выручки по месяцам (заменяет Траекторию 24 мес) ─── */
+function renderSeasonBlockHtml(bs){
+  if(!bs || !bs.coefs) return '';
+  var coefs = bs.coefs, months = bs.months || [];
+  var maxC = Math.max.apply(null, coefs) || 1.2;
+  var bars = coefs.map(function(c, i){
+    var h = Math.max(6, (c / maxC) * 95);
+    var color = c > 1.05 ? 'var(--green)' : (c < 0.95 ? 'var(--yellow)' : 'var(--accent)');
+    var labelPct = Math.round(c * 100);
+    return '<div class="ssn-col">' +
+      '<div class="ssn-bar-wrap"><div class="ssn-bar" style="height:'+h+'%;background:'+color+'"></div></div>' +
+      '<div class="ssn-pct">'+labelPct+'%</div>' +
+      '<div class="ssn-mo">'+escapeHtml(months[i]||'')+'</div>' +
+    '</div>';
+  }).join('');
+  var peakPart = (bs.peaks && bs.peaks.length) ? 'пики: ' + bs.peaks.join(', ') : '';
+  var troughPart = (bs.troughs && bs.troughs.length) ? 'просадки: ' + bs.troughs.join(', ') : '';
+  var caption = [peakPart, troughPart].filter(Boolean).join(' · ');
+  if(!caption) caption = 'Выручка распределена равномерно по году.';
+  var html = '<div class="blk"><div class="blk-h">Сезонность выручки по месяцам</div>' +
+    '<div style="font-size:12px;color:var(--text-3);margin-bottom:10px">Январь-декабрь, % от средней годовой</div>' +
+    '<div class="ssn-chart">' + bars + '</div>' +
+    '<div class="blk-note" style="margin-top:10px">Для вашей ниши ' + escapeHtml(caption) + '.</div>' +
+  '</div>';
+  return html;
 }
 
 /* ─── Block 8 — Стресс-тест ─── */

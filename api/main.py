@@ -18,7 +18,8 @@ from engine import (ZerekDB, run_quick_check_v3,
                     compute_block1_verdict, compute_block2_passport,
                     compute_block3_market, compute_block4_unit_economics,
                     compute_block5_pnl, compute_block6_capital,
-                    compute_block7_scenarios, compute_block8_stress_test,
+                    compute_block7_scenarios, compute_block_season,
+                    compute_block8_stress_test,
                     compute_block9_risks, compute_block10_next_steps,
                     FINMODEL_DEFAULTS_CFG, DEFAULTS_CFG)
 from report import render_report_v4
@@ -245,9 +246,10 @@ def quick_check(req: QCReq):
             report['block6'] = compute_block6_capital(db, result, block1_inputs, block2=block2_obj)
         except Exception:
             import traceback; traceback.print_exc()
-        # Block 7 — Траектория на 24 мес
+        # Block Season — сезонность выручки (заменяет Block 7 траекторию
+        # в Quick Check; траектория доступна в FinModel как раньше).
         try:
-            report['block7'] = compute_block7_scenarios(db, result, block1_inputs)
+            report['block_season'] = compute_block_season(db, result, block1_inputs)
         except Exception:
             import traceback; traceback.print_exc()
         # Block 8 — Стресс-тест
