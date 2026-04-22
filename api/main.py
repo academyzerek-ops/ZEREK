@@ -21,6 +21,7 @@ from engine import (ZerekDB, run_quick_check_v3,
                     compute_block7_scenarios, compute_block_season,
                     compute_block8_stress_test,
                     compute_block9_risks, compute_block10_next_steps,
+                    compute_pnl_aggregates,
                     FINMODEL_DEFAULTS_CFG, DEFAULTS_CFG)
 from report import render_report_v4
 
@@ -209,6 +210,10 @@ def quick_check(req: QCReq):
             format_id=req.format_id, cls=cls, area_m2=req.area_m2, loc_type=req.loc_type,
             capital=req.capital or 0, qty=req.qty, founder_works=founder_works_eff,
             rent_override=req.rent_override, start_month=req.start_month)
+        # Шаги 3-5 спеки: единые агрегаты P&L (зрелый режим + средний год).
+        # Кладём в result['pnl_aggregates'] — потребители: Block 5, Block 8,
+        # compute_unified_payback_months.
+        result['pnl_aggregates'] = compute_pnl_aggregates(result)
         report = render_report_v4(result)
         adaptive = {
             "has_license": req.has_license,

@@ -193,6 +193,90 @@ def compute_unified_payback_months(result, adaptive):
     return int(math.ceil(startup / monthly_income))
 
 
+def compute_pnl_aggregates(result):
+    """Шаги 3-5 спеки: зрелый месячный P&L + средние годовые показатели.
+
+    Возвращает dict:
+      mature — зрелый режим (ramp=1.0, season=1.0):
+        revenue_monthly, materials_monthly, tax_monthly, fixed_monthly,
+        profit_monthly, revenue_yearly, profit_yearly
+      yearly_avg — средний первый год (с ramp-up и сезонностью из
+        scenarios.base, вычисленных через calc_cashflow):
+        revenue_yearly, profit_yearly, profit_monthly
+      fixed_monthly — постоянные расходы / мес (для Шагов 6, 7, 8).
+
+    ВАЖНО: зрелая база НЕ зависит от start_month и сезонности.
+    Используется в стресс-тесте (Шаг 8) и breakeven (Шаг 7).
+    yearly_avg — для payback (Шаг 6) и Block 5 P&L таблицы.
+    """
+    inp = result.get('input', {}) or {}
+    fin = result.get('financials', {}) or {}
+    staff = result.get('staff', {}) or {}
+    tax = result.get('tax', {}) or {}
+    scenarios = result.get('scenarios', {}) or {}
+
+    avg_check = _safe_int(fin.get('check_med'), 0) or 3000
+    traffic = _safe_int(fin.get('traffic_med'), 0) or 30
+    cogs_pct = _safe_float(fin.get('cogs_pct'), 0.30)
+    tax_rate = (tax.get('rate_pct', 3) or 3) / 100
+    rent = _safe_int(fin.get('rent_month'), 0)
+    fot = (_safe_int(staff.get('fot_full_med'), 0)
+           or _safe_int(staff.get('fot_net_med'), 0))
+
+    # Маркетинг и прочие расходы. Для HOME/SOLO валидация в main.py
+    # гарантирует наличие marketing_med/other_opex_med. Для STANDARD/PREMIUM
+    # сохраняется существующий фолбэк через opex_med (до их калибровки).
+    fin_mk = _safe_int(fin.get('marketing_med'), 0) or _safe_int(fin.get('marketing'), 0)
+    fin_ox = _safe_int(fin.get('other_opex_med'), 0)
+    opex_med = _safe_int(fin.get('opex_med'), 0)
+    fmt_up = (inp.get('format_id') or '').upper()
+    is_home = fmt_up.endswith('_HOME') or fmt_up.endswith('_SOLO')
+    if is_home:
+        mk_monthly = fin_mk
+        ox_monthly = fin_ox
+    else:
+        mk_monthly = fin_mk if fin_mk > 0 else (int(opex_med * 0.2) if opex_med else 100_000)
+        ox_monthly = fin_ox if fin_ox > 0 else (
+            max(0, opex_med - rent - mk_monthly) if opex_med else 100_000)
+
+    # Шаг 3: зрелый месячный P&L.
+    rev_mature_m = avg_check * traffic * 30
+    materials_m = int(rev_mature_m * cogs_pct)
+    tax_m = int(rev_mature_m * tax_rate)
+    fixed_m = fot + rent + mk_monthly + ox_monthly
+    profit_mature_m = rev_mature_m - materials_m - tax_m - fixed_m
+
+    # Шаг 5: средний первый год (из scenarios.base, уже с ramp и сезонностью
+    # через calc_cashflow в run_quick_check_v3).
+    rev_year_avg = _safe_int((scenarios.get('base') or {}).get('выручка_год'), 0)
+    profit_year_avg = _safe_int((scenarios.get('base') or {}).get('прибыль_год'), 0)
+    profit_month_avg = profit_year_avg // 12 if profit_year_avg else 0
+
+    return {
+        'mature': {
+            'revenue_monthly':  rev_mature_m,
+            'materials_monthly': materials_m,
+            'tax_monthly':       tax_m,
+            'fixed_monthly':     fixed_m,
+            'profit_monthly':    profit_mature_m,
+            'revenue_yearly':    rev_mature_m * 12,
+            'profit_yearly':     profit_mature_m * 12,
+            'fot_monthly':       fot,
+            'rent_monthly':      rent,
+            'marketing_monthly': mk_monthly,
+            'other_opex_monthly': ox_monthly,
+            'cogs_pct':          cogs_pct,
+            'tax_rate':          tax_rate,
+        },
+        'yearly_avg': {
+            'revenue_yearly':  rev_year_avg,
+            'profit_yearly':   profit_year_avg,
+            'profit_monthly':  profit_month_avg,
+        },
+        'is_home': is_home,
+    }
+
+
 # ─────────────────────────────────────────────────────────────────────────
 # Города: канонический ID + маппинг из legacy → canonical + check_coef
 # ─────────────────────────────────────────────────────────────────────────
