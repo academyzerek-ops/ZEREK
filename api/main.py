@@ -172,7 +172,21 @@ def quick_check(req: QCReq):
         # Маппинг: entrepreneur_role = owner_plus_* → founder_works=True, чтобы
         # движок вычел одну ставку из ФОТ и не было двойного учёта.
         ent_role = (req.specific_answers or {}).get('entrepreneur_role', '') or ''
-        founder_works_eff = req.founder_works or ent_role.startswith('owner_plus_')
+        # HOME/SOLO форматы по определению — self-employed: мастер и есть
+        # предприниматель. Принудительно включаем founder_works и дефолтим
+        # entrepreneur_role, чтобы ФОТ подрезался и «Ваш доход» не показывал
+        # «0 (не работаю операционно)».
+        fmt_id_upper = (req.format_id or '').upper()
+        is_solo_format = fmt_id_upper.endswith('_HOME') or fmt_id_upper.endswith('_SOLO')
+        if is_solo_format:
+            if not ent_role or ent_role == 'owner_only':
+                ent_role = 'owner_plus_master'
+                sa = dict(req.specific_answers or {})
+                sa['entrepreneur_role'] = 'owner_plus_master'
+                req.specific_answers = sa
+            founder_works_eff = True
+        else:
+            founder_works_eff = req.founder_works or ent_role.startswith('owner_plus_')
         result = run_quick_check_v3(db=db, city_id=req.city_id, niche_id=req.niche_id,
             format_id=req.format_id, cls=cls, area_m2=req.area_m2, loc_type=req.loc_type,
             capital=req.capital or 0, qty=req.qty, founder_works=founder_works_eff,
