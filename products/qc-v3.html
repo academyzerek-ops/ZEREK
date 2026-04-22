@@ -1429,7 +1429,7 @@ function renderBlock9Html(b9){
       '</div>' +
       '<div class="risk-meta">Вероятность: '+escapeHtml(prob)+' · Влияние: '+escapeHtml(impact)+'</div>' +
       (r.text ? '<div class="risk-text">'+escapeHtml(r.text)+'</div>' : '') +
-      (r.mitigation ? '<div class="risk-mitigation"><strong>💡 Митигация:</strong> '+escapeHtml(r.mitigation)+'</div>' : '') +
+      (r.mitigation ? '<div class="risk-mitigation"><strong>💡 Что делать:</strong> '+escapeHtml(r.mitigation)+'</div>' : '') +
     '</div>';
   });
   return html + '</div>';
