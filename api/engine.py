@@ -121,6 +121,16 @@ CAPEX_BREAKDOWN_LABELS_RUS = {
     'marketing':   'Стартовый маркетинг',
     'deposit':     'Депозит за аренду',
     'legal':       'Юридическое оформление',
+    'training':    'Обучение и курсы',
+}
+
+# Стоимость обучения по уровню опыта для ниш с training_required=True
+# (MANICURE в Round 6; BARBER/BROW/LASH/SUGARING/COSMETOLOGY/MASSAGE/DENTAL
+# будут добавлены по мере калибровки wiki-данных).
+TRAINING_COSTS_BY_EXPERIENCE = {
+    'none': 150_000,  # с нуля: курс гель-лак + базовые техники, медиана
+    'some': 40_000,   # подтянуть недостающее: 1-2 продвинутых курса
+    'pro':  0,        # уже профи, обучение не требуется
 }
 
 
@@ -1093,6 +1103,7 @@ def run_quick_check_v3(
             "capex_standard": _safe_int(meta08.get('capex_standard'), 0),
             "masters_canon": _safe_int(meta08.get('masters_count'), 0),
             "seats_mult": round(float(seats_mult), 2),
+            "training_required": bool(fmt.get('training_required')) if fmt else False,
         },
 
         "market": {
@@ -2166,6 +2177,7 @@ def compute_block4_unit_economics(db, result, adaptive, block2=None):
 
 def compute_block6_capital(db, result, adaptive, block2=None):
     capex = result.get('capex', {}) or {}
+    inp = result.get('input', {}) or {}
     capex_needed = _safe_int(capex.get('capex_med')) or _safe_int(capex.get('capex_total'))
     if capex_needed < 500_000 and block2:
         capex_needed = (block2.get('finance') or {}).get('capex_needed') or capex_needed
@@ -2191,6 +2203,25 @@ def compute_block6_capital(db, result, adaptive, block2=None):
             ('Юр.расходы, лицензии', 0.05),
         ]
         capex_structure = [{'label':l, 'amount':int(capex_needed*p), 'pct':int(p*100)} for l,p in items]
+
+    # Обучение — отдельная статья для ниш с training_required=True
+    # (бьюти-сфера: MANICURE, BARBER, BROW, LASH, SUGARING и т.п.). Сумма
+    # зависит от уровня опыта мастера (specific_answers.experience):
+    # none=150К, some=40К, pro=0. Прибавляется к capex_needed и появляется
+    # строкой в capex_structure.
+    training_required = bool(inp.get('training_required'))
+    experience = (adaptive.get('experience') or '').lower()
+    training_cost = TRAINING_COSTS_BY_EXPERIENCE.get(experience, 0) if training_required else 0
+    if training_cost > 0:
+        capex_needed += training_cost
+        capex_structure.append({
+            'label': CAPEX_BREAKDOWN_LABELS_RUS['training'],
+            'amount': training_cost,
+            'pct': int(training_cost / max(capex_needed, 1) * 100),
+        })
+        # Пересчитаем pct у остальных статей под новый знаменатель
+        for it in capex_structure:
+            it['pct'] = int(it['amount'] / max(capex_needed, 1) * 100)
 
     # Дефицит / профицит
     if capital_own is None:
