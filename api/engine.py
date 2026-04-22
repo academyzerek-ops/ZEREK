@@ -816,17 +816,9 @@ def calc_payback(capex_total: int, cashflow: list) -> dict:
 
 
 def calc_owner_social_payments(declared_monthly_base: int = None) -> int:
-    """
-    Обязательные соцплатежи собственника-ИП на Упрощёнке (РК 2026):
-    ОПВ 10% + ОПВР 3.5% + ОСМС ~5% от 1.4 МРП + СО 3.5% ≈ 18-22% от базы.
-    База и ставка читаются из constants.yaml (owner.social_base_mrp × МРП;
-    owner.social_rate). Возвращает ₸/мес.
-    """
-    cap = MRP_2026 * OWNER_SOCIAL_BASE_MRP
-    if declared_monthly_base is None:
-        declared_monthly_base = cap
-    base = min(declared_monthly_base, cap)
-    return int(base * OWNER_SOCIAL_RATE)
+    """Thin wrapper → services/pricing_service (Этап 3 рефакторинга)."""
+    from services.pricing_service import calc_owner_social_payments as _fn
+    return _fn(declared_monthly_base)
 
 
 def calc_owner_economics(fin: dict, staff: dict, tax_rate: float,
