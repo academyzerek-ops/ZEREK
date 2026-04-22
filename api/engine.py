@@ -8,6 +8,7 @@ ZEREK Quick Check Engine v3.0
 import pandas as pd
 import os
 import glob
+import math
 from typing import Optional
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "kz")
@@ -136,6 +137,60 @@ TRAINING_COSTS_BY_EXPERIENCE = {
     'some': 40_000,   # подтянуть недостающее: 1-2 продвинутых курса
     'pro':  0,        # уже профи, обучение не требуется
 }
+
+
+def compute_unified_payback_months(result, adaptive):
+    """Единая окупаемость для UI (в целых месяцах, ceil — консервативно).
+    Используется и в Block 1 (светофор), и в Block 5 (карточка «Окупаемость»).
+
+    Формула: payback_months = ceil(startup_total / monthly_net_income_for_owner)
+      startup_total — capex.total (capex_med + deposit + working_cap) + обучение,
+      если ниша требует training_required и experience ∈ {none, some}.
+      monthly_net_income_for_owner — то что клиент реально получит в карман.
+      Для SOLO/HOME = net_profit/12 (ФОТ уже подрезан в run_quick_check_v3).
+      Для owner_plus_* = net_profit/12 + ставка роли (headcount = masters_canon).
+      Для owner_only/multi = net_profit/12.
+    """
+    inp = result.get('input', {}) or {}
+    capex = result.get('capex', {}) or {}
+    scenarios = result.get('scenarios', {}) or {}
+    staff = result.get('staff', {}) or {}
+    adaptive = adaptive or {}
+
+    # startup_total: capex.total уже включает working_cap + deposit.
+    startup = _safe_int(capex.get('total'), 0)
+    if startup <= 0:
+        startup = _safe_int(capex.get('capex_med'), 0) or _safe_int(inp.get('capex_standard'), 0)
+    # + обучение для бьюти-ниш с training_required и experience=none/some.
+    if bool(inp.get('training_required')):
+        exp = (adaptive.get('experience') or '').lower()
+        startup += TRAINING_COSTS_BY_EXPERIENCE.get(exp, 0)
+    if startup <= 0:
+        return None
+
+    # monthly_net_income_for_owner.
+    monthly_profit = _safe_int((scenarios.get('base') or {}).get('прибыль_среднемес'), 0)
+    if monthly_profit <= 0:
+        return None
+
+    fmt_up = (inp.get('format_id') or '').upper()
+    is_solo = bool(inp.get('founder_works')) and (fmt_up.endswith('_HOME') or fmt_up.endswith('_SOLO'))
+    monthly_income = monthly_profit
+    if not is_solo:
+        ent_role = (adaptive.get('entrepreneur_role') or 'owner_only').lower()
+        if ent_role.startswith('owner_plus_'):
+            fot_full = _safe_int(staff.get('fot_full_med'), 0) or _safe_int(staff.get('fot_net_med'), 0)
+            hc = max(
+                _safe_int(staff.get('headcount'), 1) or 1,
+                _safe_int(inp.get('masters_canon'), 0) or 0,
+                1,
+            )
+            role_salary = int(fot_full / hc) if fot_full else 0
+            monthly_income += role_salary
+
+    if monthly_income <= 0:
+        return None
+    return int(math.ceil(startup / monthly_income))
 
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -1729,7 +1784,11 @@ def compute_block1_verdict(result, adaptive):
                 total_investment = v
                 break
     profit_year = _safe_int(fin.get('profit_year1'), 0)
-    breakeven_months = payback.get('месяц') or breakeven.get('месяц')
+    # Единая формула окупаемости (та же что в Block 5 / Block 6) —
+    # через helper. Fallback — старый payback.месяц из cashflow.
+    breakeven_months = compute_unified_payback_months(result, adaptive)
+    if breakeven_months is None:
+        breakeven_months = payback.get('месяц') or breakeven.get('месяц')
     city_pop = _safe_int(inp.get('city_population'), 0)
     if not city_pop:
         city_pop = _safe_int((result.get('market', {}) or {}).get('population'), 0)
@@ -1797,7 +1856,10 @@ def compute_block1_verdict(result, adaptive):
     rev_opt  = _safe_int((scenarios.get('opt')  or {}).get('выручка_год'), 0) // 12
     prof_base = profit_base
     prof_pess = profit_pess
-    bk_base = _safe_int(payback.get('месяц'))
+    # Окупаемость — через тот же unified helper (breakeven_months уже
+    # пересчитан выше). bk_pess ≈ bk_base × 1.3 (консервативная оценка
+    # для пессимистичного сценария).
+    bk_base = _safe_int(breakeven_months) if breakeven_months is not None else _safe_int(payback.get('месяц'))
     sc_pess_pb = (scenarios.get('pess') or {}).get('окупаемость')
     if isinstance(sc_pess_pb, dict):
         bk_pess = _safe_int(sc_pess_pb.get('месяц'))
@@ -2869,13 +2931,9 @@ def compute_block5_pnl(db, result, adaptive):
     payback_months = None
     if is_solo_fmt:
         annual_roi = None
-        # Окупаемость = стартовый капитал / средняя чистая прибыль в месяц.
-        # capex_block.total включает working_cap + депозит (правильный
-        # знаменатель payback). См. calc_payback в run_quick_check_v3.
-        startup_total = _safe_int(capex_block.get('total'), 0) or total_investment
-        monthly_profit = pnl_base['net_profit'] / 12 if pnl_base.get('net_profit') else 0
-        if monthly_profit > 0 and startup_total > 0:
-            payback_months = int(round(startup_total / monthly_profit))
+        # Окупаемость — через единый helper, чтобы число совпадало с
+        # Block 1 «светофор — держите запас кассы на N мес».
+        payback_months = compute_unified_payback_months(result, adaptive)
     elif total_investment < 500_000:
         annual_roi = None  # нечего считать
     else:
