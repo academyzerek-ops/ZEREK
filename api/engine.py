@@ -1510,7 +1510,7 @@ def _score_roi(profit_year, total_investment, is_solo=False):
     """
     if is_solo:
         return {'score': 3, 'label': 'ROI годовой',
-                'note': 'ROI не применим для формата self-employed'}
+                'note': 'Вы работаете сами — нет расходов на зарплату сотрудников'}
     if not total_investment or total_investment < 500_000:
         return {'score': 1, 'label': 'ROI годовой',
                 'note': 'Недостаточно данных о капитале'}
