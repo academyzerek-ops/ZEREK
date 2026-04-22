@@ -1981,12 +1981,10 @@ def compute_block1_verdict(result, adaptive):
         ent_income_base = prof_base
         ent_income_pess = max(0, prof_pess)
 
-    main_metrics = {
-        'revenue_range':        _fmt_range_kzt(rev_pess, rev_base),
-        'profit_range':         _fmt_range_kzt(prof_pess, prof_base) if prof_pess >= 0 else f'0–{_fmt_kzt_short(prof_base)}',
-        'breakeven_range':      (f"{bk_base}–{bk_pess} мес" if bk_pess and bk_pess != bk_base else (f"{bk_base} мес" if bk_base else '—')),
-        'entrepreneur_income_range': _fmt_range_kzt(ent_income_pess, ent_income_base),
-    }
+    # main_metrics удалено: секция «Главные цифры» в Block 1 убрана с фронта
+    # в Round 4 bug#4 (после переноса светофора в конец). Цифры показываются
+    # в Block 5 (P&L) и Block 6 (CAPEX). Backend больше не формирует этот
+    # мёртвый payload.
 
     # ── Вердикт-предложение (шаблон) ──
     statement = _verdict_statement_template(color, risks_items[0] if risks_items else None,
@@ -2010,7 +2008,6 @@ def compute_block1_verdict(result, adaptive):
         'score': total_score,
         'max_score': max_score,
         'verdict_statement': statement,
-        'main_metrics': main_metrics,
         'strengths': strengths_texts[:3],
         'risks': risks_texts[:3],
         'scoring': {
@@ -2482,58 +2479,10 @@ def compute_block_season(db, result, adaptive):
 
 
 # ═══════════════════════════════════════════════
-# BLOCK 7 — ТРАЕКТОРИЯ БИЗНЕСА НА 24 МЕСЯЦА
-# ═══════════════════════════════════════════════
-
-def compute_block7_scenarios(db, result, adaptive):
-    scenarios = result.get('scenarios', {}) or {}
-    cashflow = result.get('cashflow') or []
-
-    # Помесячная траектория для каждого сценария (24 мес)
-    def build_traj(scale):
-        arr = []
-        cumulative = 0
-        for m in range(24):
-            # Берём базовый cashflow, применяем множитель; если cashflow < 12 — экстраполируем
-            if m < len(cashflow):
-                mp = _safe_int(cashflow[m].get('прибыль'), 0) * scale
-            elif cashflow:
-                # Второй год — берём средний последнего кв. × рост 7%
-                last_q_avg = sum(_safe_int(cashflow[-i].get('прибыль'), 0) for i in range(1, min(4, len(cashflow))+1)) / min(3, len(cashflow))
-                mp = int(last_q_avg * scale * (1.07 ** ((m-12)/12)))
-            else:
-                mp = 0
-            cumulative += int(mp)
-            arr.append({'month': m+1, 'profit': int(mp), 'cumulative': cumulative})
-        return arr
-
-    pess = build_traj(B7_SCALE_PESS)
-    base = build_traj(B7_SCALE_BASE)
-    opt  = build_traj(B7_SCALE_OPT)
-
-    # Ключевые точки
-    def find_points(arr, capex_total):
-        breakeven = None  # первый месяц где profit > 0
-        roi_back = None   # первый месяц где cumulative >= capex_total
-        for p in arr:
-            if breakeven is None and p['profit'] > 0:
-                breakeven = p['month']
-            if roi_back is None and p['cumulative'] >= capex_total:
-                roi_back = p['month']
-            if breakeven and roi_back: break
-        return {'breakeven_month': breakeven, 'roi_month': roi_back}
-
-    capex_total = _safe_int((result.get('capex') or {}).get('capex_med'), 0) or _safe_int((result.get('capex') or {}).get('capex_total'), 0)
-    return {
-        'scenarios': {
-            'pess': {'traj': pess, **find_points(pess, capex_total)},
-            'base': {'traj': base, **find_points(base, capex_total)},
-            'opt':  {'traj': opt,  **find_points(opt,  capex_total)},
-        },
-        'capex_total': capex_total,
-    }
-
-
+# BLOCK 7 — мёртв в Quick Check с Round 4 (заменён compute_block_season).
+# Функция compute_block7_scenarios удалена (не вызывалась и только
+# увеличивала LOC engine.py). Если понадобится для FinModel — восстановить
+# из git history по SHA Round 4 или вынести в отдельный модуль.
 # ═══════════════════════════════════════════════
 # BLOCK 8 — СТРЕСС-ТЕСТ
 # ═══════════════════════════════════════════════
