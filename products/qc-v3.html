@@ -284,6 +284,15 @@ h2{font-size:22px;margin-bottom:6px}
 .bar-row-label{font-size:13px;color:var(--text-2);font-weight:500;display:flex;justify-content:space-between;gap:8px}
 .bar-row-label span:last-child{font-family:var(--mono);font-weight:700;color:var(--text)}
 
+/* Строка стресс-теста — двустрочная, чтобы длинные цифры не переносились. */
+.stress-row{display:flex;flex-direction:column;gap:6px;padding:8px 0;border-bottom:0.5px solid var(--surface-2)}
+.stress-row:last-child{border-bottom:none}
+.stress-row-head{display:flex;align-items:baseline;gap:10px;font-size:13px}
+.stress-row-label{flex:1;min-width:0;color:var(--text-2);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stress-row-value{font-family:var(--mono);font-weight:700;color:var(--text);white-space:nowrap}
+.stress-row-bar{height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden;max-width:60%}
+.stress-row-bar-inner{height:100%;border-radius:3px}
+
 /* CAPEX-строка — двустрочная, чтобы длинные суммы (150 000) не обрезались. */
 .capex-row{display:flex;flex-direction:column;gap:6px;padding:8px 0;border-bottom:0.5px solid var(--surface-2)}
 .capex-row:last-child{border-bottom:none}
@@ -1387,15 +1396,26 @@ function renderBlock8Html(b8){
 
   html += '<div class="blk-hdr2">Что произойдёт при изменении параметра</div>';
   html += '<div class="blk-note" style="margin-bottom:10px">Эти цифры показывают, насколько упадёт ваша прибыль за год, если один из параметров ухудшится. Например: падение среднего чека на 15% уменьшит годовую прибыль на указанную сумму.</div>';
-  (b8.sensitivities||[]).forEach(function(s){
-    var pct = s.impact_pct || 0;
-    var width = Math.min(Math.abs(pct), 100);
-    var color = pct <= -50 ? 'var(--red)' : pct <= -25 ? '#fb923c' : pct < 0 ? 'var(--yellow)' : 'var(--green)';
-    var iconColor = pct <= -50 ? '🚨' : pct <= -25 ? '⚠️' : '';
-    html += '<div class="bar-row">' +
-      '<div class="bar-row-pct">'+(pct>0?'+':'')+pct+'%</div>' +
-      '<div class="bar-row-fill"><div class="bar-row-fill-inner" style="width:'+width+'%;background:'+color+'"></div></div>' +
-      '<div class="bar-row-label"><span>'+escapeHtml(s.param)+' ('+(s.change>0?'+':'')+s.change+'%)</span><span>'+iconColor+'</span></div>' +
+  // Detect если impact — проценты (|v|≤100) или абсолютные рубли (больше).
+  var sensList = b8.sensitivities || [];
+  var maxAbs = sensList.reduce(function(a,s){ return Math.max(a, Math.abs(s.impact_pct||0)); }, 1);
+  var asRubles = maxAbs > 200;
+  sensList.forEach(function(s){
+    var v = s.impact_pct || 0;
+    // Ширина бара: для % = |v|/100, для рублей — по доле от max в этом списке.
+    var widthPct = asRubles ? Math.min(Math.abs(v)/maxAbs*100, 100) : Math.min(Math.abs(v), 100);
+    var severityRatio = asRubles ? (Math.abs(v)/maxAbs) : (Math.abs(v)/100);
+    var color = severityRatio >= 0.70 ? 'var(--red)' : severityRatio >= 0.45 ? '#fb923c' : v < 0 ? 'var(--yellow)' : 'var(--green)';
+    var icon = severityRatio >= 0.70 ? '🚨' : severityRatio >= 0.45 ? '⚠️' : '';
+    var valueText = asRubles
+      ? ((v>0?'+':'−') + fmt(Math.abs(v)) + ' ₸/год')
+      : ((v>0?'+':'') + v + '%');
+    html += '<div class="stress-row">' +
+      '<div class="stress-row-head">' +
+        '<div class="stress-row-label">'+escapeHtml(s.param)+' ('+(s.change>0?'+':'')+s.change+'%) '+icon+'</div>' +
+        '<div class="stress-row-value">'+valueText+'</div>' +
+      '</div>' +
+      '<div class="stress-row-bar"><div class="stress-row-bar-inner" style="width:'+widthPct+'%;background:'+color+'"></div></div>' +
     '</div>';
   });
 
