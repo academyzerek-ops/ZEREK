@@ -2914,12 +2914,29 @@ def _green_action_plan(block2, block1, adaptive=None, result=None):
             ]
         },
     ]
-    # Неделя 3-4: Закупка
+    # Неделя 3-4: Закупка. Для нишеспецифичных подсказок — заглядываем
+    # в result.input.niche_id (минимальный набор для маникюра и пр.).
+    niche_id = ((result or {}).get('input') or {}).get('niche_id', '')
+    equip_hint_by_niche = {
+        'MANICURE': 'минимальный набор: лампа UV/LED, фрезер, стерилизатор, стол',
+        'BARBER':   'минимальный набор: кресло, машинка, ножницы, стерилизатор, зеркало',
+        'BROW':     'минимальный набор: кушетка, лампа с лупой, кисти, пигменты, стерилизатор',
+        'LASH':     'минимальный набор: кушетка, лампа, пинцеты, клей, материалы, стерилизатор',
+        'SUGARING': 'минимальный набор: кушетка, подогреватель пасты, материалы, стерилизатор',
+    }
+    equip_hint = equip_hint_by_niche.get(niche_id)
+    if equip_hint:
+        equip_action = (
+            f'Закупить оборудование ({equip_hint}. Бюджет ≈ {_fmt_kzt(capex_equipment)}. '
+            f'Для профессионального качества может понадобиться больше.)'
+        )
+    else:
+        equip_action = f'Закупить оборудование (бюджет ≈ {_fmt_kzt(capex_equipment)})'
     plan.append({
         'week_range': '3-4',
         'title': 'Закупка оборудования и материалов',
         'actions': [
-            f'Закупить оборудование (бюджет ≈ {_fmt_kzt(capex_equipment)})',
+            equip_action,
             f'Первичные закупки материалов (≈ {_fmt_kzt(capex_inventory)})',
         ],
     })
