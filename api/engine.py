@@ -2183,22 +2183,25 @@ def compute_block4_unit_economics(db, result, adaptive, block2=None):
                 {'label':'Налог', 'amount':tax_per_check, 'pct': round(tax_per_check/avg_check*100)},
                 {'label':'Бизнесу', 'amount':business, 'pct': round(business/avg_check*100)},
             ]
-        # breakeven по загрузке
-        fixed_per_master = int((rent_month + opex_month * 0.5) / masters_count) if masters_count else 0
+        # Breakeven по Шагу 7 спеки:
+        #   variable_per_service = avg_check × (cogs_pct + tax_rate)
+        #   contribution_margin = avg_check − piece_rate − variable_per_service
+        #   breakeven = ceil(fixed_monthly / contribution_margin)
+        # fixed_monthly берётся из pnl_aggregates.mature (fot + rent + marketing
+        # + other_opex). Это полный fixed, НЕ на одного мастера — для SOLO
+        # это корректно (один мастер); для STANDARD делим на masters_count.
+        pnl_agg = (result.get('pnl_aggregates') or {}).get('mature') or {}
+        fixed_monthly_total = _safe_int(pnl_agg.get('fixed_monthly'), 0)
+        if not fixed_monthly_total:
+            fixed_monthly_total = int(rent_month + opex_month * 0.5)
+        fixed_per_master = (fixed_monthly_total / masters_count) if masters_count else 0
         var_margin = avg_check - piece_rate - materials - tax_per_check
-        min_checks_month = int(fixed_per_master / var_margin) if var_margin > 0 else 9999
-        # Вырожденный случай: rent=0 и opex_med=None (типично для HOME) →
-        # fixed_per_master=0 → breakeven=0, что неверно (маркетинг и прочие
-        # расходы всё равно нужны). Включаем fin.marketing_med + fin.other_opex_med
-        # как постоянные расходы и пересчитываем. STANDARD/PREMIUM с rent>0
-        # не затронуты — у них min_checks_month уже > 0.
-        if min_checks_month <= 0 and var_margin > 0 and masters_count:
-            fin_marketing = _safe_int(fin.get('marketing_med'), 0) or _safe_int(fin.get('marketing'), 0)
-            fin_other = _safe_int(fin.get('other_opex_med'), 0)
-            extra_fixed = fin_marketing + fin_other
-            if extra_fixed > 0:
-                fixed_per_master = int(extra_fixed / masters_count)
-                min_checks_month = int(fixed_per_master / var_margin)
+        if var_margin > 0 and fixed_per_master > 0:
+            min_checks_month = int(math.ceil(fixed_per_master / var_margin))
+        elif var_margin > 0:
+            min_checks_month = 0
+        else:
+            min_checks_month = 9999
         min_load = min_checks_month / max(checks_per_day * work_days, 1)
         planned_checks = int(checks_per_day * work_days * load_pct)
         safety = planned_checks / max(min_checks_month, 1)
