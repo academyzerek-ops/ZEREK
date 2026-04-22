@@ -2836,13 +2836,20 @@ def _green_action_plan(block2, block1):
     })
 
     # Открытие и дальше
+    # Для HOME/SOLO мастер на дому не регистрируется в 2GIS (локация не
+    # публичная), отзывы собираются в Instagram + Google Maps.
+    reviews_action = (
+        'Отзывы в Instagram + Google Maps (если есть геолокация) — просить клиентов с 1-го дня'
+        if format_type in ('HOME', 'SOLO', 'MOBILE')
+        else 'Отзывы в 2GIS — просить клиентов с 1-го дня'
+    )
     plan.append({
         'week_range': 'Запуск',
         'title': 'Первые недели работы',
         'actions': [
             ('Следить за загрузкой мастеров еженедельно'
              if format_type not in ('HOME','SOLO','MOBILE') else 'Отслеживать конверсию заявок в сделки'),
-            'Отзывы в 2GIS — просить клиентов с 1-го дня',
+            reviews_action,
             'Еженедельный контроль unit-экономики (выручка/чек/COGS)',
         ],
     })
