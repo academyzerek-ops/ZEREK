@@ -1145,6 +1145,9 @@ def run_quick_check_v3(
             "rent_month": rent_month_total,
             "opex_med": _safe_int(fin.get('opex_med')) * qty,
             "marketing": _safe_int(fin.get('marketing')) * qty,
+            "marketing_min": _safe_int(fin.get('marketing_min')) * qty,
+            "marketing_med": _safe_int(fin.get('marketing_med')) * qty,
+            "marketing_max": _safe_int(fin.get('marketing_max')) * qty,
             "sez_month": _safe_int(fin.get('sez_month')),
             "revenue_year1": total_rev_y1,
             "profit_year1": total_profit_y1,
@@ -2628,7 +2631,9 @@ def compute_block5_pnl(db, result, adaptive):
     # фолбэка 100К/мес, который непропорционален доходу мастера.
     # STANDARD/PREMIUM — прежняя логика (opex_med*0.2 или 100К), не тронут.
     fmt_id_upper_b5 = (inp.get('format_id') or '').upper()
-    fin_marketing = _safe_int(fin.get('marketing'), 0)
+    # Приоритет: marketing_med (новая колонка Round 6 калибровки) → marketing
+    # (универсальный столбец) → фолбэк по opex.
+    fin_marketing = _safe_int(fin.get('marketing_med'), 0) or _safe_int(fin.get('marketing'), 0)
     if fmt_id_upper_b5.endswith('_HOME') and fin_marketing > 0:
         marketing_monthly = fin_marketing
     else:
