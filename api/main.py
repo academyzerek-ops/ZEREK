@@ -168,6 +168,23 @@ def quick_check(req: QCReq):
         raise HTTPException(400, "Эта ниша пока недоступна для расчёта")
     try:
         cls = CAPEX_TO_CLS.get((req.capex_level or "").strip().lower(), req.cls)
+        # Валидация HOME/SOLO: в xlsx FINANCIALS должны быть явно заданы
+        # marketing_med и other_opex_med — иначе движок раньше падал на
+        # фолбэк 100К/мес, что давало нереалистичные цифры для мастера
+        # на дому (см. ZEREK_QuickCheck_Calculation_Spec.md Р-2, 7.1).
+        _fmt_up = (req.format_id or '').upper()
+        if _fmt_up.endswith('_HOME') or _fmt_up.endswith('_SOLO'):
+            _fin_row = db.get_format_row(req.niche_id, 'FINANCIALS', req.format_id, cls) or {}
+            _mk = _fin_row.get('marketing_med') or _fin_row.get('marketing')
+            _ox = _fin_row.get('other_opex_med')
+            if not _mk or not _ox:
+                raise HTTPException(
+                    400,
+                    f"Ниша {req.niche_id} / формат {req.format_id} не откалибрована: "
+                    f"в FINANCIALS должны быть заданы marketing_med и other_opex_med. "
+                    f"Сейчас: marketing_med={_fin_row.get('marketing_med')}, "
+                    f"other_opex_med={_fin_row.get('other_opex_med')}."
+                )
         # v2 adaptive fields (has_license / staff_mode / staff_count / specific_answers)
         # пока просто протаскиваем в ответ для трассировки, не меняя расчёт.
         # Маппинг: entrepreneur_role = owner_plus_* → founder_works=True, чтобы
@@ -276,6 +293,9 @@ def quick_check(req: QCReq):
             if isinstance(report, dict):
                 report.setdefault("user_inputs", {}).update({k: v for k, v in adaptive.items() if v is not None})
         return {"status":"ok","result":clean(report)}
+    except HTTPException:
+        # Валидационные 400-ки (HOME/SOLO не откалиброван и др.) — пропускаем как есть.
+        raise
     except Exception as e:
         import traceback; d=traceback.format_exc(); print("ОШИБКА:",d)
         raise HTTPException(500,str(e)+"\n"+d[-500:])
