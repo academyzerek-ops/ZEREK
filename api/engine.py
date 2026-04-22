@@ -1076,7 +1076,7 @@ def run_quick_check_v3(
         if cls != "Эконом":
             alt_capex = db.get_format_row(niche_id, 'CAPEX', format_id, 'Эконом')
             if alt_capex:
-                alternatives.append(f"Снизьте класс до Эконом — CAPEX {_safe_int(alt_capex.get('capex_med'),0):,} ₸ вместо {capex_med:,} ₸")
+                alternatives.append(f"Снизьте класс до Эконом — стартовые вложения {_safe_int(alt_capex.get('capex_med'),0):,} ₸ вместо {capex_med:,} ₸")
         # Предложить другую локацию
         if rent_month_total > _safe_int(fin.get('rent_min'), 0) * qty:
             alternatives.append(f"Рассмотрите спальный район — аренда может быть на 30-40% ниже")
@@ -1677,7 +1677,7 @@ def _risk_text(p, context):
     if label == 'Соответствие формата городу':
         return 'Премиум-формат в выбранном городе — узкая платёжеспособная ЦА. Рассмотрите стандартный класс.'
     if label == 'ROI годовой':
-        return 'ROI ниже среднего. Пересмотрите CAPEX или ожидаемую выручку.'
+        return 'ROI ниже среднего. Пересмотрите стартовые вложения или ожидаемую выручку.'
     if label == 'Маркетинговый бюджет':
         return 'Маркетинг будет ключевым — не экономьте на первом старте.'
     return p.get('note') or label
@@ -2017,7 +2017,7 @@ def compute_block4_unit_economics(db, result, adaptive, block2=None):
             breakdown = [
                 {'label':'Материалы', 'amount':materials, 'pct': round(materials/avg_check*100)},
                 {'label':'Аренда (доля)', 'amount':rent_share, 'pct': round(rent_share/avg_check*100)},
-                {'label':'Прочие OPEX', 'amount':overhead_share, 'pct': round(overhead_share/avg_check*100)},
+                {'label':'Прочие расходы', 'amount':overhead_share, 'pct': round(overhead_share/avg_check*100)},
                 {'label':'Налог', 'amount':tax_per_check, 'pct': round(tax_per_check/avg_check*100)},
                 {'label':'В карман вам', 'amount':in_pocket, 'pct': round(in_pocket/avg_check*100)},
             ]
@@ -2029,7 +2029,7 @@ def compute_block4_unit_economics(db, result, adaptive, block2=None):
                 {'label':'Мастеру (сдельно)', 'amount':piece_rate, 'pct': round(piece_rate/avg_check*100)},
                 {'label':'Материалы', 'amount':materials, 'pct': round(materials/avg_check*100)},
                 {'label':'Аренда (доля)', 'amount':rent_share, 'pct': round(rent_share/avg_check*100)},
-                {'label':'Прочие OPEX', 'amount':overhead_share, 'pct': round(overhead_share/avg_check*100)},
+                {'label':'Прочие расходы', 'amount':overhead_share, 'pct': round(overhead_share/avg_check*100)},
                 {'label':'Налог', 'amount':tax_per_check, 'pct': round(tax_per_check/avg_check*100)},
                 {'label':'Бизнесу', 'amount':business, 'pct': round(business/avg_check*100)},
             ]
@@ -2074,7 +2074,7 @@ def compute_block4_unit_economics(db, result, adaptive, block2=None):
             {'label':'Food cost', 'amount':food_cost, 'pct': round(food_cost/avg_check*100)},
             {'label':'ФОТ на чек', 'amount':fot_per_check, 'pct': round(fot_per_check/avg_check*100)},
             {'label':'Аренда (доля)', 'amount':rent_per_check, 'pct': round(rent_per_check/avg_check*100)},
-            {'label':'Прочие OPEX', 'amount':overhead_per_check, 'pct': round(overhead_per_check/avg_check*100)},
+            {'label':'Прочие расходы', 'amount':overhead_per_check, 'pct': round(overhead_per_check/avg_check*100)},
             {'label':'Налог', 'amount':tax_per_check, 'pct': round(tax_per_check/avg_check*100)},
             {'label':'Бизнесу', 'amount':business, 'pct': round(business/avg_check*100)},
         ]
@@ -2105,7 +2105,7 @@ def compute_block4_unit_economics(db, result, adaptive, block2=None):
             {'label':'Закупка (COGS)', 'amount':c_cogs, 'pct':c_cogs},
             {'label':'ФОТ', 'amount':c_fot, 'pct':c_fot},
             {'label':'Аренда', 'amount':c_rent, 'pct':c_rent},
-            {'label':'Прочие OPEX', 'amount':c_over, 'pct':c_over},
+            {'label':'Прочие расходы', 'amount':c_over, 'pct':c_over},
             {'label':'Налог', 'amount':c_tax, 'pct':c_tax},
             {'label':'Списания/порча', 'amount':c_loss, 'pct':c_loss},
             {'label':'Бизнесу', 'amount':c_bus, 'pct':c_bus},
@@ -2146,7 +2146,7 @@ def compute_block4_unit_economics(db, result, adaptive, block2=None):
             {'label':'Материалы', 'amount':mat, 'pct':40},
             {'label':'ФОТ', 'amount':fotp, 'pct':20},
             {'label':'Аренда (доля)', 'amount':rent_p, 'pct':10},
-            {'label':'Прочие OPEX', 'amount':over, 'pct':5},
+            {'label':'Прочие расходы', 'amount':over, 'pct':5},
             {'label':'Налог', 'amount':taxp, 'pct':round(taxp/project*100)},
             {'label':'Бизнесу', 'amount':bus, 'pct':round(bus/project*100)},
         ]
@@ -2254,7 +2254,7 @@ def compute_block6_capital(db, result, adaptive, block2=None):
         diff_pct = (diff / capex_needed * 100) if capex_needed else 0
         if diff >= 0:
             diff_status = 'surplus' if diff_pct > 5 else 'match'
-            actions = ['Отложить профицит в резервный фонд (3-6 мес OPEX)', 'Увеличить маркетинговый бюджет на старт'] if diff_status == 'surplus' else []
+            actions = ['Отложить профицит в резервный фонд (3-6 мес расходов)', 'Увеличить маркетинговый бюджет на старт'] if diff_status == 'surplus' else []
         else:
             diff_status = 'critical_deficit' if abs(diff_pct) > 30 else 'deficit'
             gap = abs(diff)
@@ -2469,7 +2469,7 @@ FORMAT_RISK_FILTERS = {
 HOME_SPECIFIC_RISKS = [
     {'title': 'Зависимость от физсостояния', 'probability': 'СРЕДНЯЯ', 'impact': 'ВЫСОКОЕ',
      'text': 'Болезнь, беременность, травма рук = ноль дохода. Подушка безопасности на 3 мес — must have.',
-     'mitigation': 'Отложить 3 мес OPEX. Страхование от нетрудоспособности.'},
+     'mitigation': 'Отложить 3 мес расходов на подушку. Страхование от нетрудоспособности.'},
     {'title': 'Потолок дохода одного мастера', 'probability': 'ВЫСОКАЯ', 'impact': 'СРЕДНЕЕ',
      'text': 'Максимум 5-7 клиенток в день физически. Рост выручки только через рост чека или второго мастера.',
      'mitigation': 'Апсейл (укрепление, дизайн). План перехода в SOLO/STANDARD через 1-2 года.'},
@@ -3014,7 +3014,7 @@ def _yellow_conditions(block1, block2):
                 # капитал достаточен (дефицита нет) — условие не про деньги
                 conditions.append({
                     'title': 'Резервный фонд: обеспечить запас оборотки',
-                    'options': ['Заложить 3-6 мес OPEX как резерв', 'Не вкладывать весь капитал в CAPEX', 'Иметь отдельный счёт для резерва'],
+                    'options': ['Заложить 3-6 мес расходов как резерв', 'Не вкладывать весь капитал в стартовые вложения', 'Иметь отдельный счёт для резерва'],
                 })
             else:
                 monthly_credit = int(gap * 0.035)

@@ -555,7 +555,7 @@ function renderFormatList(root, fmts){
   var html = '<div class="step">' +
     '<div class="step-kicker">Формат</div>' +
     '<h2>Выберите формат</h2>' +
-    '<div class="step-desc">Формат определяет масштаб, CAPEX и типовой штат.</div>' +
+    '<div class="step-desc">Формат определяет масштаб, стартовые вложения и типовой штат.</div>' +
     '<div class="options">';
   fmts.forEach(function(f){
     var sel = (QC.format_id === f.format_id) ? ' selected' : '';
@@ -579,7 +579,7 @@ function renderFormatList(root, fmts){
     html += '<div class="opt'+sel+'" onclick="selectFormat(\''+f.format_id+'\')">' +
       '<div class="opt-icon">📐</div>' +
       '<div style="flex:1"><div class="opt-label">'+escapeHtml(f.format_name)+'</div>' +
-      '<div class="opt-sub">CAPEX ≈ '+fmt(f.capex_standard)+' ₸ · ' + extra.join(' · ') + '</div>' +
+      '<div class="opt-sub">Стартовые вложения ≈ '+fmt(f.capex_standard)+' ₸ · ' + extra.join(' · ') + '</div>' +
       (locHint ? '<span class="opt-badge">'+locHint+'</span>' : '') +
       '</div></div>';
   });
@@ -1072,7 +1072,7 @@ function renderBlock5Html(b5){
       '<tr class="b5-row-cost"><td>– '+escapeHtml(cogsLabel)+'</td><td>'+fmtM(pess.cogs)+'</td><td>'+fmtM(base.cogs)+'</td><td>'+fmtM(opt.cogs)+'</td></tr>' +
       '<tr class="b5-row-cost"><td>– Аренда</td><td>'+fmtM(pess.rent)+'</td><td>'+fmtM(base.rent)+'</td><td>'+fmtM(opt.rent)+'</td></tr>' +
       '<tr class="b5-row-cost"><td>– Маркетинг</td><td>'+fmtM(pess.marketing)+'</td><td>'+fmtM(base.marketing)+'</td><td>'+fmtM(opt.marketing)+'</td></tr>' +
-      '<tr class="b5-row-cost"><td>– Прочие OPEX</td><td>'+fmtM(pess.other_opex)+'</td><td>'+fmtM(base.other_opex)+'</td><td>'+fmtM(opt.other_opex)+'</td></tr>' +
+      '<tr class="b5-row-cost"><td>– Прочие расходы</td><td>'+fmtM(pess.other_opex)+'</td><td>'+fmtM(base.other_opex)+'</td><td>'+fmtM(opt.other_opex)+'</td></tr>' +
       '<tr class="b5-row-cost"><td>– Налог</td><td>'+fmtM(pess.tax)+'</td><td>'+fmtM(base.tax)+'</td><td>'+fmtM(opt.tax)+'</td></tr>' +
       '<tr class="b5-row-profit"><td>Чистая прибыль</td><td>'+fmtM(pess.net_profit)+'</td><td>'+fmtM(base.net_profit)+'</td><td>'+fmtM(opt.net_profit)+'</td></tr>' +
     '</tbody></table>';
@@ -1080,7 +1080,7 @@ function renderBlock5Html(b5){
   var m = b5.margins || {};
   var mults = '<div class="b5-mults">' +
     multCard('Маржа валовая', fmtPct(m.gross), 'после материалов') +
-    multCard('Маржа операц.', fmtPct(m.operating), 'после всех OPEX') +
+    multCard('Операционная', fmtPct(m.operating), 'после всех расходов') +
     multCard('Маржа чистая', fmtPct(m.net), 'после налога');
   if(b5.solo_mode){
     var pb = b5.payback_months != null ? b5.payback_months + ' мес' : '—';
@@ -1304,7 +1304,7 @@ function renderBlock4Html(b4){
 /* ─── Block 6 — Стартовый капитал ─── */
 function renderBlock6Html(b6){
   if(!b6) return '';
-  var html = '<div class="blk"><div class="blk-h">Стартовый капитал: структура CAPEX</div>';
+  var html = '<div class="blk"><div class="blk-h">Структура стартовых вложений</div>';
   html += '<div class="blk-row"><span>Нужно для формата</span><strong>'+fmt(b6.capex_needed)+' ₸</strong></div>';
 
   // Структура — двустрочная вёрстка, чтобы суммы не обрезались при ширине 320px.
