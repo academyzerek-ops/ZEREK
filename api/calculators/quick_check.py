@@ -45,6 +45,8 @@ from engine import (  # noqa: E402
     compute_pnl_aggregates,
     run_quick_check_v3,
 )
+from models import CalcResult  # noqa: E402
+from validators.input_validator import QuickCheckRequest  # noqa: E402
 
 _log = logging.getLogger("zerek.quick_check_calculator")
 
@@ -70,7 +72,7 @@ class QuickCheckCalculator:
     # Публичный API
     # ════════════════════════════════════════════════════════════════════
 
-    def run(self, req):
+    def run(self, req: QuickCheckRequest) -> CalcResult:
         """Главный метод — оркестрирует все шаги от валидации до calc_result.
 
         Возвращает «сырой» calc_result (без legacy block_1..block_12).

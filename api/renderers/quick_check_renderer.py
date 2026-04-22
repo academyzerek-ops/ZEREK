@@ -18,6 +18,7 @@
 import logging
 import os
 import sys
+from typing import TYPE_CHECKING
 
 import pandas as pd
 
@@ -26,6 +27,9 @@ if _API_DIR not in sys.path:
     sys.path.insert(0, _API_DIR)
 
 from engine import _safe, _safe_float, _safe_int  # noqa: E402
+
+if TYPE_CHECKING:
+    from models import CalcResult, QuickCheckResult  # noqa: F401
 
 _log = logging.getLogger("zerek.quick_check_renderer")
 
@@ -350,7 +354,7 @@ _NEW_FORMAT_KEYS = (
 )
 
 
-def render_for_api(calc_result):
+def render_for_api(calc_result: "CalcResult") -> "QuickCheckResult":
     """Берёт calc_result от QuickCheckCalculator → возвращает финальный report для API.
 
     Структура report:
