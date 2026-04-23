@@ -200,6 +200,44 @@ def test_manicure_home_response_has_growth_scenarios():
     assert gs["finmodel_cta"]["price"] == 9000
 
 
+def test_manicure_home_has_staff_paradox_short():
+    """MANICURE_HOME → block_type=short, 0 стратегий, есть hire_impossible_note."""
+    calc = QuickCheckCalculator(_db)
+    report = calc.run(_make_req())
+    sp = report.get("staff_paradox")
+    assert sp is not None
+    assert sp["block_type"] == "short"
+    assert sp["capacity"]["max_clients_per_day"] == 7
+    assert len(sp["strategies"]) == 0
+    assert sp["hire_impossible_note"]
+
+
+def test_manicure_standard_has_staff_paradox_full():
+    """MANICURE_STANDARD → block_type=full, 4 стратегии, warning про оклад."""
+    calc = QuickCheckCalculator(_db)
+    report = calc.run(_make_req(
+        format_id="MANICURE_STANDARD", area_m2=50, loc_type="tc",
+        capital=5_000_000,
+        specific_answers={"experience": "some", "entrepreneur_role": "owner_only"},
+    ))
+    sp = report["staff_paradox"]
+    assert sp["block_type"] == "full"
+    assert len(sp["strategies"]) == 4
+    assert sp["warning"] is not None
+    assert "найм" in sp["warning"]["title"].lower()
+
+
+def test_pizza_no_staff_paradox_block():
+    """PIZZA — A3 архетип, staff_paradox не показывается."""
+    calc = QuickCheckCalculator(_db)
+    report = calc.run(_make_req(
+        niche_id="PIZZA", format_id="PIZZA_DELIVERY",
+        area_m2=80, loc_type="tc", capital=5_000_000,
+        specific_answers={"experience": "some", "entrepreneur_role": "owner_only"},
+    ))
+    assert "staff_paradox" not in report
+
+
 def test_manicure_home_has_marketing_plan():
     """Блок marketing_plan подмешивается для MANICURE (архетип A1)."""
     calc = QuickCheckCalculator(_db)

@@ -44,6 +44,7 @@ from services.economics_service import (  # noqa: E402
 )
 from services.growth_service import compute_growth_block  # noqa: E402
 from services.marketing_service import compute_marketing_plan  # noqa: E402
+from services.staff_paradox_service import compute_staff_paradox  # noqa: E402
 from services.market_service import compute_block3_market  # noqa: E402
 from services.risk_service import compute_block9_risks  # noqa: E402
 from services.seasonality_service import compute_block_season, compute_first_year_chart  # noqa: E402
@@ -336,6 +337,26 @@ class QuickCheckCalculator:
                 )
                 if mp and not mp.get("error"):
                     result["marketing_plan"] = mp
+        except Exception:
+            import traceback
+            traceback.print_exc()
+
+        # Staff paradox — блок «потолок и стратегии» для beauty-ниш (A1).
+        # Формат HOME → короткий, SOLO → средний, STANDARD/PREMIUM → полный.
+        # Для других архетипов возвращает None (не рендерится).
+        try:
+            inp = result.get("input", {}) or {}
+            fin = result.get("financials") or {}
+            agg = (result.get("pnl_aggregates") or {}).get("mature") or {}
+            sp = compute_staff_paradox(
+                niche_id=(inp.get("niche_id") or "").upper(),
+                format_id=(inp.get("format_id") or "").upper(),
+                avg_check=int(fin.get("check_med") or 0),
+                rent_monthly=int(agg.get("rent_monthly") or fin.get("rent_month") or 0),
+                city_id=(inp.get("city_id") or "").lower(),
+            )
+            if sp:
+                result["staff_paradox"] = sp
         except Exception:
             import traceback
             traceback.print_exc()
