@@ -1,0 +1,239 @@
+"""Marketing service — расчёт помесячного маркетинг-плана по архетипной модели.
+
+Формула:
+    Бюджет[месяц] = НовыеКлиенты × CAC × ОпытМножитель × (1 - Органика) + Контент
+
+Где:
+- НовыеКлиенты[м] = Клиенты[м] × NCS[м] (ncs интерполируется из YAML m1/m6/m12)
+- CAC[м] = BASE_CAC × city_multiplier × experience_multiplier
+- Органика[м] = walk_in + (sarafan + referrals + content) × рост_со_временем
+- Контент = 0 если self_produced, иначе по архетипу (5K..20K)
+"""
+from __future__ import annotations
+import os
+import sys
+from typing import Any, Dict, List, Optional
+
+_API_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _API_DIR not in sys.path:
+    sys.path.insert(0, _API_DIR)
+
+from loaders import marketing_loader  # noqa: E402
+
+
+# Experience multiplier: новичок тратит в 2× на CAC в первые 3 мес.
+EXPERIENCE_MULTIPLIER = {
+    "none":   {"m1_3": 2.0, "m4_6": 1.3, "m7_12": 1.0},
+    "some":   {"m1_3": 1.5, "m4_6": 1.1, "m7_12": 1.0},  # алиас "has"
+    "has":    {"m1_3": 1.5, "m4_6": 1.1, "m7_12": 1.0},
+    "pro":    {"m1_3": 1.3, "m4_6": 1.0, "m7_12": 1.0},  # алиас "expert"
+    "expert": {"m1_3": 1.3, "m4_6": 1.0, "m7_12": 1.0},
+}
+
+# Content cost в месяц если НЕ сам(а) производит контент.
+CONTENT_COST_PER_MONTH = {
+    "A1": 15000, "A2": 5000, "A3": 10000, "A4": 5000,
+    "A5": 5000, "A6": 0, "A7": 3000, "A8": 20000,
+    "A9": 3000, "A10": 5000, "A11": 15000, "A12": 10000,
+    "A13": 15000, "A14": 10000, "A15": 10000, "A16": 3000,
+}
+
+
+def get_experience_multiplier(experience: str, month: int) -> float:
+    exp = EXPERIENCE_MULTIPLIER.get((experience or "").lower(), EXPERIENCE_MULTIPLIER["none"])
+    if month <= 3:
+        return exp["m1_3"]
+    if month <= 6:
+        return exp["m4_6"]
+    return exp["m7_12"]
+
+
+def get_ncs_for_month(niche_id: str, month: int) -> float:
+    """Доля новых клиентов в потоке — интерполяция между ncs_m1/m6/m12."""
+    metrics = marketing_loader.get_retention_metrics(niche_id)
+    if not metrics:
+        return _fallback_ncs(month)
+    ncs_m1 = float(metrics.get("ncs_m1", 90)) / 100
+    ncs_m6 = float(metrics.get("ncs_m6", 50)) / 100
+    ncs_m12 = float(metrics.get("ncs_m12", 30)) / 100
+    if month <= 1:
+        return ncs_m1
+    if month <= 6:
+        ratio = (month - 1) / 5
+        return ncs_m1 + (ncs_m6 - ncs_m1) * ratio
+    if month <= 12:
+        ratio = (month - 6) / 6
+        return ncs_m6 + (ncs_m12 - ncs_m6) * ratio
+    return ncs_m12
+
+
+def _fallback_ncs(month: int) -> float:
+    defaults = {1: 0.95, 2: 0.90, 3: 0.80, 4: 0.70, 5: 0.60, 6: 0.55,
+                7: 0.45, 8: 0.40, 9: 0.35, 10: 0.35, 11: 0.30, 12: 0.30}
+    return defaults.get(month, 0.30)
+
+
+def get_organic_share_for_month(niche_id: str, month: int) -> float:
+    """Доля клиентов приходящих бесплатно (walk-in + сарафан + контент + referrals)."""
+    channels = marketing_loader.get_channels_allocation(niche_id)
+    if not channels:
+        return _fallback_organic(month)
+    org = channels.get("organic_flow_allocation", {}) or {}
+    sarafan = float(org.get("sarafan", 0)) / 100
+    walk_in = float(org.get("walk_in", 0)) / 100
+    content = float(org.get("content", 0)) / 100
+    referrals = float(org.get("referrals", 0)) / 100
+    # walk-in работает с м.1; сарафан/referrals/content растут со временем.
+    if month <= 2:
+        return walk_in + content * 0.3
+    if month <= 6:
+        r = (month - 2) / 4
+        return walk_in + sarafan * (0.2 + 0.5 * r) + referrals * (0.3 + 0.5 * r) + content * (0.3 + 0.6 * r)
+    r = min(1.0, (month - 6) / 6 + 0.7)
+    return walk_in + (sarafan + referrals + content) * r
+
+
+def _fallback_organic(month: int) -> float:
+    defaults = {1: 0.05, 2: 0.10, 3: 0.15, 4: 0.20, 5: 0.25, 6: 0.30,
+                7: 0.35, 8: 0.40, 9: 0.42, 10: 0.45, 11: 0.48, 12: 0.50}
+    return defaults.get(month, 0.50)
+
+
+def compute_marketing_plan(
+    niche_id: str,
+    city_id: str,
+    total_clients_per_month: List[int],
+    experience: str = "none",
+    content_self_produced: bool = True,
+    legal_form: str = "ip",
+) -> Dict[str, Any]:
+    """Помесячный маркетинг-план + архетипный контекст.
+
+    Возвращает dict. При отсутствии ниши в YAML → {"error": ..., "archetype_id": None}.
+    """
+    niche_data = marketing_loader.get_niche_marketing(niche_id)
+    if not niche_data:
+        return {
+            "error": f"Ниша {niche_id} не найдена в маркетинговой базе",
+            "archetype_id": None,
+        }
+
+    archetype_id = niche_data.get("archetype")
+    archetype_info = marketing_loader.get_archetype(archetype_id) or {}
+
+    base_cac = marketing_loader.get_base_cac(niche_id)
+    city_multiplier = marketing_loader.get_city_cac_multiplier(city_id)
+    city_cac = base_cac * city_multiplier
+
+    content_cost_base = 0 if content_self_produced else CONTENT_COST_PER_MONTH.get(archetype_id, 5000)
+
+    channels = niche_data.get("channels", {}) or {}
+    platform_comm = channels.get("platform_commission_pct", {}) or {}
+    platform_rate = (float(platform_comm.get("delivery", 0)) + float(platform_comm.get("marketplace", 0))) / 100
+
+    monthly_plan: List[Dict[str, Any]] = []
+    total_year = 0
+    clients_list = list(total_clients_per_month or [])
+    while len(clients_list) < 12:
+        clients_list.append(clients_list[-1] if clients_list else 0)
+
+    for idx in range(12):
+        month = idx + 1
+        total_clients = int(clients_list[idx] or 0)
+        ncs = get_ncs_for_month(niche_id, month)
+        organic = get_organic_share_for_month(niche_id, month)
+        new_customers = total_clients * ncs
+        paid_customers = max(0.0, new_customers * (1 - organic))
+        exp_mult = get_experience_multiplier(experience, month)
+        real_cac = city_cac * exp_mult
+        paid_budget = int(round(paid_customers * real_cac))
+        content_cost = content_cost_base
+        total_marketing = paid_budget + content_cost
+        monthly_plan.append({
+            "month": month,
+            "total_clients": total_clients,
+            "new_customers": int(round(new_customers)),
+            "paid_customers": int(round(paid_customers)),
+            "organic_share_pct": round(organic * 100, 1),
+            "experience_multiplier": round(exp_mult, 2),
+            "real_cac": int(round(real_cac)),
+            "paid_budget": paid_budget,
+            "content_cost": content_cost,
+            "total_marketing": total_marketing,
+            "platform_commission_rate_pct": round(platform_rate * 100, 1),
+        })
+        total_year += total_marketing
+
+    budgets = [m["total_marketing"] for m in monthly_plan]
+    summary = {
+        "avg_monthly_budget": int(round(total_year / 12)),
+        "total_year_budget": total_year,
+        "peak_month": budgets.index(max(budgets)) + 1,
+        "peak_budget": max(budgets),
+        "lowest_month": budgets.index(min(budgets)) + 1,
+        "lowest_budget": min(budgets),
+    }
+
+    return {
+        "archetype_id": archetype_id,
+        "archetype_name": archetype_info.get("name_ru", ""),
+        "archetype_formula": archetype_info.get("formula_type", ""),
+        "archetype_note": archetype_info.get("note_ru", ""),
+        "base_cac": base_cac,
+        "city_cac_multiplier": city_multiplier,
+        "city_cac": int(round(city_cac)),
+        "monthly_plan": monthly_plan,
+        "summary": summary,
+        "retention_metrics": niche_data.get("retention_metrics", {}),
+        "choice_drivers": niche_data.get("choice_drivers", {}),
+        "channels_allocation": channels,
+        "platform_dependency": niche_data.get("platform_dependency"),
+        "demand_type": niche_data.get("demand_type"),
+        "frequency": niche_data.get("frequency"),
+        "decision_cycle": niche_data.get("decision_cycle"),
+        "customer_type": niche_data.get("customer_type"),
+        "what_not_to_do_ru": _compose_what_not_to_do(channels, archetype_id),
+        "content_advice_ru": _compose_content_advice(niche_data, archetype_id, content_self_produced),
+    }
+
+
+def _compose_what_not_to_do(channels: Dict[str, Any], archetype_id: str) -> str:
+    paid = (channels or {}).get("paid_budget_allocation", {}) or {}
+    not_working: List[str] = []
+    if paid.get("gis_paid", 0) <= 5 and archetype_id in {"A1", "A11", "A13"}:
+        not_working.append("2GIS (для вашей ниши не работает)")
+    if paid.get("google_yandex", 0) <= 5 and archetype_id in {"A1", "A2", "A8", "A15"}:
+        not_working.append("Google Ads / Яндекс.Директ (клиенты не ищут в поисковике)")
+    if paid.get("olx_krisha", 0) == 0:
+        not_working.append("OLX / Krisha (это не ваша площадка)")
+    not_working.append("ВКонтакте (в Казахстане не работает)")
+    if not_working:
+        return "Не тратьте бюджет на: " + ", ".join(not_working) + "."
+    return ""
+
+
+def _compose_content_advice(niche_data: Dict[str, Any], archetype_id: str, self_produced: bool) -> str:
+    visual_score = int((niche_data.get("choice_drivers") or {}).get("visual", 0))
+    if visual_score >= 4:
+        if self_produced:
+            return (
+                "Ваша ниша — про визуал. Отлично что умеете снимать. "
+                "Вкладывайтесь в технику (освещение, ракурсы), освойте Capcut/Inshot. "
+                "Качество контента = успех."
+            )
+        return (
+            "Ваша ниша — про визуал, это 50% успеха. Настоятельно рекомендуем освоить "
+            "съёмку и Capcut самостоятельно. Наём контент-мейкера за 20-30К/мес "
+            "непозволителен на старте — курсы по рилсам окупятся за месяц."
+        )
+    if archetype_id in {"A4", "A5", "A13"}:
+        return (
+            "Ваша ниша — про доверие и отзывы. Фокус: собирайте отзывы на 2GIS, "
+            "Google Maps, Instagram. Один положительный кейс окупает месяц таргета."
+        )
+    if archetype_id in {"A6", "A7"}:
+        return (
+            "Ваша ниша — про локацию и скорость. Фокус: правильный профиль 2GIS "
+            "с фото, часами работы, описанием. Контент не критичен."
+        )
+    return ""
