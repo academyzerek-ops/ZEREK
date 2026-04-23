@@ -1365,6 +1365,25 @@ def generate_quick_check_pdf(result: dict, niche_id: str, ai_risks=None) -> tupl
     pdf_bytes = buf.getvalue()
     buf.close()
 
-    # ASCII-safe filename — кириллица в Content-Disposition ломает HTTP
-    filename = f"ZEREK_{niche_id}_{report_id}.pdf"
+    filename = generate_pdf_filename(
+        m.get("niche_name") or niche_id,
+        m.get("city_name") or "",
+        m.get("format_name") or "",
+    )
     return pdf_bytes, report_id, filename
+
+
+def generate_pdf_filename(niche_name: str, city_name: str, format_label: str) -> str:
+    """Имя PDF: ZEREK_Анализ_{Ниша}_{Формат}_{Город}_{YYYY-MM-DD}.pdf.
+
+    Кириллица сохраняется — download-эндпоинт кодирует filename* по RFC 5987.
+    """
+    from datetime import date
+    today = date.today().isoformat()
+    parts = ["ZEREK", "Анализ"]
+    for part in (niche_name, format_label, city_name):
+        p = (part or "").strip().replace(" ", "_")
+        if p:
+            parts.append(p)
+    parts.append(today)
+    return "_".join(parts) + ".pdf"

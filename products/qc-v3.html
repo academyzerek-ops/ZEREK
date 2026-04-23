@@ -239,6 +239,27 @@ h2{font-size:22px;margin-bottom:6px}
 .b5-income-disclaimer{margin-top:10px;font-size:11px;color:var(--text-3);line-height:1.45;text-align:center}
 .b5-income-region{margin-top:10px;padding:8px 10px;background:rgba(34,197,94,0.05);border-left:2px solid rgba(34,197,94,0.4);border-radius:4px;font-size:12px;color:var(--text-2);line-height:1.45}
 
+/* ─── PDF hero (под вердиктом) + reminder (в конце отчёта) ─── */
+.pdf-download-hero{margin:20px 0;text-align:center}
+.pdf-download-btn{display:inline-block;padding:20px 32px;background:linear-gradient(135deg,#059669 0%,#10b981 100%);color:#fff;border:none;border-radius:16px;cursor:pointer;box-shadow:0 4px 20px rgba(16,185,129,0.3);transition:all 0.2s;width:100%;max-width:400px;font-family:inherit}
+.pdf-download-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(16,185,129,0.4)}
+.pdf-download-btn:disabled{opacity:0.6;cursor:wait;transform:none}
+.pdf-download-btn .pdf-icon{font-size:32px;display:block;margin-bottom:8px}
+.pdf-download-btn .pdf-main{font-size:16px;font-weight:700;display:block;margin-bottom:4px}
+.pdf-download-btn .pdf-sub{font-size:12px;opacity:0.9;display:block}
+
+.pdf-reminder{display:flex;align-items:center;gap:12px;margin:16px 0;padding:14px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);border-radius:var(--radius);flex-wrap:wrap}
+.pdf-reminder-icon{font-size:28px;flex:0 0 auto}
+.pdf-reminder-text{flex:1 1 200px;font-size:13px;color:var(--text-2);line-height:1.45}
+.pdf-reminder-text strong{color:var(--text);display:block;margin-bottom:2px}
+.pdf-reminder-btn{flex:0 0 auto;padding:10px 16px;background:linear-gradient(135deg,#059669 0%,#10b981 100%);color:#fff;border:none;border-radius:12px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;box-shadow:0 2px 10px rgba(16,185,129,0.25);transition:all 0.2s}
+.pdf-reminder-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(16,185,129,0.35)}
+.pdf-reminder-btn:disabled{opacity:0.6;cursor:wait;transform:none}
+@media (max-width:420px){
+  .pdf-reminder{flex-direction:column;align-items:stretch;text-align:center}
+  .pdf-reminder-btn{width:100%}
+}
+
 /* ─── BLOCK 10 — СЛЕДУЮЩИЕ ШАГИ ─── */
 .b10-section{padding:18px 16px;background:var(--surface);border-radius:var(--radius-lg);margin-bottom:12px}
 .b10-headline{font-size:15px;font-weight:700;line-height:1.4;padding:14px;background:var(--surface-2);border-radius:var(--radius);margin-bottom:12px}
@@ -930,6 +951,7 @@ function submit(){
       archetype: QC.archetype, format_type: QC.format_type,
     },
   };
+  window._lastBody = body;
   apiPost('/quick-check', body, function(err, resp, raw){
     $('loading-screen').classList.remove('active');
     if(err){ return showResultError('Ошибка расчёта: ' + err.message + (raw ? '\n' + raw : '')); }
@@ -963,7 +985,9 @@ function renderResult(result){
     if(result.block9)  html += renderBlock9Html(result.block9);
     if(result.block6)  html += renderBlock6Html(result.block6);
     html += renderBlock1Html(result.block1);
+    html += pdfHeroHtml();
     if(result.block10) html += renderBlock10Html(result.block10);
+    html += pdfReminderHtml();
     $('result-screen').innerHTML = html;
     return;
   }
@@ -1612,6 +1636,63 @@ function showResultError(msg){
   $('result-screen').classList.add('active');
   $('cta-wrap').style.display = 'none';
   $('result-screen').innerHTML = '<div class="result-err">'+escapeHtml(msg)+'</div>';
+}
+
+function pdfHeroHtml(){
+  return '<div class="pdf-download-hero">' +
+    '<button class="pdf-download-btn" id="pdf-btn-hero" onclick="downloadPDF(\'hero\')">' +
+      '<span class="pdf-icon">📥</span>' +
+      '<span class="pdf-main">Скачать полный отчёт (PDF)</span>' +
+      '<span class="pdf-sub">анализ, риски, стратегия роста</span>' +
+    '</button>' +
+  '</div>';
+}
+function pdfReminderHtml(){
+  return '<div class="pdf-reminder">' +
+    '<div class="pdf-reminder-icon">💾</div>' +
+    '<div class="pdf-reminder-text">' +
+      '<strong>Не забудьте сохранить отчёт</strong>' +
+      'Скачайте PDF чтобы вернуться к анализу, обсудить с партнёром или распечатать.' +
+    '</div>' +
+    '<button class="pdf-reminder-btn" id="pdf-btn-reminder" onclick="downloadPDF(\'reminder\')">📥 Скачать PDF</button>' +
+  '</div>';
+}
+function downloadPDF(sourceId){
+  var body = window._lastBody;
+  if(!body){ alert('Сначала запустите расчёт.'); return; }
+  // Блокируем обе кнопки на время генерации (может занимать 5-15 сек на первой загрузке шрифтов)
+  var btns = document.querySelectorAll('.pdf-download-btn, .pdf-reminder-btn');
+  var origLabels = [];
+  btns.forEach(function(b, i){
+    origLabels[i] = b.innerHTML;
+    b.disabled = true;
+  });
+  var heroBtn = document.getElementById('pdf-btn-hero');
+  if(heroBtn){
+    heroBtn.innerHTML = '<span class="pdf-icon">⏳</span><span class="pdf-main">Генерируем PDF...</span><span class="pdf-sub">это займёт 5-10 секунд</span>';
+  }
+  var reminderBtn = document.getElementById('pdf-btn-reminder');
+  if(reminderBtn){ reminderBtn.textContent = '⏳ Генерируем...'; }
+
+  apiPost('/quick-check/pdf', body, function(err, resp, raw){
+    btns.forEach(function(b, i){
+      b.disabled = false;
+      b.innerHTML = origLabels[i];
+    });
+    if(err){ alert('Не удалось сгенерировать PDF: ' + err.message); return; }
+    var url = resp && resp.pdf_url;
+    if(!url){ alert('PDF не пришёл. Попробуйте ещё раз.'); return; }
+    var full = API + url;
+    try {
+      if(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink){
+        window.Telegram.WebApp.openLink(full);
+      } else {
+        window.open(full, '_blank');
+      }
+    } catch(e){
+      window.open(full, '_blank');
+    }
+  });
 }
 function extractKpis(r){
   var out = { heroLabel:'Окупаемость', heroVal:'—', heroUnit:'', revenue:'—', profit:'—', capex:'—', working_cap:'—', verdict:'' };
