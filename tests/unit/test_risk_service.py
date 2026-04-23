@@ -38,11 +38,15 @@ def test_standard_format_no_filter():
 
 
 def test_home_specific_risks_for_home_only():
-    """HOME_SPECIFIC_RISKS содержит физсостояние, потолок, санитарию."""
+    """HOME_SPECIFIC_RISKS содержит физсостояние + санитарию.
+
+    UX #7: «Потолок дохода мастера» убран — дублируется с блоком
+    staff_paradox, который показывает то же с цифрами и стратегиями.
+    """
     titles = [r["title"] for r in HOME_SPECIFIC_RISKS]
     assert "Зависимость от физсостояния" in titles
-    assert "Потолок дохода одного мастера" in titles
     assert "Санитарные нормы без контроля" in titles
+    assert "Потолок дохода одного мастера" not in titles
 
 
 def test_generic_risks_archetype_a_has_5_items():

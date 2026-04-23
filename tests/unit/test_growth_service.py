@@ -16,7 +16,8 @@ def test_growth_block_for_manicure_returns_data():
     assert "stagnation" in block
     assert "development" in block
     assert "growth_factors" in block
-    assert "finmodel_cta" in block
+    # UX #3: finmodel_cta удалён (дублировался с block10).
+    assert "finmodel_cta" not in block
 
 
 def test_growth_block_for_other_niche_returns_none():
@@ -66,10 +67,7 @@ def test_growth_factors_manicure_contains_universal_and_niche_specific():
     assert len(specifics) >= 1
 
 
-def test_finmodel_cta_price_is_9000():
-    """CTA на FinModel — 9 000 ₸ (канон из продуктовой линейки)."""
+def test_finmodel_cta_removed_from_growth_block():
+    """UX #3: CTA убран из growth_scenarios — дублировался с block10."""
     block = compute_growth_block("MANICURE")
-    cta = block["finmodel_cta"]
-    assert cta["product"] == "FinModel"
-    assert cta["price"] == 9000
-    assert cta["text"]
+    assert "finmodel_cta" not in block

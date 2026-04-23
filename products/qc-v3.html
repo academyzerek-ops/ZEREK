@@ -1542,7 +1542,7 @@ function renderBlock4Html(b4){
     html += '<div class="blk-hdr2">Куда уходят деньги с одного '+(b4.unit_label||'чека')+'</div>';
     b4.breakdown.forEach(function(it){
       var pct = it.pct||0;
-      var color = (it.label === 'Бизнесу' || it.label === 'В карман вам') ? 'var(--green)' : 'var(--accent)';
+      var color = (it.label === 'Бизнесу' || it.label === 'Чистыми вам') ? 'var(--green)' : 'var(--accent)';
       html += '<div class="unit-row">' +
         '<div class="unit-row-head">' +
           '<div class="unit-row-pct">'+pct+'%</div>' +
@@ -1595,9 +1595,9 @@ function renderBlock6Html(b6){
     else if(b6.diff_status === 'deficit'){ diffLabel = fmt(Math.abs(b6.diff)) + ' ₸ дефицит'; diffClass = 'yellow'; }
     else if(b6.diff_status === 'critical_deficit'){ diffLabel = fmt(Math.abs(b6.diff)) + ' ₸ дефицит (критичный)'; diffClass = 'red'; }
     html += '<div class="blk-row"><span>Разница</span><span class="blk-pill '+diffClass+'">'+escapeHtml(diffLabel)+'</span></div>';
-  } else {
-    html += '<div class="blk-note">Капитал не указан — бюджет рассчитан по средним данным по РК.</div>';
   }
+  // UX #5: «Капитал не указан» убран — оставлено только в паспорте бизнеса
+  // и в блоке «Достаточность капитала», чтобы не дублировать 4 раза.
 
   if((b6.actions||[]).length){
     html += '<div class="blk-hdr2">Варианты закрыть недостачу</div>';
@@ -1704,7 +1704,7 @@ function renderGrowthBlockHtml(gs){
   var stag = gs.stagnation || {};
   var dev = gs.development || {};
   var factors = gs.growth_factors || [];
-  var cta = gs.finmodel_cta || {};
+  // UX #3: finmodel_cta удалён — дублировался с block10 в хвосте отчёта.
 
   var scenariosHtml = '';
   scenariosHtml += '<div class="growth-scenario growth-scenario-stagnation">' +
@@ -1728,22 +1728,12 @@ function renderGrowthBlockHtml(gs){
     '</div>';
   });
 
-  var ctaHtml = '';
-  if(cta && cta.text){
-    var priceLabel = cta.price ? cta.product+' '+fmt(cta.price)+' ₸' : cta.product;
-    ctaHtml = '<div class="growth-finmodel-cta">' +
-      '<div class="growth-cta-text">'+escapeHtml(cta.text)+'</div>' +
-      '<button class="growth-cta-btn" onclick="handleCta(\'buy_finmodel\')">→ '+escapeHtml(priceLabel)+'</button>' +
-    '</div>';
-  }
-
   return '<div class="growth-block">' +
     '<div class="growth-title">🎯 А что дальше?</div>' +
     '<div class="growth-intro">Эти цифры — ваш первый год работы. Что будет через 2-3 года — зависит от вас.</div>' +
     '<div class="growth-scenarios">' + scenariosHtml + '</div>' +
     '<div class="growth-factors-title">Что нужно делать</div>' +
     factorsHtml +
-    ctaHtml +
   '</div>';
 }
 

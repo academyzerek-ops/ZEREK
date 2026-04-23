@@ -63,12 +63,6 @@ def compute_growth_block(
             }
             for f in factors
         ],
-        "finmodel_cta": {
-            "text": (
-                "Хотите точную финансовую модель на 3 года "
-                "с учётом ваших вложений в развитие?"
-            ),
-            "product": "FinModel",
-            "price": 9000,
-        },
+        # UX #3: finmodel_cta убран из growth_scenarios — CTA дублировался
+        # с block10 в хвосте отчёта. Оставляем финальный в block10.
     }

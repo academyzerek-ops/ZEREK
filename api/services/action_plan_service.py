@@ -318,10 +318,34 @@ def compute_block10_next_steps(db, result, adaptive, block1=None, block2=None):
 
     if color == "green":
         out["action_plan"] = _green_action_plan(block2, block1, adaptive=adaptive, result=result)
-        out["headline_rus"] = (
-            f"✅ Это направление реалистично для заработка {city_prefix}{format_phrase}. "
-            f"Можно пробовать."
-        ).replace("  ", " ").strip()
+        # UX #4: подстраиваем headline под verdict_level капитала
+        # (не дублируем «это реалистично» — информативнее).
+        cap_verdict = ((result or {}).get("capital_adequacy") or {}).get("verdict_level")
+        if cap_verdict == "safe":
+            out["headline_rus"] = (
+                "🟢 Низкий стартовый риск. Подходит для старта с минимальным "
+                "капиталом и без опыта."
+            )
+        elif cap_verdict == "comfortable":
+            out["headline_rus"] = (
+                "🟢 Умеренный риск. Капитала хватает на разгон — можно "
+                "пробовать. Держите резерв на сезонные просадки."
+            )
+        elif cap_verdict == "risky":
+            out["headline_rus"] = (
+                "🟡 Средний риск. Бизнес жизнеспособен, но для спокойного "
+                "старта не хватает подушки — см. блок достаточности выше."
+            )
+        elif cap_verdict == "insufficient":
+            out["headline_rus"] = (
+                "🔴 Высокий риск. Капитала критично мало — см. блок "
+                "достаточности выше."
+            )
+        else:
+            out["headline_rus"] = (
+                f"✅ Это направление реалистично для заработка {city_prefix}{format_phrase}. "
+                f"Можно пробовать."
+            ).replace("  ", " ").strip()
         out["cta_buttons"] = [
             {"label_rus": "Купить Финансовую модель — 9 000 ₸", "action": "buy_finmodel"},
             {"label_rus": "Скачать PDF отчёта", "action": "download_pdf"},
