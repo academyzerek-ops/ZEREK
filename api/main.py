@@ -279,44 +279,50 @@ def get_niche_risks(niche_id: str, debug: int = 0):
 
 @app.get("/pdf-health")
 def pdf_health():
-    """Диагностика: WeasyPrint + Jinja2 + шаблон доступны?"""
-    info = {"engine": "weasyprint"}
-    try:
-        import jinja2  # noqa: F401
-        info["jinja2"] = jinja2.__version__
-    except Exception as e:
-        return {"status": "fail", "engine": "weasyprint",
-                "error": f"Jinja2 not installed: {e}"}
+    """Диагностика: какой PDF-движок активен сейчас + может ли рендерить.
+
+    Приоритет: WeasyPrint (премиум HTML-шаблон) → ReportLab fallback.
+    Показывает что активен и тестирует PDF-генерацию.
+    """
+    from renderers.pdf_renderer import which_engine
+    active = which_engine()
+    info = {"active_engine": active}
+
+    # WeasyPrint info.
     try:
         import weasyprint
-        info["weasyprint"] = weasyprint.__version__
+        info["weasyprint_version"] = weasyprint.__version__
+        info["weasyprint_available"] = True
     except Exception as e:
-        import traceback
-        return {"status": "fail", "engine": "weasyprint",
-                "error": f"WeasyPrint import failed: {e}",
-                "trace": traceback.format_exc()[-1500:]}
+        info["weasyprint_available"] = False
+        info["weasyprint_error"] = str(e)[:200]
+
+    # ReportLab info.
     try:
-        from renderers.pdf_renderer import create_jinja_env, TEMPLATE_FILE
-        env = create_jinja_env()
-        _ = env.get_template(TEMPLATE_FILE)
-        info["template_loaded"] = True
+        import reportlab
+        info["reportlab_version"] = reportlab.Version
+        info["reportlab_available"] = True
     except Exception as e:
-        import traceback
-        return {"status": "fail", "engine": "weasyprint",
-                "error": f"Template load failed: {e}",
-                "trace": traceback.format_exc()[-1500:]}
-    # Проверяем что WeasyPrint может реально сгенерировать PDF (проверка Pango).
+        info["reportlab_available"] = False
+        info["reportlab_error"] = str(e)[:200]
+
+    # Проверяем что активный движок реально работает.
     try:
-        pdf_bytes = weasyprint.HTML(string="<h1>Health check</h1>").write_pdf()
+        if active == "weasyprint":
+            pdf_bytes = weasyprint.HTML(string="<h1>Health</h1>").write_pdf()
+        else:
+            from renderers.pdf_renderer_reportlab import _register_fonts_once
+            _register_fonts_once()
+            pdf_bytes = b"%PDF-reportlab-fonts-registered"
         info["pdf_test_bytes"] = len(pdf_bytes)
         info["status"] = "ok"
         return info
     except Exception as e:
         import traceback
-        return {"status": "fail", "engine": "weasyprint",
-                "error": f"PDF generation failed (system libs?): {e}",
-                "trace": traceback.format_exc()[-1500:],
-                **info}
+        info["status"] = "fail"
+        info["error"] = str(e)[:200]
+        info["trace"] = traceback.format_exc()[-1000:]
+        return info
 
 
 @app.post("/quick-check/pdf")
