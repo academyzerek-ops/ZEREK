@@ -223,6 +223,19 @@ h2{font-size:22px;margin-bottom:6px}
 .b5-income-row strong{font-family:var(--mono);font-weight:700;color:var(--text)}
 .b5-income-total{border-top:1px solid rgba(34,197,94,0.3);padding-top:8px;margin-top:6px;font-size:14px;color:var(--text)}
 .b5-income-total strong{font-size:17px;color:var(--green)}
+.b5-income-cards{display:flex;gap:0;margin:10px 0 6px;border:1px solid rgba(34,197,94,0.25);border-radius:var(--radius);overflow:hidden;background:rgba(34,197,94,0.05)}
+.b5-income-card{flex:1;text-align:center;padding:12px 10px}
+.b5-income-card + .b5-income-card{border-left:1px solid rgba(34,197,94,0.28)}
+.b5-income-card-label{font-size:11px;color:var(--text-3);margin-bottom:6px;line-height:1.35}
+.b5-income-card-val{font-family:var(--mono);font-weight:700;font-size:20px;color:#10b981;line-height:1.15}
+.b5-income-card-sub{font-size:10px;color:var(--text-3);margin-top:3px}
+.b5-income-link{text-align:center;margin-top:2px;margin-bottom:6px;font-size:12px}
+.b5-income-link a{color:var(--accent);text-decoration:none}
+.b5-income-link a:hover{text-decoration:underline}
+@media (max-width:420px){
+  .b5-income-cards{flex-direction:column}
+  .b5-income-card + .b5-income-card{border-left:none;border-top:1px solid rgba(34,197,94,0.28)}
+}
 .b5-income-disclaimer{margin-top:10px;font-size:11px;color:var(--text-3);line-height:1.45;text-align:center}
 .b5-income-region{margin-top:10px;padding:8px 10px;background:rgba(34,197,94,0.05);border-left:2px solid rgba(34,197,94,0.4);border-radius:4px;font-size:12px;color:var(--text-2);line-height:1.45}
 
@@ -1177,19 +1190,32 @@ function renderBlock5Html(b5){
 
   var inc = b5.entrepreneur_income || {};
   var incRows = '';
-  // Для SOLO/HOME (solo_mode=true) мастер = сам предприниматель, штата нет —
-  // показываем одну строку «Ориентировочный доход». Иначе — ставка + прибыль + итого.
-  if(b5.solo_mode){
-    incRows += '<div class="b5-income-row b5-income-total"><span>Ориентировочный доход по региону</span><strong>'+fmt(inc.total_monthly)+' ₸/мес</strong></div>';
-  } else {
+  // Для non-SOLO показываем разбивку (ставка в штате + прибыль бизнеса) как раньше.
+  // Summary‑ряд (total_monthly) заменяем двумя карточками: средняя за год + на мощности.
+  if(!b5.solo_mode){
     if(inc.role_salary_monthly > 0){
       incRows += '<div class="b5-income-row"><span>Ставка в штате</span><strong>'+fmt(inc.role_salary_monthly)+' ₸/мес</strong></div>';
     } else {
       incRows += '<div class="b5-income-row"><span>Ставка в штате</span><strong>0 (не работаю операционно)</strong></div>';
     }
-    incRows += '<div class="b5-income-row"><span>Прибыль бизнеса</span><strong>'+fmt(inc.profit_monthly)+' ₸/мес</strong></div>' +
-      '<div class="b5-income-row b5-income-total"><span>Ориентир по региону</span><strong>'+fmt(inc.total_monthly)+' ₸/мес</strong></div>';
+    incRows += '<div class="b5-income-row"><span>Прибыль бизнеса</span><strong>'+fmt(inc.profit_monthly)+' ₸/мес</strong></div>';
   }
+
+  var matureMonthly = (inc.mature_monthly != null ? inc.mature_monthly : inc.total_monthly) || 0;
+  var incomeCards =
+    '<div class="b5-income-cards">' +
+      '<div class="b5-income-card">' +
+        '<div class="b5-income-card-label">Средняя за первый год</div>' +
+        '<div class="b5-income-card-val">'+fmt(inc.total_monthly || 0)+' ₸/мес</div>' +
+        '<div class="b5-income-card-sub">с учётом разгона</div>' +
+      '</div>' +
+      '<div class="b5-income-card">' +
+        '<div class="b5-income-card-label">Когда выйдете на мощность</div>' +
+        '<div class="b5-income-card-val">'+fmt(matureMonthly)+' ₸/мес</div>' +
+        '<div class="b5-income-card-sub">после месяца 4</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="b5-income-link"><a href="#first-year-chart">Детали по месяцам →</a></div>';
 
   var incomeDisclaimer = '<div class="b5-income-disclaimer">Это ориентир — реальный доход зависит от качества работы, рекламы и рисков, описанных ниже.</div>';
   var regionNote = inc.region_note ? '<div class="b5-income-region">'+escapeHtml(inc.region_note)+'</div>' : '';
@@ -1197,6 +1223,7 @@ function renderBlock5Html(b5){
   var incomeBlock = '<div class="b5-income">' +
     '<div class="b5-income-title">💰 Ваш доход предпринимателя</div>' +
     incRows +
+    incomeCards +
     regionNote +
     incomeDisclaimer +
   '</div>';
@@ -1487,7 +1514,7 @@ function renderFirstYearChartHtml(fyc){
       '<div class="fyc-legend-item"><span class="fyc-legend-dot" style="background:#059669"></span>Сезонный пик</div>' +
       '<div class="fyc-legend-item"><span class="fyc-legend-dot" style="background:#f59e0b"></span>Просадка</div>' +
     '</div>';
-  return '<div class="blk">' +
+  return '<div class="blk" id="first-year-chart">' +
     '<div class="blk-h">Ваши первые 12 месяцев</div>' +
     '<div style="font-size:12px;color:var(--text-3);margin-bottom:10px">Старт: '+escapeHtml(fyc.start_month_label || '')+'</div>' +
     '<div class="fyc-chart">' + bars + '</div>' +

@@ -740,6 +740,8 @@ def compute_block5_pnl(db, result, adaptive):
     profit_monthly_base = pnl_base["net_profit"] // 12
     income_from_business = profit_monthly_base
     entrepreneur_income_monthly = role_salary_monthly + income_from_business
+    mature_profit_monthly = _safe_int(mature.get("profit_monthly"), 0)
+    mature_monthly = role_salary_monthly + mature_profit_monthly
 
     region_note = None
     if is_solo_fmt:
@@ -780,6 +782,7 @@ def compute_block5_pnl(db, result, adaptive):
             "role_salary_monthly": role_salary_monthly,
             "profit_monthly":       income_from_business,
             "total_monthly":        entrepreneur_income_monthly,
+            "mature_monthly":       mature_monthly,
             "total_yearly":         entrepreneur_income_monthly * 12,
             "role_breakdown":       role_breakdown,
             "region_note":          region_note,

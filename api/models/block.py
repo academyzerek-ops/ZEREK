@@ -184,7 +184,8 @@ class PnlMargins(TypedDict):
 class EntrepreneurIncome(TypedDict):
     role_salary_monthly: int
     profit_monthly: int
-    total_monthly: int
+    total_monthly: int       # средний первый год (с учётом разгона)
+    mature_monthly: int      # после выхода на мощность (ramp=1)
     total_yearly: int
     role_breakdown: List[Dict[str, Any]]
     region_note: Optional[str]
