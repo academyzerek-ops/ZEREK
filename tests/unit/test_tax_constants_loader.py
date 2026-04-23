@@ -46,6 +46,56 @@ def test_usn_shymkent_returns_2_pct():
     assert t.get_usn_rate_for_city("shymkent") == 2.0
 
 
+# ═══ Города с расхождением xlsx vs YAML v1.1 (регрессия против баги) ═══
+# Эти 6 городов в xlsx значились как 3%, реальная ставка по решениям
+# маслихатов на 2026 — 2%. YAML v1.1 — источник истины.
+
+
+def test_karaganda_rate_is_2_pct():
+    """Карагандинская область — 2% (не 3% как было в xlsx)."""
+    assert t.get_usn_rate_for_city("karaganda") == 2.0
+
+
+def test_atyrau_rate_is_2_pct():
+    """Атырауская область — 2%."""
+    assert t.get_usn_rate_for_city("atyrau") == 2.0
+
+
+def test_oskemen_rate_is_2_pct():
+    """Усть-Каменогорск (ВКО) — 2%."""
+    assert t.get_usn_rate_for_city("oskemen") == 2.0
+
+
+def test_taraz_rate_is_2_pct():
+    """Тараз (Жамбылская область) — 2%."""
+    assert t.get_usn_rate_for_city("taraz") == 2.0
+
+
+def test_kokshetau_rate_is_2_pct():
+    """Кокшетау (Акмолинская область) — 2%."""
+    assert t.get_usn_rate_for_city("kokshetau") == 2.0
+
+
+def test_semey_rate_is_2_pct():
+    """Семей (область Абай) — 2%."""
+    assert t.get_usn_rate_for_city("semey") == 2.0
+
+
+def test_astana_baseline_still_3_pct():
+    """Регрессия: Астана осталась на 3% (не сломали при миграции)."""
+    assert t.get_usn_rate_for_city("astana") == 3.0
+
+
+def test_turkistan_spelling_variants_match_turkestan():
+    """TURKISTAN (каз.) и turkestan (англ.) резолвятся в одну ставку."""
+    assert t.get_usn_rate_for_city("TURKISTAN") == t.get_usn_rate_for_city("turkestan")
+
+
+def test_petropavlovsk_full_name_matches_petropavl():
+    """PETROPAVLOVSK (полная форма) резолвится как petropavl."""
+    assert t.get_usn_rate_for_city("PETROPAVLOVSK") == t.get_usn_rate_for_city("petropavl")
+
+
 def test_usn_unknown_city_returns_default_4_pct():
     """Неизвестный город → базовая ставка по умолчанию (4%)."""
     assert t.get_usn_rate_for_city("UNKNOWN_CITY_XYZ") == 4.0
