@@ -1071,9 +1071,11 @@ def _invest_story(m: dict, st: dict) -> list:
         capex_rows.append((it.get("name", ""), f"{_fmt(it.get('amount', 0))} ₸"))
     capex_rows.append(("Итого CAPEX", f"{_fmt(m['invMin'])} ₸"))
 
-    # Раскрываем состав подушки: 3 × (OPEX-компоненты + соцплатежи ИП).
+    # Раскрываем состав подушки: 3 × OPEX-компоненты + 3 × МИНИМАЛЬНЫЙ
+    # платёж ИП (21 675 ₸/мес), а НЕ соцплатежи от зрелого дохода.
+    # Основание: kz_tax_constants_2026.yaml, ip_minimum_monthly_payment.
+    # Клиент видит реальную минимальную нагрузку в период без выручки.
     ob = m.get("opex_breakdown") or {}
-    social_m = m.get("social", 0)
     breakdown_labels = [
         ("rent",       "Аренда × 3 мес"),
         ("fot",        "ФОТ × 3 мес"),
@@ -1090,13 +1092,19 @@ def _invest_story(m: dict, st: dict) -> list:
         three_m = monthly * 3
         buffer_rows.append((label, f"{_fmt(three_m)} ₸"))
         computed_total += three_m
-    if social_m > 0:
-        social_3m = int(social_m) * 3
-        buffer_rows.append(("Соцплатежи ИП × 3 мес", f"{_fmt(social_3m)} ₸"))
-        computed_total += social_3m
-    # Предпочитаем посчитанную сумму (бит-в-бит к компонентам).
-    # Fallback: m['bufferTotal'] если opex_breakdown пуст.
-    buffer_total = computed_total if buffer_rows else m.get("bufferTotal", 0)
+    # Минимальный платёж ИП за себя (ОПВ+ОПВР+СО+ВОСМС от 1 МЗП).
+    try:
+        from loaders.tax_constants_loader import get_ip_minimum_monthly_payment
+        ip_min_monthly = int(get_ip_minimum_monthly_payment())
+    except Exception:
+        ip_min_monthly = 21_675  # fallback = известное значение на 2026
+    ip_3m = ip_min_monthly * 3
+    buffer_rows.append((
+        f"Обязательные платежи ИП × 3 мес ({_fmt(ip_min_monthly)} ₸/мес)",
+        f"{_fmt(ip_3m)} ₸",
+    ))
+    computed_total += ip_3m
+    buffer_total = computed_total
     buffer_rows.append(("Подушка всего", f"{_fmt(buffer_total)} ₸"))
 
     grand_total = m["invMin"] + buffer_total
