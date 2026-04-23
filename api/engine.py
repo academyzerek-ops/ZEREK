@@ -247,9 +247,10 @@ class ZerekDB:
         self.permits = self._xl("17_permits.xlsx", "Разрешения и лицензии", 5)
         self.inflation_niche = self._xl("19_inflation_by_niche.xlsx", "Прогноз роста OPEX", 5)
 
-        # Налоги 2026
+        # Налоги 2026 (справочник режимов). Ставки УСН по городам теперь в
+        # data/external/kz_tax_constants_2026.yaml — читаются через
+        # tax_constants_loader.get_usn_rate_for_city().
         self.tax_regimes = self._xl("05_tax_regimes.xlsx", "tax_regimes_2026", 0)
-        self.city_tax_rates = self._xl("05_tax_regimes.xlsx", "city_ud_rates_2026", 0)
 
         print(f"✅ Общие файлы загружены.")
 
@@ -452,7 +453,7 @@ def run_quick_check_v3(
     from loaders.content_loader import get_failure_pattern, get_permits
     from loaders.niche_loader import _get_canonical_format_meta
     from loaders.rent_loader import get_rent_median
-    from loaders.tax_loader import get_city_tax_rate
+    from loaders.tax_constants_loader import get_usn_rate_for_city
     from services.economics_service import (
         calc_breakeven, calc_cashflow, calc_closure_growth_points,
         calc_owner_economics, calc_payback,
@@ -528,7 +529,8 @@ def run_quick_check_v3(
             pass
 
     # ── Ставка налога по городу ──
-    tax_rate = get_city_tax_rate(db, city_id) / 100
+    # Источник: data/external/kz_tax_constants_2026.yaml (решения маслихатов 2026).
+    tax_rate = get_usn_rate_for_city(city_id) / 100
 
     # ── Ценовой коэффициент города ──
     city_coef = get_city_check_coef(city_id)

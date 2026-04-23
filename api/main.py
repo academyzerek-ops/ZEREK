@@ -138,8 +138,8 @@ def get_classes(niche_id: str, format_id: str):
 @app.get("/tax-rate/{city_id}")
 def get_tax_rate(city_id: str):
     if not db: raise HTTPException(503,"БД не загружена")
-    from loaders.tax_loader import get_city_tax_rate
-    return {"city_id":city_id,"ud_rate_pct":get_city_tax_rate(db, city_id)}
+    from loaders.tax_constants_loader import get_usn_rate_for_city
+    return {"city_id":city_id,"ud_rate_pct":get_usn_rate_for_city(city_id)}
 
 CAPEX_TO_CLS = {"эконом":"Эконом","стандарт":"Стандарт","бизнес":"Бизнес","премиум":"Премиум"}
 
