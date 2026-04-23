@@ -341,7 +341,7 @@ def compute_block2_passport(db, result, adaptive):
 _NEW_FORMAT_KEYS = (
     "block1", "block2", "block3", "block4", "block5", "block6",
     "block_season", "block8", "block9", "block10",
-    "growth_scenarios", "user_inputs",
+    "growth_scenarios", "capital_adequacy", "user_inputs",
 )
 
 

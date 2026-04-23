@@ -34,6 +34,7 @@ from engine import run_quick_check_v3  # noqa: E402
 from models import CalcResult  # noqa: E402
 from renderers.quick_check_renderer import compute_block2_passport  # noqa: E402
 from services.action_plan_service import compute_block10_next_steps  # noqa: E402
+from services.capital_service import compute_capital_adequacy  # noqa: E402
 from services.economics_service import (  # noqa: E402
     compute_block4_unit_economics,
     compute_block5_pnl,
@@ -250,6 +251,41 @@ class QuickCheckCalculator:
         # Block 6 — Стартовый капитал
         try:
             result["block6"] = compute_block6_capital(self.db, result, block1_inputs, block2=block2_obj)
+        except Exception:
+            import traceback
+            traceback.print_exc()
+
+        # Capital adequacy — 3 уровня (minimum / comfortable / safe) + вердикт.
+        # Заменяет примитивный «капитал покрывает CAPEX ✅» на полноценное
+        # наставничество: хватает ли клиенту дожить до выхода на мощность.
+        try:
+            inp = result.get("input", {}) or {}
+            fin = result.get("financials") or {}
+            nb6 = result.get("block6") or {}
+            agg = (result.get("pnl_aggregates") or {}).get("mature") or {}
+
+            capex_total = int(
+                nb6.get("capex_needed")
+                or (result.get("capex") or {}).get("total")
+                or 0
+            )
+            marketing_m = int(agg.get("marketing_monthly") or fin.get("marketing_med") or 0)
+            other_opex_m = int(agg.get("other_opex_monthly") or fin.get("other_opex_med") or 0)
+            rent_m = int(agg.get("rent_monthly") or fin.get("rent_month") or 0)
+            rampup = int(fin.get("rampup_months") or 3)
+            user_cap = inp.get("capital")
+            user_cap_int = int(user_cap) if user_cap else None
+            # worst_season_drawdown — пока 0 (будет из danger_zone / block 2 позже).
+            result["capital_adequacy"] = compute_capital_adequacy(
+                capex_total=capex_total,
+                marketing_monthly=marketing_m,
+                other_opex_monthly=other_opex_m,
+                rent_monthly=rent_m,
+                rampup_months=rampup,
+                worst_season_drawdown=0,
+                user_capital=user_cap_int,
+                legal_form="ip",  # TODO: брать из YAML niche когда появится поле
+            )
         except Exception:
             import traceback
             traceback.print_exc()

@@ -200,6 +200,41 @@ def test_manicure_home_response_has_growth_scenarios():
     assert gs["finmodel_cta"]["price"] == 9000
 
 
+def test_manicure_home_500k_capital_returns_risky():
+    """Капитал 500К на MANICURE_HOME — level=risky (хватает на CAPEX 480К, но не на разгон)."""
+    calc = QuickCheckCalculator(_db)
+    report = calc.run(_make_req())  # default capital=500_000
+    ca = report.get("capital_adequacy")
+    assert ca is not None
+    assert ca["verdict_level"] == "risky"
+    assert ca["verdict_color"] == "yellow"
+    assert ca["gap_to_level"] == "comfortable"
+    assert ca["minimum"] == 480_000
+    assert ca["comfortable"] == 695_025  # 480K + 215 025 резерв
+
+
+def test_manicure_home_900k_capital_returns_safe():
+    """Капитал 900К > safe (без сезонного буфера = comfortable) → safe."""
+    calc = QuickCheckCalculator(_db)
+    report = calc.run(_make_req(capital=900_000))
+    ca = report["capital_adequacy"]
+    assert ca["verdict_level"] == "safe"
+    assert ca["gap_amount"] == 0
+
+
+def test_manicure_home_capital_adequacy_block_structure():
+    """Блок capital_adequacy содержит 3 уровня + reserve_breakdown + вердикт."""
+    calc = QuickCheckCalculator(_db)
+    report = calc.run(_make_req())
+    ca = report["capital_adequacy"]
+    assert set(["minimum", "comfortable", "safe", "reserve_breakdown",
+                "verdict_level", "verdict_color", "verdict_label",
+                "verdict_message", "gap_amount", "user_capital"]).issubset(ca.keys())
+    rb = ca["reserve_breakdown"]
+    assert rb["ip_min_taxes_per_month"] == 21_675  # из YAML
+    assert rb["total_for_period"] == rb["total_per_month"] * rb["months"]
+
+
 def test_barber_response_has_no_growth_scenarios():
     """У BARBER нет growth_scenarios в YAML → ключ отсутствует в ответе."""
     calc = QuickCheckCalculator(_db)
