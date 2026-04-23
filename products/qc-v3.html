@@ -269,17 +269,6 @@ h2{font-size:22px;margin-bottom:6px}
 .pdf-download-btn .pdf-main{font-size:16px;font-weight:700;display:block;margin-bottom:4px}
 .pdf-download-btn .pdf-sub{font-size:12px;opacity:0.9;display:block}
 
-.pdf-reminder{display:flex;align-items:center;gap:12px;margin:16px 0;padding:14px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);border-radius:var(--radius);flex-wrap:wrap}
-.pdf-reminder-icon{font-size:28px;flex:0 0 auto}
-.pdf-reminder-text{flex:1 1 200px;font-size:13px;color:var(--text-2);line-height:1.45}
-.pdf-reminder-text strong{color:var(--text);display:block;margin-bottom:2px}
-.pdf-reminder-btn{flex:0 0 auto;padding:10px 16px;background:linear-gradient(135deg,#059669 0%,#10b981 100%);color:#fff;border:none;border-radius:12px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;box-shadow:0 2px 10px rgba(16,185,129,0.25);transition:all 0.2s}
-.pdf-reminder-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(16,185,129,0.35)}
-.pdf-reminder-btn:disabled{opacity:0.6;cursor:wait;transform:none}
-@media (max-width:420px){
-  .pdf-reminder{flex-direction:column;align-items:stretch;text-align:center}
-  .pdf-reminder-btn{width:100%}
-}
 
 /* ─── BLOCK 10 — СЛЕДУЮЩИЕ ШАГИ ─── */
 .b10-section{padding:18px 16px;background:var(--surface);border-radius:var(--radius-lg);margin-bottom:12px}
@@ -1011,7 +1000,6 @@ function renderResult(result){
     html += renderBlock1Html(result.block1);
     html += pdfHeroHtml();
     if(result.block10) html += renderBlock10Html(result.block10);
-    html += pdfReminderHtml();
     $('result-screen').innerHTML = html;
     return;
   }
@@ -1702,7 +1690,7 @@ function handleCta(action){
     $('result-screen').classList.remove('active');
     renderStep();
   } else if(action === 'download_pdf'){
-    alert('Скачивание PDF скоро будет доступно. Пока сделай скриншот страницы.');
+    downloadPDF('block10_cta');
   }
 }
 function showResultError(msg){
@@ -1720,21 +1708,11 @@ function pdfHeroHtml(){
     '</button>' +
   '</div>';
 }
-function pdfReminderHtml(){
-  return '<div class="pdf-reminder">' +
-    '<div class="pdf-reminder-icon">💾</div>' +
-    '<div class="pdf-reminder-text">' +
-      '<strong>Не забудьте сохранить отчёт</strong>' +
-      'Скачайте PDF чтобы вернуться к анализу, обсудить с партнёром или распечатать.' +
-    '</div>' +
-    '<button class="pdf-reminder-btn" id="pdf-btn-reminder" onclick="downloadPDF(\'reminder\')">📥 Скачать PDF</button>' +
-  '</div>';
-}
 function downloadPDF(sourceId){
   var body = window._lastBody;
   if(!body){ alert('Сначала запустите расчёт.'); return; }
-  // Блокируем обе кнопки на время генерации (может занимать 5-15 сек на первой загрузке шрифтов)
-  var btns = document.querySelectorAll('.pdf-download-btn, .pdf-reminder-btn');
+  // Блокируем кнопки на время генерации (5-15 сек на первой загрузке шрифтов).
+  var btns = document.querySelectorAll('.pdf-download-btn, .b10-cta-btn');
   var origLabels = [];
   btns.forEach(function(b, i){
     origLabels[i] = b.innerHTML;
@@ -1744,8 +1722,6 @@ function downloadPDF(sourceId){
   if(heroBtn){
     heroBtn.innerHTML = '<span class="pdf-icon">⏳</span><span class="pdf-main">Генерируем PDF...</span><span class="pdf-sub">это займёт 5-10 секунд</span>';
   }
-  var reminderBtn = document.getElementById('pdf-btn-reminder');
-  if(reminderBtn){ reminderBtn.textContent = '⏳ Генерируем...'; }
 
   apiPost('/quick-check/pdf', body, function(err, resp, raw){
     btns.forEach(function(b, i){
