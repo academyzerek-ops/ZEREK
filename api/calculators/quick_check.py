@@ -303,3 +303,10 @@ class QuickCheckCalculator:
             result.setdefault("user_inputs", {}).update(
                 {k: v for k, v in adaptive.items() if v is not None}
             )
+        # Прокидываем experience из specific_answers в result.input —
+        # чтобы renderer'ы (PDF, UI) могли читать его напрямую, без погружения
+        # в user_inputs.specific_answers.experience. Защита от рассинхрона.
+        sa = req.specific_answers or {}
+        exp = sa.get("experience")
+        if exp is not None:
+            result.setdefault("input", {})["experience"] = exp
