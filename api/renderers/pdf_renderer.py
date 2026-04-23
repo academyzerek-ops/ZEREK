@@ -1071,11 +1071,33 @@ def _invest_story(m: dict, st: dict) -> list:
         capex_rows.append((it.get("name", ""), f"{_fmt(it.get('amount', 0))} ₸"))
     capex_rows.append(("Итого CAPEX", f"{_fmt(m['invMin'])} ₸"))
 
-    buffer_total = m["bufferTotal"]
-    buffer_rows = [
-        ("Резерв на 3 месяца расходов", f"{_fmt(buffer_total)} ₸"),
-        ("Подушка всего", f"{_fmt(buffer_total)} ₸"),
+    # Раскрываем состав подушки: 3 × (OPEX-компоненты + соцплатежи ИП).
+    ob = m.get("opex_breakdown") or {}
+    social_m = m.get("social", 0)
+    breakdown_labels = [
+        ("rent",       "Аренда × 3 мес"),
+        ("fot",        "ФОТ × 3 мес"),
+        ("marketing",  "Маркетинг × 3 мес"),
+        ("utilities",  "Коммуналка × 3 мес"),
+        ("other",      "Прочее (расходники, софт) × 3 мес"),
     ]
+    buffer_rows = []
+    computed_total = 0
+    for key, label in breakdown_labels:
+        monthly = int(ob.get(key) or 0)
+        if monthly <= 0:
+            continue
+        three_m = monthly * 3
+        buffer_rows.append((label, f"{_fmt(three_m)} ₸"))
+        computed_total += three_m
+    if social_m > 0:
+        social_3m = int(social_m) * 3
+        buffer_rows.append(("Соцплатежи ИП × 3 мес", f"{_fmt(social_3m)} ₸"))
+        computed_total += social_3m
+    # Предпочитаем посчитанную сумму (бит-в-бит к компонентам).
+    # Fallback: m['bufferTotal'] если opex_breakdown пуст.
+    buffer_total = computed_total if buffer_rows else m.get("bufferTotal", 0)
+    buffer_rows.append(("Подушка всего", f"{_fmt(buffer_total)} ₸"))
 
     grand_total = m["invMin"] + buffer_total
     grand_row = Table(
