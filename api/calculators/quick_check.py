@@ -40,6 +40,7 @@ from services.economics_service import (  # noqa: E402
     compute_block6_capital,
     compute_pnl_aggregates,
 )
+from services.growth_service import compute_growth_block  # noqa: E402
 from services.market_service import compute_block3_market  # noqa: E402
 from services.risk_service import compute_block9_risks  # noqa: E402
 from services.seasonality_service import compute_block_season, compute_first_year_chart  # noqa: E402
@@ -223,6 +224,25 @@ class QuickCheckCalculator:
         try:
             result["block5"] = compute_block5_pnl(self.db, result, block1_inputs)
             result["block5"]["first_year_chart"] = compute_first_year_chart(result)
+        except Exception:
+            import traceback
+            traceback.print_exc()
+
+        # Growth scenarios — «А что дальше?» (берётся из YAML ниши).
+        # Рендерится на фронте между entrepreneur_income и first_year_chart.
+        try:
+            inp = result.get("input", {}) or {}
+            mature_profit = (
+                (result.get("pnl_aggregates") or {}).get("mature", {}).get("profit_monthly")
+                or 0
+            )
+            growth = compute_growth_block(
+                niche_id=inp.get("niche_id", "") or "",
+                format_id=inp.get("format_id", "") or "",
+                base_profit_monthly=int(mature_profit),
+            )
+            if growth:
+                result["growth_scenarios"] = growth
         except Exception:
             import traceback
             traceback.print_exc()

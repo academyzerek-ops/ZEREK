@@ -186,3 +186,27 @@ def test_manicure_home_unchanged_after_yaml_overlay():
     sens = report["block8"]["sensitivities"]
     traffic = next(s for s in sens if s["param"] == "Загрузка / трафик")
     assert traffic["impact_annual"] == -963_900
+
+
+def test_manicure_home_response_has_growth_scenarios():
+    """Блок «А что дальше?» подмешивается для MANICURE (из growth_scenarios YAML)."""
+    calc = QuickCheckCalculator(_db)
+    report = calc.run(_make_req())
+    gs = report.get("growth_scenarios")
+    assert gs is not None, "growth_scenarios должен быть в ответе для MANICURE"
+    assert gs["stagnation"]["label"]
+    assert gs["development"]["outcome_year3"]
+    assert len(gs["growth_factors"]) >= 3
+    assert gs["finmodel_cta"]["price"] == 9000
+
+
+def test_barber_response_has_no_growth_scenarios():
+    """У BARBER нет growth_scenarios в YAML → ключ отсутствует в ответе."""
+    calc = QuickCheckCalculator(_db)
+    req = _make_req(
+        city_id="aktobe", niche_id="BARBER", format_id="BARBER_STANDARD",
+        area_m2=60, loc_type="street", capital=10_000_000, start_month=4,
+        specific_answers={"experience": "some", "entrepreneur_role": "owner_only"},
+    )
+    report = calc.run(req)
+    assert "growth_scenarios" not in report

@@ -340,7 +340,8 @@ def compute_block2_passport(db, result, adaptive):
 # копирует их поверх legacy-структуры.
 _NEW_FORMAT_KEYS = (
     "block1", "block2", "block3", "block4", "block5", "block6",
-    "block_season", "block8", "block9", "block10", "user_inputs",
+    "block_season", "block8", "block9", "block10",
+    "growth_scenarios", "user_inputs",
 )
 
 

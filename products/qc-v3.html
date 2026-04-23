@@ -239,6 +239,27 @@ h2{font-size:22px;margin-bottom:6px}
 .b5-income-disclaimer{margin-top:10px;font-size:11px;color:var(--text-3);line-height:1.45;text-align:center}
 .b5-income-region{margin-top:10px;padding:8px 10px;background:rgba(34,197,94,0.05);border-left:2px solid rgba(34,197,94,0.4);border-radius:4px;font-size:12px;color:var(--text-2);line-height:1.45}
 
+/* ─── Growth scenarios (А что дальше?) — между block5 и инфографикой ─── */
+.growth-block{margin:20px 0;padding:18px;background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);border-radius:var(--radius-lg);border:1px solid rgba(16,185,129,0.22)}
+.growth-title{font-size:16px;font-weight:700;margin-bottom:8px;color:var(--text)}
+.growth-intro{font-size:14px;color:var(--text-2);margin-bottom:18px;line-height:1.5}
+.growth-scenarios{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.growth-scenario{padding:14px;border-radius:10px;border-left:3px solid}
+.growth-scenario-stagnation{background:rgba(107,114,128,0.10);border-left-color:#6b7280}
+.growth-scenario-development{background:rgba(16,185,129,0.10);border-left-color:#10b981}
+.scenario-label{font-size:14px;font-weight:600;margin-bottom:8px;color:var(--text)}
+.scenario-description{font-size:13px;color:var(--text-2);line-height:1.5;margin-bottom:10px;white-space:pre-line}
+.scenario-outcome{font-size:13.5px;font-weight:500;color:var(--text);padding:6px 10px;background:rgba(255,255,255,0.04);border-radius:6px;margin-top:6px}
+.scenario-warning{font-size:11.5px;color:#f59e0b;margin-top:8px}
+.growth-factors-title{font-size:14px;font-weight:600;margin:18px 0 10px;color:var(--text)}
+.growth-factor{padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06)}
+.growth-factor:last-child{border-bottom:none}
+.factor-title{font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text)}
+.factor-body{font-size:12px;color:var(--text-2);line-height:1.5;white-space:pre-line}
+.growth-finmodel-cta{margin-top:18px;padding:16px;background:linear-gradient(135deg,#059669 0%,#10b981 100%);border-radius:12px;text-align:center}
+.growth-cta-text{font-size:13px;color:#fff;margin-bottom:10px;line-height:1.4}
+.growth-cta-btn{display:inline-block;padding:10px 24px;background:#fff;color:#059669;border:none;border-radius:8px;font-weight:700;font-size:14px;margin-top:4px;cursor:pointer;font-family:inherit}
+
 /* ─── PDF hero (под вердиктом) + reminder (в конце отчёта) ─── */
 .pdf-download-hero{margin:20px 0;text-align:center}
 .pdf-download-btn{display:inline-block;padding:20px 32px;background:linear-gradient(135deg,#059669 0%,#10b981 100%);color:#fff;border:none;border-radius:16px;cursor:pointer;box-shadow:0 4px 20px rgba(16,185,129,0.3);transition:all 0.2s;width:100%;max-width:400px;font-family:inherit}
@@ -975,6 +996,9 @@ function renderResult(result){
     if(result.block3)  html += renderBlock3Html(result.block3);
     if(result.block4)  html += renderBlock4Html(result.block4);
     if(result.block5)  html += renderBlock5Html(result.block5);
+    // Блок «А что дальше?» (2 сценария + факторы роста + CTA) — после
+    // дохода предпринимателя, до инфографики 12 месяцев.
+    if(result.growth_scenarios) html += renderGrowthBlockHtml(result.growth_scenarios);
     // Персонализированный прогноз 12 мес (ramp + сезонность × start_month)
     // идёт ПЕРЕД общей сезонностью ниши — сначала конкретика, потом
     // эталонная картина.
@@ -1513,6 +1537,55 @@ function renderSeasonBlockHtml(bs){
     '<div class="blk-note" style="margin-top:10px">Для вашей ниши ' + escapeHtml(caption) + '.</div>' +
   '</div>';
   return html;
+}
+
+/* ─── Growth scenarios (А что дальше?) ─── */
+function renderGrowthBlockHtml(gs){
+  if(!gs) return '';
+  var stag = gs.stagnation || {};
+  var dev = gs.development || {};
+  var factors = gs.growth_factors || [];
+  var cta = gs.finmodel_cta || {};
+
+  var scenariosHtml = '';
+  scenariosHtml += '<div class="growth-scenario growth-scenario-stagnation">' +
+    '<div class="scenario-label">😐 '+escapeHtml(stag.label || '')+'</div>' +
+    '<div class="scenario-description">'+escapeHtml(stag.description || '')+'</div>' +
+    (stag.outcome ? '<div class="scenario-outcome">'+escapeHtml(stag.outcome)+'</div>' : '') +
+    (stag.warning ? '<div class="scenario-warning">⚠ '+escapeHtml(stag.warning)+'</div>' : '') +
+  '</div>';
+  scenariosHtml += '<div class="growth-scenario growth-scenario-development">' +
+    '<div class="scenario-label">🚀 '+escapeHtml(dev.label || '')+'</div>' +
+    '<div class="scenario-description">'+escapeHtml(dev.description || '')+'</div>' +
+    (dev.outcome_year2 ? '<div class="scenario-outcome">'+escapeHtml(dev.outcome_year2)+'</div>' : '') +
+    (dev.outcome_year3 ? '<div class="scenario-outcome" style="margin-top:4px">'+escapeHtml(dev.outcome_year3)+'</div>' : '') +
+  '</div>';
+
+  var factorsHtml = '';
+  factors.forEach(function(f, i){
+    factorsHtml += '<div class="growth-factor">' +
+      '<div class="factor-title">'+(i+1)+'. '+escapeHtml(f.title || '')+'</div>' +
+      '<div class="factor-body">'+escapeHtml(f.body || '')+'</div>' +
+    '</div>';
+  });
+
+  var ctaHtml = '';
+  if(cta && cta.text){
+    var priceLabel = cta.price ? cta.product+' '+fmt(cta.price)+' ₸' : cta.product;
+    ctaHtml = '<div class="growth-finmodel-cta">' +
+      '<div class="growth-cta-text">'+escapeHtml(cta.text)+'</div>' +
+      '<button class="growth-cta-btn" onclick="handleCta(\'buy_finmodel\')">→ '+escapeHtml(priceLabel)+'</button>' +
+    '</div>';
+  }
+
+  return '<div class="growth-block">' +
+    '<div class="growth-title">🎯 А что дальше?</div>' +
+    '<div class="growth-intro">Эти цифры — ваш первый год работы. Что будет через 2-3 года — зависит от вас.</div>' +
+    '<div class="growth-scenarios">' + scenariosHtml + '</div>' +
+    '<div class="growth-factors-title">Что нужно делать</div>' +
+    factorsHtml +
+    ctaHtml +
+  '</div>';
 }
 
 /* ─── Ваши первые 12 месяцев (first_year_chart) ─── */
