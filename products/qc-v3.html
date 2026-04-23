@@ -356,6 +356,22 @@ h2{font-size:22px;margin-bottom:6px}
 .growth-cta-text{font-size:13px;color:#fff;margin-bottom:10px;line-height:1.4}
 .growth-cta-btn{display:inline-block;padding:10px 24px;background:#fff;color:#059669;border:none;border-radius:8px;font-weight:700;font-size:14px;margin-top:4px;cursor:pointer;font-family:inherit}
 
+/* ─── PDF top card (сразу после паспорта бизнеса) ─── */
+.pdf-download-card-top{margin:20px 0 30px 0;padding:20px;background:linear-gradient(135deg,#1e3a8a 0%,#3730a3 100%);border-radius:16px;border:1px solid rgba(201,169,97,0.3);box-shadow:0 4px 16px rgba(0,0,0,0.3)}
+.pdf-download-content{display:flex;align-items:center;gap:16px}
+.pdf-download-content .pdf-icon{font-size:36px;flex-shrink:0}
+.pdf-download-content .pdf-text{flex:1;min-width:0}
+.pdf-download-content .pdf-title{font-weight:700;color:#FFFFFF;font-size:15px;margin-bottom:4px}
+.pdf-download-content .pdf-subtitle{font-size:12px;color:rgba(255,255,255,0.7);line-height:1.4}
+.pdf-btn-top{padding:12px 20px;background:#C9A961;color:#1A1A1A;border:none;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:all 0.2s ease;flex-shrink:0;font-family:inherit}
+.pdf-btn-top:hover{background:#E8D9B0;transform:translateY(-1px)}
+.pdf-btn-top:active{transform:translateY(0)}
+.pdf-btn-top:disabled{opacity:0.7;cursor:wait}
+@media (max-width:500px){
+  .pdf-download-content{flex-direction:column;text-align:center}
+  .pdf-btn-top{width:100%}
+}
+
 /* ─── PDF hero (под вердиктом) + reminder (в конце отчёта) ─── */
 .pdf-download-hero{margin:20px 0;text-align:center}
 .pdf-download-btn{display:inline-block;padding:20px 32px;background:linear-gradient(135deg,#059669 0%,#10b981 100%);color:#fff;border:none;border-radius:16px;cursor:pointer;box-shadow:0 4px 20px rgba(16,185,129,0.3);transition:all 0.2s;width:100%;max-width:400px;font-family:inherit}
@@ -1078,6 +1094,10 @@ function renderResult(result){
   if(result.block1){
     var html = '';
     if(result.block2)  html += renderBlock2Html(result.block2);
+    // Верхняя кнопка «Скачать PDF» — сразу после паспорта бизнеса.
+    // Клиент заплатил 5 000 ₸ и должен сразу видеть, что отчёт готов
+    // к скачиванию, не листая до самого конца.
+    html += pdfTopCardHtml();
     if(result.block3)  html += renderBlock3Html(result.block3);
     if(result.block4)  html += renderBlock4Html(result.block4);
     if(result.block5)  html += renderBlock5Html(result.block5);
@@ -2067,6 +2087,18 @@ function showResultError(msg){
   $('result-screen').innerHTML = '<div class="result-err">'+escapeHtml(msg)+'</div>';
 }
 
+function pdfTopCardHtml(){
+  return '<div class="pdf-download-card-top">' +
+    '<div class="pdf-download-content">' +
+      '<div class="pdf-icon">📄</div>' +
+      '<div class="pdf-text">' +
+        '<div class="pdf-title">Ваш полный отчёт готов</div>' +
+        '<div class="pdf-subtitle">Скачайте в PDF для удобного изучения и распечатки</div>' +
+      '</div>' +
+      '<button class="pdf-btn-top" onclick="downloadPDF(\'top\')">Скачать PDF</button>' +
+    '</div>' +
+  '</div>';
+}
 function pdfHeroHtml(){
   return '<div class="pdf-download-hero">' +
     '<button class="pdf-download-btn" id="pdf-btn-hero" onclick="downloadPDF(\'hero\')">' +
@@ -2079,36 +2111,73 @@ function pdfHeroHtml(){
 function downloadPDF(sourceId){
   var body = window._lastBody;
   if(!body){ alert('Сначала запустите расчёт.'); return; }
-  // Блокируем кнопки на время генерации (5-15 сек на первой загрузке шрифтов).
-  var btns = document.querySelectorAll('.pdf-download-btn, .b10-cta-btn');
+  // Блокируем все pdf-кнопки отчёта на время генерации (5-15 сек).
+  var btns = document.querySelectorAll('.pdf-btn-top, .pdf-download-btn, .pdf-reminder-btn, .b10-cta-btn');
   var origLabels = [];
   btns.forEach(function(b, i){
     origLabels[i] = b.innerHTML;
     b.disabled = true;
+    // Верхняя кнопка / reminder — короткая подпись «Готовится...»
+    if(b.classList.contains('pdf-btn-top') || b.classList.contains('pdf-reminder-btn')){
+      b.textContent = 'Готовится...';
+    }
   });
   var heroBtn = document.getElementById('pdf-btn-hero');
   if(heroBtn){
     heroBtn.innerHTML = '<span class="pdf-icon">⏳</span><span class="pdf-main">Генерируем PDF...</span><span class="pdf-sub">это займёт 5-10 секунд</span>';
   }
 
-  apiPost('/quick-check/pdf', body, function(err, resp, raw){
+  function restore(label){
     btns.forEach(function(b, i){
       b.disabled = false;
-      b.innerHTML = origLabels[i];
-    });
-    if(err){ alert('Не удалось сгенерировать PDF: ' + err.message); return; }
-    var url = resp && resp.pdf_url;
-    if(!url){ alert('PDF не пришёл. Попробуйте ещё раз.'); return; }
-    var full = API + url;
-    try {
-      if(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink){
-        window.Telegram.WebApp.openLink(full);
+      if(label !== undefined && (b.classList.contains('pdf-btn-top') || b.classList.contains('pdf-reminder-btn'))){
+        b.textContent = label;
       } else {
+        b.innerHTML = origLabels[i];
+      }
+    });
+  }
+
+  apiPost('/quick-check/pdf', body, function(err, resp, raw){
+    if(err){
+      console.error('PDF error:', err, raw);
+      restore('Попробовать снова');
+      alert('Ошибка при скачивании PDF. Попробуйте ещё раз или напишите в поддержку.');
+      return;
+    }
+    var url = resp && resp.pdf_url;
+    if(!url){
+      restore('Попробовать снова');
+      alert('PDF не пришёл. Попробуйте ещё раз.');
+      return;
+    }
+    var full = API + url;
+    var filename = (resp && resp.filename) || 'ZEREK_QuickCheck.pdf';
+    // Предпочитаем прямой <a download> click — работает и на iOS, и на Android,
+    // и в Telegram WebApp. openLink сохраняем как fallback.
+    try {
+      var a = document.createElement('a');
+      a.href = full;
+      a.download = filename;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function(){ try { a.remove(); } catch(e){} }, 0);
+    } catch(e1){
+      try {
+        if(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink){
+          window.Telegram.WebApp.openLink(full);
+        } else {
+          window.open(full, '_blank');
+        }
+      } catch(e2){
         window.open(full, '_blank');
       }
-    } catch(e){
-      window.open(full, '_blank');
     }
+    // Success indicator на 3 секунды — потом возвращаем оригинал.
+    restore('✓ Скачано');
+    setTimeout(function(){ restore(); }, 3000);
   });
 }
 function extractKpis(r){
