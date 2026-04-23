@@ -1,0 +1,2454 @@
+meta:
+  version: '2.0'
+  year: 2026
+  last_updated: '2026-04-23'
+  description: 'Маркетинговая модель ZEREK v2: 16 архетипов, 4 типа каналов, 3 метрики retention, 5 драйверов выбора'
+  source: ZEREK Marketing Archetypes v2 methodology review
+archetypes:
+  A1:
+    id: A1
+    name_ru: Beauty & Personal Care
+    demand_type: planned recurring
+    retention_level: High (60-75%)
+    formula_type: ramp_up_with_retention
+    primary_channel: Instagram визуал + сарафан
+    unfair_advantage: Личный бренд мастера
+    ltv_horizon: Months-years
+    growth_ceiling: scalable_with_team
+    customer_type: B2C
+    note_ru: Ключ — визуальный контент + ретеншен через качество
+  A2:
+    id: A2
+    name_ru: Impulse Food & Beverage
+    demand_type: impulse
+    retention_level: Medium (40-60%)
+    formula_type: geo_traffic_with_light_retention
+    primary_channel: Локация + вывеска + 2GIS
+    unfair_advantage: Проходимость + вывеска
+    ltv_horizon: Days-months
+    growth_ceiling: location_limit
+    customer_type: B2C
+    note_ru: Кофейни/пекарни — локация решает. Инста для бренда.
+  A3:
+    id: A3
+    name_ru: Food Delivery Kitchen
+    demand_type: planned recurring
+    retention_level: Medium (50-60%)
+    formula_type: delivery_platforms_with_retention
+    primary_channel: Wolt/Glovo/Яндекс.Еда
+    unfair_advantage: Вкус + скорость доставки
+    ltv_horizon: Months-years
+    growth_ceiling: scalable_via_platforms
+    customer_type: B2C
+    note_ru: Клиенты с агрегаторов. Комиссия 15-30% — не бюджет, а вычет.
+  A4:
+    id: A4
+    name_ru: Urgent Health & Eyecare
+    demand_type: urgent + planned
+    retention_level: Mixed (30-65%)
+    formula_type: bimodal_urgent_plus_preventive
+    primary_channel: Google + 2GIS + отзывы
+    unfair_advantage: Экспертиза + доверие + локация
+    ltv_horizon: Years
+    growth_ceiling: scalable_with_team
+    customer_type: B2C
+    note_ru: DENTAL/OPTICS — разовые urgent + регулярная профилактика
+  A5:
+    id: A5
+    name_ru: Recurring Pet Health
+    demand_type: recurring trust
+    retention_level: Very High (75%+)
+    formula_type: trust_retention_core
+    primary_channel: Сарафан владельцев + 2GIS
+    unfair_advantage: Доверие к конкретному врачу
+    ltv_horizon: Years (pet lifetime)
+    growth_ceiling: scalable_with_team
+    customer_type: B2C
+    note_ru: VET — любимца ведут годами. Retention - главный драйвер.
+  A6:
+    id: A6
+    name_ru: Episodic Transactional
+    demand_type: urgent transactional
+    retention_level: Low (10-20%)
+    formula_type: flat_cac_no_retention
+    primary_channel: OLX + паблики + сарафан
+    unfair_advantage: Цена + доступность сейчас
+    ltv_horizon: Days
+    growth_ceiling: scalable_via_platforms
+    customer_type: B2C
+    note_ru: CARGO/CARPETCLEAN — разовые услуги через агрегаторы
+  A7:
+    id: A7
+    name_ru: Local Everyday Services
+    demand_type: urgent routine
+    retention_level: High (55-70%)
+    formula_type: walk_in_plus_locality_retention
+    primary_channel: 2GIS + карты + вывеска
+    unfair_advantage: Локация + привычка
+    ltv_horizon: Years
+    growth_ceiling: location_limit
+    customer_type: B2C
+    note_ru: Аптеки, химчистки, ПВЗ, ателье — локация и привычка
+  A8:
+    id: A8
+    name_ru: Visual Gift Retail
+    demand_type: emotion-driven episodic
+    retention_level: Low (20-35%)
+    formula_type: visual_conversion_with_delivery
+    primary_channel: Instagram-витрина + доставка
+    unfair_advantage: Визуал + скорость доставки
+    ltv_horizon: Months (events)
+    growth_ceiling: scalable_via_platforms
+    customer_type: B2C
+    note_ru: Цветы, торты — покупатель ≠ получатель, событийный спрос
+  A9:
+    id: A9
+    name_ru: Staple Retail
+    demand_type: routine + urgent
+    retention_level: Medium (40-55%)
+    formula_type: geo_traffic_with_loyalty
+    primary_channel: 2GIS + локация + лояльность
+    unfair_advantage: Локация + свежесть + цены
+    ltv_horizon: Years
+    growth_ceiling: location_limit
+    customer_type: B2C
+    note_ru: Продукты, мясо, овощи, корма — повседневные покупки
+  A10:
+    id: A10
+    name_ru: Recurring Delivery Subscription
+    demand_type: subscription recurring
+    retention_level: Very High (75%+)
+    formula_type: acquisition_heavy_upfront_then_retention
+    primary_channel: 'Старт: реклама. Потом: retention'
+    unfair_advantage: Удобство + регулярность + привычка
+    ltv_horizon: Years
+    growth_ceiling: scalable_with_team
+    customer_type: B2C
+    note_ru: WATERPLANT — подписка, высокий LTV, старт дорогой
+  A11:
+    id: A11
+    name_ru: High-Ticket Episodic
+    demand_type: considered episodic
+    retention_level: Very Low (<15%)
+    formula_type: high_cac_single_sale
+    primary_channel: Таргет + отзывы + портфолио
+    unfair_advantage: Доверие + уникальность
+    ltv_horizon: Days-weeks
+    growth_ceiling: high_ceiling
+    customer_type: B2C/mixed
+    note_ru: Мебель, фото, обучение вождению — разовые сделки
+  A12:
+    id: A12
+    name_ru: Subscription Wellness & Education
+    demand_type: subscription planned
+    retention_level: High (65-75%)
+    formula_type: trial_to_retention_funnel
+    primary_channel: Пробный урок → retention
+    unfair_advantage: Результат + сообщество
+    ltv_horizon: Months-years
+    growth_ceiling: scalable_with_team
+    customer_type: B2C
+    note_ru: Фитнес, йога, языки, детские сады — абонементы
+  A13:
+    id: A13
+    name_ru: B2B Project Services
+    demand_type: project-based B2B
+    retention_level: Medium (30-50%)
+    formula_type: networking_plus_expertise
+    primary_channel: Нетворкинг + Инста-экспертиза
+    unfair_advantage: Репутация + кейсы
+    ltv_horizon: Months-years
+    growth_ceiling: high_ceiling
+    customer_type: B2B
+    note_ru: Кейтеринг событий, бухгалтерия — B2B контракты
+  A14:
+    id: A14
+    name_ru: Hospitality & Travel
+    demand_type: episodic travel
+    retention_level: Low (15-25%)
+    formula_type: platform_plus_corporate_contracts
+    primary_channel: 2GIS + корп.договоры + OTA
+    unfair_advantage: Локация + рейтинг + цена
+    ltv_horizon: Days
+    growth_ceiling: scalable_via_platforms
+    customer_type: B2C/B2B
+    note_ru: Отели, риелторы — платформенная зависимость
+  A15:
+    id: A15
+    name_ru: Youth Entertainment Venue
+    demand_type: impulse social
+    retention_level: Medium (45-60%)
+    formula_type: tiktok_plus_geo_plus_events
+    primary_channel: TikTok + геотаргет + мероприятия
+    unfair_advantage: Атмосфера + сообщество + события
+    ltv_horizon: Months
+    growth_ceiling: location_limit
+    customer_type: B2C
+    note_ru: Компьютерные клубы — молодёжная механика
+  A16:
+    id: A16
+    name_ru: Corporate Canteen B2B+B2C
+    demand_type: planned routine
+    retention_level: High (70%)
+    formula_type: corporate_location_plus_retention
+    primary_channel: Локация у офисов + B2B-договоры
+    unfair_advantage: Близость к офисам + стабильность
+    ltv_horizon: Years
+    growth_ceiling: location_limit
+    customer_type: mixed
+    note_ru: Столовые — B2B + офисный трафик
+channels:
+  ch01:
+    id: ch01
+    name_ru: Instagram таргет
+    type: PAID
+    cost_model: CPM/CPC
+    typical_cost_ru: 500-2000 ₸/клик, 1-3К ₸/клиент
+    relevant_archetypes: A1, A2, A3, A8, A11, A12, A13, A14, A15
+    works_in_kz: Да, топ-1
+    note_ru: Главный платный канал КЗ. Таргет по городу/интересам.
+  ch02:
+    id: ch02
+    name_ru: TikTok реклама
+    type: PAID
+    cost_model: CPM/CPC
+    typical_cost_ru: 1500-4000 ₸/клиент
+    relevant_archetypes: A15, крупные Beauty
+    works_in_kz: Редко
+    note_ru: Платно мало используют. Только youth-бренды.
+  ch03:
+    id: ch03
+    name_ru: Покупка постов в пабликах
+    type: PAID
+    cost_model: Fixed per post
+    typical_cost_ru: 5-30К за пост
+    relevant_archetypes: A2, A6, A8, A11, локальные
+    works_in_kz: Да
+    note_ru: Городские паблики Инстаграма («Актобе афиша»).
+  ch04:
+    id: ch04
+    name_ru: Блогеры (paid)
+    type: PAID
+    cost_model: Fixed per post
+    typical_cost_ru: 10-50К за пост
+    relevant_archetypes: A1, A2, A8, A12, A15
+    works_in_kz: Да
+    note_ru: Микроблогеры 2-10К подписчиков дают лучший ROI.
+  ch05:
+    id: ch05
+    name_ru: Google Ads
+    type: PAID
+    cost_model: CPC
+    typical_cost_ru: 2-8К ₸/клиент
+    relevant_archetypes: A4, A11 (мебель), A12 (образование), A13, A14
+    works_in_kz: Да, но меньше Инсты
+    note_ru: Для услуг где ищут в поисковике (дантист, курсы).
+  ch06:
+    id: ch06
+    name_ru: Яндекс.Директ
+    type: PAID
+    cost_model: CPC
+    typical_cost_ru: 1.5-6К ₸/клиент
+    relevant_archetypes: A4, A13, A14
+    works_in_kz: Да
+    note_ru: Работает лучше в регионах. Аналог Google Ads.
+  ch07:
+    id: ch07
+    name_ru: 2GIS продвижение
+    type: PAID
+    cost_model: Subscription
+    typical_cost_ru: 30-100К/мес
+    relevant_archetypes: A2, A7, A9, A14 (отели)
+    works_in_kz: Да, критично
+    note_ru: Платное продвижение внутри 2GIS. Для офлайн-точек.
+  ch08:
+    id: ch08
+    name_ru: OLX платные listings
+    type: PAID
+    cost_model: Fixed per listing
+    typical_cost_ru: 500-3К за объявление
+    relevant_archetypes: A6, A11 (запчасти, мебель б/у)
+    works_in_kz: Да
+    note_ru: Главная площадка для transactional и b/u.
+  ch09:
+    id: ch09
+    name_ru: Krisha.kz продвижение
+    type: PAID
+    cost_model: Fixed per listing
+    typical_cost_ru: 1-10К/объявление
+    relevant_archetypes: A14 (недвижимость)
+    works_in_kz: Да
+    note_ru: Специализированная площадка для риелторов.
+  ch10:
+    id: ch10
+    name_ru: Wolt / Glovo / Яндекс.Еда
+    type: PLATFORM
+    cost_model: Commission
+    typical_cost_ru: 15-30% комиссии
+    relevant_archetypes: A3, A16
+    works_in_kz: Да
+    note_ru: Клиенты с агрегаторов. НЕ бюджет, а вычет из маржи.
+  ch11:
+    id: ch11
+    name_ru: Booking.com / OTAs
+    type: PLATFORM
+    cost_model: Commission
+    typical_cost_ru: 15-25% комиссии
+    relevant_archetypes: A14 (отели)
+    works_in_kz: Слабо в КЗ
+    note_ru: Для туризма в Алматы/Астане. В регионах не работает.
+  ch12:
+    id: ch12
+    name_ru: Kaspi Магазин (продвижение)
+    type: PLATFORM
+    cost_model: Commission + promo
+    typical_cost_ru: 3-8% + реклама
+    relevant_archetypes: A7, A8, A9, A11 (ритейл)
+    works_in_kz: Да
+    note_ru: Маркетплейс. Продвижение внутри платформы.
+  ch13:
+    id: ch13
+    name_ru: Satu.kz
+    type: PLATFORM
+    cost_model: Commission/subscription
+    typical_cost_ru: 1-5К ₸/клиент
+    relevant_archetypes: A9, A11
+    works_in_kz: Ограниченно
+    note_ru: Каталог товаров. Менее актуален чем Kaspi.
+  ch14:
+    id: ch14
+    name_ru: 2GIS профиль
+    type: INFRASTRUCTURE
+    cost_model: Free/basic
+    typical_cost_ru: 0 ₸ (базовый)
+    relevant_archetypes: ВСЕ офлайн-бизнесы
+    works_in_kz: Обязательно
+    note_ru: Бесплатный профиль — must have. Фото, отзывы, часы.
+  ch15:
+    id: ch15
+    name_ru: Google Maps / Яндекс.Карты
+    type: INFRASTRUCTURE
+    cost_model: Free
+    typical_cost_ru: 0 ₸
+    relevant_archetypes: Все офлайн
+    works_in_kz: Да
+    note_ru: Обязательное присутствие. Отзывы важны.
+  ch16:
+    id: ch16
+    name_ru: Instagram аккаунт (органический)
+    type: INFRASTRUCTURE
+    cost_model: Time-investment
+    typical_cost_ru: 0 ₸ + 5-10 ч/неделя
+    relevant_archetypes: A1, A2, A3, A8, A11, A12, A13
+    works_in_kz: Обязательно
+    note_ru: Ведение аккаунта — time investment, не деньги.
+  ch17:
+    id: ch17
+    name_ru: Физическая вывеска
+    type: INFRASTRUCTURE
+    cost_model: One-time CAPEX
+    typical_cost_ru: 50-200К разово
+    relevant_archetypes: A2, A7, A9, A16
+    works_in_kz: Критично для локации
+    note_ru: Для food/local hub — 30-40% трафика с улицы.
+  ch18:
+    id: ch18
+    name_ru: Word-of-Mouth (сарафан)
+    type: ORGANIC
+    cost_model: Free
+    typical_cost_ru: 0 ₸
+    relevant_archetypes: A1, A4, A5, A7, A12, A13
+    works_in_kz: Очень важно
+    note_ru: Бесплатно, но включается с 3-4 месяца работы.
+  ch19:
+    id: ch19
+    name_ru: TikTok органика
+    type: ORGANIC
+    cost_model: Time-investment
+    typical_cost_ru: 0 ₸ + 3-5 ч/неделя
+    relevant_archetypes: A1, A2, A8, A12, A15
+    works_in_kz: Растёт
+    note_ru: Рилсы + обучающий контент. Платно редко.
+  ch20:
+    id: ch20
+    name_ru: Referral program
+    type: ORGANIC
+    cost_model: Bonus per referral
+    typical_cost_ru: 5-10% от услуги
+    relevant_archetypes: A1, A5, A7, A12
+    works_in_kz: Эффективно
+    note_ru: Бонусы за приведённых. Технически paid, но низкозатратно.
+  ch21:
+    id: ch21
+    name_ru: Walk-in traffic
+    type: ORGANIC
+    cost_model: Location-dependent
+    typical_cost_ru: 0 ₸ (после вывески)
+    relevant_archetypes: A2, A7, A9, A16
+    works_in_kz: Критично
+    note_ru: Пешеходный трафик. 25-40% клиентов для food/retail.
+  ch22:
+    id: ch22
+    name_ru: Reviews / UGC
+    type: ORGANIC
+    cost_model: Incentivize
+    typical_cost_ru: 0-5К ₸ в бонусах
+    relevant_archetypes: A1, A4, A11, A14
+    works_in_kz: Растёт
+    note_ru: Поощрять отзывы на 2GIS, Google Maps, Инсте.
+  ch23:
+    id: ch23
+    name_ru: ВКонтакте реклама
+    type: PAID
+    cost_model: CPM/CPC
+    typical_cost_ru: n/a
+    relevant_archetypes: НЕТ
+    works_in_kz: НЕТ
+    note_ru: В Казахстане ВК практически не используется.
+  ch24:
+    id: ch24
+    name_ru: Telegram каналы
+    type: PAID
+    cost_model: Fixed per post
+    typical_cost_ru: 5-30К за пост
+    relevant_archetypes: Специфические B2B, образование
+    works_in_kz: Слабо
+    note_ru: В КЗ Telegram слабее чем Инста. Нишевые аудитории.
+niches:
+  ACCOUNTING:
+    archetype: A13
+    demand_type: subscription B2B
+    frequency: monthly
+    decision_cycle: weeks
+    customer_type: B2B
+    retention_metrics:
+      ncs_m1: 85
+      ncs_m6: 40
+      ncs_m12: 25
+      r30: 90
+      rc12: 75
+    note_ru: Абонементное бухгалтерское
+    choice_drivers:
+      price: 3
+      location: 2
+      visual: 1
+      trust: 5
+      speed: 2
+      top_driver: Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 30
+        pabliki: 15
+        bloggers: 5
+        google_yandex: 30
+        gis_paid: 20
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 55
+        walk_in: 0
+        content: 15
+        referrals: 15
+  AUTOPARTS:
+    archetype: A11
+    demand_type: project-based + urgent
+    frequency: quarterly
+    decision_cycle: days
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 90
+      ncs_m6: 65
+      ncs_m12: 50
+      r30: 15
+      rc12: 30
+    note_ru: Запчасти под ремонт
+    choice_drivers:
+      price: 5
+      location: 3
+      visual: 1
+      trust: 4
+      speed: 4
+      top_driver: Price+Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 20
+        pabliki: 10
+        bloggers: 5
+        google_yandex: 20
+        gis_paid: 25
+        olx_krisha: 20
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 5
+      organic_flow_allocation:
+        sarafan: 45
+        walk_in: 10
+        content: 5
+        referrals: 5
+  AUTOSERVICE:
+    archetype: A7
+    demand_type: urgent + planned
+    frequency: quarterly
+    decision_cycle: days
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 85
+      ncs_m6: 50
+      ncs_m12: 35
+      r30: 25
+      rc12: 55
+    note_ru: СТО — постоянные по машинам
+    choice_drivers:
+      price: 3
+      location: 3
+      visual: 1
+      trust: 5
+      speed: 2
+      top_driver: Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 20
+        pabliki: 15
+        bloggers: 5
+        google_yandex: 10
+        gis_paid: 40
+        olx_krisha: 10
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 50
+        walk_in: 15
+        content: 10
+        referrals: 15
+  BAKERY:
+    archetype: A2
+    demand_type: impulse + routine
+    frequency: weekly
+    decision_cycle: seconds
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 80
+      ncs_m6: 30
+      ncs_m12: 15
+      r30: 55
+      rc12: 40
+    note_ru: Утренний routine
+    choice_drivers:
+      price: 3
+      location: 5
+      visual: 3
+      trust: 3
+      speed: 3
+      top_driver: Location
+    channels:
+      paid_budget_allocation:
+        instagram: 30
+        pabliki: 20
+        bloggers: 10
+        google_yandex: 0
+        gis_paid: 40
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 15
+        walk_in: 45
+        content: 10
+        referrals: 5
+  BARBER:
+    archetype: A1
+    demand_type: planned recurring
+    frequency: weekly-monthly
+    decision_cycle: hours
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 90
+      ncs_m6: 40
+      ncs_m12: 25
+      r30: 80
+      rc12: 60
+    note_ru: Мужчины стригутся чаще
+    choice_drivers:
+      price: 3
+      location: 3
+      visual: 4
+      trust: 5
+      speed: 3
+      top_driver: Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 50
+        pabliki: 25
+        bloggers: 10
+        google_yandex: 5
+        gis_paid: 10
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 40
+        walk_in: 5
+        content: 15
+        referrals: 10
+  BEAUTY:
+    archetype: A1
+    demand_type: planned recurring
+    frequency: monthly
+    decision_cycle: hours-days
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 90
+      ncs_m6: 45
+      ncs_m12: 25
+      r30: 70
+      rc12: 55
+    note_ru: Универсальный салон
+    choice_drivers:
+      price: 3
+      location: 2
+      visual: 5
+      trust: 5
+      speed: 2
+      top_driver: Visual+Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 50
+        pabliki: 20
+        bloggers: 15
+        google_yandex: 5
+        gis_paid: 10
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 35
+        walk_in: 0
+        content: 20
+        referrals: 10
+  BROW:
+    archetype: A1
+    demand_type: planned recurring
+    frequency: monthly
+    decision_cycle: hours-days
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 95
+      ncs_m6: 50
+      ncs_m12: 25
+      r30: 65
+      rc12: 50
+    choice_drivers:
+      price: 3
+      location: 2
+      visual: 5
+      trust: 5
+      speed: 2
+      top_driver: Visual+Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 60
+        pabliki: 15
+        bloggers: 15
+        google_yandex: 0
+        gis_paid: 10
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 30
+        walk_in: 0
+        content: 25
+        referrals: 10
+  BUBBLETEA:
+    archetype: A2
+    demand_type: impulse social
+    frequency: monthly
+    decision_cycle: minutes
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 90
+      ncs_m6: 45
+      ncs_m12: 25
+      r30: 35
+      rc12: 30
+    note_ru: Youth, TikTok-зависимая
+    choice_drivers:
+      price: 3
+      location: 4
+      visual: 5
+      trust: 3
+      speed: 3
+      top_driver: Visual
+    channels:
+      paid_budget_allocation:
+        instagram: 40
+        pabliki: 20
+        bloggers: 15
+        google_yandex: 0
+        gis_paid: 25
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 20
+        walk_in: 30
+        content: 30
+        referrals: 5
+  BUILDMAT:
+    archetype: A11
+    demand_type: project-based
+    frequency: once-years
+    decision_cycle: weeks
+    customer_type: B2C/B2B
+    retention_metrics:
+      ncs_m1: 90
+      ncs_m6: 65
+      ncs_m12: 50
+      r30: 10
+      rc12: 20
+    note_ru: Стройка/ремонт
+    choice_drivers:
+      price: 4
+      location: 4
+      visual: 2
+      trust: 4
+      speed: 3
+      top_driver: Price+Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 25
+        pabliki: 10
+        bloggers: 5
+        google_yandex: 10
+        gis_paid: 30
+        olx_krisha: 20
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 5
+      organic_flow_allocation:
+        sarafan: 45
+        walk_in: 15
+        content: 10
+        referrals: 5
+  CANTEEN:
+    archetype: A16
+    demand_type: routine B2B+B2C
+    frequency: daily
+    decision_cycle: seconds
+    customer_type: B2C/B2B
+    retention_metrics:
+      ncs_m1: 80
+      ncs_m6: 20
+      ncs_m12: 10
+      r30: 85
+      rc12: 70
+    note_ru: Офисные столовые
+    choice_drivers:
+      price: 5
+      location: 5
+      visual: 2
+      trust: 3
+      speed: 4
+      top_driver: Price+Location
+    channels:
+      paid_budget_allocation:
+        instagram: 15
+        pabliki: 20
+        bloggers: 0
+        google_yandex: 5
+        gis_paid: 55
+        olx_krisha: 5
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 30
+        walk_in: 50
+        content: 5
+        referrals: 5
+  CARGO:
+    archetype: A6
+    demand_type: urgent transactional
+    frequency: yearly
+    decision_cycle: hours
+    customer_type: B2C/B2B
+    retention_metrics:
+      ncs_m1: 95
+      ncs_m6: 85
+      ncs_m12: 75
+      r30: 10
+      rc12: 15
+    note_ru: Разовые услуги
+    choice_drivers:
+      price: 5
+      location: 2
+      visual: 0
+      trust: 2
+      speed: 4
+      top_driver: Price
+    channels:
+      paid_budget_allocation:
+        instagram: 10
+        pabliki: 10
+        bloggers: 0
+        google_yandex: 0
+        gis_paid: 20
+        olx_krisha: 60
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 30
+        walk_in: 0
+        content: 0
+        referrals: 10
+    platform_dependency:
+      archetype: A6
+      risk_level: HIGH
+      main_platforms: OLX
+      alternative_channels: Прямой сайт, сарафан, Инста
+      recommendation_ru: OLX — главный источник. Развивать сарафан для снижения CAC.
+  CARPETCLEAN:
+    archetype: A6
+    demand_type: urgent transactional
+    frequency: yearly
+    decision_cycle: hours
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 90
+      ncs_m6: 75
+      ncs_m12: 65
+      r30: 10
+      rc12: 20
+    note_ru: Ковры — редкая услуга
+    choice_drivers:
+      price: 4
+      location: 3
+      visual: 1
+      trust: 3
+      speed: 3
+      top_driver: Price+Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 20
+        pabliki: 15
+        bloggers: 0
+        google_yandex: 10
+        gis_paid: 15
+        olx_krisha: 40
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 35
+        walk_in: 0
+        content: 5
+        referrals: 10
+    platform_dependency:
+      archetype: A6
+      risk_level: MEDIUM
+      main_platforms: OLX
+      alternative_channels: Инста, 2GIS, прямые звонки
+      recommendation_ru: null
+  CARWASH:
+    archetype: A7
+    demand_type: planned recurring
+    frequency: monthly
+    decision_cycle: minutes
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 80
+      ncs_m6: 40
+      ncs_m12: 25
+      r30: 55
+      rc12: 55
+    note_ru: Сезонность
+    choice_drivers:
+      price: 3
+      location: 5
+      visual: 2
+      trust: 3
+      speed: 4
+      top_driver: Location
+    channels:
+      paid_budget_allocation:
+        instagram: 15
+        pabliki: 20
+        bloggers: 0
+        google_yandex: 5
+        gis_paid: 50
+        olx_krisha: 10
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 35
+        walk_in: 25
+        content: 5
+        referrals: 15
+  CATERING:
+    archetype: A13
+    demand_type: project-based B2B
+    frequency: quarterly
+    decision_cycle: days-weeks
+    customer_type: B2B
+    retention_metrics:
+      ncs_m1: 90
+      ncs_m6: 60
+      ncs_m12: 40
+      r30: 20
+      rc12: 45
+    note_ru: События и корпоративы
+    choice_drivers:
+      price: 4
+      location: 2
+      visual: 5
+      trust: 5
+      speed: 3
+      top_driver: Trust+Visual
+    channels:
+      paid_budget_allocation:
+        instagram: 45
+        pabliki: 15
+        bloggers: 10
+        google_yandex: 10
+        gis_paid: 20
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 40
+        walk_in: 0
+        content: 25
+        referrals: 10
+  COFFEE:
+    archetype: A2
+    demand_type: impulse + daily habit
+    frequency: daily-weekly
+    decision_cycle: seconds
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 85
+      ncs_m6: 30
+      ncs_m12: 15
+      r30: 60
+      rc12: 45
+    note_ru: Завсегдатаи = retention
+    choice_drivers:
+      price: 3
+      location: 5
+      visual: 4
+      trust: 3
+      speed: 4
+      top_driver: Location
+    channels:
+      paid_budget_allocation:
+        instagram: 40
+        pabliki: 20
+        bloggers: 10
+        google_yandex: 0
+        gis_paid: 30
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 15
+        walk_in: 40
+        content: 20
+        referrals: 5
+  COMPCLUB:
+    archetype: A15
+    demand_type: impulse social
+    frequency: weekly
+    decision_cycle: minutes
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 90
+      ncs_m6: 50
+      ncs_m12: 25
+      r30: 45
+      rc12: 35
+    note_ru: Молодёжь, TikTok-зависимая
+    choice_drivers:
+      price: 4
+      location: 5
+      visual: 4
+      trust: 3
+      speed: 3
+      top_driver: Location+Visual
+    channels:
+      paid_budget_allocation:
+        instagram: 40
+        pabliki: 15
+        bloggers: 10
+        google_yandex: 0
+        gis_paid: 35
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 25
+        walk_in: 30
+        content: 30
+        referrals: 10
+  CONFECTION:
+    archetype: A8
+    demand_type: planned events
+    frequency: monthly events
+    decision_cycle: days
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 90
+      ncs_m6: 55
+      ncs_m12: 30
+      r30: 20
+      rc12: 25
+    note_ru: Торты на заказ
+    choice_drivers:
+      price: 4
+      location: 2
+      visual: 5
+      trust: 4
+      speed: 2
+      top_driver: Visual+Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 60
+        pabliki: 15
+        bloggers: 15
+        google_yandex: 0
+        gis_paid: 10
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 5
+      organic_flow_allocation:
+        sarafan: 20
+        walk_in: 5
+        content: 30
+        referrals: 5
+  COSMETOLOGY:
+    archetype: A1
+    demand_type: planned + considered
+    frequency: quarterly
+    decision_cycle: days-weeks
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 90
+      ncs_m6: 55
+      ncs_m12: 40
+      r30: 40
+      rc12: 35
+    note_ru: Дорогие процедуры, реже возвращаются
+    choice_drivers:
+      price: 4
+      location: 3
+      visual: 4
+      trust: 5
+      speed: 1
+      top_driver: Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 40
+        pabliki: 15
+        bloggers: 15
+        google_yandex: 15
+        gis_paid: 15
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 30
+        walk_in: 0
+        content: 25
+        referrals: 10
+  DENTAL:
+    archetype: A4
+    demand_type: urgent + planned
+    frequency: yearly + urgent
+    decision_cycle: days-weeks
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 85
+      ncs_m6: 40
+      ncs_m12: 25
+      r30: 15
+      rc12: 65
+    note_ru: 'Бимодальный: urgent + preventive'
+    choice_drivers:
+      price: 4
+      location: 3
+      visual: 1
+      trust: 5
+      speed: 2
+      top_driver: Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 30
+        pabliki: 15
+        bloggers: 5
+        google_yandex: 25
+        gis_paid: 25
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 40
+        walk_in: 5
+        content: 15
+        referrals: 10
+  DETAILING:
+    archetype: A11
+    demand_type: considered premium
+    frequency: quarterly-yearly
+    decision_cycle: days
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 90
+      ncs_m6: 55
+      ncs_m12: 40
+      r30: 20
+      rc12: 35
+    note_ru: Premium auto детейлинг
+    choice_drivers:
+      price: 3
+      location: 3
+      visual: 5
+      trust: 5
+      speed: 1
+      top_driver: Visual+Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 50
+        pabliki: 15
+        bloggers: 15
+        google_yandex: 10
+        gis_paid: 10
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 35
+        walk_in: 10
+        content: 25
+        referrals: 10
+  DONER:
+    archetype: A2
+    demand_type: impulse
+    frequency: weekly
+    decision_cycle: minutes
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 80
+      ncs_m6: 25
+      ncs_m12: 15
+      r30: 50
+      rc12: 40
+    choice_drivers:
+      price: 4
+      location: 5
+      visual: 3
+      trust: 2
+      speed: 5
+      top_driver: Location+Speed
+    channels:
+      paid_budget_allocation:
+        instagram: 25
+        pabliki: 15
+        bloggers: 0
+        google_yandex: 0
+        gis_paid: 60
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 10
+        walk_in: 50
+        content: 5
+        referrals: 5
+  DRIVING:
+    archetype: A11
+    demand_type: episodic single
+    frequency: once-lifetime
+    decision_cycle: weeks
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 95
+      ncs_m6: 85
+      ncs_m12: 70
+      r30: 0
+      rc12: 5
+    note_ru: Разовая услуга — права
+    choice_drivers:
+      price: 4
+      location: 4
+      visual: 1
+      trust: 4
+      speed: 2
+      top_driver: Price+Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 40
+        pabliki: 20
+        bloggers: 5
+        google_yandex: 25
+        gis_paid: 10
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 50
+        walk_in: 10
+        content: 5
+        referrals: 5
+  DRYCLEAN:
+    archetype: A7
+    demand_type: planned recurring
+    frequency: monthly
+    decision_cycle: minutes
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 85
+      ncs_m6: 50
+      ncs_m12: 30
+      r30: 40
+      rc12: 55
+    note_ru: Retention есть сильный
+    choice_drivers:
+      price: 3
+      location: 5
+      visual: 1
+      trust: 4
+      speed: 3
+      top_driver: Location+Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 15
+        pabliki: 15
+        bloggers: 0
+        google_yandex: 5
+        gis_paid: 55
+        olx_krisha: 10
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 35
+        walk_in: 20
+        content: 5
+        referrals: 10
+  FASTFOOD:
+    archetype: A2
+    demand_type: impulse
+    frequency: weekly
+    decision_cycle: minutes
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 80
+      ncs_m6: 25
+      ncs_m12: 15
+      r30: 50
+      rc12: 40
+    choice_drivers:
+      price: 4
+      location: 5
+      visual: 3
+      trust: 2
+      speed: 5
+      top_driver: Location+Speed
+    channels:
+      paid_budget_allocation:
+        instagram: 25
+        pabliki: 15
+        bloggers: 0
+        google_yandex: 0
+        gis_paid: 60
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 10
+        walk_in: 50
+        content: 5
+        referrals: 5
+  FITNESS:
+    archetype: A12
+    demand_type: subscription recurring
+    frequency: weekly
+    decision_cycle: days
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 85
+      ncs_m6: 30
+      ncs_m12: 15
+      r30: 60
+      rc12: 65
+    note_ru: Абонементы
+    choice_drivers:
+      price: 3
+      location: 4
+      visual: 4
+      trust: 4
+      speed: 1
+      top_driver: Location+Visual
+    channels:
+      paid_budget_allocation:
+        instagram: 45
+        pabliki: 15
+        bloggers: 10
+        google_yandex: 10
+        gis_paid: 20
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 30
+        walk_in: 15
+        content: 15
+        referrals: 15
+  FLOWERS:
+    archetype: A8
+    demand_type: emotion-driven events
+    frequency: monthly events
+    decision_cycle: minutes
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 90
+      ncs_m6: 60
+      ncs_m12: 40
+      r30: 25
+      rc12: 30
+    note_ru: Покупатель ≠ получатель
+    choice_drivers:
+      price: 3
+      location: 2
+      visual: 5
+      trust: 3
+      speed: 5
+      top_driver: Visual+Speed
+    channels:
+      paid_budget_allocation:
+        instagram: 55
+        pabliki: 15
+        bloggers: 15
+        google_yandex: 5
+        gis_paid: 10
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 10
+      organic_flow_allocation:
+        sarafan: 20
+        walk_in: 10
+        content: 25
+        referrals: 5
+    platform_dependency:
+      archetype: A8
+      risk_level: LOW
+      main_platforms: Kaspi Магазин
+      alternative_channels: Свой сайт + Инста
+      recommendation_ru: Kaspi как доп.канал, не основной.
+  FRUITSVEGS:
+    archetype: A9
+    demand_type: routine
+    frequency: weekly
+    decision_cycle: minutes
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 70
+      ncs_m6: 30
+      ncs_m12: 15
+      r30: 75
+      rc12: 65
+    choice_drivers:
+      price: 4
+      location: 5
+      visual: 2
+      trust: 3
+      speed: 3
+      top_driver: Price+Location
+    channels:
+      paid_budget_allocation:
+        instagram: 10
+        pabliki: 10
+        bloggers: 0
+        google_yandex: 0
+        gis_paid: 75
+        olx_krisha: 5
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 15
+        walk_in: 60
+        content: 5
+        referrals: 5
+  FURNITURE:
+    archetype: A11
+    demand_type: considered episodic
+    frequency: once-years
+    decision_cycle: weeks
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 95
+      ncs_m6: 80
+      ncs_m12: 70
+      r30: 5
+      rc12: 10
+    note_ru: Разовая крупная покупка
+    choice_drivers:
+      price: 4
+      location: 2
+      visual: 5
+      trust: 4
+      speed: 1
+      top_driver: Visual+Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 35
+        pabliki: 15
+        bloggers: 10
+        google_yandex: 15
+        gis_paid: 15
+        olx_krisha: 10
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 5
+      organic_flow_allocation:
+        sarafan: 20
+        walk_in: 15
+        content: 20
+        referrals: 0
+    platform_dependency:
+      archetype: A11
+      risk_level: MEDIUM
+      main_platforms: Kaspi Магазин
+      alternative_channels: Свой шоу-рум, Инста
+      recommendation_ru: Kaspi берёт 3-8% + реклама. Но даёт охват.
+  GROCERY:
+    archetype: A9
+    demand_type: routine urgent
+    frequency: daily-weekly
+    decision_cycle: minutes
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 70
+      ncs_m6: 30
+      ncs_m12: 15
+      r30: 80
+      rc12: 65
+    note_ru: Локальный магазин
+    choice_drivers:
+      price: 4
+      location: 5
+      visual: 1
+      trust: 3
+      speed: 3
+      top_driver: Location+Price
+    channels:
+      paid_budget_allocation:
+        instagram: 10
+        pabliki: 15
+        bloggers: 0
+        google_yandex: 5
+        gis_paid: 70
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 15
+        walk_in: 55
+        content: 5
+        referrals: 10
+  HOTEL:
+    archetype: A14
+    demand_type: episodic travel
+    frequency: once-yearly
+    decision_cycle: days
+    customer_type: B2C/B2B
+    retention_metrics:
+      ncs_m1: 95
+      ncs_m6: 80
+      ncs_m12: 65
+      r30: 10
+      rc12: 15
+    note_ru: 2GIS + корп.договоры
+    choice_drivers:
+      price: 4
+      location: 4
+      visual: 4
+      trust: 5
+      speed: 2
+      top_driver: Trust+Price
+    channels:
+      paid_budget_allocation:
+        instagram: 30
+        pabliki: 10
+        bloggers: 10
+        google_yandex: 20
+        gis_paid: 25
+        olx_krisha: 5
+      platform_commission_pct:
+        delivery: 15
+        marketplace: 5
+      organic_flow_allocation:
+        sarafan: 25
+        walk_in: 10
+        content: 15
+        referrals: 5
+    platform_dependency:
+      archetype: A14
+      risk_level: MEDIUM
+      main_platforms: Booking.com (слабее), 2GIS, Яндекс.Путешествия
+      alternative_channels: Прямой сайт, корп.договоры
+      recommendation_ru: В КЗ Booking не доминирует. 2GIS + прямые бронирования.
+  KIDSCENTER:
+    archetype: A12
+    demand_type: planned recurring
+    frequency: weekly
+    decision_cycle: weeks
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 85
+      ncs_m6: 30
+      ncs_m12: 15
+      r30: 75
+      rc12: 65
+    note_ru: Доп.занятия
+    choice_drivers:
+      price: 3
+      location: 4
+      visual: 4
+      trust: 5
+      speed: 1
+      top_driver: Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 45
+        pabliki: 20
+        bloggers: 10
+        google_yandex: 10
+        gis_paid: 15
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 50
+        walk_in: 5
+        content: 15
+        referrals: 10
+  KINDERGARTEN:
+    archetype: A12
+    demand_type: planned long-term
+    frequency: daily
+    decision_cycle: months
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 85
+      ncs_m6: 25
+      ncs_m12: 10
+      r30: 95
+      rc12: 80
+    note_ru: Дети ходят годами
+    choice_drivers:
+      price: 4
+      location: 5
+      visual: 3
+      trust: 5
+      speed: 1
+      top_driver: Trust+Location
+    channels:
+      paid_budget_allocation:
+        instagram: 40
+        pabliki: 20
+        bloggers: 10
+        google_yandex: 10
+        gis_paid: 20
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 55
+        walk_in: 5
+        content: 10
+        referrals: 10
+  LANGUAGES:
+    archetype: A12
+    demand_type: planned considered
+    frequency: weekly-monthly
+    decision_cycle: weeks
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 85
+      ncs_m6: 35
+      ncs_m12: 20
+      r30: 70
+      rc12: 55
+    note_ru: Долгое обучение
+    choice_drivers:
+      price: 4
+      location: 3
+      visual: 3
+      trust: 4
+      speed: 1
+      top_driver: Trust+Price
+    channels:
+      paid_budget_allocation:
+        instagram: 50
+        pabliki: 15
+        bloggers: 10
+        google_yandex: 20
+        gis_paid: 5
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 45
+        walk_in: 5
+        content: 10
+        referrals: 15
+  LASH:
+    archetype: A1
+    demand_type: planned recurring
+    frequency: monthly
+    decision_cycle: hours-days
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 95
+      ncs_m6: 50
+      ncs_m12: 25
+      r30: 65
+      rc12: 50
+    choice_drivers:
+      price: 3
+      location: 2
+      visual: 5
+      trust: 5
+      speed: 2
+      top_driver: Visual+Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 60
+        pabliki: 15
+        bloggers: 15
+        google_yandex: 0
+        gis_paid: 10
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 30
+        walk_in: 0
+        content: 25
+        referrals: 10
+  LAUNDRY:
+    archetype: A7
+    demand_type: routine
+    frequency: weekly
+    decision_cycle: minutes
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 80
+      ncs_m6: 45
+      ncs_m12: 30
+      r30: 50
+      rc12: 50
+    note_ru: Самообслуживание с привязкой
+    choice_drivers:
+      price: 4
+      location: 5
+      visual: 0
+      trust: 2
+      speed: 4
+      top_driver: Location
+    channels:
+      paid_budget_allocation:
+        instagram: 10
+        pabliki: 10
+        bloggers: 0
+        google_yandex: 0
+        gis_paid: 60
+        olx_krisha: 20
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 30
+        walk_in: 30
+        content: 0
+        referrals: 5
+  MANICURE:
+    archetype: A1
+    demand_type: planned recurring
+    frequency: monthly
+    decision_cycle: hours-days
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 95
+      ncs_m6: 45
+      ncs_m12: 30
+      r30: 70
+      rc12: 55
+    note_ru: Эталон Beauty
+    choice_drivers:
+      price: 3
+      location: 2
+      visual: 5
+      trust: 5
+      speed: 2
+      top_driver: Visual+Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 65
+        pabliki: 15
+        bloggers: 20
+        google_yandex: 0
+        gis_paid: 0
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 35
+        walk_in: 0
+        content: 20
+        referrals: 10
+  MASSAGE:
+    archetype: A1
+    demand_type: planned recurring
+    frequency: monthly
+    decision_cycle: hours-days
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 90
+      ncs_m6: 50
+      ncs_m12: 30
+      r30: 55
+      rc12: 45
+    choice_drivers:
+      price: 3
+      location: 3
+      visual: 3
+      trust: 5
+      speed: 2
+      top_driver: Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 50
+        pabliki: 20
+        bloggers: 10
+        google_yandex: 5
+        gis_paid: 15
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 40
+        walk_in: 0
+        content: 15
+        referrals: 10
+  MEATSHOP:
+    archetype: A9
+    demand_type: routine
+    frequency: weekly
+    decision_cycle: minutes
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 75
+      ncs_m6: 35
+      ncs_m12: 20
+      r30: 70
+      rc12: 60
+    choice_drivers:
+      price: 3
+      location: 4
+      visual: 2
+      trust: 4
+      speed: 2
+      top_driver: Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 20
+        pabliki: 20
+        bloggers: 0
+        google_yandex: 5
+        gis_paid: 55
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 5
+      organic_flow_allocation:
+        sarafan: 30
+        walk_in: 30
+        content: 5
+        referrals: 10
+  OPTICS:
+    archetype: A4
+    demand_type: planned yearly
+    frequency: yearly
+    decision_cycle: days-weeks
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 80
+      ncs_m6: 60
+      ncs_m12: 45
+      r30: 5
+      rc12: 40
+    note_ru: Очки раз в год-два
+    choice_drivers:
+      price: 4
+      location: 4
+      visual: 3
+      trust: 4
+      speed: 2
+      top_driver: Trust+Price
+    channels:
+      paid_budget_allocation:
+        instagram: 25
+        pabliki: 10
+        bloggers: 5
+        google_yandex: 20
+        gis_paid: 25
+        olx_krisha: 15
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 5
+      organic_flow_allocation:
+        sarafan: 30
+        walk_in: 10
+        content: 10
+        referrals: 5
+    platform_dependency:
+      archetype: A4
+      risk_level: LOW
+      main_platforms: Kaspi Магазин (оправы)
+      alternative_channels: Своя точка
+      recommendation_ru: null
+  PETSHOP:
+    archetype: A9
+    demand_type: routine
+    frequency: monthly
+    decision_cycle: minutes
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 80
+      ncs_m6: 40
+      ncs_m12: 25
+      r30: 50
+      rc12: 55
+    note_ru: Корма ежемесячно
+    choice_drivers:
+      price: 3
+      location: 4
+      visual: 2
+      trust: 3
+      speed: 3
+      top_driver: Location
+    channels:
+      paid_budget_allocation:
+        instagram: 25
+        pabliki: 15
+        bloggers: 5
+        google_yandex: 10
+        gis_paid: 35
+        olx_krisha: 10
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 10
+      organic_flow_allocation:
+        sarafan: 30
+        walk_in: 25
+        content: 10
+        referrals: 10
+    platform_dependency:
+      archetype: A9
+      risk_level: LOW
+      main_platforms: Kaspi Магазин (частично)
+      alternative_channels: Своя точка, 2GIS
+      recommendation_ru: Маркетплейсы для корма. Офлайн остаётся основным.
+  PHARMACY:
+    archetype: A7
+    demand_type: urgent + routine
+    frequency: weekly
+    decision_cycle: seconds
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 75
+      ncs_m6: 30
+      ncs_m12: 15
+      r30: 65
+      rc12: 60
+    note_ru: Urgent need + локальная привычка
+    choice_drivers:
+      price: 3
+      location: 5
+      visual: 0
+      trust: 2
+      speed: 5
+      top_driver: Location+Speed
+    channels:
+      paid_budget_allocation:
+        instagram: 5
+        pabliki: 10
+        bloggers: 0
+        google_yandex: 10
+        gis_paid: 65
+        olx_krisha: 10
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 20
+        walk_in: 50
+        content: 5
+        referrals: 5
+  PHOTO:
+    archetype: A11
+    demand_type: episodic event
+    frequency: once-years
+    decision_cycle: days-weeks
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 95
+      ncs_m6: 70
+      ncs_m12: 55
+      r30: 10
+      rc12: 15
+    note_ru: Свадьбы, family events
+    choice_drivers:
+      price: 3
+      location: 1
+      visual: 5
+      trust: 5
+      speed: 1
+      top_driver: Visual+Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 50
+        pabliki: 15
+        bloggers: 20
+        google_yandex: 5
+        gis_paid: 10
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 40
+        walk_in: 0
+        content: 30
+        referrals: 10
+  PIZZA:
+    archetype: A3
+    demand_type: planned weekly
+    frequency: weekly
+    decision_cycle: minutes
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 75
+      ncs_m6: 35
+      ncs_m12: 20
+      r30: 50
+      rc12: 40
+    note_ru: Агрегаторы + свой Инста
+    choice_drivers:
+      price: 3
+      location: 2
+      visual: 3
+      trust: 4
+      speed: 5
+      top_driver: Speed
+    channels:
+      paid_budget_allocation:
+        instagram: 50
+        pabliki: 15
+        bloggers: 5
+        google_yandex: 10
+        gis_paid: 20
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 25
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 20
+        walk_in: 5
+        content: 15
+        referrals: 5
+    platform_dependency:
+      archetype: A3
+      risk_level: HIGH
+      main_platforms: Wolt, Glovo, Яндекс.Еда
+      alternative_channels: Собственный сайт, Инста-заказы
+      recommendation_ru: Диверсифицировать доставку. Свой tg-бот / сайт = снижение комиссии.
+  PRINTING:
+    archetype: A7
+    demand_type: urgent + planned
+    frequency: monthly
+    decision_cycle: minutes
+    customer_type: B2C/B2B
+    retention_metrics:
+      ncs_m1: 85
+      ncs_m6: 55
+      ncs_m12: 40
+      r30: 30
+      rc12: 45
+    note_ru: Офисный район
+    choice_drivers:
+      price: 3
+      location: 5
+      visual: 0
+      trust: 2
+      speed: 5
+      top_driver: Location+Speed
+    channels:
+      paid_budget_allocation:
+        instagram: 10
+        pabliki: 20
+        bloggers: 0
+        google_yandex: 15
+        gis_paid: 45
+        olx_krisha: 10
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 40
+        walk_in: 15
+        content: 5
+        referrals: 10
+  PVZ:
+    archetype: A7
+    demand_type: routine
+    frequency: weekly-monthly
+    decision_cycle: minutes
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 70
+      ncs_m6: 30
+      ncs_m12: 15
+      r30: 60
+      rc12: 55
+    note_ru: Пункты выдачи маркетплейсов
+    choice_drivers:
+      price: 1
+      location: 5
+      visual: 0
+      trust: 2
+      speed: 4
+      top_driver: Location
+    channels:
+      paid_budget_allocation:
+        instagram: 5
+        pabliki: 10
+        bloggers: 0
+        google_yandex: 0
+        gis_paid: 85
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 20
+        walk_in: 50
+        content: 0
+        referrals: 5
+  REALTOR:
+    archetype: A14
+    demand_type: episodic high-stakes
+    frequency: once-years
+    decision_cycle: weeks-months
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 95
+      ncs_m6: 75
+      ncs_m12: 60
+      r30: 5
+      rc12: 15
+    note_ru: Krisha.kz + сарафан
+    choice_drivers:
+      price: 3
+      location: 2
+      visual: 3
+      trust: 5
+      speed: 2
+      top_driver: Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 30
+        pabliki: 10
+        bloggers: 10
+        google_yandex: 15
+        gis_paid: 5
+        olx_krisha: 30
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 60
+        walk_in: 5
+        content: 15
+        referrals: 5
+    platform_dependency:
+      archetype: A14
+      risk_level: HIGH
+      main_platforms: Krisha.kz
+      alternative_channels: Инста, Тг-каналы, сарафан
+      recommendation_ru: Krisha — доминирующая площадка. Платить за премиум-объявления.
+  REPAIR_PHONE:
+    archetype: A7
+    demand_type: urgent
+    frequency: quarterly-yearly
+    decision_cycle: hours
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 85
+      ncs_m6: 55
+      ncs_m12: 40
+      r30: 15
+      rc12: 35
+    note_ru: Разовая услуга
+    choice_drivers:
+      price: 3
+      location: 4
+      visual: 1
+      trust: 5
+      speed: 4
+      top_driver: Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 25
+        pabliki: 20
+        bloggers: 5
+        google_yandex: 15
+        gis_paid: 30
+        olx_krisha: 5
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 35
+        walk_in: 20
+        content: 10
+        referrals: 10
+  SEMIFOOD:
+    archetype: A3
+    demand_type: planned recurring
+    frequency: weekly
+    decision_cycle: minutes
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 80
+      ncs_m6: 35
+      ncs_m12: 20
+      r30: 55
+      rc12: 45
+    note_ru: Полуфабрикаты на неделю
+    choice_drivers:
+      price: 3
+      location: 2
+      visual: 3
+      trust: 4
+      speed: 3
+      top_driver: Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 55
+        pabliki: 15
+        bloggers: 5
+        google_yandex: 5
+        gis_paid: 20
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 20
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 25
+        walk_in: 5
+        content: 15
+        referrals: 5
+    platform_dependency:
+      archetype: A3
+      risk_level: MEDIUM
+      main_platforms: Wolt, Glovo
+      alternative_channels: Прямая доставка + WhatsApp
+      recommendation_ru: Меньше зависимость благодаря прямым заказам.
+  SUGARING:
+    archetype: A1
+    demand_type: planned recurring
+    frequency: monthly
+    decision_cycle: hours-days
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 95
+      ncs_m6: 45
+      ncs_m12: 25
+      r30: 70
+      rc12: 55
+    choice_drivers:
+      price: 3
+      location: 2
+      visual: 4
+      trust: 5
+      speed: 2
+      top_driver: Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 55
+        pabliki: 20
+        bloggers: 15
+        google_yandex: 0
+        gis_paid: 10
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 35
+        walk_in: 0
+        content: 20
+        referrals: 10
+  SUSHI:
+    archetype: A3
+    demand_type: planned weekly
+    frequency: weekly-monthly
+    decision_cycle: minutes
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 75
+      ncs_m6: 35
+      ncs_m12: 20
+      r30: 50
+      rc12: 40
+    choice_drivers:
+      price: 4
+      location: 2
+      visual: 4
+      trust: 4
+      speed: 4
+      top_driver: Trust+Visual
+    channels:
+      paid_budget_allocation:
+        instagram: 50
+        pabliki: 15
+        bloggers: 5
+        google_yandex: 10
+        gis_paid: 20
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 25
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 20
+        walk_in: 5
+        content: 15
+        referrals: 5
+    platform_dependency:
+      archetype: A3
+      risk_level: HIGH
+      main_platforms: Wolt, Glovo, Яндекс.Еда
+      alternative_channels: Собственный сайт, Инста
+      recommendation_ru: Аналогично. 15-25% маржи съедается платформами.
+  TAILOR:
+    archetype: A7
+    demand_type: urgent + routine
+    frequency: monthly-yearly
+    decision_cycle: minutes
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 80
+      ncs_m6: 45
+      ncs_m12: 30
+      r30: 35
+      rc12: 45
+    note_ru: Мелкий ремонт одежды
+    choice_drivers:
+      price: 3
+      location: 5
+      visual: 1
+      trust: 3
+      speed: 3
+      top_driver: Location
+    channels:
+      paid_budget_allocation:
+        instagram: 30
+        pabliki: 15
+        bloggers: 5
+        google_yandex: 0
+        gis_paid: 45
+        olx_krisha: 5
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 30
+        walk_in: 25
+        content: 10
+        referrals: 10
+  TIRESERVICE:
+    archetype: A7
+    demand_type: seasonal + urgent
+    frequency: twice-yearly
+    decision_cycle: minutes
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 80
+      ncs_m6: 50
+      ncs_m12: 35
+      r30: 10
+      rc12: 50
+    note_ru: Сезонные пики + ремонт
+    choice_drivers:
+      price: 3
+      location: 4
+      visual: 0
+      trust: 3
+      speed: 5
+      top_driver: Speed+Location
+    channels:
+      paid_budget_allocation:
+        instagram: 10
+        pabliki: 10
+        bloggers: 0
+        google_yandex: 10
+        gis_paid: 55
+        olx_krisha: 15
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 35
+        walk_in: 20
+        content: 5
+        referrals: 10
+  VET:
+    archetype: A5
+    demand_type: recurring trust
+    frequency: quarterly
+    decision_cycle: hours
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 85
+      ncs_m6: 30
+      ncs_m12: 15
+      r30: 30
+      rc12: 80
+    note_ru: Высокий retention — любимца ведут годами
+    choice_drivers:
+      price: 3
+      location: 3
+      visual: 1
+      trust: 5
+      speed: 3
+      top_driver: Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 30
+        pabliki: 15
+        bloggers: 5
+        google_yandex: 15
+        gis_paid: 35
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 55
+        walk_in: 5
+        content: 10
+        referrals: 15
+  WATERPLANT:
+    archetype: A10
+    demand_type: subscription
+    frequency: monthly
+    decision_cycle: days (setup)
+    customer_type: B2C/B2B
+    retention_metrics:
+      ncs_m1: 85
+      ncs_m6: 15
+      ncs_m12: 10
+      r30: 90
+      rc12: 80
+    note_ru: Подписка — высокий retention
+    choice_drivers:
+      price: 3
+      location: 2
+      visual: 1
+      trust: 4
+      speed: 3
+      top_driver: Trust
+    channels:
+      paid_budget_allocation:
+        instagram: 35
+        pabliki: 15
+        bloggers: 0
+        google_yandex: 15
+        gis_paid: 15
+        olx_krisha: 20
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 50
+        walk_in: 5
+        content: 10
+        referrals: 20
+  YOGA:
+    archetype: A12
+    demand_type: subscription recurring
+    frequency: weekly
+    decision_cycle: days
+    customer_type: B2C
+    retention_metrics:
+      ncs_m1: 85
+      ncs_m6: 35
+      ncs_m12: 20
+      r30: 55
+      rc12: 60
+    note_ru: Абонементы
+    choice_drivers:
+      price: 3
+      location: 4
+      visual: 4
+      trust: 4
+      speed: 1
+      top_driver: Location+Visual
+    channels:
+      paid_budget_allocation:
+        instagram: 45
+        pabliki: 15
+        bloggers: 10
+        google_yandex: 10
+        gis_paid: 20
+        olx_krisha: 0
+      platform_commission_pct:
+        delivery: 0
+        marketplace: 0
+      organic_flow_allocation:
+        sarafan: 35
+        walk_in: 10
+        content: 20
+        referrals: 15
