@@ -41,10 +41,26 @@ CONSTANTS = _load_yaml("constants")
 DEFAULTS_CFG = _load_yaml("defaults")
 FINMODEL_DEFAULTS_CFG = _load_yaml("finmodel_defaults")
 
-# Базовые константы (с fallback на старые значения на случай отсутствия yaml)
-MRP_2026 = int(CONSTANTS.get("mrp_2026", 4325))
-MZP_2026 = int(CONSTANTS.get("mzp_2026", 85000))
-NDS_RATE = float(CONSTANTS.get("nds_rate", 0.16))
+# Базовые константы — источник истины: data/external/kz_tax_constants_2026.yaml.
+# Читаем через tax_constants_loader (lru_cache, файл читается один раз за процесс).
+# config/constants.yaml оставлен как fallback для обратной совместимости.
+def _load_tax_constants():
+    """Попытка взять из YAML tax_constants_loader, иначе fallback на constants.yaml."""
+    try:
+        from loaders.tax_constants_loader import (
+            get_mrp, get_mzp, get_nds_rate,
+        )
+        return int(get_mrp()), int(get_mzp()), float(get_nds_rate())
+    except Exception as exc:
+        print(f"⚠️ tax_constants_loader недоступен ({exc}); fallback на constants.yaml")
+        return (
+            int(CONSTANTS.get("mrp_2026", 4325)),
+            int(CONSTANTS.get("mzp_2026", 85000)),
+            float(CONSTANTS.get("nds_rate", 0.16)),
+        )
+
+
+MRP_2026, MZP_2026, NDS_RATE = _load_tax_constants()
 
 _OWNER = CONSTANTS.get("owner", {}) or {}
 OWNER_CLOSURE_POCKET = int(_OWNER.get("closure_pocket_kzt", 200_000))
