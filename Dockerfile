@@ -34,5 +34,6 @@ COPY . .
 ENV PORT=8000
 EXPOSE 8000
 
-# uvicorn запускается с api.main:app (как в Procfile).
-CMD uvicorn api.main:app --host 0.0.0.0 --port ${PORT}
+# Явный sh -c, чтобы ${PORT} раскрывался. В exec-form переменные
+# не раскрываются; просто shell-form тоже ломалась на Railway.
+CMD ["sh", "-c", "uvicorn api.main:app --host 0.0.0.0 --port ${PORT}"]
