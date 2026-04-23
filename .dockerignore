@@ -1,0 +1,22 @@
+# Исключаем из Docker-образа всё что не нужно в рантайме.
+.git
+.github
+.claude
+node_modules
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+.DS_Store
+tests/
+docs/
+*.md
+# Некритичные файлы — не попадают в образ, уменьшают размер.
+CALIBRATION_NOTES.md
+FINAL_NOTES.md
+FIRST_YEAR_NOTES.md
+POLISH_NOTES.md
+REFACTOR_NOTES.md
+ROUND*_NOTES.md
+RW_NOTES.md
+ZEREK_QuickCheck_Calculation_Spec.md
