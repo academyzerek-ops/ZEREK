@@ -50,6 +50,7 @@ def _load() -> Dict[str, Any]:
 def clear_cache() -> None:
     """Сброс кеша (для тестов/hot-reload)."""
     _load.cache_clear()
+    _usn_canonical_lookup.cache_clear()
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -97,19 +98,45 @@ def get_ip_minimum_components() -> Dict[str, int]:
 # ═══════════════════════════════════════════════════════════════════════
 
 
+@lru_cache(maxsize=1)
+def _usn_canonical_lookup() -> Dict[str, float]:
+    """Строит таблицу canonical_city_id → rate_pct.
+
+    Ключи YAML (ASTANA, TURKISTAN, PETROPAVLOVSK) проходят через
+    normalize_city_id из city_loader, чтобы совпасть с канон-ID
+    из config/constants.yaml (astana, turkestan, petropavl).
+    Для YAML-only городов без canonical mapping — используется lowercase.
+    """
+    from loaders.city_loader import normalize_city_id
+    data = _load()["usn"]
+    cities = data.get("municipality_rates") or {}
+    out: Dict[str, float] = {}
+    for key, cfg in cities.items():
+        if not isinstance(cfg, dict) or "rate_pct" not in cfg:
+            continue
+        canonical = normalize_city_id(key)
+        if canonical == key:  # normalize_city_id не нашёл match → lowercase
+            canonical = key.lower()
+        out[canonical] = float(cfg["rate_pct"])
+    return out
+
+
 def get_usn_rate_for_city(city_id: str) -> float:
     """Ставка УСН для города, % (например 3.0 для Астаны).
 
     Принимает city_id в любом регистре (astana / ASTANA / Astana).
-    Если город не найден в YAML — возвращает базовую ставку (4.0%).
+    Нормализация идёт через normalize_city_id (учитывает legacy_ids
+    из config/constants.yaml — например, TURKISTAN → turkestan).
+    Если город не найден — базовая ставка (4.0%).
     """
-    data = _load()["usn"]
-    cities = data.get("municipality_rates") or {}
-    key = (city_id or "").upper().strip()
-    city_cfg = cities.get(key)
-    if city_cfg and "rate_pct" in city_cfg:
-        return float(city_cfg["rate_pct"])
-    return float(data.get("default_rate_pct", 4.0))
+    from loaders.city_loader import normalize_city_id
+    canonical = normalize_city_id(city_id or "")
+    # Для unknown city normalize_city_id возвращает вход как есть — lowercase-нём.
+    canonical = canonical.lower() if canonical else ""
+    lookup = _usn_canonical_lookup()
+    if canonical in lookup:
+        return lookup[canonical]
+    return float(_load()["usn"].get("default_rate_pct", 4.0))
 
 
 def get_usn_base_rate() -> float:

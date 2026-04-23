@@ -120,14 +120,14 @@ cities:
     region_rus: "Туркестанская область"
     type: regional_capital
     check_coef: 0.95
-    legacy_ids: [TURKESTAN, turkestan]
+    legacy_ids: [TURKESTAN, turkestan, TURKISTAN, turkistan]
 
   - id: petropavl
     name_rus: "Петропавловск"
     region_rus: "Северо-Казахстанская область"
     type: regional_capital
     check_coef: 0.95
-    legacy_ids: [PET, PETROPAVL, petropavlovsk, petropavl]
+    legacy_ids: [PET, PETROPAVL, petropavlovsk, petropavl, PETROPAVLOVSK]
 
   - id: kokshetau
     name_rus: "Кокшетау"
