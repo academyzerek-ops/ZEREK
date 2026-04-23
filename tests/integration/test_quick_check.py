@@ -200,6 +200,36 @@ def test_manicure_home_response_has_growth_scenarios():
     assert gs["finmodel_cta"]["price"] == 9000
 
 
+def test_manicure_home_has_danger_zone():
+    """MANICURE_HOME всегда получает поле danger_zone (даже если has_risk=False)."""
+    calc = QuickCheckCalculator(_db)
+    report = calc.run(_make_req())
+    dz = report.get("danger_zone")
+    assert dz is not None
+    # Обязательные поля
+    assert "worst_month" in dz
+    assert "max_drawdown" in dz
+    assert "break_even_month" in dz
+    assert "loss_months" in dz
+    assert "has_cashflow_risk" in dz
+    # Для MANICURE_HOME маржа высокая → убытков нет
+    assert dz["has_cashflow_risk"] is False
+    assert dz["loss_months"] == []
+
+
+def test_manicure_home_danger_zone_feeds_into_capital_seasonal_buffer():
+    """worst_month.profit из danger_zone попадает в capital_adequacy.seasonal_buffer."""
+    calc = QuickCheckCalculator(_db)
+    report = calc.run(_make_req())
+    dz = report["danger_zone"]
+    ca = report["capital_adequacy"]
+    worst_profit = int(dz["worst_month"]["profit"])
+    expected_buffer = abs(worst_profit) * 2 if worst_profit < 0 else 0
+    assert ca["seasonal_buffer"] == expected_buffer
+    # safe = comfortable + seasonal_buffer
+    assert ca["safe"] == ca["comfortable"] + ca["seasonal_buffer"]
+
+
 def test_manicure_home_500k_capital_returns_risky():
     """Капитал 500К на MANICURE_HOME — level=risky (хватает на CAPEX 480К, но не на разгон)."""
     calc = QuickCheckCalculator(_db)
