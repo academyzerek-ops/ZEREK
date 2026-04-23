@@ -279,52 +279,66 @@ def get_niche_risks(niche_id: str, debug: int = 0):
 
 @app.get("/pdf-health")
 def pdf_health():
-    """Diagnostic: is the PDF generator (ReportLab) installed and able to render?"""
+    """Диагностика: WeasyPrint + Jinja2 + шаблон доступны?"""
+    info = {"engine": "weasyprint"}
     try:
-        import reportlab
+        import jinja2  # noqa: F401
+        info["jinja2"] = jinja2.__version__
     except Exception as e:
-        return {"status": "not_installed", "engine": "reportlab", "error": str(e)[:300]}
+        return {"status": "fail", "engine": "weasyprint",
+                "error": f"Jinja2 not installed: {e}"}
     try:
-        from pdf_gen import generate_quick_check_pdf, _register_fonts_once
-        _register_fonts_once()
-        return {
-            "status": "ok",
-            "engine": "reportlab",
-            "reportlab_version": reportlab.Version,
-            "fonts_registered": True,
-        }
+        import weasyprint
+        info["weasyprint"] = weasyprint.__version__
     except Exception as e:
         import traceback
-        return {"status": "fail", "error": str(e)[:400], "trace": traceback.format_exc()[-2000:]}
+        return {"status": "fail", "engine": "weasyprint",
+                "error": f"WeasyPrint import failed: {e}",
+                "trace": traceback.format_exc()[-1500:]}
+    try:
+        from renderers.pdf_renderer import create_jinja_env, TEMPLATE_FILE
+        env = create_jinja_env()
+        _ = env.get_template(TEMPLATE_FILE)
+        info["template_loaded"] = True
+    except Exception as e:
+        import traceback
+        return {"status": "fail", "engine": "weasyprint",
+                "error": f"Template load failed: {e}",
+                "trace": traceback.format_exc()[-1500:]}
+    # Проверяем что WeasyPrint может реально сгенерировать PDF (проверка Pango).
+    try:
+        pdf_bytes = weasyprint.HTML(string="<h1>Health check</h1>").write_pdf()
+        info["pdf_test_bytes"] = len(pdf_bytes)
+        info["status"] = "ok"
+        return info
+    except Exception as e:
+        import traceback
+        return {"status": "fail", "engine": "weasyprint",
+                "error": f"PDF generation failed (system libs?): {e}",
+                "trace": traceback.format_exc()[-1500:],
+                **info}
 
 
 @app.post("/quick-check/pdf")
 def generate_pdf(req: QCReq):
+    """Генерирует премиум PDF через WeasyPrint + Jinja2 (api/templates/pdf/quick_check.html).
+
+    Возвращает {token, filename, pdf_url, report_id} — клиент открывает
+    pdf_url напрямую через `<a href download>` или Telegram.WebApp.openLink.
     """
-    Генерирует 11-страничный PDF по тем же параметрам, что и /quick-check.
-    Возвращает {token, filename, pdf_url, report_id} — клиент открывает pdf_url через openLink.
-    """
-    if not db: raise HTTPException(503, f"БД не загружена: {db_error}")
+    if not db:
+        raise HTTPException(503, f"БД не загружена: {db_error}")
     try:
-        # Defensive import — if weasyprint isn't installed on this deploy, fail gracefully
-        try:
-            from pdf_gen import generate_quick_check_pdf
-        except Exception as e:
-            raise HTTPException(503, f"PDF-генератор временно недоступен: {e}")
-
-        cls = CAPEX_TO_CLS.get((req.capex_level or "").strip().lower(), req.cls)
-        result = run_quick_check_v3(
-            db=db, city_id=req.city_id, niche_id=req.niche_id,
-            format_id=req.format_id, cls=cls, area_m2=req.area_m2, loc_type=req.loc_type,
-            capital=req.capital or 0, qty=req.qty, founder_works=req.founder_works,
-            rent_override=req.rent_override, start_month=req.start_month,
+        # Используем тот же путь что /quick-check — QuickCheckCalculator
+        # собирает result со всеми новыми блоками (block1/block4/block5/block6
+        # /capital_adequacy/marketing_plan/staff_paradox/...) которые нужны
+        # build_pdf_context в pdf_renderer.
+        from calculators.quick_check import QuickCheckCalculator
+        from renderers.pdf_renderer import generate_quick_check_pdf
+        calc_result = QuickCheckCalculator(db).run(req)
+        pdf_bytes, report_id, filename = generate_quick_check_pdf(
+            calc_result, (req.niche_id or "").upper()
         )
-        rendered = render_report_v4(result)
-
-        from gemini_rag import extract_niche_risks
-        ai_risks = extract_niche_risks(req.niche_id.upper())
-
-        pdf_bytes, report_id, filename = generate_quick_check_pdf(rendered, req.niche_id.upper(), ai_risks=ai_risks)
         token = _store_file(pdf_bytes, filename, "application/pdf", disposition="inline")
         return {
             "token": token,

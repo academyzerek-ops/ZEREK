@@ -9,7 +9,12 @@ aptPkgs = [
   "libharfbuzz0b",
   "libfontconfig1",
   "libcairo2",
+  "libcairo2-dev",
   "libjpeg-dev",
   "libgdk-pixbuf2.0-0",
+  "libgobject-2.0-0",
+  "libglib2.0-0",
   "shared-mime-info",
+  "fonts-liberation",
+  "fonts-dejavu-core",
 ]
