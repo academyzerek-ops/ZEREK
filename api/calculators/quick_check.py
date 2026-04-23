@@ -224,10 +224,48 @@ class QuickCheckCalculator:
             import traceback
             traceback.print_exc()
 
-        # Block 5 — P&L + first_year_chart
+        # Marketing plan (ДО block5) — архетипная воронка + помесячный бюджет.
+        # Патчит pnl_aggregates.mature.marketing_monthly на avg_monthly_budget
+        # → P&L-таблица в block5 показывает ту же цифру что блок «Маркетинг».
+        # first_year_chart вычисляется отдельно (не зависит от block5).
+        try:
+            inp = result.get("input", {}) or {}
+            fin = result.get("financials") or {}
+            sa = (req.specific_answers or {})
+            exp = (sa.get("experience") or inp.get("experience") or "none") or "none"
+            content_self = bool(sa.get("content_self_produced", True))
+            fyc_early = compute_first_year_chart(result)
+            months_early = (fyc_early or {}).get("months") or []
+            check_med = int(fin.get("check_med") or 0)
+            clients_per_month = []
+            if check_med > 0 and months_early:
+                for m in months_early:
+                    rev_m = int(m.get("revenue") or 0)
+                    clients_per_month.append(int(round(rev_m / max(check_med, 1))))
+            if clients_per_month:
+                mp = compute_marketing_plan(
+                    niche_id=(inp.get("niche_id") or "").upper(),
+                    city_id=(inp.get("city_id") or "").lower(),
+                    total_clients_per_month=clients_per_month,
+                    experience=exp,
+                    content_self_produced=content_self,
+                    legal_form="ip",
+                )
+                if mp and not mp.get("error"):
+                    result["marketing_plan"] = mp
+                    avg_mkt = int((mp.get("summary") or {}).get("avg_monthly_budget") or 0)
+                    if avg_mkt > 0:
+                        result.setdefault("pnl_aggregates", {}).setdefault("mature", {})["marketing_monthly"] = avg_mkt
+            result["_first_year_chart_cache"] = fyc_early
+        except Exception:
+            import traceback
+            traceback.print_exc()
+
+        # Block 5 — P&L + first_year_chart (marketing_monthly уже запатчен выше).
         try:
             result["block5"] = compute_block5_pnl(self.db, result, block1_inputs)
-            result["block5"]["first_year_chart"] = compute_first_year_chart(result)
+            fyc = result.pop("_first_year_chart_cache", None) or compute_first_year_chart(result)
+            result["block5"]["first_year_chart"] = fyc
         except Exception:
             import traceback
             traceback.print_exc()
@@ -303,40 +341,6 @@ class QuickCheckCalculator:
                 danger_zone = compute_danger_zone(cashflow_year1, capex_total)
                 if danger_zone:
                     result["danger_zone"] = danger_zone
-        except Exception:
-            import traceback
-            traceback.print_exc()
-
-        # Marketing plan — архетипная воронка + помесячный бюджет.
-        # Читается из data/external/marketing_archetypes_2026.yaml через loader.
-        # Клиенты/мес = выручка[м] / чек_med (ramp+сезонность из first_year_chart).
-        try:
-            inp = result.get("input", {}) or {}
-            fin = result.get("financials") or {}
-            fyc = (result.get("block5") or {}).get("first_year_chart") or {}
-            months = fyc.get("months") or []
-            check_med = int(fin.get("check_med") or 0)
-            clients_per_month: list[int] = []
-            if check_med > 0 and months:
-                for m in months:
-                    rev_m = int(m.get("revenue") or 0)
-                    clients_per_month.append(int(round(rev_m / max(check_med, 1))))
-            # experience / content_self_produced из specific_answers.
-            sa = (req.specific_answers or {})
-            exp = (sa.get("experience") or inp.get("experience") or "none") or "none"
-            # Дефолт для content_self_produced: True (низкозатратный сценарий).
-            content_self = bool(sa.get("content_self_produced", True))
-            if clients_per_month:
-                mp = compute_marketing_plan(
-                    niche_id=(inp.get("niche_id") or "").upper(),
-                    city_id=(inp.get("city_id") or "").lower(),
-                    total_clients_per_month=clients_per_month,
-                    experience=exp,
-                    content_self_produced=content_self,
-                    legal_form="ip",
-                )
-                if mp and not mp.get("error"):
-                    result["marketing_plan"] = mp
         except Exception:
             import traceback
             traceback.print_exc()

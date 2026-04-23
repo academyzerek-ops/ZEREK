@@ -309,14 +309,17 @@ def compute_pnl_aggregates(result):
 
 
 def compute_unified_payback_months(result, adaptive):
-    """Шаг 6: единая окупаемость — `ceil(startup / monthly_income_avg)`.
+    """Кумулятивная окупаемость — первый месяц в котором Σ profit ≥ startup.
 
-    Одна и та же формула в Block 1 (светофор) и Block 5 (карточка).
-    НИКАКИХ fallback'ов с другими формулами.
+    Вместо наивной формулы ceil(startup / avg_profit), которая для
+    MANICURE_HOME давала 2 мес (игнорируя rampup), считаем по реальному
+    cashflow первого года. Если CAPEX не покрыт за 12 мес — возвращаем 13
+    (UI показывает «более 12 мес»).
 
-    Для SOLO/HOME: monthly_income = net_profit/12 (ФОТ уже подрезан).
-    Для owner_plus_*: monthly_income = profit/12 + ставка роли.
-    Для owner_only/multi: monthly_income = net_profit/12.
+    Источник profit по месяцам:
+    1. scenarios.base.cashflow[i].прибыль (из engine.calc_cashflow — уже
+       учитывает ramp + сезонность).
+    2. Fallback: scenarios.base.прибыль_среднемес × 12 распределённо.
     """
     inp = result.get("input", {}) or {}
     capex = result.get("capex", {}) or {}
@@ -333,13 +336,16 @@ def compute_unified_payback_months(result, adaptive):
     if startup <= 0:
         return None
 
-    monthly_profit = _safe_int((scenarios.get("base") or {}).get("прибыль_среднемес"), 0)
-    if monthly_profit <= 0:
-        return None
+    base = (scenarios.get("base") or {})
+    cashflow = base.get("cashflow") or []
+    monthly_profits = []
+    if cashflow:
+        monthly_profits = [_safe_int(m.get("прибыль"), 0) for m in cashflow[:12]]
 
+    # Добавляем role_salary для owner_plus_* форматов.
     fmt_up = (inp.get("format_id") or "").upper()
     is_solo = bool(inp.get("founder_works")) and (fmt_up.endswith("_HOME") or fmt_up.endswith("_SOLO"))
-    monthly_income = monthly_profit
+    role_salary = 0
     if not is_solo:
         ent_role = (adaptive.get("entrepreneur_role") or "owner_only").lower()
         if ent_role.startswith("owner_plus_"):
@@ -350,11 +356,20 @@ def compute_unified_payback_months(result, adaptive):
                 1,
             )
             role_salary = int(fot_full / hc) if fot_full else 0
-            monthly_income += role_salary
 
-    if monthly_income <= 0:
-        return None
-    return int(math.ceil(startup / monthly_income))
+    if not monthly_profits:
+        # Fallback: равномерное распределение avg прибыли × 12.
+        avg = _safe_int(base.get("прибыль_среднемес"), 0)
+        if avg <= 0:
+            return None
+        monthly_profits = [avg] * 12
+
+    cumulative = 0
+    for i, p in enumerate(monthly_profits, start=1):
+        cumulative += int(p) + role_salary
+        if cumulative >= startup:
+            return i
+    return 13  # не окупается за первый год — UI покажет «более 12 мес»
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -396,7 +411,7 @@ def compute_block4_unit_economics(db, result, adaptive, block2=None):
     )
 
     if arch == "A":
-        unit_label = "мастер в месяц"
+        unit_label = "одна услуга"
         masters_count = max(staff_total, 1)
         checks_per_day = max(int(traffic / masters_count), 1)
         load_pct = 0.80
@@ -412,7 +427,7 @@ def compute_block4_unit_economics(db, result, adaptive, block2=None):
                 {"label": "Аренда (доля)", "amount": rent_share, "pct": round(rent_share / avg_check * 100)},
                 {"label": "Прочие расходы", "amount": overhead_share, "pct": round(overhead_share / avg_check * 100)},
                 {"label": "Налог", "amount": tax_per_check, "pct": round(tax_per_check / avg_check * 100)},
-                {"label": "В карман вам", "amount": in_pocket, "pct": round(in_pocket / avg_check * 100)},
+                {"label": "Чистыми вам", "amount": in_pocket, "pct": round(in_pocket / avg_check * 100)},
             ]
             piece_rate = 0
         else:
@@ -804,8 +819,21 @@ def compute_block6_capital(db, result, adaptive, block2=None):
     capex = result.get("capex", {}) or {}
     inp = result.get("input", {}) or {}
     capex_needed = _safe_int(capex.get("capex_med")) or _safe_int(capex.get("capex_total"))
+    # NB: block2.finance.capex_needed уже включает training (унификация BUG #1),
+    # поэтому fallback без training_cost чтобы избежать двойного добавления.
     if capex_needed < 500_000 and block2:
-        capex_needed = (block2.get("finance") or {}).get("capex_needed") or capex_needed
+        b2_fallback = _safe_int((block2.get("finance") or {}).get("capex_needed"))
+        if b2_fallback > 0:
+            # Если есть experience и training_required — b2_fallback содержит training,
+            # вычитаем его чтобы последующее +training не дало double-count.
+            try:
+                exp_fb = (adaptive.get("experience") or "").lower()
+                if bool(inp.get("training_required")):
+                    tr_fb = TRAINING_COSTS_BY_EXPERIENCE.get(exp_fb, 0)
+                    b2_fallback -= tr_fb
+            except Exception:
+                pass
+            capex_needed = max(b2_fallback, capex_needed)
     capital_own = _safe_int(adaptive.get("capital_own")) if adaptive.get("capital_own") else None
 
     breakdown_src = capex.get("breakdown") or {}

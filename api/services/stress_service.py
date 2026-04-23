@@ -54,9 +54,13 @@ def compute_block8_stress_test(result):
     cogs_pct = _safe_float(mature.get("cogs_pct"), _safe_float(fin.get("cogs_pct"), 0.30))
     tax_rate = _safe_float(mature.get("tax_rate"), (tax.get("rate_pct", 3) or 3) / 100)
 
-    # Для UI-совместимости публикуем ещё и средний год (из scenarios.base).
-    base_profit_year = _safe_int((scenarios.get("base") or {}).get("прибыль_год"), 0) or 1
-    base_profit_month = base_profit_year // 12
+    # Базовая прибыль стресс-теста = entrepreneur_income.total_monthly
+    # (средняя за первый год, с учётом rampup и реального маркетинга).
+    # Raньше бралось scenarios.base.прибыль_год / 12, что давало другую
+    # цифру из-за YAML marketing_med. BUG #6 фикс.
+    block5 = result.get("block5") or {}
+    ei = block5.get("entrepreneur_income") or {}
+    base_profit_month = _safe_int(ei.get("total_monthly"), 0) or 1
 
     rev_mature_y = rev_mature_m * 12
     materials_mature_y = materials_mature_m * 12
@@ -107,7 +111,7 @@ def compute_block8_stress_test(result):
 
     return {
         "base_profit_month": base_profit_month,
-        "base_profit_year": base_profit_year,
+        "base_profit_year": base_profit_month * 12,
         "sensitivities": sensitivities,
         "critical_param": critical,
         "recommendations": recs,

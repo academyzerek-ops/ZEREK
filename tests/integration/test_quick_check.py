@@ -197,7 +197,8 @@ def test_manicure_home_response_has_growth_scenarios():
     assert gs["stagnation"]["label"]
     assert gs["development"]["outcome_year3"]
     assert len(gs["growth_factors"]) >= 3
-    assert gs["finmodel_cta"]["price"] == 9000
+    # UX #3: finmodel_cta убран из growth (дублировался с block10).
+    assert "finmodel_cta" not in gs
 
 
 def test_manicure_home_has_staff_paradox_short():
@@ -288,16 +289,18 @@ def test_manicure_home_has_danger_zone():
 
 
 def test_manicure_home_danger_zone_feeds_into_capital_seasonal_buffer():
-    """worst_month.profit из danger_zone попадает в capital_adequacy.seasonal_buffer."""
+    """seasonal_buffer = max(worst_drawdown × 2, comfortable × 30%)."""
     calc = QuickCheckCalculator(_db)
     report = calc.run(_make_req())
     dz = report["danger_zone"]
     ca = report["capital_adequacy"]
     worst_profit = int(dz["worst_month"]["profit"])
-    expected_buffer = abs(worst_profit) * 2 if worst_profit < 0 else 0
-    assert ca["seasonal_buffer"] == expected_buffer
-    # safe = comfortable + seasonal_buffer
+    drawdown_buffer = abs(worst_profit) * 2 if worst_profit < 0 else 0
+    floor_buffer = int(ca["comfortable"] * 0.30)
+    assert ca["seasonal_buffer"] == max(drawdown_buffer, floor_buffer)
     assert ca["safe"] == ca["comfortable"] + ca["seasonal_buffer"]
+    # Invariant: safe всегда > comfortable (BUG #4 фикс).
+    assert ca["safe"] > ca["comfortable"]
 
 
 def test_manicure_home_500k_capital_returns_risky():
@@ -310,13 +313,17 @@ def test_manicure_home_500k_capital_returns_risky():
     assert ca["verdict_color"] == "yellow"
     assert ca["gap_to_level"] == "comfortable"
     assert ca["minimum"] == 480_000
-    assert ca["comfortable"] == 695_025  # 480K + 215 025 резерв
+    # comfortable = 480K + 3 × (marketing + opex + ip_min_taxes + rent).
+    # После BUG #3 marketing = avg_monthly_budget (≈60K), поэтому
+    # ≈ 480K + 3 × (60K + 5K + 21 675 + 0) = 480K + 259 719 = 739 719.
+    assert ca["comfortable"] > ca["minimum"]
+    assert ca["comfortable"] - ca["minimum"] == ca["reserve_3_months"]
 
 
-def test_manicure_home_900k_capital_returns_safe():
-    """Капитал 900К > safe (без сезонного буфера = comfortable) → safe."""
+def test_manicure_home_1_2m_capital_returns_safe():
+    """Капитал 1,2М > safe (с 30% floor-buffer) → safe."""
     calc = QuickCheckCalculator(_db)
-    report = calc.run(_make_req(capital=900_000))
+    report = calc.run(_make_req(capital=1_200_000))
     ca = report["capital_adequacy"]
     assert ca["verdict_level"] == "safe"
     assert ca["gap_amount"] == 0

@@ -57,5 +57,9 @@ def compute_3_scenarios(fin, staff, capex_total, tax_rate, start_month=1, qty=1)
             "прибыль_год": sc_profit,
             "прибыль_среднемес": int(sc_profit / 12),
             "окупаемость": sc_payback,
+            # 12-месячный cashflow [{month, выручка, прибыль, ...}] для
+            # кумулятивного payback и danger_zone. Хранится только для base,
+            # чтобы не раздувать JSON.
+            "cashflow": sc_cf if label == "base" else None,
         }
     return scenarios

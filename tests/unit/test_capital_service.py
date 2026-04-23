@@ -20,7 +20,10 @@ _BASE = dict(
 
 
 def test_capital_above_safe_level_returns_safe_verdict():
-    r = compute_capital_adequacy(**_BASE, user_capital=900_000)
+    # safe = comfortable + max(drawdown × 2, comfortable × 30%).
+    # comfortable = 480K + 215 025 = 695 025; buffer max(100K, 208K) = 208 507.
+    # safe = 903 532. 1 000K > 903 532 → safe.
+    r = compute_capital_adequacy(**_BASE, user_capital=1_000_000)
     assert r["verdict_level"] == "safe"
     assert r["verdict_color"] == "green"
     assert r["gap_amount"] == 0
@@ -93,17 +96,18 @@ def test_reserve_breakdown_has_all_components():
 
 
 def test_safe_includes_seasonal_buffer():
-    """safe = comfortable + 2 × worst_season_drawdown."""
+    """safe = comfortable + max(drawdown × 2, 30% от comfortable)."""
     r = compute_capital_adequacy(**_BASE, user_capital=500_000)
     # comfortable = 480K + 215 025 = 695 025
-    # safe = 695 025 + 50K × 2 = 795 025
+    # drawdown × 2 = 100K, floor = 30% × 695 025 ≈ 208 507.
+    # max выбирает floor → safe = 695 025 + 208 507 = 903 532.
     assert r["comfortable"] == 695_025
-    assert r["seasonal_buffer"] == 100_000
-    assert r["safe"] == 795_025
+    assert r["seasonal_buffer"] == max(100_000, int(r["comfortable"] * 0.30))
+    assert r["safe"] == r["comfortable"] + r["seasonal_buffer"]
 
 
-def test_zero_worst_season_drawdown_safe_equals_comfortable():
-    """Если просадки нет — safe и comfortable совпадают."""
+def test_zero_worst_season_drawdown_uses_floor_buffer():
+    """Даже если просадки нет — seasonal_buffer = max(0, 30% от comfortable)."""
     r = compute_capital_adequacy(
         capex_total=480_000,
         marketing_monthly=45_000,
@@ -113,8 +117,9 @@ def test_zero_worst_season_drawdown_safe_equals_comfortable():
         worst_season_drawdown=0,
         user_capital=500_000,
     )
-    assert r["seasonal_buffer"] == 0
-    assert r["safe"] == r["comfortable"]
+    # Floor: 30% от comfortable = 30% × 695 025 ≈ 208 507.
+    assert r["seasonal_buffer"] == int(r["comfortable"] * 0.30)
+    assert r["safe"] > r["comfortable"], "safe должен быть СТРОГО больше comfortable"
 
 
 def test_too_legal_form_sets_ip_taxes_to_zero():

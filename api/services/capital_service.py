@@ -52,10 +52,14 @@ def compute_capital_adequacy(
         + int(rent_monthly)
     )
     reserve_3_months = monthly_fixed * int(rampup_months)
-    seasonal_buffer = int(worst_season_drawdown) * 2 if worst_season_drawdown and worst_season_drawdown > 0 else 0
-
+    # seasonal_buffer = max(worst_monthly_loss × 2, comfortable × 30%).
+    # Для высокомаржинальных ниш где worst_month прибылен — floor даёт
+    # 30% от comfortable, чтобы safe ВСЕГДА было строго больше comfortable.
     minimum = int(capex_total)
     comfortable = minimum + reserve_3_months
+    drawdown_buffer = int(worst_season_drawdown) * 2 if worst_season_drawdown and worst_season_drawdown > 0 else 0
+    floor_buffer = int(comfortable * 0.30)
+    seasonal_buffer = max(drawdown_buffer, floor_buffer)
     safe = comfortable + seasonal_buffer
 
     reserve_breakdown = {

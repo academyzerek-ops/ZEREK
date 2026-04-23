@@ -52,8 +52,10 @@ def _score_capital(capital_own, capex_needed):
         return {"score": 1, "label": "Капитал vs ориентир",
                 "note": "Нет данных по ориентиру стартовых вложений"}
     if capital_own is None or capital_own == 0:
+        # UX #5: убираем «капитал не указан» — дублируется с capital_adequacy
+        # и паспортом бизнеса. Оставляем только сам ориентир CAPEX.
         return {"score": 2, "label": "Капитал vs ориентир",
-                "note": f"Капитал не указан — расчёт условный. Ориентир стартовых вложений: {int(capex_needed):,} ₸.".replace(",", " ")}
+                "note": f"Ориентир стартовых вложений: {int(capex_needed):,} ₸".replace(",", " ")}
     ratio = capital_own / capex_needed
     t_excel, t_match, t_low = SCORING_CAPITAL
     if ratio >= t_excel:
@@ -279,6 +281,16 @@ def compute_block1_verdict(result, adaptive):
     capex_standard_08 = _safe_int(inp.get("capex_standard"), 0)
     capex_med_perniche = _safe_int(capex_block.get("capex_med")) or _safe_int(capex_block.get("capex_total"))
     capex_needed = capex_standard_08 if capex_standard_08 > 0 else capex_med_perniche
+    # Добавляем обучение для новичков (training_required + experience=none/some).
+    try:
+        from engine import TRAINING_COSTS_BY_EXPERIENCE
+        if bool(inp.get("training_required")):
+            _exp = (adaptive.get("experience") or "").lower()
+            _tr = TRAINING_COSTS_BY_EXPERIENCE.get(_exp, 0)
+            if _tr > 0:
+                capex_needed += _tr
+    except Exception:
+        pass
     capital_own_raw = adaptive.get("capital_own")
     if capital_own_raw is None or capital_own_raw == "":
         capital_own = None
