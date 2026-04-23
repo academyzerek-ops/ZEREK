@@ -239,6 +239,26 @@ h2{font-size:22px;margin-bottom:6px}
 .b5-income-disclaimer{margin-top:10px;font-size:11px;color:var(--text-3);line-height:1.45;text-align:center}
 .b5-income-region{margin-top:10px;padding:8px 10px;background:rgba(34,197,94,0.05);border-left:2px solid rgba(34,197,94,0.4);border-radius:4px;font-size:12px;color:var(--text-2);line-height:1.45}
 
+/* ─── Danger zone (разгон + сезонность) — после инфографики, до стресса ─── */
+.danger-zone{margin:20px 0;padding:18px;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border-radius:var(--radius-lg);border:1px solid rgba(239,68,68,0.22)}
+.danger-zone-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px}
+.danger-zone-intro{font-size:13px;color:var(--text-2);line-height:1.5;margin-bottom:16px}
+.danger-section-label{font-size:11px;font-weight:700;color:var(--text-3);margin:14px 0 8px;text-transform:uppercase;letter-spacing:0.08em}
+.danger-zone-stats{background:rgba(255,255,255,0.03);border-radius:10px;padding:12px;margin-bottom:12px}
+.danger-stat-row{display:flex;justify-content:space-between;padding:4px 0;font-size:13px;color:var(--text-2)}
+.danger-stat-row strong{color:var(--text);font-family:var(--mono)}
+.danger-drawdown{font-size:15px;font-weight:700;color:#ef4444;font-family:var(--mono)}
+.danger-loss-months{padding:12px;background:rgba(239,68,68,0.08);border-radius:10px;margin-bottom:12px}
+.danger-loss-item{display:flex;justify-content:space-between;padding:4px 0;font-size:13px}
+.danger-loss-item .label{color:var(--text-2)}
+.danger-loss-item .amount{color:#ef4444;font-weight:700;font-family:var(--mono)}
+.danger-advice{padding:14px;background:rgba(16,185,129,0.10);border-left:3px solid #10b981;border-radius:10px;margin:14px 0}
+.danger-advice-title{font-size:12px;font-weight:700;color:#10b981;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em}
+.danger-advice-amount{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--text);display:block;margin:4px 0}
+.danger-advice-text{font-size:13px;color:var(--text-2);line-height:1.5}
+.danger-wisdom{margin-top:14px;padding:10px 12px;background:rgba(124,108,255,0.10);border-radius:10px;font-size:12px;color:var(--text-2);line-height:1.5}
+.danger-wisdom::before{content:"📚 "}
+
 /* ─── Capital adequacy (достаточность капитала) — после block6 ─── */
 .capital-adequacy{margin:20px 0;padding:18px;background:var(--surface);border-radius:var(--radius-lg)}
 .capital-head{font-size:16px;font-weight:700;margin-bottom:10px;color:var(--text)}
@@ -1021,6 +1041,9 @@ function renderResult(result){
     // эталонная картина.
     var fyc = result.block5 && result.block5.first_year_chart;
     if(fyc) html += renderFirstYearChartHtml(fyc);
+    // Зона риска: разгон + сезонность — после инфографики 12 мес,
+    // до стресс-теста. Рендерится только если has_cashflow_risk=True.
+    if(result.danger_zone) html += renderDangerZoneHtml(result.danger_zone);
     if(result.block_season) html += renderSeasonBlockHtml(result.block_season);
     if(result.block8)  html += renderBlock8Html(result.block8);
     if(result.block9)  html += renderBlock9Html(result.block9);
@@ -1668,6 +1691,59 @@ function renderGrowthBlockHtml(gs){
     factorsHtml +
     ctaHtml +
   '</div>';
+}
+
+/* ─── Danger zone (разгон + сезонность) ─── */
+function renderDangerZoneHtml(dz){
+  if(!dz || !dz.has_cashflow_risk) return '';  // блок не показываем если рисков нет
+
+  var wm = dz.worst_month || {};
+  var profitColor = (wm.profit || 0) >= 0 ? 'var(--text)' : '#ef4444';
+  var profitSign = (wm.profit || 0) >= 0 ? '+' : '';
+
+  var html = '<div class="danger-zone">' +
+    '<div class="danger-zone-title">⚠️ Зона риска: разгон и сезонность</div>' +
+    '<div class="danger-zone-intro">Разгон и сезонность — два главных убийцы малого бизнеса. Мало кто учитывает их вместе.</div>' +
+
+    '<div class="danger-section-label">📉 В вашем сценарии</div>' +
+    '<div class="danger-zone-stats">' +
+      '<div class="danger-stat-row"><span>Худший месяц:</span><strong>'+escapeHtml(wm.label || '')+' (#'+(wm.month_index || 0)+' от старта)</strong></div>' +
+      '<div class="danger-stat-row"><span>Выручка:</span><strong>'+fmt(wm.revenue || 0)+' ₸</strong></div>' +
+      '<div class="danger-stat-row"><span>Расходы:</span><strong>'+fmt(wm.costs || 0)+' ₸</strong></div>' +
+      '<div class="danger-stat-row"><span>Прибыль:</span><strong style="color:'+profitColor+'">'+profitSign+fmt(wm.profit || 0)+' ₸</strong></div>' +
+    '</div>' +
+
+    '<div class="danger-zone-stats">' +
+      '<div class="danger-stat-row"><span>Максимальная просадка:</span><span class="danger-drawdown">-'+fmt(dz.max_drawdown || 0)+' ₸</span></div>' +
+      '<div class="danger-stat-row" style="font-size:11px;opacity:0.7"><span>(от CAPEX до выхода на плюс по нарастающему)</span></div>' +
+      (dz.break_even_month
+        ? '<div class="danger-stat-row"><span>Выход в плюс:</span><strong>'+dz.break_even_month+'-й месяц</strong></div>'
+        : '<div class="danger-stat-row"><span>Выход в плюс:</span><strong style="color:#ef4444">не в первый год</strong></div>') +
+    '</div>';
+
+  if(dz.loss_months && dz.loss_months.length > 0){
+    html += '<div class="danger-section-label">Убыточные месяцы</div>' +
+            '<div class="danger-loss-months">';
+    dz.loss_months.forEach(function(lm){
+      var reason = lm.is_rampup ? 'разгон' : 'сезонность';
+      html += '<div class="danger-loss-item">' +
+        '<span class="label">'+escapeHtml(lm.label || '')+' · '+reason+'</span>' +
+        '<span class="amount">-'+fmt(lm.loss || 0)+' ₸</span>' +
+      '</div>';
+    });
+    html += '</div>';
+  }
+
+  html += '<div class="danger-advice">' +
+    '<div class="danger-advice-title">💡 Рекомендация</div>' +
+    '<span class="danger-advice-amount">'+fmt(dz.advice_reserve || 0)+' ₸</span>' +
+    '<div class="danger-advice-text">Держите на счету минимум '+fmt(dz.advice_reserve || 0)+' ₸ в течение первых 12 месяцев. Это подушка безопасности на случай провалов.</div>' +
+  '</div>';
+
+  html += '<div class="danger-wisdom">Самая частая причина закрытия малого бизнеса в первый год — не плохая идея и не низкий спрос, а кассовый разрыв. Бизнес зарабатывает, но в конкретный месяц не хватает денег на аренду, маркетинг или зарплаты — владелец берёт в долг, растёт хвост, через 2-3 месяца закрывается с минусом.</div>';
+
+  html += '</div>';
+  return html;
 }
 
 /* ─── Ваши первые 12 месяцев (first_year_chart) ─── */
