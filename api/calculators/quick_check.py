@@ -43,6 +43,7 @@ from services.economics_service import (  # noqa: E402
     compute_pnl_aggregates,
 )
 from services.growth_service import compute_growth_block  # noqa: E402
+from services.marketing_service import compute_marketing_plan  # noqa: E402
 from services.market_service import compute_block3_market  # noqa: E402
 from services.risk_service import compute_block9_risks  # noqa: E402
 from services.seasonality_service import compute_block_season, compute_first_year_chart  # noqa: E402
@@ -301,6 +302,40 @@ class QuickCheckCalculator:
                 danger_zone = compute_danger_zone(cashflow_year1, capex_total)
                 if danger_zone:
                     result["danger_zone"] = danger_zone
+        except Exception:
+            import traceback
+            traceback.print_exc()
+
+        # Marketing plan — архетипная воронка + помесячный бюджет.
+        # Читается из data/external/marketing_archetypes_2026.yaml через loader.
+        # Клиенты/мес = выручка[м] / чек_med (ramp+сезонность из first_year_chart).
+        try:
+            inp = result.get("input", {}) or {}
+            fin = result.get("financials") or {}
+            fyc = (result.get("block5") or {}).get("first_year_chart") or {}
+            months = fyc.get("months") or []
+            check_med = int(fin.get("check_med") or 0)
+            clients_per_month: list[int] = []
+            if check_med > 0 and months:
+                for m in months:
+                    rev_m = int(m.get("revenue") or 0)
+                    clients_per_month.append(int(round(rev_m / max(check_med, 1))))
+            # experience / content_self_produced из specific_answers.
+            sa = (req.specific_answers or {})
+            exp = (sa.get("experience") or inp.get("experience") or "none") or "none"
+            # Дефолт для content_self_produced: True (низкозатратный сценарий).
+            content_self = bool(sa.get("content_self_produced", True))
+            if clients_per_month:
+                mp = compute_marketing_plan(
+                    niche_id=(inp.get("niche_id") or "").upper(),
+                    city_id=(inp.get("city_id") or "").lower(),
+                    total_clients_per_month=clients_per_month,
+                    experience=exp,
+                    content_self_produced=content_self,
+                    legal_form="ip",
+                )
+                if mp and not mp.get("error"):
+                    result["marketing_plan"] = mp
         except Exception:
             import traceback
             traceback.print_exc()

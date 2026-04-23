@@ -200,6 +200,38 @@ def test_manicure_home_response_has_growth_scenarios():
     assert gs["finmodel_cta"]["price"] == 9000
 
 
+def test_manicure_home_has_marketing_plan():
+    """Блок marketing_plan подмешивается для MANICURE (архетип A1)."""
+    calc = QuickCheckCalculator(_db)
+    report = calc.run(_make_req())
+    mp = report.get("marketing_plan")
+    assert mp is not None
+    assert mp["archetype_id"] == "A1"
+    assert mp["archetype_name"] == "Beauty & Personal Care"
+    assert mp["city_cac"] > 0
+    assert len(mp["monthly_plan"]) == 12
+    assert "summary" in mp
+    assert mp["summary"]["total_year_budget"] > 0
+
+
+def test_marketing_plan_respects_content_self_produced():
+    """content_self_produced=False → content_cost > 0 в каждом месяце."""
+    calc = QuickCheckCalculator(_db)
+    req_self = _make_req(specific_answers={
+        "experience": "none", "entrepreneur_role": "owner_plus_master",
+        "content_self_produced": True,
+    })
+    req_hire = _make_req(specific_answers={
+        "experience": "none", "entrepreneur_role": "owner_plus_master",
+        "content_self_produced": False,
+    })
+    total_self = calc.run(req_self)["marketing_plan"]["summary"]["total_year_budget"]
+    total_hire = calc.run(req_hire)["marketing_plan"]["summary"]["total_year_budget"]
+    # При наёмном контенте общий бюджет выше (15 000 × 12 = 180 000 для A1).
+    assert total_hire > total_self
+    assert total_hire - total_self == 15_000 * 12
+
+
 def test_manicure_home_has_danger_zone():
     """MANICURE_HOME всегда получает поле danger_zone (даже если has_risk=False)."""
     calc = QuickCheckCalculator(_db)
