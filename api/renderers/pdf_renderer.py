@@ -186,6 +186,21 @@ def _load_niche_names() -> dict:
 NICHE_NAMES = _load_niche_names()
 
 
+def _normalize_capex_items(items: list) -> list:
+    """Приводит CAPEX-записи к единому виду {name, amount, note?}.
+
+    block6.capex_structure использует 'label', legacy block_4.items — 'name'.
+    """
+    out = []
+    for it in items or []:
+        if not isinstance(it, dict):
+            continue
+        name = it.get("name") or it.get("label") or ""
+        amount = it.get("amount", 0)
+        out.append({"name": name, "amount": amount, "note": it.get("note", "")})
+    return out
+
+
 # ═══════════════════════════════════════════════════════════
 # Метрики (подготовка плоского словаря)
 # ═══════════════════════════════════════════════════════════
@@ -199,6 +214,15 @@ def _prep_metrics(result: dict, niche_id: str, ai_risks=None) -> dict:
     b7 = result.get("block_7", {})
     b9 = result.get("block_9", {})
     b10 = result.get("block_10", {})
+
+    # Новый формат — источник истины (calculator).
+    nb1 = result.get("block1") or {}
+    nb4 = result.get("block4") or {}
+    nb5 = result.get("block5") or {}
+    nb6 = result.get("block6") or {}
+    nb10 = result.get("block10") or {}
+    ei = nb5.get("entrepreneur_income") or {}
+    b4_metrics = nb4.get("metrics") or {}
 
     opex_items = result.get("block_3", {}).get("items", [])
     personnel = ""
@@ -221,10 +245,13 @@ def _prep_metrics(result: dict, niche_id: str, ai_risks=None) -> dict:
     net_in_pocket = oe.get("net_in_pocket") or 0
     stress = oe.get("stress_test") or []
 
-    inv_min = b4.get("investment_min") or b4.get("total") or 0
+    # CAPEX — источник истины из block6 (с обучением по experience).
+    # Fallback: block_4 (legacy) если нового формата нет.
+    inv_min = nb6.get("capex_needed") or b4.get("investment_min") or b4.get("total") or 0
     buffer_total = int((oe.get("opex_total", 0) + social) * 3) if oe else 0
 
-    payback = oe.get("owner_payback_months")
+    # Payback — из block5 (новый формат), fallback на owner_economics (legacy).
+    payback = nb5.get("payback_months") or oe.get("owner_payback_months")
 
     return {
         "city_name": inp.get("city_name", ""),
@@ -234,10 +261,15 @@ def _prep_metrics(result: dict, niche_id: str, ai_risks=None) -> dict:
         "cls": inp.get("class", ""),
         "area_m2": inp.get("area_m2", ""),
         "loc_type": inp.get("loc_type", ""),
+        "experience": inp.get("experience") or (
+            (result.get("user_inputs") or {}).get("specific_answers") or {}
+        ).get("experience"),
         "personnel": personnel,
         "audience": audience,
-        "checkMed": b1.get("check_med", 0),
-        "trafficMed": b1.get("traffic_med", 0),
+        # Трафик/чек — приоритет новому формату (block4.metrics), fallback legacy.
+        "checkMed": b4_metrics.get("avg_check") or b1.get("check_med", 0),
+        "trafficMed": b4_metrics.get("checks_per_day") or b1.get("traffic_med", 0),
+        "trafficMax": b4_metrics.get("max_checks_per_day") or 0,
         "locomotive": b1.get("locomotive", ""),
         "revenue": revenue, "cogs": cogs, "gross": gross,
         "opex_breakdown": opex_breakdown,
@@ -248,16 +280,21 @@ def _prep_metrics(result: dict, niche_id: str, ai_risks=None) -> dict:
         "taxRegime": b7.get("regime", "Упрощёнка"),
         "social": social,
         "net_in_pocket": net_in_pocket,
+        # Доход предпринимателя из block5 (новый формат): средний год + зрелая.
+        "avg_monthly_yr1": ei.get("total_monthly"),
+        "mature_monthly": ei.get("mature_monthly"),
         "stress": stress,
         "invMin": inv_min,
         "bufferTotal": buffer_total,
-        "capexItems": b4.get("items", []),
+        # CAPEX items — нормализация ключей (block6 использует 'label', legacy — 'name').
+        "capexItems": _normalize_capex_items(nb6.get("capex_structure") or b4.get("items", [])),
         "breakEven": b6.get("tb_revenue", 0),
         "safety_margin": round(b6.get("safety_margin", 0)),
         "tbChecksDay": b6.get("tb_checks_day", 0),
         "payback": payback,
-        "verdict_color": b10.get("verdict_color", "yellow"),
-        "verdict_text": b10.get("verdict_text", ""),
+        # Вердикт — из block1 (новый, калькулятор). Fallback legacy block_10.
+        "verdict_color": nb1.get("color") or b10.get("verdict_color", "yellow"),
+        "verdict_text": nb1.get("verdict_statement") or b10.get("verdict_text", ""),
         "ai_risks": ai_risks or [],
     }
 
@@ -646,27 +683,46 @@ def _verdict_table(m: dict, st: dict) -> Table:
 
 
 def _hero_number_box(m: dict, st: dict) -> Table:
-    pocket = m["net_in_pocket"]
-    hero_style = st["hero_num_red"] if pocket < 0 else st["hero_num"]
+    """Две карточки — средняя за первый год + на мощности (синхронно с Mini App).
 
-    t = Table([
-        [Paragraph("В КАРМАН СОБСТВЕННИКУ", st["hero_label"])],
-        [Paragraph(f"{_fmt_k(pocket)} ₸", hero_style)],
-        [Paragraph("в месяц — после всех налогов и соцплатежей", st["hero_unit"])],
-    ], colWidths=[_content_w()])
+    Источник данных: block5.entrepreneur_income.{total_monthly, mature_monthly}.
+    """
+    avg_yr1 = m.get("avg_monthly_yr1") or 0
+    mature = m.get("mature_monthly") or 0
+    avg_s = f"{_fmt(avg_yr1)} ₸"
+    mat_s = f"{_fmt(mature)} ₸"
+
+    def card(label, sub, val):
+        return Table([
+            [Paragraph(f'<font name="DejaVuSans" size="9" color="#6B7280">{_e(label).upper()}</font>',
+                       ParagraphStyle("hl", fontName="DejaVuSans", fontSize=9, leading=11, alignment=TA_CENTER))],
+            [Paragraph(f'<font name="DejaVuMono-Bold" size="20" color="{COL_GREEN_DARK.hexval()}">{_e(val)}</font>',
+                       ParagraphStyle("hv", fontName="DejaVuMono-Bold", fontSize=20, leading=24, alignment=TA_CENTER))],
+            [Paragraph(f'<font name="DejaVuSans" size="9" color="#9CA3AF">{_e(sub)}</font>',
+                       ParagraphStyle("hs", fontName="DejaVuSans", fontSize=9, leading=12, alignment=TA_CENTER))],
+        ], colWidths=[_content_w() / 2])
+
+    col_w = _content_w() / 2
+    left = card("Средняя за первый год", "с учётом разгона", avg_s)
+    right = card("Когда выйдете на мощность", "после месяца 4", mat_s)
+    for c in (left, right):
+        c.setStyle(TableStyle([
+            ("LEFTPADDING", (0, 0), (-1, -1), 6), ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+            ("TOPPADDING", (0, 0), (-1, 0), 12), ("BOTTOMPADDING", (0, 0), (-1, 0), 4),
+            ("TOPPADDING", (0, 1), (-1, 1), 0), ("BOTTOMPADDING", (0, 1), (-1, 1), 4),
+            ("TOPPADDING", (0, 2), (-1, 2), 0), ("BOTTOMPADDING", (0, 2), (-1, 2), 12),
+        ]))
+
+    t = Table([[left, right]], colWidths=[col_w, col_w])
     t.setStyle(TableStyle([
-        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("LINEABOVE", (0, 0), (-1, 0), 0.4, COL_LINE),
+        ("LINEBELOW", (0, 0), (-1, 0), 0.4, COL_LINE),
+        ("LINEBEFORE", (1, 0), (1, 0), 0.3, COL_LINE),
         ("LEFTPADDING", (0, 0), (-1, -1), 0),
         ("RIGHTPADDING", (0, 0), (-1, -1), 0),
-        ("TOPPADDING", (0, 0), (0, 0), 12),
-        ("BOTTOMPADDING", (0, 0), (0, 0), 4),
-        ("TOPPADDING", (0, 1), (-1, 1), 0),
-        ("BOTTOMPADDING", (0, 1), (-1, 1), 6),
-        ("TOPPADDING", (0, 2), (-1, 2), 0),
-        ("BOTTOMPADDING", (0, 2), (-1, 2), 12),
-        # Тонкие линии сверху и снизу, вместо коробки
-        ("LINEABOVE", (0, 0), (-1, 0), 0.4, COL_LINE),
-        ("LINEBELOW", (0, 2), (-1, 2), 0.4, COL_LINE),
+        ("TOPPADDING", (0, 0), (-1, -1), 0),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
     ]))
     return t
 
@@ -859,7 +915,9 @@ def _unit_econ_story(m: dict, st: dict) -> list:
     revenue = max(m["revenue"], 1)
     cost_per_tx = round(m["checkMed"] * (m["cogs"] / revenue))
     profit_per_tx = m["checkMed"] - cost_per_tx
-    daily = 15 if m["trafficMed"] < 30 else int(m["trafficMed"])
+    # Реальный трафик из block4.metrics.checks_per_day (не fallback 15!).
+    daily = int(m.get("trafficMed") or 0)
+    daily_max = int(m.get("trafficMax") or 0)
     daily_gross = profit_per_tx * daily
 
     # Три строки формулы: чек / минус себест. / равно прибыль
@@ -893,10 +951,11 @@ def _unit_econ_story(m: dict, st: dict) -> list:
         t.setStyle(TableStyle(style))
         return t
 
+    max_tail = f" (максимум {daily_max})" if daily_max and daily_max > daily else ""
     note_text = (
-        f"<b>Что это значит.</b> Если в день приходит {daily} клиентов — "
-        f"это <b>{_fmt(daily_gross)} ₸ в день</b> «наценки после себестоимости». "
-        f"Но из неё ещё нужно заплатить аренду, зарплату, налоги, соцплатежи — "
+        f"<b>Что это значит.</b> В среднем <b>{daily} клиентов в день</b>{max_tail} "
+        f"дают <b>{_fmt(daily_gross)} ₸ в день</b> «наценки после себестоимости». "
+        f"Из неё ещё нужно заплатить аренду, зарплату, налоги, соцплатежи — "
         f"и только потом остаток идёт в карман."
     )
 
