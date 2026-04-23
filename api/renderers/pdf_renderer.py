@@ -18,7 +18,7 @@ from reportlab.pdfbase.pdfmetrics import registerFontFamily
 from reportlab.platypus import (
     BaseDocTemplate, PageTemplate, Frame,
     Paragraph, Spacer, Table, TableStyle,
-    KeepTogether, PageBreak, NextPageTemplate, Flowable,
+    KeepTogether, PageBreak, NextPageTemplate, Flowable, HRFlowable,
 )
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
@@ -31,7 +31,10 @@ from reportlab.lib.units import mm
 # Шрифты
 # ═══════════════════════════════════════════════════════════
 
-_FONTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts")
+_FONTS_DIR = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "fonts",
+)
 _FONTS_REGISTERED = False
 
 
@@ -134,13 +137,27 @@ def _e(s) -> str:
     return escape(str(s))
 
 
+_MONTHS_RU = {
+    1: "января", 2: "февраля", 3: "марта", 4: "апреля",
+    5: "мая", 6: "июня", 7: "июля", 8: "августа",
+    9: "сентября", 10: "октября", 11: "ноября", 12: "декабря",
+}
+
+
 def _report_id() -> str:
-    return "ZRK-" + uuid.uuid4().hex[:6].upper()
+    """QC-YYYY-NNNNNN — форматированный ID отчёта."""
+    import random
+    tz = timezone(timedelta(hours=5))
+    year = datetime.now(tz).year
+    number = random.randint(100000, 999999)
+    return f"QC-{year}-{number}"
 
 
 def _today_ru() -> str:
-    tz = timezone(timedelta(hours=5))  # UTC+5
-    return datetime.now(tz).strftime("%d.%m.%Y")
+    """Дата на русском: «23 апреля 2026» (Астана UTC+5)."""
+    tz = timezone(timedelta(hours=5))
+    dt = datetime.now(tz)
+    return f"{dt.day} {_MONTHS_RU[dt.month]} {dt.year}"
 
 
 # ═══════════════════════════════════════════════════════════
@@ -149,10 +166,11 @@ def _today_ru() -> str:
 
 
 def _load_niche_names() -> dict:
-    """Читает niche_id → name_rus из config/niches.yaml."""
+    """Читает niche_id → name_rus из config/niches.yaml (репозиторный корень)."""
     import os as _os
+    # __file__ = api/renderers/pdf_renderer.py → подняться на 3 уровня до корня
     path = _os.path.join(
-        _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+        _os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))),
         "config", "niches.yaml",
     )
     try:
@@ -287,32 +305,41 @@ def _styles():
             textColor=colors.HexColor("#3730A3"), alignment=TA_LEFT,
         ),
         "cover_brand": ParagraphStyle(
-            "cover_brand", fontName="DejaVuSans-Bold", fontSize=13, leading=17,
-            textColor=COL_WHITE, alignment=TA_LEFT,
+            "cover_brand", fontName="DejaVuSans-Bold", fontSize=28, leading=32,
+            textColor=COL_WHITE, alignment=TA_CENTER,
         ),
         "cover_brand_sub": ParagraphStyle(
-            "cover_brand_sub", fontName="DejaVuSans", fontSize=9.5, leading=13,
-            textColor=colors.HexColor("#A1A1AA"), alignment=TA_LEFT,
+            "cover_brand_sub", fontName="DejaVuSans", fontSize=9, leading=13,
+            textColor=colors.HexColor("#A1A1AA"), alignment=TA_CENTER,
         ),
-        "cover_badge": ParagraphStyle(
-            "cover_badge", fontName="DejaVuSans-Bold", fontSize=10, leading=14,
-            textColor=colors.HexColor("#C7D2FE"), alignment=TA_LEFT,
+        "cover_kicker": ParagraphStyle(
+            "cover_kicker", fontName="DejaVuSans-Bold", fontSize=11, leading=16,
+            textColor=colors.HexColor("#C7D2FE"), alignment=TA_CENTER,
+            spaceAfter=18,
         ),
         "cover_h1": ParagraphStyle(
-            "cover_h1", fontName="DejaVuSans-Bold", fontSize=36, leading=42,
-            textColor=COL_WHITE, alignment=TA_LEFT, spaceAfter=8,
+            "cover_h1", fontName="DejaVuSans-Bold", fontSize=48, leading=56,
+            textColor=COL_WHITE, alignment=TA_CENTER, spaceAfter=10,
         ),
         "cover_sub": ParagraphStyle(
             "cover_sub", fontName="DejaVuSans", fontSize=13, leading=18,
-            textColor=colors.HexColor("#CBD5E1"), alignment=TA_LEFT,
+            textColor=colors.HexColor("#CBD5E1"), alignment=TA_CENTER,
         ),
-        "cover_meta": ParagraphStyle(
-            "cover_meta", fontName="DejaVuSans", fontSize=10, leading=14,
-            textColor=colors.HexColor("#CBD5E1"), alignment=TA_LEFT,
+        "cover_meta_label": ParagraphStyle(
+            "cover_meta_label", fontName="DejaVuSans", fontSize=10, leading=14,
+            textColor=colors.HexColor("#9CA3AF"), alignment=TA_LEFT,
+        ),
+        "cover_meta_value": ParagraphStyle(
+            "cover_meta_value", fontName="DejaVuSans-Bold", fontSize=10, leading=14,
+            textColor=colors.HexColor("#E5E7EB"), alignment=TA_LEFT,
+        ),
+        "cover_report_id": ParagraphStyle(
+            "cover_report_id", fontName="DejaVuMono", fontSize=10, leading=14,
+            textColor=colors.HexColor("#9CA3AF"), alignment=TA_RIGHT,
         ),
         "cover_foot": ParagraphStyle(
-            "cover_foot", fontName="DejaVuSans", fontSize=9, leading=12,
-            textColor=colors.HexColor("#94A3B8"), alignment=TA_LEFT,
+            "cover_foot", fontName="DejaVuSans", fontSize=9, leading=13,
+            textColor=colors.HexColor("#94A3B8"), alignment=TA_CENTER,
         ),
         "hero_num": ParagraphStyle(
             "hero_num", fontName="DejaVuMono-Bold", fontSize=44, leading=50,
@@ -398,42 +425,77 @@ def _content_w() -> float:
 
 def _cover_story(m: dict, report_id: str, date_str: str, st: dict) -> list:
     niche_upper = _e(m["niche_name"].upper())
-    city_upper = _e(m["city_name"].upper())
-    title = _e(m["format_name"]) if m.get("format_name") else _e(m["niche_name"])
+    format_label = _e(m.get("format_name") or "")
+    city_name = _e(m.get("city_name") or "")
 
-    brand_block = Table([[Paragraph("ZEREK", st["cover_brand"])]], colWidths=[PAGE_W - 40 * mm])
-    brand_block.setStyle(TableStyle([("LEFTPADDING", (0,0), (-1,-1), 0), ("RIGHTPADDING", (0,0), (-1,-1), 0),
-                                     ("TOPPADDING", (0,0), (-1,-1), 0), ("BOTTOMPADDING", (0,0), (-1,-1), 0)]))
+    content_w = PAGE_W - 40 * mm
+    divider_col = colors.HexColor("#27272A")
+    divider = HRFlowable(width=content_w, thickness=0.5, color=divider_col,
+                         spaceBefore=0, spaceAfter=0)
+
+    brand = Table([
+        [Paragraph("ZEREK", st["cover_brand"])],
+        [Spacer(1, 4)],
+        [Paragraph("AI-ПЛАТФОРМА БИЗНЕС-АНАЛИТИКИ", st["cover_brand_sub"])],
+    ], colWidths=[content_w])
+    brand.setStyle(TableStyle([
+        ("LEFTPADDING", (0,0), (-1,-1), 0), ("RIGHTPADDING", (0,0), (-1,-1), 0),
+        ("TOPPADDING", (0,0), (-1,-1), 0), ("BOTTOMPADDING", (0,0), (-1,-1), 0),
+    ]))
 
     middle = Table([
-        [Paragraph(f"{niche_upper} · {city_upper}", st["cover_badge"])],
-        [Spacer(1, 14)],
-        [Paragraph(title, st["cover_h1"])],
+        [Paragraph("АНАЛИЗ&nbsp;&nbsp;БИЗНЕС-ИДЕИ", st["cover_kicker"])],
+        [Paragraph(niche_upper, st["cover_h1"])],
         [Spacer(1, 10)],
-        [Paragraph(
-            "Экспресс-оценка бизнес-идеи на основе данных рынка "
-            f"{_e(m['city_name'])} и практики малого бизнеса Казахстана.",
-            st["cover_sub"],
-        )],
-    ], colWidths=[PAGE_W - 40 * mm])
-    middle.setStyle(TableStyle([("LEFTPADDING", (0,0), (-1,-1), 0), ("RIGHTPADDING", (0,0), (-1,-1), 0),
-                                ("TOPPADDING", (0,0), (-1,-1), 0), ("BOTTOMPADDING", (0,0), (-1,-1), 0)]))
+        [Paragraph("Quick Check · 2026", st["cover_sub"])],
+    ], colWidths=[content_w])
+    middle.setStyle(TableStyle([
+        ("LEFTPADDING", (0,0), (-1,-1), 0), ("RIGHTPADDING", (0,0), (-1,-1), 0),
+        ("TOPPADDING", (0,0), (-1,-1), 0), ("BOTTOMPADDING", (0,0), (-1,-1), 0),
+    ]))
 
-    # Мета — на одной строке, моноширинно
-    meta_p = Paragraph(
-        f'<font name="DejaVuMono" size="9" color="#9CA3AF">'
-        f'{_e(date_str)}  ·  {_e(report_id)}  ·  ZEREK.CC  ·  @ZEREKAI_BOT'
-        f'</font>',
-        ParagraphStyle("cm", fontName="DejaVuMono", fontSize=9, leading=12),
+    # Меta: две колонки (label | value) с равномерным выравниванием.
+    meta_rows = []
+    if format_label:
+        meta_rows.append(("Формат", format_label))
+    if city_name:
+        meta_rows.append(("Город", city_name))
+    meta_rows.append(("Подготовлено", _e(date_str)))
+
+    meta_data = [
+        [Paragraph(lbl + ":", st["cover_meta_label"]),
+         Paragraph(val, st["cover_meta_value"])]
+        for lbl, val in meta_rows
+    ]
+    meta_tbl = Table(meta_data, colWidths=[content_w * 0.35, content_w * 0.65])
+    meta_tbl.setStyle(TableStyle([
+        ("LEFTPADDING", (0,0), (-1,-1), 0), ("RIGHTPADDING", (0,0), (-1,-1), 0),
+        ("TOPPADDING", (0,0), (-1,-1), 3), ("BOTTOMPADDING", (0,0), (-1,-1), 3),
+        ("VALIGN", (0,0), (-1,-1), "TOP"),
+    ]))
+
+    report_id_p = Paragraph(f"№ {_e(report_id)}", st["cover_report_id"])
+    footer = Paragraph(
+        "ZEREK — AI-платформа бизнес-аналитики для предпринимателей Казахстана<br/>"
+        "zerek.cc  ·  @ZEREKAI_BOT",
+        st["cover_foot"],
     )
 
     outer = Table([
-        [brand_block],
-        [Spacer(1, 120)],
+        [brand],
+        [Spacer(1, 24)],
+        [divider],
+        [Spacer(1, 80)],
         [middle],
-        [Spacer(1, 140)],
-        [meta_p],
-    ], colWidths=[PAGE_W - 40 * mm])
+        [Spacer(1, 80)],
+        [divider],
+        [Spacer(1, 32)],
+        [meta_tbl],
+        [Spacer(1, 16)],
+        [report_id_p],
+        [Spacer(1, 36)],
+        [footer],
+    ], colWidths=[content_w])
     outer.setStyle(TableStyle([
         ("LEFTPADDING", (0,0), (-1,-1), 0), ("RIGHTPADDING", (0,0), (-1,-1), 0),
         ("TOPPADDING", (0,0), (-1,-1), 0), ("BOTTOMPADDING", (0,0), (-1,-1), 0),
