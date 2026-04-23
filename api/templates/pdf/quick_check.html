@@ -1,0 +1,2276 @@
+{#-
+  ZEREK Quick Check PDF Report — Clean Template v1
+  
+  Использует Jinja2. Подключается к WeasyPrint.
+  Все данные — из response движка (dict result).
+  
+  Маппинг данных:
+  - inp = result.input (city_name, niche_id, format_id, capital, experience)
+  - mkt = result.market
+  - cap = result.capex (total, breakdown, levels)
+  - cadq = result.capital_adequacy (minimum, comfortable, safe, verdict, gap)
+  - dz = result.danger_zone (applicable, worst_month, max_drawdown, break_even)
+  - mp = result.marketing_plan (archetype_id, summary, phases, choice_drivers, channels)
+  - sp = result.staff_paradox (block_type, capacity, strategies)
+  - tax = result.tax (usn_rate, annual_tax, ip_min_monthly)
+  - fin = result.financials (all_financials)
+  - fyc = result.first_year_chart (12 months: clients/revenue/profit)
+  - scn = result.scenarios (pessim/base/optim)
+  - pb = result.payback (months)
+  - vrd = result.verdict (level, title, message)
+-#}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>ZEREK Quick Check — {{ inp.niche_name_ru }} · {{ inp.city_name }}</title>
+<style>
+/* =========================================================
+   ZEREK PDF STYLESHEET v2 — WeasyPrint compatible
+   Light "consulting" palette. Navy + Gold.
+   ========================================================= */
+
+/* --- Fonts (встроены напрямую) --- */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;800&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+/* --- Page setup A4 --- */
+@page {
+  size: A4;
+  margin: 20mm 18mm 22mm 18mm;
+  
+  @top-left {
+    content: "ZEREK · Quick Check";
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 8pt;
+    color: #808080;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  @top-right {
+    content: "{{ report_id | default('QC-2026-000000') }}";
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8pt;
+    color: #808080;
+  }
+  @bottom-left {
+    content: "{{ inp.niche_name_ru }} · {{ inp.city_name }} · {{ today_date }}";
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 8pt;
+    color: #808080;
+  }
+  @bottom-right {
+    content: "Страница " counter(page) " из " counter(pages);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 8pt;
+    color: #808080;
+  }
+}
+
+@page :first {
+  margin: 0;
+  @top-left { content: none; }
+  @top-right { content: none; }
+  @bottom-left { content: none; }
+  @bottom-right { content: none; }
+}
+
+/* --- Variables --- */
+:root {
+  --navy: #1F3864;
+  --navy-2: #2E4A7C;
+  --navy-3: #15274A;
+  --gold: #C9A961;
+  --gold-2: #A8894C;
+  --gold-light: #E8D9B0;
+  --ink: #1A1A1A;
+  --ink-2: #4A4A4A;
+  --ink-3: #808080;
+  --line: #E5E5E5;
+  --bg: #FFFFFF;
+  --bg-2: #FAFAFA;
+  --bg-3: #F0F0F3;
+  --green: #10B981;
+  --amber: #F59E0B;
+  --red: #EF4444;
+  --serif: 'Playfair Display', Georgia, serif;
+  --sans: 'Source Sans 3', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+/* --- Base --- */
+* { box-sizing: border-box; }
+
+body {
+  font-family: var(--sans);
+  font-size: 10.5pt;
+  line-height: 1.55;
+  color: var(--ink);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 { font-family: var(--serif); margin: 0; color: var(--navy); }
+p { margin: 0 0 8pt 0; }
+
+/* --- Section = Page --- */
+.page {
+  page-break-after: always;
+  padding: 0;
+}
+.page:last-child { page-break-after: auto; }
+
+/* --- Cover page --- */
+.cover {
+  page-break-after: always;
+  height: 297mm;
+  width: 210mm;
+  background: linear-gradient(180deg, #0F1A2E 0%, #1F3864 100%);
+  color: #FFFFFF;
+  position: relative;
+  padding: 30mm 20mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cover-top {
+  text-align: center;
+  margin-top: 40mm;
+}
+
+.cover-wordmark {
+  font-family: var(--serif);
+  font-size: 56pt;
+  font-weight: 800;
+  letter-spacing: 10px;
+  color: var(--gold-light);
+  margin-bottom: 6mm;
+}
+
+.cover-tagline {
+  font-family: var(--sans);
+  font-size: 11pt;
+  font-weight: 400;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 30mm;
+}
+
+.cover-title-wrap {
+  margin-top: 0;
+  text-align: center;
+}
+
+.cover-product {
+  font-family: var(--serif);
+  font-size: 32pt;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 4mm;
+}
+
+.cover-subtitle {
+  font-family: var(--sans);
+  font-size: 13pt;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 14mm;
+  letter-spacing: 1px;
+}
+
+.cover-divider {
+  width: 60mm;
+  height: 1px;
+  background: var(--gold);
+  margin: 12mm auto;
+}
+
+.cover-meta {
+  font-family: var(--sans);
+  font-size: 12pt;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 2;
+  text-align: center;
+}
+
+.cover-meta-row {
+  display: flex;
+  justify-content: center;
+  gap: 10mm;
+  margin: 3mm 0;
+}
+
+.cover-meta-label {
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 400;
+  min-width: 30mm;
+  text-align: right;
+}
+
+.cover-meta-value {
+  color: #FFFFFF;
+  font-weight: 600;
+  min-width: 45mm;
+  text-align: left;
+}
+
+.cover-bottom {
+  text-align: center;
+  font-size: 9pt;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 15mm;
+  padding-top: 20mm;
+}
+
+.cover-report-id {
+  font-family: var(--mono);
+  font-size: 10pt;
+  color: var(--gold-light);
+  letter-spacing: 2px;
+  margin-top: 4mm;
+}
+
+/* --- Page elements --- */
+.page-eyebrow {
+  font-family: var(--sans);
+  font-size: 8pt;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 4pt;
+}
+
+.page-title {
+  font-family: var(--serif);
+  font-size: 28pt;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.15;
+  margin: 0 0 6pt 0;
+  border-bottom: 2px solid var(--gold);
+  padding-bottom: 8pt;
+  display: inline-block;
+}
+
+.page-lede {
+  font-size: 11pt;
+  color: var(--ink-2);
+  max-width: 170mm;
+  margin-top: 12pt;
+  margin-bottom: 18pt;
+  line-height: 1.55;
+}
+
+.sub-title {
+  font-family: var(--serif);
+  font-size: 14pt;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 16pt 0 8pt 0;
+}
+
+.u-upper { text-transform: uppercase; letter-spacing: 2px; }
+.u-small { font-size: 10pt; }
+.u-tiny { font-size: 8.5pt; }
+.u-muted { color: var(--ink-3); }
+.u-gold  { color: var(--gold); }
+.u-navy  { color: var(--navy); }
+.u-mt-s  { margin-top: 8pt; }
+.u-mt-m  { margin-top: 14pt; }
+.u-mt-l  { margin-top: 22pt; }
+.u-center { text-align: center; }
+.mono { font-family: var(--mono); }
+.num { text-align: right; }
+
+/* --- Tables --- */
+table.keyvals {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8pt 0;
+}
+table.keyvals td {
+  padding: 6pt 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 10.5pt;
+}
+table.keyvals td.k { color: var(--ink-2); }
+table.keyvals td.v {
+  text-align: right;
+  font-weight: 600;
+  color: var(--ink);
+  font-family: var(--mono);
+}
+table.keyvals tr.total td {
+  border-top: 1px solid var(--navy);
+  border-bottom: none;
+  padding-top: 8pt;
+  font-weight: 700;
+}
+
+table.data {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8pt 0;
+}
+table.data th {
+  background: var(--bg-3);
+  padding: 8pt 10pt;
+  font-size: 9pt;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--navy);
+  text-align: left;
+  border-bottom: 2px solid var(--navy);
+}
+table.data th.num { text-align: right; }
+table.data td {
+  padding: 7pt 10pt;
+  border-bottom: 1px solid var(--line);
+  font-size: 10pt;
+  color: var(--ink);
+}
+table.data td.num {
+  text-align: right;
+  font-family: var(--mono);
+}
+table.data tr:nth-child(even) td { background: var(--bg-2); }
+
+/* --- Verdict / Traffic Light --- */
+.verdict {
+  display: flex;
+  gap: 16pt;
+  align-items: flex-start;
+  padding: 18pt 20pt;
+  border-radius: 3pt;
+  margin: 12pt 0 14pt 0;
+  border-left: 4pt solid;
+}
+.verdict.green { background: rgba(16, 185, 129, 0.06); border-color: var(--green); }
+.verdict.amber { background: rgba(245, 158, 11, 0.06); border-color: var(--amber); }
+.verdict.red   { background: rgba(239, 68, 68, 0.06);  border-color: var(--red); }
+
+.traffic-light {
+  display: flex;
+  flex-direction: column;
+  gap: 4pt;
+  min-width: 20pt;
+}
+.tl-light {
+  width: 14pt;
+  height: 14pt;
+  border-radius: 50%;
+  background: #D5D5D5;
+  display: inline-block;
+}
+.tl-light.on.green { background: var(--green); box-shadow: 0 0 4pt rgba(16, 185, 129, 0.5); }
+.tl-light.on.amber { background: var(--amber); box-shadow: 0 0 4pt rgba(245, 158, 11, 0.5); }
+.tl-light.on.red   { background: var(--red);   box-shadow: 0 0 4pt rgba(239, 68, 68, 0.5); }
+
+.verdict-body { flex: 1; }
+.verdict-label {
+  font-size: 9pt;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 4pt;
+}
+.verdict.green .verdict-label { color: var(--green); }
+.verdict.amber .verdict-label { color: var(--amber); }
+.verdict.red   .verdict-label { color: var(--red); }
+
+.verdict-body h3 {
+  font-size: 17pt;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 0 0 6pt 0;
+}
+.verdict-body p {
+  font-size: 10.5pt;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+/* --- KPI Grid --- */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6mm;
+  margin: 14pt 0;
+}
+.kpi-cell {
+  padding: 14pt 14pt 12pt 14pt;
+  border: 1px solid var(--line);
+  background: var(--bg-2);
+  border-radius: 3pt;
+}
+.kpi-label {
+  font-size: 8.5pt;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--ink-3);
+  font-weight: 600;
+  margin-bottom: 6pt;
+}
+.kpi-value {
+  font-family: var(--serif);
+  font-size: 26pt;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1;
+  margin-bottom: 6pt;
+}
+.kpi-value .unit {
+  font-size: 12pt;
+  color: var(--ink-3);
+  font-weight: 400;
+  margin-left: 3pt;
+  font-family: var(--sans);
+}
+.kpi-hint {
+  font-size: 9.5pt;
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+.kpi-delta {
+  display: inline-block;
+  font-size: 8pt;
+  font-weight: 700;
+  padding: 1pt 5pt;
+  border-radius: 2pt;
+  margin-right: 5pt;
+  letter-spacing: 0.5px;
+}
+.kpi-delta.up   { background: rgba(16,185,129,0.12); color: var(--green); }
+.kpi-delta.flat { background: var(--bg-3); color: var(--ink-2); }
+.kpi-delta.down { background: rgba(239,68,68,0.12); color: var(--red); }
+
+/* --- Layouts --- */
+.col2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10mm;
+}
+.col-5-7 {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 10mm;
+}
+.col-7-5 {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: 10mm;
+}
+
+/* --- Callouts --- */
+.callout {
+  padding: 12pt 14pt;
+  border-radius: 3pt;
+  margin: 10pt 0;
+  border-left: 3pt solid;
+  font-size: 10pt;
+  line-height: 1.5;
+}
+.callout.green { background: rgba(16, 185, 129, 0.05); border-color: var(--green); }
+.callout.amber { background: rgba(245, 158, 11, 0.05); border-color: var(--amber); }
+.callout.red   { background: rgba(239, 68, 68, 0.05);  border-color: var(--red); }
+.callout.navy  { background: rgba(31, 56, 100, 0.04);  border-color: var(--navy); }
+.callout-title {
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 4pt;
+  font-size: 10.5pt;
+}
+.callout.green .callout-title { color: var(--green); }
+.callout.amber .callout-title { color: var(--amber); }
+.callout.red   .callout-title { color: var(--red); }
+
+/* --- Insight block --- */
+.insight {
+  background: rgba(201, 169, 97, 0.07);
+  border-left: 3pt solid var(--gold);
+  padding: 14pt 16pt;
+  border-radius: 3pt;
+  margin: 12pt 0;
+}
+.insight-kicker {
+  font-size: 9pt;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4pt;
+}
+.insight p { margin: 0; font-size: 10.5pt; line-height: 1.55; color: var(--ink); }
+
+/* --- Charts --- */
+.chart {
+  margin: 10pt 0;
+}
+.chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.caption {
+  font-size: 8.5pt;
+  color: var(--ink-3);
+  font-style: italic;
+  margin-top: 4pt;
+}
+
+/* --- Disclaimer --- */
+.disclaimer {
+  margin-top: 20pt;
+  padding-top: 14pt;
+  border-top: 1px solid var(--line);
+  font-size: 8.5pt;
+  color: var(--ink-3);
+  line-height: 1.5;
+}
+
+/* --- Strategy blocks (staff paradox) --- */
+.strategy-card {
+  padding: 12pt 14pt;
+  background: var(--bg-2);
+  border-left: 3pt solid var(--green);
+  border-radius: 3pt;
+  margin-bottom: 10pt;
+}
+.strategy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4pt;
+}
+.strategy-label {
+  font-weight: 700;
+  font-size: 11pt;
+  color: var(--navy);
+}
+.strategy-savings {
+  font-weight: 700;
+  color: var(--green);
+  font-size: 10pt;
+}
+.strategy-summary {
+  font-weight: 600;
+  color: var(--ink-2);
+  margin-bottom: 4pt;
+  font-size: 9.5pt;
+}
+.strategy-details {
+  font-size: 9.5pt;
+  color: var(--ink-2);
+  line-height: 1.5;
+  margin-bottom: 5pt;
+}
+.strategy-meta {
+  font-size: 9pt;
+  color: var(--ink-3);
+  line-height: 1.45;
+  padding-top: 5pt;
+  border-top: 1px solid var(--line);
+}
+.strategy-meta strong { color: var(--gold-2); }
+
+/* --- Phase cards (marketing) --- */
+.phase-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4mm;
+  margin: 10pt 0;
+}
+.phase-card {
+  padding: 12pt 10pt;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 3pt;
+  text-align: center;
+}
+.phase-label {
+  font-size: 8.5pt;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--ink-3);
+  font-weight: 600;
+  margin-bottom: 4pt;
+}
+.phase-budget {
+  font-family: var(--serif);
+  font-size: 15pt;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 4pt 0;
+}
+.phase-note {
+  font-size: 9pt;
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+
+/* --- Driver bars (5 stars) --- */
+.drivers-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4mm;
+  padding: 12pt;
+  background: var(--bg-2);
+  border-radius: 3pt;
+  margin: 10pt 0;
+}
+.driver-cell {
+  text-align: center;
+}
+.driver-label {
+  font-size: 8.5pt;
+  color: var(--ink-2);
+  margin-bottom: 4pt;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+.driver-stars {
+  color: var(--gold);
+  font-size: 12pt;
+  margin-bottom: 2pt;
+}
+.driver-score {
+  font-size: 9pt;
+  color: var(--ink-3);
+  font-weight: 700;
+}
+
+/* --- CTA card --- */
+.cta-card {
+  padding: 18pt 20pt;
+  border: 2pt solid var(--navy);
+  background: #FFFFFF;
+  border-radius: 3pt;
+  margin: 14pt 0;
+}
+.cta-kicker {
+  font-size: 9pt;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6pt;
+}
+.cta-title {
+  font-family: var(--serif);
+  font-size: 22pt;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 0 0 6pt 0;
+}
+.cta-desc {
+  font-size: 10.5pt;
+  color: var(--ink-2);
+  max-width: 130mm;
+  margin: 0 0 10pt 0;
+}
+.cta-price {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 26pt;
+  color: var(--navy);
+  display: inline-block;
+  margin-right: 15pt;
+}
+.cta-link {
+  color: var(--navy);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 2px solid var(--gold);
+  padding-bottom: 2pt;
+  font-size: 11pt;
+}
+
+/* --- Avoid break inside for key blocks --- */
+.avoid-break { page-break-inside: avoid; }
+</style>
+</head>
+
+<body>
+
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 1 — COVER
+    ═══════════════════════════════════════════════════════════════ -#}
+<section class="cover">
+  <div class="cover-top">
+    <div class="cover-wordmark">ZEREK</div>
+    <div class="cover-tagline">AI Business Analytics · Казахстан</div>
+  </div>
+  
+  <div class="cover-title-wrap">
+    <div class="cover-product">Quick Check</div>
+    <div class="cover-subtitle">Анализ бизнес-возможности</div>
+    <div class="cover-divider"></div>
+    
+    <div class="cover-meta">
+      <div class="cover-meta-row">
+        <span class="cover-meta-label">Ниша:</span>
+        <span class="cover-meta-value">{{ inp.niche_name_ru }}</span>
+      </div>
+      <div class="cover-meta-row">
+        <span class="cover-meta-label">Формат:</span>
+        <span class="cover-meta-value">{{ inp.format_name_ru }}</span>
+      </div>
+      <div class="cover-meta-row">
+        <span class="cover-meta-label">Город:</span>
+        <span class="cover-meta-value">{{ inp.city_name }}</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="cover-bottom">
+    <div>Конфиденциальный отчёт</div>
+    <div class="cover-report-id">{{ report_id }}</div>
+    <div style="margin-top: 3mm;">{{ today_date }}</div>
+  </div>
+</section>
+
+
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 2 — ПАСПОРТ БИЗНЕСА
+    ═══════════════════════════════════════════════════════════════ -#}
+<section class="page">
+  <div class="page-eyebrow">01 · Паспорт</div>
+  <h1 class="page-title">Паспорт вашего бизнеса</h1>
+  <p class="page-lede">
+    Сводка параметров, по которым построен весь отчёт. Проверьте соответствие —
+    от этого зависит точность дальнейших расчётов.
+  </p>
+
+  <div class="col2">
+    <div>
+      <h3 class="sub-title">Бизнес</h3>
+      <table class="keyvals">
+        <tr><td class="k">Ниша</td><td class="v">{{ inp.niche_name_ru }}</td></tr>
+        <tr><td class="k">Формат</td><td class="v">{{ inp.format_name_ru }}</td></tr>
+        <tr><td class="k">Класс</td><td class="v">{{ inp.capex_level_ru }}</td></tr>
+        <tr><td class="k">Город</td><td class="v">{{ inp.city_name }}</td></tr>
+        <tr><td class="k">Локация</td><td class="v">{{ inp.loc_type_ru }}</td></tr>
+        {% if inp.area_m2 %}
+        <tr><td class="k">Площадь</td><td class="v">{{ inp.area_m2 }} м²</td></tr>
+        {% endif %}
+      </table>
+    </div>
+    <div>
+      <h3 class="sub-title">Предприниматель</h3>
+      <table class="keyvals">
+        <tr><td class="k">Опыт в нише</td><td class="v">{{ inp.experience_ru }}</td></tr>
+        <tr><td class="k">Правовая форма</td><td class="v">{{ inp.legal_form_ru }}</td></tr>
+        <tr><td class="k">Команда</td><td class="v">{% if inp.team_solo %}Соло-мастер{% else %}С сотрудниками{% endif %}</td></tr>
+        <tr><td class="k">Стартовый капитал</td><td class="v">
+          {% if inp.capital %}{{ inp.capital | money }} ₸
+          {% else %}<span style="color: var(--ink-3); font-weight: 400;">не указан</span>
+          {% endif %}
+        </td></tr>
+        <tr><td class="k">Нужно для формата</td><td class="v">{{ cap.total | money }} ₸</td></tr>
+      </table>
+    </div>
+  </div>
+
+  {% if inp.team_solo %}
+  <div class="callout navy u-mt-m">
+    <div class="callout-title">Вы работаете один</div>
+    Вы сами работаете. Без наёмных сотрудников — вся прибыль идёт вам.
+    Потолок роста — ваше физическое время и внимание.
+  </div>
+  {% endif %}
+
+  {% if not inp.capital %}
+  <div class="callout amber u-mt-s">
+    <div class="callout-title">Капитал не указан</div>
+    Все расчёты — на основе среднерыночных данных для вашего формата.
+    Для персональной оценки достаточности — укажите ваш капитал при
+    следующем прогоне.
+  </div>
+  {% endif %}
+</section>
+
+
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 3 — ВЕРДИКТ
+    ═══════════════════════════════════════════════════════════════ -#}
+<section class="page">
+  <div class="page-eyebrow">02 · Итог</div>
+  <h1 class="page-title">Итоговая оценка</h1>
+  <p class="page-lede">
+    Сводный вердикт по бизнес-возможности на основании расчёта экономики,
+    требуемого капитала и рыночных условий.
+  </p>
+
+  {% set verdict_class = vrd.level | default('amber') %}
+  <div class="verdict {{ verdict_class }}">
+    <div class="traffic-light">
+      <span class="tl-light {% if verdict_class == 'red' %}on red{% endif %}"></span>
+      <span class="tl-light {% if verdict_class == 'amber' %}on amber{% endif %}"></span>
+      <span class="tl-light {% if verdict_class == 'green' %}on green{% endif %}"></span>
+    </div>
+    <div class="verdict-body">
+      <div class="verdict-label">
+        {% if verdict_class == 'green' %}Зелёный сигнал
+        {% elif verdict_class == 'amber' %}Жёлтый сигнал
+        {% elif verdict_class == 'red' %}Красный сигнал
+        {% endif %}
+      </div>
+      <h3>{{ vrd.title }}</h3>
+      <p>{{ vrd.message }}</p>
+    </div>
+  </div>
+
+  <div class="col2">
+    <div>
+      <h3 class="sub-title">Почему мы так считаем</h3>
+      <table class="keyvals">
+        <tr><td class="k">Окупаемость</td><td class="v">{% if pb.months >= 13 %}более года{% else %}{{ pb.months }} мес{% endif %}</td></tr>
+        <tr><td class="k">Чистая маржа</td><td class="v">{{ fin.net_margin_pct }}%</td></tr>
+        <tr><td class="k">Точка безубыточности</td><td class="v">{{ fin.break_even_clients }} клиентов/мес</td></tr>
+        <tr><td class="k">Выход в плюс</td><td class="v">М{{ dz.break_even_month | default(4) }}</td></tr>
+        {% if dz.applicable and dz.max_drawdown %}
+        <tr><td class="k">Макс. просадка</td><td class="v">{{ dz.max_drawdown | money }} ₸</td></tr>
+        {% endif %}
+      </table>
+    </div>
+    <div>
+      <h3 class="sub-title">Три приоритета</h3>
+      <ol style="padding-left: 18pt; margin: 8pt 0 0 0;">
+        {% for priority in vrd.priorities | default([]) %}
+        <li style="margin-bottom: 8pt; font-size: 10.5pt; line-height: 1.5;">
+          <strong>{{ priority.title }}</strong>
+          {% if priority.detail %}<br><span class="u-muted u-small">{{ priority.detail }}</span>{% endif %}
+        </li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+
+  {% if vrd.key_insight %}
+  <div class="insight u-mt-m avoid-break">
+    <div class="insight-kicker">Ключевой инсайт</div>
+    <p>{{ vrd.key_insight | safe }}</p>
+  </div>
+  {% endif %}
+</section>
+
+
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 4 — DASHBOARD / KPI
+    ═══════════════════════════════════════════════════════════════ -#}
+<section class="page">
+  <div class="page-eyebrow">03 · Ключевые цифры</div>
+  <h1 class="page-title">Экономика одного взгляда</h1>
+  <p class="page-lede">
+    Шесть метрик, которые показывают форму бизнеса: сколько нужно денег,
+    сколько он может принести и как быстро встанет на ноги.
+  </p>
+
+  <div class="kpi-grid">
+    <div class="kpi-cell">
+      <div class="kpi-label">Стартовые вложения</div>
+      <div class="kpi-value">{{ cap.total | money_short }}<span class="unit">₸</span></div>
+      <div class="kpi-hint">
+        <span class="kpi-delta flat">CAPEX</span>
+        Оборудование, расходники, депозит
+      </div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Выручка · на мощности</div>
+      <div class="kpi-value">{{ fin.mature_revenue | money_short }}<span class="unit">₸</span></div>
+      <div class="kpi-hint">
+        <span class="kpi-delta up">с {{ dz.break_even_month | default(4) }}-го мес</span>
+        При стабильной загрузке
+      </div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Прибыль · на мощности</div>
+      <div class="kpi-value">{{ fin.mature_profit | money_short }}<span class="unit">₸</span></div>
+      <div class="kpi-hint">
+        <span class="kpi-delta up">{{ fin.net_margin_pct }}% маржа</span>
+        Чистыми, после налога
+      </div>
+    </div>
+
+    <div class="kpi-cell">
+      <div class="kpi-label">Точка безубыточности</div>
+      <div class="kpi-value">{{ fin.break_even_clients }}<span class="unit">клиентов/мес</span></div>
+      <div class="kpi-hint">
+        <span class="kpi-delta flat">минимум</span>
+        Чтобы выйти в ноль
+      </div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Окупаемость</div>
+      <div class="kpi-value">{{ pb.months if pb.months < 13 else '12+' }}<span class="unit">мес</span></div>
+      <div class="kpi-hint">
+        <span class="kpi-delta {% if pb.months <= 6 %}up{% elif pb.months <= 10 %}flat{% else %}down{% endif %}">
+          {% if pb.months <= 6 %}быстрая{% elif pb.months <= 10 %}средняя{% else %}долгая{% endif %}
+        </span>
+        С учётом разгона
+      </div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Клиентов · зрелый месяц</div>
+      <div class="kpi-value">{{ fin.mature_clients }}<span class="unit">чел/мес</span></div>
+      <div class="kpi-hint">
+        <span class="kpi-delta flat">реалистично</span>
+        При полной загрузке
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sub-title u-mt-l">Как читать эти цифры</h3>
+  <p class="u-small u-muted" style="max-width:170mm;">
+    Все значения — модельные, рассчитаны из локальных бенчмарков БНС РК,
+    данных 2GIS и реальных кейсов предпринимателей Казахстана.
+    Диапазон погрешности — ±12%. Зрелый месяц — 10–12-й от старта, когда
+    новых клиентов примерно столько же, сколько возвратных.
+  </p>
+</section>
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 5 — РЫНОК И КОНКУРЕНТЫ
+    ═══════════════════════════════════════════════════════════════ -#}
+<section class="page">
+  <div class="page-eyebrow">04 · Рынок</div>
+  <h1 class="page-title">Спрос и конкуренция</h1>
+  <p class="page-lede">
+    Оценка доступного рынка и уровня насыщения в вашем городе.
+  </p>
+
+  <div class="col-5-7">
+    <div>
+      <h3 class="sub-title">TAM / SAM / SOM</h3>
+      <p class="u-small u-muted">
+        Потенциальный рынок, доступный сегмент и реалистичный захват
+        на первый год.
+      </p>
+
+      <div class="chart avoid-break u-mt-s">
+        <svg viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="pyr-g" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#2E4A7C"/>
+              <stop offset="100%" stop-color="#1F3864"/>
+            </linearGradient>
+          </defs>
+          <polygon points="10,20 310,20 280,70 40,70" fill="#E6ECF5" stroke="#1F3864" stroke-width="0.5"/>
+          <text x="160" y="48" text-anchor="middle" font-family="Source Sans 3" font-size="11" font-weight="700" fill="#1F3864" letter-spacing="2">TAM</text>
+          <text x="160" y="60" text-anchor="middle" font-family="Source Sans 3" font-size="8" fill="#595959" letter-spacing="1">Всё трудоспособное население</text>
+
+          <polygon points="40,80 280,80 240,140 80,140" fill="#C9A961" opacity="0.85" stroke="#A8894C" stroke-width="0.5"/>
+          <text x="160" y="108" text-anchor="middle" font-family="Source Sans 3" font-size="11" font-weight="700" fill="#4A3A18" letter-spacing="2">SAM</text>
+          <text x="160" y="122" text-anchor="middle" font-family="Source Sans 3" font-size="8" fill="#4A3A18" letter-spacing="1">Целевой сегмент</text>
+
+          <polygon points="80,150 240,150 210,200 110,200" fill="url(#pyr-g)" stroke="#15274A" stroke-width="0.5"/>
+          <text x="160" y="175" text-anchor="middle" font-family="Source Sans 3" font-size="11" font-weight="700" fill="#FFFFFF" letter-spacing="2">SOM</text>
+          <text x="160" y="188" text-anchor="middle" font-family="Source Sans 3" font-size="8" fill="#E8D9B0" letter-spacing="1">Ваш реалистичный захват</text>
+
+          <line x1="280" y1="45" x2="310" y2="45" stroke="#A3A3A3" stroke-width="0.5"/>
+          <text x="313" y="48" font-family="JetBrains Mono" font-size="8" fill="#595959">{{ mkt.tam_sam_som.tam | money_short }}</text>
+          <line x1="280" y1="110" x2="310" y2="110" stroke="#A3A3A3" stroke-width="0.5"/>
+          <text x="313" y="113" font-family="JetBrains Mono" font-size="8" fill="#595959">{{ mkt.tam_sam_som.sam | money_short }}</text>
+          <line x1="240" y1="175" x2="310" y2="175" stroke="#A3A3A3" stroke-width="0.5"/>
+          <text x="313" y="178" font-family="JetBrains Mono" font-size="8" fill="#595959">{{ mkt.tam_sam_som.som | money_short }}</text>
+        </svg>
+        <div class="caption u-center">Воронка доступного рынка · в тысячах человек</div>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="sub-title">Город и спрос</h3>
+      <table class="keyvals">
+        <tr><td class="k">Население</td><td class="v">{{ mkt.population | money }}</td></tr>
+        <tr><td class="k">Трудоспособные 16–62</td><td class="v">{{ mkt.working_age | money }}</td></tr>
+        <tr><td class="k">TAM (весь рынок ниши)</td><td class="v">{{ mkt.tam_sam_som.tam | money }}</td></tr>
+        <tr><td class="k">SAM (доступный)</td><td class="v">{{ mkt.tam_sam_som.sam | money }}</td></tr>
+        <tr><td class="k">SOM (ваш за год)</td><td class="v">{{ mkt.tam_sam_som.som | money }}</td></tr>
+        {% if mkt.competitors.кол_во %}
+        <tr><td class="k">Конкурентов в 2GIS</td><td class="v">{{ mkt.competitors.кол_во }}</td></tr>
+        {% endif %}
+        {% if mkt.consumer_behavior.Частота_визита %}
+        <tr><td class="k">Частота визита</td><td class="v">{{ mkt.consumer_behavior.Частота_визита }}</td></tr>
+        {% endif %}
+      </table>
+
+      {% if mkt.competitors.сигнал %}
+      <div class="callout amber u-mt-m">
+        <div class="callout-title">Конкурентная среда</div>
+        {{ mkt.competitors.сигнал }}
+      </div>
+      {% endif %}
+
+      {% if mkt.market_notes %}
+      <div class="callout navy u-mt-s">
+        <div class="callout-title">Контекст рынка</div>
+        {{ mkt.market_notes }}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 6 — ЛОКАЦИЯ (скрывается для HOME формата)
+    ═══════════════════════════════════════════════════════════════ -#}
+{% if inp.format_id != 'HOME' and not inp.format_id.endswith('_HOME') and loc.rent_month %}
+<section class="page">
+  <div class="page-eyebrow">05 · Локация</div>
+  <h1 class="page-title">Локация и аренда</h1>
+  <p class="page-lede">
+    Затраты на помещение в {{ inp.city_name }} для вашего формата, сравнение
+    с рыночным бенчмарком.
+  </p>
+
+  <div class="col-7-5">
+    <div>
+      <h3 class="sub-title">Параметры аренды</h3>
+      <table class="keyvals">
+        <tr><td class="k">Тип локации</td><td class="v">{{ inp.loc_type_ru }}</td></tr>
+        {% if inp.area_m2 %}
+        <tr><td class="k">Площадь</td><td class="v">{{ inp.area_m2 }} м²</td></tr>
+        {% endif %}
+        <tr><td class="k">Аренда / мес</td><td class="v">{{ loc.rent_month | money }} ₸</td></tr>
+        {% if loc.rent_per_m2 %}
+        <tr><td class="k">Ваша ставка за м²</td><td class="v">{{ loc.rent_per_m2 | money }} ₸</td></tr>
+        {% endif %}
+        {% if loc.rent_benchmark_m2 %}
+        <tr><td class="k">Средняя по городу за м²</td><td class="v">{{ loc.rent_benchmark_m2 | money }} ₸</td></tr>
+        {% endif %}
+        <tr><td class="k">Депозит (2 мес)</td><td class="v">{{ (loc.rent_month * 2) | money }} ₸</td></tr>
+      </table>
+
+      {% if loc.rent_per_m2 and loc.rent_benchmark_m2 %}
+      {% set rent_delta = ((loc.rent_per_m2 - loc.rent_benchmark_m2) / loc.rent_benchmark_m2 * 100) | int %}
+      <div class="callout {% if rent_delta < -10 %}green{% elif rent_delta > 10 %}amber{% else %}navy{% endif %} u-mt-m">
+        <div class="callout-title">
+          {% if rent_delta < -10 %}Ставка ниже рынка
+          {% elif rent_delta > 10 %}Ставка выше рынка
+          {% else %}Ставка рыночная
+          {% endif %}
+        </div>
+        {% if rent_delta < -10 %}
+        Вы нашли выгодную локацию — на {{ rent_delta | abs }}% ниже среднегородского уровня.
+        {% elif rent_delta > 10 %}
+        Ваша ставка на {{ rent_delta }}% выше среднегородской. Если возможно — продолжайте искать или торгуйтесь.
+        {% else %}
+        Ставка в рынке. Торг возможен в пределах 5–10%.
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+
+    <div>
+      {% if loc.location_note %}
+      <h3 class="sub-title">Что важно для локации</h3>
+      <p class="u-small">{{ loc.location_note }}</p>
+      {% endif %}
+
+      <h3 class="sub-title u-mt-m">Стоимость по городам</h3>
+      <p class="u-small u-muted">
+        Средняя ставка аренды для вашего формата в других крупных городах Казахстана
+        (ориентир, если рассматриваете перенос).
+      </p>
+      {% if loc.rent_by_city %}
+      <table class="data" style="font-size: 9.5pt;">
+        <thead>
+          <tr>
+            <th>Город</th>
+            <th class="num">Ставка за м²</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for city in loc.rent_by_city %}
+          <tr>
+            <td>{{ city.name }}</td>
+            <td class="num mono">{{ city.rent_m2 | money }} ₸</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 7 — СТРУКТУРА СТАРТОВЫХ ВЛОЖЕНИЙ (CAPEX)
+    ═══════════════════════════════════════════════════════════════ -#}
+<section class="page">
+  <div class="page-eyebrow">06 · Инвестиции</div>
+  <h1 class="page-title">Структура стартовых вложений</h1>
+  <p class="page-lede">
+    Что именно нужно купить и оплатить перед запуском.
+    Разбивка CAPEX по статьям.
+  </p>
+
+  <div class="col-7-5">
+    <div>
+      <h3 class="sub-title">Куда уйдут деньги</h3>
+      <table class="data">
+        <thead>
+          <tr>
+            <th>Статья</th>
+            <th class="num">Сумма</th>
+            <th class="num">Доля</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in cap.breakdown %}
+          <tr>
+            <td>{{ item.label }}</td>
+            <td class="num mono">{{ item.amount | money }} ₸</td>
+            <td class="num mono">{{ item.pct }}%</td>
+          </tr>
+          {% endfor %}
+          <tr class="total" style="font-weight: 700;">
+            <td style="border-top: 2px solid var(--navy); padding-top: 10pt;"><strong>Итого нужно</strong></td>
+            <td class="num mono" style="border-top: 2px solid var(--navy); padding-top: 10pt; color: var(--navy);"><strong>{{ cap.total | money }} ₸</strong></td>
+            <td class="num mono" style="border-top: 2px solid var(--navy); padding-top: 10pt;"><strong>100%</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <h3 class="sub-title">Сравнение классов</h3>
+      <p class="u-small u-muted">
+        Какой объём вложений нужен для разных уровней качества.
+      </p>
+
+      {% if cap.all_levels %}
+      <table class="keyvals u-mt-s">
+        {% if cap.all_levels.economy %}
+        <tr>
+          <td class="k">
+            <span style="color: var(--green);">●</span> Эконом
+            <span class="u-tiny u-muted">(б/у)</span>
+          </td>
+          <td class="v">{{ cap.all_levels.economy | money }} ₸</td>
+        </tr>
+        {% endif %}
+        {% if cap.all_levels.standard %}
+        <tr>
+          <td class="k">
+            <span style="color: var(--navy);">●</span> Стандарт
+            <span class="u-tiny u-muted">(новое)</span>
+          </td>
+          <td class="v">{{ cap.all_levels.standard | money }} ₸</td>
+        </tr>
+        {% endif %}
+        {% if cap.all_levels.premium %}
+        <tr>
+          <td class="k">
+            <span style="color: var(--gold);">●</span> Премиум
+            <span class="u-tiny u-muted">(топ)</span>
+          </td>
+          <td class="v">{{ cap.all_levels.premium | money }} ₸</td>
+        </tr>
+        {% endif %}
+        <tr class="total">
+          <td class="k"><strong>Ваш выбор</strong></td>
+          <td class="v" style="color: var(--navy);"><strong>{{ inp.capex_level_ru }}</strong></td>
+        </tr>
+      </table>
+      {% endif %}
+
+      <div class="callout navy u-mt-m">
+        <div class="callout-title">О чём помнить</div>
+        CAPEX — это не всё. К нему добавится операционный резерв на 3 месяца
+        разгона (см. блок достаточности капитала).
+      </div>
+    </div>
+  </div>
+</section>
+
+
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 8 — ДОСТАТОЧНОСТЬ КАПИТАЛА (БЛОК НАСТАВНИЧЕСТВА #1)
+    ═══════════════════════════════════════════════════════════════ -#}
+{% if cadq %}
+<section class="page">
+  <div class="page-eyebrow">07 · Капитал · Наставничество</div>
+  <h1 class="page-title">Достаточность капитала</h1>
+  <p class="page-lede">
+    Большинство бизнесов закрываются в первый год не потому что идея плохая,
+    а потому что деньги закончились во время разгона.
+  </p>
+
+  <div class="col-5-7">
+    <div>
+      <h3 class="sub-title">Три уровня достаточности</h3>
+
+      <table class="keyvals">
+        <tr>
+          <td class="k">
+            <span style="color: var(--red);">●</span> <strong>Минимум</strong>
+            <br><span class="u-tiny u-muted">только CAPEX</span>
+          </td>
+          <td class="v">{{ cadq.minimum | money }} ₸</td>
+        </tr>
+        <tr>
+          <td class="k">
+            <span style="color: var(--amber);">●</span> <strong>Комфортно</strong>
+            <br><span class="u-tiny u-muted">+ резерв на 3 мес</span>
+          </td>
+          <td class="v">{{ cadq.comfortable | money }} ₸</td>
+        </tr>
+        <tr>
+          <td class="k">
+            <span style="color: var(--green);">●</span> <strong>Безопасно</strong>
+            <br><span class="u-tiny u-muted">+ сезонный буфер</span>
+          </td>
+          <td class="v">{{ cadq.safe | money }} ₸</td>
+        </tr>
+        {% if inp.capital %}
+        <tr class="total">
+          <td class="k"><strong>Ваш капитал</strong></td>
+          <td class="v" style="color: var(--navy);"><strong>{{ inp.capital | money }} ₸</strong></td>
+        </tr>
+        {% endif %}
+      </table>
+
+      {% if inp.capital %}
+      {% set verdict_color = cadq.verdict_level | default('amber') %}
+      <div class="callout {{ verdict_color }} u-mt-m">
+        <div class="callout-title">
+          {% if verdict_color == 'green' %}🟢 Хватает для безопасного старта
+          {% elif verdict_color == 'amber' %}🟡 Рискованно
+          {% else %}🔴 Критически мало
+          {% endif %}
+        </div>
+        {{ cadq.verdict_text }}
+        {% if cadq.gap_amount and cadq.gap_amount > 0 %}
+        <br><br><strong>Не хватает: {{ cadq.gap_amount | money }} ₸</strong> —
+        {% if cadq.gap_to == 'comfortable' %}до комфортного уровня
+        {% else %}до безопасного уровня{% endif %}.
+        {% endif %}
+      </div>
+      {% else %}
+      <div class="callout navy u-mt-m">
+        <div class="callout-title">Хотите персональную оценку?</div>
+        Укажите ваш стартовый капитал при следующем прогоне — получите вердикт
+        "хватает ли вам".
+      </div>
+      {% endif %}
+    </div>
+
+    <div>
+      <h3 class="sub-title">Из чего состоит резерв на 3 месяца</h3>
+      {% if cadq.reserve_breakdown %}
+      <table class="keyvals">
+        {% for item in cadq.reserve_breakdown %}
+        <tr>
+          <td class="k">{{ item.label }}</td>
+          <td class="v">{{ item.amount | money }} ₸</td>
+        </tr>
+        {% endfor %}
+        <tr class="total">
+          <td class="k"><strong>Итого резерв</strong></td>
+          <td class="v" style="color: var(--navy);"><strong>{{ cadq.reserve_total | money }} ₸</strong></td>
+        </tr>
+      </table>
+      {% endif %}
+
+      <div class="insight u-mt-m avoid-break">
+        <div class="insight-kicker">Мудрость консультанта</div>
+        <p>
+          Запас важнее красивого оборудования. Лучше закупить минимум
+          и иметь подушку, чем вложить всё в <em>премиум</em> и закрыться
+          через 4 месяца из-за кассового разрыва.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 9 — ШТАТ (скрывается для соло-форматов)
+    ═══════════════════════════════════════════════════════════════ -#}
+{% if not inp.team_solo and stf and stf.stages %}
+<section class="page">
+  <div class="page-eyebrow">08 · Команда</div>
+  <h1 class="page-title">Штатное расписание</h1>
+  <p class="page-lede">
+    Как растёт команда по этапам. Оклад — gross, с учётом налогов работодателя.
+  </p>
+
+  {% for stage in stf.stages %}
+  <h3 class="sub-title">{{ stage.label }}</h3>
+  <table class="data">
+    <thead>
+      <tr>
+        <th>Роль</th>
+        <th class="num">Кол-во</th>
+        <th class="num">Оклад/мес</th>
+        <th class="num">С налогами</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for role in stage.staff %}
+      <tr>
+        <td>
+          {{ role.role }}
+          {% if role.is_owner %}<span class="u-muted">(вы)</span>{% endif %}
+        </td>
+        <td class="num mono">{{ role.headcount }}</td>
+        <td class="num mono">
+          {% if role.is_owner %}
+          <span class="u-muted">без оклада</span>
+          {% else %}
+          {{ role.salary | money }} ₸
+          {% endif %}
+        </td>
+        <td class="num mono">
+          {% if role.is_owner %}—
+          {% else %}{{ (role.salary * 1.115) | int | money }} ₸
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+      <tr class="total">
+        <td colspan="3" style="border-top: 2px solid var(--navy); padding-top: 8pt;">
+          <strong>ФОТ с налогами</strong>
+        </td>
+        <td class="num mono" style="border-top: 2px solid var(--navy); padding-top: 8pt; color: var(--navy);">
+          <strong>{{ stage.total_fot_with_taxes | money }} ₸</strong>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  {% endfor %}
+
+  <div class="callout navy u-mt-m">
+    <div class="callout-title">Налоги работодателя 2026</div>
+    ОПВР 3.5% + СО 5% + ООСМС 3% = <strong>11.5% сверх оклада</strong>.
+    Соцналог для упрощёнки отменён с 2026 года.
+  </div>
+</section>
+{% endif %}
+
+
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 10 — OPEX
+    ═══════════════════════════════════════════════════════════════ -#}
+<section class="page">
+  <div class="page-eyebrow">09 · Расходы</div>
+  <h1 class="page-title">Ежемесячные расходы</h1>
+  <p class="page-lede">
+    Структура OPEX вашего бизнеса. Все статьи — месячные, если не указано иначе.
+  </p>
+
+  <div class="col-7-5">
+    <div>
+      <h3 class="sub-title">Состав OPEX</h3>
+      <table class="data">
+        <thead>
+          <tr>
+            <th>Статья</th>
+            <th class="num">Сумма / мес</th>
+            <th class="num">% выручки</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in opx.breakdown %}
+          <tr>
+            <td>{{ item.label }}</td>
+            <td class="num mono">{{ item.amount | money }} ₸</td>
+            <td class="num mono">{{ item.pct_of_revenue }}%</td>
+          </tr>
+          {% endfor %}
+          <tr class="total">
+            <td style="border-top: 2px solid var(--navy); padding-top: 8pt;"><strong>Итого OPEX</strong></td>
+            <td class="num mono" style="border-top: 2px solid var(--navy); padding-top: 8pt; color: var(--navy);">
+              <strong>{{ opx.total | money }} ₸</strong>
+            </td>
+            <td class="num mono" style="border-top: 2px solid var(--navy); padding-top: 8pt;">
+              <strong>{{ opx.total_pct }}%</strong>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <h3 class="sub-title">Юнит-экономика</h3>
+      <p class="u-small u-muted">
+        Куда уходят деньги с одной услуги.
+      </p>
+
+      <table class="keyvals">
+        <tr><td class="k">Средний чек</td><td class="v">{{ fin.avg_check | money }} ₸</td></tr>
+        <tr><td class="k">− Материалы</td><td class="v">{{ fin.unit_materials | money }} ₸</td></tr>
+        <tr><td class="k">− Аренда (доля)</td><td class="v">{{ fin.unit_rent_share | money }} ₸</td></tr>
+        <tr><td class="k">− Прочие расходы</td><td class="v">{{ fin.unit_other | money }} ₸</td></tr>
+        <tr><td class="k">− Налог</td><td class="v">{{ fin.unit_tax | money }} ₸</td></tr>
+        <tr class="total">
+          <td class="k"><strong>Чистыми вам</strong></td>
+          <td class="v" style="color: var(--green);"><strong>{{ fin.unit_net | money }} ₸</strong></td>
+        </tr>
+      </table>
+
+      <div class="callout navy u-mt-m">
+        <div class="callout-title">Чистая маржа · {{ fin.net_margin_pct }}%</div>
+        После всех расходов и налогов вам остаётся {{ fin.unit_net }} ₸
+        с каждых {{ fin.avg_check | money }} ₸ выручки.
+      </div>
+    </div>
+  </div>
+</section>
+
+
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 11 — ТОЧКА БЕЗУБЫТОЧНОСТИ + 3 СЦЕНАРИЯ
+    ═══════════════════════════════════════════════════════════════ -#}
+<section class="page">
+  <div class="page-eyebrow">10 · Выручка</div>
+  <h1 class="page-title">Выручка, безубыточность, сценарии</h1>
+  <p class="page-lede">
+    Три варианта экономики: базовый, пессимистичный и оптимистичный.
+    Все цифры — на мощности, после выхода на полную загрузку.
+  </p>
+
+  <div class="col-7-5">
+    <div>
+      <h3 class="sub-title">Финансы за год — 3 сценария</h3>
+      <table class="data">
+        <thead>
+          <tr>
+            <th>Показатель</th>
+            <th class="num" style="color: var(--red);">Пессим.</th>
+            <th class="num" style="color: var(--navy);">База</th>
+            <th class="num" style="color: var(--green);">Оптим.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Выручка</strong></td>
+            <td class="num mono">{{ scn.pessim.revenue | money_short }}</td>
+            <td class="num mono">{{ scn.base.revenue | money_short }}</td>
+            <td class="num mono">{{ scn.optim.revenue | money_short }}</td>
+          </tr>
+          <tr>
+            <td>− ФОТ</td>
+            <td class="num mono">{{ scn.pessim.fot | money_short }}</td>
+            <td class="num mono">{{ scn.base.fot | money_short }}</td>
+            <td class="num mono">{{ scn.optim.fot | money_short }}</td>
+          </tr>
+          <tr>
+            <td>− Материалы</td>
+            <td class="num mono">{{ scn.pessim.materials | money_short }}</td>
+            <td class="num mono">{{ scn.base.materials | money_short }}</td>
+            <td class="num mono">{{ scn.optim.materials | money_short }}</td>
+          </tr>
+          <tr>
+            <td>− Аренда</td>
+            <td class="num mono">{{ scn.pessim.rent | money_short }}</td>
+            <td class="num mono">{{ scn.base.rent | money_short }}</td>
+            <td class="num mono">{{ scn.optim.rent | money_short }}</td>
+          </tr>
+          <tr>
+            <td>− Маркетинг</td>
+            <td class="num mono">{{ scn.pessim.marketing | money_short }}</td>
+            <td class="num mono">{{ scn.base.marketing | money_short }}</td>
+            <td class="num mono">{{ scn.optim.marketing | money_short }}</td>
+          </tr>
+          <tr>
+            <td>− Прочие</td>
+            <td class="num mono">{{ scn.pessim.other | money_short }}</td>
+            <td class="num mono">{{ scn.base.other | money_short }}</td>
+            <td class="num mono">{{ scn.optim.other | money_short }}</td>
+          </tr>
+          <tr>
+            <td>− Налог</td>
+            <td class="num mono">{{ scn.pessim.tax | money_short }}</td>
+            <td class="num mono">{{ scn.base.tax | money_short }}</td>
+            <td class="num mono">{{ scn.optim.tax | money_short }}</td>
+          </tr>
+          <tr class="total" style="border-top: 2px solid var(--navy);">
+            <td style="padding-top: 8pt;"><strong>Чистая прибыль</strong></td>
+            <td class="num mono" style="padding-top: 8pt; color: var(--red); font-weight: 700;">{{ scn.pessim.profit | money_short }}</td>
+            <td class="num mono" style="padding-top: 8pt; color: var(--navy); font-weight: 700;">{{ scn.base.profit | money_short }}</td>
+            <td class="num mono" style="padding-top: 8pt; color: var(--green); font-weight: 700;">{{ scn.optim.profit | money_short }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <h3 class="sub-title">Точка безубыточности</h3>
+      <table class="keyvals">
+        <tr><td class="k">Минимум услуг/мес</td><td class="v">{{ fin.break_even_clients }}</td></tr>
+        <tr><td class="k">Планируется</td><td class="v">{{ fin.mature_clients }}</td></tr>
+        <tr><td class="k">Запас прочности</td><td class="v">×{{ fin.safety_ratio }}</td></tr>
+      </table>
+
+      <div class="callout navy u-mt-m">
+        <div class="callout-title">Что это значит</div>
+        Это минимум услуг в месяц, чтобы покрыть все расходы
+        и выйти в ноль. Всё, что больше — ваша прибыль.
+      </div>
+
+      <h3 class="sub-title u-mt-m">Прибыль предпринимателя</h3>
+      <table class="keyvals">
+        <tr>
+          <td class="k">Средняя за первый год<br><span class="u-tiny u-muted">с учётом разгона</span></td>
+          <td class="v" style="color: var(--green);">{{ fin.avg_year_profit | money }} ₸/мес</td>
+        </tr>
+        <tr>
+          <td class="k">На мощности<br><span class="u-tiny u-muted">после М{{ dz.break_even_month | default(4) }}</span></td>
+          <td class="v" style="color: var(--green);">{{ fin.mature_profit | money }} ₸/мес</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 12 — 12 МЕСЯЦЕВ + СЕЗОННОСТЬ
+    ═══════════════════════════════════════════════════════════════ -#}
+<section class="page">
+  <div class="page-eyebrow">11 · Год в деталях</div>
+  <h1 class="page-title">Ваши первые 12 месяцев</h1>
+  <p class="page-lede">
+    Помесячная динамика выручки с учётом разгона и сезонности.
+    Старт: {{ inp.start_month_ru }}.
+  </p>
+
+  {#- Bar chart 12 месяцев -#}
+  <div class="chart avoid-break">
+    <svg viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg">
+      {% set chart_max = fyc | map(attribute='revenue') | max %}
+      {% set bar_width = 40 %}
+      {% set bar_gap = 12 %}
+      {% for month in fyc %}
+        {% set x = 40 + loop.index0 * (bar_width + bar_gap) %}
+        {% set bar_h = ((month.revenue / chart_max) * 160) | int if chart_max else 0 %}
+        {% set y = 180 - bar_h %}
+        {% set color = '#A0A8C0' if month.phase == 'ramp' else ('#10B981' if month.phase == 'peak' else ('#F59E0B' if month.phase == 'low' else '#3E7A5E')) %}
+        <rect x="{{ x }}" y="{{ y }}" width="{{ bar_width }}" height="{{ bar_h }}" fill="{{ color }}" rx="2"/>
+        <text x="{{ x + bar_width/2 }}" y="200" text-anchor="middle" font-family="Source Sans 3" font-size="9" fill="#595959">{{ month.month_short_ru }}</text>
+      {% endfor %}
+      
+      {#- Legend -#}
+      <g transform="translate(40, 5)" font-family="Source Sans 3" font-size="8" fill="#595959">
+        <rect x="0" y="0" width="10" height="10" fill="#A0A8C0" rx="1"/>
+        <text x="14" y="8">Разгон</text>
+        <rect x="75" y="0" width="10" height="10" fill="#3E7A5E" rx="1"/>
+        <text x="89" y="8">Норма</text>
+        <rect x="150" y="0" width="10" height="10" fill="#10B981" rx="1"/>
+        <text x="164" y="8">Сезонный пик</text>
+        <rect x="260" y="0" width="10" height="10" fill="#F59E0B" rx="1"/>
+        <text x="274" y="8">Просадка</text>
+      </g>
+    </svg>
+    <div class="caption u-center">Помесячная выручка, тыс ₸</div>
+  </div>
+
+  <div class="col-5-7 u-mt-m">
+    <div>
+      <h3 class="sub-title">Ваш старт</h3>
+      <table class="keyvals">
+        <tr><td class="k">Месяц старта</td><td class="v">{{ inp.start_month_ru }}</td></tr>
+        <tr><td class="k">Разгон</td><td class="v">М1–М{{ dz.break_even_month | default(4) - 1 }}</td></tr>
+        <tr><td class="k">Выход на мощность</td><td class="v">М{{ dz.break_even_month | default(4) }}</td></tr>
+        {% if mkt.seasonal_peaks %}
+        <tr><td class="k">Сезонные пики</td><td class="v">{{ mkt.seasonal_peaks }}</td></tr>
+        {% endif %}
+        {% if mkt.seasonal_lows %}
+        <tr><td class="k">Просадки</td><td class="v">{{ mkt.seasonal_lows }}</td></tr>
+        {% endif %}
+      </table>
+    </div>
+    <div>
+      <div class="callout navy">
+        <div class="callout-title">Комментарий к старту</div>
+        {% if mkt.start_note %}
+        {{ mkt.start_note }}
+        {% else %}
+        Первые {{ dz.break_even_month | default(4) - 1 }} месяца — разгон.
+        С {{ dz.break_even_month | default(4) }}-го месяца — выход на полную мощность.
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 13 — ЗОНА РИСКА: РАЗГОН + СЕЗОННОСТЬ (БЛОК НАСТАВНИЧЕСТВА #2)
+    ═══════════════════════════════════════════════════════════════ -#}
+{% if dz and dz.applicable %}
+<section class="page">
+  <div class="page-eyebrow">12 · Зона риска · Наставничество</div>
+  <h1 class="page-title">Зона риска: разгон и сезонность</h1>
+  <p class="page-lede">
+    Точки максимальной уязвимости вашего бизнеса в первый год. Именно здесь
+    большинство закрываются из-за кассового разрыва.
+  </p>
+
+  <div class="col-5-7">
+    <div>
+      <h3 class="sub-title">Ключевые точки</h3>
+      <table class="keyvals">
+        <tr><td class="k">Выход в плюс</td><td class="v">М{{ dz.break_even_month }}</td></tr>
+        <tr><td class="k">Худший месяц</td><td class="v">{{ dz.worst_month_ru }}</td></tr>
+        <tr><td class="k">Макс. просадка</td><td class="v" style="color: var(--red);">{{ dz.max_drawdown | money }} ₸</td></tr>
+        {% if dz.loss_months %}
+        <tr><td class="k">Убыточных месяцев</td><td class="v">{{ dz.loss_months | length }}</td></tr>
+        {% endif %}
+      </table>
+
+      <div class="callout red u-mt-m">
+        <div class="callout-title">Зона максимальной опасности</div>
+        В худший месяц ({{ dz.worst_month_ru }}) прибыль снизится до
+        <strong>{{ dz.worst_month_profit | money }} ₸</strong>. Это не катастрофа
+        если у вас есть подушка — и катастрофа если нет.
+      </div>
+    </div>
+
+    <div>
+      <h3 class="sub-title">Что это значит для вас</h3>
+      <p class="u-small">
+        Максимальная просадка <strong>{{ dz.max_drawdown | money }} ₸</strong> — это сумма,
+        которая должна лежать у вас на счету дополнительно к CAPEX,
+        чтобы вы гарантированно дожили до месяца выхода в плюс.
+      </p>
+
+      {% if dz.loss_months and dz.loss_months | length > 0 %}
+      <h3 class="sub-title u-mt-m">Убыточные месяцы</h3>
+      <table class="data" style="font-size: 9pt;">
+        <thead>
+          <tr>
+            <th>Месяц</th>
+            <th class="num">Выручка</th>
+            <th class="num">Убыток</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for month in dz.loss_months %}
+          <tr>
+            <td>{{ month.name_ru }}</td>
+            <td class="num mono">{{ month.revenue | money }}</td>
+            <td class="num mono" style="color: var(--red);">{{ month.loss | money }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+
+      <div class="insight u-mt-m avoid-break">
+        <div class="insight-kicker">Рекомендация</div>
+        <p>
+          Держите на счету минимум <strong>{{ dz.max_drawdown | money }} ₸</strong>
+          в течение первых {{ dz.break_even_month }} месяцев. Это буфер,
+          который закрывает сезонные провалы и непредвиденные расходы.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 14 — СЕЗОННОСТЬ ВЫРУЧКИ
+    ═══════════════════════════════════════════════════════════════ -#}
+{% if mkt.seasonality %}
+<section class="page">
+  <div class="page-eyebrow">13 · Сезонность</div>
+  <h1 class="page-title">Годовая сезонность ниши</h1>
+  <p class="page-lede">
+    Как ваша выручка будет меняться от месяца к месяцу в стабильный год
+    (без учёта разгона).
+  </p>
+
+  {#- Seasonality bar chart -#}
+  <div class="chart avoid-break">
+    <svg viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg">
+      {% set bar_width = 40 %}
+      {% set bar_gap = 12 %}
+      {% for month in mkt.seasonality %}
+        {% set x = 40 + loop.index0 * (bar_width + bar_gap) %}
+        {% set bar_h = (month.pct * 1.3) | int %}
+        {% set y = 180 - bar_h %}
+        {% set color = '#10B981' if month.pct >= 110 else ('#3E7A5E' if month.pct >= 95 else ('#F59E0B' if month.pct >= 85 else '#EF4444')) %}
+        <rect x="{{ x }}" y="{{ y }}" width="{{ bar_width }}" height="{{ bar_h }}" fill="{{ color }}" rx="2"/>
+        <text x="{{ x + bar_width/2 }}" y="{{ y - 4 }}" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#4A4A4A" font-weight="700">{{ month.pct }}%</text>
+        <text x="{{ x + bar_width/2 }}" y="200" text-anchor="middle" font-family="Source Sans 3" font-size="9" fill="#595959">{{ month.name_short }}</text>
+      {% endfor %}
+    </svg>
+    <div class="caption u-center">% от средней годовой выручки</div>
+  </div>
+
+  {% if mkt.seasonality_note %}
+  <div class="callout navy u-mt-m">
+    <div class="callout-title">Как использовать сезонность</div>
+    {{ mkt.seasonality_note }}
+  </div>
+  {% endif %}
+</section>
+{% endif %}
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 15 — МАРКЕТИНГ (БЛОК НАСТАВНИЧЕСТВА #3)
+    ═══════════════════════════════════════════════════════════════ -#}
+{% if mp and mp.archetype_id %}
+<section class="page">
+  <div class="page-eyebrow">14 · Маркетинг · Наставничество</div>
+  <h1 class="page-title">Маркетинг — ваша воронка</h1>
+  <p class="page-lede">
+    Маркетинг работает как машина разгона — на старте дорого, потом окупается
+    сарафаном. Для вашей ниши важно правильное распределение, а не больший бюджет.
+  </p>
+
+  <div class="col-5-7">
+    <div>
+      <div class="insight avoid-break">
+        <div class="insight-kicker">Архетип вашей ниши</div>
+        <p>
+          <strong>{{ mp.archetype_name }} ({{ mp.archetype_id }})</strong><br>
+          <span class="u-small u-muted">{{ mp.archetype_note }}</span>
+        </p>
+      </div>
+
+      <h3 class="sub-title u-mt-m">Что важно клиенту при выборе</h3>
+      <div class="drivers-grid">
+        {% set drivers = [
+          ('Цена',     mp.choice_drivers.price),
+          ('Локация',  mp.choice_drivers.location),
+          ('Визуал',   mp.choice_drivers.visual),
+          ('Доверие',  mp.choice_drivers.trust),
+          ('Скорость', mp.choice_drivers.speed)
+        ] %}
+        {% for label, score in drivers %}
+        <div class="driver-cell">
+          <div class="driver-label">{{ label }}</div>
+          <div class="driver-stars">
+            {% for i in range(score) %}★{% endfor %}{% for i in range(5 - score) %}☆{% endfor %}
+          </div>
+          <div class="driver-score">{{ score }}/5</div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <h3 class="sub-title u-mt-m">Сводка за год</h3>
+      <table class="keyvals">
+        <tr><td class="k">Среднее / мес</td><td class="v">{{ mp.summary.avg_monthly_budget | money }} ₸</td></tr>
+        <tr><td class="k">Итого за год</td><td class="v">{{ mp.summary.total_year_budget | money }} ₸</td></tr>
+        <tr><td class="k">Пиковый месяц</td><td class="v">М{{ mp.summary.peak_month }} · {{ mp.summary.peak_budget | money }} ₸</td></tr>
+      </table>
+    </div>
+
+    <div>
+      <h3 class="sub-title">Бюджет по фазам роста</h3>
+      <div class="phase-grid">
+        {% for phase in mp.phases %}
+        <div class="phase-card">
+          <div class="phase-label">{{ phase.label }}</div>
+          <div class="phase-budget">{{ phase.avg_budget | money_short }} ₸/мес</div>
+          <div class="phase-note">{{ phase.note_ru }}</div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <h3 class="sub-title u-mt-m">Куда идёт платный бюджет</h3>
+      <table class="keyvals">
+        {% for channel in mp.channels_where_to_invest %}
+        <tr>
+          <td class="k">{{ channel.name }}</td>
+          <td class="v" style="color: var(--green);">{{ channel.pct }}%</td>
+        </tr>
+        {% endfor %}
+      </table>
+
+      {% if mp.what_not_to_do_ru %}
+      <div class="callout red u-mt-m">
+        <div class="callout-title">Не тратьте бюджет на</div>
+        {{ mp.what_not_to_do_ru }}
+      </div>
+      {% endif %}
+
+      {% if mp.content_advice_ru %}
+      <div class="callout amber u-mt-s">
+        <div class="callout-title">Про контент</div>
+        {{ mp.content_advice_ru }}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 16 — ПАРАДОКС КАДРОВ (БЛОК НАСТАВНИЧЕСТВА #4)
+    Показывается только для Beauty-архетипа (A1)
+    ═══════════════════════════════════════════════════════════════ -#}
+{% if sp and sp.applicable %}
+<section class="page">
+  <div class="page-eyebrow">15 · Парадокс кадров · Наставничество</div>
+  <h1 class="page-title">Парадокс кадров</h1>
+  <p class="page-lede">
+    {{ sp.subtitle }}
+  </p>
+
+  <div class="col-5-7">
+    <div>
+      <h3 class="sub-title">Ваш физический потолок</h3>
+      <table class="keyvals">
+        <tr><td class="k">Максимум в день</td><td class="v">{{ sp.capacity.max_clients_per_day }} клиентов</td></tr>
+        <tr><td class="k">Рабочих дней / мес</td><td class="v">{{ sp.capacity.working_days }}</td></tr>
+        <tr><td class="k">Средний чек</td><td class="v">{{ sp.capacity.avg_check | money }} ₸</td></tr>
+        <tr class="total">
+          <td class="k"><strong>Идеальный потолок</strong></td>
+          <td class="v" style="color: var(--navy);"><strong>{{ sp.capacity.peak_monthly_revenue | money }} ₸</strong></td>
+        </tr>
+        <tr>
+          <td class="k">Реалистично</td>
+          <td class="v">{{ sp.capacity.realistic_monthly_revenue | money }} ₸</td>
+        </tr>
+      </table>
+
+      {% if sp.physical_ceiling_note %}
+      <div class="callout amber u-mt-m">
+        <div class="callout-title">Физический потолок</div>
+        {{ sp.physical_ceiling_note }}
+      </div>
+      {% endif %}
+
+      {% if sp.block_type == 'short' %}
+      {% if sp.growth_path_note %}
+      <div class="callout navy u-mt-s">
+        <div class="callout-title">Как расти</div>
+        {{ sp.growth_path_note }}
+      </div>
+      {% endif %}
+      {% if sp.hire_impossible_note %}
+      <div class="callout red u-mt-s">
+        <div class="callout-title">Почему найм невозможен</div>
+        {{ sp.hire_impossible_note }}
+      </div>
+      {% endif %}
+      {% endif %}
+    </div>
+
+    <div>
+      {% if sp.block_type == 'medium' or sp.block_type == 'full' %}
+      <h3 class="sub-title">Стратегии расширения без найма</h3>
+
+      {% for strategy in sp.strategies %}
+      <div class="strategy-card avoid-break">
+        <div class="strategy-header">
+          <div class="strategy-label">{{ strategy.label }}</div>
+          {% if strategy.savings and strategy.savings.description %}
+          <div class="strategy-savings">{{ strategy.savings.description }}</div>
+          {% endif %}
+        </div>
+        <div class="strategy-summary">{{ strategy.summary }}</div>
+        <div class="strategy-details">{{ strategy.details }}</div>
+        {% if strategy.risk or strategy.when_works %}
+        <div class="strategy-meta">
+          {% if strategy.risk %}<div><strong>Риск:</strong> {{ strategy.risk }}</div>{% endif %}
+          {% if strategy.when_works %}<div><strong>Когда работает:</strong> {{ strategy.when_works }}</div>{% endif %}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+      {% endif %}
+
+      {% if sp.block_type == 'medium' and sp.hire_impossible_note %}
+      <div class="callout red u-mt-s">
+        <div class="callout-title">Почему найм не работает</div>
+        {{ sp.hire_impossible_note }}
+      </div>
+      {% endif %}
+
+      {% if sp.warning %}
+      <div class="callout red u-mt-m">
+        <div class="callout-title">{{ sp.warning.title }}</div>
+        {{ sp.warning.text }}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if sp.core_message %}
+  <div class="insight u-mt-m avoid-break">
+    <div class="insight-kicker">Главная мысль</div>
+    <p><em>{{ sp.core_message }}</em></p>
+  </div>
+  {% endif %}
+</section>
+{% endif %}
+
+
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 17 — СТРЕСС-ТЕСТ
+    ═══════════════════════════════════════════════════════════════ -#}
+{% if stress %}
+<section class="page">
+  <div class="page-eyebrow">16 · Устойчивость</div>
+  <h1 class="page-title">Стресс-тест</h1>
+  <p class="page-lede">
+    Насколько упадёт ваша годовая прибыль, если один из параметров ухудшится.
+    Помогает увидеть самое уязвимое место бизнеса.
+  </p>
+
+  <div class="col-5-7">
+    <div>
+      <h3 class="sub-title">Базовая прибыль</h3>
+      <table class="keyvals">
+        <tr>
+          <td class="k">Прибыль в год (база)</td>
+          <td class="v">{{ stress.base_annual_profit | money }} ₸</td>
+        </tr>
+      </table>
+    </div>
+
+    <div>
+      <h3 class="sub-title">Чувствительность к параметрам</h3>
+      <table class="data">
+        <thead>
+          <tr>
+            <th>Параметр</th>
+            <th class="num">Изменение</th>
+            <th class="num">Потеря/год</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for test in stress.tests %}
+          <tr>
+            <td>{{ test.label }}</td>
+            <td class="num mono">{{ test.delta }}</td>
+            <td class="num mono" style="color: var(--red);">{{ test.loss | money }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      {% if stress.critical_param %}
+      <div class="callout red u-mt-m">
+        <div class="callout-title">Критичный параметр</div>
+        <strong>{{ stress.critical_param }}</strong> — самая уязвимая метрика.
+        Следите за ней еженедельно с первой недели работы.
+      </div>
+      {% endif %}
+
+      {% if stress.recommendations %}
+      <div class="insight u-mt-s">
+        <div class="insight-kicker">Что делать</div>
+        <ul style="margin: 6pt 0 0 0; padding-left: 18pt; font-size: 10pt; line-height: 1.5;">
+          {% for rec in stress.recommendations %}
+          <li>{{ rec }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 18 — ТОП-РИСКИ
+    ═══════════════════════════════════════════════════════════════ -#}
+{% if risks and risks | length > 0 %}
+<section class="page">
+  <div class="page-eyebrow">17 · Риски</div>
+  <h1 class="page-title">Главные риски</h1>
+  <p class="page-lede">
+    То, о чём надо помнить в первый год. Ни один из них не фатален,
+    если подготовиться заранее.
+  </p>
+
+  {% for risk in risks %}
+  <div class="avoid-break" style="margin-bottom: 16pt; padding: 14pt 16pt; background: var(--bg-2); border-left: 3pt solid var(--amber); border-radius: 3pt;">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6pt;">
+      <strong style="font-size: 11pt; color: var(--navy);">
+        #{{ loop.index }} {{ risk.title }}
+      </strong>
+      <span class="u-tiny u-muted">
+        Вероятность: <strong>{{ risk.probability }}</strong> ·
+        Влияние: <strong>{{ risk.impact }}</strong>
+      </span>
+    </div>
+    <p class="u-small" style="margin-bottom: 6pt; color: var(--ink-2);">{{ risk.description }}</p>
+    {% if risk.mitigation %}
+    <div style="padding: 8pt 10pt; background: #FFFFFF; border-left: 2pt solid var(--green); font-size: 9.5pt; color: var(--ink-2);">
+      <strong style="color: var(--green);">💡 Что делать:</strong> {{ risk.mitigation }}
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</section>
+{% endif %}
+
+
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 19 — НАЛОГИ
+    ═══════════════════════════════════════════════════════════════ -#}
+<section class="page">
+  <div class="page-eyebrow">18 · Налоги</div>
+  <h1 class="page-title">Правовая форма и налоги</h1>
+  <p class="page-lede">
+    Рекомендованная форма и режим налогообложения для вашей ситуации —
+    с учётом города {{ inp.city_name }} и ожидаемой выручки.
+  </p>
+
+  <div class="col-5-7">
+    <div>
+      <h3 class="sub-title">Рекомендация</h3>
+      <div style="padding: 14pt; border: 1px solid var(--gold); background: rgba(201,169,97,0.06); border-radius: 3pt;">
+        <div class="u-upper u-tiny u-gold" style="margin-bottom: 4pt; font-weight: 700;">Форма · Режим</div>
+        <div style="font-family: var(--serif); font-size: 22pt; font-weight: 700; color: var(--navy); line-height: 1.1;">
+          {{ tax.legal_form_ru }} · УСН {{ tax.usn_rate }}%
+        </div>
+        <div class="u-small u-muted" style="margin-top: 6pt;">
+          {{ inp.city_name }}, оборот до {{ tax.usn_threshold | money_short }} ₸ / год, без НДС
+        </div>
+      </div>
+
+      <h3 class="sub-title u-mt-m">Годовая нагрузка</h3>
+      <table class="keyvals">
+        <tr><td class="k">Выручка (база)</td><td class="v">{{ scn.base.revenue | money }} ₸</td></tr>
+        <tr><td class="k">УСН {{ tax.usn_rate }}%</td><td class="v">{{ tax.annual_usn | money }} ₸</td></tr>
+        <tr><td class="k">Соцплатежи ИП (мин.)</td><td class="v">{{ (tax.ip_min_monthly * 12) | money }} ₸</td></tr>
+        <tr class="total">
+          <td class="k"><strong>Итого налоги за год</strong></td>
+          <td class="v" style="color: var(--navy);"><strong>{{ tax.total_annual | money }} ₸</strong></td>
+        </tr>
+      </table>
+    </div>
+
+    <div>
+      <h3 class="sub-title">Минимальные соцплатежи ИП</h3>
+      <p class="u-small">
+        <strong>{{ tax.ip_min_monthly | money }} ₸ / мес</strong> — это ОПВ + ВОСМС
+        + ИПН, обязательные платежи даже при нулевом доходе. За год:
+        <strong>{{ (tax.ip_min_monthly * 12) | money }} ₸</strong>. Учтено в OPEX.
+      </p>
+
+      <div class="callout amber u-mt-m">
+        <div class="callout-title">Важно о порогах</div>
+        Если годовой оборот превысит <strong>{{ tax.usn_threshold | money_short }} ₸</strong>
+        — вы перейдёте на общий режим (ОУР) с НДС {{ tax.nds_rate }}% и КПН.
+        Порог НДС 2026: <strong>{{ tax.nds_threshold | money_short }} ₸</strong> / год.
+      </div>
+
+      {% if tax.notes %}
+      <div class="callout navy u-mt-s">
+        <div class="callout-title">Примечания</div>
+        {{ tax.notes }}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 20 — ЧТО ДАЛЬШЕ: 3 СЦЕНАРИЯ РОСТА
+    ═══════════════════════════════════════════════════════════════ -#}
+{% if growth_scenarios %}
+<section class="page">
+  <div class="page-eyebrow">19 · Горизонт</div>
+  <h1 class="page-title">А что дальше?</h1>
+  <p class="page-lede">
+    Эти цифры — ваш первый год работы. Что будет через 2-3 года —
+    зависит от вашей стратегии.
+  </p>
+
+  {% for scenario in growth_scenarios %}
+  <div class="avoid-break" style="margin-bottom: 14pt; padding: 14pt 16pt; background: var(--bg-2); border-left: 3pt solid {{ scenario.color | default('#1F3864') }}; border-radius: 3pt;">
+    <h3 style="font-family: var(--serif); font-size: 15pt; font-weight: 700; color: var(--navy); margin: 0 0 6pt 0;">
+      {{ scenario.icon }} {{ scenario.title }}
+    </h3>
+    <p class="u-small" style="margin-bottom: 8pt; color: var(--ink-2);">
+      {{ scenario.description }}
+    </p>
+    <div style="padding: 8pt 10pt; background: #FFFFFF; border: 1px solid var(--line); border-radius: 3pt; font-size: 10pt;">
+      <strong>Через 2-3 года:</strong> {{ scenario.projection }}
+    </div>
+    {% if scenario.warning %}
+    <div style="margin-top: 6pt; font-size: 9pt; color: var(--amber);">
+      ⚠️ {{ scenario.warning }}
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+
+  {% if growth_tips %}
+  <h3 class="sub-title u-mt-m">Что нужно делать для роста</h3>
+  <div style="display: grid; grid-template-columns: 1fr; gap: 8pt;">
+    {% for tip in growth_tips %}
+    <div style="padding: 10pt 12pt; background: var(--bg-2); border-radius: 3pt; font-size: 10pt;">
+      <strong>{{ loop.index }}. {{ tip.title }}</strong>
+      <span class="u-muted"> — {{ tip.description }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</section>
+{% endif %}
+
+
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 21 — ИТОГОВАЯ КАРТОЧКА
+    ═══════════════════════════════════════════════════════════════ -#}
+<section class="page">
+  <div class="page-eyebrow">20 · Итог</div>
+  <h1 class="page-title">Zerek экспресс-оценка</h1>
+  <p class="page-lede">
+    Краткая карточка итогов для быстрого обзора.
+  </p>
+
+  <div style="text-align: center; margin: 20pt 0;">
+    <div class="traffic-light" style="flex-direction: row; justify-content: center; gap: 8pt; margin-bottom: 8pt;">
+      <span class="tl-light {% if verdict_class == 'red' %}on red{% endif %}" style="width: 30pt; height: 30pt;"></span>
+      <span class="tl-light {% if verdict_class == 'amber' %}on amber{% endif %}" style="width: 30pt; height: 30pt;"></span>
+      <span class="tl-light {% if verdict_class == 'green' %}on green{% endif %}" style="width: 30pt; height: 30pt;"></span>
+    </div>
+    <div style="font-family: var(--serif); font-size: 22pt; font-weight: 700; color: var(--navy);">
+      Ваша оценка:
+      {% if verdict_class == 'green' %}<span style="color: var(--green);">ЗЕЛЁНЫЙ</span>
+      {% elif verdict_class == 'amber' %}<span style="color: var(--amber);">ЖЁЛТЫЙ</span>
+      {% else %}<span style="color: var(--red);">КРАСНЫЙ</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col2">
+    <div>
+      <h3 class="sub-title" style="color: var(--green);">Что работает на вас</h3>
+      {% for pro in vrd.pros %}
+      <div style="padding: 8pt 10pt; background: rgba(16,185,129,0.05); border-radius: 3pt; margin-bottom: 6pt; font-size: 10pt;">
+        ✅ {{ pro }}
+      </div>
+      {% endfor %}
+    </div>
+
+    <div>
+      <h3 class="sub-title" style="color: var(--amber);">Что требует внимания</h3>
+      {% for con in vrd.cons %}
+      <div style="padding: 8pt 10pt; background: rgba(245,158,11,0.05); border-radius: 3pt; margin-bottom: 6pt; font-size: 10pt;">
+        ⚠️ {{ con }}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if action_plan %}
+  <h3 class="sub-title u-mt-l">План действий на ближайшие 60 дней</h3>
+  {% for week in action_plan %}
+  <div style="margin-bottom: 12pt; page-break-inside: avoid;">
+    <div style="display: inline-block; padding: 3pt 8pt; background: var(--navy); color: #FFFFFF; border-radius: 3pt; font-size: 9pt; font-weight: 700; letter-spacing: 1px; margin-bottom: 6pt;">
+      {{ week.label }}
+    </div>
+    <div style="font-weight: 700; font-size: 11pt; color: var(--navy); margin-bottom: 4pt;">
+      {{ week.title }}
+    </div>
+    <ul style="margin: 4pt 0 0 0; padding-left: 16pt; font-size: 10pt; line-height: 1.5; color: var(--ink-2);">
+      {% for action in week.actions %}
+      <li>{{ action }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endfor %}
+  {% endif %}
+</section>
+
+
+{#- ═══════════════════════════════════════════════════════════════
+    PAGE 22 — CTA + ФУТЕР
+    ═══════════════════════════════════════════════════════════════ -#}
+<section class="page">
+  <div class="page-eyebrow">21 · Дальше</div>
+  <h1 class="page-title">Ваш следующий шаг</h1>
+  <p class="page-lede">
+    Quick Check — это моментальный срез. Следующий уровень детализации —
+    персональная финансовая модель с месячной разбивкой на 3 года.
+  </p>
+
+  <div class="cta-card">
+    <div class="cta-kicker">Следующий продукт</div>
+    <h3 class="cta-title">ZEREK · Финансовая модель</h3>
+    <p class="cta-desc">
+      Детальный P&amp;L, cash-flow, sensitivity-анализ по 5 переменным,
+      график кредита и экспорт в Excel. Подходит для банка, инвестора, Astana Hub.
+    </p>
+    <div style="display: flex; gap: 18pt; align-items: baseline; flex-wrap: wrap;">
+      <div class="cta-price">9 000 ₸</div>
+      <a href="https://zerek.cc" class="cta-link">Заказать → zerek.cc</a>
+    </div>
+  </div>
+
+  <div class="cta-card" style="background: var(--bg-2); border-color: var(--ink-2);">
+    <div class="cta-kicker">Для серьёзных целей</div>
+    <h3 class="cta-title">ZEREK · Бизнес-план</h3>
+    <p class="cta-desc">
+      Готовый документ для банка, гранта или инвестора. Персонализирован
+      под вашу цель. Включает все расчёты Quick Check + Финмодели + маркетинг-стратегию.
+    </p>
+    <div style="display: flex; gap: 18pt; align-items: baseline; flex-wrap: wrap;">
+      <div class="cta-price">15 000 ₸</div>
+      <a href="https://zerek.cc" class="cta-link">Заказать → zerek.cc</a>
+    </div>
+  </div>
+
+  <h3 class="sub-title u-mt-l">Если есть вопросы</h3>
+  <div class="col2">
+    <div>
+      <p class="u-small">
+        <strong>Telegram-бот:</strong><br>
+        <a href="https://t.me/zerekai_bot" style="color: var(--navy);">@zerekai_bot</a> —
+        задайте вопрос по отчёту.
+      </p>
+      <p class="u-small u-mt-s">
+        <strong>Сайт:</strong><br>
+        <a href="https://zerek.cc" style="color: var(--navy);">zerek.cc</a> —
+        все продукты, кейсы, база знаний.
+      </p>
+    </div>
+    <div>
+      <p class="u-small">
+        <strong>Номер отчёта:</strong> <span class="mono">{{ report_id }}</span><br>
+        При обращении в поддержку укажите этот номер.
+      </p>
+      <p class="u-small u-mt-s">
+        <strong>Срок актуальности:</strong><br>
+        Бенчмарки обновляются ежеквартально. Рекомендуем пересчитать
+        через 3 месяца.
+      </p>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    <p style="margin-bottom: 6pt;">
+      <strong>Отказ от ответственности.</strong>
+      Этот отчёт сгенерирован AI-системой ZEREK на основании данных о нише,
+      городе, капитале и опыте предпринимателя. Отчёт носит
+      <strong>аналитический, а не юридический или финансовый характер</strong>.
+      Он не заменяет консультацию лицензированного финансового или налогового
+      советника. Решения о запуске бизнеса принимаются заказчиком самостоятельно.
+    </p>
+    <p style="margin-bottom: 6pt;">
+      <strong>Источники данных.</strong>
+      На основании аналитических отчётов по рынку Казахстана и реальных
+      кейсов предпринимателей партнёрской сети ZEREK.
+    </p>
+    <p>
+      © 2026 ZEREK. Все права защищены.
+    </p>
+  </div>
+</section>
+
+</body>
+</html>
