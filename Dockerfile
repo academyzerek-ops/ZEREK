@@ -12,14 +12,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libharfbuzz0b \
     libfontconfig1 \
     libcairo2 \
-    libjpeg-dev \
-    libgdk-pixbuf2.0-0 \
+    libjpeg62-turbo \
+    libgdk-pixbuf-2.0-0 \
     libglib2.0-0 \
     shared-mime-info \
     fonts-liberation \
     fonts-dejavu-core \
-    fonts-noto-core \
-    fonts-noto-cjk \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
