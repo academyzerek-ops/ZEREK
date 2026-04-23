@@ -1,8 +1,21 @@
-# Railway / Nixpacks build config.
-# WeasyPrint требует системные библиотеки Pango/Cairo/HarfBuzz/Fontconfig.
-# apt-packages добавляются поверх автоматически определённого Python-провайдера.
+# Railway Nixpacks config для WeasyPrint-системных библиотек.
+# Railway игнорирует railway.json с DOCKERFILE builder (Dashboard override)
+# и остаётся на Nixpacks, поэтому подаём libs через Nix-пакеты.
+# nixPkgs кладётся в /nix/store и подхватывается через LD_LIBRARY_PATH.
 
 [phases.setup]
+nixPkgs = [
+  "pango",
+  "cairo",
+  "gdk-pixbuf",
+  "harfbuzz",
+  "fontconfig",
+  "freetype",
+  "glib",
+  "libjpeg",
+  "liberation_ttf",
+]
+# aptPkgs параллельно — на случай если Nixpacks fallback использует Debian базу.
 aptPkgs = [
   "libpango-1.0-0",
   "libpangoft2-1.0-0",
