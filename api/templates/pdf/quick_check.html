@@ -2503,7 +2503,8 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       {{ vrd.direction_message }}
     </div>
     <div class="u-tiny u-muted" style="margin-top: 10pt;">
-      Средняя ЗП по региону: {{ vrd.avg_salary_region | money_round }} ₸ ·
+      Средняя ЗП по региону: {{ vrd.avg_salary_region | money }} ₸
+      <span style="opacity:0.7;">(БНС РК, Q4 2025)</span> ·
       Прогнозная прибыль на мощности: {{ vrd.profit_for_direction | money_round }} ₸/мес
     </div>
   </div>
