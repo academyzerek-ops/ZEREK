@@ -111,16 +111,16 @@ def generate_common_mistakes(niche_id: str, diag: Optional[dict] = None) -> Opti
     prompt = _PROMPT_TEMPLATE.format(insight=insight)
     diag["prompt_len"] = len(prompt)
 
+    # gemini-2.0-flash: без thinking-фазы (2.5 Flash тратит ~900 токенов
+    # на thinking, даже если thinkingBudget=0 передан — v1beta игнорирует,
+    # в итоге output ~40 tokens, текст обрывается).
     url = ("https://generativelanguage.googleapis.com/v1beta/models/"
-           "gemini-2.5-flash:generateContent?key=" + api_key)
-    # Gemini 2.5 Flash жадно ест maxOutputTokens thinking-фазой, поэтому
-    # запрос делаем с большим лимитом — для реального output нужно 400-500
-    # токенов (120 рус.слов), но thinking съест сверху до 2-4k токенов.
+           "gemini-2.0-flash:generateContent?key=" + api_key)
     payload = {
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
         "generationConfig": {
             "temperature": 0.3,
-            "maxOutputTokens": 4096,
+            "maxOutputTokens": 800,
             "topP": 0.9,
         },
     }
