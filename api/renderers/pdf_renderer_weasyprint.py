@@ -306,13 +306,26 @@ def _build_cadq_ctx(result: dict) -> Optional[dict]:
     reserve_items: List[Dict[str, Any]] = []
     if isinstance(rb, dict):
         months = int(rb.get("months") or 3)
-        mapping = [
-            ("marketing_per_month", "Маркетинг"),
+        # R6 C.1: маркетинг разгона — отдельная строка с реальной суммой
+        # M1-M3 (а не avg×3).
+        ramp_total = int(rb.get("marketing_ramp_total") or 0)
+        if ramp_total > 0:
+            reserve_items.append({
+                "label": f"Маркетинг разгона (М1-М{months})",
+                "amount": ramp_total,
+            })
+        else:
+            mk = int(rb.get("marketing_per_month") or 0)
+            if mk > 0:
+                reserve_items.append({
+                    "label": f"Маркетинг × {months} мес",
+                    "amount": mk * months,
+                })
+        for key, label in (
             ("other_opex_per_month", "Прочие расходы"),
             ("ip_min_taxes_per_month", "Соцплатежи ИП (мин)"),
             ("rent_per_month", "Аренда"),
-        ]
-        for key, label in mapping:
+        ):
             monthly = int(rb.get(key) or 0)
             if monthly <= 0:
                 continue

@@ -51,24 +51,35 @@ def compute_capital_adequacy(
     worst_season_drawdown: int,
     user_capital: Optional[int],
     legal_form: str = "ip",
+    ramp_marketing_total: int = 0,
 ) -> Dict[str, Any]:
     """Считает достаточность капитала в 3 уровнях.
 
     - minimum = capex_total
-    - comfortable = minimum + (marketing + opex + ip_min_taxes + rent) × rampup
-    - safe = comfortable + worst_season_drawdown × 2
+    - comfortable = minimum + резерв на разгон
+        резерв = ramp_marketing_total (M1-M3 из marketing_plan)
+                 + (other_opex + ip_min_taxes + rent) × rampup_months
+        Если ramp_marketing_total не передан — fallback на
+        marketing_monthly × rampup_months (старая логика).
+    - safe = comfortable + worst_season_drawdown × 2 (или 30% floor).
 
-    Для ТОО ip_min_taxes пока = 0 (все ниши сейчас на ИП; расширим позже).
+    R6 C.1: для HOME-форматов avg-маркетинг (60K) × 3 = 180K, а
+    реальный разгонный (152K/мес × 3 ≈ 460K) — занижение резерва
+    в 2.5 раза. Используем сумму первых 3 месяцев из marketing_plan.
     """
     ip_min_taxes = int(get_ip_minimum_monthly_payment()) if legal_form == "ip" else 0
 
-    monthly_fixed = (
-        int(marketing_monthly)
-        + int(other_opex_monthly)
+    other_fixed_per_month = (
+        int(other_opex_monthly)
         + ip_min_taxes
         + int(rent_monthly)
     )
-    reserve_3_months = monthly_fixed * int(rampup_months)
+    if ramp_marketing_total and ramp_marketing_total > 0:
+        marketing_for_reserve = int(ramp_marketing_total)
+    else:
+        marketing_for_reserve = int(marketing_monthly) * int(rampup_months)
+    reserve_3_months = marketing_for_reserve + other_fixed_per_month * int(rampup_months)
+    monthly_fixed = int(marketing_monthly) + other_fixed_per_month  # legacy для breakdown
     # seasonal_buffer = max(worst_monthly_loss × 2, comfortable × 30%).
     # Для высокомаржинальных ниш где worst_month прибылен — floor даёт
     # 30% от comfortable, чтобы safe ВСЕГДА было строго больше comfortable.
@@ -81,6 +92,7 @@ def compute_capital_adequacy(
 
     reserve_breakdown = {
         "marketing_per_month": int(marketing_monthly),
+        "marketing_ramp_total": int(marketing_for_reserve),
         "other_opex_per_month": int(other_opex_monthly),
         "ip_min_taxes_per_month": ip_min_taxes,
         "rent_per_month": int(rent_monthly),

@@ -386,9 +386,19 @@ class QuickCheckCalculator:
             user_cap = inp.get("capital")
             user_cap_int = int(user_cap) if user_cap else None
 
+            # R6 C.1: «комфортно» должно покрывать РАЗГОННЫЙ маркетинг
+            # (М1-М3 из marketing_plan, а не среднегодовой × 3). Для
+            # MANICURE_HOME ramp_total ≈ 460K, а avg×3 = 180K — занижало
+            # резерв в 2.5 раза.
+            ramp_marketing_total = 0
+            mp = result.get("marketing_plan") or {}
+            monthly_plan = mp.get("monthly_plan") or []
+            if monthly_plan:
+                for m in monthly_plan[:rampup]:
+                    if isinstance(m, dict):
+                        ramp_marketing_total += int(m.get("total_marketing", 0) or 0)
+
             # worst_season_drawdown = худший single-month loss (абсолют).
-            # Берётся из danger_zone.worst_month.profit если тот отрицательный.
-            # safe = comfortable + drawdown × 2 — покрытие двух таких худших месяцев.
             worst_drawdown = 0
             if danger_zone:
                 wp = int(danger_zone.get("worst_month", {}).get("profit") or 0)
@@ -403,6 +413,7 @@ class QuickCheckCalculator:
                 worst_season_drawdown=worst_drawdown,
                 user_capital=user_cap_int,
                 legal_form="ip",  # TODO: брать из YAML niche когда появится поле
+                ramp_marketing_total=ramp_marketing_total,
             )
         except Exception:
             import traceback
