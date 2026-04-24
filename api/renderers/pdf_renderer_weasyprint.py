@@ -270,6 +270,7 @@ def _build_cap_ctx(result: dict) -> dict:
     total = int(b6.get("capex_needed") or cap.get("total") or cap.get("capex_med") or 0)
     breakdown_raw = b6.get("capex_structure") or []
     breakdown = []
+    training_amount = 0
     for it in breakdown_raw:
         if not isinstance(it, dict):
             continue
@@ -277,14 +278,23 @@ def _build_cap_ctx(result: dict) -> dict:
         if amount <= 0:
             continue
         pct = int(round(amount / max(total, 1) * 100))
-        breakdown.append({
-            "label": it.get("label") or it.get("name") or "",
-            "amount": amount,
-            "pct": pct,
-        })
-    # Все уровни (эконом/стандарт/премиум) — пока берём из cap, fallback пустой.
+        label = it.get("label") or it.get("name") or ""
+        breakdown.append({"label": label, "amount": amount, "pct": pct})
+        if "Обучение" in label:
+            training_amount = amount
+    # Round-3 §1.3: показываем сноску «если опыт есть — можно исключить
+    # 150K» только если клиент не pro (иначе training_amount=0).
+    exp = (result.get("input") or {}).get("experience") or ""
+    exp_pro = str(exp).lower() in ("pro", "expert", "has", "some")
+    learning_note_visible = training_amount > 0 and not exp_pro
     all_levels = cap.get("все_уровни") or cap.get("all_levels") or {}
-    return {"total": total, "breakdown": breakdown, "all_levels": all_levels}
+    return {
+        "total": total,
+        "breakdown": breakdown,
+        "all_levels": all_levels,
+        "training_amount": training_amount,
+        "learning_note_visible": learning_note_visible,
+    }
 
 
 def _build_cadq_ctx(result: dict) -> Optional[dict]:
@@ -556,6 +566,29 @@ def _short_to_full_months(names) -> str:
     return ", ".join(out)
 
 
+def _load_niche_commentary(niche_id: str) -> Dict[str, List[Dict[str, str]]]:
+    """Читает seasonality.commentary из data/niches/{NICHE}_data.yaml.
+
+    Round-3 §3.2: пики/просадки теперь сопровождаются человеческим
+    объяснением «почему» (8 марта, свадьбы, Наурыз и т.п.). Возвращает
+    {"peaks":[{month,reason}], "troughs":[{month,reason}]} или пустой.
+    """
+    try:
+        from loaders.niche_loader import load_niche_yaml
+    except Exception:
+        return {"peaks": [], "troughs": []}
+    data = load_niche_yaml(niche_id) or {}
+    seas = (data.get("seasonality") or {}).get("commentary") or {}
+    peaks_raw = seas.get("peaks") or []
+    troughs_raw = seas.get("troughs") or []
+    norm = lambda items: [
+        {"month": str(x.get("month") or "").strip(),
+         "reason": str(x.get("reason") or "").strip()}
+        for x in items if isinstance(x, dict) and x.get("month")
+    ]
+    return {"peaks": norm(peaks_raw), "troughs": norm(troughs_raw)}
+
+
 def _build_mkt_ctx(result: dict) -> dict:
     b3 = result.get("block3") or {}
     b_season = result.get("block_season") or {}
@@ -579,6 +612,8 @@ def _build_mkt_ctx(result: dict) -> dict:
             "label": months_short[i] if i < len(months_short) else str(i + 1),
             "pct": pct,
         })
+    niche_id = (result.get("input") or {}).get("niche_id") or ""
+    commentary = _load_niche_commentary(niche_id)
     return {
         "population": int((result.get("input") or {}).get("city_population") or 0),
         "working_age": 0,
@@ -587,6 +622,8 @@ def _build_mkt_ctx(result: dict) -> dict:
         "seasonality": seasonality,
         "seasonal_peaks": _short_to_full_months(b_season.get("peaks")),
         "seasonal_lows": _short_to_full_months(b_season.get("troughs")),
+        "seasonal_peaks_commentary": commentary.get("peaks") or [],
+        "seasonal_lows_commentary": commentary.get("troughs") or [],
         "seasonality_note": None,
         "start_note": None,
         "market_notes": None,

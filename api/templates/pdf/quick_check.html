@@ -325,6 +325,17 @@ table.data td.num,
 .check-mark { color: var(--green); font-weight: 700; margin-right: 4pt; }
 .warn-mark  { color: var(--amber); font-weight: 700; margin-right: 4pt; }
 
+/* Round-3 §3.1: пояснение под каждой из 6 KPI-плашек на стр. 4 —
+   10-20 слов обоснования что значит цифра. */
+.metric-explainer {
+  font-size: 8.5pt;
+  line-height: 1.4;
+  color: var(--ink-2);
+  margin-top: 6pt;
+  padding-top: 6pt;
+  border-top: 1px dashed var(--line);
+}
+
 /* --- Tables --- */
 table.keyvals {
   width: 100%;
@@ -930,6 +941,10 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         <span class="kpi-delta flat">CAPEX</span>
         Оборудование, расходники, депозит
       </div>
+      <div class="metric-explainer">
+        Минимум для запуска формата. Не включает резерв на разгон —
+        см. страницу «Достаточность капитала».
+      </div>
     </div>
     <div class="kpi-cell">
       <div class="kpi-label">Выручка · на мощности</div>
@@ -937,6 +952,10 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <div class="kpi-hint">
         <span class="kpi-delta up">с {{ dz.break_even_month | default(4) }}-го мес</span>
         При стабильной загрузке
+      </div>
+      <div class="metric-explainer">
+        Выручка зрелого месяца при стабильной загрузке. Не ждите этой
+        цифры в первые 3 месяца — идёт разгон.
       </div>
     </div>
     <div class="kpi-cell">
@@ -946,6 +965,10 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         <span class="kpi-delta up">{{ fin.net_margin_pct }}% маржа</span>
         Чистыми, после налога
       </div>
+      <div class="metric-explainer">
+        Чистая прибыль после всех расходов и налогов. Ваш реальный
+        доход в зрелом месяце.
+      </div>
     </div>
 
     <div class="kpi-cell">
@@ -954,6 +977,10 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <div class="kpi-hint">
         <span class="kpi-delta flat">минимум</span>
         Чтобы выйти в ноль
+      </div>
+      <div class="metric-explainer">
+        Минимум клиентов в месяц чтобы покрыть постоянные расходы.
+        Всё сверху — ваша прибыль.
       </div>
     </div>
     <div class="kpi-cell">
@@ -965,6 +992,10 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         </span>
         С учётом разгона
       </div>
+      <div class="metric-explainer">
+        За сколько месяцев накопленная прибыль покроет стартовые
+        вложения. Считается с учётом разгона.
+      </div>
     </div>
     <div class="kpi-cell">
       <div class="kpi-label">Клиентов · зрелый месяц</div>
@@ -972,6 +1003,10 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <div class="kpi-hint">
         <span class="kpi-delta flat">реалистично</span>
         При полной загрузке
+      </div>
+      <div class="metric-explainer">
+        Физический максимум при полной загрузке. Реалистичная цель
+        первого года — на 25-35% ниже.
       </div>
     </div>
   </div>
@@ -1169,6 +1204,12 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
           </tr>
         </tbody>
       </table>
+      {% if cap.learning_note_visible %}
+      <p class="u-small u-muted" style="margin-top: 6pt;">
+        * Если у вас уже есть опыт в нише — {{ cap.training_amount | money_round }} ₸
+        на обучение можно исключить из стартовых вложений.
+      </p>
+      {% endif %}
     </div>
 
     <div>
@@ -1428,6 +1469,12 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
           </tr>
         </tbody>
       </table>
+      {% if inp.format_id.endswith('_HOME') or inp.format_id.endswith('_SOLO') %}
+      <p class="u-small u-muted" style="margin-top: 6pt;">
+        * Аренда не включена — формат «мастер на дому» экономит
+        бюджет на помещении (~60 000 ₸/мес в среднем для Астаны).
+      </p>
+      {% endif %}
     </div>
 
     <div>
@@ -1747,6 +1794,31 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     {{ mkt.seasonality_note }}
   </div>
   {% endif %}
+
+  {% if mkt.seasonal_peaks_commentary or mkt.seasonal_lows_commentary %}
+  <div class="col2 u-mt-m">
+    {% if mkt.seasonal_peaks_commentary %}
+    <div>
+      <h3 class="sub-title" style="color: var(--green);">Пики · почему</h3>
+      {% for p in mkt.seasonal_peaks_commentary %}
+      <div class="avoid-break" style="margin-bottom: 8pt; padding: 8pt 10pt; background: rgba(16,185,129,0.07); border-left: 2pt solid var(--green); border-radius: 3pt; font-size: 9.5pt;">
+        <strong>{{ p.month }}.</strong> {{ p.reason }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% if mkt.seasonal_lows_commentary %}
+    <div>
+      <h3 class="sub-title" style="color: var(--amber);">Просадки · почему</h3>
+      {% for t in mkt.seasonal_lows_commentary %}
+      <div class="avoid-break" style="margin-bottom: 8pt; padding: 8pt 10pt; background: rgba(245,158,11,0.07); border-left: 2pt solid var(--amber); border-radius: 3pt; font-size: 9.5pt;">
+        <strong>{{ t.month }}.</strong> {{ t.reason }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
 </section>
 {% endif %}
 {#- ═══════════════════════════════════════════════════════════════
@@ -1857,7 +1929,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <h3 class="sub-title">Ваш физический потолок</h3>
       <table class="keyvals">
         <tr><td class="k">Максимум в день</td><td class="v">{{ sp.capacity.max_clients_per_day }} клиентов</td></tr>
-        <tr><td class="k">Рабочих дней / мес</td><td class="v">{{ sp.capacity.working_days }}</td></tr>
+        <tr><td class="k">Рабочих дней / мес</td><td class="v">{{ sp.capacity.working_days | default(22) }}</td></tr>
         <tr><td class="k">Средний чек</td><td class="v">{{ sp.capacity.avg_check | money }} ₸</td></tr>
         <tr class="total">
           <td class="k"><strong>Идеальный потолок</strong></td>
