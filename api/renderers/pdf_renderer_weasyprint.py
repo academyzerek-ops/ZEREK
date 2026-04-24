@@ -700,14 +700,23 @@ def _build_opx_ctx(result: dict) -> dict:
 
 
 def _build_tax_ctx(result: dict) -> dict:
+    """R6 A.4: УСН считается от той же выручки, что выведена в строке
+    «Выручка (база)» — иначе клиент с калькулятором сразу ловит баг.
+    Раньше USN считался от revenue_yearly mature, а строка выше
+    показывала scn.base.revenue — это разные числа (mature × 12 ≠
+    base scenario из ramp + сезонности).
+    """
     tax = result.get("tax") or {}
     inp = result.get("input") or {}
     agg_m = (result.get("pnl_aggregates") or {}).get("mature") or {}
-    revenue_y = int(agg_m.get("revenue_yearly") or 0)
+    b5_scn = (result.get("block5") or {}).get("scenarios") or {}
+    base_scn = b5_scn.get("base") or {}
+    # Выручка консистентно: scn.base.revenue (то что в шаблоне рядом),
+    # фолбэк на mature × 12 если scn.base.revenue не определён.
+    revenue_for_tax = int(base_scn.get("revenue") or agg_m.get("revenue_yearly") or 0)
     tax_rate_pct = float(tax.get("rate_pct") or 3)
-    # IP минимальный платёж в год — 21 675 × 12.
     ip_min_year = 21_675 * 12
-    annual_usn = int(revenue_y * tax_rate_pct / 100)
+    annual_usn = int(revenue_for_tax * tax_rate_pct / 100)
     return {
         "legal_form_ru": "ИП" if (inp.get("legal_form") or "ip") == "ip" else "ТОО",
         "usn_rate": tax_rate_pct,

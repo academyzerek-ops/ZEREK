@@ -2322,11 +2322,11 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <h3 class="sub-title u-mt-m">Годовая нагрузка</h3>
       <table class="keyvals">
         <tr><td class="k">Выручка (база)</td><td class="v">{{ scn.base.revenue | money_round }} ₸</td></tr>
-        <tr><td class="k">УСН {{ tax.usn_rate }}%</td><td class="v">{{ tax.annual_usn | money_round }} ₸</td></tr>
+        <tr><td class="k">УСН {{ tax.usn_rate }}%</td><td class="v">{{ tax.annual_usn | money }} ₸</td></tr>
         <tr><td class="k">Соцплатежи ИП (мин.)</td><td class="v">{{ (tax.ip_min_monthly * 12) | money }} ₸</td></tr>
         <tr class="total">
           <td class="k"><strong>Итого налоги за год</strong></td>
-          <td class="v" style="color: var(--navy);"><strong>{{ tax.total_annual | money_round }} ₸</strong></td>
+          <td class="v" style="color: var(--navy);"><strong>{{ tax.total_annual | money }} ₸</strong></td>
         </tr>
       </table>
     </div>
