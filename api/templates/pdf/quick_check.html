@@ -1755,24 +1755,47 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
 
   <div class="col-5-7 u-mt-m">
     <div>
-      {# Round-4 bug 6: «Сезонные пики/Просадки» убраны — дублировались
-         со стр. «Сезонность» (там подробно расписано с причинами). #}
-      <h3 class="sub-title">Ваш старт</h3>
-      <table class="keyvals">
-        <tr><td class="k">Месяц старта</td><td class="v">{{ inp.start_month_ru }}</td></tr>
-        <tr><td class="k">Разгон</td><td class="v">М1–М{{ dz.break_even_month | default(4) - 1 }}</td></tr>
-        <tr><td class="k">Выход на мощность</td><td class="v">М{{ dz.break_even_month | default(4) }}</td></tr>
-      </table>
+      {# R6 C.3 / B.3: блок «Механика разгона» — клиенту нужно понимать
+         что серые столбики на графике — это нормально, а не баг. #}
+      <h3 class="sub-title">Механика разгона</h3>
+      <div class="avoid-break" style="padding: 12pt 14pt; background: var(--bg-2); border-left: 3pt solid var(--navy); border-radius: 4pt;">
+        <p class="u-small" style="margin: 0 0 6pt 0; line-height: 1.55; color: var(--ink-2);">
+          <strong>М1</strong> — около 35-45% от мощности. Только сарафан
+          и первые клиенты по рекламе. Расходы — те же, что в зрелом
+          месяце. Минус на счёте гарантирован.
+        </p>
+        <p class="u-small" style="margin: 0 0 6pt 0; line-height: 1.55; color: var(--ink-2);">
+          <strong>М2</strong> — около 55-70%. Подключается реклама через
+          блогеров, появляются первые возвраты. Близко к безубытку.
+        </p>
+        <p class="u-small" style="margin: 0 0 6pt 0; line-height: 1.55; color: var(--ink-2);">
+          <strong>М3</strong> — около 75-90%. База стабилизируется,
+          сарафан начинает работать. Первый месяц в плюсе.
+        </p>
+        <p class="u-small" style="margin: 0; line-height: 1.55; color: var(--ink);">
+          <strong>М4+</strong> — 100%, выход на мощность.
+        </p>
+      </div>
     </div>
     <div>
-      <div class="callout navy">
-        <div class="callout-title">Комментарий к старту</div>
-        {% if mkt.start_note %}
-        {{ mkt.start_note }}
-        {% else %}
-        Первые {{ dz.break_even_month | default(4) - 1 }} месяца — разгон.
-        С {{ dz.break_even_month | default(4) }}-го месяца — выход на полную мощность.
-        {% endif %}
+      <h3 class="sub-title">Красный флаг разгона</h3>
+      <div class="avoid-break" style="padding: 12pt 14pt; background: rgba(214,69,69,0.06); border-left: 3pt solid #D64545; border-radius: 4pt;">
+        <p class="u-small" style="margin: 0 0 6pt 0; line-height: 1.55; color: var(--ink-2);">
+          Если к М3 выручка ниже <strong>50% от плана</strong> — это
+          уже не разгон, а отсутствие маркетинга или слабый продукт.
+        </p>
+        <ol style="margin: 6pt 0 0 0; padding-left: 18pt; font-size: 9.5pt; line-height: 1.55; color: var(--ink-2);">
+          <li>Пересмотрите воронку: откуда приходят заявки, сколько доходит до записи.</li>
+          <li>Посчитайте конверсию из подписчика в клиента — если ниже 2%, проблема в контенте.</li>
+          <li>Не добавляйте бюджет в тот же канал — смените канал (с таргета на блогеров или наоборот).</li>
+        </ol>
+      </div>
+      <div class="callout navy u-mt-s">
+        <div class="callout-title">Ваш старт</div>
+        Месяц старта — <strong>{{ inp.start_month_ru }}</strong>.
+        Разгон М1-М{{ dz.break_even_month | default(4) - 1 }}.
+        Выход на мощность — М{{ dz.break_even_month | default(4) }}.
+        {% if mkt.start_note %}<br>{{ mkt.start_note }}{% endif %}
       </div>
     </div>
   </div>
