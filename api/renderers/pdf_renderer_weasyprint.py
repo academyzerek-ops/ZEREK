@@ -1092,6 +1092,13 @@ def build_pdf_context(result: Dict[str, Any]) -> Dict[str, Any]:
                 fin_ctx["safety_ratio"] = max(0, int(round(
                     (planned_per_month - be_per_month) / planned_per_month * 100
                 )))
+                # R6 A.2: «Запас прочности ×N» — множитель planned / BE,
+                # не процент. ×8 значит выручка может упасть в 8 раз и
+                # вы ещё в нуле. Раньше выводился safety_ratio (процент)
+                # как множитель → клиент видел абсурдные ×79.
+                fin_ctx["safety_multiplier"] = round(
+                    planned_per_month / max(be_per_month, 1), 1
+                )
     return {
         "inp": inp_ctx,
         "cap": _build_cap_ctx(result),

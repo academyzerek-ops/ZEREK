@@ -1667,7 +1667,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <table class="keyvals">
         <tr><td class="k">Минимум услуг/мес</td><td class="v">{{ fin.break_even_clients }}</td></tr>
         <tr><td class="k">Планируется</td><td class="v">{{ fin.mature_clients }}</td></tr>
-        <tr><td class="k">Запас прочности</td><td class="v">×{{ fin.safety_ratio }}</td></tr>
+        <tr><td class="k">Запас прочности</td><td class="v">×{{ fin.safety_multiplier | default(1) }}</td></tr>
       </table>
 
       <div class="callout navy u-mt-m">
