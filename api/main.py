@@ -560,6 +560,124 @@ async def ai_chat(request: Request):
     answer = get_ai_interpretation({"question": question, "lesson_context": context})
     return {"answer": answer}
 
+
+# Round-3 §4.2: AI-чат по конкретному Quick Check отчёту.
+# Клиент Mini App вызывает этот endpoint с question + report (full QC
+# result JSON). Системный промпт даёт модели полный контекст отчёта,
+# чтобы отвечала опираясь на реальные цифры клиента.
+@app.post("/qc-chat")
+async def qc_chat(request: Request):
+    import json as _json
+    body = await request.json()
+    question = (body.get("question") or "").strip()
+    report = body.get("report") or {}
+    if not question:
+        return {"answer": "Задайте вопрос."}
+    if not report:
+        return {"answer": "Сначала запустите расчёт Quick Check."}
+
+    api_key = os.getenv("GEMINI_API_KEY", "")
+    if not api_key:
+        return {"answer": "AI-консультант временно недоступен."}
+
+    # Режем отчёт до осмысленного минимума: paспорт, вердикт, ключевые
+    # цифры, сценарии, риски — без многолистового cashflow и т.п.
+    def _slim(r):
+        inp = r.get("input") or {}
+        b1  = r.get("block1") or {}
+        b4  = r.get("block4") or {}
+        b5  = r.get("block5") or {}
+        b6  = r.get("block6") or {}
+        b8  = r.get("block8") or {}
+        b9  = r.get("block9") or {}
+        b10 = r.get("block10") or {}
+        agg = (r.get("pnl_aggregates") or {}).get("mature") or {}
+        be  = r.get("breakeven") or {}
+        return {
+            "input": {k: inp.get(k) for k in (
+                "niche_id","niche_name","format_id","format_name",
+                "city_id","city_name","capital","experience","start_month",
+                "loc_type","area_m2","legal_form",
+            )},
+            "verdict": {
+                "color":  b1.get("color"),
+                "headline": b10.get("headline_rus"),
+                "statement": b1.get("verdict_statement"),
+                "strengths": b1.get("strengths"),
+                "risks": b1.get("risks"),
+            },
+            "mature": {
+                "revenue_monthly": agg.get("revenue_monthly"),
+                "profit_monthly":  agg.get("profit_monthly"),
+                "fot_monthly":     agg.get("fot_monthly"),
+                "rent_monthly":    agg.get("rent_monthly"),
+                "marketing_monthly": agg.get("marketing_monthly"),
+                "other_opex_monthly": agg.get("other_opex_monthly"),
+                "cogs_pct": agg.get("cogs_pct"),
+                "tax_rate": agg.get("tax_rate"),
+            },
+            "scenarios_year": {
+                name: {
+                    k: s.get(k)
+                    for k in ("revenue","cogs","fot","rent","marketing","other_opex","tax","net_profit")
+                }
+                for name, s in ((b5.get("scenarios") or {}).items() or [])
+            },
+            "unit": (b4.get("metrics") or {}),
+            "breakeven": {
+                "per_month_clients": be.get("тб_чеков_день"),
+                "safety_pct": be.get("запас_прочности_%"),
+                "fixed_total": be.get("fixed_total"),
+            },
+            "capex": {
+                "total": b6.get("capex_needed"),
+                "structure": b6.get("capex_structure"),
+            },
+            "stress": b8,
+            "risks_detail": (b9.get("risks") or [])[:5],
+            "payback_months": b5.get("payback_months"),
+            "entrepreneur_income": b5.get("entrepreneur_income"),
+        }
+
+    report_json = _json.dumps(_slim(report), ensure_ascii=False, default=str)
+
+    system_prompt = (
+        "Ты — ИИ-консультант ZEREK. Клиент задаёт вопросы по своему "
+        "отчёту Quick Check. Отвечай кратко (2-4 предложения), опираясь "
+        "ИСКЛЮЧИТЕЛЬНО на цифры из отчёта ниже. Не выдумывай данные, "
+        "которых нет. Простой русский, без терминов EBITDA, CAPEX, "
+        "OPEX, LTV, CAC. Если вопрос не про отчёт или требует глубокого "
+        "моделирования — скажи, что для углублённого анализа есть "
+        "Финансовая модель за 9 000 ₸.\n\n"
+        "ОТЧЁТ КЛИЕНТА (JSON):\n" + report_json
+    )
+
+    import httpx
+    url = ("https://generativelanguage.googleapis.com/v1beta/models/"
+           "gemini-2.5-flash-lite:generateContent?key=" + api_key)
+    payload = {
+        "contents": [
+            {"role": "user", "parts": [
+                {"text": system_prompt + "\n\nВОПРОС КЛИЕНТА: " + question}
+            ]},
+        ],
+        "generationConfig": {
+            "temperature": 0.4,
+            "maxOutputTokens": 500,
+            "topP": 0.9,
+        },
+    }
+    try:
+        resp = httpx.post(url, json=payload, timeout=25.0)
+        data = resp.json()
+        if "candidates" not in data or not data["candidates"]:
+            return {"answer": "ИИ не смог ответить. Попробуйте переформулировать."}
+        text = data["candidates"][0]["content"]["parts"][0]["text"]
+        from gemini_rag import clean_markdown
+        return {"answer": clean_markdown(text)}
+    except Exception as e:
+        return {"answer": f"Ошибка ИИ-консультанта: {str(e)[:120]}"}
+
 @app.get("/test-gemini")
 def test_gemini():
     try:

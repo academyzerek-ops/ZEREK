@@ -356,30 +356,39 @@ h2{font-size:22px;margin-bottom:6px}
 .growth-cta-text{font-size:13px;color:#fff;margin-bottom:10px;line-height:1.4}
 .growth-cta-btn{display:inline-block;padding:10px 24px;background:#fff;color:#059669;border:none;border-radius:8px;font-weight:700;font-size:14px;margin-top:4px;cursor:pointer;font-family:inherit}
 
-/* ─── PDF top card (сразу после паспорта бизнеса) ─── */
-.pdf-download-card-top{margin:20px 0 30px 0;padding:20px;background:linear-gradient(135deg,#1e3a8a 0%,#3730a3 100%);border-radius:16px;border:1px solid rgba(201,169,97,0.3);box-shadow:0 4px 16px rgba(0,0,0,0.3)}
-.pdf-download-content{display:flex;align-items:center;gap:16px}
-.pdf-download-content .pdf-icon{font-size:36px;flex-shrink:0}
-.pdf-download-content .pdf-text{flex:1;min-width:0}
-.pdf-download-content .pdf-title{font-weight:700;color:#FFFFFF;font-size:15px;margin-bottom:4px}
-.pdf-download-content .pdf-subtitle{font-size:12px;color:rgba(255,255,255,0.7);line-height:1.4}
-.pdf-btn-top{padding:12px 20px;background:#C9A961;color:#1A1A1A;border:none;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:all 0.2s ease;flex-shrink:0;font-family:inherit}
-.pdf-btn-top:hover{background:#E8D9B0;transform:translateY(-1px)}
-.pdf-btn-top:active{transform:translateY(0)}
-.pdf-btn-top:disabled{opacity:0.7;cursor:wait}
-@media (max-width:500px){
-  .pdf-download-content{flex-direction:column;text-align:center}
-  .pdf-btn-top{width:100%}
-}
-
-/* ─── PDF hero (под вердиктом) + reminder (в конце отчёта) ─── */
+/* ─── PDF download (Round-3 §4.1) ───
+   Единый зелёный primary CTA для обоих мест (после паспорта и перед
+   апселлом). Фиолетовая navy-версия и бежевая «Скачано» заменены на
+   этот стиль. */
 .pdf-download-hero{margin:20px 0;text-align:center}
-.pdf-download-btn{display:inline-block;padding:20px 32px;background:linear-gradient(135deg,#059669 0%,#10b981 100%);color:#fff;border:none;border-radius:16px;cursor:pointer;box-shadow:0 4px 20px rgba(16,185,129,0.3);transition:all 0.2s;width:100%;max-width:400px;font-family:inherit}
-.pdf-download-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(16,185,129,0.4)}
-.pdf-download-btn:disabled{opacity:0.6;cursor:wait;transform:none}
-.pdf-download-btn .pdf-icon{font-size:32px;display:block;margin-bottom:8px}
-.pdf-download-btn .pdf-main{font-size:16px;font-weight:700;display:block;margin-bottom:4px}
-.pdf-download-btn .pdf-sub{font-size:12px;opacity:0.9;display:block}
+.pdf-download-btn{display:block;padding:18px 24px;background:linear-gradient(135deg,#4ADE80 0%,#22C55E 100%);color:#fff;border:none;border-radius:14px;cursor:pointer;box-shadow:0 4px 16px rgba(34,197,94,0.35);transition:all 0.2s;width:100%;max-width:420px;margin:0 auto;font-family:inherit;font-weight:600}
+.pdf-download-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(34,197,94,0.45)}
+.pdf-download-btn:disabled{opacity:0.7;cursor:wait;transform:none}
+.pdf-download-btn .pdf-icon{font-size:24px;display:block;margin-bottom:6px}
+.pdf-download-btn .pdf-main{font-size:16px;font-weight:700;display:block;margin-bottom:2px}
+.pdf-download-btn .pdf-sub{font-size:12px;opacity:0.92;display:block}
+.pdf-download-btn.downloaded{background:linear-gradient(135deg,#22C55E 0%,#16A34A 100%);box-shadow:0 3px 12px rgba(22,163,74,0.4)}
+
+/* ─── AI-чат secondary action (Round-3 §4.2) ─── */
+.btn-discuss-ai{display:block;padding:16px 24px;background:#FFFFFF;color:#1F3864;border:1.5px solid #1F3864;border-radius:14px;font-weight:500;font-family:inherit;cursor:pointer;width:100%;max-width:420px;margin:12px auto 0;font-size:14px;transition:background 0.15s}
+.btn-discuss-ai:hover{background:#F5F7FB}
+.btn-discuss-ai:disabled{opacity:0.6;cursor:wait}
+
+/* ─── AI-chat модалка ─── */
+.ai-chat-overlay{position:fixed;inset:0;background:rgba(15,26,46,0.78);z-index:9999;display:flex;align-items:flex-end;justify-content:center}
+.ai-chat-sheet{background:var(--bg);color:var(--text);width:100%;max-width:480px;max-height:85vh;border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:hidden}
+.ai-chat-header{padding:14px 16px;border-bottom:1px solid var(--surface-2);display:flex;align-items:center;justify-content:space-between}
+.ai-chat-title{font-weight:700;font-size:15px}
+.ai-chat-close{background:none;border:none;color:var(--text-2);font-size:22px;cursor:pointer;padding:0 6px;font-family:inherit}
+.ai-chat-messages{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-height:240px}
+.ai-msg{padding:10px 12px;border-radius:12px;font-size:13.5px;line-height:1.5;max-width:85%}
+.ai-msg-user{align-self:flex-end;background:var(--accent-dim);color:var(--text);border-bottom-right-radius:4px}
+.ai-msg-bot{align-self:flex-start;background:var(--surface-2);color:var(--text);border-bottom-left-radius:4px}
+.ai-msg-bot.loading{opacity:0.6;font-style:italic}
+.ai-chat-input{border-top:1px solid var(--surface-2);padding:10px 12px;display:flex;gap:8px;background:var(--surface)}
+.ai-chat-input textarea{flex:1;resize:none;border:1px solid var(--surface-3);border-radius:10px;padding:8px 10px;background:var(--bg);color:var(--text);font-family:inherit;font-size:13px;min-height:40px;max-height:90px}
+.ai-chat-send{padding:8px 14px;background:#1F3864;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-family:inherit}
+.ai-chat-send:disabled{opacity:0.5;cursor:wait}
 
 
 /* ─── BLOCK 10 — СЛЕДУЮЩИЕ ШАГИ ─── */
@@ -1128,6 +1137,7 @@ function renderResult(result){
     if(result.capital_adequacy) html += renderCapitalAdequacyHtml(result.capital_adequacy);
     html += renderBlock1Html(result.block1);
     html += pdfHeroHtml();
+    html += pdfDiscussAiHtml();
     if(result.block10) html += renderBlock10Html(result.block10);
     $('result-screen').innerHTML = html;
     return;
@@ -1478,14 +1488,20 @@ function renderBlock10Html(b10){
       '</div>';
     }
 
-    // CTA
+    // CTA — Round-3 §4.1: кнопка скачать PDF убрана из апселла,
+    // она теперь только как primary-green в двух местах отчёта.
     if(b10.cta_buttons && b10.cta_buttons.length){
-      html += '<div class="b10-cta">';
-      b10.cta_buttons.forEach(function(b, i){
-        var cls = i === 0 ? 'primary' : 'secondary';
-        html += '<div class="b10-cta-btn '+cls+'" onclick="handleCta(\''+escapeHtml(b.action)+'\')">'+escapeHtml(b.label_rus)+'</div>';
+      var ctaList = b10.cta_buttons.filter(function(b){
+        return b && b.action !== 'download_pdf';
       });
-      html += '</div>';
+      if(ctaList.length){
+        html += '<div class="b10-cta">';
+        ctaList.forEach(function(b, i){
+          var cls = i === 0 ? 'primary' : 'secondary';
+          html += '<div class="b10-cta-btn '+cls+'" onclick="handleCta(\''+escapeHtml(b.action)+'\')">'+escapeHtml(b.label_rus)+'</div>';
+        });
+        html += '</div>';
+      }
     }
     html += '</div>';
   }
@@ -2088,96 +2104,159 @@ function showResultError(msg){
 }
 
 function pdfTopCardHtml(){
-  return '<div class="pdf-download-card-top">' +
-    '<div class="pdf-download-content">' +
-      '<div class="pdf-icon">📄</div>' +
-      '<div class="pdf-text">' +
-        '<div class="pdf-title">Ваш полный отчёт готов</div>' +
-        '<div class="pdf-subtitle">Скачайте в PDF для удобного изучения и распечатки</div>' +
-      '</div>' +
-      '<button class="pdf-btn-top" onclick="downloadPDF(\'top\')">Скачать PDF</button>' +
-    '</div>' +
-  '</div>';
-}
-function pdfHeroHtml(){
+  // Round-3 §4.1: единый зелёный стиль (раньше тут была фиолетовая
+  // navy-кнопка). Первая возможность скачать — сразу после паспорта.
   return '<div class="pdf-download-hero">' +
-    '<button class="pdf-download-btn" id="pdf-btn-hero" onclick="downloadPDF(\'hero\')">' +
-      '<span class="pdf-icon">📥</span>' +
+    '<button class="pdf-download-btn" id="pdf-btn-top" onclick="downloadPDF(\'top\')">' +
       '<span class="pdf-main">Скачать полный отчёт (PDF)</span>' +
       '<span class="pdf-sub">анализ, риски, стратегия роста</span>' +
     '</button>' +
   '</div>';
 }
+function pdfHeroHtml(){
+  return '<div class="pdf-download-hero">' +
+    '<button class="pdf-download-btn" id="pdf-btn-hero" onclick="downloadPDF(\'hero\')">' +
+      '<span class="pdf-main">Скачать полный отчёт (PDF)</span>' +
+      '<span class="pdf-sub">анализ, риски, стратегия роста</span>' +
+    '</button>' +
+  '</div>';
+}
+function pdfDiscussAiHtml(){
+  // Round-3 §4.2: secondary CTA рядом со 2-й кнопкой «Скачать».
+  return '<div style="text-align:center">' +
+    '<button class="btn-discuss-ai" onclick="openAiChat()">' +
+      'Обсудить этот отчёт с ИИ-консультантом' +
+    '</button>' +
+  '</div>';
+}
+
+// Round-3 §4.2: модалка AI-чата с контекстом текущего отчёта.
+// Серверный endpoint /qc-chat принимает {question, report} и возвращает
+// {answer}. Сессии не ведём — каждый вопрос self-contained (для MVP).
+function openAiChat(){
+  if(!window._lastResult){ alert('Сначала запустите расчёт.'); return; }
+  if(document.getElementById('ai-chat-overlay')) return;
+  var overlay = document.createElement('div');
+  overlay.id = 'ai-chat-overlay';
+  overlay.className = 'ai-chat-overlay';
+  overlay.innerHTML =
+    '<div class="ai-chat-sheet" onclick="event.stopPropagation()">' +
+      '<div class="ai-chat-header">' +
+        '<div class="ai-chat-title">ИИ-консультант · по вашему отчёту</div>' +
+        '<button class="ai-chat-close" onclick="closeAiChat()" aria-label="Закрыть">×</button>' +
+      '</div>' +
+      '<div class="ai-chat-messages" id="ai-chat-messages">' +
+        '<div class="ai-msg ai-msg-bot">' +
+          'Задайте вопрос по вашему отчёту. Например: «Почему такая окупаемость?», ' +
+          '«Что изменится, если переделать под SOLO?», «Посоветуй маркетинг под мой бюджет».' +
+        '</div>' +
+      '</div>' +
+      '<div class="ai-chat-input">' +
+        '<textarea id="ai-chat-q" placeholder="Ваш вопрос…"></textarea>' +
+        '<button class="ai-chat-send" id="ai-chat-send" onclick="sendAiChat()">→</button>' +
+      '</div>' +
+    '</div>';
+  overlay.addEventListener('click', function(e){
+    if(e.target === overlay) closeAiChat();
+  });
+  document.body.appendChild(overlay);
+  setTimeout(function(){ var t = document.getElementById('ai-chat-q'); if(t) t.focus(); }, 50);
+}
+function closeAiChat(){
+  var o = document.getElementById('ai-chat-overlay');
+  if(o) o.remove();
+}
+function sendAiChat(){
+  var ta = document.getElementById('ai-chat-q');
+  var send = document.getElementById('ai-chat-send');
+  var msgs = document.getElementById('ai-chat-messages');
+  if(!ta || !msgs) return;
+  var question = (ta.value || '').trim();
+  if(!question) return;
+  // user message
+  var userEl = document.createElement('div');
+  userEl.className = 'ai-msg ai-msg-user';
+  userEl.textContent = question;
+  msgs.appendChild(userEl);
+  ta.value = '';
+  ta.disabled = true; send.disabled = true;
+  // loading placeholder
+  var loadEl = document.createElement('div');
+  loadEl.className = 'ai-msg ai-msg-bot loading';
+  loadEl.textContent = 'Думаю…';
+  msgs.appendChild(loadEl);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  apiPost('/qc-chat', {
+    question: question,
+    report: window._lastResult,
+  }, function(err, resp, raw){
+    ta.disabled = false; send.disabled = false;
+    if(loadEl.parentNode) loadEl.parentNode.removeChild(loadEl);
+    var answer;
+    if(err){
+      answer = 'Не удалось получить ответ: ' + (err.message || err) + '. Попробуйте ещё раз.';
+    } else {
+      answer = (resp && resp.answer) || 'Ответ не пришёл. Попробуйте переформулировать.';
+    }
+    var botEl = document.createElement('div');
+    botEl.className = 'ai-msg ai-msg-bot';
+    botEl.textContent = answer;
+    msgs.appendChild(botEl);
+    msgs.scrollTop = msgs.scrollHeight;
+    ta.focus();
+  });
+}
 function downloadPDF(sourceId){
   var body = window._lastBody;
   if(!body){ alert('Сначала запустите расчёт.'); return; }
-  // Блокируем все pdf-кнопки отчёта на время генерации (5-15 сек).
-  var btns = document.querySelectorAll('.pdf-btn-top, .pdf-download-btn, .pdf-reminder-btn, .b10-cta-btn');
-  var origLabels = [];
+  var btns = document.querySelectorAll('.pdf-download-btn');
+  var origHtml = [];
   btns.forEach(function(b, i){
-    origLabels[i] = b.innerHTML;
+    origHtml[i] = b.innerHTML;
     b.disabled = true;
-    // Верхняя кнопка / reminder — короткая подпись «Готовится...»
-    if(b.classList.contains('pdf-btn-top') || b.classList.contains('pdf-reminder-btn')){
-      b.textContent = 'Готовится...';
-    }
+    b.innerHTML = '<span class="pdf-main">Генерируем PDF…</span>' +
+                  '<span class="pdf-sub">5-10 секунд</span>';
   });
-  var heroBtn = document.getElementById('pdf-btn-hero');
-  if(heroBtn){
-    heroBtn.innerHTML = '<span class="pdf-icon">⏳</span><span class="pdf-main">Генерируем PDF...</span><span class="pdf-sub">это займёт 5-10 секунд</span>';
-  }
 
-  function restore(label){
-    btns.forEach(function(b, i){
+  function setAll(html, extraClass){
+    btns.forEach(function(b){
       b.disabled = false;
-      if(label !== undefined && (b.classList.contains('pdf-btn-top') || b.classList.contains('pdf-reminder-btn'))){
-        b.textContent = label;
-      } else {
-        b.innerHTML = origLabels[i];
-      }
+      b.innerHTML = html;
+      if(extraClass) b.classList.add(extraClass);
     });
   }
 
   apiPost('/quick-check/pdf', body, function(err, resp, raw){
     if(err){
       console.error('PDF error:', err, raw);
-      restore('Попробовать снова');
-      alert('Ошибка при скачивании PDF. Попробуйте ещё раз или напишите в поддержку.');
+      btns.forEach(function(b, i){ b.disabled = false; b.innerHTML = origHtml[i]; });
+      alert('Ошибка при скачивании PDF. Попробуйте ещё раз.');
       return;
     }
     var url = resp && resp.pdf_url;
     if(!url){
-      restore('Попробовать снова');
+      btns.forEach(function(b, i){ b.disabled = false; b.innerHTML = origHtml[i]; });
       alert('PDF не пришёл. Попробуйте ещё раз.');
       return;
     }
     var full = API + url;
     var filename = (resp && resp.filename) || 'ZEREK_QuickCheck.pdf';
-    // Предпочитаем прямой <a download> click — работает и на iOS, и на Android,
-    // и в Telegram WebApp. openLink сохраняем как fallback.
     try {
       var a = document.createElement('a');
-      a.href = full;
-      a.download = filename;
-      a.target = '_blank';
-      a.rel = 'noopener';
-      document.body.appendChild(a);
-      a.click();
+      a.href = full; a.download = filename; a.target = '_blank'; a.rel = 'noopener';
+      document.body.appendChild(a); a.click();
       setTimeout(function(){ try { a.remove(); } catch(e){} }, 0);
     } catch(e1){
       try {
         if(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink){
           window.Telegram.WebApp.openLink(full);
-        } else {
-          window.open(full, '_blank');
-        }
-      } catch(e2){
-        window.open(full, '_blank');
-      }
+        } else { window.open(full, '_blank'); }
+      } catch(e2){ window.open(full, '_blank'); }
     }
-    // Success indicator на 3 секунды — потом возвращаем оригинал.
-    restore('✓ Скачано');
-    setTimeout(function(){ restore(); }, 3000);
+    // Round-3 §4.1: успешный state — тот же зелёный градиент, чуть темнее.
+    setAll('<span class="pdf-main">✓ PDF сохранён</span>' +
+           '<span class="pdf-sub">можно скачать повторно</span>', 'downloaded');
   });
 }
 function extractKpis(r){
