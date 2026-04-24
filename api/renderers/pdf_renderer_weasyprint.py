@@ -643,6 +643,12 @@ def _build_fin_ctx(result: dict) -> dict:
         "mature_revenue": rev_mature_m,
         "mature_profit":  profit_mature_m - social_hit,
         "mature_clients": int(b4m.get("max_checks_per_day") or 0) * 26,
+        # R6 A.1: было `total_monthly × 12` — это годовая величина,
+        # а шаблон выводил её с подписью «/мес». Клиент видел 3.67M
+        # как месячный доход, что в 12 раз больше реального.
+        # Теперь — реальная средняя за месяц первого года.
+        "avg_first_year_monthly": int(ei.get("total_monthly") or 0),
+        # legacy ключ для обратной совместимости (тесты могут читать)
         "avg_year_profit": int(ei.get("total_monthly") or 0) * 12,
         "net_margin_pct": net_margin_pct,
         "break_even_clients": int(be.get("тб_чеков_день") or 0),

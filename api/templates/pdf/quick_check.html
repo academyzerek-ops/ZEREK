@@ -1679,8 +1679,8 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <h3 class="sub-title u-mt-m">Прибыль предпринимателя</h3>
       <table class="keyvals">
         <tr>
-          <td class="k">Средняя за первый год<br><span class="u-tiny u-muted">с учётом разгона</span></td>
-          <td class="v" style="color: var(--green);">{{ fin.avg_year_profit | money_round }} ₸/мес</td>
+          <td class="k">В среднем за месяц первого года<br><span class="u-tiny u-muted">с учётом разгона</span></td>
+          <td class="v" style="color: var(--green);">{{ fin.avg_first_year_monthly | money_round }} ₸/мес</td>
         </tr>
         <tr>
           <td class="k">На мощности<br><span class="u-tiny u-muted">после М{{ dz.break_even_month | default(4) }}</span></td>
