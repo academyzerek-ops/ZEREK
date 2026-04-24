@@ -764,30 +764,48 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
 /* Round-4 bug 3: inline SVG вместо emoji. WeasyPrint не всегда
    рендерит CSS-only shapes из-за сложной блок-модели; inline SVG
    даёт гарантию. */
-.icon-sq { display: inline-block; vertical-align: middle; margin-right: 5pt; }
+.icon-sq {
+  display: inline-block;
+  vertical-align: -2pt;
+  margin-right: 6pt;
+  flex-shrink: 0;
+}
 </style>
 </head>
 
 {#- Round-4 bug 3: Jinja-макросы для SVG-иконок статуса.
    Используются вместо emoji 🟢🟡🔴 ✓ ⚠ ★ ☆ и CSS .dot/.check-mark/.warn-mark. -#}
 {%- macro icon_circle(color) -%}
-<svg class="icon-sq" width="10" height="10" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" fill="{{ color }}"/></svg>
+<svg class="icon-sq" width="14" height="14" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="7" fill="{{ color }}"/></svg>
 {%- endmacro -%}
+{#- icon_check: filled checkmark (без stroke — WeasyPrint надёжнее
+    рендерит filled paths) -#}
 {%- macro icon_check() -%}
-<svg class="icon-sq" width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg"><path d="M2 6.5 L5 9 L10 3" stroke="#48A068" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<svg class="icon-sq" width="14" height="14" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="7" fill="#48A068"/><path d="M4.2 8.4 L6.8 11 L11.8 5.5 L10.6 4.4 L6.8 8.6 L5.4 7.2 Z" fill="#FFFFFF"/></svg>
 {%- endmacro -%}
+{#- icon_warn: filled треугольник + восклицательный знак -#}
 {%- macro icon_warn() -%}
-<svg class="icon-sq" width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg"><path d="M6 1 L11 11 L1 11 Z" fill="#E8A33D"/><rect x="5.5" y="5" width="1" height="3.4" fill="#fff"/><rect x="5.5" y="9" width="1" height="1" fill="#fff"/></svg>
+<svg class="icon-sq" width="14" height="14" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 1.5 L15 14 L1 14 Z" fill="#E8A33D"/><path d="M7.3 6 L8.7 6 L8.55 10.5 L7.45 10.5 Z" fill="#FFFFFF"/><rect x="7.3" y="11.5" width="1.4" height="1.4" fill="#FFFFFF"/></svg>
 {%- endmacro -%}
 {%- macro icon_star(on=true) -%}
 {%- if on -%}
-<svg class="icon-sq" width="11" height="11" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg"><path d="M6 1 L7.55 4.24 L11 4.75 L8.5 7.2 L9.1 10.65 L6 9 L2.9 10.65 L3.5 7.2 L1 4.75 L4.45 4.24 Z" fill="#C9A961"/></svg>
+<svg class="icon-sq" width="13" height="13" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 1 L10.06 5.65 L15 6.4 L11.4 9.95 L12.25 15 L8 12.65 L3.75 15 L4.6 9.95 L1 6.4 L5.94 5.65 Z" fill="#C9A961"/></svg>
 {%- else -%}
-<svg class="icon-sq" width="11" height="11" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg"><path d="M6 1 L7.55 4.24 L11 4.75 L8.5 7.2 L9.1 10.65 L6 9 L2.9 10.65 L3.5 7.2 L1 4.75 L4.45 4.24 Z" stroke="#C9A961" stroke-width="0.8" fill="none"/></svg>
+<svg class="icon-sq" width="13" height="13" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 1 L10.06 5.65 L15 6.4 L11.4 9.95 L12.25 15 L8 12.65 L3.75 15 L4.6 9.95 L1 6.4 L5.94 5.65 Z" fill="#E8DAB1"/></svg>
 {%- endif -%}
 {%- endmacro -%}
 {%- macro icon_bullet(color='#1F3864') -%}
-<svg class="icon-sq" width="8" height="8" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><circle cx="4" cy="4" r="3" fill="{{ color }}"/></svg>
+<svg class="icon-sq" width="9" height="9" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><circle cx="4" cy="4" r="3.5" fill="{{ color }}"/></svg>
+{%- endmacro -%}
+
+{#- Round-5 A.4: сквозной счётчик eyebrow'ов. Раньше нумерация была
+    захардкожена ('01 · Паспорт'), при скипе секции (например стр.
+    «Конкуренция» когда pct_of_benchmark None) — оставались пропуски.
+    Теперь номер инкрементируется на каждый рендер. -#}
+{%- set _sec = namespace(n=0) -%}
+{%- macro eyebrow(label) -%}
+{%- set _sec.n = _sec.n + 1 -%}
+{{ "%02d" | format(_sec.n) }} · {{ label }}
 {%- endmacro -%}
 
 <body>
@@ -834,7 +852,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     PAGE 2 — ПАСПОРТ БИЗНЕСА
     ═══════════════════════════════════════════════════════════════ -#}
 <section class="page page--break">
-  <div class="page-eyebrow">01 · Паспорт</div>
+  <div class="page-eyebrow">{{ eyebrow('Паспорт') }}</div>
   <h1 class="page-title">Паспорт вашего бизнеса</h1>
   <p class="page-lede">
     Сводка параметров, по которым построен весь отчёт. Проверьте соответствие —
@@ -897,22 +915,23 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     PAGE 3 — ВЕРДИКТ
     ═══════════════════════════════════════════════════════════════ -#}
 <section class="page page--break">
-  <div class="page-eyebrow">02 · Итог</div>
+  <div class="page-eyebrow">{{ eyebrow('Итог') }}</div>
   <h1 class="page-title">Итоговая оценка</h1>
   <p class="page-lede">
     Сводный вердикт по бизнес-возможности на основании расчёта экономики,
     требуемого капитала и рыночных условий.
   </p>
 
-  {# Round-4 bug 2: светофор на стр. 3 убран, он дублирует финальную
-     карточку на стр. 18. Оставляем только текст вердикта — заголовок +
-     объяснение, без цветового ярлыка. #}
-  {% set verdict_class = vrd.level | default('amber') %}
-  <div class="verdict {{ verdict_class }}" style="padding: 16pt 18pt;">
-    <div class="verdict-body">
-      <h3 style="margin: 0 0 6pt 0;">{{ vrd.title }}</h3>
-      <p style="margin: 0;">{{ vrd.message }}</p>
-    </div>
+  {# Round-5 A.1: цветной verdict-box убран целиком — он дублирует
+     финальную карточку на стр. 18 и создаёт «двойной вердикт».
+     Здесь — только текст, без плашки и цветового фона. #}
+  <div class="avoid-break u-mt-s" style="margin-bottom: 14pt;">
+    <h3 style="margin: 0 0 6pt 0; font-family: var(--serif); color: var(--navy); font-size: 16pt; line-height: 1.25;">
+      {{ vrd.title }}
+    </h3>
+    <p style="margin: 0; font-size: 11pt; line-height: 1.55; color: var(--ink);">
+      {{ vrd.message }}
+    </p>
   </div>
 
   <div class="col2">
@@ -954,7 +973,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     PAGE 4 — DASHBOARD / KPI
     ═══════════════════════════════════════════════════════════════ -#}
 <section class="page page--break">
-  <div class="page-eyebrow">03 · Ключевые цифры</div>
+  <div class="page-eyebrow">{{ eyebrow('Ключевые цифры') }}</div>
   <h1 class="page-title">Экономика одного взгляда</h1>
   <p class="page-lede">
     Шесть метрик, которые показывают форму бизнеса: сколько нужно денег,
@@ -1065,7 +1084,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     нет — тогда секция просто не рендерится). -#}
 {% if mkt.competitors.pct_of_benchmark %}
 <section class="page">
-  <div class="page-eyebrow">04 · Конкуренция</div>
+  <div class="page-eyebrow">{{ eyebrow('Конкуренция') }}</div>
   <h1 class="page-title">Конкурентная среда</h1>
   <div>
     <table class="keyvals" style="max-width:130mm;">
@@ -1105,7 +1124,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     ═══════════════════════════════════════════════════════════════ -#}
 {% if inp.format_id != 'HOME' and not inp.format_id.endswith('_HOME') and loc.rent_month %}
 <section class="page">
-  <div class="page-eyebrow">05 · Локация</div>
+  <div class="page-eyebrow">{{ eyebrow('Локация') }}</div>
   <h1 class="page-title">Локация и аренда</h1>
   <p class="page-lede">
     Затраты на помещение в {{ inp.city_name }} для вашего формата, сравнение
@@ -1189,7 +1208,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     PAGE 7 — СТРУКТУРА СТАРТОВЫХ ВЛОЖЕНИЙ (CAPEX)
     ═══════════════════════════════════════════════════════════════ -#}
 <section class="page page--break">
-  <div class="page-eyebrow">06 · Инвестиции</div>
+  <div class="page-eyebrow">{{ eyebrow('Инвестиции') }}</div>
   <h1 class="page-title">Структура стартовых вложений</h1>
   <p class="page-lede">
     Что именно нужно купить и оплатить перед запуском.
@@ -1287,7 +1306,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     ═══════════════════════════════════════════════════════════════ -#}
 {% if cadq %}
 <section class="page">
-  <div class="page-eyebrow">07 · Капитал · Наставничество</div>
+  <div class="page-eyebrow">{{ eyebrow('Капитал · Наставничество') }}</div>
   <h1 class="page-title">Достаточность капитала</h1>
   <p class="page-lede">
     Большинство бизнесов закрываются в первый год не потому что идея плохая,
@@ -1354,6 +1373,35 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     </div>
 
     <div>
+      {# Round-5 B.2: блок «Что такое разгон» — без него таблица резерва
+         выглядит как сумма из ниоткуда. -#}
+      <div class="avoid-break" style="padding: 12pt 14pt; background: var(--bg-2); border-left: 3pt solid var(--navy); border-radius: 3pt; margin-bottom: 12pt;">
+        <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1pt;">
+          Что такое разгон и почему он съедает деньги
+        </div>
+        <p class="u-small" style="margin: 0 0 6pt 0; line-height: 1.5; color: var(--ink-2);">
+          Разгон — первые 3 месяца бизнеса, когда вы уже несёте расходы
+          (маркетинг, соцплатежи, расходники, аренда если есть), а выручка
+          ещё не вышла на проектную мощность.
+        </p>
+        <p class="u-small" style="margin: 6pt 0 0 0; line-height: 1.5; color: var(--ink-2);">
+          Типичная динамика: М1 — около 40% от потолка, идут только первые
+          клиенты по сарафану; М2 — 65%, подключается реклама и возвраты;
+          М3 — 85%, база стабилизируется; М4+ — 100%, выход на мощность.
+        </p>
+        <p class="u-small" style="margin: 6pt 0 0 0; line-height: 1.5; color: var(--ink-2);">
+          Что съедает кассу: маркетинг (первый месяц в 2-3 раза дороже
+          зрелого), соцплатежи (с первого дня независимо от выручки),
+          закупки расходников с запасом, ошибки в работе с клиентами
+          (возвраты, бесплатные переделки).
+        </p>
+        <p class="u-small" style="margin: 8pt 0 0 0; line-height: 1.5; color: var(--ink);">
+          Без подушки на разгон половина начинающих бизнесов закрываются
+          на 3-5 месяце не потому что идея плохая, а потому что деньги
+          закончились раньше чем дошли до стабилизации.
+        </p>
+      </div>
+
       <h3 class="sub-title">Из чего состоит резерв на 3 месяца</h3>
       {% if cadq.reserve_breakdown %}
       <table class="keyvals">
@@ -1398,7 +1446,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     ═══════════════════════════════════════════════════════════════ -#}
 {% if not inp.team_solo and stf and stf.stages %}
 <section class="page">
-  <div class="page-eyebrow">08 · Команда</div>
+  <div class="page-eyebrow">{{ eyebrow('Команда') }}</div>
   <h1 class="page-title">Штатное расписание</h1>
   <p class="page-lede">
     Как растёт команда по этапам. Оклад — gross, с учётом налогов работодателя.
@@ -1462,7 +1510,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     PAGE 10 — OPEX
     ═══════════════════════════════════════════════════════════════ -#}
 <section class="page">
-  <div class="page-eyebrow">09 · Расходы</div>
+  <div class="page-eyebrow">{{ eyebrow('Расходы') }}</div>
   <h1 class="page-title">Ежемесячные расходы</h1>
   <p class="page-lede">
     Структура OPEX вашего бизнеса. Все статьи — месячные, если не указано иначе.
@@ -1542,7 +1590,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     PAGE 11 — ТОЧКА БЕЗУБЫТОЧНОСТИ + 3 СЦЕНАРИЯ
     ═══════════════════════════════════════════════════════════════ -#}
 <section class="page page--break">
-  <div class="page-eyebrow">10 · Выручка</div>
+  <div class="page-eyebrow">{{ eyebrow('Выручка') }}</div>
   <h1 class="page-title">Выручка, безубыточность, сценарии</h1>
   <p class="page-lede">
     Три варианта экономики: базовый, пессимистичный и оптимистичный.
@@ -1648,7 +1696,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     PAGE 12 — 12 МЕСЯЦЕВ + СЕЗОННОСТЬ
     ═══════════════════════════════════════════════════════════════ -#}
 <section class="page">
-  <div class="page-eyebrow">11 · Год в деталях</div>
+  <div class="page-eyebrow">{{ eyebrow('Год в деталях') }}</div>
   <h1 class="page-title">Ваши первые 12 месяцев</h1>
   <p class="page-lede">
     Помесячная динамика выручки с учётом разгона и сезонности.
@@ -1716,7 +1764,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     ═══════════════════════════════════════════════════════════════ -#}
 {% if dz and dz.applicable %}
 <section class="page">
-  <div class="page-eyebrow">12 · Зона риска · Наставничество</div>
+  <div class="page-eyebrow">{{ eyebrow('Зона риска · Наставничество') }}</div>
   <h1 class="page-title">Зона риска: разгон и сезонность</h1>
   <p class="page-lede">
     Точки максимальной уязвимости вашего бизнеса в первый год. Именно здесь
@@ -1792,7 +1840,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     ═══════════════════════════════════════════════════════════════ -#}
 {% if mkt.seasonality %}
 <section class="page">
-  <div class="page-eyebrow">13 · Сезонность</div>
+  <div class="page-eyebrow">{{ eyebrow('Сезонность') }}</div>
   <h1 class="page-title">Годовая сезонность ниши</h1>
   <p class="page-lede">
     Как ваша выручка будет меняться от месяца к месяцу в стабильный год
@@ -1855,7 +1903,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     ═══════════════════════════════════════════════════════════════ -#}
 {% if mp and mp.archetype_id %}
 <section class="page">
-  <div class="page-eyebrow">14 · Маркетинг · Наставничество</div>
+  <div class="page-eyebrow">{{ eyebrow('Маркетинг · Наставничество') }}</div>
   <h1 class="page-title">Маркетинг — ваша воронка</h1>
   <p class="page-lede">
     Маркетинг работает как машина разгона — на старте дорого, потом окупается
@@ -1937,6 +1985,31 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       {% endif %}
     </div>
   </div>
+
+  {# Round-5 B.4: «Микро-фишки ретеншена» — захардкоженный блок для
+     beauty-архетипа A1 (MANICURE/BARBER/BROW/LASH/SUGARING/MASSAGE/
+     COSMETOLOGY и т.п.). Для других архетипов делаем вариации позже. -#}
+  {% if mp.archetype_id in ['A1', 'a1', 'A_BEAUTY', 'BEAUTY'] %}
+  <div class="avoid-break u-mt-l" style="padding: 14pt 16pt; background: var(--bg-2); border-left: 3pt solid var(--gold); border-radius: 3pt;">
+    <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1pt;">
+      Микро-фишки ретеншена · для вашей ниши
+    </div>
+    <p class="u-small" style="margin: 0 0 8pt 0; line-height: 1.55; color: var(--ink-2);">
+      Клиент вернётся не за рекламой, а за ощущением «здесь хорошо».
+      В beauty-нише работают мелочи:
+    </p>
+    <ul class="u-small" style="margin: 0; padding-left: 18pt; line-height: 1.55; color: var(--ink-2);">
+      <li><strong>Чай / кофе / вода на выбор</strong> — копеечная себестоимость, меняет восприятие визита с «услуги» на «перерыв для себя».</li>
+      <li><strong>Ремонт лака бесплатно в первые 3 дня</strong> — снимает страх купить дешёвую работу.</li>
+      <li><strong>Плюс одна бесплатная услуга после 5-го визита</strong> — формирует привычку возвращаться именно к вам.</li>
+      <li><strong>Фото «до / после» в сторис</strong> с разрешения — клиент чувствует внимание, у вас растёт портфолио.</li>
+      <li><strong>День рождения клиента</strong> — скидка 10-15%. Телефон у вас уже есть, это одна рассылка раз в месяц.</li>
+    </ul>
+    <p class="u-small" style="margin: 8pt 0 0 0; line-height: 1.5; color: var(--ink);">
+      Стоимость всех этих фишек — небольшая доля выручки. Эффект на повторные визиты — заметный. Это самая дешёвая часть маркетинга и часто самая забываемая.
+    </p>
+  </div>
+  {% endif %}
 </section>
 {% endif %}
 
@@ -1947,7 +2020,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     ═══════════════════════════════════════════════════════════════ -#}
 {% if sp and sp.applicable %}
 <section class="page">
-  <div class="page-eyebrow">15 · Парадокс кадров · Наставничество</div>
+  <div class="page-eyebrow">{{ eyebrow('Парадокс кадров · Наставничество') }}</div>
   <h1 class="page-title">Парадокс кадров</h1>
   <p class="page-lede">
     {{ sp.subtitle }}
@@ -2030,6 +2103,38 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         {{ sp.warning.text }}
       </div>
       {% endif %}
+
+      {# Round-5 B.1: блок «Режим работы и выгорание» — захардкоженный
+         для beauty-ниш. Заполняет правую колонку «Парадокса кадров»,
+         которая раньше была почти пуста. #}
+      <div class="avoid-break u-mt-m" style="padding: 12pt 14pt; background: var(--bg-2); border-left: 3pt solid var(--amber); border-radius: 3pt;">
+        <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1pt;">
+          Режим работы и выгорание
+        </div>
+        <p class="u-small" style="margin: 0 0 8pt 0; line-height: 1.55; color: var(--ink-2);">
+          Ваш потолок — это не только математика чеков, но и ваше
+          тело и нервы.
+        </p>
+        <p class="u-small" style="margin: 0 0 6pt 0; line-height: 1.5; color: var(--ink-2);">
+          <strong>Устойчивый режим:</strong> 22 рабочих дня × 6-8 часов
+          в день. В расчёте именно он — оставляет ресурс на запись,
+          материалы, отдых, семью.
+        </p>
+        <p class="u-small" style="margin: 0 0 6pt 0; line-height: 1.5; color: var(--ink-2);">
+          <strong>Предельный режим:</strong> 26-28 дней × 10-12 часов.
+          Даёт на 35-50% больше выручки, но через 4-6 месяцев приводит
+          к выгоранию, ошибкам на руках клиентов, срывам сроков.
+        </p>
+        <p class="u-small" style="margin: 0 0 6pt 0; line-height: 1.5; color: var(--ink-2);">
+          <strong>Выгорание</strong> — причина закрытия № 1 среди
+          соло-мастеров с опытом 1-2 года. Физическая усталость
+          плюс накопленная ответственность за клиентов.
+        </p>
+        <p class="u-small" style="margin: 6pt 0 0 0; line-height: 1.5; color: var(--ink);">
+          Берите меньше клиентов, но держите качество. Это единственный
+          актив, который не воруют другие мастера.
+        </p>
+      </div>
     </div>
   </div>
 
@@ -2048,12 +2153,30 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     ═══════════════════════════════════════════════════════════════ -#}
 {% if stress %}
 <section class="page">
-  <div class="page-eyebrow">16 · Устойчивость</div>
+  <div class="page-eyebrow">{{ eyebrow('Устойчивость') }}</div>
   <h1 class="page-title">Стресс-тест</h1>
   <p class="page-lede">
     Насколько упадёт ваша годовая прибыль, если один из параметров ухудшится.
     Помогает увидеть самое уязвимое место бизнеса.
   </p>
+
+  {# Round-5 B.3: объяснение стресс-теста простым языком до таблицы. -#}
+  <div class="avoid-break u-mt-s" style="padding: 12pt 14pt; background: var(--bg-2); border-left: 3pt solid var(--navy); border-radius: 3pt; margin-bottom: 14pt;">
+    <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1pt;">
+      Что такое чувствительность
+    </div>
+    <p class="u-small" style="margin: 0 0 6pt 0; line-height: 1.5; color: var(--ink-2);">
+      Любой бизнес зависит от нескольких ключевых переменных. Если одна
+      из них изменится в худшую сторону — как сильно упадёт ваша годовая
+      прибыль? В таблице ниже — сценарии «что если».
+    </p>
+    <p class="u-small" style="margin: 0; line-height: 1.5; color: var(--ink-2);">
+      «Загрузка −20%» значит клиентов пришло на 20% меньше плана.
+      «Маркетинг +20%» — реклама подорожала или стала менее эффективной.
+      Чем больше цифра в колонке «Потеря / год», тем критичнее эта
+      переменная — следите за ней еженедельно, не раз в квартал.
+    </p>
+  </div>
 
   <div class="col-5-7">
     <div>
@@ -2093,6 +2216,21 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         <strong>{{ stress.critical_param }}</strong> — самая уязвимая метрика.
         Следите за ней еженедельно с первой недели работы.
       </div>
+
+      {# Round-5 B.3: «Что делать с этой информацией» — практический
+         вывод после таблицы. -#}
+      <div class="avoid-break u-mt-s" style="padding: 12pt 14pt; background: var(--bg-2); border-left: 3pt solid var(--green); border-radius: 3pt;">
+        <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1pt;">
+          Что делать с этой информацией
+        </div>
+        <p class="u-small" style="margin: 0; line-height: 1.55; color: var(--ink-2);">
+          Найдите самую большую потерю в таблице — это ваша точка
+          наибольшего риска. Для вашей ниши это <strong>{{ stress.critical_param }}</strong>.
+          Если через 2-3 месяца работы вы видите, что этот параметр
+          ухудшается, это <strong>не</strong> «ещё подождём, разгонится» —
+          это красный флаг, срочно пересматривайте маркетинг и воронку.
+        </p>
+      </div>
       {% endif %}
 
       {% if stress.recommendations %}
@@ -2116,7 +2254,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     ═══════════════════════════════════════════════════════════════ -#}
 {% if risks and risks | length > 0 %}
 <section class="page">
-  <div class="page-eyebrow">17 · Риски</div>
+  <div class="page-eyebrow">{{ eyebrow('Риски') }}</div>
   <h1 class="page-title">Главные риски</h1>
   <p class="page-lede">
     То, о чём надо помнить в первый год. Ни один из них не фатален,
@@ -2161,7 +2299,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     PAGE 19 — НАЛОГИ
     ═══════════════════════════════════════════════════════════════ -#}
 <section class="page">
-  <div class="page-eyebrow">18 · Налоги</div>
+  <div class="page-eyebrow">{{ eyebrow('Налоги') }}</div>
   <h1 class="page-title">Правовая форма и налоги</h1>
   <p class="page-lede">
     Рекомендованная форма и режим налогообложения для вашей ситуации —
@@ -2224,7 +2362,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     ═══════════════════════════════════════════════════════════════ -#}
 {% if growth_scenarios %}
 <section class="page">
-  <div class="page-eyebrow">19 · Горизонт</div>
+  <div class="page-eyebrow">{{ eyebrow('Горизонт') }}</div>
   <h1 class="page-title">А что дальше?</h1>
   <p class="page-lede">
     Эти цифры — ваш первый год работы. Что будет через 2-3 года —
@@ -2269,24 +2407,30 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     PAGE 21 — ИТОГОВАЯ КАРТОЧКА
     ═══════════════════════════════════════════════════════════════ -#}
 <section class="page">
-  <div class="page-eyebrow">20 · Итог</div>
+  <div class="page-eyebrow">{{ eyebrow('Итог') }}</div>
   <h1 class="page-title">Zerek экспресс-оценка</h1>
   <p class="page-lede">
     Краткая карточка итогов для быстрого обзора.
   </p>
 
-  <div style="text-align: center; margin: 20pt 0;">
-    <div class="traffic-light" style="flex-direction: row; justify-content: center; gap: 8pt; margin-bottom: 8pt;">
-      <span class="tl-light {% if verdict_class == 'red' %}on red{% endif %}" style="width: 30pt; height: 30pt;"></span>
-      <span class="tl-light {% if verdict_class == 'amber' %}on amber{% endif %}" style="width: 30pt; height: 30pt;"></span>
-      <span class="tl-light {% if verdict_class == 'green' %}on green{% endif %}" style="width: 30pt; height: 30pt;"></span>
+  {# Round-5 A.5: «Ваша оценка: ЗЕЛЁНЫЙ» заменено на нейтральную
+     формулировку «Характер направления». Cветофорные кружки + слова
+     ЗЕЛЁНЫЙ/ЖЁЛТЫЙ/КРАСНЫЙ убраны как обещание которое не отражает
+     реальность (в нашем кейсе профит ниже средней ЗП — но это не
+     «красный/жёлтый», это входной шаг). #}
+  <div style="text-align: center; margin: 16pt 0 24pt 0;">
+    <div class="u-upper u-tiny u-gold" style="margin-bottom: 8pt; font-weight: 700; letter-spacing: 1.5pt;">
+      Характер направления
     </div>
-    <div style="font-family: var(--serif); font-size: 22pt; font-weight: 700; color: var(--navy);">
-      Ваша оценка:
-      {% if verdict_class == 'green' %}<span style="color: var(--green);">ЗЕЛЁНЫЙ</span>
-      {% elif verdict_class == 'amber' %}<span style="color: var(--amber);">ЖЁЛТЫЙ</span>
-      {% else %}<span style="color: var(--red);">КРАСНЫЙ</span>
-      {% endif %}
+    <div style="font-family: var(--serif); font-size: 22pt; font-weight: 700; color: var(--navy); line-height: 1.2;">
+      {{ vrd.direction_title }}
+    </div>
+    <div class="u-small" style="margin-top: 8pt; max-width: 360pt; margin-left: auto; margin-right: auto; line-height: 1.5; color: var(--ink-2);">
+      {{ vrd.direction_message }}
+    </div>
+    <div class="u-tiny u-muted" style="margin-top: 10pt;">
+      Средняя ЗП по региону: {{ vrd.avg_salary_region | money_round }} ₸ ·
+      Прогнозная прибыль на мощности: {{ vrd.profit_for_direction | money_round }} ₸/мес
     </div>
   </div>
 
@@ -2346,7 +2490,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     PAGE 22 — CTA + ФУТЕР
     ═══════════════════════════════════════════════════════════════ -#}
 <section class="page">
-  <div class="page-eyebrow">21 · Дальше</div>
+  <div class="page-eyebrow">{{ eyebrow('Дальше') }}</div>
   <h1 class="page-title">Ваш следующий шаг</h1>
   <p class="page-lede">
     Quick Check — это моментальный срез. Следующий уровень детализации —

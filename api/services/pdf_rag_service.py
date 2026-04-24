@@ -17,7 +17,7 @@ from __future__ import annotations
 import logging
 import os
 import re
-from typing import Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 from gemini_rag import _read_insight_file  # reuse path constant + reader
 
@@ -80,23 +80,11 @@ _GUARDRAIL_RULES = (
 # ═══════════════════════════════════════════════════════════════════════
 
 
-_BANNED_WORDS = (
-    "гарантирую", "гарантия", "гарантирует",
-    "стопроцентно", "100%",
-    "обязательно получится", "точно получится",
-)
-
-_BANNED_BRANDS = (
-    "instagram", "tiktok", "whatsapp",
-    "яндекс", "google",
-    "kaspi", "каспи",
-    "2gis", "2гис",
-    "telegram", "телеграм",
-    "halyk", "халык",
-)
-
-
-def _validate(text: str, diag: dict) -> Tuple[bool, str]:
+def _validate(text: str, format_id: str, diag: dict) -> Tuple[bool, str]:
+    """Round-5 C.1: валидатор учитывает формат — для HOME/SOLO
+    отклоняет упоминания найма, помещения, витрины и т.п.
+    """
+    from services.rag_filters import banned_words_for, find_banned
     t = (text or "").strip()
     if not t:
         return False, "empty"
@@ -107,13 +95,10 @@ def _validate(text: str, diag: dict) -> Tuple[bool, str]:
         return False, f"word_count_out_of_range:{wc}"
     if re.search(r"\d", t):
         return False, "contains_digits"
-    low = t.lower()
-    for b in _BANNED_BRANDS:
-        if b in low:
-            return False, f"brand:{b}"
-    for w in _BANNED_WORDS:
-        if w in low:
-            return False, f"banned_word:{w}"
+    banned = banned_words_for(format_id)
+    hits = find_banned(t, banned)
+    if hits:
+        return False, f"banned:{hits[0]}"
     if "**" in t or "##" in t or re.search(r"^\s*[-•*]", t, re.M):
         return False, "markdown_artifacts"
     return True, "ok"
@@ -124,40 +109,13 @@ def _validate(text: str, diag: dict) -> Tuple[bool, str]:
 # ═══════════════════════════════════════════════════════════════════════
 
 
-def generate_slot(
-    slot_type: str,
-    niche_id: str,
-    diag: Optional[dict] = None,
-) -> Optional[str]:
-    """Возвращает текст 80-120 слов для указанного slot_type, либо None.
-
-    slot_type ∈ {"common_mistakes","first_year_reality","market_insight","real_experience"}.
-    """
-    diag = diag if diag is not None else {}
-    niche_id = (niche_id or "").upper()
-    diag["niche_id"] = niche_id
-    diag["slot_type"] = slot_type
-
-    if slot_type not in _PROMPTS:
-        diag["reason"] = f"unknown_slot:{slot_type}"
-        return None
-
-    insight = _read_insight_file(niche_id)
-    if not insight:
-        diag["reason"] = "insight_missing"
-        return None
-    diag["insight_len"] = len(insight)
-
+def _gemini_call(prompt: str, diag: dict) -> Optional[str]:
+    """Один HTTP-вызов Gemini. Возвращает raw text или None."""
     api_key = os.getenv("GEMINI_API_KEY", "")
     if not api_key:
         diag["reason"] = "no_gemini_api_key"
         return None
-
     import httpx
-
-    prompt = _PROMPTS[slot_type] + _GUARDRAIL_RULES.format(insight=insight)
-    diag["prompt_len"] = len(prompt)
-
     url = ("https://generativelanguage.googleapis.com/v1beta/models/"
            "gemini-2.5-flash-lite:generateContent?key=" + api_key)
     payload = {
@@ -168,7 +126,6 @@ def generate_slot(
             "topP": 0.9,
         },
     }
-
     try:
         resp = httpx.post(url, json=payload, timeout=20.0)
         diag["http_status"] = resp.status_code
@@ -183,20 +140,79 @@ def generate_slot(
         text = cand["content"]["parts"][0]["text"]
         diag["raw_text"] = text
         diag["raw_len"] = len(text)
+        return text
     except Exception as e:
         diag["reason"] = "exception"
         diag["error"] = str(e)[:200]
         return None
 
-    ok, reason = _validate(text, diag)
-    diag["validator"] = reason
-    _log.info(
-        "pdf-rag slot=%s niche=%s ok=%s reason=%s wc=%s",
-        slot_type, niche_id, ok, reason, diag.get("word_count"),
-    )
-    if not ok:
+
+def generate_slot(
+    slot_type: str,
+    niche_id: str,
+    diag: Optional[dict] = None,
+    format_id: str = "",
+    max_retries: int = 3,
+) -> Optional[str]:
+    """Возвращает текст 80-120 слов или None.
+
+    Round-5 C.1: добавили format_id — попадает в system-prompt как
+    «КРИТИЧЕСКИ ВАЖНО О ФОРМАТЕ» секция, а валидатор отклоняет тексты
+    с найм/помещение/бренды для HOME/SOLO. До max_retries попыток
+    с разными температурами.
+    """
+    diag = diag if diag is not None else {}
+    niche_id = (niche_id or "").upper()
+    diag["niche_id"] = niche_id
+    diag["slot_type"] = slot_type
+    diag["format_id"] = format_id
+    diag["attempts"] = []
+
+    if slot_type not in _PROMPTS:
+        diag["reason"] = f"unknown_slot:{slot_type}"
         return None
-    return text.strip()
+
+    insight = _read_insight_file(niche_id)
+    if not insight:
+        diag["reason"] = "insight_missing"
+        return None
+    diag["insight_len"] = len(insight)
+
+    from services.rag_filters import get_format_context
+    fmt_ctx = get_format_context(format_id)
+    fmt_block = ""
+    if fmt_ctx:
+        fmt_block = (
+            "\n\nФОРМАТ: " + (format_id or "") +
+            "\nКРИТИЧЕСКИ ВАЖНО О ФОРМАТЕ:\n" + fmt_ctx
+        )
+
+    base_prompt = _PROMPTS[slot_type] + fmt_block + _GUARDRAIL_RULES.format(insight=insight)
+    diag["prompt_len"] = len(base_prompt)
+
+    accepted_text: Optional[str] = None
+    for attempt in range(max_retries):
+        attempt_diag: Dict[str, object] = {"attempt": attempt + 1}
+        text = _gemini_call(base_prompt, attempt_diag)
+        if text:
+            ok, reason = _validate(text, format_id, attempt_diag)
+            attempt_diag["validator"] = reason
+            if ok:
+                accepted_text = text.strip()
+                diag["attempts"].append(attempt_diag)
+                diag["validator"] = reason
+                break
+        diag["attempts"].append(attempt_diag)
+
+    final_ok = accepted_text is not None
+    _log.info(
+        "pdf-rag slot=%s niche=%s fmt=%s ok=%s attempts=%s",
+        slot_type, niche_id, format_id, final_ok, len(diag["attempts"]),
+    )
+    if not final_ok:
+        diag["reason"] = "all_attempts_failed"
+        return None
+    return accepted_text
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -204,17 +220,17 @@ def generate_slot(
 # ═══════════════════════════════════════════════════════════════════════
 
 
-def generate_common_mistakes(niche_id: str, diag: Optional[dict] = None) -> Optional[str]:
-    return generate_slot("common_mistakes", niche_id, diag)
+def generate_common_mistakes(niche_id: str, diag: Optional[dict] = None, format_id: str = "") -> Optional[str]:
+    return generate_slot("common_mistakes", niche_id, diag, format_id=format_id)
 
 
-def generate_first_year_reality(niche_id: str, diag: Optional[dict] = None) -> Optional[str]:
-    return generate_slot("first_year_reality", niche_id, diag)
+def generate_first_year_reality(niche_id: str, diag: Optional[dict] = None, format_id: str = "") -> Optional[str]:
+    return generate_slot("first_year_reality", niche_id, diag, format_id=format_id)
 
 
-def generate_market_insight(niche_id: str, diag: Optional[dict] = None) -> Optional[str]:
-    return generate_slot("market_insight", niche_id, diag)
+def generate_market_insight(niche_id: str, diag: Optional[dict] = None, format_id: str = "") -> Optional[str]:
+    return generate_slot("market_insight", niche_id, diag, format_id=format_id)
 
 
-def generate_real_experience(niche_id: str, diag: Optional[dict] = None) -> Optional[str]:
-    return generate_slot("real_experience", niche_id, diag)
+def generate_real_experience(niche_id: str, diag: Optional[dict] = None, format_id: str = "") -> Optional[str]:
+    return generate_slot("real_experience", niche_id, diag, format_id=format_id)

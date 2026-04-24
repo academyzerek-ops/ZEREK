@@ -397,6 +397,176 @@ def _build_sp_ctx(result: dict) -> Optional[dict]:
     return sp
 
 
+def _build_vrd_priorities(result: dict) -> List[Dict[str, str]]:
+    """Round-5 A.3: три приоритета динамически из расчёта.
+
+    1. Финансовая защита (gap → подушка → защита капитала)
+    2. Маркетинг первых 3 месяцев (из marketing_service)
+    3. Сезонность — самая глубокая просадка
+    """
+    out: List[Dict[str, str]] = []
+
+    # ── Приоритет 1: финансы ─────────────────────────────────────────
+    ca = result.get("capital_adequacy") or {}
+    gap = int(ca.get("gap_amount") or 0)
+    reserve = int(ca.get("reserve_3_months") or 0)
+    if gap > 0:
+        out.append({
+            "title": "Финансовая подушка",
+            "detail": (
+                f"Не хватает {filter_money_round(gap)} ₸ до комфортного "
+                "уровня. Пополните резерв до старта или урежьте формат "
+                "до эконом-класса — иначе риск кассового разрыва на 3-4 "
+                "месяце реален."
+            ),
+        })
+    elif reserve > 0:
+        out.append({
+            "title": "Резерв на разгон",
+            "detail": (
+                f"Держите минимум {filter_money_round(reserve)} ₸ на счету "
+                "первые 3 месяца — маркетинг, соцплатежи и расходники "
+                "идут с первого дня, а выручка выходит на мощность только "
+                "к 4-му месяцу."
+            ),
+        })
+    else:
+        out.append({
+            "title": "Защита капитала",
+            "detail": (
+                "Капитала достаточно. Главный риск — потратить подушку "
+                "до старта на «красоту» (премиум-оборудование, ремонт). "
+                "Минимум до 3-го месяца держите 30% капитала в резерве."
+            ),
+        })
+
+    # ── Приоритет 2: маркетинг первых 3 мес ─────────────────────────
+    mp = result.get("marketing_plan") or {}
+    monthly = mp.get("monthly_plan") or []
+    ramp_total = 0
+    if monthly:
+        for m in monthly[:3]:
+            if isinstance(m, dict):
+                ramp_total += int(m.get("total_marketing", 0) or 0)
+    if ramp_total > 0:
+        avg_ramp = ramp_total // 3
+        out.append({
+            "title": "Маркетинг первых 3 месяцев",
+            "detail": (
+                f"В среднем {filter_money_round(avg_ramp)} ₸/мес на разгоне. "
+                "Без этого бюджета новые клиенты не пойдут — это не статья "
+                "расходов «по остаточному принципу», а топливо запуска."
+            ),
+        })
+    else:
+        out.append({
+            "title": "Маркетинг первых 3 месяцев",
+            "detail": (
+                "Заложите бюджет на разгон отдельно от обычного маркетинга — "
+                "первый месяц всегда дороже зрелого в 2-3 раза, пока вы "
+                "тестируете каналы и собираете первых клиентов."
+            ),
+        })
+
+    # ── Приоритет 3: сезонность ─────────────────────────────────────
+    bs = result.get("block_season") or {}
+    coefs = bs.get("coefs") or []
+    months_short = bs.get("months") or []
+    if coefs:
+        try:
+            coef_floats = [float(c) for c in coefs]
+            min_idx = min(range(len(coef_floats)), key=lambda i: coef_floats[i])
+            min_coef = coef_floats[min_idx]
+            min_month = months_short[min_idx] if min_idx < len(months_short) else ""
+            month_genitive = {
+                "янв":"января","фев":"февраля","мар":"марта","апр":"апреля",
+                "май":"мая","июн":"июня","июл":"июля","авг":"августа",
+                "сен":"сентября","окт":"октября","ноя":"ноября","дек":"декабря",
+            }.get(str(min_month).lower(), str(min_month).lower())
+            drop_pct = int(round((1 - min_coef) * 100))
+            if drop_pct >= 5:
+                out.append({
+                    "title": f"Сезонность {month_genitive}",
+                    "detail": (
+                        f"Минус {drop_pct}% от обычной выручки. Заранее "
+                        "откладывайте деньги для этого месяца — это не "
+                        "сюрприз, это известный паттерн вашей ниши."
+                    ),
+                })
+            else:
+                out.append({
+                    "title": "Стабильная сезонность",
+                    "detail": (
+                        "Выручка ровная по году, без глубоких ям. Это "
+                        "плюс — не нужны кассовые манёвры между месяцами."
+                    ),
+                })
+        except (TypeError, ValueError):
+            pass
+    if len(out) < 3:
+        out.append({
+            "title": "Контроль воронки еженедельно",
+            "detail": (
+                "Главная метрика первого года — загрузка. Если через 2-3 "
+                "месяца клиентов меньше плана — это красный флаг, не "
+                "«разгонимся позже». Срочно пересматривайте маркетинг."
+            ),
+        })
+    return out[:3]
+
+
+def _direction_character(profit_monthly: int, avg_salary: int, payback_months: int) -> Tuple[str, str]:
+    """Round-5 A.5: характер направления вместо «ЗЕЛЁНЫЙ/ЖЁЛТЫЙ».
+
+    Возвращает (заголовок, объяснение) на основе отношения прибыли
+    к средней ЗП региона + срока окупаемости. Не врёт клиенту
+    цветом, говорит про экономический профиль направления.
+    """
+    if avg_salary <= 0:
+        avg_salary = 430_000
+    if payback_months and payback_months > 24:
+        return (
+            "Сомнительная экономика",
+            "Окупаемость дольше 24 месяцев — пересмотрите формат "
+            "или ключевые параметры (чек, формат, локацию).",
+        )
+    if profit_monthly <= 0:
+        return (
+            "Сомнительная экономика",
+            "Прибыль на мощности нулевая или отрицательная — "
+            "формат в текущих параметрах не зарабатывает.",
+        )
+    ratio = profit_monthly / avg_salary
+    if ratio < 0.5:
+        return (
+            "Сомнительная экономика",
+            "Прибыль ниже половины средней зарплаты по региону — "
+            "требует пересмотра формата или параметров.",
+        )
+    if ratio < 0.8:
+        return (
+            "Невысокий доход для соло-формата",
+            "Ниже средней зарплаты по региону, но подходит как "
+            "входной шаг в нишу — без сильных рисков потери капитала.",
+        )
+    if ratio < 1.2:
+        return (
+            "Умеренно-доходный старт",
+            "Прибыль примерно на уровне средней зарплаты по региону.",
+        )
+    if ratio < 2.0:
+        return (
+            "Доходный старт",
+            "Прибыль выше средней зарплаты по региону — "
+            "при условии стабильной загрузки.",
+        )
+    return (
+        "Высокодоходный старт",
+        "Прибыль кратно выше средней зарплаты по региону — "
+        "потенциал на голову выше рынка труда.",
+    )
+
+
 def _build_vrd_ctx(result: dict) -> dict:
     """Вердикт — berём block1 (новый формат) как канон.
 
@@ -418,14 +588,34 @@ def _build_vrd_ctx(result: dict) -> dict:
         ca_color = "amber"
     if severity.get(ca_color, 0) >= severity.get("amber", 2) and severity.get(color, 0) < severity.get(ca_color, 0):
         color = ca_color
+    # Round-5 A.5: характер направления — нейтральная формулировка
+    # вместо «Ваша оценка: ЗЕЛЁНЫЙ/ЖЁЛТЫЙ/КРАСНЫЙ».
+    try:
+        from engine import AVG_SALARY_2025, AVG_SALARY_DEFAULT
+    except Exception:
+        AVG_SALARY_2025, AVG_SALARY_DEFAULT = {}, 430_000
+    inp = result.get("input") or {}
+    city_id = (inp.get("city_id") or "").lower()
+    avg_salary = int(AVG_SALARY_2025.get(city_id) or AVG_SALARY_DEFAULT)
+    agg_m = (result.get("pnl_aggregates") or {}).get("mature") or {}
+    profit_m = int(agg_m.get("profit_monthly") or 0)
+    # учитываем социалочный hit для ИП — как в _build_fin_ctx.
+    social_hit = 21_675 if (inp.get("legal_form") or "ip") == "ip" else 0
+    profit_for_dir = max(0, profit_m - social_hit)
+    pb_months = int((result.get("block5") or {}).get("payback_months") or 0)
+    dir_title, dir_message = _direction_character(profit_for_dir, avg_salary, pb_months)
     return {
         "level": color,
         "title": b10.get("headline_rus") or b1.get("verdict_statement") or "",
         "message": b1.get("verdict_statement") or "",
-        "priorities": [],
+        "priorities": _build_vrd_priorities(result),
         "key_insight": None,
         "pros": b1.get("strengths") or [],
         "cons": b1.get("risks") or [],
+        "direction_title": dir_title,
+        "direction_message": dir_message,
+        "avg_salary_region": avg_salary,
+        "profit_for_direction": profit_for_dir,
     }
 
 
@@ -793,11 +983,15 @@ def _build_stress_ctx(result: dict) -> Optional[Dict[str, Any]]:
     }
 
 
-def _maybe_rag_slot(slot_type: str, niche_id: str) -> Optional[str]:
+def _maybe_rag_slot(slot_type: str, niche_id: str, format_id: str = "") -> Optional[str]:
     """Unified generator — any slot returns None on any failure.
 
     Fallback-контракт: template `{% if {slot} %}` просто не рендерит
     блок когда None — никаких placeholder'ов.
+
+    Round-5 C.1: format_id прокидывается в pdf_rag_service чтобы
+    валидатор отклонял тексты с «найм / помещение / вывеска» для
+    HOME/SOLO форматов.
     """
     import logging
     log = logging.getLogger("zerek.pdf_rag")
@@ -808,7 +1002,7 @@ def _maybe_rag_slot(slot_type: str, niche_id: str) -> Optional[str]:
         return None
     try:
         diag: Dict[str, Any] = {}
-        text = generate_slot(slot_type, niche_id, diag=diag)
+        text = generate_slot(slot_type, niche_id, diag=diag, format_id=format_id)
         log.info(
             "pdf-rag slot=%s diag=%s",
             slot_type, {k: v for k, v in diag.items() if k != "raw_text"},
@@ -900,10 +1094,10 @@ def build_pdf_context(result: Dict[str, Any]) -> Dict[str, Any]:
         "today_date": _format_date_ru(now),
         "verdict_class": vrd_ctx["level"],
         "city": {"name": inp_ctx["city_name"]},
-        "common_mistakes":    _maybe_rag_slot("common_mistakes",    inp_ctx.get("niche_id") or ""),
-        "first_year_reality": _maybe_rag_slot("first_year_reality", inp_ctx.get("niche_id") or ""),
-        "market_insight":     _maybe_rag_slot("market_insight",     inp_ctx.get("niche_id") or ""),
-        "real_experience":    _maybe_rag_slot("real_experience",    inp_ctx.get("niche_id") or ""),
+        "common_mistakes":    _maybe_rag_slot("common_mistakes",    inp_ctx.get("niche_id") or "", inp_ctx.get("format_id") or ""),
+        "first_year_reality": _maybe_rag_slot("first_year_reality", inp_ctx.get("niche_id") or "", inp_ctx.get("format_id") or ""),
+        "market_insight":     _maybe_rag_slot("market_insight",     inp_ctx.get("niche_id") or "", inp_ctx.get("format_id") or ""),
+        "real_experience":    _maybe_rag_slot("real_experience",    inp_ctx.get("niche_id") or "", inp_ctx.get("format_id") or ""),
     }
 
 
