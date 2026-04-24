@@ -1317,35 +1317,55 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     <div>
       <h3 class="sub-title">Три уровня достаточности</h3>
 
+      {# R6 C.2: расшифровка «что входит» под каждой из трёх цифр —
+         иначе клиент видит непрозрачные суммы и не понимает разницу. #}
+      <div class="avoid-break" style="padding: 12pt 14pt; background: var(--bg-2); border-left: 3pt solid #D64545; border-radius: 4pt; margin-bottom: 8pt;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between;">
+          <strong style="font-size: 11pt; color: var(--navy);">{{ icon_circle('#D64545') }} Минимум</strong>
+          <span class="num mono" style="font-size: 12pt; font-weight: 700; color: var(--navy);">
+            {{ cadq.minimum | money_round }} ₸
+          </span>
+        </div>
+        <p class="u-tiny u-muted" style="margin: 4pt 0 0 0;">
+          Только CAPEX: оборудование, материалы, регистрация, обучение.
+          Этого хватает открыться, но первые 3 месяца вы будете доедать
+          сбережения. Риск закрытия на М3-М4 если маркетинг не сработает.
+        </p>
+      </div>
+      <div class="avoid-break" style="padding: 12pt 14pt; background: var(--bg-2); border-left: 3pt solid #E8A33D; border-radius: 4pt; margin-bottom: 8pt;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between;">
+          <strong style="font-size: 11pt; color: var(--navy);">{{ icon_circle('#E8A33D') }} Комфортно</strong>
+          <span class="num mono" style="font-size: 12pt; font-weight: 700; color: var(--navy);">
+            {{ cadq.comfortable | money_round }} ₸
+          </span>
+        </div>
+        <p class="u-tiny u-muted" style="margin: 4pt 0 0 0;">
+          CAPEX + разгонный маркетинг М1-М3 + соцплатежи и прочие
+          фикс-расходы за 3 месяца. На этом уровне вы проходите
+          разгон без стресса и доходите до выхода на мощность.
+        </p>
+      </div>
+      <div class="avoid-break" style="padding: 12pt 14pt; background: var(--bg-2); border-left: 3pt solid #48A068; border-radius: 4pt; margin-bottom: 12pt;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between;">
+          <strong style="font-size: 11pt; color: var(--navy);">{{ icon_circle('#48A068') }} Безопасно</strong>
+          <span class="num mono" style="font-size: 12pt; font-weight: 700; color: var(--navy);">
+            {{ cadq.safe | money_round }} ₸
+          </span>
+        </div>
+        <p class="u-tiny u-muted" style="margin: 4pt 0 0 0;">
+          Комфортно + буфер на просадочный месяц (минус 25% к выручке).
+          Даёт спокойно пережить первый сезонный спад без долгов.
+        </p>
+      </div>
+
+      {% if inp.capital %}
       <table class="keyvals">
-        <tr>
-          <td class="k">
-            {{ icon_circle('#D64545') }} <strong>Минимум</strong>
-            <br><span class="u-tiny u-muted">только CAPEX</span>
-          </td>
-          <td class="v">{{ cadq.minimum | money_round }} ₸</td>
-        </tr>
-        <tr>
-          <td class="k">
-            {{ icon_circle('#E8A33D') }} <strong>Комфортно</strong>
-            <br><span class="u-tiny u-muted">+ резерв на 3 мес</span>
-          </td>
-          <td class="v">{{ cadq.comfortable | money_round }} ₸</td>
-        </tr>
-        <tr>
-          <td class="k">
-            {{ icon_circle('#48A068') }} <strong>Безопасно</strong>
-            <br><span class="u-tiny u-muted">+ сезонный буфер</span>
-          </td>
-          <td class="v">{{ cadq.safe | money_round }} ₸</td>
-        </tr>
-        {% if inp.capital %}
         <tr class="total">
           <td class="k"><strong>Ваш капитал</strong></td>
           <td class="v" style="color: var(--navy);"><strong>{{ inp.capital | money_round }} ₸</strong></td>
         </tr>
-        {% endif %}
       </table>
+      {% endif %}
 
       {% if inp.capital %}
       {% set verdict_color = cadq.verdict_level | default('amber') %}
