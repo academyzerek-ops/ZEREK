@@ -740,7 +740,14 @@ def _build_scn_ctx(result: dict) -> dict:
 
 
 def _build_fyc_ctx(result: dict) -> list:
+    """Round-6 A.3: метка под столбиком — КАЛЕНДАРНЫЙ месяц
+    (apr/may/jun…), а не порядковый (1, 2, 3…). Иначе при start_month=5
+    разгонные столбики оставались на «янв-фев-мар», что противоречит
+    тексту «Старт: Май» рядом.
+    """
     fyc = ((result.get("block5") or {}).get("first_year_chart") or {}).get("months") or []
+    inp = result.get("input") or {}
+    start_month = int(inp.get("start_month") or 1)
     out = []
     for i, m in enumerate(fyc, start=1):
         color = m.get("color") or ""
@@ -752,9 +759,13 @@ def _build_fyc_ctx(result: dict) -> list:
             phase = "low"
         else:
             phase = "normal"
+        n = int(m.get("n") or i)
+        # cal_m: 1..12 для календарной подписи под столбиком.
+        cal_m = ((start_month - 1 + n - 1) % 12) + 1
         out.append({
-            "month": int(m.get("n") or i),
-            "month_short_ru": _month_short_ru(int(m.get("n") or i)),
+            "month": n,
+            "month_short_ru": _month_short_ru(cal_m),
+            "calendar_month": cal_m,
             "revenue": int(m.get("revenue") or 0),
             "phase": phase,
         })
