@@ -601,19 +601,36 @@ def build_pdf_context(result: Dict[str, Any]) -> Dict[str, Any]:
     rev_m = int(agg_m.get("revenue_monthly") or 0)
     cogs_pct = float(agg_m.get("cogs_pct") or (result.get("financials") or {}).get("cogs_pct") or 0.30)
     tax_rate = float(agg_m.get("tax_rate") or ((result.get("tax") or {}).get("rate_pct", 3) or 3) / 100)
+    avg_check = int(fin_ctx.get("avg_check") or 0)
     if rev_m > 0:
         cogs_m = int(rev_m * cogs_pct)
         tax_m = int(rev_m * tax_rate)
         true_profit_m = rev_m - cogs_m - tax_m - int(opx_ctx.get("total") or 0)
         fin_ctx["mature_profit"] = true_profit_m
         fin_ctx["net_margin_pct"] = int(round(true_profit_m / rev_m * 100))
-        # Юнит-экономика: чистыми с чека по консистентной марже.
-        avg_check = int(fin_ctx.get("avg_check") or 0)
         if avg_check > 0:
             fin_ctx["unit_net"] = int(round(avg_check * true_profit_m / rev_m))
-    # БЭП для solo: если fixed costs слишком малы — минимум 1 клиент/день.
-    if fin_ctx.get("break_even_clients", 0) == 0 and rev_m > 0:
-        fin_ctx["break_even_clients"] = 1
+    # БЭП — пересчёт через opx.total (содержит реальный marketing из
+    # marketing_service + соцплатежи ИП + аренду + ФОТ). Канонический
+    # calc_breakeven читает fin['marketing'] = 0 для HOME-форматов и
+    # не учитывает соцплатежи — отсюда "БЭП=0/1" артефакт для solo.
+    #
+    # Contribution margin = check − check×cogs_pct − check×tax_rate.
+    # BE (клиентов/мес) = fixed_total / contribution_margin.
+    # safety_% = (planned_month − be) / planned_month × 100.
+    if avg_check > 0 and rev_m > 0:
+        cogs_per_check = int(avg_check * cogs_pct)
+        tax_per_check = int(avg_check * tax_rate)
+        contribution = avg_check - cogs_per_check - tax_per_check
+        fixed_total = int(opx_ctx.get("total") or 0)
+        if contribution > 0 and fixed_total > 0:
+            be_per_month = int(round(fixed_total / contribution))
+            fin_ctx["break_even_clients"] = max(be_per_month, 1)
+            planned_per_month = int(rev_m / avg_check)
+            if planned_per_month > 0:
+                fin_ctx["safety_ratio"] = max(0, int(round(
+                    (planned_per_month - be_per_month) / planned_per_month * 100
+                )))
     return {
         "inp": inp_ctx,
         "cap": _build_cap_ctx(result),
