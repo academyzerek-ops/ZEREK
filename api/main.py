@@ -277,6 +277,28 @@ def get_niche_risks(niche_id: str, debug: int = 0):
     return out
 
 
+@app.get("/pdf-rag-debug/{niche_id}")
+def pdf_rag_debug(niche_id: str, n: int = 1):
+    """Отладка LLM-слота common_mistakes: N прогонов с полными diag.
+
+    Каждый прогон — свежий вызов Gemini (без кеша в текущей реализации),
+    что позволяет смотреть вариативность температуры 0.3 на одном insight.
+    """
+    n = max(1, min(int(n or 1), 5))
+    from services.pdf_rag_service import generate_common_mistakes
+    runs = []
+    for i in range(n):
+        diag: dict = {}
+        text = generate_common_mistakes(niche_id, diag=diag)
+        runs.append({
+            "run": i + 1,
+            "text": text,
+            "accepted": text is not None,
+            "diag": diag,
+        })
+    return {"niche_id": (niche_id or "").upper(), "runs": runs}
+
+
 @app.get("/pdf-health")
 def pdf_health():
     """Диагностика: какой PDF-движок активен сейчас + может ли рендерить.

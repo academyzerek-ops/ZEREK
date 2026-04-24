@@ -585,6 +585,30 @@ def _build_stf_ctx(result: dict) -> Optional[dict]:
 # ═══════════════════════════════════════════════════════════════════════
 
 
+def _maybe_common_mistakes(niche_id: str) -> Optional[str]:
+    """Generate LLM-written slot; return None on any failure.
+
+    Не даём ни одной ошибке Gemini-клиента/валидатора уронить PDF —
+    шаблон в таком случае просто не рендерит слот, страница остаётся
+    с 4 пунктами рисков как и раньше.
+    """
+    import logging
+    log = logging.getLogger("zerek.pdf_rag")
+    try:
+        from services.pdf_rag_service import generate_common_mistakes
+    except Exception as e:
+        log.warning("pdf_rag_service import failed: %s", e)
+        return None
+    try:
+        diag: Dict[str, Any] = {}
+        text = generate_common_mistakes(niche_id, diag=diag)
+        log.info("common_mistakes diag=%s", {k: v for k, v in diag.items() if k != "raw_text"})
+        return text
+    except Exception as e:
+        log.warning("common_mistakes generation crashed: %s", e)
+        return None
+
+
 def build_pdf_context(result: Dict[str, Any]) -> Dict[str, Any]:
     """Маппинг result → Jinja2 context для шаблона."""
     inp_ctx = _build_inp_ctx(result)
@@ -657,6 +681,7 @@ def build_pdf_context(result: Dict[str, Any]) -> Dict[str, Any]:
         "today_date": _format_date_ru(now),
         "verdict_class": vrd_ctx["level"],
         "city": {"name": inp_ctx["city_name"]},
+        "common_mistakes": _maybe_common_mistakes(inp_ctx.get("niche_id") or ""),
     }
 
 

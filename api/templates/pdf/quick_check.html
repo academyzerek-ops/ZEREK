@@ -1990,6 +1990,17 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     {% endif %}
   </div>
   {% endfor %}
+
+  {% if common_mistakes %}
+  <div class="avoid-break u-mt-l" style="margin-top: 14pt; padding: 14pt 16pt; border: 1px solid var(--gold); background: rgba(201,169,97,0.06); border-radius: 3pt;">
+    <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1pt;">
+      От консультанта ZEREK · частые ошибки
+    </div>
+    <p style="margin: 0; font-size: 10pt; line-height: 1.55; color: var(--ink-2);">
+      {{ common_mistakes }}
+    </p>
+  </div>
+  {% endif %}
 </section>
 {% endif %}
 
