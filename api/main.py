@@ -278,25 +278,25 @@ def get_niche_risks(niche_id: str, debug: int = 0):
 
 
 @app.get("/pdf-rag-debug/{niche_id}")
-def pdf_rag_debug(niche_id: str, n: int = 1):
-    """Отладка LLM-слота common_mistakes: N прогонов с полными diag.
+def pdf_rag_debug(niche_id: str, n: int = 1, slot: str = "common_mistakes"):
+    """Отладка LLM-слотов: N прогонов с полными diag.
 
-    Каждый прогон — свежий вызов Gemini (без кеша в текущей реализации),
-    что позволяет смотреть вариативность температуры 0.3 на одном insight.
+    slot ∈ {common_mistakes | first_year_reality | market_insight | real_experience}.
+    Каждый прогон — свежий вызов Gemini, позволяет смотреть вариативность.
     """
     n = max(1, min(int(n or 1), 5))
-    from services.pdf_rag_service import generate_common_mistakes
+    from services.pdf_rag_service import generate_slot
     runs = []
     for i in range(n):
         diag: dict = {}
-        text = generate_common_mistakes(niche_id, diag=diag)
+        text = generate_slot(slot, niche_id, diag=diag)
         runs.append({
             "run": i + 1,
             "text": text,
             "accepted": text is not None,
             "diag": diag,
         })
-    return {"niche_id": (niche_id or "").upper(), "runs": runs}
+    return {"niche_id": (niche_id or "").upper(), "slot": slot, "runs": runs}
 
 
 @app.get("/pdf-health")

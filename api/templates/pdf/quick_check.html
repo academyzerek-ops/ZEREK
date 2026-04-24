@@ -368,18 +368,19 @@ table.data {
 }
 table.data th {
   background: var(--bg-3);
-  padding: 8pt 10pt;
+  padding: 10pt 12pt;
   font-size: 9pt;
-  font-weight: 700;
-  letter-spacing: 1px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: var(--navy);
+  color: #8B93A8;
   text-align: left;
   border-bottom: 2px solid var(--navy);
+  white-space: nowrap;
 }
 table.data th.num { text-align: right; }
 table.data td {
-  padding: 7pt 10pt;
+  padding: 8pt 12pt;
   border-bottom: 1px solid var(--line);
   font-size: 10pt;
   color: var(--ink);
@@ -387,7 +388,12 @@ table.data td {
 table.data td.num {
   text-align: right;
   font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
+/* Round-4 bug 9: выровнять все keyvals и data под единый стиль.
+   Value-колонка — tabular-nums чтобы цифры одной ширины. */
+table.keyvals td.v { font-variant-numeric: tabular-nums; }
 table.data tr:nth-child(even) td { background: var(--bg-2); }
 
 /* --- Verdict / Traffic Light --- */
@@ -754,8 +760,35 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
 
 /* --- Avoid break inside for key blocks --- */
 .avoid-break { page-break-inside: avoid; }
+
+/* Round-4 bug 3: inline SVG вместо emoji. WeasyPrint не всегда
+   рендерит CSS-only shapes из-за сложной блок-модели; inline SVG
+   даёт гарантию. */
+.icon-sq { display: inline-block; vertical-align: middle; margin-right: 5pt; }
 </style>
 </head>
+
+{#- Round-4 bug 3: Jinja-макросы для SVG-иконок статуса.
+   Используются вместо emoji 🟢🟡🔴 ✓ ⚠ ★ ☆ и CSS .dot/.check-mark/.warn-mark. -#}
+{%- macro icon_circle(color) -%}
+<svg class="icon-sq" width="10" height="10" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" fill="{{ color }}"/></svg>
+{%- endmacro -%}
+{%- macro icon_check() -%}
+<svg class="icon-sq" width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg"><path d="M2 6.5 L5 9 L10 3" stroke="#48A068" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+{%- endmacro -%}
+{%- macro icon_warn() -%}
+<svg class="icon-sq" width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg"><path d="M6 1 L11 11 L1 11 Z" fill="#E8A33D"/><rect x="5.5" y="5" width="1" height="3.4" fill="#fff"/><rect x="5.5" y="9" width="1" height="1" fill="#fff"/></svg>
+{%- endmacro -%}
+{%- macro icon_star(on=true) -%}
+{%- if on -%}
+<svg class="icon-sq" width="11" height="11" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg"><path d="M6 1 L7.55 4.24 L11 4.75 L8.5 7.2 L9.1 10.65 L6 9 L2.9 10.65 L3.5 7.2 L1 4.75 L4.45 4.24 Z" fill="#C9A961"/></svg>
+{%- else -%}
+<svg class="icon-sq" width="11" height="11" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg"><path d="M6 1 L7.55 4.24 L11 4.75 L8.5 7.2 L9.1 10.65 L6 9 L2.9 10.65 L3.5 7.2 L1 4.75 L4.45 4.24 Z" stroke="#C9A961" stroke-width="0.8" fill="none"/></svg>
+{%- endif -%}
+{%- endmacro -%}
+{%- macro icon_bullet(color='#1F3864') -%}
+<svg class="icon-sq" width="8" height="8" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><circle cx="4" cy="4" r="3" fill="{{ color }}"/></svg>
+{%- endmacro -%}
 
 <body>
 
@@ -816,6 +849,9 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         <tr><td class="k">Формат</td><td class="v">{{ inp.format_name_ru }}</td></tr>
         <tr><td class="k">Класс</td><td class="v">{{ inp.capex_level_ru }}</td></tr>
         <tr><td class="k">Город</td><td class="v">{{ inp.city_name }}</td></tr>
+        {% if mkt.population %}
+        <tr><td class="k">Население города</td><td class="v">{{ mkt.population | money_round }}</td></tr>
+        {% endif %}
         <tr><td class="k">Локация</td><td class="v">{{ inp.loc_type_ru }}</td></tr>
         {% if inp.area_m2 %}
         <tr><td class="k">Площадь</td><td class="v">{{ inp.area_m2 }} м²</td></tr>
@@ -868,22 +904,14 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     требуемого капитала и рыночных условий.
   </p>
 
+  {# Round-4 bug 2: светофор на стр. 3 убран, он дублирует финальную
+     карточку на стр. 18. Оставляем только текст вердикта — заголовок +
+     объяснение, без цветового ярлыка. #}
   {% set verdict_class = vrd.level | default('amber') %}
-  <div class="verdict {{ verdict_class }}">
-    <div class="traffic-light">
-      <span class="tl-light {% if verdict_class == 'red' %}on red{% endif %}"></span>
-      <span class="tl-light {% if verdict_class == 'amber' %}on amber{% endif %}"></span>
-      <span class="tl-light {% if verdict_class == 'green' %}on green{% endif %}"></span>
-    </div>
+  <div class="verdict {{ verdict_class }}" style="padding: 16pt 18pt;">
     <div class="verdict-body">
-      <div class="verdict-label">
-        {% if verdict_class == 'green' %}Зелёный сигнал
-        {% elif verdict_class == 'amber' %}Жёлтый сигнал
-        {% elif verdict_class == 'red' %}Красный сигнал
-        {% endif %}
-      </div>
-      <h3>{{ vrd.title }}</h3>
-      <p>{{ vrd.message }}</p>
+      <h3 style="margin: 0 0 6pt 0;">{{ vrd.title }}</h3>
+      <p style="margin: 0;">{{ vrd.message }}</p>
     </div>
   </div>
 
@@ -1011,6 +1039,17 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     </div>
   </div>
 
+  {% if market_insight %}
+  <div class="avoid-break u-mt-m" style="padding: 14pt 16pt; border: 1px solid var(--gold); background: rgba(201,169,97,0.06); border-radius: 3pt;">
+    <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1pt;">
+      От консультанта ZEREK · взгляд на нишу
+    </div>
+    <p style="margin: 0; font-size: 10pt; line-height: 1.55; color: var(--ink-2);">
+      {{ market_insight }}
+    </p>
+  </div>
+  {% endif %}
+
   <h3 class="sub-title u-mt-l">Как читать эти цифры</h3>
   <p class="u-small u-muted" style="max-width:170mm;">
     Все значения — модельные, рассчитаны из локальных бенчмарков БНС РК,
@@ -1019,22 +1058,17 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     новых клиентов примерно столько же, сколько возвратных.
   </p>
 </section>
-{#- ═══════════════════════════════════════════════════════════════
-    PAGE 5 — РЫНОК И КОНКУРЕНТЫ
-    ═══════════════════════════════════════════════════════════════ -#}
+{#- Round-4 bug 7: страница «Рынок» удалена целиком — полторы строки
+    не тянули на отдельную A4. Население теперь в паспорте, детальный
+    market-анализ в FinModel. Конкурентный callout сохраняем встраиваясь
+    только если есть pct_of_benchmark (обычно для ниш в регионах
+    нет — тогда секция просто не рендерится). -#}
+{% if mkt.competitors.pct_of_benchmark %}
 <section class="page">
-  <div class="page-eyebrow">04 · Рынок</div>
-  <h1 class="page-title">Спрос и конкуренция</h1>
-  <p class="page-lede">
-    Оценка доступного рынка и уровня насыщения в вашем городе.
-  </p>
-
+  <div class="page-eyebrow">04 · Конкуренция</div>
+  <h1 class="page-title">Конкурентная среда</h1>
   <div>
-    <h3 class="sub-title">Город и спрос</h3>
     <table class="keyvals" style="max-width:130mm;">
-      {% if mkt.population %}
-      <tr><td class="k">Население</td><td class="v">{{ mkt.population | money_round }}</td></tr>
-      {% endif %}
       {% if mkt.competitors.count %}
       <tr><td class="k">Конкурентов в 2GIS</td><td class="v">{{ mkt.competitors.count }}</td></tr>
       {% endif %}
@@ -1044,12 +1078,8 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       {% if mkt.competitors.benchmark_per_10k %}
       <tr><td class="k">Бенчмарк по КЗ</td><td class="v">{{ '%.1f' | format(mkt.competitors.benchmark_per_10k) }}</td></tr>
       {% endif %}
-      {% if mkt.competitors.pct_of_benchmark %}
       <tr><td class="k">% от бенчмарка</td><td class="v">{{ mkt.competitors.pct_of_benchmark }}%</td></tr>
-      {% endif %}
     </table>
-
-    {% if mkt.competitors.pct_of_benchmark %}
     <div class="callout {% if mkt.competitors.pct_of_benchmark < 80 %}green{% elif mkt.competitors.pct_of_benchmark > 130 %}amber{% else %}navy{% endif %} u-mt-m" style="max-width:170mm;">
       <div class="callout-title">
         {% if mkt.competitors.pct_of_benchmark < 80 %}Рынок ненасыщен
@@ -1065,21 +1095,9 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       Плотность конкурентов — в норме. Решающим будет качество продукта и маркетинг.
       {% endif %}
     </div>
-    {% endif %}
-
-    {% if mkt.market_notes %}
-    <div class="callout navy u-mt-s" style="max-width:170mm;">
-      <div class="callout-title">Контекст рынка</div>
-      {{ mkt.market_notes }}
-    </div>
-    {% endif %}
-
-    <p class="u-small u-muted u-mt-m" style="max-width:170mm;">
-      Детальный market-анализ (TAM / SAM / SOM, воронка, сегменты) входит
-      в отдельный продукт — Финансовая модель (9 000 ₸).
-    </p>
   </div>
 </section>
+{% endif %}
 
 
 {#- ═══════════════════════════════════════════════════════════════
@@ -1223,7 +1241,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         {% if cap.all_levels.economy %}
         <tr>
           <td class="k">
-            <span class="dot dot-green"></span> Эконом
+            {{ icon_circle('#48A068') }} Эконом
             <span class="u-tiny u-muted">(б/у)</span>
           </td>
           <td class="v">{{ cap.all_levels.economy | money_round }} ₸</td>
@@ -1232,7 +1250,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         {% if cap.all_levels.standard %}
         <tr>
           <td class="k">
-            <span class="dot dot-navy"></span> Стандарт
+            {{ icon_circle('#1F3864') }} Стандарт
             <span class="u-tiny u-muted">(новое)</span>
           </td>
           <td class="v">{{ cap.all_levels.standard | money_round }} ₸</td>
@@ -1241,7 +1259,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         {% if cap.all_levels.premium %}
         <tr>
           <td class="k">
-            <span class="dot dot-gold"></span> Премиум
+            {{ icon_circle('#C9A961') }} Премиум
             <span class="u-tiny u-muted">(топ)</span>
           </td>
           <td class="v">{{ cap.all_levels.premium | money_round }} ₸</td>
@@ -1283,21 +1301,21 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <table class="keyvals">
         <tr>
           <td class="k">
-            <span class="dot dot-red"></span> <strong>Минимум</strong>
+            {{ icon_circle('#D64545') }} <strong>Минимум</strong>
             <br><span class="u-tiny u-muted">только CAPEX</span>
           </td>
           <td class="v">{{ cadq.minimum | money_round }} ₸</td>
         </tr>
         <tr>
           <td class="k">
-            <span class="dot dot-amber"></span> <strong>Комфортно</strong>
+            {{ icon_circle('#E8A33D') }} <strong>Комфортно</strong>
             <br><span class="u-tiny u-muted">+ резерв на 3 мес</span>
           </td>
           <td class="v">{{ cadq.comfortable | money_round }} ₸</td>
         </tr>
         <tr>
           <td class="k">
-            <span class="dot dot-green"></span> <strong>Безопасно</strong>
+            {{ icon_circle('#48A068') }} <strong>Безопасно</strong>
             <br><span class="u-tiny u-muted">+ сезонный буфер</span>
           </td>
           <td class="v">{{ cadq.safe | money_round }} ₸</td>
@@ -1314,9 +1332,9 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       {% set verdict_color = cadq.verdict_level | default('amber') %}
       <div class="callout {{ verdict_color }} u-mt-m">
         <div class="callout-title">
-          {% if verdict_color == 'green' %}<span class="dot dot-green"></span> Хватает для безопасного старта
-          {% elif verdict_color == 'amber' %}<span class="dot dot-amber"></span> Рискованно
-          {% else %}<span class="dot dot-red"></span> Критически мало
+          {% if verdict_color == 'green' %}{{ icon_circle('#48A068') }} Хватает для безопасного старта
+          {% elif verdict_color == 'amber' %}{{ icon_circle('#E8A33D') }} Рискованно
+          {% else %}{{ icon_circle('#D64545') }} Критически мало
           {% endif %}
         </div>
         {{ cadq.verdict_text }}
@@ -1350,6 +1368,17 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
           <td class="v" style="color: var(--navy);"><strong>{{ cadq.reserve_total | money_round }} ₸</strong></td>
         </tr>
       </table>
+      {% endif %}
+
+      {% if first_year_reality %}
+      <div class="avoid-break u-mt-m" style="padding: 14pt 16pt; border: 1px solid var(--gold); background: rgba(201,169,97,0.06); border-radius: 3pt;">
+        <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1pt;">
+          От консультанта ZEREK · первый год на практике
+        </div>
+        <p style="margin: 0; font-size: 10pt; line-height: 1.55; color: var(--ink-2);">
+          {{ first_year_reality }}
+        </p>
+      </div>
       {% endif %}
 
       <div class="insight u-mt-m avoid-break">
@@ -1486,18 +1515,22 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <table class="keyvals">
         <tr><td class="k">Средний чек</td><td class="v">{{ fin.avg_check | money }} ₸</td></tr>
         <tr><td class="k">− Материалы</td><td class="v">{{ fin.unit_materials | money }} ₸</td></tr>
-        <tr><td class="k">− Аренда (доля)</td><td class="v">{{ fin.unit_rent_share | money }} ₸</td></tr>
-        <tr><td class="k">− Прочие расходы</td><td class="v">{{ fin.unit_other | money }} ₸</td></tr>
         <tr><td class="k">− Налог</td><td class="v">{{ fin.unit_tax | money }} ₸</td></tr>
+        <tr><td class="k">− Доля OPEX (марк. + соцпл.)</td><td class="v">{{ fin.unit_opex_share | default(0) | money }} ₸</td></tr>
         <tr class="total">
           <td class="k"><strong>Чистыми вам</strong></td>
           <td class="v" style="color: var(--green);"><strong>{{ fin.unit_net | money }} ₸</strong></td>
         </tr>
       </table>
+      <p class="u-small u-muted" style="margin-top: 6pt;">
+        * Доля OPEX — постоянные месячные расходы (маркетинг, соцплатежи,
+        прочее), поделённые на среднюю загрузку первого года. С ростом
+        загрузки эта доля падает, а чистыми с чека — растёт.
+      </p>
 
       <div class="callout navy u-mt-m">
         <div class="callout-title">Чистая маржа · {{ fin.net_margin_pct }}%</div>
-        После всех расходов и налогов вам остаётся {{ fin.unit_net }} ₸
+        После всех расходов и налогов вам остаётся {{ fin.unit_net | money }} ₸
         с каждых {{ fin.avg_check | money }} ₸ выручки.
       </div>
     </div>
@@ -1654,17 +1687,13 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
 
   <div class="col-5-7 u-mt-m">
     <div>
+      {# Round-4 bug 6: «Сезонные пики/Просадки» убраны — дублировались
+         со стр. «Сезонность» (там подробно расписано с причинами). #}
       <h3 class="sub-title">Ваш старт</h3>
       <table class="keyvals">
         <tr><td class="k">Месяц старта</td><td class="v">{{ inp.start_month_ru }}</td></tr>
         <tr><td class="k">Разгон</td><td class="v">М1–М{{ dz.break_even_month | default(4) - 1 }}</td></tr>
         <tr><td class="k">Выход на мощность</td><td class="v">М{{ dz.break_even_month | default(4) }}</td></tr>
-        {% if mkt.seasonal_peaks %}
-        <tr><td class="k">Сезонные пики</td><td class="v">{{ mkt.seasonal_peaks }}</td></tr>
-        {% endif %}
-        {% if mkt.seasonal_lows %}
-        <tr><td class="k">Просадки</td><td class="v">{{ mkt.seasonal_lows }}</td></tr>
-        {% endif %}
       </table>
     </div>
     <div>
@@ -1856,7 +1885,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         <div class="driver-cell">
           <div class="driver-label">{{ label }}</div>
           <div class="driver-stars">
-            <span class="star-row">{% for i in range(score) %}<span class="star-on"></span>{% endfor %}{% for i in range(5 - score) %}<span class="star-off"></span>{% endfor %}</span>
+            <span class="star-row">{% for i in range(score) %}{{ icon_star(True) }}{% endfor %}{% for i in range(5 - score) %}{{ icon_star(False) }}{% endfor %}</span>
           </div>
           <div class="driver-score">{{ score }}/5</div>
         </div>
@@ -2215,7 +2244,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     </div>
     {% if scenario.warning %}
     <div style="margin-top: 6pt; font-size: 9pt; color: var(--amber);">
-      <span class="warn-mark">!</span> {{ scenario.warning }}
+      {{ icon_warn() }} {{ scenario.warning }}
     </div>
     {% endif %}
   </div>
@@ -2266,7 +2295,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <h3 class="sub-title" style="color: var(--green);">Что работает на вас</h3>
       {% for pro in vrd.pros %}
       <div style="padding: 8pt 10pt; background: rgba(16,185,129,0.05); border-radius: 3pt; margin-bottom: 6pt; font-size: 10pt;">
-        <span class="check-mark">✓</span> {{ pro }}
+        {{ icon_check() }} {{ pro }}
       </div>
       {% endfor %}
     </div>
@@ -2275,11 +2304,22 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <h3 class="sub-title" style="color: var(--amber);">Что требует внимания</h3>
       {% for con in vrd.cons %}
       <div style="padding: 8pt 10pt; background: rgba(245,158,11,0.05); border-radius: 3pt; margin-bottom: 6pt; font-size: 10pt;">
-        <span class="warn-mark">!</span> {{ con }}
+        {{ icon_warn() }} {{ con }}
       </div>
       {% endfor %}
     </div>
   </div>
+
+  {% if real_experience %}
+  <div class="avoid-break u-mt-l" style="padding: 14pt 16pt; border: 1px solid var(--gold); background: rgba(201,169,97,0.06); border-radius: 3pt;">
+    <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1pt;">
+      От консультанта ZEREK · реальный опыт ниши
+    </div>
+    <p style="margin: 0; font-size: 10pt; line-height: 1.55; color: var(--ink-2);">
+      {{ real_experience }}
+    </p>
+  </div>
+  {% endif %}
 
   {% if action_plan %}
   <h3 class="sub-title u-mt-l">План действий на ближайшие 60 дней</h3>

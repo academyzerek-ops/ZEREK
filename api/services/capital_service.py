@@ -21,8 +21,25 @@ from loaders.tax_constants_loader import get_ip_minimum_monthly_payment  # noqa:
 
 
 def _fmt_kzt(n: int) -> str:
-    """«71 675» — разделитель тысяч пробел, для встраивания в сообщения."""
-    return f"{int(n):,}".replace(",", " ")
+    """Round-4 bug 5: прогнозные gap-суммы в verdict_message должны
+    быть округлены до тысячи (иначе в PDF видны 39 719, 39 500 и
+    т.п. — несогласованное округление).
+    """
+    n = int(n)
+    av = abs(n)
+    if av < 1_000:
+        step = 10
+    elif av < 10_000:
+        step = 100
+    elif av < 100_000:
+        step = 500
+    elif av < 1_000_000:
+        step = 1_000
+    else:
+        step = 10_000
+    sign = -1 if n < 0 else 1
+    rounded = sign * int(round(av / step) * step)
+    return f"{rounded:,}".replace(",", " ")
 
 
 def compute_capital_adequacy(

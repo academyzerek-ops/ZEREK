@@ -398,13 +398,26 @@ def _build_sp_ctx(result: dict) -> Optional[dict]:
 
 
 def _build_vrd_ctx(result: dict) -> dict:
-    """Вердикт — berём block1 (новый формат) как канон."""
+    """Вердикт — berём block1 (новый формат) как канон.
+
+    Round-4 bug 1: светофор block1 не может быть зеленее чем результат
+    capital_adequacy. Если capital < comfortable — верхний предел yellow.
+    Scoring block1 этого не учитывает, отсюда «ЗЕЛЁНЫЙ СИГНАЛ» вместе с
+    текстом «Средний риск — не хватает подушки».
+    """
     b1 = result.get("block1") or {}
     b10 = result.get("block10") or {}
+    ca = result.get("capital_adequacy") or {}
     color = (b1.get("color") or b10.get("color") or "amber").lower()
-    # Нормализация yellow → amber для шаблона.
+    # yellow / amber — синонимы, приводим к одному значению для тесплейта.
     if color == "yellow":
         color = "amber"
+    severity = {"red": 3, "amber": 2, "green": 1, "gray": 0}
+    ca_color = (ca.get("verdict_color") or "").lower()
+    if ca_color == "yellow":
+        ca_color = "amber"
+    if severity.get(ca_color, 0) >= severity.get("amber", 2) and severity.get(color, 0) < severity.get(ca_color, 0):
+        color = ca_color
     return {
         "level": color,
         "title": b10.get("headline_rus") or b1.get("verdict_statement") or "",
@@ -780,27 +793,29 @@ def _build_stress_ctx(result: dict) -> Optional[Dict[str, Any]]:
     }
 
 
-def _maybe_common_mistakes(niche_id: str) -> Optional[str]:
-    """Generate LLM-written slot; return None on any failure.
+def _maybe_rag_slot(slot_type: str, niche_id: str) -> Optional[str]:
+    """Unified generator — any slot returns None on any failure.
 
-    Не даём ни одной ошибке Gemini-клиента/валидатора уронить PDF —
-    шаблон в таком случае просто не рендерит слот, страница остаётся
-    с 4 пунктами рисков как и раньше.
+    Fallback-контракт: template `{% if {slot} %}` просто не рендерит
+    блок когда None — никаких placeholder'ов.
     """
     import logging
     log = logging.getLogger("zerek.pdf_rag")
     try:
-        from services.pdf_rag_service import generate_common_mistakes
+        from services.pdf_rag_service import generate_slot
     except Exception as e:
         log.warning("pdf_rag_service import failed: %s", e)
         return None
     try:
         diag: Dict[str, Any] = {}
-        text = generate_common_mistakes(niche_id, diag=diag)
-        log.info("common_mistakes diag=%s", {k: v for k, v in diag.items() if k != "raw_text"})
+        text = generate_slot(slot_type, niche_id, diag=diag)
+        log.info(
+            "pdf-rag slot=%s diag=%s",
+            slot_type, {k: v for k, v in diag.items() if k != "raw_text"},
+        )
         return text
     except Exception as e:
-        log.warning("common_mistakes generation crashed: %s", e)
+        log.warning("%s slot crashed: %s", slot_type, e)
         return None
 
 
@@ -829,6 +844,15 @@ def build_pdf_context(result: Dict[str, Any]) -> Dict[str, Any]:
         fin_ctx["net_margin_pct"] = int(round(true_profit_m / rev_m * 100))
         if avg_check > 0:
             fin_ctx["unit_net"] = int(round(avg_check * true_profit_m / rev_m))
+    # Round-4 bug 4: в юнит-экономике раньше не было строки «Доля OPEX» —
+    # клиент-финансист видел 5250−630−157=4463, а в чистых было 3501.
+    # Разница = доля постоянных расходов (marketing+соцпл+прочие) на один
+    # чек при актуальной загрузке. Показываем отдельной строкой.
+    if avg_check > 0:
+        _mat = int(fin_ctx.get("unit_materials") or 0)
+        _tax = int(fin_ctx.get("unit_tax") or 0)
+        _net = int(fin_ctx.get("unit_net") or 0)
+        fin_ctx["unit_opex_share"] = max(0, avg_check - _mat - _tax - _net)
     # БЭП — пересчёт через opx.total (содержит реальный marketing из
     # marketing_service + соцплатежи ИП + аренду + ФОТ). Канонический
     # calc_breakeven читает fin['marketing'] = 0 для HOME-форматов и
@@ -876,7 +900,10 @@ def build_pdf_context(result: Dict[str, Any]) -> Dict[str, Any]:
         "today_date": _format_date_ru(now),
         "verdict_class": vrd_ctx["level"],
         "city": {"name": inp_ctx["city_name"]},
-        "common_mistakes": _maybe_common_mistakes(inp_ctx.get("niche_id") or ""),
+        "common_mistakes":    _maybe_rag_slot("common_mistakes",    inp_ctx.get("niche_id") or ""),
+        "first_year_reality": _maybe_rag_slot("first_year_reality", inp_ctx.get("niche_id") or ""),
+        "market_insight":     _maybe_rag_slot("market_insight",     inp_ctx.get("niche_id") or ""),
+        "real_experience":    _maybe_rag_slot("real_experience",    inp_ctx.get("niche_id") or ""),
     }
 
 
