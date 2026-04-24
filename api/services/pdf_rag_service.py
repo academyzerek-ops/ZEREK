@@ -111,11 +111,12 @@ def generate_common_mistakes(niche_id: str, diag: Optional[dict] = None) -> Opti
     prompt = _PROMPT_TEMPLATE.format(insight=insight)
     diag["prompt_len"] = len(prompt)
 
-    # gemini-2.0-flash: без thinking-фазы (2.5 Flash тратит ~900 токенов
-    # на thinking, даже если thinkingBudget=0 передан — v1beta игнорирует,
-    # в итоге output ~40 tokens, текст обрывается).
+    # gemini-2.5-flash-lite: без thinking-фазы (в отличие от gemini-2.5-flash,
+    # который тратит ~900 токенов на thinking раньше output). 2.0-flash
+    # deprecated для новых проектов. На 2.5-flash-lite thinkingBudget можно
+    # не передавать — по умолчанию 0, весь max=800 идёт в реальный ответ.
     url = ("https://generativelanguage.googleapis.com/v1beta/models/"
-           "gemini-2.0-flash:generateContent?key=" + api_key)
+           "gemini-2.5-flash-lite:generateContent?key=" + api_key)
     payload = {
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
         "generationConfig": {
