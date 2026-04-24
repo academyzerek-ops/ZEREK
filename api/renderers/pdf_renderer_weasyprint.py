@@ -61,9 +61,49 @@ def _coerce_number(value):
 
 
 def filter_money(value) -> str:
-    """480000 → '480 000'. Undefined/None → '0'."""
+    """480000 → '480 000'. Undefined/None → '0'.
+
+    Точная сумма — для «законных» величин (МРП, МЗП, соцплатежи,
+    пороги НДС/УСН) и юнит-экономики (чек, материалы, налог/чек).
+    Для прогнозов используйте money_round.
+    """
     n = _coerce_number(value)
     return f"{n:,}".replace(",", " ")
+
+
+def _round_bucket(n: int) -> int:
+    """Правила округления Round-3: прогнозные суммы не должны быть
+    точными до тенге.
+
+    < 1 000              → до 10
+    1 000 – 10 000       → до 100
+    10 000 – 100 000     → до 500
+    100 000 – 1 000 000  → до 1 000
+    > 1 000 000          → до 10 000
+    """
+    n = int(n)
+    av = abs(n)
+    if av < 1_000:
+        step = 10
+    elif av < 10_000:
+        step = 100
+    elif av < 100_000:
+        step = 500
+    elif av < 1_000_000:
+        step = 1_000
+    else:
+        step = 10_000
+    sign = -1 if n < 0 else 1
+    return sign * int(round(av / step) * step)
+
+
+def filter_money_round(value) -> str:
+    """Бакетное округление + пробельный разделитель.
+
+    480 123 → '480 000', 259 719 → '260 000', 5 250 → '5 300',
+    21 675 → '22 000' (для соцплатежей используйте money — исключение)."""
+    n = _coerce_number(value)
+    return f"{_round_bucket(n):,}".replace(",", " ")
 
 
 def filter_money_short(value) -> str:
@@ -185,6 +225,8 @@ def create_jinja_env():
     )
     env.filters["money"] = filter_money
     env.filters["money_short"] = filter_money_short
+    env.filters["money_round"] = filter_money_round
+    env.filters["money_exact"] = filter_money  # alias для читаемости в шаблоне
     _ENV_CACHE = env
     return env
 
@@ -585,6 +627,122 @@ def _build_stf_ctx(result: dict) -> Optional[dict]:
 # ═══════════════════════════════════════════════════════════════════════
 
 
+def _build_growth_scenarios_ctx(result: dict) -> Optional[List[Dict[str, Any]]]:
+    """Приводит growth_service.compute_growth_block к формату шаблона.
+
+    Источник — result['growth_scenarios'] — это DICT
+    {stagnation: {label, description, outcome, warning},
+     development: {label, description, outcome_year2, outcome_year3},
+     growth_factors: [...]}.
+
+    Шаблон ждёт LIST со сценариями с ключами:
+      {icon, color, title, description, projection, warning?}.
+
+    Когда шаблон итерировал dict, Jinja возвращал строки-ключи
+    "stagnation"/"development"; {{ scenario.title }} превращалось в
+    `<built-in method title of str>` — отсюда Round-3 баг 1.1.
+
+    Формируем 3 сценария: Стагнация / Развитие / Рост. Тексты пока
+    заглушки из правок Ноа; когда придёт deterministic_texts.yaml —
+    подхватим оттуда.
+    """
+    raw = result.get("growth_scenarios")
+    if not raw or not isinstance(raw, dict):
+        return None
+    stag = raw.get("stagnation") or {}
+    dev = raw.get("development") or {}
+
+    dev_outcome = (dev.get("outcome_year3") or dev.get("outcome_year2")
+                   or dev.get("description") or "").strip()
+
+    scenarios = [
+        {
+            "icon": "·",
+            "color": "#F59E0B",
+            "title": stag.get("label") or "Стагнация",
+            "description": (stag.get("description") or
+                "Работаете как в первый год, без изменений. "
+                "Выручка держится на мощности базового сценария."),
+            "projection": (stag.get("outcome") or
+                "Та же прибыль месяц в месяц. Риск — выгорание и "
+                "постепенная потеря клиентов к конкурентам с более "
+                "агрессивным маркетингом."),
+            "warning": stag.get("warning") or "",
+        },
+        {
+            "icon": "·",
+            "color": "#10B981",
+            "title": dev.get("label") or "Развитие",
+            "description": (dev.get("description") or
+                "Растёт средний чек за счёт ретеншена и допуслуг. "
+                "Клиентская база расширяется через сарафан."),
+            "projection": dev_outcome or (
+                "Прибыль выше базового сценария. Требует дисциплины "
+                "в ведении клиентов и регулярного обучения."),
+            "warning": "",
+        },
+        {
+            "icon": "·",
+            "color": "#7C6CFF",
+            "title": "Рост",
+            "description": (
+                "Переход в формат SOLO — арендованный кабинет. "
+                "Физический потолок выручки увеличивается примерно "
+                "вдвое, появляется возможность принимать параллельные "
+                "визиты."),
+            "projection": (
+                "Требует дополнительного CAPEX на ремонт и оборудование "
+                "и принятия риска долгосрочной аренды."),
+            "warning": "",
+        },
+    ]
+    return scenarios
+
+
+def _build_stress_ctx(result: dict) -> Optional[Dict[str, Any]]:
+    """Приводит block8 (stress_service) к формату шаблона.
+
+    stress_service возвращает:
+      {base_profit_month, base_profit_year, sensitivities:[{param,change,
+      impact_annual}], critical_param:{param,change,impact_annual}, recs}.
+
+    Шаблон ждёт:
+      {base_annual_profit, tests:[{label,delta,loss}], critical_param:str,
+      recommendations}.
+
+    Баг 1.2: шаблон читал stress.critical_param как строку, а сервис
+    клал туда dict → рендерился как `{'param': 'Загрузка / трафик',
+    'change': -20, 'impact_annual': -963900}`. Заодно base_annual_profit
+    не существовало в сервисе — отсюда «Прибыль в год (база) 0 ₸».
+    """
+    s = result.get("block8") or {}
+    if not s:
+        return None
+    sens = s.get("sensitivities") or []
+    tests: List[Dict[str, Any]] = []
+    for item in sens:
+        if not isinstance(item, dict):
+            continue
+        change = int(item.get("change") or 0)
+        loss = abs(int(item.get("impact_annual") or 0))
+        tests.append({
+            "label": item.get("param") or "",
+            "delta": f"{change}%" if change else "0%",
+            "loss": loss,
+        })
+    crit = s.get("critical_param") or {}
+    if isinstance(crit, dict):
+        critical_str = crit.get("param") or ""
+    else:
+        critical_str = str(crit)
+    return {
+        "base_annual_profit": int(s.get("base_profit_year") or 0),
+        "tests": tests,
+        "critical_param": critical_str,
+        "recommendations": s.get("recommendations") or [],
+    }
+
+
 def _maybe_common_mistakes(niche_id: str) -> Optional[str]:
     """Generate LLM-written slot; return None on any failure.
 
@@ -671,9 +829,9 @@ def build_pdf_context(result: Dict[str, Any]) -> Dict[str, Any]:
         "scn": _build_scn_ctx(result),
         "pb": {"months": (result.get("block5") or {}).get("payback_months") or 12},
         "stf": _build_stf_ctx(result),
-        "stress": result.get("block8"),
+        "stress": _build_stress_ctx(result),
         "risks": (result.get("block9") or {}).get("risks") or [],
-        "growth_scenarios": result.get("growth_scenarios"),
+        "growth_scenarios": _build_growth_scenarios_ctx(result),
         "growth_tips": [],
         "fyc": _build_fyc_ctx(result),
         "action_plan": (result.get("block10") or {}).get("action_plan") or [],

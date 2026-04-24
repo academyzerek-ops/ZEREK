@@ -113,11 +113,19 @@ body {
 h1, h2, h3, h4 { font-family: var(--serif); margin: 0; color: var(--navy); }
 p { margin: 0 0 8pt 0; }
 
-/* --- Section = Page --- */
+/* --- Section = Page ---
+   Round-3 баг 2.5: раньше каждая секция форсила новую страницу
+   (`page-break-after: always`) — короткие секции (Рынок, Сезонность,
+   Парадокс кадров) оставляли полторы страницы воздуха снизу.
+   Теперь page-break-after: auto — секции плывут потоком, разрыв
+   форсят только те, что помечены .page--break. */
 .page {
-  page-break-after: always;
+  page-break-after: auto;
+  page-break-inside: avoid;
   padding: 0;
+  margin-bottom: 6mm;  /* визуальный воздух между склеенными секциями */
 }
+.page--break { page-break-after: always; margin-bottom: 0; }
 .page:last-child { page-break-after: auto; }
 
 /* --- Cover page --- */
@@ -285,6 +293,37 @@ p { margin: 0 0 8pt 0; }
 .u-center { text-align: center; }
 .mono { font-family: var(--mono); }
 .num { text-align: right; }
+.nowrap { white-space: nowrap; }
+
+/* Round-3 баг 2.2: «число + ₸ + /мес» не должно разрываться
+   на строки. Включаем no-wrap на всех стандартных контейнерах где
+   деньги выводятся: ячейки таблиц keyvals/data, KPI-плашки. */
+table.keyvals td.v,
+table.data td.num,
+.kpi-value { white-space: nowrap; }
+
+/* Round-3 баг 2.3: Source Sans 3 / Playfair Display не содержат
+   emoji-символов (цветные кружки статуса, лампочка, галочка) и
+   не все Unicode-буллеты (ch U+25CF и звёзды). Заменяем их
+   CSS-формами чтобы PDF не показывал квадраты на проде. */
+.dot {
+  display: inline-block;
+  width: 8pt; height: 8pt;
+  border-radius: 50%;
+  vertical-align: middle;
+  margin-right: 4pt;
+  background: currentColor;
+}
+.dot-green { background: var(--green); }
+.dot-amber { background: var(--amber); }
+.dot-red   { background: var(--red); }
+.dot-navy  { background: var(--navy); }
+.dot-gold  { background: var(--gold); }
+.star-row { letter-spacing: 1pt; color: var(--gold); }
+.star-on::before  { content: "\2605"; } /* ★ */
+.star-off::before { content: "\2606"; } /* ☆ */
+.check-mark { color: var(--green); font-weight: 700; margin-right: 4pt; }
+.warn-mark  { color: var(--amber); font-weight: 700; margin-right: 4pt; }
 
 /* --- Tables --- */
 table.keyvals {
@@ -613,35 +652,47 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
   line-height: 1.4;
 }
 
-/* --- Driver bars (5 stars) --- */
+/* --- Driver bars (5 drivers) ---
+   Round-3 баг 2.4: 5 колонок × звёздочки 12pt наезжали на правую колонку
+   «Куда идёт платный бюджет». Переводим на плоский flex-column (1 строка
+   на драйвер: label + stars + score) чтобы лучше ловило узкую 5fr колонку. */
 .drivers-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 4mm;
+  display: flex;
+  flex-direction: column;
+  gap: 6pt;
   padding: 12pt;
   background: var(--bg-2);
   border-radius: 3pt;
   margin: 10pt 0;
 }
 .driver-cell {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6pt;
+  min-width: 0;
 }
 .driver-label {
-  font-size: 8.5pt;
+  flex: 0 0 auto;
+  font-size: 9pt;
   color: var(--ink-2);
-  margin-bottom: 4pt;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.5px;
 }
 .driver-stars {
+  flex: 1 1 auto;
+  text-align: right;
   color: var(--gold);
-  font-size: 12pt;
-  margin-bottom: 2pt;
+  font-size: 10pt;
+  white-space: nowrap;
 }
 .driver-score {
+  flex: 0 0 24pt;
+  text-align: right;
   font-size: 9pt;
   color: var(--ink-3);
   font-weight: 700;
+  white-space: nowrap;
 }
 
 /* --- CTA card --- */
@@ -738,7 +789,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
 {#- ═══════════════════════════════════════════════════════════════
     PAGE 2 — ПАСПОРТ БИЗНЕСА
     ═══════════════════════════════════════════════════════════════ -#}
-<section class="page">
+<section class="page page--break">
   <div class="page-eyebrow">01 · Паспорт</div>
   <h1 class="page-title">Паспорт вашего бизнеса</h1>
   <p class="page-lede">
@@ -767,11 +818,11 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         <tr><td class="k">Правовая форма</td><td class="v">{{ inp.legal_form_ru }}</td></tr>
         <tr><td class="k">Команда</td><td class="v">{% if inp.team_solo %}Соло-мастер{% else %}С сотрудниками{% endif %}</td></tr>
         <tr><td class="k">Стартовый капитал</td><td class="v">
-          {% if inp.capital %}{{ inp.capital | money }} ₸
+          {% if inp.capital %}{{ inp.capital | money_round }} ₸
           {% else %}<span style="color: var(--ink-3); font-weight: 400;">не указан</span>
           {% endif %}
         </td></tr>
-        <tr><td class="k">Нужно для формата</td><td class="v">{{ cap.total | money }} ₸</td></tr>
+        <tr><td class="k">Нужно для формата</td><td class="v">{{ cap.total | money_round }} ₸</td></tr>
       </table>
     </div>
   </div>
@@ -798,7 +849,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
 {#- ═══════════════════════════════════════════════════════════════
     PAGE 3 — ВЕРДИКТ
     ═══════════════════════════════════════════════════════════════ -#}
-<section class="page">
+<section class="page page--break">
   <div class="page-eyebrow">02 · Итог</div>
   <h1 class="page-title">Итоговая оценка</h1>
   <p class="page-lede">
@@ -834,7 +885,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         <tr><td class="k">Точка безубыточности</td><td class="v">{{ fin.break_even_clients }} клиентов/мес</td></tr>
         <tr><td class="k">Выход в плюс</td><td class="v">М{{ dz.break_even_month | default(4) }}</td></tr>
         {% if dz.applicable and dz.max_drawdown %}
-        <tr><td class="k">Макс. просадка</td><td class="v">{{ dz.max_drawdown | money }} ₸</td></tr>
+        <tr><td class="k">Макс. просадка</td><td class="v">{{ dz.max_drawdown | money_round }} ₸</td></tr>
         {% endif %}
       </table>
     </div>
@@ -863,7 +914,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
 {#- ═══════════════════════════════════════════════════════════════
     PAGE 4 — DASHBOARD / KPI
     ═══════════════════════════════════════════════════════════════ -#}
-<section class="page">
+<section class="page page--break">
   <div class="page-eyebrow">03 · Ключевые цифры</div>
   <h1 class="page-title">Экономика одного взгляда</h1>
   <p class="page-lede">
@@ -947,7 +998,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     <h3 class="sub-title">Город и спрос</h3>
     <table class="keyvals" style="max-width:130mm;">
       {% if mkt.population %}
-      <tr><td class="k">Население</td><td class="v">{{ mkt.population | money }}</td></tr>
+      <tr><td class="k">Население</td><td class="v">{{ mkt.population | money_round }}</td></tr>
       {% endif %}
       {% if mkt.competitors.count %}
       <tr><td class="k">Конкурентов в 2GIS</td><td class="v">{{ mkt.competitors.count }}</td></tr>
@@ -1016,14 +1067,14 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         {% if inp.area_m2 %}
         <tr><td class="k">Площадь</td><td class="v">{{ inp.area_m2 }} м²</td></tr>
         {% endif %}
-        <tr><td class="k">Аренда / мес</td><td class="v">{{ loc.rent_month | money }} ₸</td></tr>
+        <tr><td class="k">Аренда / мес</td><td class="v">{{ loc.rent_month | money_round }} ₸</td></tr>
         {% if loc.rent_per_m2 %}
-        <tr><td class="k">Ваша ставка за м²</td><td class="v">{{ loc.rent_per_m2 | money }} ₸</td></tr>
+        <tr><td class="k">Ваша ставка за м²</td><td class="v">{{ loc.rent_per_m2 | money_round }} ₸</td></tr>
         {% endif %}
         {% if loc.rent_benchmark_m2 %}
-        <tr><td class="k">Средняя по городу за м²</td><td class="v">{{ loc.rent_benchmark_m2 | money }} ₸</td></tr>
+        <tr><td class="k">Средняя по городу за м²</td><td class="v">{{ loc.rent_benchmark_m2 | money_round }} ₸</td></tr>
         {% endif %}
-        <tr><td class="k">Депозит (2 мес)</td><td class="v">{{ (loc.rent_month * 2) | money }} ₸</td></tr>
+        <tr><td class="k">Депозит (2 мес)</td><td class="v">{{ (loc.rent_month * 2) | money_round }} ₸</td></tr>
       </table>
 
       {% if loc.rent_per_m2 and loc.rent_benchmark_m2 %}
@@ -1069,7 +1120,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
           {% for city in loc.rent_by_city %}
           <tr>
             <td>{{ city.name }}</td>
-            <td class="num mono">{{ city.rent_m2 | money }} ₸</td>
+            <td class="num mono">{{ city.rent_m2 | money_round }} ₸</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -1084,7 +1135,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
 {#- ═══════════════════════════════════════════════════════════════
     PAGE 7 — СТРУКТУРА СТАРТОВЫХ ВЛОЖЕНИЙ (CAPEX)
     ═══════════════════════════════════════════════════════════════ -#}
-<section class="page">
+<section class="page page--break">
   <div class="page-eyebrow">06 · Инвестиции</div>
   <h1 class="page-title">Структура стартовых вложений</h1>
   <p class="page-lede">
@@ -1107,13 +1158,13 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
           {% for item in cap.breakdown %}
           <tr>
             <td>{{ item.label }}</td>
-            <td class="num mono">{{ item.amount | money }} ₸</td>
+            <td class="num mono">{{ item.amount | money_round }} ₸</td>
             <td class="num mono">{{ item.pct }}%</td>
           </tr>
           {% endfor %}
           <tr class="total" style="font-weight: 700;">
             <td style="border-top: 2px solid var(--navy); padding-top: 10pt;"><strong>Итого нужно</strong></td>
-            <td class="num mono" style="border-top: 2px solid var(--navy); padding-top: 10pt; color: var(--navy);"><strong>{{ cap.total | money }} ₸</strong></td>
+            <td class="num mono" style="border-top: 2px solid var(--navy); padding-top: 10pt; color: var(--navy);"><strong>{{ cap.total | money_round }} ₸</strong></td>
             <td class="num mono" style="border-top: 2px solid var(--navy); padding-top: 10pt;"><strong>100%</strong></td>
           </tr>
         </tbody>
@@ -1131,28 +1182,28 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         {% if cap.all_levels.economy %}
         <tr>
           <td class="k">
-            <span style="color: var(--green);">●</span> Эконом
+            <span class="dot dot-green"></span> Эконом
             <span class="u-tiny u-muted">(б/у)</span>
           </td>
-          <td class="v">{{ cap.all_levels.economy | money }} ₸</td>
+          <td class="v">{{ cap.all_levels.economy | money_round }} ₸</td>
         </tr>
         {% endif %}
         {% if cap.all_levels.standard %}
         <tr>
           <td class="k">
-            <span style="color: var(--navy);">●</span> Стандарт
+            <span class="dot dot-navy"></span> Стандарт
             <span class="u-tiny u-muted">(новое)</span>
           </td>
-          <td class="v">{{ cap.all_levels.standard | money }} ₸</td>
+          <td class="v">{{ cap.all_levels.standard | money_round }} ₸</td>
         </tr>
         {% endif %}
         {% if cap.all_levels.premium %}
         <tr>
           <td class="k">
-            <span style="color: var(--gold);">●</span> Премиум
+            <span class="dot dot-gold"></span> Премиум
             <span class="u-tiny u-muted">(топ)</span>
           </td>
-          <td class="v">{{ cap.all_levels.premium | money }} ₸</td>
+          <td class="v">{{ cap.all_levels.premium | money_round }} ₸</td>
         </tr>
         {% endif %}
         <tr class="total">
@@ -1191,29 +1242,29 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <table class="keyvals">
         <tr>
           <td class="k">
-            <span style="color: var(--red);">●</span> <strong>Минимум</strong>
+            <span class="dot dot-red"></span> <strong>Минимум</strong>
             <br><span class="u-tiny u-muted">только CAPEX</span>
           </td>
-          <td class="v">{{ cadq.minimum | money }} ₸</td>
+          <td class="v">{{ cadq.minimum | money_round }} ₸</td>
         </tr>
         <tr>
           <td class="k">
-            <span style="color: var(--amber);">●</span> <strong>Комфортно</strong>
+            <span class="dot dot-amber"></span> <strong>Комфортно</strong>
             <br><span class="u-tiny u-muted">+ резерв на 3 мес</span>
           </td>
-          <td class="v">{{ cadq.comfortable | money }} ₸</td>
+          <td class="v">{{ cadq.comfortable | money_round }} ₸</td>
         </tr>
         <tr>
           <td class="k">
-            <span style="color: var(--green);">●</span> <strong>Безопасно</strong>
+            <span class="dot dot-green"></span> <strong>Безопасно</strong>
             <br><span class="u-tiny u-muted">+ сезонный буфер</span>
           </td>
-          <td class="v">{{ cadq.safe | money }} ₸</td>
+          <td class="v">{{ cadq.safe | money_round }} ₸</td>
         </tr>
         {% if inp.capital %}
         <tr class="total">
           <td class="k"><strong>Ваш капитал</strong></td>
-          <td class="v" style="color: var(--navy);"><strong>{{ inp.capital | money }} ₸</strong></td>
+          <td class="v" style="color: var(--navy);"><strong>{{ inp.capital | money_round }} ₸</strong></td>
         </tr>
         {% endif %}
       </table>
@@ -1222,14 +1273,14 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       {% set verdict_color = cadq.verdict_level | default('amber') %}
       <div class="callout {{ verdict_color }} u-mt-m">
         <div class="callout-title">
-          {% if verdict_color == 'green' %}🟢 Хватает для безопасного старта
-          {% elif verdict_color == 'amber' %}🟡 Рискованно
-          {% else %}🔴 Критически мало
+          {% if verdict_color == 'green' %}<span class="dot dot-green"></span> Хватает для безопасного старта
+          {% elif verdict_color == 'amber' %}<span class="dot dot-amber"></span> Рискованно
+          {% else %}<span class="dot dot-red"></span> Критически мало
           {% endif %}
         </div>
         {{ cadq.verdict_text }}
         {% if cadq.gap_amount and cadq.gap_amount > 0 %}
-        <br><br><strong>Не хватает: {{ cadq.gap_amount | money }} ₸</strong> —
+        <br><br><strong>Не хватает: {{ cadq.gap_amount | money_round }} ₸</strong> —
         {% if cadq.gap_to == 'comfortable' %}до комфортного уровня
         {% else %}до безопасного уровня{% endif %}.
         {% endif %}
@@ -1250,12 +1301,12 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         {% for item in cadq.reserve_breakdown %}
         <tr>
           <td class="k">{{ item.label }}</td>
-          <td class="v">{{ item.amount | money }} ₸</td>
+          <td class="v">{{ item.amount | money_round }} ₸</td>
         </tr>
         {% endfor %}
         <tr class="total">
           <td class="k"><strong>Итого резерв</strong></td>
-          <td class="v" style="color: var(--navy);"><strong>{{ cadq.reserve_total | money }} ₸</strong></td>
+          <td class="v" style="color: var(--navy);"><strong>{{ cadq.reserve_total | money_round }} ₸</strong></td>
         </tr>
       </table>
       {% endif %}
@@ -1306,12 +1357,12 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
           {% if role.is_owner %}
           <span class="u-muted">без оклада</span>
           {% else %}
-          {{ role.salary | money }} ₸
+          {{ role.salary | money_round }} ₸
           {% endif %}
         </td>
         <td class="num mono">
           {% if role.is_owner %}—
-          {% else %}{{ (role.salary * 1.115) | int | money }} ₸
+          {% else %}{{ (role.salary * 1.115) | int | money_round }} ₸
           {% endif %}
         </td>
       </tr>
@@ -1321,7 +1372,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
           <strong>ФОТ с налогами</strong>
         </td>
         <td class="num mono" style="border-top: 2px solid var(--navy); padding-top: 8pt; color: var(--navy);">
-          <strong>{{ stage.total_fot_with_taxes | money }} ₸</strong>
+          <strong>{{ stage.total_fot_with_taxes | money_round }} ₸</strong>
         </td>
       </tr>
     </tbody>
@@ -1362,14 +1413,14 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
           {% for item in opx.breakdown %}
           <tr>
             <td>{{ item.label }}</td>
-            <td class="num mono">{{ item.amount | money }} ₸</td>
+            <td class="num mono">{{ item.amount | money_round }} ₸</td>
             <td class="num mono">{{ item.pct_of_revenue }}%</td>
           </tr>
           {% endfor %}
           <tr class="total">
             <td style="border-top: 2px solid var(--navy); padding-top: 8pt;"><strong>Итого OPEX</strong></td>
             <td class="num mono" style="border-top: 2px solid var(--navy); padding-top: 8pt; color: var(--navy);">
-              <strong>{{ opx.total | money }} ₸</strong>
+              <strong>{{ opx.total | money_round }} ₸</strong>
             </td>
             <td class="num mono" style="border-top: 2px solid var(--navy); padding-top: 8pt;">
               <strong>{{ opx.total_pct }}%</strong>
@@ -1410,7 +1461,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
 {#- ═══════════════════════════════════════════════════════════════
     PAGE 11 — ТОЧКА БЕЗУБЫТОЧНОСТИ + 3 СЦЕНАРИЯ
     ═══════════════════════════════════════════════════════════════ -#}
-<section class="page">
+<section class="page page--break">
   <div class="page-eyebrow">10 · Выручка</div>
   <h1 class="page-title">Выручка, безубыточность, сценарии</h1>
   <p class="page-lede">
@@ -1501,11 +1552,11 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <table class="keyvals">
         <tr>
           <td class="k">Средняя за первый год<br><span class="u-tiny u-muted">с учётом разгона</span></td>
-          <td class="v" style="color: var(--green);">{{ fin.avg_year_profit | money }} ₸/мес</td>
+          <td class="v" style="color: var(--green);">{{ fin.avg_year_profit | money_round }} ₸/мес</td>
         </tr>
         <tr>
           <td class="k">На мощности<br><span class="u-tiny u-muted">после М{{ dz.break_even_month | default(4) }}</span></td>
-          <td class="v" style="color: var(--green);">{{ fin.mature_profit | money }} ₸/мес</td>
+          <td class="v" style="color: var(--green);">{{ fin.mature_profit | money_round }} ₸/мес</td>
         </tr>
       </table>
     </div>
@@ -1602,7 +1653,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <table class="keyvals">
         <tr><td class="k">Выход в плюс</td><td class="v">М{{ dz.break_even_month }}</td></tr>
         <tr><td class="k">Худший месяц</td><td class="v">{{ dz.worst_month_ru }}</td></tr>
-        <tr><td class="k">Макс. просадка</td><td class="v" style="color: var(--red);">{{ dz.max_drawdown | money }} ₸</td></tr>
+        <tr><td class="k">Макс. просадка</td><td class="v" style="color: var(--red);">{{ dz.max_drawdown | money_round }} ₸</td></tr>
         {% if dz.loss_months %}
         <tr><td class="k">Убыточных месяцев</td><td class="v">{{ dz.loss_months | length }}</td></tr>
         {% endif %}
@@ -1611,7 +1662,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <div class="callout red u-mt-m">
         <div class="callout-title">Зона максимальной опасности</div>
         В худший месяц ({{ dz.worst_month_ru }}) прибыль снизится до
-        <strong>{{ dz.worst_month_profit | money }} ₸</strong>. Это не катастрофа
+        <strong>{{ dz.worst_month_profit | money_round }} ₸</strong>. Это не катастрофа
         если у вас есть подушка — и катастрофа если нет.
       </div>
     </div>
@@ -1619,7 +1670,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     <div>
       <h3 class="sub-title">Что это значит для вас</h3>
       <p class="u-small">
-        Максимальная просадка <strong>{{ dz.max_drawdown | money }} ₸</strong> — это сумма,
+        Максимальная просадка <strong>{{ dz.max_drawdown | money_round }} ₸</strong> — это сумма,
         которая должна лежать у вас на счету дополнительно к CAPEX,
         чтобы вы гарантированно дожили до месяца выхода в плюс.
       </p>
@@ -1638,8 +1689,8 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
           {% for month in dz.loss_months %}
           <tr>
             <td>{{ month.name_ru }}</td>
-            <td class="num mono">{{ month.revenue | money }}</td>
-            <td class="num mono" style="color: var(--red);">{{ month.loss | money }}</td>
+            <td class="num mono">{{ month.revenue | money_round }}</td>
+            <td class="num mono" style="color: var(--red);">{{ month.loss | money_round }}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -1649,7 +1700,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <div class="insight u-mt-m avoid-break">
         <div class="insight-kicker">Рекомендация</div>
         <p>
-          Держите на счету минимум <strong>{{ dz.max_drawdown | money }} ₸</strong>
+          Держите на счету минимум <strong>{{ dz.max_drawdown | money_round }} ₸</strong>
           в течение первых {{ dz.break_even_month }} месяцев. Это буфер,
           который закрывает сезонные провалы и непредвиденные расходы.
         </p>
@@ -1733,7 +1784,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         <div class="driver-cell">
           <div class="driver-label">{{ label }}</div>
           <div class="driver-stars">
-            {% for i in range(score) %}★{% endfor %}{% for i in range(5 - score) %}☆{% endfor %}
+            <span class="star-row">{% for i in range(score) %}<span class="star-on"></span>{% endfor %}{% for i in range(5 - score) %}<span class="star-off"></span>{% endfor %}</span>
           </div>
           <div class="driver-score">{{ score }}/5</div>
         </div>
@@ -1742,9 +1793,9 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
 
       <h3 class="sub-title u-mt-m">Сводка за год</h3>
       <table class="keyvals">
-        <tr><td class="k">Среднее / мес</td><td class="v">{{ mp.summary.avg_monthly_budget | money }} ₸</td></tr>
-        <tr><td class="k">Итого за год</td><td class="v">{{ mp.summary.total_year_budget | money }} ₸</td></tr>
-        <tr><td class="k">Пиковый месяц</td><td class="v">М{{ mp.summary.peak_month }} · {{ mp.summary.peak_budget | money }} ₸</td></tr>
+        <tr><td class="k">Среднее / мес</td><td class="v">{{ mp.summary.avg_monthly_budget | money_round }} ₸</td></tr>
+        <tr><td class="k">Итого за год</td><td class="v">{{ mp.summary.total_year_budget | money_round }} ₸</td></tr>
+        <tr><td class="k">Пиковый месяц</td><td class="v">М{{ mp.summary.peak_month }} · {{ mp.summary.peak_budget | money_round }} ₸</td></tr>
       </table>
     </div>
 
@@ -1810,11 +1861,11 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         <tr><td class="k">Средний чек</td><td class="v">{{ sp.capacity.avg_check | money }} ₸</td></tr>
         <tr class="total">
           <td class="k"><strong>Идеальный потолок</strong></td>
-          <td class="v" style="color: var(--navy);"><strong>{{ sp.capacity.peak_monthly_revenue | money }} ₸</strong></td>
+          <td class="v" style="color: var(--navy);"><strong>{{ sp.capacity.peak_monthly_revenue | money_round }} ₸</strong></td>
         </tr>
         <tr>
           <td class="k">Реалистично</td>
-          <td class="v">{{ sp.capacity.realistic_monthly_revenue | money }} ₸</td>
+          <td class="v">{{ sp.capacity.realistic_monthly_revenue | money_round }} ₸</td>
         </tr>
       </table>
 
@@ -1909,7 +1960,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <table class="keyvals">
         <tr>
           <td class="k">Прибыль в год (база)</td>
-          <td class="v">{{ stress.base_annual_profit | money }} ₸</td>
+          <td class="v">{{ stress.base_annual_profit | money_round }} ₸</td>
         </tr>
       </table>
     </div>
@@ -1929,7 +1980,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
           <tr>
             <td>{{ test.label }}</td>
             <td class="num mono">{{ test.delta }}</td>
-            <td class="num mono" style="color: var(--red);">{{ test.loss | money }}</td>
+            <td class="num mono" style="color: var(--red);">{{ test.loss | money_round }}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -1985,7 +2036,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     <p class="u-small" style="margin-bottom: 6pt; color: var(--ink-2);">{{ risk.description }}</p>
     {% if risk.mitigation %}
     <div style="padding: 8pt 10pt; background: #FFFFFF; border-left: 2pt solid var(--green); font-size: 9.5pt; color: var(--ink-2);">
-      <strong style="color: var(--green);">💡 Что делать:</strong> {{ risk.mitigation }}
+      <strong style="color: var(--green);">Что делать:</strong> {{ risk.mitigation }}
     </div>
     {% endif %}
   </div>
@@ -2031,12 +2082,12 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
 
       <h3 class="sub-title u-mt-m">Годовая нагрузка</h3>
       <table class="keyvals">
-        <tr><td class="k">Выручка (база)</td><td class="v">{{ scn.base.revenue | money }} ₸</td></tr>
-        <tr><td class="k">УСН {{ tax.usn_rate }}%</td><td class="v">{{ tax.annual_usn | money }} ₸</td></tr>
+        <tr><td class="k">Выручка (база)</td><td class="v">{{ scn.base.revenue | money_round }} ₸</td></tr>
+        <tr><td class="k">УСН {{ tax.usn_rate }}%</td><td class="v">{{ tax.annual_usn | money_round }} ₸</td></tr>
         <tr><td class="k">Соцплатежи ИП (мин.)</td><td class="v">{{ (tax.ip_min_monthly * 12) | money }} ₸</td></tr>
         <tr class="total">
           <td class="k"><strong>Итого налоги за год</strong></td>
-          <td class="v" style="color: var(--navy);"><strong>{{ tax.total_annual | money }} ₸</strong></td>
+          <td class="v" style="color: var(--navy);"><strong>{{ tax.total_annual | money_round }} ₸</strong></td>
         </tr>
       </table>
     </div>
@@ -2092,7 +2143,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     </div>
     {% if scenario.warning %}
     <div style="margin-top: 6pt; font-size: 9pt; color: var(--amber);">
-      ⚠️ {{ scenario.warning }}
+      <span class="warn-mark">!</span> {{ scenario.warning }}
     </div>
     {% endif %}
   </div>
@@ -2143,7 +2194,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <h3 class="sub-title" style="color: var(--green);">Что работает на вас</h3>
       {% for pro in vrd.pros %}
       <div style="padding: 8pt 10pt; background: rgba(16,185,129,0.05); border-radius: 3pt; margin-bottom: 6pt; font-size: 10pt;">
-        ✅ {{ pro }}
+        <span class="check-mark">✓</span> {{ pro }}
       </div>
       {% endfor %}
     </div>
@@ -2152,7 +2203,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <h3 class="sub-title" style="color: var(--amber);">Что требует внимания</h3>
       {% for con in vrd.cons %}
       <div style="padding: 8pt 10pt; background: rgba(245,158,11,0.05); border-radius: 3pt; margin-bottom: 6pt; font-size: 10pt;">
-        ⚠️ {{ con }}
+        <span class="warn-mark">!</span> {{ con }}
       </div>
       {% endfor %}
     </div>
@@ -2255,7 +2306,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     <p style="margin-bottom: 6pt;">
       <strong>Источники данных.</strong>
       На основании аналитических отчётов по рынку Казахстана и реальных
-      кейсов предпринимателей партнёрской сети ZEREK.
+      кейсов предпринимателей Казахстана.
     </p>
     <p>
       © 2026 ZEREK. Все права защищены.

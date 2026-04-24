@@ -66,6 +66,11 @@ def compute_block8_stress_test(result):
     materials_mature_y = materials_mature_m * 12
     fixed_year = fixed_monthly * 12
 
+    # Компоненты fixed_monthly — для отдельных params (Аренда/ФОТ/Маркетинг)
+    rent_monthly = _safe_int(mature.get("rent_monthly"), 0)
+    fot_monthly = _safe_int(mature.get("fot_monthly"), 0)
+    mk_monthly = _safe_int(mature.get("marketing_monthly"), 0)
+
     def impact_traffic(delta_pct):
         frac = abs(delta_pct) / 100.0
         rev_new_m = rev_mature_m * (1 - frac)
@@ -82,9 +87,20 @@ def compute_block8_stress_test(result):
         profit_new_m = rev_new_m - materials_new_m - tax_new_m - fixed_monthly
         return -int(round((profit_mature_m - profit_new_m) * 12))
 
+    def impact_cost_up(cost_monthly, delta_pct):
+        """Рост фикс-статьи (rent/marketing/fot) — прямо уменьшает прибыль."""
+        frac = abs(delta_pct) / 100.0
+        delta_m = cost_monthly * frac
+        return -int(round(delta_m * 12))
+
+    # Round-3: 5 параметров. Для HOME-форматов rent/fot = 0 → impact=0,
+    # строки всё равно показываем (клиент видит «аренды нет — плюс»).
     sensitivities = [
         {"param": "Загрузка / трафик", "change": -20, "impact_annual": impact_traffic(-20)},
         {"param": "Средний чек",        "change": -15, "impact_annual": impact_avg_check(-15)},
+        {"param": "Аренда (рост)",      "change":  20, "impact_annual": impact_cost_up(rent_monthly, 20)},
+        {"param": "Маркетинг (рост)",   "change":  20, "impact_annual": impact_cost_up(mk_monthly, 20)},
+        {"param": "ФОТ (рост)",         "change":  20, "impact_annual": impact_cost_up(fot_monthly, 20)},
     ]
     sensitivities.sort(key=lambda x: x["impact_annual"])
 
