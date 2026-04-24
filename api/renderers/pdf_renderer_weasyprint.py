@@ -371,36 +371,54 @@ def _build_fin_ctx(result: dict) -> dict:
     agg_m = (result.get("pnl_aggregates") or {}).get("mature") or {}
     b5 = result.get("block5") or {}
     ei = b5.get("entrepreneur_income") or {}
-    b5_scn = (b5.get("scenarios") or {}).get("base") or {}
-    b6_legacy = result.get("block_6") or {}
+    be = result.get("breakeven") or {}
+    # Net margin — считаем из зрелого P&L с учётом соцплатежей ИП,
+    # чтобы цифра совпадала с тем, что видно в OPEX / юнит-экономике.
+    # Legacy block5.margins.net не вычитал 21 675 × 12 — отсюда
+    # инфляция маржи (≈70% вместо реальных ≈43%).
+    rev_mature_m = int(agg_m.get("revenue_monthly") or 0)
+    profit_mature_m = int(agg_m.get("profit_monthly") or 0)
+    social_monthly = 21_675  # ОПВ + ВОСМС + ИПН минимум ИП, 2026
+    legal_form = (result.get("input") or {}).get("legal_form") or "ip"
+    social_hit = social_monthly if legal_form == "ip" else 0
+    net_margin_pct = 0
+    if rev_mature_m > 0:
+        net_margin_pct = int(round((profit_mature_m - social_hit) / rev_mature_m * 100))
     return {
-        "mature_revenue": int(agg_m.get("revenue_monthly") or 0),
-        "mature_profit": int(agg_m.get("profit_monthly") or 0),
+        "mature_revenue": rev_mature_m,
+        "mature_profit":  profit_mature_m - social_hit,
         "mature_clients": int(b4m.get("max_checks_per_day") or 0) * 26,
         "avg_year_profit": int(ei.get("total_monthly") or 0) * 12,
-        "net_margin_pct": int(round(((b5.get("margins") or {}).get("net") or 0) * 100)),
-        "break_even_clients": int(b6_legacy.get("tb_checks_day") or 0),
-        "safety_ratio": int(b6_legacy.get("safety_margin") or 0),
+        "net_margin_pct": net_margin_pct,
+        "break_even_clients": int(be.get("тб_чеков_день") or 0),
+        "safety_ratio": int(round(float(be.get("запас_прочности_%") or 0))),
         "avg_check": int(fin.get("check_med") or b4m.get("avg_check") or 0),
         "unit_materials": int(int(fin.get("check_med") or 0) * float(fin.get("cogs_pct") or 0.30)),
         "unit_rent_share": 0,
         "unit_other": 0,
         "unit_tax": int(int(fin.get("check_med") or 0) * ((result.get("tax") or {}).get("rate_pct", 3) or 3) / 100),
-        "unit_net": int((ei.get("mature_monthly") or 0) / max(b4m.get("max_checks_per_day") or 1, 1) / 26),
+        "unit_net": int(((ei.get("mature_monthly") or 0) - social_hit) / max(b4m.get("max_checks_per_day") or 1, 1) / 26),
     }
 
 
 def _build_opx_ctx(result: dict) -> dict:
-    """Monthly OPEX breakdown + total."""
+    """Monthly OPEX breakdown + total.
+
+    Для ИП добавляем минимальные соцплатежи 21 675 ₸/мес (ОПВ+ВОСМС+ИПН) —
+    они обязательны даже при нулевом доходе и в шаблоне на стр. «Налоги»
+    явно сказано «Учтено в OPEX».
+    """
     agg_m = (result.get("pnl_aggregates") or {}).get("mature") or {}
     fin = result.get("financials") or {}
     revenue = max(int(agg_m.get("revenue_monthly") or 1), 1)
+    legal_form = (result.get("input") or {}).get("legal_form") or "ip"
+    ip_social = 21_675 if legal_form == "ip" else 0
     items = [
-        ("Аренда",             int(agg_m.get("rent_monthly") or fin.get("rent_month") or 0)),
-        ("ФОТ с налогами",     int(agg_m.get("fot_monthly") or 0)),
-        ("Маркетинг",          int(agg_m.get("marketing_monthly") or 0)),
-        ("Коммунальные",       0),
-        ("Прочие расходы",     int(agg_m.get("other_opex_monthly") or 0)),
+        ("Аренда",                 int(agg_m.get("rent_monthly") or fin.get("rent_month") or 0)),
+        ("ФОТ с налогами",         int(agg_m.get("fot_monthly") or 0)),
+        ("Маркетинг",              int(agg_m.get("marketing_monthly") or 0)),
+        ("Соцплатежи ИП (мин.)",   ip_social),
+        ("Прочие расходы",         int(agg_m.get("other_opex_monthly") or 0)),
     ]
     breakdown = []
     total = 0
@@ -482,6 +500,20 @@ def _build_fyc_ctx(result: dict) -> list:
     return out
 
 
+def _short_to_full_months(names) -> str:
+    """['мар', 'май'] → 'Март, Май'. Принимает list, строку или None."""
+    if not names:
+        return ""
+    if isinstance(names, str):
+        return names
+    mapping = dict(zip(MONTHS_SHORT_RU, MONTHS_RU))
+    out = []
+    for n in names:
+        s = str(n).strip().lower()
+        out.append(mapping.get(s, s.capitalize()))
+    return ", ".join(out)
+
+
 def _build_mkt_ctx(result: dict) -> dict:
     b3 = result.get("block3") or {}
     b_season = result.get("block_season") or {}
@@ -508,13 +540,11 @@ def _build_mkt_ctx(result: dict) -> dict:
     return {
         "population": int((result.get("input") or {}).get("city_population") or 0),
         "working_age": 0,
-        # tam_sam_som заглушки (детальный market-анализ только в FinModel).
-        "tam_sam_som": {"tam": 0, "sam": 0, "som": 0},
         "competitors": competitors,
         "consumer_behavior": {},
         "seasonality": seasonality,
-        "seasonal_peaks": b_season.get("peaks"),
-        "seasonal_lows": b_season.get("troughs"),
+        "seasonal_peaks": _short_to_full_months(b_season.get("peaks")),
+        "seasonal_lows": _short_to_full_months(b_season.get("troughs")),
         "seasonality_note": None,
         "start_note": None,
         "market_notes": None,

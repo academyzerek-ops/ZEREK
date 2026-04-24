@@ -943,75 +943,55 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     Оценка доступного рынка и уровня насыщения в вашем городе.
   </p>
 
-  <div class="col-5-7">
-    <div>
-      <h3 class="sub-title">TAM / SAM / SOM</h3>
-      <p class="u-small u-muted">
-        Потенциальный рынок, доступный сегмент и реалистичный захват
-        на первый год.
-      </p>
-
-      <div class="chart avoid-break u-mt-s">
-        <svg viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="pyr-g" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#2E4A7C"/>
-              <stop offset="100%" stop-color="#1F3864"/>
-            </linearGradient>
-          </defs>
-          <polygon points="10,20 310,20 280,70 40,70" fill="#E6ECF5" stroke="#1F3864" stroke-width="0.5"/>
-          <text x="160" y="48" text-anchor="middle" font-family="Source Sans 3" font-size="11" font-weight="700" fill="#1F3864" letter-spacing="2">TAM</text>
-          <text x="160" y="60" text-anchor="middle" font-family="Source Sans 3" font-size="8" fill="#595959" letter-spacing="1">Всё трудоспособное население</text>
-
-          <polygon points="40,80 280,80 240,140 80,140" fill="#C9A961" opacity="0.85" stroke="#A8894C" stroke-width="0.5"/>
-          <text x="160" y="108" text-anchor="middle" font-family="Source Sans 3" font-size="11" font-weight="700" fill="#4A3A18" letter-spacing="2">SAM</text>
-          <text x="160" y="122" text-anchor="middle" font-family="Source Sans 3" font-size="8" fill="#4A3A18" letter-spacing="1">Целевой сегмент</text>
-
-          <polygon points="80,150 240,150 210,200 110,200" fill="url(#pyr-g)" stroke="#15274A" stroke-width="0.5"/>
-          <text x="160" y="175" text-anchor="middle" font-family="Source Sans 3" font-size="11" font-weight="700" fill="#FFFFFF" letter-spacing="2">SOM</text>
-          <text x="160" y="188" text-anchor="middle" font-family="Source Sans 3" font-size="8" fill="#E8D9B0" letter-spacing="1">Ваш реалистичный захват</text>
-
-          <line x1="280" y1="45" x2="310" y2="45" stroke="#A3A3A3" stroke-width="0.5"/>
-          <text x="313" y="48" font-family="JetBrains Mono" font-size="8" fill="#595959">{{ mkt.tam_sam_som.tam | money_short }}</text>
-          <line x1="280" y1="110" x2="310" y2="110" stroke="#A3A3A3" stroke-width="0.5"/>
-          <text x="313" y="113" font-family="JetBrains Mono" font-size="8" fill="#595959">{{ mkt.tam_sam_som.sam | money_short }}</text>
-          <line x1="240" y1="175" x2="310" y2="175" stroke="#A3A3A3" stroke-width="0.5"/>
-          <text x="313" y="178" font-family="JetBrains Mono" font-size="8" fill="#595959">{{ mkt.tam_sam_som.som | money_short }}</text>
-        </svg>
-        <div class="caption u-center">Воронка доступного рынка · в тысячах человек</div>
-      </div>
-    </div>
-
-    <div>
-      <h3 class="sub-title">Город и спрос</h3>
-      <table class="keyvals">
-        <tr><td class="k">Население</td><td class="v">{{ mkt.population | money }}</td></tr>
-        <tr><td class="k">Трудоспособные 16–62</td><td class="v">{{ mkt.working_age | money }}</td></tr>
-        <tr><td class="k">TAM (весь рынок ниши)</td><td class="v">{{ mkt.tam_sam_som.tam | money }}</td></tr>
-        <tr><td class="k">SAM (доступный)</td><td class="v">{{ mkt.tam_sam_som.sam | money }}</td></tr>
-        <tr><td class="k">SOM (ваш за год)</td><td class="v">{{ mkt.tam_sam_som.som | money }}</td></tr>
-        {% if mkt.competitors.кол_во %}
-        <tr><td class="k">Конкурентов в 2GIS</td><td class="v">{{ mkt.competitors.кол_во }}</td></tr>
-        {% endif %}
-        {% if mkt.consumer_behavior.Частота_визита %}
-        <tr><td class="k">Частота визита</td><td class="v">{{ mkt.consumer_behavior.Частота_визита }}</td></tr>
-        {% endif %}
-      </table>
-
-      {% if mkt.competitors.сигнал %}
-      <div class="callout amber u-mt-m">
-        <div class="callout-title">Конкурентная среда</div>
-        {{ mkt.competitors.сигнал }}
-      </div>
+  <div>
+    <h3 class="sub-title">Город и спрос</h3>
+    <table class="keyvals" style="max-width:130mm;">
+      {% if mkt.population %}
+      <tr><td class="k">Население</td><td class="v">{{ mkt.population | money }}</td></tr>
       {% endif %}
+      {% if mkt.competitors.count %}
+      <tr><td class="k">Конкурентов в 2GIS</td><td class="v">{{ mkt.competitors.count }}</td></tr>
+      {% endif %}
+      {% if mkt.competitors.density_per_10k %}
+      <tr><td class="k">Плотность на 10 000 чел</td><td class="v">{{ '%.1f' | format(mkt.competitors.density_per_10k) }}</td></tr>
+      {% endif %}
+      {% if mkt.competitors.benchmark_per_10k %}
+      <tr><td class="k">Бенчмарк по КЗ</td><td class="v">{{ '%.1f' | format(mkt.competitors.benchmark_per_10k) }}</td></tr>
+      {% endif %}
+      {% if mkt.competitors.pct_of_benchmark %}
+      <tr><td class="k">% от бенчмарка</td><td class="v">{{ mkt.competitors.pct_of_benchmark }}%</td></tr>
+      {% endif %}
+    </table>
 
-      {% if mkt.market_notes %}
-      <div class="callout navy u-mt-s">
-        <div class="callout-title">Контекст рынка</div>
-        {{ mkt.market_notes }}
+    {% if mkt.competitors.pct_of_benchmark %}
+    <div class="callout {% if mkt.competitors.pct_of_benchmark < 80 %}green{% elif mkt.competitors.pct_of_benchmark > 130 %}amber{% else %}navy{% endif %} u-mt-m" style="max-width:170mm;">
+      <div class="callout-title">
+        {% if mkt.competitors.pct_of_benchmark < 80 %}Рынок ненасыщен
+        {% elif mkt.competitors.pct_of_benchmark > 130 %}Перегретый рынок
+        {% else %}Рыночная плотность
+        {% endif %}
       </div>
+      {% if mkt.competitors.pct_of_benchmark < 80 %}
+      Плотность конкурентов на {{ 100 - mkt.competitors.pct_of_benchmark }}% ниже бенчмарка по стране — есть место для нового игрока.
+      {% elif mkt.competitors.pct_of_benchmark > 130 %}
+      Плотность на {{ mkt.competitors.pct_of_benchmark - 100 }}% выше бенчмарка. Новому игроку потребуется чёткое позиционирование.
+      {% else %}
+      Плотность конкурентов — в норме. Решающим будет качество продукта и маркетинг.
       {% endif %}
     </div>
+    {% endif %}
+
+    {% if mkt.market_notes %}
+    <div class="callout navy u-mt-s" style="max-width:170mm;">
+      <div class="callout-title">Контекст рынка</div>
+      {{ mkt.market_notes }}
+    </div>
+    {% endif %}
+
+    <p class="u-small u-muted u-mt-m" style="max-width:170mm;">
+      Детальный market-анализ (TAM / SAM / SOM, воронка, сегменты) входит
+      в отдельный продукт — Финансовая модель (9 000 ₸).
+    </p>
   </div>
 </section>
 
