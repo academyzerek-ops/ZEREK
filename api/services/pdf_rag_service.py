@@ -113,17 +113,16 @@ def generate_common_mistakes(niche_id: str, diag: Optional[dict] = None) -> Opti
 
     url = ("https://generativelanguage.googleapis.com/v1beta/models/"
            "gemini-2.5-flash:generateContent?key=" + api_key)
-    # Gemini 2.5 Flash включает «thinking»-токены по умолчанию; они
-    # съедают maxOutputTokens и текст обрезается до 1-2 предложений.
-    # thinkingBudget=0 → режим non-reasoning, модель отвечает напрямую.
-    # maxOutputTokens = 800 → запас для 120 русских слов (~400-500 токенов).
+    # NB: используем ту же сигнатуру что работающий get_ai_interpretation
+    # в gemini_rag.py — без thinkingConfig (v1beta молча игнорирует его
+    # и обрезает вывод до ~40 chars). maxOutputTokens=1024 с запасом
+    # под 120 русских слов.
     payload = {
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
         "generationConfig": {
             "temperature": 0.3,
-            "maxOutputTokens": 800,
+            "maxOutputTokens": 1024,
             "topP": 0.9,
-            "thinkingConfig": {"thinkingBudget": 0},
         },
     }
 
@@ -135,7 +134,10 @@ def generate_common_mistakes(niche_id: str, diag: Optional[dict] = None) -> Opti
             diag["reason"] = "no_candidates"
             diag["api_response_preview"] = str(data)[:300]
             return None
-        text = data["candidates"][0]["content"]["parts"][0]["text"]
+        cand = data["candidates"][0]
+        diag["finish_reason"] = cand.get("finishReason")
+        diag["usage"] = data.get("usageMetadata") or {}
+        text = cand["content"]["parts"][0]["text"]
         diag["raw_text"] = text
         diag["raw_len"] = len(text)
     except Exception as e:
