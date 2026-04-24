@@ -652,10 +652,14 @@ def _build_fin_ctx(result: dict) -> dict:
     net_margin_pct = 0
     if rev_mature_m > 0:
         net_margin_pct = int(round((profit_mature_m - social_hit) / rev_mature_m * 100))
+    # R6 A.6: устойчивый режим = 22 раб.дня (а не 26 как было).
+    # 26 — предельный режим, упоминается только в блоке «Парадокс
+    # кадров». На стр. KPI и БЭП используем устойчивый.
+    work_days_sustainable = 22
     return {
         "mature_revenue": rev_mature_m,
         "mature_profit":  profit_mature_m - social_hit,
-        "mature_clients": int(b4m.get("max_checks_per_day") or 0) * 26,
+        "mature_clients": int(b4m.get("max_checks_per_day") or 0) * work_days_sustainable,
         # R6 A.1: было `total_monthly × 12` — это годовая величина,
         # а шаблон выводил её с подписью «/мес». Клиент видел 3.67M
         # как месячный доход, что в 12 раз больше реального.
@@ -1125,10 +1129,15 @@ def build_pdf_context(result: Dict[str, Any]) -> Dict[str, Any]:
                 fin_ctx["safety_ratio"] = max(0, int(round(
                     (planned_per_month - be_per_month) / planned_per_month * 100
                 )))
-                # R6 A.2: «Запас прочности ×N» — множитель planned / BE,
-                # не процент. ×8 значит выручка может упасть в 8 раз и
-                # вы ещё в нуле. Раньше выводился safety_ratio (процент)
-                # как множитель → клиент видел абсурдные ×79.
+            # R6 A.2: «Запас прочности ×N» — множитель planned / BE.
+            # Используем mature_clients (то же число что показано рядом
+            # как «Планируется») — клиент сразу проверит арифметику.
+            mature_clients_val = fin_ctx.get("mature_clients") or 0
+            if mature_clients_val > 0:
+                fin_ctx["safety_multiplier"] = round(
+                    mature_clients_val / max(be_per_month, 1), 1
+                )
+            else:
                 fin_ctx["safety_multiplier"] = round(
                     planned_per_month / max(be_per_month, 1), 1
                 )
