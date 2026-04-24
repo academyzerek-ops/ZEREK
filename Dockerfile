@@ -34,6 +34,8 @@ COPY . .
 ENV PORT=8000
 EXPOSE 8000
 
-# Явный sh -c, чтобы ${PORT} раскрывался. В exec-form переменные
-# не раскрываются; просто shell-form тоже ломалась на Railway.
-CMD ["sh", "-c", "uvicorn api.main:app --host 0.0.0.0 --port ${PORT}"]
+# ENTRYPOINT с sh -c — чтобы ЛЮБАЯ команда (включая Railway
+# startCommand override, который не проходит через shell) попадала
+# в shell и ${PORT} раскрывался корректно.
+ENTRYPOINT ["sh", "-c"]
+CMD ["uvicorn api.main:app --host 0.0.0.0 --port ${PORT}"]
