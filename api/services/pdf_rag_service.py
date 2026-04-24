@@ -113,12 +113,17 @@ def generate_common_mistakes(niche_id: str, diag: Optional[dict] = None) -> Opti
 
     url = ("https://generativelanguage.googleapis.com/v1beta/models/"
            "gemini-2.5-flash:generateContent?key=" + api_key)
+    # Gemini 2.5 Flash включает «thinking»-токены по умолчанию; они
+    # съедают maxOutputTokens и текст обрезается до 1-2 предложений.
+    # thinkingBudget=0 → режим non-reasoning, модель отвечает напрямую.
+    # maxOutputTokens = 800 → запас для 120 русских слов (~400-500 токенов).
     payload = {
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
         "generationConfig": {
             "temperature": 0.3,
-            "maxOutputTokens": 300,
+            "maxOutputTokens": 800,
             "topP": 0.9,
+            "thinkingConfig": {"thinkingBudget": 0},
         },
     }
 
