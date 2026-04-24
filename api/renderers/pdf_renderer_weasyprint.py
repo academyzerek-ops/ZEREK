@@ -591,6 +591,29 @@ def build_pdf_context(result: Dict[str, Any]) -> Dict[str, Any]:
     vrd_ctx = _build_vrd_ctx(result)
     now = datetime.now(timezone(timedelta(hours=5)))
     report_id = _generate_report_id(now)
+    opx_ctx = _build_opx_ctx(result)
+    fin_ctx = _build_fin_ctx(result)
+    # Пересчитываем маржу из opx_total чтобы цифра совпадала с
+    # таблицей OPEX. mature.profit_monthly считается engine'ом до того
+    # как marketing_service патчит marketing_monthly, поэтому прямое
+    # деление mature_profit/revenue даёт искажённую маржу.
+    agg_m = (result.get("pnl_aggregates") or {}).get("mature") or {}
+    rev_m = int(agg_m.get("revenue_monthly") or 0)
+    cogs_pct = float(agg_m.get("cogs_pct") or (result.get("financials") or {}).get("cogs_pct") or 0.30)
+    tax_rate = float(agg_m.get("tax_rate") or ((result.get("tax") or {}).get("rate_pct", 3) or 3) / 100)
+    if rev_m > 0:
+        cogs_m = int(rev_m * cogs_pct)
+        tax_m = int(rev_m * tax_rate)
+        true_profit_m = rev_m - cogs_m - tax_m - int(opx_ctx.get("total") or 0)
+        fin_ctx["mature_profit"] = true_profit_m
+        fin_ctx["net_margin_pct"] = int(round(true_profit_m / rev_m * 100))
+        # Юнит-экономика: чистыми с чека по консистентной марже.
+        avg_check = int(fin_ctx.get("avg_check") or 0)
+        if avg_check > 0:
+            fin_ctx["unit_net"] = int(round(avg_check * true_profit_m / rev_m))
+    # БЭП для solo: если fixed costs слишком малы — минимум 1 клиент/день.
+    if fin_ctx.get("break_even_clients", 0) == 0 and rev_m > 0:
+        fin_ctx["break_even_clients"] = 1
     return {
         "inp": inp_ctx,
         "cap": _build_cap_ctx(result),
@@ -601,8 +624,8 @@ def build_pdf_context(result: Dict[str, Any]) -> Dict[str, Any]:
         "vrd": vrd_ctx,
         "mkt": _build_mkt_ctx(result),
         "loc": _build_loc_ctx(result),
-        "fin": _build_fin_ctx(result),
-        "opx": _build_opx_ctx(result),
+        "fin": fin_ctx,
+        "opx": opx_ctx,
         "tax": _build_tax_ctx(result),
         "scn": _build_scn_ctx(result),
         "pb": {"months": (result.get("block5") or {}).get("payback_months") or 12},
