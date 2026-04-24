@@ -321,29 +321,31 @@ def compute_block10_next_steps(db, result, adaptive, block1=None, block2=None):
         # UX #4: подстраиваем headline под verdict_level капитала
         # (не дублируем «это реалистично» — информативнее).
         cap_verdict = ((result or {}).get("capital_adequacy") or {}).get("verdict_level")
+        # Round-5 A.2: эмодзи-префиксы (🟢🟡🔴✅) убраны — Source Sans 3
+        # и Playfair Display их не рендерят, остаётся квадрат.
         if cap_verdict == "safe":
             out["headline_rus"] = (
-                "🟢 Низкий стартовый риск. Подходит для старта с минимальным "
+                "Низкий стартовый риск. Подходит для старта с минимальным "
                 "капиталом и без опыта."
             )
         elif cap_verdict == "comfortable":
             out["headline_rus"] = (
-                "🟢 Умеренный риск. Капитала хватает на разгон — можно "
+                "Умеренный риск. Капитала хватает на разгон — можно "
                 "пробовать. Держите резерв на сезонные просадки."
             )
         elif cap_verdict == "risky":
             out["headline_rus"] = (
-                "🟡 Средний риск. Бизнес жизнеспособен, но для спокойного "
+                "Средний риск. Бизнес жизнеспособен, но для спокойного "
                 "старта не хватает подушки — см. блок достаточности выше."
             )
         elif cap_verdict == "insufficient":
             out["headline_rus"] = (
-                "🔴 Высокий риск. Капитала критично мало — см. блок "
+                "Высокий риск. Капитала критично мало — см. блок "
                 "достаточности выше."
             )
         else:
             out["headline_rus"] = (
-                f"✅ Это направление реалистично для заработка {city_prefix}{format_phrase}. "
+                f"Это направление реалистично для заработка {city_prefix}{format_phrase}. "
                 f"Можно пробовать."
             ).replace("  ", " ").strip()
         out["cta_buttons"] = [
@@ -353,7 +355,7 @@ def compute_block10_next_steps(db, result, adaptive, block1=None, block2=None):
     elif color == "yellow":
         out["conditions"] = _yellow_conditions(block1, block2)
         out["headline_rus"] = (
-            "⚠️ Это направление возможно, но с оговорками. Обратите внимание "
+            "Это направление возможно, но с оговорками. Обратите внимание "
             "на пункты выше перед стартом."
         )
         out["cta_buttons"] = [
@@ -363,7 +365,7 @@ def compute_block10_next_steps(db, result, adaptive, block1=None, block2=None):
     else:  # red
         out["alternatives"] = _red_alternatives(block1, block2, result, db)
         out["headline_rus"] = (
-            f"🚨 В этом формате{(' и регионе ' + city_rus) if city_rus else ''} "
+            f"В этом формате{(' и регионе ' + city_rus) if city_rus else ''} "
             f"направление даст убыток по базовому сценарию. Пересмотрите параметры или формат."
         ).replace("  ", " ").strip()
         out["cta_buttons"] = [

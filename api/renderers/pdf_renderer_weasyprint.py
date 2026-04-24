@@ -892,46 +892,64 @@ def _build_growth_scenarios_ctx(result: dict) -> Optional[List[Dict[str, Any]]]:
     stag = raw.get("stagnation") or {}
     dev = raw.get("development") or {}
 
-    dev_outcome = (dev.get("outcome_year3") or dev.get("outcome_year2")
-                   or dev.get("description") or "").strip()
+    # Трим префиксов в outcome — в YAML часто начинается с «Через 2-3 года: …»,
+    # а шаблон сам рендерит строку «Через 2-3 года: …» → дубль.
+    def _strip_horizon_prefix(s: str) -> str:
+        s = (s or "").strip()
+        for prefix in (
+            "Через 2-3 года:", "Через 3 года:", "Через 2 года:",
+            "Через 1 год:", "через 2-3 года:", "через 3 года:",
+            "через 2 года:", "через 1 год:",
+        ):
+            if s.lower().startswith(prefix.lower()):
+                s = s[len(prefix):].strip()
+                break
+        return s
 
+    dev_outcome = _strip_horizon_prefix(
+        dev.get("outcome_year3") or dev.get("outcome_year2") or dev.get("description") or ""
+    )
+    stag_outcome = _strip_horizon_prefix(stag.get("outcome") or "")
+    # Убираем декоративные символы-маркеры. Цвет задаётся через border-left.
+    # Для Growth — дефолтные тексты если YAML пустой.
     scenarios = [
         {
-            "icon": "·",
+            "icon": "",
             "color": "#F59E0B",
-            "title": stag.get("label") or "Стагнация",
+            "title": stag.get("label") or "Сценарий А · Стагнация",
             "description": (stag.get("description") or
                 "Работаете как в первый год, без изменений. "
                 "Выручка держится на мощности базового сценария."),
-            "projection": (stag.get("outcome") or
+            "projection": stag_outcome or (
                 "Та же прибыль месяц в месяц. Риск — выгорание и "
                 "постепенная потеря клиентов к конкурентам с более "
                 "агрессивным маркетингом."),
             "warning": stag.get("warning") or "",
         },
         {
-            "icon": "·",
+            "icon": "",
             "color": "#10B981",
-            "title": dev.get("label") or "Развитие",
+            "title": dev.get("label") or "Сценарий Б · Развитие",
             "description": (dev.get("description") or
-                "Растёт средний чек за счёт ретеншена и допуслуг. "
-                "Клиентская база расширяется через сарафан."),
+                "Растёте как специалист и организатор. Клиенты "
+                "возвращаются, работает сарафан, средний чек растёт "
+                "через допродажи."),
             "projection": dev_outcome or (
                 "Прибыль выше базового сценария. Требует дисциплины "
                 "в ведении клиентов и регулярного обучения."),
             "warning": "",
         },
         {
-            "icon": "·",
+            "icon": "",
             "color": "#7C6CFF",
-            "title": "Рост",
+            "title": "Сценарий В · Рост",
             "description": (
                 "Переход в формат SOLO — арендованный кабинет. "
                 "Физический потолок выручки увеличивается примерно "
                 "вдвое, появляется возможность принимать параллельные "
                 "визиты."),
             "projection": (
-                "Требует дополнительного CAPEX на ремонт и оборудование "
+                "Требует дополнительного бюджета на ремонт и оборудование "
                 "и принятия риска долгосрочной аренды."),
             "warning": "",
         },
