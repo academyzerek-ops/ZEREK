@@ -113,15 +113,14 @@ def generate_common_mistakes(niche_id: str, diag: Optional[dict] = None) -> Opti
 
     url = ("https://generativelanguage.googleapis.com/v1beta/models/"
            "gemini-2.5-flash:generateContent?key=" + api_key)
-    # NB: используем ту же сигнатуру что работающий get_ai_interpretation
-    # в gemini_rag.py — без thinkingConfig (v1beta молча игнорирует его
-    # и обрезает вывод до ~40 chars). maxOutputTokens=1024 с запасом
-    # под 120 русских слов.
+    # Gemini 2.5 Flash жадно ест maxOutputTokens thinking-фазой, поэтому
+    # запрос делаем с большим лимитом — для реального output нужно 400-500
+    # токенов (120 рус.слов), но thinking съест сверху до 2-4k токенов.
     payload = {
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
         "generationConfig": {
             "temperature": 0.3,
-            "maxOutputTokens": 1024,
+            "maxOutputTokens": 4096,
             "topP": 0.9,
         },
     }
