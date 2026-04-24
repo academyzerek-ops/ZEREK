@@ -29,13 +29,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Код.
 COPY . .
+RUN chmod +x /app/start.sh
 
 # Railway подставит $PORT; для локального запуска дефолт 8000.
 ENV PORT=8000
 EXPOSE 8000
 
-# ENTRYPOINT с sh -c — чтобы ЛЮБАЯ команда (включая Railway
-# startCommand override, который не проходит через shell) попадала
-# в shell и ${PORT} раскрывался корректно.
-ENTRYPOINT ["sh", "-c"]
-CMD ["uvicorn api.main:app --host 0.0.0.0 --port ${PORT}"]
+# ENTRYPOINT = wrapper-скрипт. Railway service-level startCommand
+# («uvicorn ... --port $PORT») попадает в $@ скрипта и игнорируется —
+# start.sh всегда запускает uvicorn c ${PORT} раскрытым корректно.
+ENTRYPOINT ["/app/start.sh"]
