@@ -35,7 +35,14 @@ MAX_CLIENTS_PER_DAY_BEAUTY = {
 }
 MAX_CLIENTS_DEFAULT = 6
 
-WORK_DAYS_PER_MONTH = 26
+# R6 A.5/A.6: 22 — устойчивый режим (5/2, рекомендуем как базу).
+# 26 — предельный режим (6 рабочих, без отдыха), по нему считается
+# отдельная цифра «потолок предельный» с предупреждением о выгорании.
+WORK_DAYS_SUSTAINABLE = 22
+WORK_DAYS_PEAK = 26
+# Совместимость с прежним кодом (не используется в расчёте, но мы
+# не можем удалить имя — на него могут опираться импорты).
+WORK_DAYS_PER_MONTH = WORK_DAYS_SUSTAINABLE
 
 
 def compute_staff_paradox(
@@ -65,13 +72,17 @@ def compute_staff_paradox(
 
     max_per_day = MAX_CLIENTS_PER_DAY_BEAUTY.get((niche_id or "").upper(), MAX_CLIENTS_DEFAULT)
     check = int(avg_check or 0)
-    peak_monthly_revenue = max_per_day * WORK_DAYS_PER_MONTH * check
-    # Реалистичная выручка: 18 будней × 60% + 8 выходных × 90%.
-    realistic_monthly_revenue = int((18 * max_per_day * 0.6 + 8 * max_per_day * 0.9) * check)
+    # R6 A.5: два потолка (устойчивый 22 дня + предельный 26)
+    # вместо одного «идеального». Реалистично — 80% от устойчивого.
+    sustainable_monthly_revenue = max_per_day * WORK_DAYS_SUSTAINABLE * check
+    peak_monthly_revenue = max_per_day * WORK_DAYS_PEAK * check
+    realistic_monthly_revenue = int(sustainable_monthly_revenue * 0.80)
 
     capacity = {
         "max_clients_per_day": max_per_day,
-        "work_days_per_month": WORK_DAYS_PER_MONTH,
+        "work_days_per_month": WORK_DAYS_SUSTAINABLE,
+        "work_days_peak": WORK_DAYS_PEAK,
+        "sustainable_monthly_revenue": sustainable_monthly_revenue,
         "peak_monthly_revenue": peak_monthly_revenue,
         "realistic_monthly_revenue": realistic_monthly_revenue,
         "avg_check": check,

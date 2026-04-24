@@ -2028,20 +2028,51 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
 
   <div class="col-5-7">
     <div>
-      <h3 class="sub-title">Ваш физический потолок</h3>
-      <table class="keyvals">
-        <tr><td class="k">Максимум в день</td><td class="v">{{ sp.capacity.max_clients_per_day }} клиентов</td></tr>
-        <tr><td class="k">Рабочих дней / мес</td><td class="v">{{ sp.capacity.working_days | default(22) }}</td></tr>
-        <tr><td class="k">Средний чек</td><td class="v">{{ sp.capacity.avg_check | money }} ₸</td></tr>
-        <tr class="total">
-          <td class="k"><strong>Идеальный потолок</strong></td>
-          <td class="v" style="color: var(--navy);"><strong>{{ sp.capacity.peak_monthly_revenue | money_round }} ₸</strong></td>
-        </tr>
-        <tr>
-          <td class="k">Реалистично</td>
-          <td class="v">{{ sp.capacity.realistic_monthly_revenue | money_round }} ₸</td>
-        </tr>
-      </table>
+      <h3 class="sub-title">Ваш потолок в месяц</h3>
+      {# R6 A.5: «Идеальный потолок» переименован и разнесён на два
+         режима — устойчивый (22 дня) и предельный (26 дней).
+         «Реалистично» = 80% от устойчивого. -#}
+      <div class="avoid-break" style="padding: 12pt 14pt; background: var(--bg-2); border-radius: 4pt; margin-bottom: 10pt;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between;">
+          <strong style="font-size: 11pt; color: var(--navy);">Устойчивый режим</strong>
+          <span class="num mono" style="font-size: 13pt; font-weight: 700; color: var(--navy);">
+            {{ sp.capacity.sustainable_monthly_revenue | money_round }} ₸
+          </span>
+        </div>
+        <p class="u-tiny u-muted" style="margin: 4pt 0 0 0;">
+          {{ sp.capacity.work_days_per_month | default(22) }} дней ×
+          {{ sp.capacity.max_clients_per_day }} клиентов ×
+          {{ sp.capacity.avg_check | money }} ₸. Режим, в котором можно
+          работать годами без выгорания.
+        </p>
+      </div>
+      <div class="avoid-break" style="padding: 12pt 14pt; background: rgba(245,158,11,0.06); border-left: 3pt solid var(--amber); border-radius: 4pt; margin-bottom: 10pt;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between;">
+          <strong style="font-size: 11pt; color: var(--navy);">Предельный режим</strong>
+          <span class="num mono" style="font-size: 13pt; font-weight: 700; color: var(--navy);">
+            {{ sp.capacity.peak_monthly_revenue | money_round }} ₸
+          </span>
+        </div>
+        <p class="u-tiny u-muted" style="margin: 4pt 0 0 0;">
+          {{ sp.capacity.work_days_peak | default(26) }} дней ×
+          {{ sp.capacity.max_clients_per_day }} клиентов ×
+          {{ sp.capacity.avg_check | money }} ₸. Даёт прирост к выручке,
+          но через 4-6 месяцев приводит к выгоранию, ошибкам и потере
+          клиентов. Не рекомендуем как постоянный.
+        </p>
+      </div>
+      <div class="avoid-break" style="padding: 12pt 14pt; background: rgba(16,185,129,0.06); border-left: 3pt solid var(--green); border-radius: 4pt;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between;">
+          <strong style="font-size: 11pt; color: var(--navy);">Реалистично · первый год</strong>
+          <span class="num mono" style="font-size: 13pt; font-weight: 700; color: var(--green);">
+            {{ sp.capacity.realistic_monthly_revenue | money_round }} ₸
+          </span>
+        </div>
+        <p class="u-tiny u-muted" style="margin: 4pt 0 0 0;">
+          80% от устойчивого режима — типичная загрузка соло-мастера
+          первого года, ещё не вышедшего на максимум.
+        </p>
+      </div>
 
       {% if sp.physical_ceiling_note %}
       <div class="callout amber u-mt-m">
