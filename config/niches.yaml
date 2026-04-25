@@ -10,8 +10,8 @@ niches:
   BARBER: {name_rus: "Барбершоп",            category: beauty,      archetype: A, icon: "💈", available: true}
   BEAUTY: {name_rus: "Салон красоты",        category: beauty,      archetype: A, icon: "💄", available: false}
   MANICURE: {name_rus: "Маникюр",              category: beauty,      archetype: A, icon: "💅", available: true}
-  BROW: {name_rus: "Брови",                category: beauty,      archetype: A, icon: "✨", available: true}
-  LASH: {name_rus: "Ресницы",              category: beauty,      archetype: A, icon: "👁️", available: true}
+  BROW: {name_rus: "Брови и ресницы",      category: beauty,      archetype: A, icon: "✨", available: true}
+  LASH: {name_rus: "Ресницы",              category: beauty,      archetype: A, icon: "👁️", available: false}
   SUGARING: {name_rus: "Шугаринг",             category: beauty,      archetype: A, icon: "🌸", available: true}
   MASSAGE: {name_rus: "Массажный салон",      category: beauty,      archetype: A, icon: "💆", available: true}
   COSMETOLOGY: {name_rus: "Косметология",         category: beauty,      archetype: A, icon: "🧴", available: false}
@@ -27,7 +27,7 @@ niches:
   # АРХЕТИП B — Общепит (11)
   # ============================================================================
   COFFEE: {name_rus: "Кофейня",              category: food,        archetype: B, icon: "☕", available: true}
-  BAKERY: {name_rus: "Пекарня",              category: food,        archetype: B, icon: "🥐", available: true}
+  BAKERY: {name_rus: "Пекарня",              category: food,        archetype: B, icon: "🥐", available: false}
   CONFECTION: {name_rus: "Кондитерская",         category: food,        archetype: B, icon: "🎂", available: true}
   DONER: {name_rus: "Донерная",             category: food,        archetype: B, icon: "🌯", available: true}
   FASTFOOD: {name_rus: "Фастфуд",              category: food,        archetype: B, icon: "🍔", available: true}
@@ -48,7 +48,7 @@ niches:
   BUILDMAT: {name_rus: "Строительные материалы", category: retail,    archetype: C, icon: "🧱", available: false}
   PETSHOP: {name_rus: "Зоомагазин",           category: retail,      archetype: C, icon: "🐾", available: false}
   PHARMACY: {name_rus: "Аптека",               category: health,      archetype: C, icon: "💊", available: true}
-  GROCERY: {name_rus: "Продуктовый магазин",  category: retail,      archetype: C, icon: "🛒", available: true}
+  GROCERY: {name_rus: "Продуктовый магазин",  category: retail,      archetype: C, icon: "🛒", available: false}
   WATERPLANT: {name_rus: "Розлив воды",          category: retail,      archetype: C, icon: "💧", available: true}
 
   # ============================================================================
@@ -79,13 +79,13 @@ niches:
   # АРХЕТИП F — Мощность / пропускная способность (11)
   # ============================================================================
   AUTOSERVICE: {name_rus: "Автосервис",           category: auto,        archetype: F, icon: "🔧", available: true}
-  TIRESERVICE: {name_rus: "Шиномонтаж",           category: auto,        archetype: F, icon: "🛞", available: true}
+  TIRESERVICE: {name_rus: "Шиномонтаж",           category: auto,        archetype: F, icon: "🛞", available: false}
   CARWASH: {name_rus: "Автомойка",            category: auto,        archetype: F, icon: "🚗", available: true}
   CLEAN: {name_rus: "Клининг",              category: services,    archetype: F, icon: "🧹", available: true}
   CARPETCLEAN: {name_rus: "Чистка ковров",        category: services,    archetype: F, icon: "🪣", available: false}
   DRYCLEAN: {name_rus: "Химчистка одежды",     category: services,    archetype: F, icon: "🧺", available: true}
   LAUNDRY: {name_rus: "Прачечная",            category: services,    archetype: F, icon: "🧼", available: false}
-  COMPCLUB: {name_rus: "Компьютерный клуб",    category: entertainment, archetype: F, icon: "🎮", available: true}
+  COMPCLUB: {name_rus: "Компьютерный клуб",    category: entertainment, archetype: F, icon: "🎮", available: false}
   DRIVING: {name_rus: "Автошкола",            category: education,   archetype: F, icon: "🚘", available: false}
   HOTEL: {name_rus: "Хостел",               category: hospitality, archetype: F, icon: "🏨", available: false}
   PVZ: {name_rus: "Пункт выдачи заказов", category: services,    archetype: F, icon: "📦", available: true}
