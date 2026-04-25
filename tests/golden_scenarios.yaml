@@ -1,0 +1,207 @@
+# ───────────────────────────────────────────────────────────────────
+# ZEREK Quick Check · Регрессионные эталоны
+# ───────────────────────────────────────────────────────────────────
+# Каждый сценарий: inputs (что подаём в engine) + expected (что
+# ожидаем от engine.compute). Матчеры: exact / min+max / approx.
+# Зафиксировано на коде после R10 #1+#2 (commit 228a3ad).
+# Прогон: pytest tests/test_engine_regression.py -v
+# ───────────────────────────────────────────────────────────────────
+
+# ═══ CRITICAL — must pass на каждом PR (5 шт) ═══
+
+- id: manicure_home_astana_700k_baseline
+  severity: critical
+  description: Главный baseline-сценарий, по нему откалиброван движок R10
+  inputs:
+    niche: MANICURE
+    format: MANICURE_HOME
+    city: astana
+    capital: 700000
+    experience: none
+    start_month: 5
+  expected:
+    capex:                  { exact: 480000 }
+    avg_y1:                 { exact: 270351 }
+    mature_monthly:         { exact: 315000 }
+    breakeven_clients:      { exact: 19 }
+    safety_mature:          { exact: 6.9 }
+    safety_ramp:            { exact: 2.8 }
+    capital_zone:           { exact: YELLOW }
+    income_grade:           { exact: MODEST }
+    income_ratio_pct:       { exact: 48 }
+    marketing_year_total:   { exact: 715000 }
+    marketing_phase_ramp:   { exact: 152333 }
+    marketing_phase_tuning: { exact: 54000 }
+    marketing_phase_mature: { exact: 16000 }
+
+- id: manicure_home_astana_350k_red
+  severity: critical
+  description: Зона RED (350K < 0.9×CAPEX=432K) — критически мало
+  inputs:
+    niche: MANICURE
+    format: MANICURE_HOME
+    city: astana
+    capital: 350000
+    experience: none
+    start_month: 5
+  expected:
+    capital_zone:           { exact: RED }
+    income_grade:           { exact: MODEST }
+    avg_y1:                 { exact: 270351 }
+
+- id: manicure_home_astana_1100k_green
+  severity: critical
+  description: Зона GREEN (1100K ≥ comfortable=988K) — комфортный запас
+  inputs:
+    niche: MANICURE
+    format: MANICURE_HOME
+    city: astana
+    capital: 1100000
+    experience: none
+    start_month: 5
+  expected:
+    capital_zone:           { exact: GREEN }
+    income_grade:           { exact: MODEST }
+
+- id: manicure_home_aktobe_no_capital_experienced
+  severity: critical
+  description: Капитал не указан + опыт=есть → CAPEX 370K + UNKNOWN зона
+  inputs:
+    niche: MANICURE
+    format: MANICURE_HOME
+    city: aktobe
+    capital: 0
+    experience: some
+    start_month: 5
+  expected:
+    capex:                  { exact: 370000 }
+    capital_zone:           { exact: UNKNOWN }
+    income_grade:           { exact: MIDDLE }
+    income_ratio_pct:       { min: 67, max: 71 }
+
+- id: manicure_home_turkestan_500k_decent
+  severity: critical
+  description: Граничная градация DECENT (87% от ЗП)
+  inputs:
+    niche: MANICURE
+    format: MANICURE_HOME
+    city: turkestan
+    capital: 500000
+    experience: none
+    start_month: 5
+  expected:
+    income_grade:           { exact: DECENT }
+    income_ratio_pct:       { min: 85, max: 90 }
+
+# ═══ STANDARD — должны пройти, при падении warning (8 шт) ═══
+
+- id: manicure_home_almaty_700k
+  severity: standard
+  description: Алматы — близко к Астане по ЗП, MODEST
+  inputs:
+    niche: MANICURE
+    format: MANICURE_HOME
+    city: almaty
+    capital: 700000
+    experience: none
+    start_month: 5
+  expected:
+    income_grade:           { exact: MODEST }
+    income_ratio_pct:       { min: 51, max: 54 }
+    capital_zone:           { exact: YELLOW }
+
+- id: manicure_home_shymkent_500k
+  severity: standard
+  description: Шымкент — MIDDLE (79% от ЗП)
+  inputs:
+    niche: MANICURE
+    format: MANICURE_HOME
+    city: shymkent
+    capital: 500000
+    experience: none
+    start_month: 5
+  expected:
+    income_grade:           { exact: MIDDLE }
+    income_ratio_pct:       { min: 77, max: 81 }
+
+- id: manicure_home_atyrau_700k
+  severity: standard
+  description: Атырау — высокая ЗП, MODEST даже при той же прибыли
+  inputs:
+    niche: MANICURE
+    format: MANICURE_HOME
+    city: atyrau
+    capital: 700000
+    experience: none
+    start_month: 5
+  expected:
+    income_grade:           { exact: MODEST }
+    income_ratio_pct:       { min: 49, max: 53 }
+
+- id: manicure_home_astana_586k_amber_boundary
+  severity: standard
+  description: Граница AMBER из R10 (586K < 660K=yellow_threshold) → AMBER
+  inputs:
+    niche: MANICURE
+    format: MANICURE_HOME
+    city: astana
+    capital: 586000
+    experience: none
+    start_month: 5
+  expected:
+    capital_zone:           { exact: AMBER }
+
+- id: manicure_home_astana_660k_yellow_boundary
+  severity: standard
+  description: Граница YELLOW (660K ≥ yellow_threshold) → YELLOW
+  inputs:
+    niche: MANICURE
+    format: MANICURE_HOME
+    city: astana
+    capital: 660000
+    experience: none
+    start_month: 5
+  expected:
+    capital_zone:           { exact: YELLOW }
+
+- id: manicure_home_astana_with_experience
+  severity: standard
+  description: Опыт есть → CAPEX 370K (480 - 150 курсов + 40 квалификации)
+  inputs:
+    niche: MANICURE
+    format: MANICURE_HOME
+    city: astana
+    capital: 700000
+    experience: some
+    start_month: 5
+  expected:
+    capex:                  { exact: 370000 }
+    capex_education_label:  { exact: "Повышение квалификации" }
+
+- id: manicure_home_astana_start_december
+  severity: standard
+  description: Старт в декабре (пик) — cashflow не ломается на пиковом старте
+  inputs:
+    niche: MANICURE
+    format: MANICURE_HOME
+    city: astana
+    capital: 700000
+    experience: none
+    start_month: 12
+  expected:
+    avg_y1:                 { min: 268000, max: 275000 }
+    mature_monthly:         { exact: 315000 }
+
+- id: manicure_home_astana_start_april
+  severity: standard
+  description: Старт в апреле (просадка) — cashflow не ломается на просадочном старте
+  inputs:
+    niche: MANICURE
+    format: MANICURE_HOME
+    city: astana
+    capital: 700000
+    experience: none
+    start_month: 4
+  expected:
+    avg_y1:                 { min: 272000, max: 280000 }
+    mature_monthly:         { exact: 315000 }

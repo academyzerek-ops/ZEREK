@@ -1,0 +1,38 @@
+name: Regression Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: Run all regression tests
+        # Все 13 сценариев + sanity checks. Полный отчёт даже если
+        # standard-сценарий упал.
+        run: pytest tests/test_engine_regression.py -v --tb=short
+
+      - name: Critical-only gate (block merge if any critical fails)
+        # На pull_request — отдельный шаг только critical-сценариев.
+        # Если хотя бы один critical упал, мерж в main блокируется
+        # GitHub Branch Protection (нужно настроить отдельно в Settings).
+        if: github.event_name == 'pull_request'
+        run: pytest tests/test_engine_regression.py -v -k "critical or yaml_well_formed or critical_scenarios_present"
