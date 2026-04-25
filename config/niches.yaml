@@ -10,7 +10,7 @@ niches:
   BARBER: {name_rus: "Барбершоп",            category: beauty,      archetype: A, icon: "💈", available: true}
   BEAUTY: {name_rus: "Салон красоты",        category: beauty,      archetype: A, icon: "💄", available: false}
   MANICURE: {name_rus: "Маникюр",              category: beauty,      archetype: A, icon: "💅", available: true}
-  BROW: {name_rus: "Брови и ресницы",      category: beauty,      archetype: A, icon: "✨", available: true}
+  BROW: {name_rus: "Брови",                category: beauty,      archetype: A, icon: "✨", available: true}
   LASH: {name_rus: "Ресницы",              category: beauty,      archetype: A, icon: "👁️", available: true}
   SUGARING: {name_rus: "Шугаринг",             category: beauty,      archetype: A, icon: "🌸", available: true}
   MASSAGE: {name_rus: "Массажный салон",      category: beauty,      archetype: A, icon: "💆", available: true}
