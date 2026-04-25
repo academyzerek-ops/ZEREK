@@ -1409,44 +1409,39 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     <div>
       <h3 class="sub-title">Три уровня достаточности</h3>
 
-      {# R6 C.2: расшифровка «что входит» под каждой из трёх цифр —
-         иначе клиент видит непрозрачные суммы и не понимает разницу. #}
-      <div class="avoid-break" style="padding: 12pt 14pt; background: var(--bg-2); border-left: 3pt solid #D64545; border-radius: 4pt; margin-bottom: 8pt;">
+      {# R6 C.2 + post-comment: 3 уровня сжаты в одну строку каждый —
+         иначе вместе с callout не помещаются на стр. #}
+      <div class="avoid-break" style="padding: 8pt 12pt; background: var(--bg-2); border-left: 3pt solid #D64545; border-radius: 4pt; margin-bottom: 6pt;">
         <div style="display: flex; align-items: baseline; justify-content: space-between;">
-          <strong style="font-size: 11pt; color: var(--navy);">{{ icon_circle('#D64545') }} Минимум</strong>
-          <span class="num mono" style="font-size: 12pt; font-weight: 700; color: var(--navy);">
+          <strong style="font-size: 10.5pt; color: var(--navy);">{{ icon_circle('#D64545') }} Минимум</strong>
+          <span class="num mono" style="font-size: 11pt; font-weight: 700; color: var(--navy);">
             {{ cadq.minimum | money_round }} ₸
           </span>
         </div>
-        <p class="u-tiny u-muted" style="margin: 4pt 0 0 0;">
-          Только CAPEX: оборудование, материалы, регистрация, обучение.
-          Этого хватает открыться, но первые 3 месяца вы будете доедать
-          сбережения. Риск закрытия на М3-М4 если маркетинг не сработает.
+        <p class="u-tiny u-muted" style="margin: 2pt 0 0 0; line-height: 1.4;">
+          Только CAPEX. Хватает открыться, но риск закрытия на М3-М4.
         </p>
       </div>
-      <div class="avoid-break" style="padding: 12pt 14pt; background: var(--bg-2); border-left: 3pt solid #E8A33D; border-radius: 4pt; margin-bottom: 8pt;">
+      <div class="avoid-break" style="padding: 8pt 12pt; background: var(--bg-2); border-left: 3pt solid #E8A33D; border-radius: 4pt; margin-bottom: 6pt;">
         <div style="display: flex; align-items: baseline; justify-content: space-between;">
-          <strong style="font-size: 11pt; color: var(--navy);">{{ icon_circle('#E8A33D') }} Комфортно</strong>
-          <span class="num mono" style="font-size: 12pt; font-weight: 700; color: var(--navy);">
+          <strong style="font-size: 10.5pt; color: var(--navy);">{{ icon_circle('#E8A33D') }} Комфортно</strong>
+          <span class="num mono" style="font-size: 11pt; font-weight: 700; color: var(--navy);">
             {{ cadq.comfortable | money_round }} ₸
           </span>
         </div>
-        <p class="u-tiny u-muted" style="margin: 4pt 0 0 0;">
-          CAPEX + разгонный маркетинг М1-М3 + соцплатежи и прочие
-          фикс-расходы за 3 месяца. На этом уровне вы проходите
-          разгон без стресса и доходите до выхода на мощность.
+        <p class="u-tiny u-muted" style="margin: 2pt 0 0 0; line-height: 1.4;">
+          CAPEX + разгонный маркетинг + фикс-расходы за М1-М3.
         </p>
       </div>
-      <div class="avoid-break" style="padding: 12pt 14pt; background: var(--bg-2); border-left: 3pt solid #48A068; border-radius: 4pt; margin-bottom: 12pt;">
+      <div class="avoid-break" style="padding: 8pt 12pt; background: var(--bg-2); border-left: 3pt solid #48A068; border-radius: 4pt; margin-bottom: 8pt;">
         <div style="display: flex; align-items: baseline; justify-content: space-between;">
-          <strong style="font-size: 11pt; color: var(--navy);">{{ icon_circle('#48A068') }} Безопасно</strong>
-          <span class="num mono" style="font-size: 12pt; font-weight: 700; color: var(--navy);">
+          <strong style="font-size: 10.5pt; color: var(--navy);">{{ icon_circle('#48A068') }} Безопасно</strong>
+          <span class="num mono" style="font-size: 11pt; font-weight: 700; color: var(--navy);">
             {{ cadq.safe | money_round }} ₸
           </span>
         </div>
-        <p class="u-tiny u-muted" style="margin: 4pt 0 0 0;">
-          Комфортно + буфер на просадочный месяц (минус 25% к выручке).
-          Даёт спокойно пережить первый сезонный спад без долгов.
+        <p class="u-tiny u-muted" style="margin: 2pt 0 0 0; line-height: 1.4;">
+          Комфортно + буфер на просадочный месяц (-25% выручки).
         </p>
       </div>
 
@@ -1835,43 +1830,37 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
          Сарафан подключается с M2 как первые рекомендации, к M3 даёт
          20-30% потока, в зрелом состоянии ~50%. #}
       <h3 class="sub-title">Механика разгона</h3>
-      <div class="avoid-break" style="padding: 12pt 14pt; background: var(--bg-2); border-left: 3pt solid var(--navy); border-radius: 4pt;">
-        <p class="u-small" style="margin: 0 0 6pt 0; line-height: 1.55; color: var(--ink-2);">
-          <strong>М1</strong> — около 35-45% от мощности. Идут только
-          клиенты по рекламе: таргет, блогеры, посты в пабликах.
-          Сарафана пока нет — некому рекомендовать. Расходы как в
-          зрелом месяце. Минус на счёте гарантирован.
+      <div class="avoid-break" style="padding: 9pt 12pt; background: var(--bg-2); border-left: 3pt solid var(--navy); border-radius: 4pt;">
+        <p class="u-small" style="margin: 0 0 4pt 0; line-height: 1.45; color: var(--ink-2);">
+          <strong>М1</strong> — 35-45% мощности. Только реклама (таргет,
+          блогеры) — сарафана пока нет, рекомендовать некому. Минус на
+          счёте гарантирован.
         </p>
-        <p class="u-small" style="margin: 0 0 6pt 0; line-height: 1.55; color: var(--ink-2);">
-          <strong>М2</strong> — около 55-70%. К рекламе добавляются
-          первые сарафанные клиенты — те, кто пришёл по рекомендации
-          первых обслуженных. Появляются первые возвраты. Близко к
-          безубытку.
+        <p class="u-small" style="margin: 0 0 4pt 0; line-height: 1.45; color: var(--ink-2);">
+          <strong>М2</strong> — 55-70%. К рекламе добавляются первые
+          сарафанные клиенты от первых обслуженных. Близко к безубытку.
         </p>
-        <p class="u-small" style="margin: 0 0 6pt 0; line-height: 1.55; color: var(--ink-2);">
-          <strong>М3</strong> — около 75-90%. Сарафан начинает работать
-          всерьёз — рекомендации составляют 20-30% потока. Возвраты
-          выходят на устойчивый уровень. Первый месяц в плюсе.
+        <p class="u-small" style="margin: 0 0 4pt 0; line-height: 1.45; color: var(--ink-2);">
+          <strong>М3</strong> — 75-90%. Сарафан даёт 20-30% потока,
+          возвраты на устойчивом уровне. Первый месяц в плюсе.
         </p>
-        <p class="u-small" style="margin: 0; line-height: 1.55; color: var(--ink);">
-          <strong>М4+</strong> — 100%, выход на мощность. Сарафан и
-          возвраты ~50% потока, реклама становится поддерживающим
-          инструментом.
+        <p class="u-small" style="margin: 0; line-height: 1.45; color: var(--ink);">
+          <strong>М4+</strong> — 100%, выход на мощность. Сарафан +
+          возвраты ~50% потока, реклама поддерживает.
         </p>
       </div>
-
     </div>
     <div>
       <h3 class="sub-title">Красный флаг разгона</h3>
-      <div class="avoid-break" style="padding: 12pt 14pt; background: rgba(214,69,69,0.06); border-left: 3pt solid #D64545; border-radius: 4pt;">
-        <p class="u-small" style="margin: 0 0 6pt 0; line-height: 1.55; color: var(--ink-2);">
-          Если к М3 выручка ниже <strong>50% от плана</strong> — это
-          уже не разгон, а отсутствие маркетинга или слабый продукт.
+      <div class="avoid-break" style="padding: 9pt 12pt; background: rgba(214,69,69,0.06); border-left: 3pt solid #D64545; border-radius: 4pt;">
+        <p class="u-small" style="margin: 0 0 5pt 0; line-height: 1.45; color: var(--ink-2);">
+          Если к М3 выручка ниже <strong>50% от плана</strong> — это уже
+          не разгон, а отсутствие маркетинга или слабый продукт.
         </p>
-        <ol style="margin: 6pt 0 0 0; padding-left: 18pt; font-size: 9.5pt; line-height: 1.55; color: var(--ink-2);">
-          <li>Пересмотрите воронку: откуда приходят заявки, сколько доходит до записи.</li>
-          <li>Посчитайте конверсию из подписчика в клиента — если ниже 2%, проблема в контенте.</li>
-          <li>Не добавляйте бюджет в тот же канал — смените канал (с таргета на блогеров или наоборот).</li>
+        <ol style="margin: 0; padding-left: 18pt; font-size: 9pt; line-height: 1.45; color: var(--ink-2);">
+          <li>Пересмотрите воронку: откуда заявки, сколько доходит до записи.</li>
+          <li>Конверсия из подписчика в клиента — если &lt; 2%, проблема в контенте.</li>
+          <li>Не лейте больше в тот же канал — смените канал (таргет ↔ блогеры).</li>
         </ol>
       </div>
       <div class="callout navy u-mt-s">
