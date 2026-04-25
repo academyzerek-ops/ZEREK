@@ -883,11 +883,14 @@ def compute_block6_capital(db, result, adaptive, block2=None):
             diff_status = "critical_deficit" if abs(diff_pct) > 30 else "deficit"
             gap = abs(diff)
             credit_monthly = int(gap * 0.035)
+            # R7 G.3: actions подаются клиенту как варианты выбора,
+            # не как «вы должны». Эконом-класс упоминается как один
+            # из вариантов с явной ценой, а не как директива.
             actions = [
-                f"Урезать формат до эконом-класса (бюджет ≈ {_fmt_kzt(int(capex_needed * 0.5))})",
-                f"Кредит {_fmt_kzt(gap)} на 24 мес (платёж ~{_fmt_kzt(credit_monthly)}/мес)",
-                "Найти партнёра с долей 20%",
-                "Грант Astana Hub / Bastau Business до 5 млн ₸",
+                f"Кредит {_fmt_kzt(gap)} на 24 мес (платёж ~{_fmt_kzt(credit_monthly)}/мес).",
+                f"Эконом-класс ≈ {_fmt_kzt(int(capex_needed * 0.5))} — если для вашего формата это применимо (для HOME/SOLO бюджет уже минимальный).",
+                "Партнёрство с долей 20-30% в обмен на покрытие дефицита.",
+                "Грант Astana Hub / Bastau Business — до 5 млн ₸ для малого бизнеса.",
             ]
 
     return {
