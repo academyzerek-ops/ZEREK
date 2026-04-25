@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Кейс: Арбузы, которые дешевле бросить, чем продать</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0A0A0F;
+  --surface: #16161E;
+  --surface2: #1E1E28;
+  --border: rgba(255,255,255,0.06);
+  --text: #E8E8ED;
+  --text2: #A0A0B0;
+  --text3: #6B6B7B;
+  --red: #E85454;
+  --red-dim: rgba(232,84,84,0.08);
+  --green: #00D4AA;
+  --green-dim: rgba(0,212,170,0.08);
+  --accent: #6C63FF;
+}
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 40px;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 20px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+}
+.back::before {
+  content: '‹';
+  font-size: 20px;
+  line-height: 1;
+}
+
+.case-header {
+  padding: 12px 20px 20px;
+}
+.case-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.badge-fail {
+  background: var(--red-dim);
+  color: var(--red);
+  border: 1px solid rgba(232,84,84,0.2);
+}
+
+.case-title {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 10px;
+}
+.case-meta {
+  font-size: 13px;
+  color: var(--text3);
+  line-height: 1.5;
+}
+
+.thread {
+  padding: 0 20px;
+}
+.thread p {
+  font-size: 15px;
+  color: var(--text2);
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+.thread strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.thread em {
+  font-style: normal;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+.accent-block {
+  background: var(--surface);
+  border-left: 3px solid var(--red);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  margin: 20px 0;
+}
+.accent-block.lesson {
+  border-left-color: var(--accent);
+}
+.accent-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+.accent-block .accent-label + p {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+
+.sep {
+  height: 1px;
+  background: var(--border);
+  margin: 24px 20px;
+}
+</style>
+</head>
+<body>
+
+<a class="back" onclick="history.back()">Назад</a>
+
+<div class="case-header">
+  <div class="case-badge badge-fail">Провал</div>
+  <h1 class="case-title">Арбузы, которые дешевле бросить, чем продать</h1>
+  <div class="case-meta">Сельское хозяйство · Бахча · Студенческий бизнес</div>
+</div>
+
+<div class="thread">
+
+  <div class="accent-block">
+    <div class="accent-label">Главная ошибка</div>
+    <p>Посчитал только сколько стоит вырастить. А сколько стоит собрать, довезти и продать — не посчитал</p>
+  </div>
+
+  <p>Студент решил подзаработать на сельском хозяйстве. Идея показалась простой и логичной: арбузы растут в жару, регион подходящий, земля есть. Посадил — собрал — продал. Что может пойти не так?</p>
+
+  <p>Взял небольшой участок далеко за городом. Сам посадил, сам ухаживал. Погодные условия благоприятные, климат свой дело сделал. Арбузы выросли <strong>отличные, крупные</strong>. По качеству — не придраться. Казалось, всё получилось.</p>
+
+  <p>А потом наступил август. И здесь история разворачивается под совсем другим углом.</p>
+
+  <p>Август — это пиковый сезон арбузов в регионе. К этому моменту рынок уже был забит привозными арбузами, которые начали поступать ещё с июня. Плюс местные крупные хозяйства выкатили свой урожай. <em>Цена на арбуз в августе стала минимальной за весь год.</em></p>
+
+  <p>А теперь давай посчитаем, как выглядит юнит-экономика, когда ты <strong>один, без автоматизации, на маленьком участке, далеко от города</strong>.</p>
+
+  <p>Во-первых, арбузы нужно собрать. Это ручной труд — нанять людей, заплатить им. Во-вторых, загрузить в машину — тоже ручками. В-третьих, довезти до города — аренда или своя машина, бензин, время. В-четвёртых, продать — место на рынке, продавец, расходники.</p>
+
+  <p>А цена за килограмм в пиковый август — копейки. Посчитал наш герой, сложил все расходы на одну машину арбузов — и получилось, что **<em>собрать, довезти и продать стоит дороже, чем эти арбузы принесут после продажи</em>**.</p>
+
+  <p>Юнит-экономика не билась. Вообще.</p>
+
+  <p>Первую машину он всё-таки привёз. Продал. Проверил цифры. Понял, что продолжать смысла нет — каждая следующая машина будет минусом. А арбузы на поле — это не капуста, их нельзя сложить в погреб до зимы. Они просто <strong>сгниют</strong>.</p>
+
+  <p>И он сделал единственное рациональное решение: бросил это дело. Объявил всем знакомым: кому нужны бесплатные арбузы — приезжайте на бахчу, забирайте сами, сколько увезёте. Потому что каждый арбуз, который он попытается продать — это убыток, а каждый арбуз, который увезёт бесплатно кто-то другой — это хотя бы не сгниёт.</p>
+
+  <p>Сезон отработал в минус. Потраченные деньги, время и силы — в никуда.</p>
+
+  <div class="sep"></div>
+
+  <div class="accent-block lesson">
+    <div class="accent-label">Урок</div>
+    <p>Когда считаешь бизнес в сельском хозяйстве — себестоимость выращивания это только половина картины. Вторая половина — логистика и сбыт. Собрать урожай, довезти до рынка, хранить, продать — всё это стоит денег, и в маленьком объёме эти расходы могут съесть всю выручку. Юнит-экономика работает только на масштабе: большие поля, механизация сбора, свой транспорт, прямые контракты со скупщиками или сетями, свои склады. У одиночки без всего этого себестоимость одного килограмма получается такой, что на пиковый сезон просто невыгодно выходить на рынок. И отдельный риск — скоропортящиеся товары. Картошку или зерно можно переждать в погребе до лучшей цены. Арбуз, помидор, клубнику — нет. Ты или продаёшь по любой цене сейчас, или теряешь всё. Прежде чем заходить в агробизнес, посчитай не только «сколько стоит вырастить», а полный путь от поля до кошелька покупателя. И если на маленьком объёме цифры не сходятся — не сходятся они никогда.</p>
+  </div>
+
+</div>
+
+</body>
+</html>

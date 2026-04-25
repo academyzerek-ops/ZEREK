@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Кейс: Как бабулина подруга научила меня думать</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0A0A0F;
+  --surface: #16161E;
+  --surface2: #1E1E28;
+  --border: rgba(255,255,255,0.06);
+  --text: #E8E8ED;
+  --text2: #A0A0B0;
+  --text3: #6B6B7B;
+  --red: #E85454;
+  --red-dim: rgba(232,84,84,0.08);
+  --green: #00D4AA;
+  --green-dim: rgba(0,212,170,0.08);
+  --yellow: #E8C34C;
+  --yellow-dim: rgba(232,195,76,0.08);
+  --accent: #6C63FF;
+}
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 40px;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 20px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+}
+.back::before {
+  content: '‹';
+  font-size: 20px;
+  line-height: 1;
+}
+
+.case-header {
+  padding: 12px 20px 20px;
+}
+.case-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.badge-neutral {
+  background: var(--yellow-dim);
+  color: var(--yellow);
+  border: 1px solid rgba(232,195,76,0.2);
+}
+
+.case-title {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 10px;
+}
+.case-meta {
+  font-size: 13px;
+  color: var(--text3);
+  line-height: 1.5;
+}
+
+.thread {
+  padding: 0 20px;
+}
+.thread p {
+  font-size: 15px;
+  color: var(--text2);
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+.thread strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.thread em {
+  font-style: normal;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+.accent-block {
+  background: var(--surface);
+  border-left: 3px solid var(--yellow);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  margin: 20px 0;
+}
+.accent-block.lesson {
+  border-left-color: var(--accent);
+}
+.accent-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+.accent-block .accent-label + p {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+
+.sep {
+  height: 1px;
+  background: var(--border);
+  margin: 24px 20px;
+}
+</style>
+</head>
+<body>
+
+<a class="back" onclick="history.back()">Назад</a>
+
+<div class="case-header">
+  <div class="case-badge badge-neutral">Нейтральный</div>
+  <h1 class="case-title">Как бабулина подруга научила меня думать</h1>
+  <div class="case-meta">Детское наблюдение · Лихие 90-е · Первый бизнес-урок в 10 лет</div>
+</div>
+
+<div class="thread">
+
+  <div class="accent-block">
+    <div class="accent-label">Главный инсайт</div>
+    <p>Один и тот же товар можно продавать по-разному. Формат продажи — это не мелочь, это совершенно другие клиенты и совершенно другая выручка</p>
+  </div>
+
+  <p>Мне было десять лет. Лихие девяностые. Я жил у бабули, и каждый зарабатывал, чем мог. Бабуля, как и многие в те времена, занималась самопалом — покупала спирт, разводила водой в нужных пропорциях, разливала по бутылкам, клеила наклейки, ставила крышки, доводила до нужного градуса и продавала. Акцизные марки поддельные, наклейки фиктивные, всё как у всех тогда.</p>
+
+  <p>Я, десятилетний пацан, помогал как мог. Собирал бутылки, мыл их, таскал тару, крутился на подхвате. В самих продажах ещё не участвовал — мал был. Но всё видел.</p>
+
+  <p>И вот какая картина складывалась в голове у этого десятилетнего. Обычно продавалось <em>от четырёх до семи бутылок в день</em>. Это если день нормальный. А бывали дни, когда продаж почти не было: ноль, одна, максимум две бутылки. Смотришь вечером на непроданные бутылки, и думаешь — ну вот, день пропал.</p>
+
+  <p>А у бабули была подруга. Занималась тем же самым. Тот же спирт, те же бутылки, тот же район. И вот что интересно — в те же плохие дни <strong>у неё бутылки уходили</strong>.</p>
+
+  <p>В чём разница? Она была <em>гибкая</em>. Когда видела, что бутылками никто не берёт, она не сидела и не ждала. Она брала ту же самую бутылку и начинала разливать её <strong>по сто грамм</strong>. Одна поллитровка — это пять продаж по рюмке. И клиентов на такой формат всегда было больше.</p>
+
+  <p>Потому что сегмент — совсем другой. Бутылку берут те, у кого есть деньги, кто покупает впрок, кто идёт к кому-то в гости. А рюмку берут те, кому <em>нужно прямо сейчас</em>: мужику опохмелиться утром, кому-то денег в кармане хватает только на сто грамм, кто-то пришёл снять напряжение и уйти. Это не пересекающиеся категории. Это два разных рынка.</p>
+
+  <p>Я сидел вечером, смотрел на наши непроданные бутылки и думал: вот если бы бабуля хоть иногда делала так же, как её подруга — мы бы в плохие дни продавали хотя бы две-три рюмки. День бы не пропадал. Денег бы было больше.</p>
+
+  <p>Но у бабули не было гибкости. <strong>Бутылками — и точка.</strong> Никакого отступления от формата, никакого творческого подхода. Есть продукт — есть цена — есть способ продажи. Всё.</p>
+
+  <p>Мне было десять. Я не мог сформулировать это для неё словами. Но нутром — я уже понимал, что дело не в продукте, не в спирте, не в локации. <em>Дело в том, как ты продаёшь</em>. Бабулина подруга продавала тот же самый продукт, в том же самом месте, тем же самым людям — но умела видеть: сегодня никто не берёт бутылками, значит сегодня я продаю рюмками.</p>
+
+  <p>Это был мой первый бизнес-урок. Я тогда не знал таких слов как «сегментация» или «форматы продукта». Но на уровне детского наблюдения я увидел: <strong>один и тот же товар, проданный по-разному, приносит совершенно разный результат</strong>.</p>
+
+  <div class="sep"></div>
+
+  <div class="accent-block lesson">
+    <div class="accent-label">Урок</div>
+    <p>Формат продажи — это не косметика, это часть продукта. И он определяет, кто вообще твой клиент. Бутылка и рюмка — это не две цены одного товара, это <strong>два разных продукта для двух разных людей</strong>. Это работает везде. Кофе по 500 тенге за чашку и кофе зёрнами по килограмму — разные клиенты, разная воронка, разный средний чек. Курс на 40 часов за 200 тысяч и тот же материал, разбитый на мини-уроки по 5 тысяч — разная аудитория. Услуга за абонентку и та же услуга разовая — разные сегменты. Если у тебя продажи проседают — прежде чем винить рынок, клиентов или конкурентов, задай себе один вопрос: <em>а может, я продаю в единственном формате, который отрезает меня от половины потенциальных клиентов?</em> Часто рост спрятан не в новом продукте. Он спрятан в новом формате старого продукта. Это и называется гибкостью. И это — то, что отличает людей, которые тащат бизнес, от людей, которые просто стоят за прилавком.</p>
+  </div>
+
+</div>
+
+</body>
+</html>

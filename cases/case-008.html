@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Кейс: Зашли, когда капуста стоила золото</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0A0A0F;
+  --surface: #16161E;
+  --surface2: #1E1E28;
+  --border: rgba(255,255,255,0.06);
+  --text: #E8E8ED;
+  --text2: #A0A0B0;
+  --text3: #6B6B7B;
+  --red: #E85454;
+  --red-dim: rgba(232,84,84,0.08);
+  --green: #00D4AA;
+  --green-dim: rgba(0,212,170,0.08);
+  --accent: #6C63FF;
+}
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 40px;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 20px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+}
+.back::before {
+  content: '‹';
+  font-size: 20px;
+  line-height: 1;
+}
+
+.case-header {
+  padding: 12px 20px 20px;
+}
+.case-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.badge-fail {
+  background: var(--red-dim);
+  color: var(--red);
+  border: 1px solid rgba(232,84,84,0.2);
+}
+
+.case-title {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 10px;
+}
+.case-meta {
+  font-size: 13px;
+  color: var(--text3);
+  line-height: 1.5;
+}
+
+.thread {
+  padding: 0 20px;
+}
+.thread p {
+  font-size: 15px;
+  color: var(--text2);
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+.thread strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.thread em {
+  font-style: normal;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+.accent-block {
+  background: var(--surface);
+  border-left: 3px solid var(--red);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  margin: 20px 0;
+}
+.accent-block.lesson {
+  border-left-color: var(--accent);
+}
+.accent-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+.accent-block .accent-label + p {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+
+.sep {
+  height: 1px;
+  background: var(--border);
+  margin: 24px 20px;
+}
+</style>
+</head>
+<body>
+
+<a class="back" onclick="history.back()">Назад</a>
+
+<div class="case-header">
+  <div class="case-badge badge-fail">Провал</div>
+  <h1 class="case-title">Зашли, когда капуста стоила золото</h1>
+  <div class="case-meta">Сельское хозяйство · Овощеводство · Сезонный бизнес</div>
+</div>
+
+<div class="thread">
+
+  <div class="accent-block">
+    <div class="accent-label">Главная ошибка</div>
+    <p>Увидел высокую цену в прошлом сезоне и решил, что в этом будет так же. Но рынок так не работает</p>
+  </div>
+
+  <p>Был один сезон, когда в городе капуста резко подорожала. Видимо, неурожай — толком никто не разбирался в причинах. Но факт был простой: капусты мало, спрос есть, цена высокая. Все, у кого она была, прилично заработали.</p>
+
+  <p>И тут парни подумали: а чего мы сидим? Капуста продаётся с отличной рентабельностью. На следующий сезон сажаем — и всё, в шоколаде.</p>
+
+  <p>Без опыта. Без знаний. Без агрономов. Просто <em>увидели цену в прошлом году и решили, что так будет всегда</em>.</p>
+
+  <p>Взяли небольшой участок. Площади скромные — новички же, начинали с малого. Вся работа — ручная, наёмные рабочие. Весь сезон возились: посадили, поливали, ухаживали, взращивали. И в целом, надо отдать должное, собрали <strong>неплохой урожай</strong>.</p>
+
+  <p>А теперь самое интересное.</p>
+
+  <p>Когда они повезли капусту на рынок, выяснилась одна простая вещь: в этом году урожай был <em>у всех</em>. Не только у них. Везде. Капусты — завались. Предложение огромное.</p>
+
+  <p>И тут работает главный закон экономики, который не обманешь никакой мотивацией и никаким трудолюбием: <strong>чем больше предложение — тем ниже цена</strong>.</p>
+
+  <p>Капуста, за которую в прошлом году давали хорошие деньги, в этом году стоила копейки. А расходы на её выращивание — ручной труд, рабочие, вода, удобрения, аренда земли, транспорт — остались прежними. Даже выросли, потому что новички всегда переплачивают за всё.</p>
+
+  <p>Плюс ещё одна деталь, о которой обычно не думают, пока не столкнутся лично: капуста — это <em>не то, что продаётся за один день</em>. Её нужно хранить. А хранение — это либо свои погреба, либо аренда холодных складов, либо быстрая распродажа по бросовой цене, чтобы не сгнила. Холодных складов у них не было. Пришлось сбрасывать по тем ценам, которые предлагал рынок.</p>
+
+  <p>Итог: сезон отпахали с утра до ночи. Урожай собрали хороший. А заработать — не заработали. Только промучились.</p>
+
+  <div class="sep"></div>
+
+  <div class="accent-block lesson">
+    <div class="accent-label">Урок</div>
+    <p>Высокая цена в прошлом году — это почти гарантия того, что в этом году цена упадёт. Потому что не ты один увидел эту возможность. Когда все заходят на рынок на пике цен, к моменту сбора урожая предложение раздувается, цена падает, а новички — которые зашли позже всех и без инфраструктуры — теряют всё. Это работает не только в сельском хозяйстве. Это работает везде, где есть сезонность, цикличность и низкий порог входа. Пока ты видишь высокую цену и думаешь «вот это идея», её уже видят тысячи других людей. Если у тебя нет преимущества — масштаба, механизации, контрактов с крупными сетями, своих складов, опыта — ты просто один из толпы, которая раздавит сама себя. Прежде чем заходить на сезонный рынок на волне хайпа — спроси себя: что у меня есть такого, чего нет у остальных новичков? Если ответа нет — ты не поймал возможность, ты стал её жертвой.</p>
+  </div>
+
+</div>
+
+</body>
+</html>
