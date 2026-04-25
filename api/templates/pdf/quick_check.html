@@ -1104,9 +1104,14 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <p class="u-small u-muted" style="margin-bottom: 8pt;">
         Краткий путеводитель по разделам отчёта.
       </p>
-      <table class="keyvals" style="font-size: 9.5pt;">
+      {# R8 H.3: размер 8.5pt и компактные ячейки — навигатор должен
+         уместиться в одну стр. 5 вместе с «Откуда цифры», «Границы
+         точности» и «Как использовать». Раньше 17 строк × 9.5pt
+         переливались на стр. 6. R8 H.2 убрал блок «Карточка
+         экспресс-оценки» (бывшая стр. 21) → 16 пунктов вместо 17. #}
+      <table class="keyvals" style="font-size: 8.5pt; line-height: 1.35;">
         <tr><td class="k">01 Паспорт</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Параметры расчёта</td></tr>
-        <tr><td class="k">02 Итог</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Сводный вердикт и три приоритета</td></tr>
+        <tr><td class="k">02 Итог</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Характер направления + три приоритета</td></tr>
         <tr><td class="k">03 Ключевые цифры</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Шесть метрик одного взгляда</td></tr>
         <tr><td class="k">04 Инвестиции</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Структура CAPEX по статьям</td></tr>
         <tr><td class="k">05 Капитал</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Достаточность и резерв на разгон</td></tr>
@@ -1120,8 +1125,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         <tr><td class="k">13 Риски</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Главные риски первого года</td></tr>
         <tr><td class="k">14 Налоги</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Форма, режим, годовая нагрузка</td></tr>
         <tr><td class="k">15 Горизонт</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Что будет через 2-3 года</td></tr>
-        <tr><td class="k">16 Итог</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Карточка экспресс-оценки</td></tr>
-        <tr><td class="k">17 Дальше</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Следующий продукт ZEREK</td></tr>
+        <tr><td class="k">16 Дальше</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Следующий продукт ZEREK</td></tr>
       </table>
     </div>
 
@@ -1153,13 +1157,15 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     </div>
   </div>
 
-  <h3 class="sub-title u-mt-l">Как использовать</h3>
-  <ol class="u-small" style="margin: 0; padding-left: 20pt; line-height: 1.55; color: var(--ink-2); max-width: 175mm;">
-    <li>Сначала проверьте <strong>Паспорт</strong> (стр. 2) — корректны ли входные параметры.</li>
-    <li>Прочитайте <strong>Итог</strong> (стр. 3) — общий взгляд и три приоритета.</li>
-    <li>Если вердикт «Критически мало капитала» — не идите дальше пока не закроете дефицит. Запуск без подушки — типичная причина закрытия на 3-4 месяце.</li>
-    <li>Если капитала достаточно — углубляйтесь в Маркетинг, Кадры, Риски.</li>
-    <li>Через 3 месяца после старта — пересчитайте отчёт. Бенчмарки обновятся.</li>
+  {# R8 H.3: «Как использовать» сжато с 5 пунктов до 3 ключевых.
+     Убраны «содержательные» советы про вердикт капитала (это уже
+     на стр. 3 + стр. 8) и «углубляйтесь в...» — это очевидное
+     «как читать», а не уникальная инструкция. #}
+  <h3 class="sub-title u-mt-l" style="margin-top: 14pt;">Как использовать</h3>
+  <ol class="u-small" style="margin: 0; padding-left: 20pt; line-height: 1.5; color: var(--ink-2); max-width: 175mm;">
+    <li>Проверьте <strong>Паспорт</strong> (стр. 2). Если параметры неверны — пересчитайте.</li>
+    <li>Прочитайте <strong>Итог</strong> (стр. 3) — это главный экран отчёта.</li>
+    <li>Через 3 месяца после старта — пересчитайте, бенчмарки обновятся.</li>
   </ol>
 </section>
 {#- Round-4 bug 7: страница «Рынок» удалена целиком — полторы строки
