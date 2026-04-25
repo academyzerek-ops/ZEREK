@@ -2242,17 +2242,21 @@ function downloadPDF(sourceId){
     }
     var full = API + url;
     var filename = (resp && resp.filename) || 'ZEREK_QuickCheck.pdf';
-    try {
-      var a = document.createElement('a');
-      a.href = full; a.download = filename; a.target = '_blank'; a.rel = 'noopener';
-      document.body.appendChild(a); a.click();
-      setTimeout(function(){ try { a.remove(); } catch(e){} }, 0);
-    } catch(e1){
+    var tg = window.Telegram && window.Telegram.WebApp;
+    if(tg && typeof tg.openLink === 'function'){
+      // В Telegram WebApp (особенно iOS) <a download> не работает —
+      // PDF открывается inline в WebView без возможности сохранить.
+      // openLink уводит во внешний браузер (Safari/Chrome), где
+      // backend отдаёт Content-Disposition: attachment и срабатывает
+      // штатное скачивание.
+      tg.openLink(full, { try_instant_view: false });
+    } else {
       try {
-        if(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink){
-          window.Telegram.WebApp.openLink(full);
-        } else { window.open(full, '_blank'); }
-      } catch(e2){ window.open(full, '_blank'); }
+        var a = document.createElement('a');
+        a.href = full; a.download = filename; a.target = '_blank'; a.rel = 'noopener';
+        document.body.appendChild(a); a.click();
+        setTimeout(function(){ try { a.remove(); } catch(e){} }, 0);
+      } catch(e1){ window.open(full, '_blank'); }
     }
     // Round-3 §4.1: успешный state — тот же зелёный градиент, чуть темнее.
     setAll('<span class="pdf-main">✓ PDF сохранён</span>' +

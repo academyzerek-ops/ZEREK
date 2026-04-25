@@ -378,7 +378,7 @@ def generate_pdf(req: QCReq):
         pdf_bytes, report_id, filename = generate_quick_check_pdf(
             calc_result, (req.niche_id or "").upper()
         )
-        token = _store_file(pdf_bytes, filename, "application/pdf", disposition="inline")
+        token = _store_file(pdf_bytes, filename, "application/pdf", disposition="attachment")
         return {
             "token": token,
             "report_id": report_id,
