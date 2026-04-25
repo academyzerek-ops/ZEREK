@@ -1071,13 +1071,85 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
   </div>
   {% endif %}
 
-  <h3 class="sub-title u-mt-l">Как читать эти цифры</h3>
-  <p class="u-small u-muted" style="max-width:170mm;">
-    Все значения — модельные, рассчитаны из локальных бенчмарков БНС РК,
-    данных 2GIS и реальных кейсов предпринимателей Казахстана.
-    Диапазон погрешности — ±12%. Зрелый месяц — 10–12-й от старта, когда
-    новых клиентов примерно столько же, сколько возвратных.
-  </p>
+  {# R7 E.1: «Как читать эти цифры» переехало в полноценную секцию
+     «Как построен этот отчёт» (навигатор + источники + границы +
+     как использовать) — отдельная страница после Ключевых цифр. #}
+</section>
+
+
+{#- ═══════════════════════════════════════════════════════════════
+    R7 E.1 — КАК ПОСТРОЕН ЭТОТ ОТЧЁТ
+    Навигатор по разделам + источники данных + границы точности +
+    как использовать. Заполняет страницу, которая раньше была
+    полупустой только с подписью «Все значения — модельные».
+    ═══════════════════════════════════════════════════════════════ -#}
+<section class="page page--break">
+  <div class="page-eyebrow">{{ eyebrow('Навигатор') }}</div>
+  <h1 class="page-title">Как построен этот отчёт</h1>
+
+  <div class="col2 u-mt-m">
+    <div>
+      <h3 class="sub-title">Что внутри</h3>
+      <p class="u-small u-muted" style="margin-bottom: 8pt;">
+        Краткий путеводитель по разделам отчёта.
+      </p>
+      <table class="keyvals" style="font-size: 9.5pt;">
+        <tr><td class="k">01 Паспорт</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Параметры расчёта</td></tr>
+        <tr><td class="k">02 Итог</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Сводный вердикт и три приоритета</td></tr>
+        <tr><td class="k">03 Ключевые цифры</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Шесть метрик одного взгляда</td></tr>
+        <tr><td class="k">04 Инвестиции</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Структура CAPEX по статьям</td></tr>
+        <tr><td class="k">05 Капитал</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Достаточность и резерв на разгон</td></tr>
+        <tr><td class="k">06 Расходы</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">OPEX и юнит-экономика</td></tr>
+        <tr><td class="k">07 Выручка</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Финансы за год в трёх сценариях</td></tr>
+        <tr><td class="k">08 Год в деталях</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Помесячная динамика и разгон</td></tr>
+        <tr><td class="k">09 Сезонность</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Пики и просадки в году</td></tr>
+        <tr><td class="k">10 Маркетинг</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Воронка, бюджет, каналы, ретеншен</td></tr>
+        <tr><td class="k">11 Кадры</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Ваш потолок — устойчивый и предельный</td></tr>
+        <tr><td class="k">12 Устойчивость</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Стресс-тест по 5 параметрам</td></tr>
+        <tr><td class="k">13 Риски</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Главные риски первого года</td></tr>
+        <tr><td class="k">14 Налоги</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Форма, режим, годовая нагрузка</td></tr>
+        <tr><td class="k">15 Горизонт</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Что будет через 2-3 года</td></tr>
+        <tr><td class="k">16 Итог</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Карточка экспресс-оценки</td></tr>
+        <tr><td class="k">17 Дальше</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Следующий продукт ZEREK</td></tr>
+      </table>
+    </div>
+
+    <div>
+      <h3 class="sub-title">Откуда цифры</h3>
+      <p class="u-small u-muted" style="margin-bottom: 6pt;">
+        Quick Check работает на четырёх источниках данных:
+      </p>
+      <ul class="u-small" style="margin: 0 0 14pt 0; padding-left: 16pt; line-height: 1.5; color: var(--ink-2);">
+        <li><strong>БНС РК</strong> — официальная статистика. Зарплаты по регионам, инфляция, доходы населения. Обновление: ежеквартально.</li>
+        <li><strong>2GIS</strong> — конкурентный ландшафт по 22 городам и 50+ нишам. Обновление: ежемесячно.</li>
+        <li><strong>Реальные кейсы</strong> — обобщённый опыт предпринимателей из открытых источников и интервью. Без выдуманных цифр и историй.</li>
+        <li><strong>Бенчмарки ZEREK</strong> — внутренняя база по экономике ниш, верифицирована против БНС и реальных финансовых отчётов.</li>
+      </ul>
+
+      <h3 class="sub-title">Границы точности</h3>
+      <p class="u-small" style="line-height: 1.5; margin: 0 0 6pt 0; color: var(--ink-2);">
+        Все значения — модельные. Диапазон погрешности базового сценария: <strong>±12%</strong>.
+      </p>
+      <p class="u-small" style="line-height: 1.5; margin: 0 0 6pt 0; color: var(--ink-2);">
+        Самые точные цифры: налоги, минимальные соцплатежи, ставки УСН/НДС.
+      </p>
+      <p class="u-small" style="line-height: 1.5; margin: 0 0 6pt 0; color: var(--ink-2);">
+        Самые чувствительные: загрузка и средний чек — зависят от исполнения, маркетинга и локального рынка. Реальные значения могут отличаться от модельных на ±25%.
+      </p>
+      <p class="u-tiny u-muted" style="line-height: 1.45; margin: 0;">
+        Quick Check не заменяет финансовую модель с месячной cash-flow разбивкой (продукт ZEREK · Финмодель), консультацию налогового специалиста и юридическую экспертизу договоров.
+      </p>
+    </div>
+  </div>
+
+  <h3 class="sub-title u-mt-l">Как использовать</h3>
+  <ol class="u-small" style="margin: 0; padding-left: 20pt; line-height: 1.55; color: var(--ink-2); max-width: 175mm;">
+    <li>Сначала проверьте <strong>Паспорт</strong> (стр. 2) — корректны ли входные параметры.</li>
+    <li>Прочитайте <strong>Итог</strong> (стр. 3) — общий взгляд и три приоритета.</li>
+    <li>Если вердикт «Критически мало капитала» — не идите дальше пока не закроете дефицит. Запуск без подушки — типичная причина закрытия на 3-4 месяце.</li>
+    <li>Если капитала достаточно — углубляйтесь в Маркетинг, Кадры, Риски.</li>
+    <li>Через 3 месяца после старта — пересчитайте отчёт. Бенчмарки обновятся.</li>
+  </ol>
 </section>
 {#- Round-4 bug 7: страница «Рынок» удалена целиком — полторы строки
     не тянули на отдельную A4. Население теперь в паспорте, детальный
