@@ -2170,30 +2170,27 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     </div>
   </div>
 
-  {# R5 B.4 + R7 E.2: «Микро-фишки ретеншена» — beauty-архетип A1.
-     R7 — добавлен новый ПЕРВЫЙ пункт про личную симпатию (без него
-     остальные пять не работают). Блок остаётся внутри секции
-     маркетинга, без принудительного page-break. -#}
+  {# R5 B.4 + R7 E.2 + R8 J.1: «Микро-фишки ретеншена» — beauty-архетип
+     A1. Уплотнено: «Личная симпатия» сжата с абзаца до 2 строк,
+     трейлинг-параграф убран (его вывод уже считывается из самих фишек),
+     padding/line-height уменьшены — чтобы блок помещался в стр. 13
+     после маркетинга и не уходил на отдельную стр. 14. -#}
   {% if mp.archetype_id in ['A1', 'a1', 'A_BEAUTY', 'BEAUTY'] %}
-  <div class="avoid-break u-mt-l" style="padding: 14pt 16pt; background: var(--bg-2); border-left: 3pt solid var(--gold); border-radius: 3pt;">
-    <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1pt;">
+  <div class="avoid-break u-mt-m" style="padding: 11pt 14pt; background: var(--bg-2); border-left: 3pt solid var(--gold); border-radius: 3pt;">
+    <div class="u-upper u-tiny u-gold" style="margin-bottom: 5pt; font-weight: 700; letter-spacing: 1pt;">
       Микро-фишки ретеншена · для вашей ниши
     </div>
-    <p class="u-small" style="margin: 0 0 8pt 0; line-height: 1.55; color: var(--ink-2);">
-      Клиент вернётся не за рекламой, а за ощущением «здесь хорошо».
-      В beauty-нише работают мелочи:
+    <p class="u-small" style="margin: 0 0 6pt 0; line-height: 1.45; color: var(--ink-2);">
+      Клиент вернётся не за рекламой, а за ощущением «здесь хорошо». В beauty-нише работают мелочи:
     </p>
-    <ul class="u-small" style="margin: 0; padding-left: 18pt; line-height: 1.55; color: var(--ink-2);">
-      <li><strong>Личная симпатия и атмосфера разговора.</strong> Маникюр — это 60-90 минут наедине с мастером. Для клиентки это не просто услуга, а пауза в дне: чашка кофе, обсудить фильм, пожаловаться на работу, посмеяться. Мастер, рядом с которым приятно провести час, — возвращается клиент. Мастер с идеальной техникой, но угрюмый или замкнутый, — не возвращается. Это не «мягкий навык», это первая по важности составляющая ретеншена в нише.</li>
+    <ul class="u-small" style="margin: 0; padding-left: 16pt; line-height: 1.45; color: var(--ink-2);">
+      <li><strong>Личная симпатия и атмосфера разговора.</strong> Маникюр — 60-90 минут наедине с мастером. Тёплая клиентка возвращается не за техникой, а за самим часом. Это первый по важности фактор ретеншена в нише.</li>
       <li><strong>Чай / кофе / вода на выбор</strong> — копеечная себестоимость, меняет восприятие визита с «услуги» на «перерыв для себя».</li>
       <li><strong>Ремонт лака бесплатно в первые 3 дня</strong> — снимает страх купить дешёвую работу.</li>
       <li><strong>Плюс одна бесплатная услуга после 5-го визита</strong> — формирует привычку возвращаться именно к вам.</li>
       <li><strong>Фото «до / после» в сторис</strong> с разрешения — клиент чувствует внимание, у вас растёт портфолио.</li>
-      <li><strong>День рождения клиента</strong> — скидка 10-15%. Телефон у вас уже есть, это одна рассылка раз в месяц.</li>
+      <li><strong>День рождения клиента</strong> — скидка 10-15%. Одна рассылка раз в месяц по уже собранным телефонам.</li>
     </ul>
-    <p class="u-small" style="margin: 8pt 0 0 0; line-height: 1.5; color: var(--ink);">
-      Стоимость всех этих фишек — небольшая доля выручки. Эффект на повторные визиты — заметный. Это самая дешёвая часть маркетинга и часто самая забываемая.
-    </p>
   </div>
   {% endif %}
 </section>
@@ -2630,17 +2627,13 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
 <section class="page">
   <div class="page-eyebrow">{{ eyebrow('Дальше') }}</div>
   <h1 class="page-title">Ваш следующий шаг</h1>
-  <p class="page-lede">
-    Quick Check — это моментальный срез. Следующий уровень детализации —
-    персональная финансовая модель с месячной разбивкой на 3 года.
-  </p>
-
-  <div class="cta-card">
+  {# R8 J.2: page-lede убран и CTA-карточки сжаты, чтобы disclaimer
+     помещался на той же стр. 22 (раньше переливался на стр. 23). #}
+  <div class="cta-card" style="padding: 10pt 14pt;">
     <div class="cta-kicker">Следующий продукт</div>
-    <h3 class="cta-title">ZEREK · Финансовая модель</h3>
-    <p class="cta-desc">
-      Детальный P&amp;L, cash-flow, sensitivity-анализ по 5 переменным,
-      график кредита и экспорт в Excel. Подходит для банка, инвестора, Astana Hub.
+    <h3 class="cta-title" style="margin: 2pt 0 4pt 0;">ZEREK · Финансовая модель</h3>
+    <p class="cta-desc" style="margin: 0 0 6pt 0;">
+      Детальный P&amp;L, cash-flow, sensitivity по 5 переменным, экспорт в Excel.
     </p>
     <div style="display: flex; gap: 18pt; align-items: baseline; flex-wrap: wrap;">
       <div class="cta-price">9 000 ₸</div>
@@ -2648,12 +2641,11 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     </div>
   </div>
 
-  <div class="cta-card" style="background: var(--bg-2); border-color: var(--ink-2);">
+  <div class="cta-card" style="background: var(--bg-2); border-color: var(--ink-2); padding: 10pt 14pt;">
     <div class="cta-kicker">Для серьёзных целей</div>
-    <h3 class="cta-title">ZEREK · Бизнес-план</h3>
-    <p class="cta-desc">
-      Готовый документ для банка, гранта или инвестора. Персонализирован
-      под вашу цель. Включает все расчёты Quick Check + Финмодели + маркетинг-стратегию.
+    <h3 class="cta-title" style="margin: 2pt 0 4pt 0;">ZEREK · Бизнес-план</h3>
+    <p class="cta-desc" style="margin: 0 0 6pt 0;">
+      Готовый документ для банка, гранта или инвестора. Quick Check + Финмодель + маркетинг-стратегия.
     </p>
     <div style="display: flex; gap: 18pt; align-items: baseline; flex-wrap: wrap;">
       <div class="cta-price">15 000 ₸</div>
