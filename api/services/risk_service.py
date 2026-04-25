@@ -38,6 +38,54 @@ FORMAT_RISK_FILTERS = {
     "SUGARING_HOME": {"exclude_keywords": ["аренд", "помещен", "найм", "договор", "наём"]},
 }
 
+# R8 J.3: «Что делать» для рисков из insight.md, у которых
+# mitigation пуст после парсинга (md содержит только title + текст
+# без секции «как митигировать»). Mapping по ключевым словам в title,
+# чтобы быть устойчивым к разному написанию (двоеточие в конце и т.п.).
+MITIGATION_BY_TITLE_KEYWORDS = [
+    (("расходник", "глаз"),
+     "Excel или Google Sheets со списком расходников. Закупка 1 раз "
+     "в 2 недели по списку. Запас на 3 рабочих дня минимум, чтобы не "
+     "срывать запись из-за отсутствия материала."),
+    (("программ", "лояльност"),
+     "С первого клиента — карточка постоянного клиента (Notion или "
+     "Excel). После 5-го визита — бонус. День рождения — скидка 10-15%. "
+     "Без этого ретеншен на маленькой базе невозможен."),
+    (("уход мастер", "клиентск"),
+     "CRM на салон, не на мастера. Минимум 2 мастера на каждое "
+     "направление. Долгосрочные контракты с условиями non-compete. "
+     "Регулярный пересмотр условий мастеров."),
+    (("сезон", "просад"),
+     "Запас оборотки на 2 мес. Сезонные пакеты (например, маникюр + "
+     "педикюр) или промо в просадочные месяцы — поддержка трафика."),
+    (("конкурент",),
+     "Долгосрочный договор аренды с фиксированной ставкой. Программа "
+     "лояльности с первого дня. Сильный визуальный контент в соцсетях."),
+]
+
+
+def _enrich_mitigation(risks):
+    """R8 J.3: дозаполняет mitigation для рисков, у которых поле пустое
+    после парсинга insight.md. Возвращает новый список (риски не
+    мутируются)."""
+    out = []
+    for r in risks:
+        if r.get("mitigation"):
+            out.append(r)
+            continue
+        title_lower = (r.get("title") or "").lower()
+        mitigation = ""
+        for keywords, text in MITIGATION_BY_TITLE_KEYWORDS:
+            if all(k in title_lower for k in keywords):
+                mitigation = text
+                break
+        if mitigation:
+            r = dict(r)
+            r["mitigation"] = mitigation
+        out.append(r)
+    return out
+
+
 HOME_SPECIFIC_RISKS = [
     {"title": "Зависимость от физсостояния", "probability": "СРЕДНЯЯ", "impact": "ВЫСОКОЕ",
      "text": "Болезнь, беременность, травма рук = ноль дохода. Подушка безопасности на 3 мес — must have.",
@@ -221,6 +269,9 @@ def compute_block9_risks(db, result, adaptive):
         risks_out = HOME_SPECIFIC_RISKS + risks_out
 
     risks_out = risks_out[:5]
+    # R8 J.3: дозаполняем «Что делать» для рисков из insight.md
+    # (парсер md не извлекает mitigation; делаем mapping по title).
+    risks_out = _enrich_mitigation(risks_out)
 
     return {
         "niche_id": niche_id,

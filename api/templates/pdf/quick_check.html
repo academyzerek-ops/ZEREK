@@ -872,8 +872,13 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         {% endif %}
         {# R7 G.4: строка «Локация» убрана — для HOME выводился
            технический id «home», а информация дублирует «Формат»
-           (Мастер на дому). Площадь оставляем когда задана. #}
-        {% if inp.area_m2 %}
+           (Мастер на дому). Площадь оставляем когда задана.
+           R8 J.4: для HOME-формата «Площадь» скрываем всегда —
+           пользователь её не указывал (это его собственный дом),
+           дефолт 10.0 м² не имеет смысла. Для SOLO/STANDARD/PREMIUM
+           показываем только если задана. #}
+        {% set fmt_id = (inp.format_id or '') | upper %}
+        {% if inp.area_m2 and not fmt_id.endswith('_HOME') %}
         <tr><td class="k">Площадь</td><td class="v">{{ inp.area_m2 }} м²</td></tr>
         {% endif %}
       </table>
