@@ -164,6 +164,38 @@ def compute_marketing_plan(
         })
         total_year += total_marketing
 
+    # ── R9 K.1: фазовый override для соло-beauty (архетип A1) ──
+    # Канон по решению Адиля: для архетипа A1 маркетинг по явным фазам
+    # 3+3+6, не через CAC × clients (формула давала 619K/год при 51K avg
+    # — методологически неверно для соло-beauty: М1 у формулы 69K, тогда
+    # как реально М1 — самый дорогой период из-за тестирования креативов
+    # с нуля и поиска блогеров). Фазы:
+    #   M1-M3 (Разгон):    152 000 ₸/мес — выкупаем инфо-поле
+    #   M4-M6 (Настройка): 54 000 ₸/мес  — оптимизация каналов
+    #   M7-M12 (Зрелый):   16 000 ₸/мес  — поддерживающий
+    # Итого 717K/год, среднее 60K. Пик М2 = 175K (фаза разгона + сезонный
+    # пик контент-производства).
+    if archetype_id == "A1":
+        PHASE_BUDGETS = {
+            "ramp":   152_000,    # M1-M3
+            "tuning":  54_000,    # M4-M6
+            "mature":  16_000,    # M7-M12
+        }
+        # Лёгкая «волна» внутри разгона: M1=130K, M2=175K (пик), M3=152K.
+        # Среднее по фазе ≈ 152K, как и заявлено каноном.
+        ramp_curve = [130_000, 175_000, 152_000]
+        for idx in range(12):
+            month = idx + 1
+            if month <= 3:
+                new_marketing = ramp_curve[month - 1]
+            elif month <= 6:
+                new_marketing = PHASE_BUDGETS["tuning"]
+            else:
+                new_marketing = PHASE_BUDGETS["mature"]
+            monthly_plan[idx]["paid_budget"] = new_marketing
+            monthly_plan[idx]["total_marketing"] = new_marketing
+        total_year = sum(m["total_marketing"] for m in monthly_plan)
+
     budgets = [m["total_marketing"] for m in monthly_plan]
     summary = {
         "avg_monthly_budget": int(round(total_year / 12)),

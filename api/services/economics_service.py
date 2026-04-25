@@ -752,10 +752,16 @@ def compute_block5_pnl(db, result, adaptive):
         role_salary_monthly = max(int(fot_monthly_full * 0.35), 300_000)
         role_breakdown.append({"role": "multi", "salary_monthly": role_salary_monthly})
 
-    profit_monthly_base = pnl_base["net_profit"] // 12
+    # R9 K.1: вычитаем минимальные соцплатежи ИП из месячной прибыли,
+    # потому что они обязательные и тратятся каждый месяц независимо
+    # от выручки. Раньше pnl_base.net_profit их не учитывал → avg_y1
+    # был завышен на ~22K/мес. ОПВ + ВОСМС + ИПН для ИП (2026) = 21 675 ₸.
+    legal_form = (inp.get("legal_form") or "ip")
+    social_monthly = 21_675 if legal_form == "ip" else 0
+    profit_monthly_base = (pnl_base["net_profit"] // 12) - social_monthly
     income_from_business = profit_monthly_base
     entrepreneur_income_monthly = role_salary_monthly + income_from_business
-    mature_profit_monthly = _safe_int(mature.get("profit_monthly"), 0)
+    mature_profit_monthly = _safe_int(mature.get("profit_monthly"), 0) - social_monthly
     mature_monthly = role_salary_monthly + mature_profit_monthly
 
     region_note = None
