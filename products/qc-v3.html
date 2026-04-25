@@ -1918,7 +1918,14 @@ function renderMarketingPlanHtml(mp){
   }
   // Совет по контенту.
   if(mp.content_advice_ru){
-    html += '<div class="mp-content-advice">📸 '+escapeHtml(mp.content_advice_ru)+'</div>';
+    // R8 I.4: backend возвращает <strong>...</strong> в тексте «Про
+    // контент» (для PDF). Mini App escape'ит весь HTML — пользователь
+    // видел буквально «<strong>Путь 1 — сам</strong>». Разрешаем
+    // только <strong>/</strong> + переносы \n\n → <br><br>.
+    var safeText = escapeHtml(mp.content_advice_ru)
+      .replace(/&lt;(\/?strong)&gt;/g, '<$1>')
+      .replace(/\n\n/g, '<br><br>');
+    html += '<div class="mp-content-advice">📸 '+safeText+'</div>';
   }
 
   html += '<div class="mp-wisdom">💡 Маркетинг — это кислород бизнеса. Для вашей ниши важно ПРАВИЛЬНОЕ распределение, а не больший бюджет.</div>';
