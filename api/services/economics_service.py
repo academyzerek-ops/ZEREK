@@ -761,7 +761,22 @@ def compute_block5_pnl(db, result, adaptive):
     profit_monthly_base = (pnl_base["net_profit"] // 12) - social_monthly
     income_from_business = profit_monthly_base
     entrepreneur_income_monthly = role_salary_monthly + income_from_business
-    mature_profit_monthly = _safe_int(mature.get("profit_monthly"), 0) - social_monthly
+    # R10 #2: mature_monthly считаем по тому же пути что fin.mature_profit
+    # на стр. 9 PDF (rev - cogs - tax - opex_total - social), чтобы оба
+    # API-поля совпадали. Раньше брали mature.profit_monthly без opex_total
+    # коррекции — отсюда 329K vs 315K в API. Округляем до 1K как в L.1.
+    rev_m = _safe_int(mature.get("revenue_monthly"), 0)
+    if rev_m > 0:
+        cogs_m_mature = int(rev_m * cogs_pct)
+        tax_m_mature = int(rev_m * tax_rate)
+        opex_total_mature = (
+            int(marketing_monthly) + int(other_opex_monthly)
+            + int(rent_monthly) + int(fot_monthly_full) + int(social_monthly)
+        )
+        true_mature_profit = rev_m - cogs_m_mature - tax_m_mature - opex_total_mature
+        mature_profit_monthly = int(round(max(0, true_mature_profit) / 1000) * 1000)
+    else:
+        mature_profit_monthly = _safe_int(mature.get("profit_monthly"), 0) - social_monthly
     mature_monthly = role_salary_monthly + mature_profit_monthly
 
     region_note = None

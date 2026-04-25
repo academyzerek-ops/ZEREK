@@ -127,14 +127,23 @@ def _compute_verdict(
     comfortable: int,
     safe: int,
 ) -> Dict[str, Any]:
-    """R8 H.1: единая позиция по капиталу через 5 зон.
+    """R8 H.1 + R10 #1 fix: единая позиция по капиталу через 5 зон.
 
-    Зоны (граничные множители вокруг CAPEX даны в ТЗ R8 H.1):
-      RED       capital < CAPEX × 0.9      «критически не хватает на запуск»
-      AMBER     0.9·CAPEX ≤ < 1.1·CAPEX    «хватает на запуск, на разгон — нет»
-      YELLOW    1.1·CAPEX ≤ < comfortable  «на запуск + часть разгона»
-      GREEN     comfortable ≤ < safe       «комфортный запас на разгон»
-      GREEN+    capital ≥ safe             «безопасный запас с подушкой»
+    Зоны:
+      RED       capital < CAPEX × 0.9                       «критически не хватает»
+      AMBER     0.9·CAPEX ≤ capital < yellow_threshold      «на запуск, на разгон — нет»
+      YELLOW    yellow_threshold ≤ capital < comfortable    «на запуск + часть разгона»
+      GREEN     comfortable ≤ capital < safe                «комфортный запас»
+      GREEN+    capital ≥ safe                              «безопасный запас с подушкой»
+
+    R10 канон границы AMBER→YELLOW:
+        yellow_threshold = capex + (comfortable - capex) / 3
+    Раньше (R8 ошибочно реализовала вариант A) было 1.1×CAPEX = 528K при
+    capex=480K. Сейчас при capex=480K и comfortable=1020K:
+        yellow_threshold = 480 + (1020-480)/3 = 660K
+        586K < 660K → AMBER (хватает на CAPEX + ~20% разгона — мало)
+        660K ≥ 660K → YELLOW
+        700K → YELLOW
 
     Возвращает три текста для одной и той же оценки:
       verdict_short   — одна-две строки для priorities на стр. «Итог»
@@ -174,6 +183,10 @@ def _compute_verdict(
     cap_txt = _fmt_kzt(capital)
     capex_txt = _fmt_kzt(capex)
     comf_txt = _fmt_kzt(comfortable)
+    # R10 #1: yellow_threshold = capex + (comfortable - capex) / 3.
+    # Канон: при capex=480K и comfortable=1020K порог = 660K. AMBER до
+    # 660K, YELLOW от 660K до comfortable. Раньше была 1.1×CAPEX (528K).
+    yellow_threshold = capex + (comfortable - capex) // 3
 
     # ── RED: критически не хватает даже на минимальный запуск ──
     if capital < int(capex * 0.9):
@@ -207,7 +220,7 @@ def _compute_verdict(
         }
 
     # ── AMBER: хватает на запуск, на разгон — нет ──
-    if capital < int(capex * 1.1):
+    if capital < yellow_threshold:
         ramp_gap = max(0, comfortable - capital)
         post_capex = capital - capex
         return {
