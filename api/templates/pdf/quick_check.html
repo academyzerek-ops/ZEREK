@@ -2301,34 +2301,21 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
 {#- ═══════════════════════════════════════════════════════════════
     PAGE 17 — СТРЕСС-ТЕСТ
     ═══════════════════════════════════════════════════════════════ -#}
+{# R7 E.3: вся стресс-страница на одной A4 — компактная вводная,
+   две колонки (таблица + Что делать), без отдельного callout
+   «Что такое чувствительность» сверху (он переехал в lede). -#}
 {% if stress %}
 <section class="page">
   <div class="page-eyebrow">{{ eyebrow('Устойчивость') }}</div>
   <h1 class="page-title">Стресс-тест</h1>
   <p class="page-lede">
-    Насколько упадёт ваша годовая прибыль, если один из параметров ухудшится.
-    Помогает увидеть самое уязвимое место бизнеса.
+    Насколько упадёт ваша годовая прибыль, если один из параметров
+    ухудшится. «Загрузка −20%» = клиентов на 20% меньше плана.
+    «Маркетинг +20%» = реклама подорожала или потеряла эффективность.
+    Чем больше цифра в колонке «Потеря/год», тем критичнее переменная.
   </p>
 
-  {# Round-5 B.3: объяснение стресс-теста простым языком до таблицы. -#}
-  <div class="avoid-break u-mt-s" style="padding: 12pt 14pt; background: var(--bg-2); border-left: 3pt solid var(--navy); border-radius: 3pt; margin-bottom: 14pt;">
-    <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1pt;">
-      Что такое чувствительность
-    </div>
-    <p class="u-small" style="margin: 0 0 6pt 0; line-height: 1.5; color: var(--ink-2);">
-      Любой бизнес зависит от нескольких ключевых переменных. Если одна
-      из них изменится в худшую сторону — как сильно упадёт ваша годовая
-      прибыль? В таблице ниже — сценарии «что если».
-    </p>
-    <p class="u-small" style="margin: 0; line-height: 1.5; color: var(--ink-2);">
-      «Загрузка −20%» значит клиентов пришло на 20% меньше плана.
-      «Маркетинг +20%» — реклама подорожала или стала менее эффективной.
-      Чем больше цифра в колонке «Потеря / год», тем критичнее эта
-      переменная — следите за ней еженедельно, не раз в квартал.
-    </p>
-  </div>
-
-  <div class="col-5-7">
+  <div class="col-5-7 u-mt-m">
     <div>
       <h3 class="sub-title">Базовая прибыль</h3>
       <table class="keyvals">
@@ -2337,10 +2324,8 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
           <td class="v">{{ stress.base_annual_profit | money_round }} ₸</td>
         </tr>
       </table>
-    </div>
 
-    <div>
-      <h3 class="sub-title">Чувствительность к параметрам</h3>
+      <h3 class="sub-title u-mt-m">Чувствительность</h3>
       <table class="data">
         <thead>
           <tr>
@@ -2361,31 +2346,26 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       </table>
 
       {% if stress.critical_param %}
-      <div class="callout red u-mt-m">
+      <div class="callout red u-mt-s" style="font-size: 10pt;">
         <div class="callout-title">Критичный параметр</div>
-        <strong>{{ stress.critical_param }}</strong> — самая уязвимая метрика.
-        Следите за ней еженедельно с первой недели работы.
+        <strong>{{ stress.critical_param }}</strong> — самая уязвимая метрика. Следите за ней еженедельно с первой недели работы.
       </div>
+      {% endif %}
+    </div>
 
-      {# Round-5 B.3: «Что делать с этой информацией» — практический
-         вывод после таблицы. -#}
-      <div class="avoid-break u-mt-s" style="padding: 12pt 14pt; background: var(--bg-2); border-left: 3pt solid var(--green); border-radius: 3pt;">
-        <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1pt;">
-          Что делать с этой информацией
-        </div>
-        <p class="u-small" style="margin: 0; line-height: 1.55; color: var(--ink-2);">
-          Найдите самую большую потерю в таблице — это ваша точка
-          наибольшего риска. Для вашей ниши это <strong>{{ stress.critical_param }}</strong>.
-          Если через 2-3 месяца работы вы видите, что этот параметр
-          ухудшается, это <strong>не</strong> «ещё подождём, разгонится» —
-          это красный флаг, срочно пересматривайте маркетинг и воронку.
-        </p>
-      </div>
+    <div>
+      {% if stress.critical_param %}
+      <h3 class="sub-title">Что делать с этим</h3>
+      <p class="u-small" style="line-height: 1.55; margin: 0 0 10pt 0; color: var(--ink-2);">
+        Самая уязвимая метрика для вашей ниши — <strong>{{ stress.critical_param }}</strong>.
+        Если через 2-3 месяца работы этот параметр ухудшается — это
+        <strong>не</strong> «ещё подождём», это красный флаг.
+      </p>
       {% endif %}
 
       {% if stress.recommendations %}
       <div class="insight u-mt-s">
-        <div class="insight-kicker">Что делать</div>
+        <div class="insight-kicker">Ключевые действия</div>
         <ul style="margin: 6pt 0 0 0; padding-left: 18pt; font-size: 10pt; line-height: 1.5;">
           {% for rec in stress.recommendations %}
           <li>{{ rec }}</li>
