@@ -335,10 +335,20 @@ def _build_cadq_ctx(result: dict) -> Optional[dict]:
             })
     elif isinstance(rb, list):
         reserve_items = rb
+    # R8 H.1: одна позиция по капиталу. Шаблон стр. 8 берёт verdict_full
+    # как основной текст, verdict_label как заголовок callout, verdict_color
+    # как CSS-класс. Старые verdict_text / verdict_level / gap_amount
+    # сохраняем для обратной совместимости (action_plan_service и т.п.).
     return {
         "minimum": int(ca.get("minimum") or 0),
         "comfortable": int(ca.get("comfortable") or 0),
         "safe": int(ca.get("safe") or 0),
+        "capital_zone": ca.get("capital_zone") or "AMBER",
+        "verdict_color": ca.get("verdict_color") or "amber",
+        "verdict_label": ca.get("verdict_label") or "",
+        "verdict_short": ca.get("verdict_short") or ca.get("verdict_message") or "",
+        "verdict_full": ca.get("verdict_full") or ca.get("verdict_message") or "",
+        # legacy aliases
         "verdict_level": ca.get("verdict_color") or ca.get("verdict_level") or "amber",
         "verdict_text": ca.get("verdict_message") or ca.get("verdict_text") or "",
         "gap_amount": int(ca.get("gap_amount") or 0),
@@ -420,53 +430,31 @@ def _build_vrd_priorities(result: dict) -> List[Dict[str, str]]:
     out: List[Dict[str, str]] = []
 
     # ── Приоритет 1: финансы ─────────────────────────────────────────
-    # R7 G.1: тон «факт + риск без диктата». Никаких «пополните»,
-    # «урежьте до эконом», «займите». Сообщаем что есть, что может
-    # произойти — решение оставляем клиенту.
+    # R8 H.1: одна позиция по капиталу — текст и заголовок берём из
+    # capital_service.verdict_short / verdict_label, чтобы стр. 3
+    # и стр. 8 говорили одно и то же про одну сумму. Никакой
+    # отдельной генерации текста здесь — иначе снова разъедется.
     ca = result.get("capital_adequacy") or {}
-    gap = int(ca.get("gap_amount") or 0)
-    reserve = int(ca.get("reserve_3_months") or 0)
-    inp_p = result.get("input") or {}
-    capital = int(inp_p.get("capital") or 0)
-    capex_p = int((result.get("block6") or {}).get("capex_needed") or 0)
-    if gap > 0:
-        capital_txt = f"{filter_money_round(capital)} ₸" if capital else "ваш капитал"
-        capex_txt = f"({filter_money_round(capex_p)} ₸)" if capex_p else ""
+    zone = ca.get("capital_zone") or "AMBER"
+    short_text = ca.get("verdict_short") or ""
+    if zone == "RED":
+        title = "Капитал ниже минимума"
+    elif zone in ("AMBER", "YELLOW"):
+        title = "Финансовая подушка"
+    elif zone in ("GREEN", "GREEN_PLUS"):
+        title = "Защита капитала"
+    else:
+        title = "Финансовая подушка"
+    if short_text:
+        out.append({"title": title, "detail": short_text})
+    else:
+        # Fallback — нет capital_adequacy в результате (капитал не указан).
         out.append({
             "title": "Финансовая подушка",
             "detail": (
-                f"Капитал {capital_txt} покрывает CAPEX {capex_txt} "
-                f"и часть разгона. До комфортного уровня не хватает "
-                f"{filter_money_round(gap)} ₸ — это разгонный маркетинг "
-                "М1-М3 и фиксированные расходы первых трёх месяцев, "
-                "пока выручка ещё не вышла на потолок. Это не приговор, "
-                "но это фактор риска: к М2-М3 вероятно потребуется "
-                "дополнительная сумма. Без неё выход в кассовый минус "
-                "на 2-3 месяце — типичный паттерн соло-старта без "
-                "подушки."
-            ),
-        })
-    elif reserve > 0:
-        out.append({
-            "title": "Резерв на разгон",
-            "detail": (
-                f"Минимальная подушка для разгона по вашей нише — "
-                f"{filter_money_round(reserve)} ₸. В первые 3 месяца "
-                "маркетинг, соцплатежи и расходники идут с первого "
-                "дня, а выручка выходит на мощность только к 4-му "
-                "месяцу. Резерв нужен чтобы дойти до выхода без "
-                "кассовых разрывов."
-            ),
-        })
-    else:
-        out.append({
-            "title": "Защита капитала",
-            "detail": (
-                "Капитала достаточно для уверенного старта. Типичный "
-                "риск на этом уровне — потратить подушку до открытия "
-                "на «красоту» (премиум-оборудование, дорогой ремонт). "
-                "К 3-му месяцу часть капитала желательно держать "
-                "нетронутой — это страховка от внезапных расходов."
+                "Укажите ваш стартовый капитал, чтобы получить "
+                "персональную оценку достаточности и понять, нужен "
+                "ли резерв на разгон."
             ),
         })
 

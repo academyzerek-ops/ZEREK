@@ -127,13 +127,41 @@ def _compute_verdict(
     comfortable: int,
     safe: int,
 ) -> Dict[str, Any]:
-    """Определяет уровень и формирует сообщение для клиента."""
+    """R8 H.1: единая позиция по капиталу через 5 зон.
+
+    Зоны (граничные множители вокруг CAPEX даны в ТЗ R8 H.1):
+      RED       capital < CAPEX × 0.9      «критически не хватает на запуск»
+      AMBER     0.9·CAPEX ≤ < 1.1·CAPEX    «хватает на запуск, на разгон — нет»
+      YELLOW    1.1·CAPEX ≤ < comfortable  «на запуск + часть разгона»
+      GREEN     comfortable ≤ < safe       «комфортный запас на разгон»
+      GREEN+    capital ≥ safe             «безопасный запас с подушкой»
+
+    Возвращает три текста для одной и той же оценки:
+      verdict_short   — одна-две строки для priorities на стр. «Итог»
+      verdict_message — компактный текст для блока «Достаточность капитала»
+      verdict_full    — полный текст с числами для правого блока стр. 8
+
+    Поля verdict_level / gap_amount / gap_to_level сохранены для
+    обратной совместимости (action_plan_service, verdict_service).
+
+    Тон: «критически» — только в RED. «дефицит» / «не хватает» вне RED
+    запрещены (G.3 R7 + H.1 R8). Заменяются на «желательно добрать».
+    """
     if user_capital is None or user_capital == 0:
         return {
+            "capital_zone": "UNKNOWN",
             "verdict_level": "unknown",
             "verdict_color": "gray",
             "verdict_label": "Укажите капитал",
+            "verdict_short": (
+                "Капитал не указан. Укажите сумму, чтобы получить "
+                "персональную оценку достаточности."
+            ),
             "verdict_message": (
+                "Укажите ваш стартовый капитал чтобы получить "
+                "персональную оценку достаточности."
+            ),
+            "verdict_full": (
                 "Укажите ваш стартовый капитал чтобы получить "
                 "персональную оценку достаточности."
             ),
@@ -141,60 +169,184 @@ def _compute_verdict(
             "gap_to_level": None,
         }
 
-    if user_capital >= safe:
-        return {
-            "verdict_level": "safe",
-            "verdict_color": "green",
-            "verdict_label": "Безопасно",
-            "verdict_message": (
-                "У вас есть запас на разгон и сезонные провалы. "
-                "Это редкая ситуация — большинство предпринимателей "
-                "стартуют с меньшими суммами."
-            ),
-            "gap_amount": 0,
-            "gap_to_level": None,
-        }
+    capital = int(user_capital)
+    capex = int(minimum)
+    cap_txt = _fmt_kzt(capital)
+    capex_txt = _fmt_kzt(capex)
+    comf_txt = _fmt_kzt(comfortable)
 
-    if user_capital >= comfortable:
-        gap = safe - user_capital
+    # ── RED: критически не хватает даже на минимальный запуск ──
+    if capital < int(capex * 0.9):
+        gap = capex - capital
         return {
-            "verdict_level": "comfortable",
-            "verdict_color": "green",
-            "verdict_label": "Комфортно",
+            "capital_zone": "RED",
+            "verdict_level": "insufficient",
+            "verdict_color": "red",
+            "verdict_label": "Критически не хватает",
+            "verdict_short": (
+                f"Не хватает {_fmt_kzt(gap)} ₸ даже на минимальный запуск "
+                f"({capex_txt} ₸). Без этой суммы открыть бизнес "
+                "физически невозможно."
+            ),
             "verdict_message": (
-                "На разгон хватает. Но в худший сезонный месяц "
-                f"может быть тяжело — держите резерв ещё {_fmt_kzt(gap)} ₸ "
-                "на экстренные расходы."
+                f"Капитал {cap_txt} ₸ ниже минимума на запуск "
+                f"({capex_txt} ₸) — не хватает {_fmt_kzt(gap)} ₸. "
+                "Без этой суммы CAPEX (оборудование, обучение, "
+                "первый месяц аренды) физически не закрыть."
+            ),
+            "verdict_full": (
+                f"Ваш капитал {cap_txt} ₸ ниже минимума на запуск "
+                f"({capex_txt} ₸). Не хватает {_fmt_kzt(gap)} ₸ — "
+                "это деньги на CAPEX: оборудование, обучение, материалы, "
+                "первый платёж за аренду или место. Без этих расходов "
+                "открыться физически невозможно. С таким капиталом "
+                "начинать рано: либо найти недостающую сумму, либо "
+                "пересмотреть формат на более лёгкий (например, дома "
+                "вместо аренды места)."
             ),
             "gap_amount": gap,
-            "gap_to_level": "safe",
+            "gap_to_level": "minimum",
         }
 
-    if user_capital >= minimum:
-        gap = comfortable - user_capital
+    # ── AMBER: хватает на запуск, на разгон — нет ──
+    if capital < int(capex * 1.1):
+        ramp_gap = max(0, comfortable - capital)
+        post_capex = capital - capex
         return {
+            "capital_zone": "AMBER",
             "verdict_level": "risky",
-            "verdict_color": "yellow",
-            "verdict_label": "Рискованно",
-            "verdict_message": (
-                "Капитала хватает на стартовые вложения, но НЕ на "
-                "разгон. Первые 3 месяца вы будете в минусе — без "
-                f"подушки рискуете закрыться. Нужно ещё {_fmt_kzt(gap)} ₸ "
-                "чтобы дожить до выхода на мощность."
+            "verdict_color": "amber",
+            "verdict_label": "Хватает на запуск, на разгон — нет",
+            "verdict_short": (
+                f"Капитал {cap_txt} ₸ покрывает CAPEX ({capex_txt} ₸) "
+                f"и оставляет {_fmt_kzt(post_capex)} ₸ на старт разгона. "
+                f"До комфортного уровня желательно добрать {_fmt_kzt(ramp_gap)} ₸ "
+                "к М2-М3 — это разница между спокойным и стрессовым "
+                "прохождением разгона."
             ),
-            "gap_amount": gap,
+            "verdict_message": (
+                f"Капитал {cap_txt} ₸ покрывает CAPEX ({capex_txt} ₸). "
+                f"На разгон М1-М3 желательно добрать {_fmt_kzt(ramp_gap)} ₸ — "
+                "иначе высокий риск кассового разрыва на 2-3 месяце "
+                "если воронка не сработает с первого раза."
+            ),
+            "verdict_full": (
+                f"Ваш капитал {cap_txt} ₸ покрывает CAPEX полностью "
+                f"({capex_txt} ₸) и оставляет {_fmt_kzt(post_capex)} ₸ "
+                "на начало разгона.\n\n"
+                f"До комфортного уровня ({comf_txt} ₸) — желательно "
+                f"добрать {_fmt_kzt(ramp_gap)} ₸, ориентируясь на М2-М3 "
+                "как точку, когда подушка особенно нужна: именно в этот "
+                "момент маркетинг разгона выходит на пик, а выручка ещё "
+                "не достигла потолка.\n\n"
+                "Это не блокер запуска — это фактор риска. С таким "
+                "капиталом стартовать можно, но сценарий «спокойный "
+                "разгон» переходит в сценарий «напряжённый разгон»: "
+                "меньше права на ошибку с маркетингом, выше вероятность "
+                "кассового разрыва на 2-3 месяце если воронка не "
+                "сработает с первого раза."
+            ),
+            "gap_amount": ramp_gap,
             "gap_to_level": "comfortable",
         }
 
-    gap = minimum - user_capital
+    # ── YELLOW: на запуск + часть разгона ──
+    if capital < comfortable:
+        ramp_gap = comfortable - capital
+        ramp_reserve = comfortable - capex  # резерв на разгон полностью
+        # доля разгонного резерва, покрытая капиталом сверх CAPEX
+        post_capex = capital - capex
+        if ramp_reserve > 0:
+            ramp_pct = int(round(post_capex / ramp_reserve * 100))
+        else:
+            ramp_pct = 0
+        return {
+            "capital_zone": "YELLOW",
+            "verdict_level": "risky",
+            "verdict_color": "yellow",
+            "verdict_label": "На запуск и часть разгона хватает",
+            "verdict_short": (
+                f"Капитал {cap_txt} ₸ покрывает запуск и около {ramp_pct}% "
+                "разгонного резерва. До комфортного уровня желательно "
+                f"добрать {_fmt_kzt(ramp_gap)} ₸ — ориентируйтесь на М2-М3 "
+                "как точку, когда подушка особенно нужна."
+            ),
+            "verdict_message": (
+                f"Капитал {cap_txt} ₸ покрывает CAPEX и часть разгона "
+                f"(около {ramp_pct}% резерва М1-М3). До комфортного "
+                f"уровня желательно добрать {_fmt_kzt(ramp_gap)} ₸ к М2-М3."
+            ),
+            "verdict_full": (
+                f"Ваш капитал {cap_txt} ₸ покрывает CAPEX ({capex_txt} ₸) "
+                f"и около {ramp_pct}% разгонного резерва. До комфортного "
+                f"уровня ({comf_txt} ₸) желательно добрать "
+                f"{_fmt_kzt(ramp_gap)} ₸.\n\n"
+                "Ориентируйтесь на М2-М3 как точку, когда подушка "
+                "особенно нужна: маркетинг разгона выходит на пик, а "
+                "выручка ещё не достигла потолка. С текущим капиталом "
+                "разгон проходим, но без права на ошибку: если воронка "
+                "не сработает с первого раза, нужны дополнительные "
+                "средства в районе М2-М3."
+            ),
+            "gap_amount": ramp_gap,
+            "gap_to_level": "comfortable",
+        }
+
+    # ── GREEN: комфортный запас на разгон ──
+    if capital < safe:
+        cushion = safe - capital
+        return {
+            "capital_zone": "GREEN",
+            "verdict_level": "comfortable",
+            "verdict_color": "green",
+            "verdict_label": "Комфортный запас на разгон",
+            "verdict_short": (
+                f"Капитал {cap_txt} ₸ покрывает CAPEX и весь резерв "
+                "разгона М1-М3. Сезонные просадки потребуют дисциплины, "
+                "но не угрозы."
+            ),
+            "verdict_message": (
+                f"Капитала достаточно для комфортного прохождения "
+                "разгона. Сезонные просадки потребуют дисциплины, "
+                "но не угрозы."
+            ),
+            "verdict_full": (
+                f"Ваш капитал {cap_txt} ₸ покрывает CAPEX ({capex_txt} ₸) "
+                f"и весь резерв разгона М1-М3 — комфортный уровень "
+                f"{comf_txt} ₸ пройден.\n\n"
+                "До безопасного уровня (с буфером на сезонные просадки) "
+                f"остаётся {_fmt_kzt(cushion)} ₸. Это не критично — "
+                "сезонные провалы потребуют дисциплины (контроль "
+                "OPEX в худший месяц), но не угрожают существованию "
+                "бизнеса."
+            ),
+            "gap_amount": cushion,
+            "gap_to_level": "safe",
+        }
+
+    # ── GREEN+: безопасный запас с подушкой на просадки ──
     return {
-        "verdict_level": "insufficient",
-        "verdict_color": "red",
-        "verdict_label": "Недостаточно",
-        "verdict_message": (
-            f"Не хватает даже на стартовые вложения. Найти ещё "
-            f"{_fmt_kzt(gap)} ₸ или пересмотреть формат на более лёгкий."
+        "capital_zone": "GREEN_PLUS",
+        "verdict_level": "safe",
+        "verdict_color": "green",
+        "verdict_label": "Безопасный запас с подушкой",
+        "verdict_short": (
+            f"Капитал {cap_txt} ₸ покрывает запуск, разгон и сезонные "
+            "просадки. Можно проходить год спокойно."
         ),
-        "gap_amount": gap,
-        "gap_to_level": "minimum",
+        "verdict_message": (
+            "Капитал с подушкой. Можете спокойно проходить разгон "
+            "и сезонные просадки."
+        ),
+        "verdict_full": (
+            f"Ваш капитал {cap_txt} ₸ покрывает CAPEX ({capex_txt} ₸), "
+            f"полный резерв разгона ({comf_txt} ₸) и сезонный буфер. "
+            "Можете спокойно проходить разгон и сезонные просадки.\n\n"
+            "На этом уровне типичный риск — потратить подушку до "
+            "открытия на «красоту» (премиум-оборудование, дорогой "
+            "ремонт). Часть капитала желательно держать нетронутой "
+            "до М4 как страховку от непредвиденных расходов."
+        ),
+        "gap_amount": 0,
+        "gap_to_level": None,
     }

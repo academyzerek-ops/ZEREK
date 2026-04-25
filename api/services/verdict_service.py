@@ -47,34 +47,45 @@ _log = logging.getLogger("zerek.verdict_service")
 
 
 def _score_capital(capital_own, capex_needed):
-    """Баллы за капитал vs CAPEX-бенчмарк (0-3)."""
+    """Баллы за капитал vs CAPEX-бенчмарк (0-3).
+
+    R8 H.1: фразы синхронизированы с зонами capital_service:
+      ratio < 0.9        → score 0  (RED)    «критически не хватает на запуск»
+      0.9 ≤ ratio < 1.1  → score 1  (AMBER)  «хватает на запуск, на разгон — нет»
+      1.1 ≤ ratio < 2.0  → score 2  (YELLOW) «на запуск и часть разгона хватает»
+      ratio ≥ 2.0        → score 3  (GREEN+) «комфортный запас на разгон»
+
+    «Капитал с запасом» вне зон GREEN/GREEN+ не возвращается — это давало
+    противоречие с правым блоком стр. 8 при ratio≈1.2 (попадание в AMBER).
+    Слово «дефицит» — только в RED.
+    """
     if not capex_needed:
         return {"score": 1, "label": "Капитал vs ориентир",
                 "note": "Нет данных по ориентиру стартовых вложений"}
     if capital_own is None or capital_own == 0:
-        # UX #5: убираем «капитал не указан» — дублируется с capital_adequacy
-        # и паспортом бизнеса. Оставляем только сам ориентир CAPEX.
         return {"score": 2, "label": "Капитал vs ориентир",
                 "note": f"Ориентир стартовых вложений: {int(capex_needed):,} ₸".replace(",", " ")}
     ratio = capital_own / capex_needed
-    t_excel, t_match, t_low = SCORING_CAPITAL
-    if ratio >= t_excel:
-        return {"score": 3, "label": "Капитал vs ориентир",
-                "note": f"Капитал с запасом: на {int((ratio-1)*100)}% выше ориентира",
-                "ratio": ratio}
-    if ratio >= t_match:
-        return {"score": 2, "label": "Капитал vs ориентир",
-                "note": "Капитал соответствует ориентиру",
-                "ratio": ratio}
-    if ratio >= t_low:
-        return {"score": 1, "label": "Капитал vs ориентир",
-                "note": f"Капитал на грани: дефицит {int((1-ratio)*100)}%",
+    if ratio < 0.9:
+        return {"score": 0, "label": "Капитал vs ориентир",
+                "note": "Критически не хватает на минимальный запуск",
                 "ratio": ratio,
-                "gap_kzt": int(capex_needed - capital_own)}
-    return {"score": 0, "label": "Капитал vs ориентир",
-            "note": f"Критический дефицит капитала: {int((1-ratio)*100)}%",
+                "gap_kzt": int(capex_needed - capital_own),
+                "zone": "RED"}
+    if ratio < 1.1:
+        return {"score": 1, "label": "Капитал vs ориентир",
+                "note": "Хватает на запуск, на разгон — желательно добрать",
+                "ratio": ratio,
+                "zone": "AMBER"}
+    if ratio < 2.0:
+        return {"score": 2, "label": "Капитал vs ориентир",
+                "note": "Хватает на запуск и часть разгона",
+                "ratio": ratio,
+                "zone": "YELLOW"}
+    return {"score": 3, "label": "Капитал vs ориентир",
+            "note": "Комфортный запас на разгон и сезонные просадки",
             "ratio": ratio,
-            "gap_kzt": int(capex_needed - capital_own)}
+            "zone": "GREEN"}
 
 
 def _score_roi(profit_year, total_investment, is_solo=False):
@@ -233,15 +244,21 @@ def _strength_text(p):
 
 def _risk_text(p, context):
     """Тезис для риска — с конкретной рекомендацией."""
-    # R7 G.3: тон «факт + риск», без диктата «найдите/урежьте/пополните».
+    # R7 G.3 + R8 H.1: тон «факт + риск», без диктата и без «дефицит» вне RED.
+    # Для капитала возвращаем согласованный с зоной note (см. _score_capital).
     label = p.get("label", "")
     if label == "Капитал vs ориентир":
-        gap = p.get("gap_kzt")
-        if gap:
+        zone = p.get("zone")
+        if zone == "RED":
+            gap = p.get("gap_kzt") or 0
             return (
-                f"Дефицит капитала {_fmt_kzt(gap)}. На текущем "
-                "уровне выход в кассовый минус на 2-3 месяце — "
-                "типичный паттерн соло-старта без подушки."
+                f"Не хватает {_fmt_kzt(gap)} даже на минимальный "
+                "запуск — без этой суммы открыться физически невозможно."
+            )
+        if zone == "AMBER":
+            return (
+                "Хватает на запуск, на разгон М1-М3 желательно добрать — "
+                "иначе высокий риск кассового разрыва на 2-3 месяце."
             )
         return p.get("note") or "Бюджет не соответствует формату."
     if label == "Точка безубыточности":

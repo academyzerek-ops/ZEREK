@@ -1442,20 +1442,20 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       {% endif %}
 
       {% if inp.capital %}
-      {% set verdict_color = cadq.verdict_level | default('amber') %}
-      <div class="callout {{ verdict_color }} u-mt-m">
+      {# R8 H.1: одна позиция по капиталу. Заголовок (verdict_label),
+         цвет (verdict_color: red/amber/yellow/green) и полный текст
+         (verdict_full) — всё из capital_service. Дублирующий блок
+         «Не хватает X ₸» убран — числа уже внутри verdict_full. #}
+      {% set vc = cadq.verdict_color | default('amber') %}
+      {% set callout_class = 'red' if vc == 'red' else ('green' if vc == 'green' else 'amber') %}
+      {% set dot_color = '#D64545' if vc == 'red' else ('#48A068' if vc == 'green' else ('#E8A33D' if vc == 'amber' else '#D9B23A')) %}
+      <div class="callout {{ callout_class }} u-mt-m">
         <div class="callout-title">
-          {% if verdict_color == 'green' %}{{ icon_circle('#48A068') }} Хватает для безопасного старта
-          {% elif verdict_color == 'amber' %}{{ icon_circle('#E8A33D') }} Рискованно
-          {% else %}{{ icon_circle('#D64545') }} Критически мало
-          {% endif %}
+          {{ icon_circle(dot_color) }} {{ cadq.verdict_label }}
         </div>
-        {{ cadq.verdict_text }}
-        {% if cadq.gap_amount and cadq.gap_amount > 0 %}
-        <br><br><strong>Не хватает: {{ cadq.gap_amount | money_round }} ₸</strong> —
-        {% if cadq.gap_to == 'comfortable' %}до комфортного уровня
-        {% else %}до безопасного уровня{% endif %}.
-        {% endif %}
+        {% for paragraph in (cadq.verdict_full | default(cadq.verdict_text)).split('\n\n') %}
+        <p style="margin: {% if loop.first %}0{% else %}8pt{% endif %} 0 0 0;">{{ paragraph }}</p>
+        {% endfor %}
       </div>
       {% else %}
       <div class="callout navy u-mt-m">
