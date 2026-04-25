@@ -2153,9 +2153,18 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       {% endif %}
 
       {% if mp.content_advice_ru %}
-      <div class="callout amber u-mt-s">
-        <div class="callout-title">Про контент</div>
-        {{ mp.content_advice_ru }}
+      {# R8 I.4: расширенный блок «Про контент и бюджет» вместо узкого
+         callout. Для визуальных ниш текст содержит два пути с цифрами;
+         параграфы разделены '\n\n', <strong> уже встроены в текст. #}
+      <div class="avoid-break u-mt-s" style="padding: 14pt 16pt; background: var(--bg-2); border-left: 3pt solid var(--gold); border-radius: 3pt;">
+        <div class="u-upper u-tiny u-gold" style="margin-bottom: 8pt; font-weight: 700; letter-spacing: 1pt;">
+          Про контент и бюджет
+        </div>
+        {% for paragraph in mp.content_advice_ru.split('\n\n') %}
+        <p class="u-small" style="margin: {% if loop.first %}0{% else %}8pt{% endif %} 0 0 0; line-height: 1.55; color: var(--ink-2);">
+          {{ paragraph | safe }}
+        </p>
+        {% endfor %}
       </div>
       {% endif %}
     </div>
