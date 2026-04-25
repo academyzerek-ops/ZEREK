@@ -1,0 +1,79 @@
+# ───────────────────────────────────────────────────────────────────
+# ZEREK PDF Auditor · сценарии для прогона (R11)
+# ───────────────────────────────────────────────────────────────────
+# Старт: маникюр × HOME × разные города/капиталы. Покрываем:
+#   · все 4 зоны капитала (RED/AMBER/YELLOW/GREEN)
+#   · все 6 градаций дохода (LOW/MODEST/MIDDLE/DECENT/HIGH/VERY_HIGH)
+#   · региональный разброс ЗП (от Туркестана 324K до Аktау 658K)
+#   · 2 уровня опыта (none / some)
+# Расширять по мере добавления ниш — BARBER, BROW, SUGARING и т.д.
+# ───────────────────────────────────────────────────────────────────
+
+# ═══ R10 baseline — должны давать 0 critical/high (контроль false positives) ═══
+
+- id: baseline_astana_700k_yellow_modest
+  inputs: {niche: MANICURE, format: HOME, city: astana,    capital: 700000,  experience: none, start_month: 5}
+
+- id: baseline_astana_350k_red_modest
+  inputs: {niche: MANICURE, format: HOME, city: astana,    capital: 350000,  experience: none, start_month: 5}
+
+- id: baseline_astana_1100k_green_modest
+  inputs: {niche: MANICURE, format: HOME, city: astana,    capital: 1100000, experience: none, start_month: 5}
+
+- id: baseline_aktobe_no_capital_middle
+  inputs: {niche: MANICURE, format: HOME, city: aktobe,    capital: 0,       experience: some, start_month: 5}
+
+- id: baseline_turkestan_500k_decent
+  inputs: {niche: MANICURE, format: HOME, city: turkestan, capital: 500000,  experience: none, start_month: 5}
+
+# ═══ Региональный охват (15 городов API + 5 не выгружены, fallback) ═══
+
+- id: city_almaty_700k
+  inputs: {niche: MANICURE, format: HOME, city: almaty,      capital: 700000, experience: none, start_month: 5}
+
+- id: city_shymkent_500k
+  inputs: {niche: MANICURE, format: HOME, city: shymkent,    capital: 500000, experience: none, start_month: 5}
+
+- id: city_atyrau_700k
+  inputs: {niche: MANICURE, format: HOME, city: atyrau,      capital: 700000, experience: none, start_month: 5}
+
+- id: city_aktau_700k
+  inputs: {niche: MANICURE, format: HOME, city: aktau,       capital: 700000, experience: none, start_month: 5}
+
+- id: city_kostanay_500k
+  inputs: {niche: MANICURE, format: HOME, city: kostanay,    capital: 500000, experience: none, start_month: 5}
+
+- id: city_kyzylorda_500k
+  inputs: {niche: MANICURE, format: HOME, city: kyzylorda,   capital: 500000, experience: none, start_month: 5}
+
+- id: city_pavlodar_500k
+  inputs: {niche: MANICURE, format: HOME, city: pavlodar,    capital: 500000, experience: none, start_month: 5}
+
+- id: city_taraz_500k
+  inputs: {niche: MANICURE, format: HOME, city: taraz,       capital: 500000, experience: none, start_month: 5}
+
+- id: city_uralsk_500k
+  inputs: {niche: MANICURE, format: HOME, city: uralsk,      capital: 500000, experience: none, start_month: 5}
+
+- id: city_oskemen_500k
+  inputs: {niche: MANICURE, format: HOME, city: oskemen,     capital: 500000, experience: none, start_month: 5}
+
+- id: city_semey_500k
+  inputs: {niche: MANICURE, format: HOME, city: semey,       capital: 500000, experience: none, start_month: 5}
+
+- id: city_kokshetau_500k
+  inputs: {niche: MANICURE, format: HOME, city: kokshetau,   capital: 500000, experience: none, start_month: 5}
+
+- id: city_petropavl_500k
+  inputs: {niche: MANICURE, format: HOME, city: petropavl,   capital: 500000, experience: none, start_month: 5}
+
+# ═══ Граничные случаи для регрессии правил аудитора ═══
+
+- id: boundary_astana_586k_amber
+  inputs: {niche: MANICURE, format: HOME, city: astana,      capital: 586000, experience: none, start_month: 5}
+
+- id: boundary_astana_660k_yellow
+  inputs: {niche: MANICURE, format: HOME, city: astana,      capital: 660000, experience: none, start_month: 5}
+
+- id: boundary_astana_with_exp_370k_capex
+  inputs: {niche: MANICURE, format: HOME, city: astana,      capital: 700000, experience: some, start_month: 5}

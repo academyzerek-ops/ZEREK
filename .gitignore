@@ -12,3 +12,6 @@ docs/refactor_history/
 
 # pytest
 .pytest_cache/
+
+# R11 PDF Audit output
+audit/output/

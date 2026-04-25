@@ -1,0 +1,58 @@
+name: PDF Audit
+
+on:
+  workflow_dispatch:        # ручной запуск кнопкой
+  schedule:
+    - cron: '0 2 * * *'     # каждую ночь в 02:00 UTC = 07:00 Астана
+  pull_request:
+    branches: [main]
+    paths:
+      - 'api/**'
+      - 'config/**'
+      - 'audit/**'
+      - 'data/kz/**'
+      - 'knowledge/kz/**'
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install system deps (poppler-utils for pdftotext, weasyprint deps)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils libpango-1.0-0 libpangoft2-1.0-0
+
+      - name: Install Python deps
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run audit (use prod API на CI чтобы не зависеть от WeasyPrint)
+        # На CI WeasyPrint требует libgobject и др. — проще поднять prod-API.
+        # Локально: для скорости можно использовать локальный рендер.
+        run: python3 -m audit.auditor --use-prod --critical-only-exit
+
+      - name: Upload findings CSV
+        if: always()  # даже если audit упал — выгружаем CSV для разбора
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-findings
+          path: audit/output/findings_*.csv
+          if-no-files-found: warn
+
+      - name: Upload PDFs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-pdfs
+          path: audit/output/pdfs/*.pdf
+          if-no-files-found: warn
