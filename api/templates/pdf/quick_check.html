@@ -1519,14 +1519,10 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       </div>
       {% endif %}
 
-      <div class="insight u-mt-m avoid-break">
-        <div class="insight-kicker">Мудрость консультанта</div>
-        <p>
-          Запас важнее красивого оборудования. Лучше закупить минимум
-          и иметь подушку, чем вложить всё в <em>премиум</em> и закрыться
-          через 4 месяца из-за кассового разрыва.
-        </p>
-      </div>
+      {# R8 (post-comment): «Мудрость консультанта» удалена — она
+         повторяла идею verdict_full («запас важнее красивого
+         оборудования»), и из-за неё последний блок переполнял стр. 7
+         на стр. 8. -#}
     </div>
   </div>
 </section>
@@ -2115,15 +2111,15 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       {% endif %}
 
       {% if mp.content_advice_ru %}
-      {# R8 I.4: расширенный блок «Про контент и бюджет» вместо узкого
-         callout. Для визуальных ниш текст содержит два пути с цифрами;
-         параграфы разделены '\n\n', <strong> уже встроены в текст. #}
-      <div class="avoid-break u-mt-s" style="padding: 14pt 16pt; background: var(--bg-2); border-left: 3pt solid var(--gold); border-radius: 3pt;">
-        <div class="u-upper u-tiny u-gold" style="margin-bottom: 8pt; font-weight: 700; letter-spacing: 1pt;">
+      {# R8 I.4 + post-comment: «Про контент и бюджет» — макс компактно
+         (padding 8pt, шрифт 9pt, line-height 1.4) чтобы помещалось в
+         правую колонку маркетинга после phases + channels + callout. #}
+      <div class="avoid-break u-mt-s" style="padding: 8pt 12pt; background: var(--bg-2); border-left: 3pt solid var(--gold); border-radius: 3pt;">
+        <div class="u-upper u-tiny u-gold" style="margin-bottom: 4pt; font-weight: 700; letter-spacing: 1pt;">
           Про контент и бюджет
         </div>
         {% for paragraph in mp.content_advice_ru.split('\n\n') %}
-        <p class="u-small" style="margin: {% if loop.first %}0{% else %}8pt{% endif %} 0 0 0; line-height: 1.55; color: var(--ink-2);">
+        <p style="margin: {% if loop.first %}0{% else %}5pt{% endif %} 0 0 0; font-size: 9pt; line-height: 1.4; color: var(--ink-2);">
           {{ paragraph | safe }}
         </p>
         {% endfor %}
