@@ -735,8 +735,6 @@ RENDERERS.niche = function(root){
   var html = '<div class="step">' +
     '<div class="step-kicker">Ниша</div>' +
     '<h2>Какой бизнес открываете?</h2>' +
-    '<div class="step-desc">'+Object.keys(niches).length+' ниш по категориям. Выберите одну.</div>' +
-    '<div class="search-in"><input id="niche-search" placeholder="Поиск ниши…" oninput="filterNiches(this.value)" autocomplete="off"></div>' +
     '<div id="niche-list">';
   catOrder.forEach(function(c){
     var m = cats[c] || {};
