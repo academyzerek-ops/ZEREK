@@ -1103,54 +1103,51 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
   <div class="page-eyebrow">{{ eyebrow('Навигатор') }}</div>
   <h1 class="page-title">Как построен этот отчёт</h1>
 
+  {# R8 nav-fix: навигатор в полную ширину страницы, чтобы описания
+     помещались в 1 строку. «Откуда цифры» и «Границы точности» —
+     ниже в col2. Раньше навигатор был в левой половине col2 (~85mm
+     полезных) и описания типа «характер направления + три приоритета»
+     не помещались. Теперь полные ~170mm: 9mm + 40mm + ~120mm на
+     описание — всё в 1 строку. #}
+  <h3 class="sub-title u-mt-m">Что внутри</h3>
+  <div class="nav-toc" style="font-family: var(--sans); font-size: 9.5pt; line-height: 1.5; color: var(--ink-2); margin-bottom: 14pt;">
+    <div style="display: grid; grid-template-columns: 9mm 40mm 1fr; column-gap: 8pt; row-gap: 6pt; align-items: baseline;">
+      <span style="color: var(--navy); font-weight: 600;">01</span><span style="color: var(--navy); font-weight: 600;">Паспорт</span><span>параметры расчёта</span>
+      <span style="color: var(--navy); font-weight: 600;">02</span><span style="color: var(--navy); font-weight: 600;">Итог</span><span>характер направления + три приоритета</span>
+      <span style="color: var(--navy); font-weight: 600;">03</span><span style="color: var(--navy); font-weight: 600;">Ключевые цифры</span><span>шесть метрик одного взгляда</span>
+      <span style="color: var(--navy); font-weight: 600;">04</span><span style="color: var(--navy); font-weight: 600;">Инвестиции</span><span>структура CAPEX по статьям</span>
+      <span style="color: var(--navy); font-weight: 600;">05</span><span style="color: var(--navy); font-weight: 600;">Капитал</span><span>достаточность и резерв на разгон</span>
+      <span style="color: var(--navy); font-weight: 600;">06</span><span style="color: var(--navy); font-weight: 600;">Расходы</span><span>OPEX и юнит-экономика</span>
+      <span style="color: var(--navy); font-weight: 600;">07</span><span style="color: var(--navy); font-weight: 600;">Выручка</span><span>финансы за год в трёх сценариях</span>
+      <span style="color: var(--navy); font-weight: 600;">08</span><span style="color: var(--navy); font-weight: 600;">Год в деталях</span><span>помесячная динамика и разгон</span>
+      <span style="color: var(--navy); font-weight: 600;">09</span><span style="color: var(--navy); font-weight: 600;">Сезонность</span><span>пики и просадки в году</span>
+      <span style="color: var(--navy); font-weight: 600;">10</span><span style="color: var(--navy); font-weight: 600;">Маркетинг</span><span>воронка, бюджет, каналы, ретеншен</span>
+      <span style="color: var(--navy); font-weight: 600;">11</span><span style="color: var(--navy); font-weight: 600;">Кадры</span><span>устойчивый и предельный потолок</span>
+      <span style="color: var(--navy); font-weight: 600;">12</span><span style="color: var(--navy); font-weight: 600;">Устойчивость</span><span>стресс-тест по 5 параметрам</span>
+      <span style="color: var(--navy); font-weight: 600;">13</span><span style="color: var(--navy); font-weight: 600;">Риски</span><span>главные риски первого года</span>
+      <span style="color: var(--navy); font-weight: 600;">14</span><span style="color: var(--navy); font-weight: 600;">Налоги</span><span>форма, режим, годовая нагрузка</span>
+      <span style="color: var(--navy); font-weight: 600;">15</span><span style="color: var(--navy); font-weight: 600;">Горизонт</span><span>что будет через 2-3 года</span>
+      <span style="color: var(--navy); font-weight: 600;">16</span><span style="color: var(--navy); font-weight: 600;">Дальше</span><span>следующий продукт ZEREK</span>
+    </div>
+  </div>
+
   <div class="col2 u-mt-m">
     <div>
-      <h3 class="sub-title">Что внутри</h3>
-      <p class="u-small u-muted" style="margin-bottom: 8pt;">
-        Краткий путеводитель по разделам отчёта.
-      </p>
-      {# R8 H.3 + post-comment: навигатор в 3 колонки — номер, название
-         и описание. Средняя колонка 38mm чтобы длинные названия
-         («Ключевые цифры», «Год в деталях», «Устойчивость») влезали
-         в одну строку. Все ячейки align-self: baseline — даже если
-         что-то перенесётся, описание остаётся справа на той же
-         базовой линии, а не уходит ПОД название. #}
-      <div class="nav-toc" style="font-family: var(--sans); font-size: 9pt; line-height: 1.45; color: var(--ink-2);">
-        <div style="display: grid; grid-template-columns: 9mm 38mm 1fr; column-gap: 6pt; row-gap: 7pt; align-items: baseline;">
-          <span style="color: var(--navy); font-weight: 600;">01</span><span style="color: var(--navy); font-weight: 600;">Паспорт</span><span>параметры расчёта</span>
-          <span style="color: var(--navy); font-weight: 600;">02</span><span style="color: var(--navy); font-weight: 600;">Итог</span><span>характер направления + три приоритета</span>
-          <span style="color: var(--navy); font-weight: 600;">03</span><span style="color: var(--navy); font-weight: 600;">Ключевые цифры</span><span>шесть метрик одного взгляда</span>
-          <span style="color: var(--navy); font-weight: 600;">04</span><span style="color: var(--navy); font-weight: 600;">Инвестиции</span><span>структура CAPEX по статьям</span>
-          <span style="color: var(--navy); font-weight: 600;">05</span><span style="color: var(--navy); font-weight: 600;">Капитал</span><span>достаточность и резерв на разгон</span>
-          <span style="color: var(--navy); font-weight: 600;">06</span><span style="color: var(--navy); font-weight: 600;">Расходы</span><span>OPEX и юнит-экономика</span>
-          <span style="color: var(--navy); font-weight: 600;">07</span><span style="color: var(--navy); font-weight: 600;">Выручка</span><span>финансы за год в трёх сценариях</span>
-          <span style="color: var(--navy); font-weight: 600;">08</span><span style="color: var(--navy); font-weight: 600;">Год в деталях</span><span>помесячная динамика и разгон</span>
-          <span style="color: var(--navy); font-weight: 600;">09</span><span style="color: var(--navy); font-weight: 600;">Сезонность</span><span>пики и просадки в году</span>
-          <span style="color: var(--navy); font-weight: 600;">10</span><span style="color: var(--navy); font-weight: 600;">Маркетинг</span><span>воронка, бюджет, каналы, ретеншен</span>
-          <span style="color: var(--navy); font-weight: 600;">11</span><span style="color: var(--navy); font-weight: 600;">Кадры</span><span>устойчивый и предельный потолок</span>
-          <span style="color: var(--navy); font-weight: 600;">12</span><span style="color: var(--navy); font-weight: 600;">Устойчивость</span><span>стресс-тест по 5 параметрам</span>
-          <span style="color: var(--navy); font-weight: 600;">13</span><span style="color: var(--navy); font-weight: 600;">Риски</span><span>главные риски первого года</span>
-          <span style="color: var(--navy); font-weight: 600;">14</span><span style="color: var(--navy); font-weight: 600;">Налоги</span><span>форма, режим, годовая нагрузка</span>
-          <span style="color: var(--navy); font-weight: 600;">15</span><span style="color: var(--navy); font-weight: 600;">Горизонт</span><span>что будет через 2-3 года</span>
-          <span style="color: var(--navy); font-weight: 600;">16</span><span style="color: var(--navy); font-weight: 600;">Дальше</span><span>следующий продукт ZEREK</span>
-        </div>
-      </div>
-    </div>
-
-    <div>
       <h3 class="sub-title">Откуда цифры</h3>
-      <ul class="u-small" style="margin: 4pt 0 12pt 0; padding-left: 16pt; line-height: 1.45; color: var(--ink-2);">
+      <ul class="u-small" style="margin: 4pt 0 0 0; padding-left: 16pt; line-height: 1.45; color: var(--ink-2);">
         <li><strong>БНС РК</strong> — зарплаты, инфляция, доходы населения. Ежеквартально.</li>
         <li><strong>2GIS</strong> — конкуренты по 22 городам и 50+ нишам. Ежемесячно.</li>
         <li><strong>Реальные кейсы</strong> — обобщённый опыт предпринимателей.</li>
         <li><strong>Бенчмарки ZEREK</strong> — внутренняя база по экономике ниш.</li>
       </ul>
+    </div>
 
+    <div>
       <h3 class="sub-title">Границы точности</h3>
       <p class="u-small" style="line-height: 1.45; margin: 4pt 0 4pt 0; color: var(--ink-2);">
         Все значения — модельные. Погрешность базового сценария <strong>±12%</strong>.
         Точные: налоги, соцплатежи, ставки УСН. Чувствительные: загрузка и
-        средний чек (зависят от исполнения и локального рынка, ±25%).
+        средний чек (±25%).
       </p>
       <p class="u-tiny u-muted" style="line-height: 1.4; margin: 0;">
         Не заменяет финмодель с cash-flow по месяцам, консультацию налогового
@@ -1158,10 +1155,6 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       </p>
     </div>
   </div>
-
-  {# R8 H.3 + post-comment: «Как использовать» удалён по просьбе Адиля
-     — очевидные советы (проверь паспорт, читай итог, пересчитай через
-     3 мес) не несут уникальной ценности. Раздел отнимал место. #}
 </section>
 {#- Round-4 bug 7: страница «Рынок» удалена целиком — полторы строки
     не тянули на отдельную A4. Население теперь в паспорте, детальный
