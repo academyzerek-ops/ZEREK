@@ -1109,55 +1109,51 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <p class="u-small u-muted" style="margin-bottom: 8pt;">
         Краткий путеводитель по разделам отчёта.
       </p>
-      {# R8 H.3: размер 8.5pt и компактные ячейки — навигатор должен
-         уместиться в одну стр. 5 вместе с «Откуда цифры», «Границы
-         точности» и «Как использовать». Раньше 17 строк × 9.5pt
-         переливались на стр. 6. R8 H.2 убрал блок «Карточка
-         экспресс-оценки» (бывшая стр. 21) → 16 пунктов вместо 17. #}
-      <table class="keyvals" style="font-size: 8.5pt; line-height: 1.35;">
-        <tr><td class="k">01 Паспорт</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Параметры расчёта</td></tr>
-        <tr><td class="k">02 Итог</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Характер направления + три приоритета</td></tr>
-        <tr><td class="k">03 Ключевые цифры</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Шесть метрик одного взгляда</td></tr>
-        <tr><td class="k">04 Инвестиции</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Структура CAPEX по статьям</td></tr>
-        <tr><td class="k">05 Капитал</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Достаточность и резерв на разгон</td></tr>
-        <tr><td class="k">06 Расходы</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">OPEX и юнит-экономика</td></tr>
-        <tr><td class="k">07 Выручка</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Финансы за год в трёх сценариях</td></tr>
-        <tr><td class="k">08 Год в деталях</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Помесячная динамика и разгон</td></tr>
-        <tr><td class="k">09 Сезонность</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Пики и просадки в году</td></tr>
-        <tr><td class="k">10 Маркетинг</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Воронка, бюджет, каналы, ретеншен</td></tr>
-        <tr><td class="k">11 Кадры</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Ваш потолок — устойчивый и предельный</td></tr>
-        <tr><td class="k">12 Устойчивость</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Стресс-тест по 5 параметрам</td></tr>
-        <tr><td class="k">13 Риски</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Главные риски первого года</td></tr>
-        <tr><td class="k">14 Налоги</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Форма, режим, годовая нагрузка</td></tr>
-        <tr><td class="k">15 Горизонт</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Что будет через 2-3 года</td></tr>
-        <tr><td class="k">16 Дальше</td><td class="v" style="font-weight: 400; color: var(--ink-2); text-align: left;">Следующий продукт ZEREK</td></tr>
-      </table>
+      {# R8 H.3 + последующая правка: навигатор без table.keyvals
+         (которая навязывает monospace на правой колонке). Своя
+         сетка через display: grid — sans-шрифт, ровный 1-й столбец
+         с фиксированной шириной. Формат строки: «01: Паспорт:
+         параметры расчёта» — две двоеточия с разными ролями. #}
+      <div class="nav-toc" style="font-family: var(--sans); font-size: 9pt; line-height: 1.45; color: var(--ink-2);">
+        <div style="display: grid; grid-template-columns: 22mm 1fr; gap: 4pt 6pt; row-gap: 5pt;">
+          <span style="color: var(--navy); font-weight: 600;">01: Паспорт</span><span>параметры расчёта</span>
+          <span style="color: var(--navy); font-weight: 600;">02: Итог</span><span>характер направления + три приоритета</span>
+          <span style="color: var(--navy); font-weight: 600;">03: Ключевые цифры</span><span>шесть метрик одного взгляда</span>
+          <span style="color: var(--navy); font-weight: 600;">04: Инвестиции</span><span>структура CAPEX по статьям</span>
+          <span style="color: var(--navy); font-weight: 600;">05: Капитал</span><span>достаточность и резерв на разгон</span>
+          <span style="color: var(--navy); font-weight: 600;">06: Расходы</span><span>OPEX и юнит-экономика</span>
+          <span style="color: var(--navy); font-weight: 600;">07: Выручка</span><span>финансы за год в трёх сценариях</span>
+          <span style="color: var(--navy); font-weight: 600;">08: Год в деталях</span><span>помесячная динамика и разгон</span>
+          <span style="color: var(--navy); font-weight: 600;">09: Сезонность</span><span>пики и просадки в году</span>
+          <span style="color: var(--navy); font-weight: 600;">10: Маркетинг</span><span>воронка, бюджет, каналы, ретеншен</span>
+          <span style="color: var(--navy); font-weight: 600;">11: Кадры</span><span>ваш потолок — устойчивый и предельный</span>
+          <span style="color: var(--navy); font-weight: 600;">12: Устойчивость</span><span>стресс-тест по 5 параметрам</span>
+          <span style="color: var(--navy); font-weight: 600;">13: Риски</span><span>главные риски первого года</span>
+          <span style="color: var(--navy); font-weight: 600;">14: Налоги</span><span>форма, режим, годовая нагрузка</span>
+          <span style="color: var(--navy); font-weight: 600;">15: Горизонт</span><span>что будет через 2-3 года</span>
+          <span style="color: var(--navy); font-weight: 600;">16: Дальше</span><span>следующий продукт ZEREK</span>
+        </div>
+      </div>
     </div>
 
     <div>
       <h3 class="sub-title">Откуда цифры</h3>
-      <p class="u-small u-muted" style="margin-bottom: 6pt;">
-        Quick Check работает на четырёх источниках данных:
-      </p>
-      <ul class="u-small" style="margin: 0 0 14pt 0; padding-left: 16pt; line-height: 1.5; color: var(--ink-2);">
-        <li><strong>БНС РК</strong> — официальная статистика. Зарплаты по регионам, инфляция, доходы населения. Обновление: ежеквартально.</li>
-        <li><strong>2GIS</strong> — конкурентный ландшафт по 22 городам и 50+ нишам. Обновление: ежемесячно.</li>
-        <li><strong>Реальные кейсы</strong> — обобщённый опыт предпринимателей из открытых источников и интервью. Без выдуманных цифр и историй.</li>
-        <li><strong>Бенчмарки ZEREK</strong> — внутренняя база по экономике ниш, верифицирована против БНС и реальных финансовых отчётов.</li>
+      <ul class="u-small" style="margin: 4pt 0 12pt 0; padding-left: 16pt; line-height: 1.45; color: var(--ink-2);">
+        <li><strong>БНС РК</strong> — зарплаты, инфляция, доходы населения. Ежеквартально.</li>
+        <li><strong>2GIS</strong> — конкуренты по 22 городам и 50+ нишам. Ежемесячно.</li>
+        <li><strong>Реальные кейсы</strong> — обобщённый опыт предпринимателей.</li>
+        <li><strong>Бенчмарки ZEREK</strong> — внутренняя база по экономике ниш.</li>
       </ul>
 
       <h3 class="sub-title">Границы точности</h3>
-      <p class="u-small" style="line-height: 1.5; margin: 0 0 6pt 0; color: var(--ink-2);">
-        Все значения — модельные. Диапазон погрешности базового сценария: <strong>±12%</strong>.
+      <p class="u-small" style="line-height: 1.45; margin: 4pt 0 4pt 0; color: var(--ink-2);">
+        Все значения — модельные. Погрешность базового сценария <strong>±12%</strong>.
+        Точные: налоги, соцплатежи, ставки УСН. Чувствительные: загрузка и
+        средний чек (зависят от исполнения и локального рынка, ±25%).
       </p>
-      <p class="u-small" style="line-height: 1.5; margin: 0 0 6pt 0; color: var(--ink-2);">
-        Самые точные цифры: налоги, минимальные соцплатежи, ставки УСН/НДС.
-      </p>
-      <p class="u-small" style="line-height: 1.5; margin: 0 0 6pt 0; color: var(--ink-2);">
-        Самые чувствительные: загрузка и средний чек — зависят от исполнения, маркетинга и локального рынка. Реальные значения могут отличаться от модельных на ±25%.
-      </p>
-      <p class="u-tiny u-muted" style="line-height: 1.45; margin: 0;">
-        Quick Check не заменяет финансовую модель с месячной cash-flow разбивкой (продукт ZEREK · Финмодель), консультацию налогового специалиста и юридическую экспертизу договоров.
+      <p class="u-tiny u-muted" style="line-height: 1.4; margin: 0;">
+        Не заменяет финмодель с cash-flow по месяцам, консультацию налогового
+        специалиста и юридическую экспертизу договоров.
       </p>
     </div>
   </div>
@@ -1489,33 +1485,15 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     </div>
 
     <div>
-      {# Round-5 B.2: блок «Что такое разгон» — без него таблица резерва
-         выглядит как сумма из ниоткуда. -#}
-      <div class="avoid-break" style="padding: 12pt 14pt; background: var(--bg-2); border-left: 3pt solid var(--navy); border-radius: 3pt; margin-bottom: 12pt;">
-        <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1pt;">
-          Что такое разгон и почему он съедает деньги
-        </div>
-        <p class="u-small" style="margin: 0 0 6pt 0; line-height: 1.5; color: var(--ink-2);">
-          Разгон — первые 3 месяца бизнеса, когда вы уже несёте расходы
-          (маркетинг, соцплатежи, расходники, аренда если есть), а выручка
-          ещё не вышла на проектную мощность.
-        </p>
-        <p class="u-small" style="margin: 6pt 0 0 0; line-height: 1.5; color: var(--ink-2);">
-          Типичная динамика: М1 — около 40% от потолка, идут только клиенты
-          по рекламе (сарафану ещё некому работать); М2 — 65%, подключаются
-          первые сарафанные клиенты и возвраты; М3 — 85%, сарафан даёт
-          20-30% потока; М4+ — 100%, выход на мощность.
-        </p>
-        <p class="u-small" style="margin: 6pt 0 0 0; line-height: 1.5; color: var(--ink-2);">
-          Что съедает кассу: маркетинг (первый месяц в 2-3 раза дороже
-          зрелого), соцплатежи (с первого дня независимо от выручки),
-          закупки расходников с запасом, ошибки в работе с клиентами
-          (возвраты, бесплатные переделки).
-        </p>
-        <p class="u-small" style="margin: 8pt 0 0 0; line-height: 1.5; color: var(--ink);">
-          Без подушки на разгон половина начинающих бизнесов закрываются
-          на 3-5 месяце не потому что идея плохая, а потому что деньги
-          закончились раньше чем дошли до стабилизации.
+      {# R8 (post-comment): «Что такое разгон» свёрнут до 2 строк —
+         развёрнутая механика теперь живёт на стр. 12 (Год в деталях),
+         здесь только подводка к таблице резерва. -#}
+      <div class="avoid-break" style="padding: 10pt 14pt; background: var(--bg-2); border-left: 3pt solid var(--navy); border-radius: 3pt; margin-bottom: 10pt;">
+        <p class="u-small" style="margin: 0; line-height: 1.5; color: var(--ink-2);">
+          <strong>Разгон</strong> — первые 3 месяца, когда расходы идут как
+          в зрелом режиме, а выручка ещё не вышла на потолок. Без подушки
+          половина бизнесов закрывается на М3-М5 не из-за плохой идеи, а
+          потому что закончились деньги. Подробная механика — на стр. 12.
         </p>
       </div>
 
@@ -1882,34 +1860,6 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         </p>
       </div>
 
-      {# R8 I.2: «От чего зависит скорость разгона» — снимает с клиента
-         ощущение «у меня не получилось как в отчёте» если он не выйдет
-         на мощность к M4. Без этого блока траектория 40/65/85/100
-         выглядела как единственно возможный сценарий. #}
-      <div class="avoid-break u-mt-m" style="padding: 12pt 14pt; background: var(--bg-2); border-left: 3pt solid var(--gold); border-radius: 4pt;">
-        <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1pt;">
-          От чего зависит скорость разгона
-        </div>
-        <p class="u-small" style="margin: 0 0 6pt 0; line-height: 1.55; color: var(--ink-2);">
-          Эта траектория (М1=40% → М4=100%) — оптимистичный, но
-          достижимый сценарий. Он работает при условии что заявленный
-          маркетинговый бюджет тратится грамотно: контент снят и
-          оформлен на уровне, таргет настроен на правильную аудиторию,
-          блогеры выбраны по релевантности, а не по цене.
-        </p>
-        <p class="u-small" style="margin: 0 0 4pt 0; line-height: 1.55; color: var(--ink-2);">
-          При слабом маркетинге (плохое визуальное оформление,
-          неудачный таргет, случайные блогеры) разгон растягивается
-          на 4-6 месяцев — это нормально для соло-старта без опыта.
-          В этом случае:
-        </p>
-        <ul style="margin: 0; padding-left: 16pt; font-size: 9.5pt; line-height: 1.5; color: var(--ink-2);">
-          <li>М4-М5 — окончательный выход на мощность (а не М4)</li>
-          <li>Резерв на разгон нужен больше — добавьте +50% к плановому</li>
-          <li>Не паникуйте: ZEREK видит сценарий «медленного разгона»
-              значительно более частым, чем «классические 3 месяца»</li>
-        </ul>
-      </div>
     </div>
     <div>
       <h3 class="sub-title">Красный флаг разгона</h3>
@@ -1932,6 +1882,24 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         {% if mkt.start_note %}<br>{{ mkt.start_note }}{% endif %}
       </div>
     </div>
+  </div>
+
+  {# R8 I.2 (post-comment): «От чего зависит скорость разгона» —
+     компактный full-width блок под Механикой+Красным флагом, чтобы
+     не выталкивать колонку слева на отдельную страницу. -#}
+  <div class="avoid-break u-mt-m" style="padding: 10pt 14pt; background: var(--bg-2); border-left: 3pt solid var(--gold); border-radius: 4pt;">
+    <div class="u-upper u-tiny u-gold" style="margin-bottom: 5pt; font-weight: 700; letter-spacing: 1pt;">
+      От чего зависит скорость разгона
+    </div>
+    <p class="u-small" style="margin: 0; line-height: 1.5; color: var(--ink-2);">
+      Траектория 40→100% — оптимистичный, но достижимый сценарий при
+      грамотном маркетинге (контент на уровне, точный таргет, релевантные
+      блогеры). При слабом маркетинге разгон растягивается на 4-6 мес —
+      это норма для соло-старта без опыта: выход на мощность сдвигается
+      к М4-М5, резерв нужен на +50% больше планового. Сценарий «медленного
+      разгона» статистически чаще «классических 3 месяцев» — паниковать
+      не нужно.
+    </p>
   </div>
 </section>
 
@@ -2460,10 +2428,13 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     если подготовиться заранее.
   </p>
 
+  {# R8 (post-comment): риски сжаты — padding 14→9pt, gap 16→9pt,
+     mitigation шрифт 9.5→9pt — чтобы все 4 риска + common_mistakes
+     + real_experience помещались в одну стр. без переполнения. #}
   {% for risk in risks %}
-  <div class="avoid-break" style="margin-bottom: 16pt; padding: 14pt 16pt; background: var(--bg-2); border-left: 3pt solid var(--amber); border-radius: 3pt;">
-    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6pt;">
-      <strong style="font-size: 11pt; color: var(--navy);">
+  <div class="avoid-break" style="margin-bottom: 9pt; padding: 9pt 12pt; background: var(--bg-2); border-left: 3pt solid var(--amber); border-radius: 3pt;">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4pt;">
+      <strong style="font-size: 10.5pt; color: var(--navy);">
         #{{ loop.index }} {{ risk.title }}
       </strong>
       <span class="u-tiny u-muted">
@@ -2471,9 +2442,9 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         Влияние: <strong>{{ risk.impact }}</strong>
       </span>
     </div>
-    <p class="u-small" style="margin-bottom: 6pt; color: var(--ink-2);">{{ risk.description }}</p>
+    <p class="u-small" style="margin: 0 0 4pt 0; line-height: 1.45; color: var(--ink-2);">{{ risk.description }}</p>
     {% if risk.mitigation %}
-    <div style="padding: 8pt 10pt; background: #FFFFFF; border-left: 2pt solid var(--green); font-size: 9.5pt; color: var(--ink-2);">
+    <div style="padding: 6pt 9pt; background: #FFFFFF; border-left: 2pt solid var(--green); font-size: 9pt; line-height: 1.45; color: var(--ink-2);">
       <strong style="color: var(--green);">Что делать:</strong> {{ risk.mitigation }}
     </div>
     {% endif %}
@@ -2481,25 +2452,25 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
   {% endfor %}
 
   {% if common_mistakes %}
-  <div class="avoid-break u-mt-l" style="margin-top: 14pt; padding: 14pt 16pt; border: 1px solid var(--gold); background: rgba(201,169,97,0.06); border-radius: 3pt;">
-    <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1pt;">
+  <div class="avoid-break" style="margin-top: 10pt; padding: 9pt 12pt; border: 1px solid var(--gold); background: rgba(201,169,97,0.06); border-radius: 3pt;">
+    <div class="u-upper u-tiny u-gold" style="margin-bottom: 4pt; font-weight: 700; letter-spacing: 1pt;">
       От консультанта ZEREK · частые ошибки
     </div>
-    <p style="margin: 0; font-size: 10pt; line-height: 1.55; color: var(--ink-2);">
+    <p style="margin: 0; font-size: 9.5pt; line-height: 1.45; color: var(--ink-2);">
       {{ common_mistakes }}
     </p>
   </div>
   {% endif %}
 
-  {# R8 H.2: «Реальный опыт ниши» переехал сюда со стр. 21 как второй
-     RAG-блок наставника после «Частых ошибок». На стр. 21 был оторван
-     от рисков; здесь — рядом с типовыми ошибками — работает в связке. #}
+  {# R8 H.2 + post-comment compaction: «Реальный опыт ниши» — компактный
+     RAG-блок наставника после «Частых ошибок». Padding и шрифт сжаты
+     чтобы не вытолкнуть блок на отдельную стр. 20. #}
   {% if real_experience %}
-  <div class="avoid-break u-mt-l" style="margin-top: 12pt; padding: 14pt 16pt; border: 1px solid var(--gold); background: rgba(201,169,97,0.06); border-radius: 3pt;">
-    <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1pt;">
+  <div class="avoid-break" style="margin-top: 8pt; padding: 9pt 12pt; border: 1px solid var(--gold); background: rgba(201,169,97,0.06); border-radius: 3pt;">
+    <div class="u-upper u-tiny u-gold" style="margin-bottom: 4pt; font-weight: 700; letter-spacing: 1pt;">
       От консультанта ZEREK · реальный опыт ниши
     </div>
-    <p style="margin: 0; font-size: 10pt; line-height: 1.55; color: var(--ink-2);">
+    <p style="margin: 0; font-size: 9.5pt; line-height: 1.45; color: var(--ink-2);">
       {{ real_experience }}
     </p>
   </div>
