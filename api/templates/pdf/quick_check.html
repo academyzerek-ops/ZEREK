@@ -870,7 +870,9 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         {% if mkt.population %}
         <tr><td class="k">Население города</td><td class="v">{{ mkt.population | money_round }}</td></tr>
         {% endif %}
-        <tr><td class="k">Локация</td><td class="v">{{ inp.loc_type_ru }}</td></tr>
+        {# R7 G.4: строка «Локация» убрана — для HOME выводился
+           технический id «home», а информация дублирует «Формат»
+           (Мастер на дому). Площадь оставляем когда задана. #}
         {% if inp.area_m2 %}
         <tr><td class="k">Площадь</td><td class="v">{{ inp.area_m2 }} м²</td></tr>
         {% endif %}
