@@ -264,11 +264,19 @@ def _build_inp_ctx(result: dict) -> dict:
 
 
 def _build_cap_ctx(result: dict) -> dict:
-    """CAPEX: total (= block6.capex_needed с обучением) + breakdown + все уровни."""
+    """CAPEX: total (= block6.capex_needed с обучением) + breakdown + все уровни.
+
+    R9 L.2: для опытных мастеров (some/has) переименовываем «Обучение и
+    курсы» → «Повышение квалификации» и показываем сноску с поправкой
+    «можно исключить, итог станет X». Для новичков остаётся старое
+    название и старая сноска.
+    """
     b6 = result.get("block6") or {}
     cap = result.get("capex") or {}
     total = int(b6.get("capex_needed") or cap.get("total") or cap.get("capex_med") or 0)
     breakdown_raw = b6.get("capex_structure") or []
+    exp = (result.get("input") or {}).get("experience") or ""
+    is_experienced = str(exp).lower() in ("some", "has", "pro", "expert")
     breakdown = []
     training_amount = 0
     for it in breakdown_raw:
@@ -279,14 +287,14 @@ def _build_cap_ctx(result: dict) -> dict:
             continue
         pct = int(round(amount / max(total, 1) * 100))
         label = it.get("label") or it.get("name") or ""
+        if "Обучение" in label and is_experienced:
+            label = "Повышение квалификации"
         breakdown.append({"label": label, "amount": amount, "pct": pct})
-        if "Обучение" in label:
+        if "Обучение" in (it.get("label") or "") or "квалификации" in label.lower():
             training_amount = amount
-    # Round-3 §1.3: показываем сноску «если опыт есть — можно исключить
-    # 150K» только если клиент не pro (иначе training_amount=0).
-    exp = (result.get("input") or {}).get("experience") or ""
-    exp_pro = str(exp).lower() in ("pro", "expert", "has", "some")
-    learning_note_visible = training_amount > 0 and not exp_pro
+    # Сноска показывается всегда когда training_amount > 0 — но для
+    # опытных мы показываем другую формулировку (см. шаблон).
+    learning_note_visible = training_amount > 0
     all_levels = cap.get("все_уровни") or cap.get("all_levels") or {}
     return {
         "total": total,
@@ -294,6 +302,7 @@ def _build_cap_ctx(result: dict) -> dict:
         "all_levels": all_levels,
         "training_amount": training_amount,
         "learning_note_visible": learning_note_visible,
+        "learning_is_experienced": is_experienced,
     }
 
 
@@ -1185,10 +1194,20 @@ def build_pdf_context(result: Dict[str, Any]) -> Dict[str, Any]:
         cogs_m = int(rev_m * cogs_pct)
         tax_m = int(rev_m * tax_rate)
         true_profit_m = rev_m - cogs_m - tax_m - int(opx_ctx.get("total") or 0)
-        fin_ctx["mature_profit"] = true_profit_m
+        # R9 L.1: единый источник истины для «прибыль на мощности».
+        # Округляем до 1000 — иначе на стр. 3 видим 323 (round из 323.4),
+        # а на стр. 9 видим 324 (другая ветка с round из 323.6).
+        true_profit_m_rounded = int(round(true_profit_m / 1000) * 1000)
+        fin_ctx["mature_profit"] = true_profit_m_rounded
         fin_ctx["net_margin_pct"] = int(round(true_profit_m / rev_m * 100))
         if avg_check > 0:
             fin_ctx["unit_net"] = int(round(avg_check * true_profit_m / rev_m))
+        # Перезаписываем vrd.profit_for_direction тем же значением, чтобы
+        # стр. 3 «Характер направления» и стр. 9 «На мощности» показывали
+        # одинаковое число. income_ratio_pct тоже обновляем под него.
+        vrd_ctx["profit_for_direction"] = true_profit_m_rounded
+        avg_sal = int(vrd_ctx.get("avg_salary_region") or 1)
+        vrd_ctx["income_ratio_pct"] = int(round(true_profit_m_rounded / max(avg_sal, 1) * 100)) if true_profit_m_rounded > 0 else 0
     # Round-4 bug 4: в юнит-экономике раньше не было строки «Доля OPEX» —
     # клиент-финансист видел 5250−630−157=4463, а в чистых было 3501.
     # Разница = доля постоянных расходов (marketing+соцпл+прочие) на один
@@ -1231,6 +1250,12 @@ def build_pdf_context(result: Dict[str, Any]) -> Dict[str, Any]:
                 fin_ctx["safety_multiplier"] = round(
                     planned_per_month / max(be_per_month, 1), 1
                 )
+            # R9 L.4: запас прочности на разгоне (M1, ramp 0.40) — снимает
+            # иллюзию неуязвимости от mature ×N. Базовая модель ramp
+            # M1=0.40 → если зрелый поток падает в 0.40 раз, разгонный
+            # запас = mature_safety × 0.40.
+            base_safety = fin_ctx.get("safety_multiplier") or 0
+            fin_ctx["safety_multiplier_ramp"] = round(base_safety * 0.40, 1)
     return {
         "inp": inp_ctx,
         "cap": _build_cap_ctx(result),

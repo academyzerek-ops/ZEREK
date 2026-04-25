@@ -1323,8 +1323,15 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       </table>
       {% if cap.learning_note_visible %}
       <p class="u-small u-muted" style="margin-top: 6pt;">
-        * Если у вас уже есть опыт в нише — {{ cap.training_amount | money_round }} ₸
-        на обучение можно исключить из стартовых вложений.
+        {% if cap.learning_is_experienced %}
+          * Даже опытным мастерам мы рекомендуем закладывать
+          ~{{ cap.training_amount | money_round }} ₸/год на 1-2 мастер-класса для
+          актуализации техник и трендов. Если уверены, что обойдётесь без —
+          исключите из CAPEX, итог станет {{ (cap.total - cap.training_amount) | money_round }} ₸.
+        {% else %}
+          * Если у вас уже есть опыт в нише — {{ cap.training_amount | money_round }} ₸
+          на обучение можно исключить из стартовых вложений.
+        {% endif %}
       </p>
       {% endif %}
     </div>
@@ -1741,13 +1748,30 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <table class="keyvals">
         <tr><td class="k">Минимум услуг/мес</td><td class="v">{{ fin.break_even_clients }}</td></tr>
         <tr><td class="k">Планируется</td><td class="v">{{ fin.mature_clients }}</td></tr>
-        <tr><td class="k">Запас прочности</td><td class="v">×{{ fin.safety_multiplier | default(1) }}</td></tr>
+      </table>
+
+      {# R9 L.4: запас прочности в двух режимах вместо одного. На
+         мощности (×N от mature_clients/БЭП) — широкий, снимает иллюзию
+         неуязвимости после M4. На разгоне M1-M3 (×0.4 от mature
+         потока) — узкий, ближе к зоне риска. -#}
+      <h3 class="sub-title u-mt-m">Запас прочности</h3>
+      <table class="keyvals">
+        <tr>
+          <td class="k">В зрелом месяце<br><span class="u-tiny u-muted">после М4</span></td>
+          <td class="v">×{{ fin.safety_multiplier | default(1) }}</td>
+        </tr>
+        <tr>
+          <td class="k">В разгоне<br><span class="u-tiny u-muted">М1-М3</span></td>
+          <td class="v">×{{ fin.safety_multiplier_ramp | default(1) }}</td>
+        </tr>
       </table>
 
       <div class="callout navy u-mt-m">
         <div class="callout-title">Что это значит</div>
-        Это минимум услуг в месяц, чтобы покрыть все расходы
-        и выйти в ноль. Всё, что больше — ваша прибыль.
+        Минимум услуг в месяц — это БЭП. На мощности запас широкий
+        (трафик может упасть в N раз — вы ещё в нуле). На разгоне М1-М3
+        запас в 2.5 раза уже из-за разгонной кривой 40/65/85% — здесь
+        нужен маркетинг, иначе кассовый разрыв.
       </div>
 
       <h3 class="sub-title u-mt-m">Прибыль предпринимателя</h3>
@@ -2435,19 +2459,10 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
   </div>
   {% endif %}
 
-  {# R8 H.2 + post-comment compaction: «Реальный опыт ниши» — компактный
-     RAG-блок наставника после «Частых ошибок». Padding и шрифт сжаты
-     чтобы не вытолкнуть блок на отдельную стр. 20. #}
-  {% if real_experience %}
-  <div class="avoid-break" style="margin-top: 8pt; padding: 9pt 12pt; border: 1px solid var(--gold); background: rgba(201,169,97,0.06); border-radius: 3pt;">
-    <div class="u-upper u-tiny u-gold" style="margin-bottom: 4pt; font-weight: 700; letter-spacing: 1pt;">
-      От консультанта ZEREK · реальный опыт ниши
-    </div>
-    <p style="margin: 0; font-size: 9.5pt; line-height: 1.45; color: var(--ink-2);">
-      {{ real_experience }}
-    </p>
-  </div>
-  {% endif %}
+  {# R9 L.3: блок «Реальный опыт ниши» удалён — дублировал «Частые
+     ошибки» на 70% (та же тема: самоорганизация, отношения с клиентами,
+     чистота, физические пределы). RAG-текст абстрактный без конкретных
+     полезных советов — звучит красиво, не несёт информации. -#}
 </section>
 {% endif %}
 
