@@ -434,6 +434,7 @@ def _build_vrd_priorities(result: dict) -> List[Dict[str, str]]:
     # capital_service.verdict_short / verdict_label, чтобы стр. 3
     # и стр. 8 говорили одно и то же про одну сумму. Никакой
     # отдельной генерации текста здесь — иначе снова разъедется.
+    inp_p = result.get("input") or {}  # used by Приоритет 3 (seasonality) ниже
     ca = result.get("capital_adequacy") or {}
     zone = ca.get("capital_zone") or "AMBER"
     short_text = ca.get("verdict_short") or ""
