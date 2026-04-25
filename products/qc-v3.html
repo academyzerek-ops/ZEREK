@@ -669,7 +669,10 @@ function renderStep(){
   $('loading-screen').classList.remove('active');
   $('result-screen').classList.remove('active');
   $('cta-wrap').style.display = 'none';  // CTA по умолчанию скрыт; рендереры сами добавляют inline-кнопку когда нужна
-  $('back-btn').disabled = stepIndex === 0;
+  // Кнопка «Назад» активна всегда. На шаге 0 уводит из оценки —
+  // history.back() возвращает в Academy SPA / Telegram, или
+  // Telegram.WebApp.close() закрывает Mini App если истории нет.
+  $('back-btn').disabled = false;
   var fn = RENDERERS[name] || function(root){ root.innerHTML = '<div class="result-err">Шаг «'+name+'» не реализован.</div>'; };
   fn($('wizard-screen'));
 }
@@ -689,7 +692,22 @@ function updateProgress(){
   $('progress-step').textContent = 'Шаг ' + (stepIndex+1);
   $('progress-total').textContent = 'из ' + total;
 }
-function goBack(){ if(stepIndex > 0){ stepIndex -= 1; renderStep(); } }
+function goBack(){
+  if(stepIndex > 0){
+    stepIndex -= 1;
+    renderStep();
+    return;
+  }
+  // На шаге 0 — выходим из оценки. Если есть history (открыты из
+  // Academy SPA app.html) — возвращаемся туда. Иначе закрываем
+  // Mini App через Telegram.WebApp.close().
+  if(window.history.length > 1){
+    window.history.back();
+    return;
+  }
+  var tg = window.Telegram && window.Telegram.WebApp;
+  if(tg && typeof tg.close === 'function'){ tg.close(); }
+}
 
 function loadNicheSurvey(cb){
   // Показываем мини-лоадер поверх wizard
