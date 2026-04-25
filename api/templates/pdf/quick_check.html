@@ -924,17 +924,28 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     требуемого капитала и рыночных условий.
   </p>
 
-  {# Round-5 A.1: цветной verdict-box убран целиком — он дублирует
-     финальную карточку на стр. 18 и создаёт «двойной вердикт».
-     Здесь — только текст, без плашки и цветового фона. #}
-  <div class="avoid-break u-mt-s" style="margin-bottom: 14pt;">
-    <h3 style="margin: 0 0 6pt 0; font-family: var(--serif); color: var(--navy); font-size: 16pt; line-height: 1.25;">
-      {{ vrd.title }}
+  {# R8 H.2: «Характер направления» переехало сюда со стр. 21 как первый
+     блок итога. Старый vrd.title/message («Бизнес жизнеспособен» и т.п.)
+     был общим вердиктом — теперь его роль играет нейтральный «Характер»,
+     согласованный с фактом «Прогнозная прибыль vs ЗП по региону». #}
+  {% if vrd.direction_title %}
+  <div class="avoid-break u-mt-s" style="margin-bottom: 14pt; padding: 14pt 0; border-bottom: 1px solid var(--border);">
+    <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1.5pt;">
+      Характер направления
+    </div>
+    <h3 style="margin: 0 0 6pt 0; font-family: var(--serif); color: var(--navy); font-size: 18pt; line-height: 1.25;">
+      {{ vrd.direction_title }}
     </h3>
-    <p style="margin: 0; font-size: 11pt; line-height: 1.55; color: var(--ink);">
-      {{ vrd.message }}
+    <p style="margin: 0 0 8pt 0; font-size: 11pt; line-height: 1.55; color: var(--ink);">
+      {{ vrd.direction_message }}
+    </p>
+    <p class="u-tiny u-muted" style="margin: 0;">
+      Средняя ЗП по региону: <strong>{{ vrd.avg_salary_region | money }} ₸</strong>
+      <span style="opacity:0.7;">(БНС РК, Q4 2025)</span> ·
+      Прогнозная прибыль на мощности: <strong>{{ vrd.profit_for_direction | money_round }} ₸/мес</strong>
     </p>
   </div>
+  {% endif %}
 
   <div class="col2">
     <div>
@@ -2424,6 +2435,20 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
     </p>
   </div>
   {% endif %}
+
+  {# R8 H.2: «Реальный опыт ниши» переехал сюда со стр. 21 как второй
+     RAG-блок наставника после «Частых ошибок». На стр. 21 был оторван
+     от рисков; здесь — рядом с типовыми ошибками — работает в связке. #}
+  {% if real_experience %}
+  <div class="avoid-break u-mt-l" style="margin-top: 12pt; padding: 14pt 16pt; border: 1px solid var(--gold); background: rgba(201,169,97,0.06); border-radius: 3pt;">
+    <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1pt;">
+      От консультанта ZEREK · реальный опыт ниши
+    </div>
+    <p style="margin: 0; font-size: 10pt; line-height: 1.55; color: var(--ink-2);">
+      {{ real_experience }}
+    </p>
+  </div>
+  {% endif %}
 </section>
 {% endif %}
 
@@ -2537,87 +2562,13 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
 
 
 {#- ═══════════════════════════════════════════════════════════════
-    PAGE 21 — ИТОГОВАЯ КАРТОЧКА
+    R8 H.2: PAGE 21 «Zerek экспресс-оценка» удалена целиком.
+    — «Характер направления» переехал на стр. 3 как первый блок Итога.
+    — «Что работает / Что требует» удалены как дубль «Трёх приоритетов».
+    — «Реальный опыт ниши» переехал на стр. 17 (после «Частых ошибок»).
+    — «План действий 60 дней» удалён вместе со стр. 21; если понадобится
+      вернуть — поднять из git history (был block10.action_plan).
     ═══════════════════════════════════════════════════════════════ -#}
-<section class="page">
-  <div class="page-eyebrow">{{ eyebrow('Итог') }}</div>
-  <h1 class="page-title">Zerek экспресс-оценка</h1>
-  <p class="page-lede">
-    Краткая карточка итогов для быстрого обзора.
-  </p>
-
-  {# Round-5 A.5: «Ваша оценка: ЗЕЛЁНЫЙ» заменено на нейтральную
-     формулировку «Характер направления». Cветофорные кружки + слова
-     ЗЕЛЁНЫЙ/ЖЁЛТЫЙ/КРАСНЫЙ убраны как обещание которое не отражает
-     реальность (в нашем кейсе профит ниже средней ЗП — но это не
-     «красный/жёлтый», это входной шаг). #}
-  <div style="text-align: center; margin: 16pt 0 24pt 0;">
-    <div class="u-upper u-tiny u-gold" style="margin-bottom: 8pt; font-weight: 700; letter-spacing: 1.5pt;">
-      Характер направления
-    </div>
-    <div style="font-family: var(--serif); font-size: 22pt; font-weight: 700; color: var(--navy); line-height: 1.2;">
-      {{ vrd.direction_title }}
-    </div>
-    <div class="u-small" style="margin-top: 8pt; max-width: 360pt; margin-left: auto; margin-right: auto; line-height: 1.5; color: var(--ink-2);">
-      {{ vrd.direction_message }}
-    </div>
-    <div class="u-tiny u-muted" style="margin-top: 10pt;">
-      Средняя ЗП по региону: {{ vrd.avg_salary_region | money }} ₸
-      <span style="opacity:0.7;">(БНС РК, Q4 2025)</span> ·
-      Прогнозная прибыль на мощности: {{ vrd.profit_for_direction | money_round }} ₸/мес
-    </div>
-  </div>
-
-  <div class="col2">
-    <div>
-      <h3 class="sub-title" style="color: var(--green);">Что работает на вас</h3>
-      {% for pro in vrd.pros %}
-      <div style="padding: 8pt 10pt; background: rgba(16,185,129,0.05); border-radius: 3pt; margin-bottom: 6pt; font-size: 10pt;">
-        {{ icon_check() }} {{ pro }}
-      </div>
-      {% endfor %}
-    </div>
-
-    <div>
-      <h3 class="sub-title" style="color: var(--amber);">Что требует внимания</h3>
-      {% for con in vrd.cons %}
-      <div style="padding: 8pt 10pt; background: rgba(245,158,11,0.05); border-radius: 3pt; margin-bottom: 6pt; font-size: 10pt;">
-        {{ icon_warn() }} {{ con }}
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-
-  {% if real_experience %}
-  <div class="avoid-break u-mt-l" style="padding: 14pt 16pt; border: 1px solid var(--gold); background: rgba(201,169,97,0.06); border-radius: 3pt;">
-    <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1pt;">
-      От консультанта ZEREK · реальный опыт ниши
-    </div>
-    <p style="margin: 0; font-size: 10pt; line-height: 1.55; color: var(--ink-2);">
-      {{ real_experience }}
-    </p>
-  </div>
-  {% endif %}
-
-  {% if action_plan %}
-  <h3 class="sub-title u-mt-l">План действий на ближайшие 60 дней</h3>
-  {% for week in action_plan %}
-  <div style="margin-bottom: 12pt; page-break-inside: avoid;">
-    <div style="display: inline-block; padding: 3pt 8pt; background: var(--navy); color: #FFFFFF; border-radius: 3pt; font-size: 9pt; font-weight: 700; letter-spacing: 1px; margin-bottom: 6pt;">
-      {{ week.label }}
-    </div>
-    <div style="font-weight: 700; font-size: 11pt; color: var(--navy); margin-bottom: 4pt;">
-      {{ week.title }}
-    </div>
-    <ul style="margin: 4pt 0 0 0; padding-left: 16pt; font-size: 10pt; line-height: 1.5; color: var(--ink-2);">
-      {% for action in week.actions %}
-      <li>{{ action }}</li>
-      {% endfor %}
-    </ul>
-  </div>
-  {% endfor %}
-  {% endif %}
-</section>
 
 
 {#- ═══════════════════════════════════════════════════════════════
