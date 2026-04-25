@@ -603,6 +603,9 @@ def _build_vrd_ctx(result: dict) -> dict:
         color = ca_color
     # Round-5 A.5: характер направления — нейтральная формулировка
     # вместо «Ваша оценка: ЗЕЛЁНЫЙ/ЖЁЛТЫЙ/КРАСНЫЙ».
+    # R6 D.4 follow-up: profit_for_direction должен совпадать с
+    # fin.mature_profit на стр. 9 (revenue − cogs − tax − opx.total),
+    # иначе клиент видит 330K тут vs 315K там.
     try:
         from engine import AVG_SALARY_2025, AVG_SALARY_DEFAULT
     except Exception:
@@ -611,10 +614,19 @@ def _build_vrd_ctx(result: dict) -> dict:
     city_id = (inp.get("city_id") or "").lower()
     avg_salary = int(AVG_SALARY_2025.get(city_id) or AVG_SALARY_DEFAULT)
     agg_m = (result.get("pnl_aggregates") or {}).get("mature") or {}
-    profit_m = int(agg_m.get("profit_monthly") or 0)
-    # учитываем социалочный hit для ИП — как в _build_fin_ctx.
-    social_hit = 21_675 if (inp.get("legal_form") or "ip") == "ip" else 0
-    profit_for_dir = max(0, profit_m - social_hit)
+    rev_m_for_dir = int(agg_m.get("revenue_monthly") or 0)
+    cogs_pct_d = float(agg_m.get("cogs_pct") or (result.get("financials") or {}).get("cogs_pct") or 0.30)
+    tax_rate_d = float(agg_m.get("tax_rate") or ((result.get("tax") or {}).get("rate_pct", 3) or 3) / 100)
+    # opex_total через те же правила что в _build_opx_ctx (включая соцплатежи).
+    opx_for_dir = _build_opx_ctx(result).get("total") or 0
+    if rev_m_for_dir > 0:
+        cogs_d = int(rev_m_for_dir * cogs_pct_d)
+        tax_d = int(rev_m_for_dir * tax_rate_d)
+        profit_for_dir = max(0, rev_m_for_dir - cogs_d - tax_d - int(opx_for_dir))
+    else:
+        profit_m = int(agg_m.get("profit_monthly") or 0)
+        social_hit = 21_675 if (inp.get("legal_form") or "ip") == "ip" else 0
+        profit_for_dir = max(0, profit_m - social_hit)
     pb_months = int((result.get("block5") or {}).get("payback_months") or 0)
     dir_title, dir_message = _direction_character(profit_for_dir, avg_salary, pb_months)
     return {
