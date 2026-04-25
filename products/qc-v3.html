@@ -559,7 +559,25 @@ h2{font-size:22px;margin-bottom:6px}
 <script>
 var API = 'https://web-production-921a5.up.railway.app';
 function $(id){ return document.getElementById(id); }
-function fmt(n){ if(n==null||isNaN(n)) return '—'; return Math.round(n).toLocaleString('ru-RU').replace(/,/g,' '); }
+// R8 (post-comment): бакетное округление как в PDF money_round
+// (api/services/capital_service.py:_fmt_kzt). Раньше Mini App
+// показывал 306 532 ₸/мес vs 307 000 ₸/мес в PDF — теперь оба
+// округляют одинаково. Бакеты:
+//   <1K → 10, <10K → 100, <100K → 500, <1M → 1 000, >1M → 10 000.
+// Точные суммы кратные бакету (586 000) не меняются.
+function fmt(n){
+  if(n==null||isNaN(n)) return '—';
+  var v = Math.abs(n);
+  var step;
+  if(v < 1000) step = 10;
+  else if(v < 10000) step = 100;
+  else if(v < 100000) step = 500;
+  else if(v < 1000000) step = 1000;
+  else step = 10000;
+  var sign = n < 0 ? -1 : 1;
+  var rounded = sign * Math.round(v / step) * step;
+  return rounded.toLocaleString('ru-RU').replace(/,/g,' ');
+}
 function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
 
 function apiGet(path, cb){
