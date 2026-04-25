@@ -610,8 +610,12 @@ def _direction_character(profit_monthly: int, avg_salary: int, payback_months: i
             "Прибыль на мощности нулевая или отрицательная — "
             "формат в текущих параметрах не зарабатывает.",
         )
-    ratio = profit_monthly / avg_salary
-    if ratio < 0.45:
+    # R11 #1: считаем градацию по ОКРУГЛЁННОМУ pct, а не по raw ratio.
+    # Иначе при ratio=0.4495 → раньше шёл LOW (raw < 0.45), но в PDF
+    # показывалось «около 45% от ЗП» (округлённо), которое по таблице
+    # R9 K.2 — уже MODEST. Аудитор R11 это словил для Аktau.
+    pct = int(round(profit_monthly / avg_salary * 100))
+    if pct < 45:
         return (
             "Низкий доход для соло-формата",
             "Существенно ниже средней ЗП по региону. Этот формат "
@@ -621,7 +625,7 @@ def _direction_character(profit_monthly: int, avg_salary: int, payback_months: i
             "Рассматривайте как ступень к SOLO или STANDARD форматам, "
             "либо как параллельный заработок.",
         )
-    if ratio < 0.65:
+    if pct < 65:
         return (
             "Невысокий доход для соло-формата",
             "Ниже средней ЗП по региону, но достаточно для входного "
@@ -629,7 +633,7 @@ def _direction_character(profit_monthly: int, avg_salary: int, payback_months: i
             "вариант если у вас есть основной доход (наём или подработка), "
             "а маникюр становится параллельным заработком и подушкой.",
         )
-    if ratio < 0.85:
+    if pct < 85:
         return (
             "Средний доход — на уровне начинающего сотрудника",
             "Сопоставим с зарплатой младшего специалиста в найме. Может "
@@ -637,7 +641,7 @@ def _direction_character(profit_monthly: int, avg_salary: int, payback_months: i
             "семейных расходов будет ощущаться туже чем стабильная "
             "зарплата. Рост — переход в SOLO/STANDARD или индексация чека.",
         )
-    if ratio < 1.05:
+    if pct < 105:
         return (
             "Достойный доход — сопоставимый с наёмной работой",
             "На уровне средней ЗП по региону. Может быть полноценным "
@@ -645,7 +649,7 @@ def _direction_character(profit_monthly: int, avg_salary: int, payback_months: i
             "нет больничных, отпускных, гарантированной зарплаты в случае "
             "болезни. Уверенная альтернатива найму для опытных мастеров.",
         )
-    if ratio < 1.30:
+    if pct < 130:
         return (
             "Высокий доход — выше средней ЗП региона",
             "Выше средней ЗП по региону. В этом формате соло-маникюр "
@@ -1208,6 +1212,14 @@ def build_pdf_context(result: Dict[str, Any]) -> Dict[str, Any]:
         vrd_ctx["profit_for_direction"] = true_profit_m_rounded
         avg_sal = int(vrd_ctx.get("avg_salary_region") or 1)
         vrd_ctx["income_ratio_pct"] = int(round(true_profit_m_rounded / max(avg_sal, 1) * 100)) if true_profit_m_rounded > 0 else 0
+        # R11 #1: пересчитать direction_title/message от округлённого
+        # profit, чтобы grade был согласован с показанным pct
+        # (иначе для Aktau pct=45 → MODEST в шаблоне, но grade=LOW
+        # в заголовке — рассинхрон, словлен аудитором).
+        pb_months_v = int((result.get("block5") or {}).get("payback_months") or 0)
+        new_title, new_message = _direction_character(true_profit_m_rounded, avg_sal, pb_months_v)
+        vrd_ctx["direction_title"] = new_title
+        vrd_ctx["direction_message"] = new_message
     # Round-4 bug 4: в юнит-экономике раньше не было строки «Доля OPEX» —
     # клиент-финансист видел 5250−630−157=4463, а в чистых было 3501.
     # Разница = доля постоянных расходов (marketing+соцпл+прочие) на один
