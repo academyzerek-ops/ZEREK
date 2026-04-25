@@ -18,6 +18,8 @@
   --text3: #6B6B7B;
   --red: #E85454;
   --red-dim: rgba(232,84,84,0.08);
+  --yellow: #E8C34C;
+  --yellow-dim: rgba(232,195,76,0.08);
   --green: #00D4AA;
   --accent: #6C63FF;
 }
@@ -61,10 +63,10 @@ body {
   text-transform: uppercase;
   margin-bottom: 12px;
 }
-.badge-fail {
-  background: var(--red-dim);
-  color: var(--red);
-  border: 1px solid rgba(232,84,84,0.2);
+.badge-neutral {
+  background: var(--yellow-dim);
+  color: var(--yellow);
+  border: 1px solid rgba(232,195,76,0.2);
 }
 
 .case-title {
@@ -101,7 +103,7 @@ body {
 
 .accent-block {
   background: var(--surface);
-  border-left: 3px solid var(--red);
+  border-left: 3px solid var(--yellow);
   border-radius: 0 8px 8px 0;
   padding: 14px 18px;
   margin: 20px 0;
@@ -137,7 +139,7 @@ body {
 <a class="back" onclick="history.back()">Назад</a>
 
 <div class="case-header">
-  <div class="case-badge badge-fail">Провал</div>
+  <div class="case-badge badge-neutral">Жёлтый</div>
   <h1 class="case-title">Как «успешный успех» чуть не убил клининговую компанию</h1>
   <div class="case-meta">Город: Иркутск · Клининг B2C → B2B</div>
 </div>
