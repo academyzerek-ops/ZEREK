@@ -332,7 +332,11 @@ formats:
           med: 50000
 
       training:
-        required: false                 # владелец-организатор, не мастер
+        # R12.5: STUDIO — это соло-мастер в своём кабинете, обучение
+        # требуется (раньше STANDARD был «студия 3-4 мастера», поэтому
+        # required=false — владелец-организатор). Для R12.5 STUDIO
+        # включаем training.
+        required: true
 
     ramp_up:
       months: 5

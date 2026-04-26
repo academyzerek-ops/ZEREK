@@ -285,7 +285,210 @@ def _apply_r12_5_overrides(fin, niche_id, format_id, experience='none'):
     if cogs:
         fin_new['cogs_pct'] = float(cogs)
 
+    # R12.5 Сессия 2 хвост: rent_med + deposit_months из formats_r12.
+    # HOME: rent=0, deposit=0. STUDIO/SALON_RENT/MALL_SOLO: rent_per_month
+    # из YAML, deposit_months обычно 2 (engine: deposit = rent × months).
+    # Для SALON_RENT уровень standard/premium хранит rent внутри levels —
+    # дефолт на standard. Для STUDIO rent на верхнем уровне формата.
+    rent_per_month = target.get('rent_per_month_astana')
+    if rent_per_month is None:
+        # SALON_RENT — rent внутри levels
+        levels = target.get('levels') or {}
+        default_level_key = 'standard' if 'standard' in levels else (
+            'simple' if 'simple' in levels else None
+        )
+        if default_level_key:
+            rent_per_month = (levels.get(default_level_key) or {}).get('rent_per_month_astana')
+    if rent_per_month is not None:
+        fin_new['rent_med'] = int(rent_per_month)
+    deposit_months = target.get('deposit_months')
+    if deposit_months is None:
+        levels = target.get('levels') or {}
+        default_level_key = 'standard' if 'standard' in levels else (
+            'simple' if 'simple' in levels else None
+        )
+        if default_level_key:
+            deposit_months = (levels.get(default_level_key) or {}).get('deposit_months')
+    if deposit_months is not None:
+        fin_new['deposit_months'] = int(deposit_months)
+
     return fin_new
+
+
+def _apply_r12_5_staff_override(staff, niche_id, format_id):
+    """R12.5: для R12 ниш все 4 формата — соло (headcount=1, fot=0).
+
+    db.get_format_row для STAFF может возвращать данные из legacy YAML
+    formats: блока, где для STANDARD захардкожено headcount=5,
+    fot_full_med=1338000 (старая модель «студия 3-4 мастера»).
+
+    R12.5: STUDIO (бывш. STANDARD) — соло-формат с 1 мастером.
+    Обнуляем headcount/fot если formats_r12 определён.
+    """
+    if not staff:
+        return staff
+    try:
+        from loaders.niche_loader import load_niche_yaml  # noqa: WPS433
+    except ImportError:
+        return staff
+    niche = (niche_id or '').upper()
+    yaml_data = load_niche_yaml(niche)
+    if not yaml_data or 'formats_r12' not in yaml_data:
+        return staff
+    fmt = (format_id or '').upper()
+    suffix_to_r12 = {
+        '_HOME': 'HOME', '_SOLO': 'SALON_RENT',
+        '_STANDARD': 'STUDIO', '_PREMIUM': None,
+    }
+    r12_id = None
+    for sfx, rid in suffix_to_r12.items():
+        if fmt.endswith(sfx):
+            r12_id = rid
+            break
+    if not r12_id:
+        return staff
+    out = dict(staff)
+    out['headcount'] = 1
+    out['positions'] = 'Мастер (сам)'
+    out['founder_role'] = 'Сам'
+    for k in ('fot_net_min', 'fot_net_med', 'fot_net_max',
+              'fot_full_min', 'fot_full_med', 'fot_full_max'):
+        out[k] = 0
+    out['hire_m3'] = 0
+    out['hire_m6'] = 0
+    return out
+
+
+def _r12_5_normalize_meta08(meta08, niche_id, format_id):
+    """R12.5: для ниш с formats_r12 обнуляем legacy multi-place
+    параметры 08-канона. Все 4 формата R12.5 — соло (1 мастер).
+
+    Без этой нормализации:
+      · 08.typical_staff = 'мастер:2' даёт seats_mult=2 → revenue×2
+      · 08.capex_standard = 2.2M перебивает _apply_r12_5_capex_override
+        (см. engine logic «if capex_standard_08 > capex_med * 1.1: override»).
+
+    Возвращает копию meta08 с очищенными полями. Если ниша не имеет
+    formats_r12 — возвращает meta08 без изменений.
+    """
+    if not meta08:
+        return meta08
+    try:
+        from loaders.niche_loader import load_niche_yaml  # noqa: WPS433
+    except ImportError:
+        return meta08
+    niche = (niche_id or '').upper()
+    yaml_data = load_niche_yaml(niche)
+    if not yaml_data or 'formats_r12' not in yaml_data:
+        return meta08
+    fmt = (format_id or '').upper()
+    suffix_to_r12 = {
+        '_HOME': 'HOME', '_SOLO': 'SALON_RENT',
+        '_STANDARD': 'STUDIO', '_PREMIUM': None,
+    }
+    r12_id = None
+    for sfx, rid in suffix_to_r12.items():
+        if fmt.endswith(sfx):
+            r12_id = rid
+            break
+    if not r12_id:
+        return meta08
+    out = dict(meta08)
+    out['masters_count'] = 1                 # все R12.5 форматы — соло
+    out['typical_staff'] = None              # не масштабируем через seats_mult
+    out['capex_standard'] = 0                # не перебиваем formats_r12 capex
+    return out
+
+
+def _apply_r12_5_capex_override(capex_data, niche_id, format_id, experience='none'):
+    """R12.5 Сессия 2 хвост: переписывает CAPEX-разбивку через
+    `formats_r12.capex_items` + `capex_base_total`.
+
+    Engine считает capex_total = capex_med + deposit + working_cap_3m.
+    R12.5 capex_base_total УЖЕ включает working_capital, поэтому
+    обнуляем `working_cap_3m` чтобы не было double-add.
+
+    Training (по experience) и deposit (×rent_per_month) добавляются
+    engine'ом отдельно — это совместимо с R12.5 формулой Адиля:
+        capex_total = base_total + training + deposit
+
+    Не меняет capex_data если ниша не содержит formats_r12 — fallback
+    на legacy YAML formats: блок (для других ниш).
+    """
+    if not capex_data:
+        return capex_data
+    try:
+        from loaders.niche_loader import load_niche_yaml  # noqa: WPS433
+    except ImportError:
+        return capex_data
+    niche = (niche_id or '').upper()
+    fmt = (format_id or '').upper()
+    yaml_data = load_niche_yaml(niche)
+    if not yaml_data or 'formats_r12' not in yaml_data:
+        return capex_data
+
+    suffix_to_r12 = {
+        '_HOME': 'HOME',
+        '_SOLO': 'SALON_RENT',
+        '_STANDARD': 'STUDIO',
+        '_PREMIUM': None,
+    }
+    r12_id = None
+    for sfx, rid in suffix_to_r12.items():
+        if fmt.endswith(sfx):
+            r12_id = rid
+            break
+    if not r12_id:
+        return capex_data
+
+    target = None
+    for f in yaml_data.get('formats_r12') or []:
+        if f.get('id') == r12_id:
+            target = f
+            break
+    if not target:
+        return capex_data
+
+    # Базовая сумма + items. Для STUDIO/SALON_RENT с уровнями берём
+    # дефолт (simple/standard).
+    base_total = target.get('capex_base_total')
+    if base_total is None:
+        # SALON_RENT хранит base_total per-level
+        for k in ('capex_base_total_standard', 'capex_base_total_simple'):
+            if target.get(k):
+                base_total = target[k]
+                break
+    if base_total is None:
+        return capex_data  # нет данных для override
+
+    capex_new = dict(capex_data)
+    capex_new['capex_med'] = int(base_total)
+    capex_new['capex_min'] = int(base_total * 0.85)
+    capex_new['capex_max'] = int(base_total * 1.30)
+    # Обнуляем working_cap_3m т.к. он уже внутри base_total через
+    # capex_items.working_capital.
+    capex_new['working_cap_3m'] = 0
+
+    # Перезаписываем breakdown items для PDF (стр. «Инвестиции»).
+    items = target.get('capex_items') or target.get('capex_items_common') or {}
+    field_map = {
+        'equipment':       'equipment',
+        'renovation':      'renovation',
+        'furniture':       'furniture',
+        'first_stock':     'first_stock',
+        'permits':         'permits_sez',
+        'working_capital': 'working_cap_3m_breakdown',  # для отображения, не пересчёт
+        'marketing_start': 'marketing',
+        'legal':           'legal',
+        'kiosk_design':    'kiosk_design',
+    }
+    for yaml_key, capex_key in field_map.items():
+        if yaml_key in items:
+            med = (items[yaml_key] or {}).get('med')
+            if med is not None:
+                capex_new[capex_key] = int(med)
+
+    return capex_new
 
 
 _MONTH_NAMES_RUS_FULL = ['Янв','Фев','Мар','Апр','Май','Июн',
@@ -603,14 +806,19 @@ def run_quick_check_v3(
     capex_data = db.get_format_row(niche_id, 'CAPEX', format_id, cls)
     tax_data = db.get_format_row(niche_id, 'TAXES', format_id, cls)
 
-    # R12.5 Сессия 2: override fin через formats_r12 + A1 archetype.
-    # Канон R12.5 — base_check / avg_clients_per_day_mature /
-    # working_days_per_month по формату и уровню опыта. Применяется
-    # только если YAML содержит formats_r12 для этой ниши и archetype
-    # = A1. Иначе fin используется как был (legacy R8/R9).
+    # R12.5 Сессия 2: override fin + capex_data через formats_r12 +
+    # A1 archetype. Канон R12.5 — base_check / avg_clients_per_day_mature /
+    # working_days_per_month / rent_per_month / capex_base_total +
+    # capex_items по формату и уровню опыта. Применяется только если
+    # YAML содержит formats_r12 для этой ниши и archetype = A1.
+    # Иначе fin/capex_data используются как были (legacy R8/R9).
     fin = _apply_r12_5_overrides(
         fin, niche_id, format_id, experience=experience,
     )
+    capex_data = _apply_r12_5_capex_override(
+        capex_data, niche_id, format_id, experience=experience,
+    )
+    staff = _apply_r12_5_staff_override(staff, niche_id, format_id)
 
     # Контентные данные
     products = db.get_format_all_rows(niche_id, 'PRODUCTS', format_id, cls)
@@ -627,6 +835,10 @@ def run_quick_check_v3(
     # ── Канонический мета-формат из 08_niche_formats.xlsx ──
     # Источник истины для capex_standard и typical_staff (masters_canon).
     meta08 = _get_canonical_format_meta(db, niche_id, format_id)
+    # R12.5: 08-канон для R12 ниш всё ещё может содержать legacy
+    # multi-place параметры (typical_staff: 'мастер:2', capex 2.2M).
+    # Обнуляем их если formats_r12 определён — все 4 формата R12.5 = соло.
+    meta08 = _r12_5_normalize_meta08(meta08, niche_id, format_id)
 
     # ── Множитель «точек/мастеров» ──
     # qty_points из FORMATS (если >1 — пользовательское масштабирование, например
