@@ -32,7 +32,10 @@ def test_manicure_solo_returns_medium_block():
     ids = [s["id"] for s in result["strategies"]]
     assert "grow_to_standard" in ids
     assert "cross_niches_in_host" in ids
-    assert result["hire_impossible_note"] is None
+    # R12 #1: hire_impossible_note теперь для всех 4 форматов A1.
+    # Для SOLO — текст про переход в STUDIO когда найм нужен.
+    assert result["hire_impossible_note"] is not None
+    assert "найм" in result["hire_impossible_note"].lower()
     assert result["warning"] is None
 
 
@@ -112,12 +115,15 @@ def test_massage_has_lower_capacity_than_manicure():
 
 
 def test_realistic_revenue_smaller_than_peak():
-    """Реалистичная выручка (будни 60% + выходные 90%) < пик (100%)."""
+    """R6 A.5: реалистичная выручка = sustainable × 0.80 (где sustainable
+    = 22 рабочих дня × max_per_day × check). Peak = 26 дней × max × check.
+    """
     result = compute_staff_paradox(
         niche_id="MANICURE", format_id="MANICURE_HOME",
         avg_check=6000, rent_monthly=0, city_id="astana",
     )
     cap = result["capacity"]
     assert cap["realistic_monthly_revenue"] < cap["peak_monthly_revenue"]
-    # Формула: (18 × 7 × 0.6 + 8 × 7 × 0.9) × 6000 = 126 × 6000 = 756 000
-    assert cap["realistic_monthly_revenue"] == 756_000
+    # Формула: 7 × 22 × 6000 × 0.80 = 924 000 × 0.80 = 739 200
+    assert cap["realistic_monthly_revenue"] == 739_200
+    assert cap["peak_monthly_revenue"] == 1_092_000  # 7 × 26 × 6000

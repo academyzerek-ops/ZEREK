@@ -158,11 +158,15 @@ def _is_solo_format(format_id: str) -> bool:
 
 
 _EXPERIENCE_LABELS = {
-    "none":   "Нет опыта — открываю с нуля",
-    "some":   "Есть опыт в нише",
-    "has":    "Есть опыт в нише",
-    "pro":    "Эксперт (5+ лет)",
-    "expert": "Эксперт (5+ лет)",
+    # R12.5 канон (соло-beauty A1):
+    "none":         "Учусь / только начинаю",
+    "middle":       "Делаю гель-лак уверенно",
+    "experienced":  "Опытный мастер — сложные техники + база",
+    # Legacy aliases (Mini App до R12.5):
+    "some":         "Есть опыт в нише",
+    "has":          "Есть опыт в нише",
+    "pro":          "Опытный мастер — сложные техники + база",
+    "expert":       "Опытный мастер — сложные техники + база",
 }
 
 
@@ -1177,6 +1181,171 @@ def _maybe_rag_slot(slot_type: str, niche_id: str, format_id: str = "") -> Optio
         return None
 
 
+_R12_FORMAT_SUFFIX_TO_R12 = {
+    "_HOME": "HOME",
+    "_SOLO": "SALON_RENT",
+    "_STANDARD": "STUDIO",
+    "_PREMIUM": None,
+}
+
+
+def _r12_resolve_format_key(format_id: str) -> Optional[str]:
+    """legacy MANICURE_HOME → 'HOME'; MANICURE_SOLO → 'SALON_RENT' и т.п."""
+    if not format_id:
+        return None
+    fmt = format_id.upper()
+    for sfx, key in _R12_FORMAT_SUFFIX_TO_R12.items():
+        if fmt.endswith(sfx):
+            return key
+    return None
+
+
+def _build_r12_ctx(result: Dict[str, Any]) -> Dict[str, Any]:
+    """R12.5: блок контекста для соло-beauty (архетип A1).
+
+    Собирает:
+      · `r12.experience` / `r12.strategy` / `r12.level` — нормализованные
+        поля анкеты (none/middle/experienced × conservative/middle/aggressive
+        × simple/nice/standard/premium).
+      · `r12.antipattern` — если задан novice + aggressive паттерн,
+        возвращает блок antipatterns.novice_aggressive из A1 архетипа.
+        Иначе None.
+      · `r12.explanation_blocks` — list блоков из
+        archetype.explanation_blocks, чьи trigger.experience совпадает
+        с текущим уровнем (для new master показывается «почему ниже чем
+        у знакомых»).
+      · `r12.strategy_explanation` — текст объяснения выбранной стратегии
+        (для стр. «Маркетинг»).
+      · `r12.info_blocks` — словарь {block_id: {title, body, page}} из
+        niche YAML info_blocks_r12, отфильтрованный по show_for_formats.
+      · `r12.format_key` — нормализованный ключ формата (HOME/STUDIO/...).
+
+    Контракт: для не-A1 ниш (или если YAML нельзя загрузить) возвращает
+    {"is_r12": False} — шаблон через `{% if r12.is_r12 %}` пропускает
+    R12.5-блоки и рендерит legacy-вид.
+    """
+    if not result:
+        return {"is_r12": False}
+    inp = result.get("input") or {}
+    fin = result.get("financials") or {}
+    user_inputs = result.get("user_inputs") or {}
+    sa = (user_inputs.get("specific_answers") or {}) if isinstance(user_inputs, dict) else {}
+    niche_id = (inp.get("niche_id") or "").upper()
+    format_id = (inp.get("format_id") or "").upper()
+    fmt_key = _r12_resolve_format_key(format_id)
+
+    # Если ниша не из R12.5 — fast-path
+    try:
+        from loaders.niche_loader import load_niche_yaml, load_archetype_yaml  # noqa: WPS433
+    except ImportError:
+        return {"is_r12": False}
+    niche_yaml = load_niche_yaml(niche_id) or {}
+    if not niche_yaml.get("formats_r12") or not fmt_key:
+        return {"is_r12": False}
+
+    # Архетип A1
+    archetype = load_archetype_yaml("A1") or {}
+
+    # Нормализация experience: 'some'/'has'/'pro'/'expert' → middle/experienced
+    raw_exp = (sa.get("experience") or inp.get("experience") or "").lower()
+    exp_map = {
+        "none": "none", "": "none", "not_specified": "none",
+        "some": "middle", "has": "middle", "middle": "middle",
+        "pro": "experienced", "expert": "experienced", "experienced": "experienced",
+    }
+    exp_norm = exp_map.get(raw_exp, "none")
+    strategy = (sa.get("strategy") or fin.get("strategy") or "middle").lower()
+    level = sa.get("level") or fin.get("r12_level") or None
+
+    # Антипаттерны: проверяем match по trigger
+    antipattern = None
+    for ap_id, ap in (archetype.get("antipatterns") or {}).items():
+        trig = (ap or {}).get("trigger") or {}
+        if (
+            trig.get("experience") == exp_norm
+            and trig.get("strategy") == strategy
+        ):
+            antipattern = {
+                "id": ap_id,
+                "severity": ap.get("severity") or "high",
+                "title": ap.get("block_title") or "Антипаттерн",
+                "body": ap.get("block_text") or "",
+            }
+            break
+
+    # Объяснительные блоки: trigger.experience match → показываем
+    explanation_blocks = []
+    for eb_id, eb in (archetype.get("explanation_blocks") or {}).items():
+        trig = (eb or {}).get("trigger") or {}
+        if trig.get("experience") and trig.get("experience") != exp_norm:
+            continue
+        if trig.get("strategy") and trig.get("strategy") != strategy:
+            continue
+        if trig.get("format") and trig.get("format") != fmt_key:
+            continue
+        explanation_blocks.append({
+            "id": eb_id,
+            "page": eb.get("page"),
+            "title": eb.get("block_title") or "",
+            "body": eb.get("block_text") or "",
+        })
+
+    strategy_explanation = ((archetype.get("strategy_explanations") or {}).get(strategy)) or ""
+    strategy_warning = (archetype.get("strategy_explanations") or {}).get("warning_universal") or ""
+
+    # info_blocks_r12 из niche YAML, отфильтрованные по show_for_formats
+    info_blocks: Dict[str, Dict[str, Any]] = {}
+    for ib_id, ib in (niche_yaml.get("info_blocks_r12") or {}).items():
+        if not isinstance(ib, dict):
+            continue
+        show_for = ib.get("show_for_formats") or []
+        if show_for and fmt_key not in show_for:
+            continue
+        info_blocks[ib_id] = {
+            "page": ib.get("page"),
+            "title": ib.get("title_ru") or ib.get("title") or "",
+            "body": ib.get("body_ru") or ib.get("body") or "",
+        }
+
+    # Метки уровня формата (для стр. «Паспорт» / уточнения)
+    level_label = ""
+    if level and fmt_key:
+        for fmt in (niche_yaml.get("formats_r12") or []):
+            if fmt.get("id") != fmt_key:
+                continue
+            lvl_data = (fmt.get("levels") or {}).get(level) or {}
+            level_label = lvl_data.get("label_ru") or ""
+            break
+
+    # Метка опыта (R12.5 канон)
+    exp_labels = {
+        "none":         "Учусь / только начинаю",
+        "middle":       "Делаю гель-лак уверенно",
+        "experienced":  "Опытный мастер — сложные техники + база",
+    }
+    strategy_labels = {
+        "conservative": "Консервативная",
+        "middle":       "Средняя",
+        "aggressive":   "Агрессивная",
+    }
+
+    return {
+        "is_r12": True,
+        "format_key": fmt_key,
+        "experience": exp_norm,
+        "experience_label": exp_labels.get(exp_norm, ""),
+        "strategy": strategy,
+        "strategy_label": strategy_labels.get(strategy, ""),
+        "strategy_explanation": strategy_explanation,
+        "strategy_warning": strategy_warning,
+        "level": level,
+        "level_label": level_label,
+        "antipattern": antipattern,
+        "explanation_blocks": explanation_blocks,
+        "info_blocks": info_blocks,
+    }
+
+
 def build_pdf_context(result: Dict[str, Any]) -> Dict[str, Any]:
     """Маппинг result → Jinja2 context для шаблона."""
     inp_ctx = _build_inp_ctx(result)
@@ -1290,6 +1459,11 @@ def build_pdf_context(result: Dict[str, Any]) -> Dict[str, Any]:
         "growth_tips": [],
         "fyc": _build_fyc_ctx(result),
         "action_plan": (result.get("block10") or {}).get("action_plan") or [],
+        # R12.5 S4: контекст для соло-beauty (A1) — antipatterns,
+        # explanation_blocks, strategy_explanations, info_blocks_r12.
+        # Для не-A1 ниш r12.is_r12 = False — шаблон через `{% if r12.is_r12 %}`
+        # пропускает блоки и рендерит legacy-вид.
+        "r12": _build_r12_ctx(result),
         "report_id": report_id,
         "today_date": _format_date_ru(now),
         "verdict_class": vrd_ctx["level"],

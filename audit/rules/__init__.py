@@ -21,4 +21,6 @@ RULE_MODULES = (
     "audit.rules.grade_consistency",
     "audit.rules.numerical_consistency",
     "audit.rules.rag_quality",
+    # R12.5 S5: правила соло-beauty (архетип A1)
+    "audit.rules.r12_blocks",
 )

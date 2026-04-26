@@ -28,12 +28,16 @@ MANICURE_HOME_FIN = {
 
 
 def test_ramp_month_1_is_start_pct():
-    """Месяц 1 ramp-up: выручка = base × start_pct × season."""
-    # Месяц 1, cal_month=1 (январь, s01=0.80)
-    # ramp = 0.30 + (1-0.30) × (1/3) = 0.30 + 0.233 = 0.533
-    # rev = 5250 × 3 × 30 × 0.80 × 0.533 ≈ 201 348
+    """Месяц 1 ramp-up: выручка = base × ramp_curve[0] × season.
+
+    R12.5 канон: для не-A1 ниш rampup_months=3 → RAMP_CURVE_DEFAULT
+    [0.40, 0.65, 0.85]; для A1 ниш применяется A1.marketing_strategies
+    [strategy].ramp_curve (12 значений). MANICURE_HOME_FIN не задаёт
+    strategy → берётся RAMP_CURVE_DEFAULT.
+    rev = 5250 × 3 × 30 × 0.80 (s01) × 0.40 (M1) = 151 200.
+    """
     rev = calc_revenue_monthly(MANICURE_HOME_FIN, cal_month=1, razgon_month=1)
-    assert 200_000 <= rev <= 203_000, f"got {rev}"
+    assert 150_000 <= rev <= 153_000, f"got {rev}"
 
 
 def test_ramp_after_rampup_months_is_1():
@@ -53,10 +57,16 @@ def test_seasonality_applied_by_cal_month():
 
 
 def test_ramp_at_rampup_months_is_1():
-    """В точности на месяце rampup_months ramp становится 1.0."""
-    # Месяц 3 работы, cal_month=7 (s=1.00) → rev = 472_500 × 1.0 × 1.0
+    """В R12.5 на razgon_month=rampup_months (3-й мес) ramp = 0.85
+    (последняя точка RAMP_CURVE_DEFAULT). На razgon_month > rampup_months
+    ramp = 1.0.
+    """
+    # Месяц 3 работы, cal_month=7 (s=1.00) → rev = 472_500 × 0.85 × 1.0
     rev = calc_revenue_monthly(MANICURE_HOME_FIN, cal_month=7, razgon_month=3)
-    assert rev == 472_500
+    assert rev == int(472_500 * 0.85), f"got {rev}"
+    # Месяц 4 работы — выходит на полную мощность
+    rev_m4 = calc_revenue_monthly(MANICURE_HOME_FIN, cal_month=7, razgon_month=4)
+    assert rev_m4 == 472_500
 
 
 # ═══ compute_first_year_chart ═════════════════════════════════════════════

@@ -15,15 +15,21 @@ from services.verdict_service import (  # noqa: E402
 
 
 def test_score_capital_surplus_returns_3():
-    """Капитал 1.2× CAPEX → 3 балла «с запасом»."""
-    s = _score_capital(capital_own=600_000, capex_needed=500_000)
+    """R8 H.1: ratio ≥ 2.0 → 3 балла «комфортный запас на разгон»."""
+    s = _score_capital(capital_own=1_000_000, capex_needed=500_000)
     assert s["score"] == 3
 
 
-def test_score_capital_match_returns_2():
-    """Капитал в [0.95, 1.2) от CAPEX → 2 балла «соответствует»."""
-    s = _score_capital(capital_own=500_000, capex_needed=500_000)
+def test_score_capital_yellow_returns_2():
+    """R8 H.1: 1.1 ≤ ratio < 2.0 → 2 балла «на запуск и часть разгона»."""
+    s = _score_capital(capital_own=600_000, capex_needed=500_000)
     assert s["score"] == 2
+
+
+def test_score_capital_match_returns_1():
+    """R8 H.1: 0.9 ≤ ratio < 1.1 → 1 балл «хватает на запуск, на разгон — желательно добрать»."""
+    s = _score_capital(capital_own=500_000, capex_needed=500_000)
+    assert s["score"] == 1
 
 
 def test_score_capital_deficit_returns_0():

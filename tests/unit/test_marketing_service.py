@@ -54,6 +54,12 @@ def test_cargo_budget_drops_less_than_manicure():
 
 
 def test_expert_has_lower_cac_than_novice():
+    """R12 S2 + R12.5: для архетипа A1 (соло-beauty) phase budgets фиксированы
+    в формате (PHASE_BUDGETS_BY_R12), не зависят от experience — поэтому
+    бюджет ramp_m1 одинаков для novice / expert. Опыт влияет на capex
+    (training) и traffic_med, не на маркетинговый бюджет (бюджет — функция
+    стратегии, не уровня мастера). Проверяем эту логику явно: бюджеты равны.
+    """
     novice = compute_marketing_plan(
         niche_id="MANICURE", city_id="astana",
         total_clients_per_month=_CLIENTS_STABLE,
@@ -64,7 +70,8 @@ def test_expert_has_lower_cac_than_novice():
         total_clients_per_month=_CLIENTS_STABLE,
         experience="pro", content_self_produced=True,
     )
-    assert expert["monthly_plan"][0]["paid_budget"] < novice["monthly_plan"][0]["paid_budget"]
+    # A1 phase budgets фиксированы — для одной стратегии бюджет идентичен.
+    assert expert["monthly_plan"][0]["paid_budget"] == novice["monthly_plan"][0]["paid_budget"]
 
 
 def test_content_cost_zero_when_self_produced():
@@ -146,12 +153,18 @@ def test_manicure_what_not_to_do_excludes_gis_google():
 
 
 def test_content_advice_for_visual_niche():
+    """R8/R9 переписали content_advice_ru: теперь это «Бюджет рассчитан…»
+    с двумя путями (сам / с помощниками). Проверяем что структура есть.
+    """
     plan = compute_marketing_plan(
         niche_id="MANICURE", city_id="astana",
         total_clients_per_month=_CLIENTS_STABLE,
         experience="none", content_self_produced=False,
     )
-    assert "визуал" in plan["content_advice_ru"].lower()
+    text = (plan.get("content_advice_ru") or "").lower()
+    assert text, "content_advice_ru должен быть не-пустым"
+    # Маркеры R8/R9 текста: «путь 1», «путь 2», «таргет», «рекламу»
+    assert "путь 1" in text and "путь 2" in text, text[:200]
 
 
 def test_pharmacy_content_advice_about_location():

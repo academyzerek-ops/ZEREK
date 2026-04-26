@@ -183,10 +183,16 @@ def _payroll_label(pt):
 
 
 def _experience_label(exp):
+    # R12.5: добавлен 'middle' (для соло-beauty/A1: «делаю гель-лак уверенно»).
+    # 'some'/'has' — legacy-метки до R12.5; функционально соответствуют middle.
     return {
-        "none":        "Нет опыта — открываю с нуля",
-        "some":        "1–2 года опыта в найме",
-        "experienced": "3+ лет опыта / был свой бизнес",
+        "none":         "Учусь / только начинаю",
+        "middle":       "Делаю гель-лак уверенно",
+        "some":         "1–2 года опыта в найме",
+        "has":          "1–2 года опыта в найме",
+        "experienced":  "Опытный мастер — сложные техники + база",
+        "pro":          "Опытный мастер — сложные техники + база",
+        "expert":       "Опытный мастер — сложные техники + база",
     }.get(exp, "—")
 
 
@@ -272,10 +278,19 @@ def compute_block2_passport(db, result, adaptive):
 
     # CAPEX — унифицированный расчёт (base + training по experience).
     # Тот же результат что block6.capex_needed. Helper в economics_service.
+    # R12.5 калибровка: читаем `capex.total` (полные стартовые вложения =
+    # capex_med + deposit + working_cap), не `capex_med`. Прежняя ветка
+    # читала несуществующий ключ `capex_total` и роняла deposit для
+    # STUDIO/SALON_RENT.
     capex_block = result.get("capex", {}) or {}
-    capex_needed = _safe_int(capex_block.get("capex_med")) or _safe_int(capex_block.get("capex_total"))
+    capex_needed = _safe_int(capex_block.get("total")) or _safe_int(capex_block.get("capex_med"))
+    # R12.5: engine.capex.total — канон. Старый fallback к
+    # fm.capex_standard переписывал валидное значение более низким
+    # (для SALON_RENT total=370K, а fm.capex_standard=300K → терялся
+    # deposit). Берём max, чтобы не потерять deposit и при этом не
+    # уронить случай legacy-формата с устаревшей xlsx-CAPEX-строкой.
     if capex_needed < 500_000:
-        capex_needed = _safe_int(fm.get("capex_standard"), 0) or capex_needed
+        capex_needed = max(_safe_int(fm.get("capex_standard"), 0), capex_needed)
     # Добавляем обучение если training_required и experience указан.
     try:
         from engine import TRAINING_COSTS_BY_EXPERIENCE

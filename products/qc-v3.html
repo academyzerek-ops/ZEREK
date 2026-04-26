@@ -602,7 +602,14 @@ var QC = {
   format_id:'', format_name:'', format_type:'', class_level:'',
   city_id:'', city_name:'',
   loc_type:'', location_line:'',
-  experience:'', payroll_type:'', entrepreneur_role:'',
+  experience:'',
+  // R12.5: уровень формата (simple/nice для STUDIO, standard/premium для
+  // SALON_RENT). Пустая строка — авто-выбор на бэке (_resolve_r12_level).
+  level:'',
+  // R12.5: маркетинг-стратегия. По умолчанию 'middle'. Влияет на бюджет
+  // и на скорость выхода на потолок (ramp_curve в A1 архетипе).
+  strategy:'',
+  payroll_type:'', entrepreneur_role:'',
   capital_own:null, capital_needed:null,
   // Месяц старта (1=янв..12=дек). Null до выбора клиентом → валидация 400 на backend.
   start_month: null,
@@ -647,6 +654,19 @@ function computeStepPlan(){
     plan.push('location');
   }
   plan.push('experience');
+  if(!QC.experience) return plan;
+  // R12.5: для соло-beauty (архетип A1) добавляем шаги уровня и стратегии.
+  // - level: только для STUDIO (нынешний format_type=STANDARD) и SALON_RENT
+  //   (нынешний format_type=SOLO). HOME без уровней.
+  // - strategy: для всех A1 форматов.
+  if(QC.archetype === 'A1'){
+    if(ft === 'STANDARD' || ft === 'SOLO'){
+      plan.push('level');
+      if(!QC.level) return plan;
+    }
+    plan.push('strategy');
+    if(!QC.strategy) return plan;
+  }
   if(['SOLO','HOME'].indexOf(ft) === -1 && hasStaff()){
     plan.push('payroll');
     plan.push('role');
@@ -942,15 +962,28 @@ function selectLoc(v){
 function selectLine(v){ QC.location_line = v; advance(); }
 
 RENDERERS.experience = function(root){
-  var opts = [
-    {id:'none',        label:'Нет опыта — открываю с нуля',           sub:'Риск выше среднего'},
-    {id:'some',        label:'1–2 года в найме в этой нише',           sub:'Базовый — типовая оценка'},
-    {id:'experienced', label:'3+ лет опыта или был свой бизнес',       sub:'Риск ниже'},
+  // R12.5: для соло-beauty (архетип A1) — конкретные уровни мастера.
+  // Каждый уровень соответствует параметрам в A1 архетипе и фильтрует
+  // доступные форматы (none → только HOME; middle → STUDIO/SALON_RENT;
+  // experienced → STUDIO/SALON_RENT premium).
+  var optsA1 = [
+    {id:'none',        label:'Учусь / только начинаю',                          sub:'Без опыта, открываю с нуля. Риск выше среднего.'},
+    {id:'middle',      label:'Делаю гель-лак уверенно',                          sub:'Базовые техники освоены, есть первичная база.'},
+    {id:'experienced', label:'Делаю сложные техники, есть постоянная база',     sub:'Опытный мастер с устойчивой клиентской базой. Риск ниже.'},
   ];
+  // Для остальных архетипов — общая трёхступенчатая шкала опыта.
+  // Маппинг бэкенда (_EXPERIENCE_TO_R12) принимает 'some'/'has' как middle,
+  // 'experienced'/'pro'/'expert' как experienced.
+  var optsGeneric = [
+    {id:'none',        label:'Нет опыта — открываю с нуля',                     sub:'Риск выше среднего'},
+    {id:'some',        label:'1–2 года в найме в этой нише',                    sub:'Базовый — типовая оценка'},
+    {id:'experienced', label:'3+ лет опыта или был свой бизнес',                sub:'Риск ниже'},
+  ];
+  var opts = (QC.archetype === 'A1') ? optsA1 : optsGeneric;
   var html = '<div class="step">' +
     '<div class="step-kicker">Опыт</div>' +
-    '<h2>Есть ли опыт в этом бизнесе?</h2>' +
-    '<div class="step-desc">Влияет на риск-оценку сценариев.</div>' +
+    '<h2>Какой ваш уровень?</h2>' +
+    '<div class="step-desc">Влияет на риск-оценку, чек, скорость работы и доступные форматы.</div>' +
     '<div class="radio-group">';
   opts.forEach(function(o){
     var sel = (QC.experience === o.id) ? ' selected' : '';
@@ -962,7 +995,109 @@ RENDERERS.experience = function(root){
   html += '</div></div>';
   root.innerHTML = html;
 };
-function selectExp(v){ QC.experience = v; advance(); }
+function selectExp(v){
+  QC.experience = v;
+  // R12.5: при смене опыта сбрасываем уровень формата — он мог
+  // быть выбран под другой опыт (например premium доступен только
+  // experienced). На следующем шаге авто-подстановка / выбор.
+  if(QC.archetype === 'A1'){ QC.level = ''; }
+  advance();
+}
+
+// R12.5 RENDERERS.level — выбор уровня формата для соло-beauty (A1).
+// STUDIO: simple / nice. SALON_RENT: standard / premium (premium только
+// для опытного). Бэкенд через _resolve_r12_level умеет авто-выбирать
+// (SALON_RENT × experienced → premium), но в анкете спрашиваем явно
+// чтобы пользователь увидел разницу в стартовых вложениях.
+RENDERERS.level = function(root){
+  var opts = [];
+  var title = '';
+  var desc  = '';
+  var kicker = 'Уровень формата';
+  if(QC.format_type === 'STANDARD'){
+    // STUDIO — свой кабинет
+    title = 'Какой кабинет арендуете?';
+    desc  = 'Влияет на CAPEX (мебель и ремонт) и средний чек.';
+    opts = [
+      {id:'simple', label:'Простой кабинет',     sub:'Базовое оборудование, минимальный ремонт. Меньше вложений.'},
+      {id:'nice',   label:'Приличный кабинет',   sub:'Дизайн, качественная мебель, ремонт под бьюти. +230 000 ₸ к старту, +10% к чеку.'},
+    ];
+  } else if(QC.format_type === 'SOLO'){
+    // SALON_RENT — аренда места в салоне
+    title = 'В каком салоне арендуете место?';
+    desc  = 'Премиум доступен только опытному мастеру (3+ лет, сложные техники).';
+    opts = [
+      {id:'standard', label:'Стандарт-салон',    sub:'Маникюрный салон среднего сегмента. Аренда 35 000 ₸/мес, чек ~7 500 ₸.'},
+    ];
+    // Премиум доступен только experienced
+    if(QC.experience === 'experienced'){
+      opts.push({id:'premium', label:'Премиум-салон', sub:'Известный бренд, сильный трафик. Аренда 60 000 ₸/мес, чек ~9 500 ₸. Меньше своего маркетинга.'});
+    } else {
+      opts.push({id:'premium', label:'Премиум-салон (недоступен)', sub:'Доступен с уровня «делаю сложные техники, есть постоянная база».', disabled:true});
+    }
+  } else {
+    // не должно случаться — но safety: пропускаем шаг
+    QC.level = ''; advance(); return;
+  }
+  var html = '<div class="step">' +
+    '<div class="step-kicker">'+escapeHtml(kicker)+'</div>' +
+    '<h2>'+escapeHtml(title)+'</h2>' +
+    '<div class="step-desc">'+escapeHtml(desc)+'</div>' +
+    '<div class="radio-group">';
+  opts.forEach(function(o){
+    if(o.disabled){
+      html += '<label class="radio" style="opacity:.5;cursor:not-allowed">' +
+        '<div class="radio-dot"></div>' +
+        '<div><div class="radio-label">'+escapeHtml(o.label)+'</div><div class="radio-sub">'+escapeHtml(o.sub)+'</div></div>' +
+      '</label>';
+    } else {
+      var sel = (QC.level === o.id) ? ' selected' : '';
+      html += '<label class="radio'+sel+'" onclick="selectLevel(\''+o.id+'\')">' +
+        '<div class="radio-dot"></div>' +
+        '<div><div class="radio-label">'+escapeHtml(o.label)+'</div><div class="radio-sub">'+escapeHtml(o.sub)+'</div></div>' +
+      '</label>';
+    }
+  });
+  html += '</div></div>';
+  root.innerHTML = html;
+};
+function selectLevel(v){ QC.level = v; advance(); }
+
+// R12.5 RENDERERS.strategy — маркетинговая стратегия. Влияет на бюджет
+// и скорость выхода на потолок. Антипаттерн: novice + aggressive
+// (показываем inline-предупреждение).
+RENDERERS.strategy = function(root){
+  var opts = [
+    {id:'conservative', label:'Консервативная',
+     sub:'Минимум таргета, ставка на сарафан и органику. Полный выход на потолок к М10–М12.'},
+    {id:'middle',       label:'Средняя',
+     sub:'Стандартный путь — выход на потолок к М4. Подходит большинству.'},
+    {id:'aggressive',   label:'Агрессивная',
+     sub:'Активный таргет + блогеры + промо. Быстрый выход к М3.'},
+  ];
+  var html = '<div class="step">' +
+    '<div class="step-kicker">Маркетинг</div>' +
+    '<h2>Какую стратегию запуска выбираете?</h2>' +
+    '<div class="step-desc">Влияет на бюджет рекламы и скорость выхода на стабильный доход.</div>' +
+    '<div class="radio-group">';
+  opts.forEach(function(o){
+    var sel = (QC.strategy === o.id) ? ' selected' : '';
+    html += '<label class="radio'+sel+'" onclick="selectStrategy(\''+o.id+'\')">' +
+      '<div class="radio-dot"></div>' +
+      '<div><div class="radio-label">'+escapeHtml(o.label)+'</div><div class="radio-sub">'+escapeHtml(o.sub)+'</div></div>' +
+    '</label>';
+  });
+  // R12.5 antipattern hint: novice + aggressive подсвечивается красным.
+  // Полный текст-объяснение появится в PDF (стр. 3 «Итог»).
+  if(QC.experience === 'none' && QC.strategy === 'aggressive'){
+    html += '<div style="margin-top:14px;padding:12px 14px;border-radius:10px;background:#FEF2F2;border:1px solid #FCA5A5;color:#991B1B;font-size:13px;line-height:1.5">' +
+      '<strong>Внимание — антипаттерн.</strong> При уровне «учусь / только начинаю» агрессивный маркетинг создаёт больше заявок чем вы можете принять. Часть бюджета уйдёт впустую. Рекомендуем <strong>среднюю стратегию</strong> — она соответствует темпу вашего роста.' +
+    '</div>';
+  }
+  html += '</div>';
+  root.innerHTML = html;
+};
+function selectStrategy(v){ QC.strategy = v; advance(); }
 
 RENDERERS.payroll = function(root){
   var qc_q = ((Configs.questionnaire && Configs.questionnaire.questionnaire &&
@@ -1060,7 +1195,18 @@ RENDERERS.confirm = function(root){
   var locsMeta = (Configs.locations && Configs.locations.locations) || {};
   var locLabel = (locsMeta[QC.loc_type] || {}).label_rus || QC.loc_type || '—';
   var lineLabel = QC.location_line === 'line_1' ? '1-я линия' : QC.location_line === 'line_2' ? '2-я линия' : null;
-  var expL = {none:'Нет опыта',some:'1–2 года',experienced:'3+ лет'};
+  // R12.5: для A1 — уровни мастера (none/middle/experienced). Для прочих
+  // ниш — старая шкала (none/some/experienced).
+  var expL = (QC.archetype === 'A1')
+    ? {none:'Учусь / только начинаю', middle:'Делаю гель-лак уверенно', experienced:'Сложные техники + база'}
+    : {none:'Нет опыта', some:'1–2 года', experienced:'3+ лет'};
+  var levelL = {
+    simple:   'Простой кабинет',
+    nice:     'Приличный кабинет',
+    standard: 'Стандарт-салон',
+    premium:  'Премиум-салон',
+  };
+  var stratL = {conservative:'Консервативная', middle:'Средняя', aggressive:'Агрессивная'};
   var payL = {salary:'Оклад',piece:'Сдельно',mixed:'Смешанно'};
   var roles = (NicheSurvey && NicheSurvey.entrepreneur_roles) || [];
   var roleRow = (roles.find(function(r){return r.id === QC.entrepreneur_role;}) || {}).label_rus || null;
@@ -1072,6 +1218,8 @@ RENDERERS.confirm = function(root){
     ['Локация', locLabel + (lineLabel?' · '+lineLabel:'')],
     ['Опыт', expL[QC.experience] || '—'],
   ];
+  if(QC.level && levelL[QC.level]) rows.push(['Уровень', levelL[QC.level]]);
+  if(QC.strategy && stratL[QC.strategy]) rows.push(['Стратегия маркетинга', stratL[QC.strategy]]);
   if(QC.payroll_type && ['SOLO','HOME'].indexOf(QC.format_type) === -1) rows.push(['Оплата труда', payL[QC.payroll_type] || '—']);
   if(roleRow) rows.push(['Роль владельца', roleRow]);
   if(QC.capital_own) rows.push(['Готов вложить', fmt(QC.capital_own) + ' ₸']);
@@ -1111,6 +1259,11 @@ function submit(){
     staff_mode: (QC.entrepreneur_role && QC.entrepreneur_role !== 'owner_only') ? 'self' : 'hired',
     specific_answers: {
       location_line: QC.location_line, experience: QC.experience,
+      // R12.5: новые поля анкеты — уровень формата (для STUDIO/SALON_RENT)
+      // и маркетинг-стратегия. Бэкенд в _resolve_r12_level умеет
+      // авто-выбирать level если он не задан. strategy по умолчанию 'middle'.
+      level: QC.level || null,
+      strategy: QC.strategy || 'middle',
       payroll_type: QC.payroll_type, entrepreneur_role: QC.entrepreneur_role,
       capital_own: QC.capital_own, capital_needed: QC.capital_needed,
       archetype: QC.archetype, format_type: QC.format_type,
@@ -2127,7 +2280,8 @@ function handleCta(action){
     // Сбросить состояние и начать с начала
     QC = {niche_id:'', niche_name:'', archetype:'', icon:'', format_id:'', format_name:'', format_type:'',
           class_level:'', city_id:'', city_name:'', loc_type:'', location_line:'',
-          experience:'', payroll_type:'', entrepreneur_role:'', capital_own:null, capital_needed:null,
+          experience:'', level:'', strategy:'',
+          payroll_type:'', entrepreneur_role:'', capital_own:null, capital_needed:null,
           start_month: null};
     NicheSurvey = null;
     stepIndex = 0;

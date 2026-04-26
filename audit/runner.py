@@ -82,6 +82,8 @@ def _flatten_engine(result: dict, ctx: dict) -> Dict[str, Any]:
     summary = mp.get("summary") or {}
     ei = (result.get("block5") or {}).get("entrepreneur_income") or {}
 
+    # R12.5 S5: r12-контекст уже собран в build_pdf_context. Берём готовое.
+    r12_ctx = ctx.get("r12") or {}
     return {
         # категории
         "capital_zone":           cadq.get("capital_zone") or "UNKNOWN",
@@ -105,6 +107,16 @@ def _flatten_engine(result: dict, ctx: dict) -> Dict[str, Any]:
         "niche":                  (inp.get("niche_id") or "").upper(),
         "city":                   (inp.get("city_id") or "").lower(),
         "experience":             (inp.get("experience") or "none").lower(),
+        # R12.5 контекст (для check_r12_*)
+        "is_r12":                 bool(r12_ctx.get("is_r12")),
+        "r12_format_key":         r12_ctx.get("format_key") or "",
+        "r12_experience":         r12_ctx.get("experience") or "",
+        "r12_strategy":           r12_ctx.get("strategy") or "",
+        "r12_level":              r12_ctx.get("level") or "",
+        "r12_level_label":        r12_ctx.get("level_label") or "",
+        "r12_strategy_label":     r12_ctx.get("strategy_label") or "",
+        "r12_has_antipattern":    bool(r12_ctx.get("antipattern")),
+        "r12_n_explanation_blocks": len(r12_ctx.get("explanation_blocks") or []),
     }
 
 
@@ -142,6 +154,14 @@ def _normalize_format(niche: str, fmt: str) -> str:
 
 
 def _build_qc_payload(inp: Dict[str, Any]) -> Dict[str, Any]:
+    # R12.5 S5: для соло-beauty (A1) сценариев — проброс strategy / level
+    # из YAML-сценария. Если поле отсутствует — engine использует дефолты
+    # (strategy="middle", level=None — авто-выбор через _resolve_r12_level).
+    sa = {"experience": str(inp.get("experience") or "none")}
+    if inp.get("strategy"):
+        sa["strategy"] = str(inp["strategy"])
+    if inp.get("level"):
+        sa["level"] = str(inp["level"])
     return {
         "city_id":       str(inp["city"]).lower(),
         "niche_id":      str(inp["niche"]).upper(),
@@ -151,7 +171,7 @@ def _build_qc_payload(inp: Dict[str, Any]) -> Dict[str, Any]:
         "capital":       int(inp.get("capital") or 0),
         "start_month":   int(inp.get("start_month") or 5),
         "capex_level":   "стандарт",
-        "specific_answers": {"experience": str(inp.get("experience") or "none")},
+        "specific_answers": sa,
     }
 
 
