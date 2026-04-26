@@ -272,7 +272,10 @@ def compute_pnl_aggregates(result):
             max(0, opex_med - rent - mk_monthly) if opex_med else 100_000)
 
     # Шаг 3: зрелый месячный P&L.
-    rev_mature_m = avg_check * traffic * 30
+    # R12.5 Сессия 2: × working_days_per_month вместо × 30 (если задано
+    # в fin — приходит через formats_r12 + _apply_r12_5_overrides).
+    working_days = _safe_int(fin.get("working_days_per_month"), 30)
+    rev_mature_m = avg_check * traffic * working_days
     materials_m = int(rev_mature_m * cogs_pct)
     tax_m = int(rev_mature_m * tax_rate)
     fixed_m = fot + rent + mk_monthly + ox_monthly

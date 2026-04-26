@@ -60,7 +60,12 @@ def calc_revenue_monthly(fin, cal_month, razgon_month):
     """
     check = _safe_int(fin.get("check_med"), 1000)
     traffic = _safe_int(fin.get("traffic_med"), 50)
-    base_rev = check * traffic * 30
+    # R12.5 Сессия 2: × working_days_per_month вместо хардкода × 30.
+    # Если поле не задано (legacy ниши до R12.5) — fallback на 30 для
+    # обратной совместимости. Маникюр R12.5: HOME=26, STUDIO=22,
+    # SALON_RENT=24, MALL_SOLO=26 — приходит через _apply_r12_5_overrides.
+    working_days = _safe_int(fin.get("working_days_per_month"), 30)
+    base_rev = check * traffic * working_days
 
     s_key = f"s{cal_month:02d}"
     season_coef = _safe_float(fin.get(s_key), 1.0)

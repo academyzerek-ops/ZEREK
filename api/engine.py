@@ -168,6 +168,126 @@ TRAINING_COSTS_BY_EXPERIENCE = {
 }
 
 
+# R12.5 Сессия 2: маппинг legacy experience-меток на R12.5-канон.
+# Mini App до Сессии 3 присылает 'some'/'has'/'pro'/'expert', движок
+# нормализует к 'none'/'middle'/'experienced'.
+_EXPERIENCE_TO_R12 = {
+    'none': 'none', '': 'none', 'not_specified': 'none',
+    'some': 'middle', 'has': 'middle', 'middle': 'middle',
+    'pro': 'experienced', 'expert': 'experienced', 'experienced': 'experienced',
+}
+
+
+def _apply_r12_5_overrides(fin, niche_id, format_id, experience='none'):
+    """R12.5 Сессия 2: переписывает поля `fin` через `formats_r12` блок
+    в YAML ниши + experience_levels из A1 архетипа.
+
+    Если ниша не содержит `formats_r12` (или формат не найден в нём) —
+    возвращает fin без изменений. Это безопасный fallback для всех
+    остальных ниш (BARBER, COFFEE, и т.д.) которые ещё не переехали.
+
+    Override применяет:
+      · check_med = base_check_astana × experience.check_multiplier
+        (city_check_coef умножится позже в seats_mult ветке —
+         мы сохраняем нейтральный масштаб для Астаны).
+      · traffic_med = round(experience.avg_clients_per_day_mature)
+      · working_days_per_month = formats_r12[fmt].working_days_per_month
+        (раньше calc_revenue_monthly использовал × 30 жёстко).
+      · cogs_pct из formats_r12 (R12.5: 10% для STUDIO/SALON_RENT/MALL_SOLO,
+         12% для HOME).
+
+    Аренда / маркетинг / CAPEX через formats_r12 — НЕ перезаписываем
+    в этом коммите (Сессия 2 Commit 2 минимальная). Для HOME это
+    не критично (rent=0, marketing уже через marketing_service).
+    """
+    if not fin:
+        return fin
+    try:
+        from loaders.niche_loader import load_niche_yaml, load_archetype_yaml  # noqa: WPS433
+    except ImportError:
+        return fin
+    niche = (niche_id or '').upper()
+    fmt = (format_id or '').upper()
+    yaml_data = load_niche_yaml(niche)
+    if not yaml_data or 'formats_r12' not in yaml_data:
+        return fin
+
+    # Найти формат в formats_r12. Маппим legacy xlsx-суффиксы:
+    # _HOME → HOME, _SOLO → SALON_RENT, _STANDARD → STUDIO, _PREMIUM → нет.
+    suffix_to_r12 = {
+        '_HOME': 'HOME',
+        '_SOLO': 'SALON_RENT',
+        '_STANDARD': 'STUDIO',
+        '_PREMIUM': None,
+    }
+    r12_id = None
+    for sfx, rid in suffix_to_r12.items():
+        if fmt.endswith(sfx):
+            r12_id = rid
+            break
+    if not r12_id:
+        return fin
+
+    target = None
+    for f in yaml_data.get('formats_r12') or []:
+        if f.get('id') == r12_id:
+            target = f
+            break
+    if not target:
+        return fin
+
+    # Архетип A1 для experience_levels
+    a1 = load_archetype_yaml('A1')
+    if not a1:
+        return fin
+    exp_norm = _EXPERIENCE_TO_R12.get((experience or '').lower(), 'none')
+    exp_params = (a1.get('experience_levels') or {}).get(exp_norm) or {}
+
+    check_mult = float(exp_params.get('check_multiplier') or 1.0)
+    avg_clients = float(exp_params.get('avg_clients_per_day_mature') or 0)
+
+    # Базовый чек берём из formats_r12 (Астана). Если есть уровни —
+    # используем simple/standard/single как дефолт (выбор уровня
+    # будет в Сессии 3 через анкету).
+    base_check_astana = target.get('base_check', {}).get('astana')
+    if not base_check_astana:
+        # Для STUDIO/SALON_RENT/MALL_SOLO — base_check внутри levels
+        levels = target.get('levels') or {}
+        if levels:
+            default_level_key = (
+                'simple' if 'simple' in levels else
+                'standard' if 'standard' in levels else
+                next(iter(levels))
+            )
+            base_check_astana = (levels.get(default_level_key) or {}).get('base_check_astana')
+            # MALL_SOLO: используем base_check_average_astana если есть
+            if not base_check_astana:
+                base_check_astana = target.get('base_check_average_astana')
+
+    fin_new = dict(fin)
+
+    if base_check_astana and check_mult:
+        # check_med — это база для Астаны до city_check_coef.
+        # В коде ниже city_check_coef умножается на check позже
+        # (через get_city_check_coef). Astana coef = 1.0, поэтому
+        # для неё значение остаётся таким же.
+        fin_new['check_med'] = int(round(base_check_astana * check_mult))
+
+    if avg_clients > 0:
+        # traffic_med — целое число клиентов в день. Округляем.
+        fin_new['traffic_med'] = max(1, int(round(avg_clients)))
+
+    wd = target.get('working_days_per_month')
+    if wd:
+        fin_new['working_days_per_month'] = int(wd)
+
+    cogs = target.get('cogs_pct')
+    if cogs:
+        fin_new['cogs_pct'] = float(cogs)
+
+    return fin_new
+
+
 _MONTH_NAMES_RUS_FULL = ['Янв','Фев','Мар','Апр','Май','Июн',
                          'Июл','Авг','Сен','Окт','Ноя','Дек']
 _MONTH_NAMES_RUS_LONG = ['Январь','Февраль','Март','Апрель','Май','Июнь',
@@ -452,6 +572,7 @@ def run_quick_check_v3(
     founder_works: bool = False,  # учредитель сам работает?
     rent_override: int = None,
     start_month: int = 4,
+    experience: str = 'none',  # R12.5: уровень опыта для override fin/capex
 ) -> dict:
     """
     Quick Check v3 — полный расчёт из новых шаблонов (12 листов).
@@ -481,6 +602,15 @@ def run_quick_check_v3(
     staff = db.get_format_row(niche_id, 'STAFF', format_id, cls)
     capex_data = db.get_format_row(niche_id, 'CAPEX', format_id, cls)
     tax_data = db.get_format_row(niche_id, 'TAXES', format_id, cls)
+
+    # R12.5 Сессия 2: override fin через formats_r12 + A1 archetype.
+    # Канон R12.5 — base_check / avg_clients_per_day_mature /
+    # working_days_per_month по формату и уровню опыта. Применяется
+    # только если YAML содержит formats_r12 для этой ниши и archetype
+    # = A1. Иначе fin используется как был (legacy R8/R9).
+    fin = _apply_r12_5_overrides(
+        fin, niche_id, format_id, experience=experience,
+    )
 
     # Контентные данные
     products = db.get_format_all_rows(niche_id, 'PRODUCTS', format_id, cls)
@@ -750,6 +880,10 @@ def run_quick_check_v3(
         "financials": {
             "check_med": _safe_int(fin.get('check_med')),
             "traffic_med": _safe_int(fin.get('traffic_med')),
+            # R12.5 Сессия 2: working_days_per_month — приходит из
+            # formats_r12 через _apply_r12_5_overrides. Используется
+            # в compute_pnl_aggregates Шаг 3 (rev_mature_m).
+            "working_days_per_month": _safe_int(fin.get('working_days_per_month'), 30),
             "cogs_pct": _safe_float(fin.get('cogs_pct'), DEFAULTS['cogs_pct']),
             "margin_pct": _safe_float(fin.get('margin_pct'), DEFAULTS['margin_pct']),
             "rent_month": rent_month_total,

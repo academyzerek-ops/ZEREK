@@ -164,6 +164,10 @@ class QuickCheckCalculator:
 
     def _compute_base(self, req, cls, founder_works_eff):
         """Шаг 3: базовый расчёт через engine.run_quick_check_v3."""
+        # R12.5: experience прокидывается из specific_answers до engine
+        # для override fin через formats_r12 (только если в YAML ниши
+        # есть formats_r12 + archetype A1).
+        experience = (req.specific_answers or {}).get('experience') or 'none'
         return run_quick_check_v3(
             db=self.db,
             city_id=req.city_id,
@@ -177,6 +181,7 @@ class QuickCheckCalculator:
             founder_works=founder_works_eff,
             rent_override=req.rent_override,
             start_month=req.start_month,
+            experience=experience,
         )
 
     def _overlay_blocks(self, result, req):
