@@ -250,6 +250,7 @@ class QuickCheckCalculator:
                     experience=exp,
                     content_self_produced=content_self,
                     legal_form="ip",
+                    format_id=(inp.get("format_id") or "").upper(),  # R12 S2
                 )
                 if mp and not mp.get("error"):
                     result["marketing_plan"] = mp

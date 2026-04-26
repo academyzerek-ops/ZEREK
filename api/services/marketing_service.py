@@ -106,6 +106,7 @@ def compute_marketing_plan(
     experience: str = "none",
     content_self_produced: bool = True,
     legal_form: str = "ip",
+    format_id: str = "",   # R12 S2: для format-зависимых фаз A1
 ) -> Dict[str, Any]:
     """Помесячный маркетинг-план + архетипный контекст.
 
@@ -164,34 +165,55 @@ def compute_marketing_plan(
         })
         total_year += total_marketing
 
-    # ── R9 K.1: фазовый override для соло-beauty (архетип A1) ──
-    # Канон по решению Адиля: для архетипа A1 маркетинг по явным фазам
-    # 3+3+6, не через CAC × clients (формула давала 619K/год при 51K avg
-    # — методологически неверно для соло-beauty: М1 у формулы 69K, тогда
-    # как реально М1 — самый дорогой период из-за тестирования креативов
-    # с нуля и поиска блогеров). Фазы:
-    #   M1-M3 (Разгон):    152 000 ₸/мес — выкупаем инфо-поле
-    #   M4-M6 (Настройка): 54 000 ₸/мес  — оптимизация каналов
-    #   M7-M12 (Зрелый):   16 000 ₸/мес  — поддерживающий
-    # Итого 717K/год, среднее 60K. Пик М2 = 175K (фаза разгона + сезонный
-    # пик контент-производства).
+    # ── R9 K.1 + R12 S2: фазовый override для соло-beauty (A1) ──
+    # Канон по R9: для архетипа A1 маркетинг по явным фазам 3+3+6, не
+    # через CAC × clients. R12: фазы зависят от формата — у HOME выкуп
+    # инфо-поля дороже (нет пешеходного потока), у STUDIO/SALON_RENT/
+    # MALL_SOLO бюджеты ниже (есть локация / трафик ТЦ / трафик салона).
     if archetype_id == "A1":
-        PHASE_BUDGETS = {
-            "ramp":   152_000,    # M1-M3
-            "tuning":  54_000,    # M4-M6
-            "mature":  16_000,    # M7-M12
+        # R12 §«Маркетинг разгона М1-М3 / М4-М6 / М7-М12». Под текущие
+        # xlsx-суффиксы маппим на R12-канон (см. _FORMAT_SUFFIX_TO_R12).
+        # Кривая разгона M1/M2/M3 — лёгкая «волна» с пиком в M2.
+        PHASE_BUDGETS_BY_R12 = {
+            # HOME: «выкупаем инфо-поле» — выше всех (нет проходящего потока)
+            "HOME":       {"ramp_curve": [130_000, 175_000, 152_000],
+                           "tuning":      54_000,
+                           "mature":      16_000},
+            # STUDIO: своя локация даёт первый интерес, но нужен мощный старт
+            "STUDIO":     {"ramp_curve": [110_000, 150_000, 130_000],
+                           "tuning":      50_000,
+                           "mature":      18_000},
+            # SALON_RENT: часть трафика идёт от салона — бюджет ниже
+            "SALON_RENT": {"ramp_curve": [70_000, 95_000, 75_000],
+                           "tuning":      35_000,
+                           "mature":      12_000},
+            # MALL_SOLO: трафик ТЦ — основной канал, бюджет на оформление
+            "MALL_SOLO":  {"ramp_curve": [50_000, 75_000, 55_000],
+                           "tuning":      30_000,
+                           "mature":      15_000},
         }
-        # Лёгкая «волна» внутри разгона: M1=130K, M2=175K (пик), M3=152K.
-        # Среднее по фазе ≈ 152K, как и заявлено каноном.
-        ramp_curve = [130_000, 175_000, 152_000]
+        _SUFFIX_TO_R12 = {
+            "_HOME": "HOME", "_SOLO": "SALON_RENT",
+            "_STANDARD": "STUDIO", "_PREMIUM": None,
+        }
+        fmt_id_up = (format_id or "").upper()
+        _r12_key = None
+        for sfx, key in _SUFFIX_TO_R12.items():
+            if fmt_id_up.endswith(sfx):
+                _r12_key = key
+                break
+        budgets = PHASE_BUDGETS_BY_R12.get(_r12_key) or PHASE_BUDGETS_BY_R12["HOME"]
+        ramp_curve = budgets["ramp_curve"]
+        tuning_amt = budgets["tuning"]
+        mature_amt = budgets["mature"]
         for idx in range(12):
             month = idx + 1
             if month <= 3:
                 new_marketing = ramp_curve[month - 1]
             elif month <= 6:
-                new_marketing = PHASE_BUDGETS["tuning"]
+                new_marketing = tuning_amt
             else:
-                new_marketing = PHASE_BUDGETS["mature"]
+                new_marketing = mature_amt
             monthly_plan[idx]["paid_budget"] = new_marketing
             monthly_plan[idx]["total_marketing"] = new_marketing
         total_year = sum(m["total_marketing"] for m in monthly_plan)
