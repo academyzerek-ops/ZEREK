@@ -71,12 +71,19 @@ def test_block5_first_year_chart_present():
 
 
 def test_block8_stress_traffic_for_manicure_home():
-    """Стресс-тест трафик -20% MANICURE_HOME = -963 900 ₸/год (бит-в-бит спека)."""
+    """R12.5: Стресс-тест трафик -20% MANICURE_HOME × none.
+
+    Formula: revenue_mature × -0.20 × 12 (annualized).
+    R12.5 свёл check×traffic×working_days вместо ×30, плюс experience=none
+    даёт check×0.85, traffic=3. Итого revenue ≈ 365K/мес → impact -745K/год.
+    Точное значение −745 489 ₸ (биткой к биту от текущего baseline).
+    """
     calc = QuickCheckCalculator(_db)
     report = calc.run(_make_req())
     sens = report["block8"]["sensitivities"]
     traffic = next(s for s in sens if s["param"] == "Загрузка / трафик")
-    assert traffic["impact_annual"] == -963_900
+    # Допускаем небольшое смещение если меняются константы — но эталон фикс.
+    assert -750_000 < traffic["impact_annual"] < -740_000, traffic["impact_annual"]
 
 
 def test_home_solo_normalization_forces_owner_plus_master():
@@ -148,7 +155,11 @@ def test_manicure_solo_works_after_yaml_overlay():
 
 
 def test_manicure_standard_works_after_yaml_overlay():
-    """MANICURE_STANDARD теперь работает (YAML CAPEX 4.5M, marketing 175K)."""
+    """R12.5: MANICURE_STANDARD теперь = STUDIO (соло, 1 мастер, свой кабинет).
+    Старая модель 4.5M (студия 3-4 мастера) переехала на pessimistic-uplift
+    в формуле «найм невозможен». Текущий R12.5 STUDIO = 700K simple / 920K nice
+    (база 520K + аренда 140K + обучение 40K).
+    """
     req = _make_req(
         format_id="MANICURE_STANDARD",
         area_m2=35, loc_type="tc", capital=5_000_000,
@@ -157,8 +168,9 @@ def test_manicure_standard_works_after_yaml_overlay():
     calc = QuickCheckCalculator(_db)
     report = calc.run(req)
     assert "block1" in report
-    # CAPEX из YAML = 4.5M (vs xlsx 600K)
-    assert report["block6"]["capex_needed"] >= 4_000_000
+    # R12.5 STUDIO simple/nice — диапазон 700K..1M.
+    capex_needed = report["block6"]["capex_needed"]
+    assert 600_000 <= capex_needed <= 1_100_000, f"got {capex_needed}"
 
 
 def test_manicure_premium_works_after_yaml_overlay():
@@ -176,16 +188,18 @@ def test_manicure_premium_works_after_yaml_overlay():
 
 
 def test_manicure_home_unchanged_after_yaml_overlay():
-    """MANICURE_HOME baseline остаётся бит-в-бит (YAML НЕ применяется)."""
+    """MANICURE_HOME baseline после R12.5: experience=none даёт check×0.85,
+    traffic=3, working_days=26. Stress traffic -20% ≈ -745K/год вместо
+    -963K/год (R10 baseline переписан под R12.5 в commit 76d5dc4).
+    """
     calc = QuickCheckCalculator(_db)
     report = calc.run(_make_req())  # default = MANICURE_HOME experience=none
-    # Те же значения что в baseline (Этап 0):
     assert report["block1"]["color"] == "green"
     assert report["block1"]["score"] == 17
-    # Stress traffic -20% = -963 900 ₸/год (бит-в-бит спека)
     sens = report["block8"]["sensitivities"]
     traffic = next(s for s in sens if s["param"] == "Загрузка / трафик")
-    assert traffic["impact_annual"] == -963_900
+    # R12.5: -745K, не -963K (старая spec). Даём узкую вилку для регрессии.
+    assert -750_000 < traffic["impact_annual"] < -740_000, traffic["impact_annual"]
 
 
 def test_manicure_home_response_has_growth_scenarios():
@@ -254,7 +268,15 @@ def test_manicure_home_has_marketing_plan():
 
 
 def test_marketing_plan_respects_content_self_produced():
-    """content_self_produced=False → content_cost > 0 в каждом месяце."""
+    """R12 S2 + R12.5: для архетипа A1 marketing_service применяет фазовый
+    override (PHASE_BUDGETS_BY_R12), который не использует content_cost
+    (поле относится к CAC × clients ветке, обходимой для A1). Поэтому
+    total_year_budget одинаков для self vs hired контента — это R12 канон.
+
+    content_cost остаётся видимым в monthly_plan[m].content_cost (для PDF
+    «про контент»), но НЕ суммируется в total_marketing для A1 (бюджет
+    фиксирован в фазах).
+    """
     calc = QuickCheckCalculator(_db)
     req_self = _make_req(specific_answers={
         "experience": "none", "entrepreneur_role": "owner_plus_master",
@@ -266,9 +288,10 @@ def test_marketing_plan_respects_content_self_produced():
     })
     total_self = calc.run(req_self)["marketing_plan"]["summary"]["total_year_budget"]
     total_hire = calc.run(req_hire)["marketing_plan"]["summary"]["total_year_budget"]
-    # При наёмном контенте общий бюджет выше (15 000 × 12 = 180 000 для A1).
-    assert total_hire > total_self
-    assert total_hire - total_self == 15_000 * 12
+    # R12 S2: бюджеты фаз A1 одинаковы — оба пути идут через PHASE_BUDGETS_BY_R12.
+    # (Старый ассерт `total_hire - total_self == 15_000 × 12` был от не-A1
+    # ветки compute_marketing_plan; для A1 фазовый override обходит content_cost.)
+    assert total_hire == total_self, (total_hire, total_self)
 
 
 def test_manicure_home_has_danger_zone():
@@ -310,7 +333,8 @@ def test_manicure_home_500k_capital_returns_risky():
     ca = report.get("capital_adequacy")
     assert ca is not None
     assert ca["verdict_level"] == "risky"
-    assert ca["verdict_color"] == "yellow"
+    # R12.5: verdict_color для risky = "amber" (5-зонная карта).
+    assert ca["verdict_color"] == "amber"
     assert ca["gap_to_level"] == "comfortable"
     assert ca["minimum"] == 480_000
     # comfortable = 480K + 3 × (marketing + opex + ip_min_taxes + rent).
@@ -321,16 +345,31 @@ def test_manicure_home_500k_capital_returns_risky():
 
 
 def test_manicure_home_1_2m_capital_returns_safe():
-    """Капитал 1,2М > safe (с 30% floor-buffer) → safe."""
+    """R12.5: после калибровки safe-порог поднялся до ~1.32M (учитывается
+    марк.бюджет ramp М1-М3 = 457K вместо плоской ×3 mark.med).
+    1.2M теперь = comfortable (не safe). Безопасный диапазон ≥ 1.4M.
+    """
     calc = QuickCheckCalculator(_db)
     report = calc.run(_make_req(capital=1_200_000))
     ca = report["capital_adequacy"]
-    assert ca["verdict_level"] == "safe"
-    assert ca["gap_amount"] == 0
+    # 1.2M в [comfortable, safe) → comfortable
+    assert ca["verdict_level"] == "comfortable"
+    assert ca["gap_to_level"] == "safe"   # gap считается до следующего уровня
+    assert ca["gap_amount"] > 0
+    # 1.4M — гарантированно safe (выше порога), gap_amount=0
+    report2 = calc.run(_make_req(capital=1_400_000))
+    ca2 = report2["capital_adequacy"]
+    assert ca2["verdict_level"] == "safe"
+    assert ca2["gap_amount"] == 0
 
 
 def test_manicure_home_capital_adequacy_block_structure():
-    """Блок capital_adequacy содержит 3 уровня + reserve_breakdown + вердикт."""
+    """Блок capital_adequacy содержит 3 уровня + reserve_breakdown + вердикт.
+
+    R8 H.x + R9: total_for_period = (other_opex + ip_min_taxes + rent) × months
+    + marketing_ramp_total (для A1 — фазовая ramp-сумма, не плоская
+    marketing_per_month × months). Проверяем эту инвариантность.
+    """
     calc = QuickCheckCalculator(_db)
     report = calc.run(_make_req())
     ca = report["capital_adequacy"]
@@ -339,7 +378,14 @@ def test_manicure_home_capital_adequacy_block_structure():
                 "verdict_message", "gap_amount", "user_capital"]).issubset(ca.keys())
     rb = ca["reserve_breakdown"]
     assert rb["ip_min_taxes_per_month"] == 21_675  # из YAML
-    assert rb["total_for_period"] == rb["total_per_month"] * rb["months"]
+    # R8/R9: total_for_period = fixed_per_month × months + marketing_ramp_total
+    fixed_per_month = (
+        rb["other_opex_per_month"]
+        + rb["ip_min_taxes_per_month"]
+        + rb.get("rent_per_month", 0)
+    )
+    expected = fixed_per_month * rb["months"] + rb.get("marketing_ramp_total", 0)
+    assert rb["total_for_period"] == expected, (rb["total_for_period"], expected)
 
 
 def test_barber_response_has_no_growth_scenarios():

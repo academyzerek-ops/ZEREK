@@ -38,9 +38,11 @@ def test_capital_between_comfortable_and_safe():
 
 
 def test_capital_between_minimum_and_comfortable_returns_risky():
+    # R12.5: verdict_color для risky = "amber" (5-зонная карта вместо
+    # старой 3-цветной). См. capital_service compute_capital_adequacy.
     r = compute_capital_adequacy(**_BASE, user_capital=500_000)
     assert r["verdict_level"] == "risky"
-    assert r["verdict_color"] == "yellow"
+    assert r["verdict_color"] == "amber"
     assert r["gap_to_level"] == "comfortable"
     assert r["gap_amount"] == 695_025 - 500_000
 
