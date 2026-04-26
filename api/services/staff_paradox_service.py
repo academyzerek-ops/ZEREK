@@ -90,7 +90,8 @@ def compute_staff_paradox(
 
     strategies = _build_strategies(block_type, int(rent_monthly or 0))
     warning = _build_warning(block_type)
-    hire_impossible_note = _build_hire_impossible_note(block_type)
+    # R12 #1: hire_impossible_note теперь для всех 4 форматов.
+    hire_impossible_note = _build_hire_impossible_note(format_id)
 
     return {
         "applicable": True,
@@ -199,12 +200,62 @@ def _build_warning(block_type: str) -> Optional[Dict[str, str]]:
     }
 
 
-def _build_hire_impossible_note(block_type: str) -> Optional[str]:
-    """Note для HOME — нельзя нанять другого мастера в свой дом."""
-    if block_type != "short":
-        return None
-    return (
+# R12 Сессия 1: словарь форматных текстов «Почему найм невозможен».
+# Ключи — канон R12 (HOME/STUDIO/SALON_RENT/MALL_SOLO). Маппинг с
+# текущих xlsx-суффиксов выполняется через _FORMAT_SUFFIX_TO_R12.
+# Тексты дословно из ТЗ R12 (Адиль явно: «Не угадывай тексты»).
+HIRE_IMPOSSIBLE_NOTES_BY_FORMAT = {
+    "HOME": (
         "Нельзя нанять другого мастера работать у вас дома — это ваш дом, "
         "и клиент доверяет лично вам. Рост возможен только через рост "
-        "среднего чека или переход в формат SOLO (арендованный кабинет)."
-    )
+        "среднего чека или переход в формат STUDIO (свой кабинет) либо "
+        "SALON_RENT (аренда места в чужом салоне)."
+    ),
+    "STUDIO": (
+        "В одном кабинете обычно работает один мастер. Найм требует "
+        "расширения помещения и переход в формат BEAUTY-салон с другой "
+        "экономикой."
+    ),
+    "SALON_RENT": (
+        "Вы арендуете место для одного мастера. Найм невозможен в этой "
+        "модели — нужен переход в формат STUDIO или своего салона."
+    ),
+    "MALL_SOLO": (
+        "На одной стойке работает один мастер. Найм требует расширения "
+        "до многоместной точки — это другой формат с большим CAPEX и "
+        "другой моделью."
+    ),
+}
+
+
+# Маппинг текущих xlsx-суффиксов на канон R12. В Сессии 5 R12 будет
+# переименование IDs в xlsx (SOLO→SALON_RENT, STANDARD→STUDIO,
+# PREMIUM→MALL_SOLO) — тогда этот маппинг можно убрать.
+_FORMAT_SUFFIX_TO_R12 = {
+    "_HOME":     "HOME",
+    "_SOLO":     "SALON_RENT",  # «Аренда места» по семантике = R12.SALON_RENT
+    "_STANDARD": "STUDIO",      # «Свой кабинет» по семантике = R12.STUDIO
+    "_PREMIUM":  None,          # PREMIUM ≠ MALL_SOLO; в Сессии 4 будет переделан
+}
+
+
+def _r12_format_key(format_id: str) -> Optional[str]:
+    """Возвращает канон R12 для текущего format_id или None если маппинг
+    не определён (например для _PREMIUM до Сессии 4)."""
+    fmt = (format_id or "").upper()
+    for suffix, key in _FORMAT_SUFFIX_TO_R12.items():
+        if fmt.endswith(suffix):
+            return key
+    return None
+
+
+def _build_hire_impossible_note(format_id: str) -> Optional[str]:
+    """Текст «Почему найм невозможен» для блока «Парадокс кадров».
+
+    R12 Сессия 1: показывается для всех 4 форматов (HOME/STUDIO/
+    SALON_RENT/MALL_SOLO). Раньше — только для HOME.
+    """
+    key = _r12_format_key(format_id)
+    if not key:
+        return None
+    return HIRE_IMPOSSIBLE_NOTES_BY_FORMAT.get(key)
