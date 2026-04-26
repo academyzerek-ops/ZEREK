@@ -110,7 +110,8 @@ def compute_marketing_plan(
     experience: str = "none",
     content_self_produced: bool = True,
     legal_form: str = "ip",
-    format_id: str = "",   # R12 S2: для format-зависимых фаз A1
+    format_id: str = "",       # R12 S2: для format-зависимых фаз A1
+    strategy: str = "middle",  # R12.5 S2 хвост: conservative / middle / aggressive
 ) -> Dict[str, Any]:
     """Помесячный маркетинг-план + архетипный контекст.
 
@@ -210,6 +211,16 @@ def compute_marketing_plan(
         ramp_curve = budgets["ramp_curve"]
         tuning_amt = budgets["tuning"]
         mature_amt = budgets["mature"]
+        # R12.5 S2 хвост: budget_multiplier по стратегии из A1 archetype.
+        # conservative ×0.20, middle ×1.00, aggressive ×1.40.
+        try:
+            from loaders.niche_loader import load_archetype_yaml  # noqa: WPS433
+            a1 = load_archetype_yaml('A1') or {}
+            strats = a1.get('marketing_strategies') or {}
+            strat_data = strats.get((strategy or 'middle').lower()) or strats.get('middle') or {}
+            budget_mult = float(strat_data.get('budget_multiplier') or 1.0)
+        except Exception:  # noqa: BLE001
+            budget_mult = 1.0
         for idx in range(12):
             month = idx + 1
             if month <= 3:
@@ -218,6 +229,7 @@ def compute_marketing_plan(
                 new_marketing = tuning_amt
             else:
                 new_marketing = mature_amt
+            new_marketing = int(round(new_marketing * budget_mult))
             monthly_plan[idx]["paid_budget"] = new_marketing
             monthly_plan[idx]["total_marketing"] = new_marketing
         total_year = sum(m["total_marketing"] for m in monthly_plan)

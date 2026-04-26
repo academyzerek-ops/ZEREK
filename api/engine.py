@@ -178,7 +178,7 @@ _EXPERIENCE_TO_R12 = {
 }
 
 
-def _apply_r12_5_overrides(fin, niche_id, format_id, experience='none'):
+def _apply_r12_5_overrides(fin, niche_id, format_id, experience='none', strategy='middle'):
     """R12.5 Сессия 2: переписывает поля `fin` через `formats_r12` блок
     в YAML ниши + experience_levels из A1 архетипа.
 
@@ -311,6 +311,11 @@ def _apply_r12_5_overrides(fin, niche_id, format_id, experience='none'):
             deposit_months = (levels.get(default_level_key) or {}).get('deposit_months')
     if deposit_months is not None:
         fin_new['deposit_months'] = int(deposit_months)
+
+    # R12.5: записываем стратегию в fin чтобы её увидели
+    # marketing_service (для budget_multiplier) и seasonality_service
+    # (для ramp_curve по стратегии).
+    fin_new['strategy'] = (strategy or 'middle').lower()
 
     return fin_new
 
@@ -775,7 +780,8 @@ def run_quick_check_v3(
     founder_works: bool = False,  # учредитель сам работает?
     rent_override: int = None,
     start_month: int = 4,
-    experience: str = 'none',  # R12.5: уровень опыта для override fin/capex
+    experience: str = 'none',     # R12.5: уровень опыта для override fin/capex
+    strategy: str = 'middle',      # R12.5: маркетинг-стратегия (conservative/middle/aggressive)
 ) -> dict:
     """
     Quick Check v3 — полный расчёт из новых шаблонов (12 листов).
@@ -813,7 +819,7 @@ def run_quick_check_v3(
     # YAML содержит formats_r12 для этой ниши и archetype = A1.
     # Иначе fin/capex_data используются как были (legacy R8/R9).
     fin = _apply_r12_5_overrides(
-        fin, niche_id, format_id, experience=experience,
+        fin, niche_id, format_id, experience=experience, strategy=strategy,
     )
     capex_data = _apply_r12_5_capex_override(
         capex_data, niche_id, format_id, experience=experience,
@@ -1096,6 +1102,8 @@ def run_quick_check_v3(
             # formats_r12 через _apply_r12_5_overrides. Используется
             # в compute_pnl_aggregates Шаг 3 (rev_mature_m).
             "working_days_per_month": _safe_int(fin.get('working_days_per_month'), 30),
+            # R12.5: маркетинговая стратегия (conservative/middle/aggressive)
+            "strategy": fin.get('strategy') or 'middle',
             "cogs_pct": _safe_float(fin.get('cogs_pct'), DEFAULTS['cogs_pct']),
             "margin_pct": _safe_float(fin.get('margin_pct'), DEFAULTS['margin_pct']),
             "rent_month": rent_month_total,

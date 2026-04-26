@@ -72,7 +72,25 @@ def calc_revenue_monthly(fin, cal_month, razgon_month):
 
     rampup_months = _safe_int(fin.get("rampup_months"), DEFAULTS["rampup_months"])
 
-    if rampup_months == 3 and razgon_month <= 3:
+    # R12.5 S2 хвост: ramp_curve по стратегии из A1 archetype, если
+    # стратегия задана в fin. Conservative — медленная (выход на М11),
+    # middle — стандарт (М4), aggressive — быстрая (М3).
+    strategy = (fin.get("strategy") or "middle").lower()
+    a1_ramp = None
+    try:
+        from loaders.niche_loader import load_archetype_yaml  # noqa: WPS433
+        a1 = load_archetype_yaml('A1') or {}
+        strats = a1.get('marketing_strategies') or {}
+        strat_data = strats.get(strategy) or strats.get('middle') or {}
+        rc = strat_data.get('ramp_curve')
+        if rc and isinstance(rc, list) and len(rc) >= 12:
+            a1_ramp = [float(v) for v in rc[:12]]
+    except Exception:  # noqa: BLE001
+        a1_ramp = None
+
+    if a1_ramp and 1 <= razgon_month <= 12:
+        razgon_coef = min(a1_ramp[razgon_month - 1], 1.0)
+    elif rampup_months == 3 and razgon_month <= 3:
         razgon_coef = RAMP_CURVE_DEFAULT[razgon_month - 1]
     elif razgon_month <= rampup_months:
         # Fallback на линейную интерполяцию для нестандартных rampup_months.

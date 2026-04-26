@@ -164,10 +164,13 @@ class QuickCheckCalculator:
 
     def _compute_base(self, req, cls, founder_works_eff):
         """Шаг 3: базовый расчёт через engine.run_quick_check_v3."""
-        # R12.5: experience прокидывается из specific_answers до engine
-        # для override fin через formats_r12 (только если в YAML ниши
-        # есть formats_r12 + archetype A1).
-        experience = (req.specific_answers or {}).get('experience') or 'none'
+        # R12.5: experience + strategy прокидываются из specific_answers
+        # до engine. experience override fin/capex/staff через formats_r12
+        # (если ниша в R12.5). strategy управляет маркетинг-фазами и
+        # ramp curve.
+        sa = req.specific_answers or {}
+        experience = sa.get('experience') or 'none'
+        strategy = sa.get('strategy') or 'middle'
         return run_quick_check_v3(
             db=self.db,
             city_id=req.city_id,
@@ -182,6 +185,7 @@ class QuickCheckCalculator:
             rent_override=req.rent_override,
             start_month=req.start_month,
             experience=experience,
+            strategy=strategy,
         )
 
     def _overlay_blocks(self, result, req):
@@ -256,6 +260,7 @@ class QuickCheckCalculator:
                     content_self_produced=content_self,
                     legal_form="ip",
                     format_id=(inp.get("format_id") or "").upper(),  # R12 S2
+                    strategy=sa.get("strategy") or "middle",  # R12.5 S2 хвост
                 )
                 if mp and not mp.get("error"):
                     result["marketing_plan"] = mp
