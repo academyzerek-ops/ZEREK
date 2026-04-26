@@ -154,13 +154,17 @@ CAPEX_BREAKDOWN_LABELS_RUS = {
 # из CAPEX на новичке, который не заполнил поле). Клиенту с опытом в
 # шаблоне CAPEX показываем подпись: можно исключить 150 000 ₸.
 TRAINING_COSTS_BY_EXPERIENCE = {
-    'none': 150_000,            # с нуля
-    'not_specified': 150_000,   # поле не заполнено → дефолт новичка
-    '': 150_000,                # пустая строка
-    'some': 40_000,             # 1-2 продвинутых курса
-    'has':  40_000,             # alias из _EXPERIENCE_LABELS
-    'pro':  0,                  # профи, обучение не требуется
-    'expert': 0,                # alias
+    # R12.5 канон (3 уровня из data/archetypes/a1_beauty_solo.yaml):
+    'none':          150_000,   # с нуля — полный курс
+    'middle':        40_000,    # 1-2 продвинутых курса (= legacy "some")
+    'experienced':   20_000,    # повышение квалификации (R12.5 для опытного)
+    # Legacy aliases (Mini App до R12.5 использовала some/has/pro/expert):
+    'not_specified': 150_000,
+    '':              150_000,
+    'some':          40_000,    # = middle
+    'has':           40_000,
+    'pro':           20_000,    # = experienced (раньше 0; R12.5 закладывает курсы 20K)
+    'expert':        20_000,
 }
 
 

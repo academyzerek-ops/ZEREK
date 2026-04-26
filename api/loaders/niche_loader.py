@@ -494,6 +494,61 @@ def get_inflation_niche(db, niche_id):
 _YAML_CACHE = {}
 
 
+# R12.5 Сессия 2: загрузчик архетипа A1 (универсальные параметры
+# опыта/стратегий для всех соло-beauty ниш). Отдельный кеш чтобы не
+# смешивать с per-niche YAML.
+_ARCHETYPE_CACHE = {}
+
+
+def load_archetype_yaml(archetype_id):
+    """Читает `data/archetypes/{archetype_id}_*.yaml` → dict (с кешем).
+
+    Файлы названы по схеме `a1_beauty_solo.yaml`, `b_*.yaml`, etc.
+    Возвращает `None` если архетип не найден.
+
+    R12.5 Сессия 2: пока поддерживается только A1 — единый соло-beauty
+    архетип для маникюра / барбера / бровиста / ресничницы / шугаринга /
+    массажа / косметологии. Параметры:
+      experience_levels    (none / middle / experienced)
+      marketing_strategies (conservative / middle / aggressive)
+      antipatterns         (например novice_aggressive)
+      explanation_blocks   (для опыта none — «почему ниже знакомых»)
+    """
+    aid = (archetype_id or "").lower()
+    if aid in _ARCHETYPE_CACHE:
+        return _ARCHETYPE_CACHE[aid]
+    # A1 → a1_beauty_solo.yaml. Если в будущем появятся другие архетипы
+    # (B/C/D...) — просто добавим маппинг здесь.
+    file_map = {
+        "a1": "a1_beauty_solo.yaml",
+    }
+    fname = file_map.get(aid)
+    if not fname:
+        _log.info("archetype YAML mapping not found for %s", aid)
+        _ARCHETYPE_CACHE[aid] = None
+        return None
+    path = os.path.join(_REPO_ROOT, "data", "archetypes", fname)
+    if not os.path.exists(path):
+        _log.info("archetype YAML not found at %s", path)
+        _ARCHETYPE_CACHE[aid] = None
+        return None
+    try:
+        import yaml  # noqa: WPS433
+    except ImportError:
+        _log.warning("PyYAML not installed; cannot load %s", path)
+        _ARCHETYPE_CACHE[aid] = None
+        return None
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f) or {}
+    except Exception as exc:  # noqa: BLE001
+        _log.warning("failed to parse %s: %s", path, exc)
+        _ARCHETYPE_CACHE[aid] = None
+        return None
+    _ARCHETYPE_CACHE[aid] = data
+    return data
+
+
 def load_niche_yaml(niche_id):
     """Читает `data/niches/{NICHE}_data.yaml` → dict (с in-process кешем).
 
