@@ -1,0 +1,125 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ZEREK Archetype (frontmatter schema)",
+  "description": "Структура YAML frontmatter для knowledge/archetypes/{ID}.md. Универсальные параметры архетипа: уровни опыта, стратегии маркетинга, антипаттерны.",
+  "type": "object",
+  "required": ["id", "name_rus"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Z][0-9]+_[A-Z_]+$",
+      "description": "ID архетипа в формате A1_BEAUTY_SOLO."
+    },
+    "name_rus": {
+      "type": "string",
+      "description": "Человекочитаемое название (Beauty-соло, Food impulse, ...)."
+    },
+    "description_short": {"type": "string"},
+    "format_options": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Список доступных форматов архетипа (HOME, STUDIO, SALON_RENT, MALL_SOLO)."
+    },
+    "experience_levels": {
+      "type": "object",
+      "description": "Уровни опыта мастера. Ключи: none / middle / experienced (или другие для нон-A1 архетипов).",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["label"],
+        "properties": {
+          "label":                       {"type": "string"},
+          "description_short":           {"type": "string"},
+          "minutes_per_client":          {"type": "integer"},
+          "peak_clients_per_day":        {"type": "integer"},
+          "avg_clients_per_day_mature":  {"type": "number"},
+          "check_multiplier":            {"type": "number"},
+          "training_capex":              {"type": "integer"},
+          "working_capital_multiplier":  {"type": "number"},
+          "available_formats":           {"type": "array", "items": {"type": "string"}},
+          "risk_note":                   {"type": "string"}
+        }
+      }
+    },
+    "marketing_strategies": {
+      "type": "object",
+      "description": "Стратегии маркетинга. Ключи: conservative / middle / aggressive.",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["budget_multiplier", "ramp_curve"],
+        "properties": {
+          "label":              {"type": "string"},
+          "description_short":  {"type": "string"},
+          "description_long":   {"type": "string"},
+          "budget_multiplier":  {"type": "number"},
+          "ramp_speed":         {"type": "string"},
+          "full_capacity_month":{"type": "integer"},
+          "ramp_curve":         {
+            "type": "array",
+            "items": {"type": "number"},
+            "minItems": 12,
+            "maxItems": 12,
+            "description": "12 коэффициентов 0..1 — выручка по месяцам относительно зрелого."
+          }
+        }
+      }
+    },
+    "antipatterns": {
+      "type": "object",
+      "description": "Антипаттерны (триггер по комбинации опыт+стратегия). Ключ: id паттерна.",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["trigger", "severity", "block_title"],
+        "properties": {
+          "trigger": {
+            "type": "object",
+            "properties": {
+              "experience": {"type": "string"},
+              "strategy":   {"type": "string"},
+              "format":     {"type": "string"}
+            }
+          },
+          "severity":     {"type": "string", "enum": ["low", "medium", "high"]},
+          "block_title":  {"type": "string"},
+          "block_text":   {"type": "string"}
+        }
+      }
+    },
+    "explanation_blocks": {
+      "type": "object",
+      "description": "Объяснительные блоки (триггер опыт/стратегия/формат). Появляются на стр. PDF.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "trigger": {
+            "type": "object",
+            "properties": {
+              "experience": {"type": "string"},
+              "strategy":   {"type": "string"},
+              "format":     {"type": "string"}
+            }
+          },
+          "page":         {"type": "integer"},
+          "block_title":  {"type": "string"},
+          "block_text":   {"type": "string"}
+        }
+      }
+    },
+    "strategy_explanations": {
+      "type": "object",
+      "description": "Тексты пояснений по стратегиям (для PDF стр. «Маркетинг»).",
+      "additionalProperties": {"type": "string"}
+    },
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date":   {"type": "string", "format": "date"},
+          "change": {"type": "string"},
+          "by":     {"type": "string"}
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

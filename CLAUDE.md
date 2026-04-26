@@ -42,8 +42,17 @@ config/                 — YAML-конфиги (источники истины
 data/
   kz/                   — xlsx-файлы по КЗ + niches/ + templates/
   ru/                   — пустые зеркала под RU (niches/, templates/)
-knowledge/
-  kz/niches/            — *_insight.md по нишам (RAG)
+  niches/               — legacy-YAML по 53 нишам (для не-A1 + не-мигрированных в R12.6)
+  archetypes/           — legacy-YAML архетипов (a1_beauty_solo.yaml — пилот R12.6 ушёл в knowledge/)
+knowledge/              — R12.6 единый источник истины (бизнес-данные, frontmatter+md)
+  niches/               — структурированные данные ниш (R12.6 пилот = MANICURE; остальные через fallback на data/niches/*.yaml)
+  archetypes/           — A1_BEAUTY_SOLO.md и т.п.
+  regions/              — 18 городов КЗ (frontmatter: ЗП, население, check_coef)
+  taxes/                — KZ_2026.md (МРП, НДС, УД-ставки по городам)
+  changelog/            — история изменений + Obsidian setup guide
+  _schemas/             — JSON Schema для валидации frontmatter
+  _templates/           — болванки для новых ниш / регионов
+  kz/niches/            — *_insight.md по нишам (RAG, ОТДЕЛЬНЫЙ контур от R12.6)
   ru/niches/            — пустое зеркало под RU
   common/               — общие ресурсы (например, _yt_videos.json)
 templates/
@@ -83,18 +92,28 @@ Procfile, railway.json, requirements.txt
 ## Источники истины (канон)
 Когда правишь значения — сверяйся только с каноническим источником.
 
-| Что | Канон |
-|---|---|
-| Список ниш, иконки, имена, архетип, флаг `available` | `config/niches.yaml` |
-| Налоги УСН по городам | `data/kz/05_tax_regimes.xlsx` (лист `city_ud_rates_2026`) |
-| Константы 2026 (МРП, МЗП, НДС, ФОТ-множитель, соцплатежи ИП) | `config/constants.yaml` |
-| Расчётные дефолты Quick Check (сезонность, сценарные коэффициенты, скоринг, бенчмарки) | `config/defaults.yaml` |
-| Дефолты финмодели (горизонт, OPEX, ФОТ, CAPEX, кредит, WACC) | `config/finmodel_defaults.yaml` |
-| Канонические ID городов (+ legacy_ids для совместимости) | `config/constants.yaml`, секция `cities` |
-| Архетипы и операционные вопросы финмодели | `config/archetypes.yaml` |
-| Типы локаций | `config/locations.yaml` |
-| Вопросы анкеты (Quick Check / FinModel / BizPlan) | `config/questionnaire.yaml` |
-| Инсайты по нишам (риски, красные флаги) | `knowledge/kz/niches/{NICHE_ID}_insight.md` |
+**R12.6 разделение:** бизнес-данные (то, что Адиль правит) → `knowledge/`. Технические дефолты + структуры анкет → `config/`.
+
+| Что | Канон | Тип |
+|---|---|---|
+| **Бизнес-данные ниш** (формат, чек, аренда, риски) — пилот R12.6 = MANICURE | `knowledge/niches/{NICHE}.md` (frontmatter + markdown) | бизнес |
+| **Архетипы** (опыт, стратегии маркетинга, антипаттерны) — A1 пилот | `knowledge/archetypes/{ID}.md` | бизнес |
+| **Регионы** (ЗП, население, check_coef) | `knowledge/regions/{city}.md` | бизнес |
+| **Налоги КЗ** (МРП, МЗП, НДС, УД-ставки по городам) | `knowledge/taxes/KZ_{year}.md` | бизнес |
+| Список ниш + иконки + флаг `available` | `config/niches.yaml` | технический реестр |
+| Расчётные дефолты Quick Check (скоринг, бенчмарки) | `config/defaults.yaml` | техдеф |
+| Дефолты финмодели (горизонт, OPEX, кредит, WACC) | `config/finmodel_defaults.yaml` | техдеф |
+| Канонические ID городов + legacy_ids + check_coef | `config/constants.yaml` (секция cities) | технический реестр |
+| ФОТ-множитель, соцплатежи ИП (расчётные коэф.) | `config/constants.yaml` | техдеф |
+| Архетипы и операционные вопросы финмодели | `config/archetypes.yaml` | техдеф |
+| Типы локаций | `config/locations.yaml` | техдеф |
+| Вопросы анкеты (Quick Check / FinModel / BizPlan) | `config/questionnaire.yaml` | техдеф |
+| **Не-A1 / не-мигрированные ниши** (53 ниши) | `data/niches/{NICHE}_data.yaml` | legacy YAML, fallback после knowledge |
+| Инсайты по нишам (RAG для PDF) | `knowledge/kz/niches/{NICHE_ID}_insight.md` | RAG (отдельный контур) |
+
+**R12.6 backward-compat:** для мигрированных ниш есть парный `knowledge/niches/{NICHE}.legacy.yaml` — машинный файл с legacy `formats:` блоком (не редактировать). Будет удалён в R12.7+ когда engine целиком перейдёт на `formats_r12`.
+
+**Workflow редактирования бизнес-данных:** Адиль открывает `knowledge/` в Obsidian → правит markdown frontmatter → плагин Obsidian Git авто-коммитит каждые 30 мин → Railway пересобирает. См. `knowledge/changelog/2026-04-26_R12.6_obsidian_setup.md`.
 
 ## Правила работы
 - Все тексты пользователю — на русском языке

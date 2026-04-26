@@ -1,0 +1,149 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ZEREK Niche (frontmatter schema)",
+  "description": "Структура YAML frontmatter для knowledge/niches/{NICHE}.md. R12.6 канон R12.5 — frontmatter содержит формат-параметры, текстовая часть (info_blocks, риски-описания, кейсы) — в свободном markdown ниже.",
+  "type": "object",
+  "required": ["id", "name_rus", "archetype", "formats"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z_0-9]*$",
+      "description": "ID ниши в UPPER_SNAKE: MANICURE, BARBER, COFFEE и т.д."
+    },
+    "name_rus": {"type": "string", "description": "Человекочитаемое название."},
+    "icon": {"type": "string", "description": "Эмодзи (💅 для маникюра)."},
+    "archetype": {
+      "type": "string",
+      "pattern": "^[A-Z][0-9]+_[A-Z_]+$",
+      "description": "Reference на архетип (A1_BEAUTY_SOLO)."
+    },
+    "available": {
+      "type": "boolean",
+      "default": true,
+      "description": "Включена ли ниша в Quick Check (фронт скрывает available=false)."
+    },
+    "seasonality": {
+      "type": "object",
+      "description": "12 коэффициентов сезонности по календарным месяцам (январь = s01).",
+      "properties": {
+        "s01": {"type": "number"}, "s02": {"type": "number"}, "s03": {"type": "number"},
+        "s04": {"type": "number"}, "s05": {"type": "number"}, "s06": {"type": "number"},
+        "s07": {"type": "number"}, "s08": {"type": "number"}, "s09": {"type": "number"},
+        "s10": {"type": "number"}, "s11": {"type": "number"}, "s12": {"type": "number"}
+      }
+    },
+    "formats": {
+      "type": "object",
+      "description": "Форматы ниши. R12.5 канон для A1: HOME, STUDIO, SALON_RENT, MALL_SOLO.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "label_rus": {"type": "string"},
+          "description_short": {"type": "string"},
+          "available_for_experience": {
+            "type": "array",
+            "items": {"type": "string", "enum": ["none", "middle", "experienced"]}
+          },
+          "base_check_astana": {
+            "type": "integer",
+            "description": "Базовый чек в Астане (₸). Применяется ×check_coef города ×check_multiplier опыта."
+          },
+          "rent_per_month_astana": {"type": "integer", "description": "Месячная аренда в Астане (₸). 0 для HOME."},
+          "deposit_months": {"type": "integer", "default": 2},
+          "working_days_per_month": {"type": "integer", "description": "Рабочих дней в месяц (HOME 22-26, STUDIO 22, SALON_RENT 24, MALL_SOLO 26)."},
+          "utilities_per_month": {"type": "integer"},
+          "other_opex_per_month": {"type": "integer"},
+          "extra_payments_per_month": {"type": "integer"},
+          "cogs_pct": {"type": "number"},
+          "tax_regime_id": {"type": "string", "enum": ["UD", "SELF", "OUR", "KFH"]},
+          "capex_items": {
+            "type": "object",
+            "description": "Разбивка CAPEX. Ключи: equipment, furniture, renovation, first_stock, permits, working_capital, marketing_start, legal, kiosk_design.",
+            "additionalProperties": {"type": "integer"}
+          },
+          "capex_base_total": {"type": "integer", "description": "Сумма capex_items без обучения и без депозита."},
+          "marketing_phases": {
+            "type": "object",
+            "description": "Базовые маркетинг-фазы (без множителя стратегии).",
+            "properties": {
+              "ramp_m1_m3":   {"type": "integer"},
+              "tuning_m4_m6": {"type": "integer"},
+              "mature_m7_m12":{"type": "integer"}
+            }
+          },
+          "levels": {
+            "type": "object",
+            "description": "Уровни формата (STUDIO simple/nice; SALON_RENT standard/premium; MALL_SOLO single/cluster).",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "label_rus": {"type": "string"},
+                "description_short": {"type": "string"},
+                "base_check_astana": {"type": "integer"},
+                "rent_per_month_astana": {"type": "integer"},
+                "deposit_months": {"type": "integer"},
+                "available_experience": {"type": "array", "items": {"type": "string"}},
+                "capex_extras": {
+                  "type": "object",
+                  "description": "Дельта к базовому формату (например, +230K на nice кабинет).",
+                  "additionalProperties": {"type": "integer"}
+                },
+                "capex_overrides": {
+                  "type": "object",
+                  "description": "Переопределяет capex_items базового уровня (для SALON_RENT premium equipment=80K vs standard 150K).",
+                  "additionalProperties": {"type": "integer"}
+                },
+                "capex_base_total": {"type": "integer"},
+                "marketing_phases": {
+                  "type": "object",
+                  "properties": {
+                    "ramp_m1_m3":    {"type": "integer"},
+                    "tuning_m4_m6":  {"type": "integer"},
+                    "mature_m7_m12": {"type": "integer"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "risks_table": {
+      "type": "array",
+      "description": "Главные риски (4-6 штук). Каждый: id, label, severity, what_to_do.",
+      "items": {
+        "type": "object",
+        "required": ["id", "label_rus"],
+        "properties": {
+          "id":           {"type": "string"},
+          "label_rus":    {"type": "string"},
+          "probability":  {"type": "string", "enum": ["низкая", "средняя", "высокая"]},
+          "impact":       {"type": "string", "enum": ["заметное", "высокое", "критическое"]},
+          "what_to_do":   {"type": "string"},
+          "applies_to_formats": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "growth_scenarios": {
+      "type": "object",
+      "description": "3 сценария роста (стагнация / развитие / рост). Используются на стр. «Что дальше» в PDF.",
+      "properties": {
+        "stagnation":  {"type": "object"},
+        "development": {"type": "object"},
+        "expansion":   {"type": "object"}
+      }
+    },
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date":   {"type": "string", "format": "date"},
+          "change": {"type": "string"},
+          "by":     {"type": "string"}
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}

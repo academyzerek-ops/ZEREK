@@ -1,0 +1,497 @@
+'# R12.6 BACKWARD-COMPAT FILE': 'НЕ редактировать вручную. Содержит legacy formats:
+  блок из data/niches/MANICURE_data.yaml для обратной совместимости engine. Будет
+  удалён в R12.7+ когда engine перейдёт на formats_r12 целиком.'
+legacy_formats:
+- id: HOME
+  label_ru: Мастер на дому
+  description_short: Работа из своей квартиры, 1 мастер, без аренды
+  archetype: solo
+  legal_form: ip
+  needs_location: false
+  avg_check:
+    min: 3500
+    med: 5000
+    max: 6500
+    currency: KZT
+  traffic:
+    max_per_day: 6
+    load_med: 0.5
+    load_min: 0.3
+    load_max: 0.75
+    working_days_per_month: 26
+  capex:
+    base_total: 330000
+    items:
+      equipment:
+        label_ru: Оборудование
+        min: 100000
+        med: 150000
+        max: 250000
+        note_ru: Лампа UV/LED, фрезер, стерилизатор, расходники
+      furniture:
+        label_ru: Мебель и интерьер
+        min: 20000
+        med: 30000
+        max: 60000
+      first_stock:
+        label_ru: Первый запас материалов
+        min: 40000
+        med: 60000
+        max: 100000
+      permits:
+        label_ru: Разрешения и регистрация
+        min: 5000
+        med: 10000
+        max: 20000
+      working_capital:
+        label_ru: Оборотные средства
+        min: 30000
+        med: 45000
+        max: 60000
+      marketing_start:
+        label_ru: Стартовый маркетинг
+        min: 20000
+        med: 30000
+        max: 50000
+      legal:
+        label_ru: Юридическое оформление
+        min: 3000
+        med: 5000
+        max: 10000
+    training:
+      required: true
+      amounts_by_experience:
+        none: 150000
+        some: 40000
+        pro: 0
+  ramp_up:
+    months: 3
+    start_pct: 0.3
+    curve: linear
+  marketing:
+    phase_1_months:
+    - 1
+    - 2
+    - 3
+    phase_1_amount: 30000
+    phase_2_months:
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    phase_2_amount: 50000
+    phase_3_months:
+    - 9
+    - 10
+    - 11
+    - 12
+    phase_3_amount: 15000
+    med_monthly: 45000
+    min_monthly: 25000
+    max_monthly: 70000
+  other_opex:
+    med_monthly: 5000
+    min_monthly: 3000
+    max_monthly: 8000
+  fot:
+    monthly: 0
+    headcount: 0
+    employer_taxes_pct: 0
+    note_ru: ИП на упрощёнке — собственный труд не оплачивается отдельно, прибыль
+      = доход в карман
+  cogs_pct: 0.12
+  tax_regime:
+    type: ip_simplified
+    rate_pct: 3.0
+  scenario_coefficients:
+    pessimistic_traffic: 0.65
+    pessimistic_check: 0.9
+    base_traffic: 1.0
+    base_check: 1.0
+    optimistic_traffic: 1.25
+    optimistic_check: 1.1
+  risks_format_specific:
+  - id: physical_health
+  - id: income_ceiling_solo
+  - id: home_sanitation
+  risks_excluded:
+  - rent_overpriced
+  - hiring_no_probation
+  - master_contract
+  - staff_management
+- id: SOLO
+  label_ru: Своя точка, 1 мастер
+  description_short: Аренда кабинета 8-12 м², 1 мастер (вы)
+  archetype: solo
+  legal_form: ip
+  needs_location: true
+  location_type: rented_cabinet
+  avg_check:
+    min: 5500
+    med: 7000
+    max: 10000
+  traffic:
+    max_per_day: 7
+    load_med: 0.55
+    load_min: 0.35
+    load_max: 0.8
+    working_days_per_month: 26
+  capex:
+    base_total: 850000
+    items:
+      equipment:
+        label_ru: Оборудование
+        med: 250000
+      furniture:
+        label_ru: Мебель и интерьер
+        med: 150000
+      first_stock:
+        label_ru: Первый запас материалов
+        med: 80000
+      renovation:
+        label_ru: Ремонт и адаптация
+        med: 100000
+      permits:
+        label_ru: Разрешения и регистрация
+        med: 20000
+      working_capital:
+        label_ru: Оборотные средства
+        med: 100000
+      marketing_start:
+        label_ru: Стартовый маркетинг
+        med: 80000
+      deposit:
+        label_ru: Депозит за аренду
+        med: 60000
+      legal:
+        label_ru: Юридическое оформление
+        med: 10000
+    training:
+      required: true
+      amounts_by_experience:
+        none: 200000
+        some: 50000
+        pro: 0
+  ramp_up:
+    months: 4
+    start_pct: 0.25
+    curve: linear
+  marketing:
+    phase_1_months:
+    - 1
+    - 2
+    - 3
+    phase_1_amount: 60000
+    phase_2_months:
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    phase_2_amount: 80000
+    phase_3_months:
+    - 9
+    - 10
+    - 11
+    - 12
+    phase_3_amount: 30000
+    med_monthly: 70000
+  other_opex:
+    med_monthly: 25000
+  fot:
+    monthly: 0
+    headcount: 0
+  cogs_pct: 0.13
+  tax_regime:
+    type: ip_simplified
+    rate_pct: 3.0
+  rent:
+    use_external_data: true
+    area_m2: 10
+    location_type_for_rent: cabinet_inside_salon
+  risks_format_specific:
+  - id: rent_dependency
+  - id: physical_health
+  - id: income_ceiling_solo
+  risks_excluded:
+  - hiring_no_probation
+  - master_contract
+  - staff_management
+- id: STANDARD
+  label_ru: Студия, 3-4 мастера
+  description_short: Своё помещение 25-40 м², 3-4 мастера, владелец-организатор
+  archetype: with_staff
+  legal_form: too
+  needs_location: true
+  location_type: retail_space
+  avg_check:
+    min: 6000
+    med: 8000
+    max: 12000
+  traffic:
+    max_per_day: 24
+    load_med: 0.55
+    working_days_per_month: 28
+  capex:
+    base_total: 4500000
+    items:
+      equipment:
+        label_ru: Оборудование
+        med: 1200000
+      furniture:
+        label_ru: Мебель и интерьер
+        med: 800000
+      first_stock:
+        label_ru: Первый запас материалов
+        med: 350000
+      renovation:
+        label_ru: Ремонт
+        med: 800000
+      permits:
+        label_ru: Разрешения
+        med: 50000
+      working_capital:
+        label_ru: Оборотные средства
+        med: 600000
+      marketing_start:
+        label_ru: Стартовый маркетинг
+        med: 400000
+      deposit:
+        label_ru: Депозит за аренду
+        med: 250000
+      legal:
+        label_ru: Юридическое оформление
+        med: 50000
+    training:
+      required: true
+  ramp_up:
+    months: 5
+    start_pct: 0.2
+    curve: linear
+  marketing:
+    phase_1_months:
+    - 1
+    - 2
+    - 3
+    phase_1_amount: 250000
+    phase_2_months:
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    phase_2_amount: 200000
+    phase_3_months:
+    - 9
+    - 10
+    - 11
+    - 12
+    phase_3_amount: 100000
+    med_monthly: 175000
+  other_opex:
+    med_monthly: 80000
+  fot:
+    monthly: 1200000
+    headcount: 5
+    employer_taxes_pct: 0.115
+    owner_in_staff: true
+    owner_salary: 250000
+  cogs_pct: 0.18
+  tax_regime:
+    type: too_simplified
+    rate_pct: 3.0
+  rent:
+    use_external_data: true
+    area_m2: 35
+    location_type_for_rent: retail_first_line
+  risks_format_specific:
+  - id: rent_overpriced
+  - id: hiring_no_probation
+  - id: master_contract
+  - id: staff_management
+  - id: master_takes_clients
+  risks_excluded:
+  - physical_health
+  - home_sanitation
+- id: PREMIUM
+  label_ru: Премиум-салон, 5+ мастеров
+  description_short: Премиальное помещение 50+ м², брендирование, расширенный сервис
+  archetype: with_staff
+  legal_form: too
+  needs_location: true
+  location_type: premium_retail
+  avg_check:
+    min: 10000
+    med: 14000
+    max: 25000
+  traffic:
+    max_per_day: 35
+    load_med: 0.6
+    working_days_per_month: 30
+  capex:
+    base_total: 9500000
+    items:
+      equipment:
+        label_ru: Оборудование
+        med: 2500000
+      furniture:
+        label_ru: Мебель и интерьер
+        med: 2000000
+      first_stock:
+        label_ru: Первый запас
+        med: 600000
+      renovation:
+        label_ru: Ремонт премиум
+        med: 2500000
+      permits:
+        label_ru: Разрешения
+        med: 80000
+      working_capital:
+        label_ru: Оборотные средства
+        med: 1200000
+      marketing_start:
+        label_ru: Стартовый маркетинг
+        med: 800000
+      deposit:
+        label_ru: Депозит за аренду
+        med: 600000
+      legal:
+        label_ru: Юридическое оформление
+        med: 80000
+    training:
+      required: false
+  ramp_up:
+    months: 6
+    start_pct: 0.2
+  marketing:
+    med_monthly: 350000
+  other_opex:
+    med_monthly: 180000
+  fot:
+    monthly: 2200000
+    headcount: 7
+    employer_taxes_pct: 0.115
+    owner_in_staff: true
+    owner_salary: 400000
+  cogs_pct: 0.22
+  tax_regime:
+    type: too_oer
+    rate_pct: 0.2
+  rent:
+    use_external_data: true
+    area_m2: 60
+    location_type_for_rent: premium_first_line
+  risks_format_specific:
+  - id: rent_overpriced
+  - id: hiring_no_probation
+  - id: master_contract
+  - id: staff_management
+  - id: master_takes_clients
+  - id: premium_market_thin
+  risks_excluded:
+  - physical_health
+  - home_sanitation
+risks:
+- id: physical_health
+  title_ru: Зависимость от физсостояния
+  body_ru: Болезнь, беременность, травма рук = ноль дохода. Один человек — единая
+    точка отказа.
+  probability: medium
+  impact: high
+  what_to_do_ru: Подушка безопасности на 3 мес. Страхование от нетрудоспособности.
+- id: income_ceiling_solo
+  title_ru: Потолок дохода одного мастера
+  body_ru: Максимум 5-7 клиенток в день физически. Чтобы расти дальше — поднимайте
+    средний чек (дизайн, укрепление, уход) или планируйте переезд в свою студию через
+    1-2 года.
+  probability: high
+  impact: medium
+  what_to_do_ru: 'Апсейл: дизайн, укрепление, парафин. План перехода в SOLO/STANDARD
+    через 1-2 года.'
+- id: home_sanitation
+  title_ru: Санитарные нормы без контроля
+  body_ru: Дома проще забить на стерилизацию. Один случай грибка/инфекции — репутация
+    уничтожена.
+  probability: medium
+  impact: high
+  what_to_do_ru: Автоклав или сухожар. Одноразовые инструменты где можно. Фото стерилизации
+    в сторис.
+- id: rent_overpriced
+  title_ru: Аренда дорогого помещения в надежде на поток
+  body_ru: Маникюрный сервис не работает на случайном потоке — клиенты записываются.
+    Переплата за проходное место не конвертируется в выручку.
+  probability: medium
+  impact: medium
+  what_to_do_ru: Считайте долю аренды от прогнозной выручки. Не выше 15% — норма,
+    выше 20% — зона убытка.
+- id: hiring_no_probation
+  title_ru: Найм мастеров без испытательного срока
+  body_ru: Плохая техника или конфликтное поведение мастера разрушают репутацию быстрее,
+    чем любая реклама.
+  probability: medium
+  impact: medium
+  what_to_do_ru: Испытательный срок 1-2 недели с тестовыми клиентами. Проверка отзывов
+    и портфолио до найма.
+- id: master_contract
+  title_ru: Игнорирование договора с мастерами
+  body_ru: Без чётких условий работы (процент, клиентская база, запрет переманивания)
+    уходящий мастер забирает клиентов и открывает точку рядом.
+  probability: medium
+  impact: medium
+  what_to_do_ru: 'Письменный договор: процент, доступ к базе, NDA, штраф за переманивание.
+    Юрист на старте — обязателен.'
+- id: master_takes_clients
+  title_ru: Уход ключевого мастера с клиентской базой
+  body_ru: Один мастер, занимающий больше 40% записи — критическая зависимость. Диверсификация
+    мастеров обязательна.
+  probability: medium
+  impact: high
+  what_to_do_ru: Не давайте одному мастеру более 35% записи. Программа лояльности
+    на бренд салона, не на мастера.
+- id: staff_management
+  title_ru: Работа без учёта занятости мастеров
+  body_ru: Перегрузка ведёт к выгоранию и снижению качества; недозагрузка — к уходу
+    мастера к конкурентам с большим потоком.
+  probability: medium
+  impact: medium
+  what_to_do_ru: Учёт занятости по каждому мастеру. Балансировать поток через систему
+    записи.
+- id: premium_market_thin
+  title_ru: Тонкий премиум-сегмент
+  body_ru: Реальный платёжеспособный premium в РК узкий. Чек 15-25К найдут только
+    в Алматы/Астане в правильных районах.
+  probability: high
+  impact: high
+  what_to_do_ru: Перед открытием — реальные интервью с потенциальной аудиторией. Тестируйте
+    через pop-up или партнёрство.
+- id: low_loyalty_program
+  title_ru: Отсутствие программы лояльности с первого дня
+  body_ru: Маникюр — регулярная процедура (раз в 2-4 недели). Клиент, вернувшийся
+    трижды, остаётся надолго. Без стимула возвращения теряются до 40% разовых посетителей.
+  probability: medium
+  impact: medium
+  what_to_do_ru: С первого клиента — карточка постоянного клиента (Notion или Excel).
+    После 5-го визита — бонус. День рождения — скидка 10-15%. Без этого ретеншен на
+    маленькой базе невозможен.
+  formats_applied:
+  - HOME
+  - SOLO
+  - STANDARD
+  - PREMIUM
+- id: stock_no_norms
+  title_ru: Закупка расходников «на глаз»
+  body_ru: Избыток дорогих материалов замораживает деньги; нехватка в разгар записи
+    — потеря клиентов. Нужны нормы расхода на процедуру.
+  probability: medium
+  impact: medium
+  what_to_do_ru: Excel или Google Sheets со списком расходников. Закупка 1 раз в 2
+    недели по списку. Запас на 3 рабочих дня минимум, чтобы не срывать запись из-за
+    отсутствия материала.
+  formats_applied:
+  - HOME
+  - SOLO
+  - STANDARD
+  - PREMIUM
+failure_patterns: []
+expansion_options: []

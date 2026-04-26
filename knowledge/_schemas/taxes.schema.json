@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ZEREK Taxes (frontmatter schema)",
+  "description": "Структура YAML frontmatter для knowledge/taxes/KZ_{year}.md. Налоговые параметры на год — обновляются ежегодно.",
+  "type": "object",
+  "required": ["year", "mrp", "mzp", "nds_rate_pct", "ud_default_rate_pct"],
+  "properties": {
+    "year":             {"type": "integer", "minimum": 2024, "maximum": 2030},
+    "country":          {"type": "string", "enum": ["KZ"]},
+    "mrp":              {"type": "integer", "description": "Месячный расчётный показатель в ₸."},
+    "mzp":              {"type": "integer", "description": "Минимальная зарплата в ₸."},
+    "subsistence_min":  {"type": "integer", "description": "Прожиточный минимум в ₸."},
+    "nds_rate_pct":     {"type": "number", "description": "Ставка НДС в %."},
+    "nds_threshold_kzt":{"type": "integer", "description": "Порог обязательной регистрации НДС, ₸/год."},
+    "ud_default_rate_pct": {"type": "number", "description": "Базовая ставка УД (УСН), без поправок маслихата."},
+    "ud_limit_kzt":     {"type": "integer", "description": "Лимит выручки на УД, ₸/год."},
+    "ud_rates_by_city": {
+      "type": "object",
+      "description": "Ставки УД по городам (решения маслихатов 2-6%). Перебивает ud_default_rate_pct.",
+      "additionalProperties": {"type": "number", "minimum": 2, "maximum": 6}
+    },
+    "ip_minimum_taxes_per_month_kzt": {
+      "type": "integer",
+      "description": "ИП минимальные соцплатежи в месяц (ОПВ + ВОСМС + ИПН), ₸. Платятся даже при нулевом доходе."
+    },
+    "ip_minimum_taxes_per_year_kzt": {
+      "type": "integer",
+      "description": "ИП минимальные соцплатежи за год, ₸."
+    },
+    "payroll_taxes": {
+      "type": "object",
+      "description": "Налоги работодателя на ФОТ (для ТОО). Используются в финмодели.",
+      "properties": {
+        "opv_pct":   {"type": "number", "description": "ОПВ удерживается у работника, %."},
+        "opvr_pct":  {"type": "number", "description": "ОПВР работодателя, %."},
+        "vosms_pct": {"type": "number", "description": "ВОСМС работника, %."},
+        "oosms_pct": {"type": "number", "description": "ООСМС работодателя, %."},
+        "so_pct":    {"type": "number", "description": "Социальные отчисления, %."},
+        "ipn_base_pct": {"type": "number", "description": "ИПН базовая ставка, %."},
+        "ipn_progressive_threshold_mrp": {"type": "integer", "description": "Порог прогрессивного ИПН (15%) в МРП/год."},
+        "kpn_pct":   {"type": "number", "description": "КПН для ТОО, %."}
+      }
+    },
+    "tax_regimes": {
+      "type": "array",
+      "description": "Доступные налоговые режимы.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name_rus", "rate_pct"],
+        "properties": {
+          "id":         {"type": "string", "enum": ["UD", "SELF", "OUR", "KFH"]},
+          "name_rus":   {"type": "string"},
+          "rate_pct":   {"type": ["number", "string"]},
+          "nds_payer":  {"type": "boolean"},
+          "limit_kzt":  {"type": ["integer", "string"]},
+          "notes":      {"type": "string"}
+        }
+      }
+    },
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date":   {"type": "string", "format": "date"},
+          "change": {"type": "string"},
+          "by":     {"type": "string"}
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ZEREK Region (frontmatter schema)",
+  "description": "Структура YAML frontmatter для knowledge/regions/{city}.md. Бизнес-данные региона/города КЗ — то что Адиль правит через Obsidian.",
+  "type": "object",
+  "required": ["id", "name_rus", "type", "population", "avg_salary_2025"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Канонический ID города в lower_snake_latin (astana, almaty, shymkent, ...).",
+      "pattern": "^[a-z][a-z_0-9]*$"
+    },
+    "name_rus": {
+      "type": "string",
+      "description": "Название города на русском (Астана, Алматы, Шымкент, ...)."
+    },
+    "region_rus": {
+      "type": "string",
+      "description": "Регион (область) на русском. Для 3-х городов республиканского значения = «г. Астана» / «г. Алматы» / «г. Шымкент»."
+    },
+    "type": {
+      "type": "string",
+      "enum": ["megacity", "regional_capital", "regional_city"],
+      "description": "Тип города: megacity (Астана/Алматы/Шымкент), regional_capital (областной центр), regional_city (другие)."
+    },
+    "legacy_ids": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Старые варианты ID (ALA, ASTANA, AKT и т.п.) для обратной совместимости normalize_city_id()."
+    },
+    "population": {
+      "type": "object",
+      "description": "Демография на 2026-01-01 (БНС РК Т-18-08).",
+      "required": ["total"],
+      "properties": {
+        "total":      {"type": "integer", "description": "Всего жителей."},
+        "men":        {"type": "integer", "description": "Мужчины."},
+        "women":      {"type": "integer", "description": "Женщины."},
+        "children_0_15": {"type": "integer"},
+        "working_age_16_62": {"type": "integer"},
+        "pensioners_63_plus": {"type": "integer"},
+        "growth_yoy_pct": {"type": "number", "description": "Темп прироста YoY %."}
+      }
+    },
+    "avg_salary_2025": {
+      "type": "integer",
+      "description": "Среднемесячная номинальная ЗП за Q4 2025 (₸). Источник: БНС РК."
+    },
+    "check_coef": {
+      "type": "number",
+      "description": "Ценовой коэффициент города (база = 1.00). Перемножается на base_check ниши.",
+      "default": 1.00
+    },
+    "tax_rate_ud_pct": {
+      "type": "number",
+      "description": "Ставка УД (УСН) для этого города по решению маслихата (2-6%). Если не указана — берётся из knowledge/taxes/KZ_2026.md дефолт.",
+      "minimum": 2,
+      "maximum": 6
+    },
+    "rent_per_m2_default": {
+      "type": "object",
+      "description": "Средняя аренда коммерческих помещений (₸/м²/мес) по типам локации. Опционально — если есть локальные данные.",
+      "properties": {
+        "retail_med": {"type": "integer"},
+        "tc":         {"type": "integer"},
+        "office":     {"type": "integer"}
+      }
+    },
+    "grant_bp_avg_wage": {
+      "type": "integer",
+      "description": "Средняя ЗП для генератора бизнес-плана Бастау. Может отличаться от avg_salary_2025 (берётся отдельная оценка)."
+    },
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date":   {"type": "string", "format": "date"},
+          "change": {"type": "string"},
+          "by":     {"type": "string"}
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

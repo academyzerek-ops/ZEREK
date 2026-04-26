@@ -501,14 +501,15 @@ _ARCHETYPE_CACHE = {}
 
 
 def load_archetype_yaml(archetype_id):
-    """Читает `data/archetypes/{archetype_id}_*.yaml` → dict (с кешем).
+    """Читает архетип → dict (с кешем).
 
-    Файлы названы по схеме `a1_beauty_solo.yaml`, `b_*.yaml`, etc.
-    Возвращает `None` если архетип не найден.
+    R12.6: сначала пробует knowledge/archetypes/{ID}.md (новый канон),
+    при отсутствии — fallback на data/archetypes/{id}_*.yaml (legacy).
 
-    R12.5 Сессия 2: пока поддерживается только A1 — единый соло-beauty
-    архетип для маникюра / барбера / бровиста / ресничницы / шугаринга /
-    массажа / косметологии. Параметры:
+    Возвращает `None` если архетип не найден ни там, ни там.
+
+    R12.5 канон поддерживается только A1 (соло-beauty: маникюр, барбер,
+    бровист, лэшмейкер, сахарист, массажист, косметолог). Параметры:
       experience_levels    (none / middle / experienced)
       marketing_strategies (conservative / middle / aggressive)
       antipatterns         (например novice_aggressive)
@@ -517,6 +518,15 @@ def load_archetype_yaml(archetype_id):
     aid = (archetype_id or "").lower()
     if aid in _ARCHETYPE_CACHE:
         return _ARCHETYPE_CACHE[aid]
+    # R12.6: knowledge/-первая попытка
+    try:
+        from loaders.knowledge_loader import load_knowledge_archetype  # noqa: WPS433
+        kn_data = load_knowledge_archetype(aid)
+        if kn_data is not None:
+            _ARCHETYPE_CACHE[aid] = kn_data
+            return kn_data
+    except ImportError:
+        pass
     # A1 → a1_beauty_solo.yaml. Если в будущем появятся другие архетипы
     # (B/C/D...) — просто добавим маппинг здесь.
     file_map = {
@@ -550,13 +560,26 @@ def load_archetype_yaml(archetype_id):
 
 
 def load_niche_yaml(niche_id):
-    """Читает `data/niches/{NICHE}_data.yaml` → dict (с in-process кешем).
+    """Читает данные ниши → dict (с in-process кешем).
 
-    Возвращает `None` если файла нет или YAML пустой.
+    R12.6: сначала пробует knowledge/niches/{NICHE}.md (новый канон,
+    R12.5 пилот = MANICURE), при отсутствии — fallback на
+    data/niches/{NICHE}_data.yaml (legacy для остальных 53 ниш).
+
+    Возвращает `None` если ниши нет ни там, ни там.
     Подключается как приоритетный источник в Этапе 7 (YAML-first).
     """
     if niche_id in _YAML_CACHE:
         return _YAML_CACHE[niche_id]
+    # R12.6: knowledge/-первая попытка (для мигрированных ниш)
+    try:
+        from loaders.knowledge_loader import load_knowledge_niche  # noqa: WPS433
+        kn_data = load_knowledge_niche(niche_id)
+        if kn_data is not None:
+            _YAML_CACHE[niche_id] = kn_data
+            return kn_data
+    except ImportError:
+        pass
     path = os.path.join(_REPO_ROOT, "data", "niches", f"{niche_id}_data.yaml")
     if not os.path.exists(path):
         _log.info("niche YAML not found for %s at %s", niche_id, path)
