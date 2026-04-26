@@ -497,7 +497,10 @@ class QuickCheckCalculator:
         # Прокидываем experience из specific_answers в result.input —
         # чтобы renderer'ы (PDF, UI) могли читать его напрямую, без погружения
         # в user_inputs.specific_answers.experience. Защита от рассинхрона.
+        # R12.5: то же делаем для level и strategy — нужны PDF-шаблону
+        # для antipatterns / explanation_blocks / strategy_explanations.
         sa = req.specific_answers or {}
-        exp = sa.get("experience")
-        if exp is not None:
-            result.setdefault("input", {})["experience"] = exp
+        for k in ("experience", "level", "strategy"):
+            v = sa.get(k)
+            if v is not None:
+                result.setdefault("input", {})[k] = v

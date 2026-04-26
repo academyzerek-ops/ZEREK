@@ -864,7 +864,7 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <h3 class="sub-title">Бизнес</h3>
       <table class="keyvals">
         <tr><td class="k">Ниша</td><td class="v">{{ inp.niche_name_ru }}</td></tr>
-        <tr><td class="k">Формат</td><td class="v">{{ inp.format_name_ru }}</td></tr>
+        <tr><td class="k">Формат</td><td class="v">{{ inp.format_name_ru }}{% if r12.is_r12 and r12.level_label %} · {{ r12.level_label }}{% endif %}</td></tr>
         <tr><td class="k">Класс</td><td class="v">{{ inp.capex_level_ru }}</td></tr>
         <tr><td class="k">Город</td><td class="v">{{ inp.city_name }}</td></tr>
         {% if mkt.population %}
@@ -887,6 +887,9 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       <h3 class="sub-title">Предприниматель</h3>
       <table class="keyvals">
         <tr><td class="k">Опыт в нише</td><td class="v">{{ inp.experience_ru }}</td></tr>
+        {% if r12.is_r12 and r12.strategy_label %}
+        <tr><td class="k">Стратегия маркетинга</td><td class="v">{{ r12.strategy_label }}</td></tr>
+        {% endif %}
         <tr><td class="k">Правовая форма</td><td class="v">{{ inp.legal_form_ru }}</td></tr>
         <tr><td class="k">Команда</td><td class="v">{% if inp.team_solo %}Соло-мастер{% else %}С сотрудниками{% endif %}</td></tr>
         <tr><td class="k">Стартовый капитал</td><td class="v">
@@ -951,6 +954,39 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       {% if vrd.income_ratio_pct %} — около <strong>{{ vrd.income_ratio_pct }}%</strong> от ЗП{% endif %}
     </p>
   </div>
+  {% endif %}
+
+  {#- R12.5 S4: антипаттерн (novice + aggressive и т.п.) — красная плашка
+       сразу после «Характер направления». Тригер из A1 архетипа. -#}
+  {% if r12.is_r12 and r12.antipattern %}
+  <div class="avoid-break u-mt-s" style="margin-bottom: 14pt; padding: 14pt 16pt; border-radius: 6pt; background: #FEF2F2; border-left: 4pt solid #DC2626;">
+    <div class="u-upper u-tiny" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1.5pt; color: #991B1B;">
+      {{ r12.antipattern.title }}
+    </div>
+    {% for paragraph in r12.antipattern.body.split('\n\n') %}
+    <p style="margin: {% if loop.first %}0{% else %}8pt{% endif %} 0 0 0; font-size: 10.5pt; line-height: 1.5; color: #5B0E0E;">
+      {{ paragraph | safe }}
+    </p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {#- R12.5 S4: объяснительные блоки (например «Почему ваша первая
+       прибыль ниже чем у знакомых» для новичка). Триггер по
+       experience/strategy/format в A1 архетипе. -#}
+  {% if r12.is_r12 and r12.explanation_blocks %}
+  {% for eb in r12.explanation_blocks %}
+  <div class="avoid-break u-mt-s" style="margin-bottom: 14pt; padding: 14pt 16pt; border-radius: 6pt; background: var(--bg-2); border-left: 3pt solid var(--gold);">
+    <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1.5pt;">
+      {{ eb.title }}
+    </div>
+    {% for paragraph in eb.body.split('\n\n') %}
+    <p style="margin: {% if loop.first %}0{% else %}8pt{% endif %} 0 0 0; font-size: 10pt; line-height: 1.5; color: var(--ink-2);">
+      {{ paragraph | safe }}
+    </p>
+    {% endfor %}
+  </div>
+  {% endfor %}
   {% endif %}
 
   <div class="col2">
@@ -1280,6 +1316,36 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
       {% endif %}
     </div>
   </div>
+
+  {#- R12.5 S4: салон-аренда — две модели (фикс vs процент). Показывается
+       только когда info_blocks_r12.salon_rent_models в YAML ниши, и формат
+       SALON_RENT попадает в show_for_formats. -#}
+  {% if r12.is_r12 and r12.info_blocks and r12.info_blocks.salon_rent_models %}
+  <div class="avoid-break u-mt-m" style="padding: 12pt 14pt; background: var(--bg-2); border-left: 3pt solid var(--gold); border-radius: 3pt;">
+    <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1pt;">
+      {{ r12.info_blocks.salon_rent_models.title }}
+    </div>
+    {% for paragraph in r12.info_blocks.salon_rent_models.body.split('\n\n') %}
+    <p style="margin: {% if loop.first %}0{% else %}6pt{% endif %} 0 0 0; font-size: 9.5pt; line-height: 1.5; color: var(--ink-2);">
+      {{ paragraph | safe }}
+    </p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {#- R12.5 S4: ТЦ-сценарии (single/cluster) — для MALL_SOLO формата. -#}
+  {% if r12.is_r12 and r12.info_blocks and r12.info_blocks.mall_solo_scenarios %}
+  <div class="avoid-break u-mt-m" style="padding: 12pt 14pt; background: var(--bg-2); border-left: 3pt solid var(--gold); border-radius: 3pt;">
+    <div class="u-upper u-tiny u-gold" style="margin-bottom: 6pt; font-weight: 700; letter-spacing: 1pt;">
+      {{ r12.info_blocks.mall_solo_scenarios.title }}
+    </div>
+    {% for paragraph in r12.info_blocks.mall_solo_scenarios.body.split('\n\n') %}
+    <p style="margin: {% if loop.first %}0{% else %}6pt{% endif %} 0 0 0; font-size: 9.5pt; line-height: 1.5; color: var(--ink-2);">
+      {{ paragraph | safe }}
+    </p>
+    {% endfor %}
+  </div>
+  {% endif %}
 </section>
 {% endif %}
 
@@ -1632,6 +1698,21 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         * Аренда не включена — формат «мастер на дому» экономит
         бюджет на помещении (~60 000 ₸/мес в среднем для Астаны).
       </p>
+      {% endif %}
+
+      {#- R12.5 S4: info_blocks_r12.materials — для STUDIO/SALON_RENT/MALL_SOLO
+           показывает блок «Про материалы» (как считать cogs, что входит). -#}
+      {% if r12.is_r12 and r12.info_blocks and r12.info_blocks.materials %}
+      <div class="avoid-break u-mt-s" style="margin-top: 12pt; padding: 10pt 12pt; background: var(--bg-2); border-left: 3pt solid var(--gold); border-radius: 3pt;">
+        <div class="u-upper u-tiny u-gold" style="margin-bottom: 4pt; font-weight: 700; letter-spacing: 1pt;">
+          {{ r12.info_blocks.materials.title }}
+        </div>
+        {% for paragraph in r12.info_blocks.materials.body.split('\n\n') %}
+        <p style="margin: {% if loop.first %}0{% else %}5pt{% endif %} 0 0 0; font-size: 9pt; line-height: 1.45; color: var(--ink-2);">
+          {{ paragraph | safe }}
+        </p>
+        {% endfor %}
+      </div>
       {% endif %}
     </div>
 
@@ -2064,6 +2145,25 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
           <span class="u-small u-muted">{{ mp.archetype_note }}</span>
         </p>
       </div>
+
+      {#- R12.5 S4: пояснение по выбранной стратегии. Текст из
+           archetype.strategy_explanations[strategy]. Показываем только
+           для соло-beauty (A1) и когда стратегия задана пользователем. -#}
+      {% if r12.is_r12 and r12.strategy_explanation %}
+      <div class="avoid-break u-mt-s" style="padding: 10pt 12pt; background: var(--bg-2); border-left: 3pt solid var(--gold); border-radius: 3pt;">
+        <div class="u-upper u-tiny u-gold" style="margin-bottom: 4pt; font-weight: 700; letter-spacing: 1pt;">
+          Ваша стратегия — {{ r12.strategy_label }}
+        </div>
+        <p style="margin: 0; font-size: 9.5pt; line-height: 1.5; color: var(--ink-2);">
+          {{ r12.strategy_explanation }}
+        </p>
+        {% if r12.strategy_warning %}
+        <p style="margin: 6pt 0 0 0; font-size: 9pt; line-height: 1.45; color: var(--ink); font-style: italic;">
+          {{ r12.strategy_warning }}
+        </p>
+        {% endif %}
+      </div>
+      {% endif %}
 
       <h3 class="sub-title u-mt-m">Что важно клиенту при выборе</h3>
       <div class="drivers-grid">
