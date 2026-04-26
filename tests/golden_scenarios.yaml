@@ -213,3 +213,72 @@
   expected:
     avg_y1:                 { min: 192000, max: 197000 }
     mature_monthly:         { exact: 224000 }
+
+# ═══ R12.5 S5: новые форматы и стратегии (3 critical) ═══
+
+- id: manicure_salon_rent_astana_700k_middle_auto_standard
+  severity: critical
+  description: SALON_RENT × middle × auto-level=standard. CAPEX = base 300K + deposit 70K + training 40K = 410K
+  inputs:
+    niche: MANICURE
+    format: MANICURE_SOLO
+    city: astana
+    capital: 700000
+    experience: middle
+    strategy: middle
+    start_month: 5
+  expected:
+    capex:                  { exact: 410000 }       # 300 base + 70 deposit + 40 training
+    capital_zone:           { exact: YELLOW }
+    income_grade:           { exact: MIDDLE }       # SALON_RENT middle Astana → ratio ~82% → MIDDLE
+    income_ratio_pct:       { min: 78, max: 86 }
+    breakeven_clients:      { exact: 17 }
+    safety_mature:          { exact: 7.8 }
+    safety_ramp:            { exact: 3.1 }
+    marketing_year_total:   { min: 415000, max: 420000 }
+    marketing_phase_ramp:   { exact: 80000 }
+    marketing_phase_tuning: { exact: 35000 }
+    marketing_phase_mature: { exact: 12000 }
+
+- id: manicure_studio_astana_1m_middle_simple
+  severity: critical
+  description: STUDIO × middle × simple. CAPEX = 520 base + 140 deposit + 40 training = 700K
+  inputs:
+    niche: MANICURE
+    format: MANICURE_STANDARD
+    city: astana
+    capital: 1000000
+    experience: middle
+    strategy: middle
+    level: simple
+    start_month: 5
+  expected:
+    capex:                  { exact: 700000 }
+    capital_zone:           { exact: AMBER }        # 1M < yellow_threshold (700+ (1.0-700)/3 = comfortable)
+    income_grade:           { exact: MODEST }       # ratio ~51% → MODEST
+    income_ratio_pct:       { min: 48, max: 55 }
+    breakeven_clients:      { exact: 35 }
+    safety_mature:          { exact: 2.5 }
+    safety_ramp:            { exact: 1.0 }
+    marketing_year_total:   { min: 645000, max: 651000 }
+    marketing_phase_ramp:   { exact: 130000 }
+
+- id: manicure_home_astana_700k_none_aggressive_antipattern
+  severity: critical
+  description: HOME × none × aggressive — антипаттерн (новичок + агрессивный маркетинг). Бюджет ×1.40, mature_profit ниже из-за высоких расходов.
+  inputs:
+    niche: MANICURE
+    format: MANICURE_HOME
+    city: astana
+    capital: 700000
+    experience: none
+    strategy: aggressive
+    start_month: 5
+  expected:
+    capex:                  { exact: 480000 }       # CAPEX не зависит от стратегии
+    capital_zone:           { exact: AMBER }        # 700K < yellow_threshold (для CAPEX 480K порог выше)
+    income_grade:           { exact: LOW }          # mature ниже из-за агрессивного маркетинга
+    marketing_year_total:   { min: 998000, max: 1003000 }   # ×1.40 от middle 715K
+    marketing_phase_ramp:   { min: 210000, max: 215000 }    # 152×1.40 ≈ 213K (среднее по 3 мес)
+    marketing_phase_tuning: { min: 75000, max: 76000 }      # 54×1.40
+    marketing_phase_mature: { min: 22000, max: 23000 }      # 16×1.40

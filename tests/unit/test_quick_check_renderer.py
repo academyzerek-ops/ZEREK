@@ -101,7 +101,12 @@ def test_payroll_label_known_types():
 
 
 def test_experience_label_levels():
-    assert "Нет опыта" in _experience_label("none")
+    # R12.5: 'none' → «Учусь / только начинаю», 'middle' → «Делаю гель-лак
+    # уверенно», 'experienced' → «Опытный мастер ...». Legacy 'some' маппит
+    # в R12.5 нейтральную фразу «Есть опыт в нише» (для не-A1 ниш).
+    assert "Учусь" in _experience_label("none")
+    assert "Делаю гель-лак" in _experience_label("middle")
+    assert "Опытный мастер" in _experience_label("experienced")
     assert "1–2 года" in _experience_label("some")
 
 

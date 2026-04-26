@@ -89,6 +89,14 @@ def engine_compute(scenario: Dict[str, Any]) -> Dict[str, Any]:
     inp = scenario["inputs"]
     db = _get_db()
 
+    # R12.5 S5: golden_scenarios.yaml может задавать strategy / level
+    # для соло-beauty (A1) сценариев. Если поле в inputs отсутствует —
+    # используем дефолты (strategy="middle", level не передаётся).
+    sa: Dict[str, Any] = {"experience": str(inp.get("experience") or "none")}
+    if inp.get("strategy"):
+        sa["strategy"] = str(inp["strategy"])
+    if inp.get("level"):
+        sa["level"] = str(inp["level"])
     req = QCReq(
         city_id=str(inp["city"]).lower(),
         niche_id=str(inp["niche"]).upper(),
@@ -98,7 +106,7 @@ def engine_compute(scenario: Dict[str, Any]) -> Dict[str, Any]:
         capital=int(inp.get("capital") or 0),
         start_month=int(inp.get("start_month") or 4),
         capex_level="стандарт",
-        specific_answers={"experience": str(inp.get("experience") or "none")},
+        specific_answers=sa,
     )
     result = QuickCheckCalculator(db).run(req)
     ctx = build_pdf_context(result)

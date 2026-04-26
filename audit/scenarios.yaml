@@ -77,3 +77,38 @@
 
 - id: boundary_astana_with_exp_370k_capex
   inputs: {niche: MANICURE, format: HOME, city: astana,      capital: 700000, experience: some, start_month: 5}
+
+# ═══ R12.5 S5: соло-beauty (архетип A1) — антипаттерны, уровни, стратегии ═══
+
+# (а) контрольный — HOME × none × middle. Должен показывать explanation_block
+#     «Почему ваша первая прибыль ниже чем у знакомых».
+- id: r12_home_none_middle_astana_700k
+  inputs: {niche: MANICURE, format: HOME, city: astana, capital: 700000, experience: none, strategy: middle, start_month: 5}
+
+# (в) антипаттерн — HOME × none × aggressive. Должен показывать «Предупреждение».
+- id: r12_home_none_aggressive_astana_700k
+  inputs: {niche: MANICURE, format: HOME, city: astana, capital: 700000, experience: none, strategy: aggressive, start_month: 5}
+
+# Aktobe + conservative — низкий бюджет (143K/y), explanation_block сохраняется
+- id: r12_home_none_conservative_aktobe_700k
+  inputs: {niche: MANICURE, format: HOME, city: aktobe, capital: 700000, experience: none, strategy: conservative, start_month: 5}
+
+# HOME × middle: explanation_block не показывается (триггер — only none)
+- id: r12_home_middle_middle_aktobe_700k
+  inputs: {niche: MANICURE, format: HOME, city: aktobe, capital: 700000, experience: middle, strategy: middle, start_month: 5}
+
+# SALON_RENT × middle (auto level=standard, base 300K + dep 70K + train 40K = 410K)
+- id: r12_salon_middle_astana_700k_auto_standard
+  inputs: {niche: MANICURE, format: SOLO, city: astana, capital: 700000, experience: middle, strategy: middle, start_month: 5}
+
+# SALON_RENT × experienced (auto level=premium — должна быть подпись «Премиум-салон»)
+- id: r12_salon_experienced_astana_700k_auto_premium
+  inputs: {niche: MANICURE, format: SOLO, city: astana, capital: 700000, experience: experienced, strategy: middle, start_month: 5}
+
+# STUDIO × middle × simple
+- id: r12_studio_middle_simple_astana_1m
+  inputs: {niche: MANICURE, format: STANDARD, city: astana, capital: 1000000, experience: middle, strategy: middle, level: simple, start_month: 5}
+
+# STUDIO × middle × nice + aggressive — должны быть «Приличный кабинет» и «Агрессивная»
+- id: r12_studio_middle_nice_aggressive_astana_1_5m
+  inputs: {niche: MANICURE, format: STANDARD, city: astana, capital: 1500000, experience: middle, strategy: aggressive, level: nice, start_month: 5}
