@@ -164,13 +164,17 @@ class QuickCheckCalculator:
 
     def _compute_base(self, req, cls, founder_works_eff):
         """Шаг 3: базовый расчёт через engine.run_quick_check_v3."""
-        # R12.5: experience + strategy прокидываются из specific_answers
-        # до engine. experience override fin/capex/staff через formats_r12
-        # (если ниша в R12.5). strategy управляет маркетинг-фазами и
-        # ramp curve.
+        # R12.5: experience + strategy + level прокидываются из
+        # specific_answers до engine. experience override fin/capex/staff
+        # через formats_r12 (если ниша в R12.5). strategy управляет
+        # маркетинг-фазами и ramp curve. level (если задан) выбирает
+        # SALON_RENT premium / STUDIO nice вместо дефолтов; если не задан,
+        # _resolve_r12_level выбирает автоматически (SALON_RENT × experienced
+        # → premium).
         sa = req.specific_answers or {}
         experience = sa.get('experience') or 'none'
         strategy = sa.get('strategy') or 'middle'
+        level = sa.get('level')  # None допустим — авто-выбор в engine
         return run_quick_check_v3(
             db=self.db,
             city_id=req.city_id,
@@ -186,6 +190,7 @@ class QuickCheckCalculator:
             start_month=req.start_month,
             experience=experience,
             strategy=strategy,
+            level=level,
         )
 
     def _overlay_blocks(self, result, req):
@@ -252,6 +257,15 @@ class QuickCheckCalculator:
                     rev_m = int(m.get("revenue") or 0)
                     clients_per_month.append(int(round(rev_m / max(check_med, 1))))
             if clients_per_month:
+                # R12.5 Сессия 2 калибровка: level — уровень формата
+                # (premium/standard для SALON_RENT). Используется
+                # marketing_service для выбора marketing_phases_premium
+                # vs marketing_phases_standard (премиум-салон требует
+                # меньше своего маркетинга — есть трафик от салона).
+                resolved_level = (
+                    (fin.get('r12_level') if isinstance(fin, dict) else None)
+                    or sa.get('level')
+                )
                 mp = compute_marketing_plan(
                     niche_id=(inp.get("niche_id") or "").upper(),
                     city_id=(inp.get("city_id") or "").lower(),
@@ -261,6 +275,7 @@ class QuickCheckCalculator:
                     legal_form="ip",
                     format_id=(inp.get("format_id") or "").upper(),  # R12 S2
                     strategy=sa.get("strategy") or "middle",  # R12.5 S2 хвост
+                    level=resolved_level,  # R12.5 калибровка
                 )
                 if mp and not mp.get("error"):
                     result["marketing_plan"] = mp

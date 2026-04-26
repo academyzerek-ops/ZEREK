@@ -178,7 +178,46 @@ _EXPERIENCE_TO_R12 = {
 }
 
 
-def _apply_r12_5_overrides(fin, niche_id, format_id, experience='none', strategy='middle'):
+def _resolve_r12_level(target, experience='none', explicit_level=None):
+    """R12.5 Сессия 2 (калибровка): выбирает уровень формата.
+
+    Логика дефолтов (R12.5 ТЗ):
+      · HOME — без уровней → возвращает (None, None).
+      · STUDIO — simple дефолт; nice если задан явно.
+      · SALON_RENT × experienced → premium (тариф «опытному в премиум-салоне»).
+      · SALON_RENT × middle → standard.
+      · MALL_SOLO — single (по умолчанию рассчитываем как одиночка). В будущем
+        можно отдавать средний (single+cluster)/2, но пока MVP.
+
+    `explicit_level` (если передан и валиден) перебивает авто-выбор.
+    Возвращает кортеж (level_key, level_data) либо (None, None).
+    """
+    levels = (target or {}).get('levels') or {}
+    if not levels:
+        return None, None
+    # Явный выбор пользователя в анкете
+    if explicit_level:
+        ek = str(explicit_level).strip().lower()
+        if ek in levels:
+            return ek, levels[ek]
+    # Авто: SALON_RENT × experienced → premium
+    fmt_id = (target.get('id') or '').upper()
+    if (
+        fmt_id == 'SALON_RENT'
+        and (experience or '').lower() == 'experienced'
+        and 'premium' in levels
+    ):
+        return 'premium', levels['premium']
+    # Дефолт: standard / simple / single (первый из канонических)
+    for default_key in ('standard', 'simple', 'single'):
+        if default_key in levels:
+            return default_key, levels[default_key]
+    # Fallback: первый по итерации
+    first_key = next(iter(levels))
+    return first_key, levels[first_key]
+
+
+def _apply_r12_5_overrides(fin, niche_id, format_id, experience='none', strategy='middle', level=None):
     """R12.5 Сессия 2: переписывает поля `fin` через `formats_r12` блок
     в YAML ниши + experience_levels из A1 архетипа.
 
@@ -246,23 +285,19 @@ def _apply_r12_5_overrides(fin, niche_id, format_id, experience='none', strategy
     check_mult = float(exp_params.get('check_multiplier') or 1.0)
     avg_clients = float(exp_params.get('avg_clients_per_day_mature') or 0)
 
-    # Базовый чек берём из formats_r12 (Астана). Если есть уровни —
-    # используем simple/standard/single как дефолт (выбор уровня
-    # будет в Сессии 3 через анкету).
-    base_check_astana = target.get('base_check', {}).get('astana')
+    # R12.5 Сессия 2 калибровка: уровень (simple/nice или standard/premium)
+    # выбирается через _resolve_r12_level. SALON_RENT × experienced
+    # автоматически идёт в premium (тариф для опытного в премиум-салоне).
+    level_key, level_data = _resolve_r12_level(target, exp_norm, explicit_level=level)
+
+    # Базовый чек: для HOME — top-level base_check.astana. Для остальных
+    # форматов с уровнями — base_check_astana уровня.
+    base_check_astana = (target.get('base_check') or {}).get('astana')
+    if not base_check_astana and level_data:
+        base_check_astana = level_data.get('base_check_astana')
+    # MALL_SOLO: дефолт = base_check_average_astana (среднее single+cluster)
     if not base_check_astana:
-        # Для STUDIO/SALON_RENT/MALL_SOLO — base_check внутри levels
-        levels = target.get('levels') or {}
-        if levels:
-            default_level_key = (
-                'simple' if 'simple' in levels else
-                'standard' if 'standard' in levels else
-                next(iter(levels))
-            )
-            base_check_astana = (levels.get(default_level_key) or {}).get('base_check_astana')
-            # MALL_SOLO: используем base_check_average_astana если есть
-            if not base_check_astana:
-                base_check_astana = target.get('base_check_average_astana')
+        base_check_astana = target.get('base_check_average_astana')
 
     fin_new = dict(fin)
 
@@ -288,34 +323,28 @@ def _apply_r12_5_overrides(fin, niche_id, format_id, experience='none', strategy
     # R12.5 Сессия 2 хвост: rent_med + deposit_months из formats_r12.
     # HOME: rent=0, deposit=0. STUDIO/SALON_RENT/MALL_SOLO: rent_per_month
     # из YAML, deposit_months обычно 2 (engine: deposit = rent × months).
-    # Для SALON_RENT уровень standard/premium хранит rent внутри levels —
-    # дефолт на standard. Для STUDIO rent на верхнем уровне формата.
+    # SALON_RENT × experienced берёт premium через _resolve_r12_level →
+    # rent=60K → deposit 120K (вместо standard 35K → 70K).
     rent_per_month = target.get('rent_per_month_astana')
+    if rent_per_month is None and level_data:
+        rent_per_month = level_data.get('rent_per_month_astana')
+    # MALL_SOLO: rent на верхнем уровне (одинаковый для single/cluster)
     if rent_per_month is None:
-        # SALON_RENT — rent внутри levels
-        levels = target.get('levels') or {}
-        default_level_key = 'standard' if 'standard' in levels else (
-            'simple' if 'simple' in levels else None
-        )
-        if default_level_key:
-            rent_per_month = (levels.get(default_level_key) or {}).get('rent_per_month_astana')
+        rent_per_month = target.get('rent_per_month_astana')
     if rent_per_month is not None:
         fin_new['rent_med'] = int(rent_per_month)
     deposit_months = target.get('deposit_months')
-    if deposit_months is None:
-        levels = target.get('levels') or {}
-        default_level_key = 'standard' if 'standard' in levels else (
-            'simple' if 'simple' in levels else None
-        )
-        if default_level_key:
-            deposit_months = (levels.get(default_level_key) or {}).get('deposit_months')
+    if deposit_months is None and level_data:
+        deposit_months = level_data.get('deposit_months')
     if deposit_months is not None:
         fin_new['deposit_months'] = int(deposit_months)
 
-    # R12.5: записываем стратегию в fin чтобы её увидели
-    # marketing_service (для budget_multiplier) и seasonality_service
-    # (для ramp_curve по стратегии).
+    # R12.5: записываем стратегию + резолвенный level в fin чтобы их
+    # увидели downstream-сервисы (marketing_service для budget_multiplier
+    # и фаз standard/premium, seasonality_service для ramp_curve).
     fin_new['strategy'] = (strategy or 'middle').lower()
+    if level_key:
+        fin_new['r12_level'] = level_key
 
     return fin_new
 
@@ -405,7 +434,7 @@ def _r12_5_normalize_meta08(meta08, niche_id, format_id):
     return out
 
 
-def _apply_r12_5_capex_override(capex_data, niche_id, format_id, experience='none'):
+def _apply_r12_5_capex_override(capex_data, niche_id, format_id, experience='none', level=None):
     """R12.5 Сессия 2 хвост: переписывает CAPEX-разбивку через
     `formats_r12.capex_items` + `capex_base_total`.
 
@@ -416,6 +445,12 @@ def _apply_r12_5_capex_override(capex_data, niche_id, format_id, experience='non
     Training (по experience) и deposit (×rent_per_month) добавляются
     engine'ом отдельно — это совместимо с R12.5 формулой Адиля:
         capex_total = base_total + training + deposit
+
+    R12.5 калибровка: для SALON_RENT base_total per-level
+    (capex_base_total_standard / capex_base_total_premium). Для STUDIO
+    nice = simple base + extras (capex_furniture_extra и т.д.).
+    `level` (если задан и валиден) перебивает авто-выбор —
+    SALON_RENT × experienced иначе автоматически идёт в premium.
 
     Не меняет capex_data если ниша не содержит formats_r12 — fallback
     на legacy YAML formats: блок (для других ниш).
@@ -454,15 +489,25 @@ def _apply_r12_5_capex_override(capex_data, niche_id, format_id, experience='non
     if not target:
         return capex_data
 
-    # Базовая сумма + items. Для STUDIO/SALON_RENT с уровнями берём
-    # дефолт (simple/standard).
+    # R12.5: резолвим уровень (SALON_RENT × experienced → premium и т.п.)
+    exp_norm = _EXPERIENCE_TO_R12.get((experience or '').lower(), 'none')
+    level_key, level_data = _resolve_r12_level(target, exp_norm, explicit_level=level)
+
+    # Базовая сумма: per-level для SALON_RENT/STUDIO, общая для HOME/MALL_SOLO.
     base_total = target.get('capex_base_total')
     if base_total is None:
-        # SALON_RENT хранит base_total per-level
-        for k in ('capex_base_total_standard', 'capex_base_total_simple'):
-            if target.get(k):
-                base_total = target[k]
-                break
+        if level_key == 'premium' and target.get('capex_base_total_premium'):
+            base_total = target['capex_base_total_premium']
+        elif target.get('capex_base_total_standard'):
+            base_total = target['capex_base_total_standard']
+    # STUDIO «приличный кабинет» (nice) = simple base + extras
+    if level_key == 'nice' and base_total is not None:
+        extras = (
+            (level_data or {}).get('capex_furniture_extra', 0)
+            + (level_data or {}).get('capex_renovation_extra', 0)
+            + (level_data or {}).get('capex_marketing_start_extra', 0)
+        )
+        base_total = int(base_total) + int(extras)
     if base_total is None:
         return capex_data  # нет данных для override
 
@@ -475,7 +520,15 @@ def _apply_r12_5_capex_override(capex_data, niche_id, format_id, experience='non
     capex_new['working_cap_3m'] = 0
 
     # Перезаписываем breakdown items для PDF (стр. «Инвестиции»).
-    items = target.get('capex_items') or target.get('capex_items_common') or {}
+    # Для SALON_RENT items берутся из capex_items_common + level
+    # (equipment/marketing_start приходят из level_data).
+    items = dict(target.get('capex_items') or target.get('capex_items_common') or {})
+    if level_data:
+        # SALON_RENT level: capex_equipment / capex_marketing_start
+        if 'capex_equipment' in level_data:
+            items['equipment'] = {'med': level_data['capex_equipment']}
+        if 'capex_marketing_start' in level_data:
+            items['marketing_start'] = {'med': level_data['capex_marketing_start']}
     field_map = {
         'equipment':       'equipment',
         'renovation':      'renovation',
@@ -782,6 +835,7 @@ def run_quick_check_v3(
     start_month: int = 4,
     experience: str = 'none',     # R12.5: уровень опыта для override fin/capex
     strategy: str = 'middle',      # R12.5: маркетинг-стратегия (conservative/middle/aggressive)
+    level: str = None,             # R12.5: уровень формата (simple/nice или standard/premium)
 ) -> dict:
     """
     Quick Check v3 — полный расчёт из новых шаблонов (12 листов).
@@ -819,10 +873,11 @@ def run_quick_check_v3(
     # YAML содержит formats_r12 для этой ниши и archetype = A1.
     # Иначе fin/capex_data используются как были (legacy R8/R9).
     fin = _apply_r12_5_overrides(
-        fin, niche_id, format_id, experience=experience, strategy=strategy,
+        fin, niche_id, format_id,
+        experience=experience, strategy=strategy, level=level,
     )
     capex_data = _apply_r12_5_capex_override(
-        capex_data, niche_id, format_id, experience=experience,
+        capex_data, niche_id, format_id, experience=experience, level=level,
     )
     staff = _apply_r12_5_staff_override(staff, niche_id, format_id)
 
@@ -1104,6 +1159,12 @@ def run_quick_check_v3(
             "working_days_per_month": _safe_int(fin.get('working_days_per_month'), 30),
             # R12.5: маркетинговая стратегия (conservative/middle/aggressive)
             "strategy": fin.get('strategy') or 'middle',
+            # R12.5 Сессия 2 калибровка: уровень формата
+            # (simple/nice или standard/premium). Резолвится в
+            # _resolve_r12_level — для SALON_RENT × experienced
+            # автоматически = premium. PDF / UI используют для подписи
+            # «арендуете в премиум-салоне» и т.п.
+            "r12_level": fin.get('r12_level'),
             "cogs_pct": _safe_float(fin.get('cogs_pct'), DEFAULTS['cogs_pct']),
             "margin_pct": _safe_float(fin.get('margin_pct'), DEFAULTS['margin_pct']),
             "rent_month": rent_month_total,

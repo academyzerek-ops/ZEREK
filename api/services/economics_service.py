@@ -713,11 +713,14 @@ def compute_block5_pnl(db, result, adaptive):
 
     capital_own = _safe_int(adaptive.get("capital_own")) if adaptive.get("capital_own") else 0
     capex_standard_08 = _safe_int(inp.get("capex_standard"), 0)
+    # R12.5: engine.capex.total — канонический полный CAPEX (включая
+    # deposit + working_cap). Старый ключ `capex_total` не существует —
+    # engine пишет именно `total`. Берём его первым после capital_own.
     total_investment = (
         capital_own
         or capex_standard_08
+        or _safe_int(capex_block.get("total"), 0)
         or _safe_int(capex_block.get("capex_med"), 0)
-        or _safe_int(capex_block.get("capex_total"), 0)
     )
     if total_investment < 500_000:
         for k in ("capex_high", "total", "capital"):
@@ -842,7 +845,13 @@ def compute_block6_capital(db, result, adaptive, block2=None):
     """
     capex = result.get("capex", {}) or {}
     inp = result.get("input", {}) or {}
-    capex_needed = _safe_int(capex.get("capex_med")) or _safe_int(capex.get("capex_total"))
+    # R12.5 калибровка: engine пишет полную сумму стартовых вложений в
+    # `capex.total` (= capex_med + deposit + working_cap_3m). Старая
+    # ветка читала несуществующий ключ `capex_total` и проваливалась
+    # на `capex_med`, теряя deposit для STUDIO/SALON_RENT (где capex_med
+    # = «голая» база без аренды). Берём `total` как первичное значение
+    # с фолбэком на `capex_med` для устаревших путей.
+    capex_needed = _safe_int(capex.get("total")) or _safe_int(capex.get("capex_med"))
     # NB: block2.finance.capex_needed уже включает training (унификация BUG #1),
     # поэтому fallback без training_cost чтобы избежать двойного добавления.
     if capex_needed < 500_000 and block2:

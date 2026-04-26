@@ -112,6 +112,7 @@ def compute_marketing_plan(
     legal_form: str = "ip",
     format_id: str = "",       # R12 S2: для format-зависимых фаз A1
     strategy: str = "middle",  # R12.5 S2 хвост: conservative / middle / aggressive
+    level: str = None,          # R12.5 калибровка: standard/premium/simple/nice
 ) -> Dict[str, Any]:
     """Помесячный маркетинг-план + архетипный контекст.
 
@@ -211,6 +212,48 @@ def compute_marketing_plan(
         ramp_curve = budgets["ramp_curve"]
         tuning_amt = budgets["tuning"]
         mature_amt = budgets["mature"]
+        # R12.5 калибровка: per-level фазы из formats_r12 (если YAML
+        # содержит marketing_phases_premium / _standard). Премиум-салон
+        # сам приводит клиентов — бюджет ниже стандарта (60K ramp vs 80K).
+        try:
+            from loaders.niche_loader import load_niche_yaml  # noqa: WPS433
+            niche_yaml = load_niche_yaml((niche_id or '').upper()) or {}
+            for f in niche_yaml.get('formats_r12') or []:
+                if f.get('id') != _r12_key:
+                    continue
+                lvl_key = (level or '').lower() if level else None
+                if lvl_key == 'premium' and f.get('marketing_phases_premium'):
+                    mp_lvl = f['marketing_phases_premium']
+                elif lvl_key == 'standard' and f.get('marketing_phases_standard'):
+                    mp_lvl = f['marketing_phases_standard']
+                # SALON_RENT auto: experienced+SALON_RENT → premium
+                elif (
+                    _r12_key == 'SALON_RENT'
+                    and (experience or '').lower() in ('experienced', 'pro', 'expert')
+                    and f.get('marketing_phases_premium')
+                ):
+                    mp_lvl = f['marketing_phases_premium']
+                elif _r12_key == 'SALON_RENT' and f.get('marketing_phases_standard'):
+                    mp_lvl = f['marketing_phases_standard']
+                else:
+                    mp_lvl = None
+                if mp_lvl:
+                    base_ramp = int(mp_lvl.get('ramp_m1_m3_base') or 0)
+                    if base_ramp > 0:
+                        # Лёгкая «волна» с пиком M2 (как в hardcoded
+                        # PHASE_BUDGETS_BY_R12 канон).
+                        ramp_curve = [
+                            int(round(base_ramp * 0.85)),
+                            int(round(base_ramp * 1.15)),
+                            base_ramp,
+                        ]
+                    if mp_lvl.get('tuning_m4_m6_base'):
+                        tuning_amt = int(mp_lvl['tuning_m4_m6_base'])
+                    if mp_lvl.get('mature_m7_m12_base'):
+                        mature_amt = int(mp_lvl['mature_m7_m12_base'])
+                break
+        except Exception:  # noqa: BLE001
+            pass
         # R12.5 S2 хвост: budget_multiplier по стратегии из A1 archetype.
         # conservative ×0.20, middle ×1.00, aggressive ×1.40.
         try:
