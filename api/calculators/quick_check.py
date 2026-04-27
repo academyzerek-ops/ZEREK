@@ -83,6 +83,10 @@ class QuickCheckCalculator:
         Renderer (renderers/quick_check_renderer.render_for_api) превращает
         его в финальный API-отчёт.
         """
+        # 0. R13: синхронизируем top-level experience/format_level/strategy
+        # → specific_answers (block1_inputs / adaptive ниже подтягивают
+        # из SA). Top-level всегда выигрывает, если задан.
+        self._sync_top_level_to_sa(req)
         # 1. Валидация + резолв cls
         cls = self._validate_and_resolve_cls(req)
         # 2. Нормализация HOME/SOLO (R-6)
@@ -100,6 +104,30 @@ class QuickCheckCalculator:
     # ════════════════════════════════════════════════════════════════════
     # Внутренние шаги
     # ════════════════════════════════════════════════════════════════════
+
+    def _sync_top_level_to_sa(self, req):
+        """R13: experience / format_level / strategy могут прийти как
+        top-level поля QCReq (после R13) или внутри specific_answers
+        (старый фронт до R13). Подмешиваем top-level в SA с правильными
+        legacy-ключами (`experience`, `level`, `strategy`), чтобы все
+        downstream-блоки (block1_inputs, adaptive в block6, и т.п.)
+        видели одинаковую структуру независимо от транспорта.
+
+        Top-level выигрывает над SA если оба заданы.
+        """
+        sa = dict(req.specific_answers or {})
+        top_to_sa = {
+            "experience":   getattr(req, "experience", None),
+            "level":        getattr(req, "format_level", None),
+            "strategy":     getattr(req, "strategy", None),
+        }
+        changed = False
+        for sa_key, top_v in top_to_sa.items():
+            if top_v is not None:
+                sa[sa_key] = top_v
+                changed = True
+        if changed:
+            req.specific_answers = sa
 
     def _validate_and_resolve_cls(self, req):
         """Шаг 1: валидация ниши + start_month + HOME/SOLO калибровки.
@@ -163,18 +191,30 @@ class QuickCheckCalculator:
         return founder_works_eff
 
     def _compute_base(self, req, cls, founder_works_eff):
-        """Шаг 3: базовый расчёт через engine.run_quick_check_v3."""
-        # R12.5: experience + strategy + level прокидываются из
-        # specific_answers до engine. experience override fin/capex/staff
-        # через formats_r12 (если ниша в R12.5). strategy управляет
-        # маркетинг-фазами и ramp curve. level (если задан) выбирает
-        # SALON_RENT premium / STUDIO nice вместо дефолтов; если не задан,
-        # _resolve_r12_level выбирает автоматически (SALON_RENT × experienced
-        # → premium).
+        """Шаг 3: базовый расчёт через engine.run_quick_check_v3.
+
+        R13: experience / format_level / strategy теперь top-level поля
+        QuickCheckRequest. Сначала читаем из них, fallback — на
+        specific_answers (для backward-compat со старым фронтом).
+        Имена в Pydantic: `format_level`; внутри engine исторически — `level`.
+        """
         sa = req.specific_answers or {}
-        experience = sa.get('experience') or 'none'
-        strategy = sa.get('strategy') or 'middle'
-        level = sa.get('level')  # None допустим — авто-выбор в engine
+        experience = (
+            getattr(req, "experience", None)
+            or sa.get('experience')
+            or 'none'
+        )
+        strategy = (
+            getattr(req, "strategy", None)
+            or sa.get('strategy')
+            or 'middle'
+        )
+        level = (
+            getattr(req, "format_level", None)
+            or sa.get('level')
+            # None допустим — _resolve_r12_level выбирает автоматически
+            # (SALON_RENT × experienced → premium).
+        )
         return run_quick_check_v3(
             db=self.db,
             city_id=req.city_id,
@@ -246,7 +286,14 @@ class QuickCheckCalculator:
             inp = result.get("input", {}) or {}
             fin = result.get("financials") or {}
             sa = (req.specific_answers or {})
-            exp = (sa.get("experience") or inp.get("experience") or "none") or "none"
+            # R13: experience читаем сначала из top-level, потом из SA, потом
+            # из inp (после _add_user_inputs), последний фолбэк — 'none'.
+            exp = (
+                getattr(req, "experience", None)
+                or sa.get("experience")
+                or inp.get("experience")
+                or "none"
+            )
             content_self = bool(sa.get("content_self_produced", True))
             fyc_early = compute_first_year_chart(result)
             months_early = (fyc_early or {}).get("months") or []
@@ -262,8 +309,10 @@ class QuickCheckCalculator:
                 # marketing_service для выбора marketing_phases_premium
                 # vs marketing_phases_standard (премиум-салон требует
                 # меньше своего маркетинга — есть трафик от салона).
+                # R13: top-level format_level имеет приоритет над SA.
                 resolved_level = (
                     (fin.get('r12_level') if isinstance(fin, dict) else None)
+                    or getattr(req, "format_level", None)
                     or sa.get('level')
                 )
                 mp = compute_marketing_plan(
@@ -494,13 +543,20 @@ class QuickCheckCalculator:
             result.setdefault("user_inputs", {}).update(
                 {k: v for k, v in adaptive.items() if v is not None}
             )
-        # Прокидываем experience из specific_answers в result.input —
-        # чтобы renderer'ы (PDF, UI) могли читать его напрямую, без погружения
-        # в user_inputs.specific_answers.experience. Защита от рассинхрона.
-        # R12.5: то же делаем для level и strategy — нужны PDF-шаблону
-        # для antipatterns / explanation_blocks / strategy_explanations.
+        # Прокидываем experience / level / strategy в result.input —
+        # чтобы renderer'ы (PDF, UI) могли читать их напрямую, без погружения
+        # в user_inputs.specific_answers.X. Защита от рассинхрона.
+        # R13: сначала top-level поля QCReq (явные); если None — fallback
+        # на specific_answers (старый фронт до R13). PDF использует
+        # input.experience / input.level / input.strategy для antipatterns
+        # / explanation_blocks / strategy_explanations.
         sa = req.specific_answers or {}
-        for k in ("experience", "level", "strategy"):
-            v = sa.get(k)
+        sources = {
+            "experience": (getattr(req, "experience", None), sa.get("experience")),
+            "level":      (getattr(req, "format_level", None), sa.get("level")),
+            "strategy":   (getattr(req, "strategy", None), sa.get("strategy")),
+        }
+        for k, (top, sa_v) in sources.items():
+            v = top if top is not None else sa_v
             if v is not None:
                 result.setdefault("input", {})[k] = v

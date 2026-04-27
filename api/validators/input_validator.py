@@ -60,6 +60,16 @@ class QuickCheckRequest(BaseModel):
     staff_count: Optional[int] = None
     specific_answers: Optional[dict] = None  # {"experience": "none", "entrepreneur_role": "owner_plus_master", ...}
 
+    # ── R13 top-level R12.5 параметры ──
+    # Раньше experience / level / strategy жили внутри `specific_answers`.
+    # R13 поднимает их на верхний уровень для явности схемы и для будущей
+    # типобезопасной проверки (Pydantic enum). Backward-compat: calculator
+    # читает сначала из этих полей, при None — fallback на `specific_answers`.
+    # Имена соответствуют ТЗ R13: `format_level` (не `level`).
+    experience: Optional[str] = None       # "none" / "middle" / "experienced" (+ legacy "some" / "pro" / ...)
+    format_level: Optional[str] = None     # "simple" / "nice" / "standard" / "premium" / "single" / "cluster"
+    strategy: Optional[str] = None         # "conservative" / "middle" / "aggressive"
+
     # ── Простые валидаторы ──
 
     @field_validator("capital")

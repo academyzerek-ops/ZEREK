@@ -1257,11 +1257,14 @@ function submit(){
     capital: QC.capital_own || QC.capital_needed || 0,
     start_month: QC.start_month,
     staff_mode: (QC.entrepreneur_role && QC.entrepreneur_role !== 'owner_only') ? 'self' : 'hired',
+    // R13: experience / format_level / strategy теперь top-level поля
+    // QuickCheckRequest. Дублируем в specific_answers для backward-compat
+    // (старый бэк / прод до R13 читает из SA).
+    experience: QC.experience || null,
+    format_level: QC.level || null,
+    strategy: QC.strategy || 'middle',
     specific_answers: {
       location_line: QC.location_line, experience: QC.experience,
-      // R12.5: новые поля анкеты — уровень формата (для STUDIO/SALON_RENT)
-      // и маркетинг-стратегия. Бэкенд в _resolve_r12_level умеет
-      // авто-выбирать level если он не задан. strategy по умолчанию 'middle'.
       level: QC.level || null,
       strategy: QC.strategy || 'middle',
       payroll_type: QC.payroll_type, entrepreneur_role: QC.entrepreneur_role,
