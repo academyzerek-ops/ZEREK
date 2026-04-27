@@ -1151,22 +1151,26 @@ RENDERERS.role = function(root){
 function selectRole(v){ QC.entrepreneur_role = v; advance(); }
 
 RENDERERS.capital = function(root){
+  // R14 фикс: одно поле «сколько готовы вложить?» (необязательное).
+  // Удалены: 2-е поле «сколько по-вашему нужно» (Quick Check сам считает
+  // требуемый CAPEX) и кнопка «Не знаю — рассчитайте типовое»
+  // (дублировала пустое поле + Продолжить).
+  // Если поле пустое → capital=null → бэк применяет дефолтный сценарий
+  // по требуемому CAPEX формата. Если заполнено → используется capital_own.
   var html = '<div class="step">' +
     '<div class="step-kicker">Капитал</div>' +
     '<h2>Ваш стартовый капитал</h2>' +
-    '<div class="step-desc">Можно пропустить — мы рассчитаем типовое.</div>' +
-    '<div class="section-label">Сколько готовы вложить?</div>' +
-    '<div class="num-in"><input type="number" inputmode="numeric" min="0" step="100000" placeholder="Необязательно" value="'+(QC.capital_own||'')+'" oninput="setCapOwn(this.value)"><span class="num-in-suffix">₸</span></div>' +
-    '<div class="section-label">Сколько, по-вашему, нужно?</div>' +
-    '<div class="num-in"><input type="number" inputmode="numeric" min="0" step="100000" placeholder="Необязательно" value="'+(QC.capital_needed||'')+'" oninput="setCapNeed(this.value)"><span class="num-in-suffix">₸</span></div>' +
-    '<div style="margin-top:14px"><button class="btn" onclick="advance()">Продолжить</button></div>' +
-    '<div class="skip-btn" onclick="skipCapital()">Не знаю — рассчитайте типовое</div>' +
+    '<div class="step-desc">Сколько вы готовы вложить? Если не знаете — оставьте пустым, мы покажем сценарий по среднерыночному капиталу для вашего формата.</div>' +
+    '<div class="num-in"><input type="number" inputmode="numeric" min="0" step="100000" placeholder="Например, 700 000" value="'+(QC.capital_own||'')+'" oninput="setCapOwn(this.value)"><span class="num-in-suffix">₸</span></div>' +
+    '<div style="margin-top:18px"><button class="btn" onclick="advance()">Продолжить</button></div>' +
   '</div>';
   root.innerHTML = html;
 };
 function setCapOwn(v){ QC.capital_own = parseInt(v,10) || null; }
+// R14: capital_needed больше не собирается анкетой. Оставляем функции/стейт
+// как мёртвые поля для backward-compat с remenant payload-полями
+// (specific_answers.capital_needed) — null значение безопасно.
 function setCapNeed(v){ QC.capital_needed = parseInt(v,10) || null; }
-function skipCapital(){ QC.capital_own = null; QC.capital_needed = null; advance(); }
 
 // Выбор месяца старта. Возвращает сетку 3×4 с месяцами 1-12 (календарные
 // названия). QC.start_month хранится 1..12. Передаётся в /quick-check как
