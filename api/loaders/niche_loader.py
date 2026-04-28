@@ -13,7 +13,8 @@
 - `data/kz/07_niches.xlsx` (adaptive-survey конфиг v2)
 - `data/kz/08_niche_formats.xlsx` (канонические метаданные форматов)
 - `data/kz/09_surveys.xlsx` (каталог вопросов / применимость / зависимости)
-- `config/niches.yaml`, `config/archetypes.yaml`, `config/locations.yaml`,
+- `data/kz/niches_registry.yaml` — единый реестр ниш (синтезируется в db.configs["niches"])
+- `config/archetypes.yaml`, `config/locations.yaml`,
   `config/questionnaire.yaml` (через db.configs)
 - `data/niches/{NICHE}_data.yaml` (новый YAML-первый источник — Этап 7)
 """
@@ -40,9 +41,9 @@ _log = logging.getLogger("zerek.niche_loader")
 
 
 def _archetype_of(db, niche_id):
-    """Архетип ниши (A/B/C/D/E/F) из config/niches.yaml.
+    """Архетип ниши (A/B/C/D/E/F) из data/kz/niches_registry.yaml.
 
-    Возвращает пустую строку если ниши нет в конфиге.
+    Возвращает пустую строку если ниши нет в реестре.
     """
     configs = getattr(db, "configs", {}) or {}
     return (
@@ -411,7 +412,7 @@ def get_quickcheck_survey(db, niche_id, format_id=None):
 
     return {
         "niche_id": niche_id,
-        "niche_name": niche_meta.get("name_rus", niche_id),
+        "niche_name": niche_meta.get("name_ru", niche_id),
         "archetype": archetype,
         "archetype_name": archetype_meta.get("name_rus", ""),
         "revenue_formula": archetype_meta.get("revenue_formula", ""),

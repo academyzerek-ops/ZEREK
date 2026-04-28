@@ -242,7 +242,7 @@ def compute_block2_passport(db, result, adaptive):
 
     niche_meta = niches_cfg.get(niche_id, {}) or {}
     niche_icon = niche_meta.get("icon", "📋")
-    niche_name_rus = niche_meta.get("name_rus", niche_id)
+    niche_name_rus = niche_meta.get("name_ru") or niche_meta.get("name_rus") or niche_id
 
     formats = _formats_from_fallback_xlsx(db, niche_id)
     fm = next((f for f in formats if f.get("format_id") == format_id), {})

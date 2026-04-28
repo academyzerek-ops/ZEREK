@@ -1,6 +1,6 @@
 ---
 id: MANICURE
-name_rus: Маникюр
+name_ru: Маникюр
 icon: 💅
 archetype: A1_BEAUTY_SOLO
 available: true

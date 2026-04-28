@@ -383,8 +383,8 @@ def compute_unified_payback_months(result, adaptive):
 def compute_block4_unit_economics(db, result, adaptive, block2=None):
     """Юнит-экономика + breakeven по архетипу.
 
-    db передан для `_archetype_of` (читает config/niches.yaml). В Этапе 4+
-    архетип будет частью `result`, зависимость от db уйдёт.
+    db передан для `_archetype_of` (читает data/kz/niches_registry.yaml через
+    db.configs). В Этапе 4+ архетип будет частью `result`, зависимость от db уйдёт.
     """
     inp = result.get("input", {}) or {}
     fin = result.get("financials", {}) or {}

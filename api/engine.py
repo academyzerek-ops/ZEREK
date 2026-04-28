@@ -660,7 +660,7 @@ class ZerekDB:
         SHEETS = ['FORMATS','STAFF','FINANCIALS','CAPEX','GROWTH','TAXES',
                   'MARKET','LAUNCH','INSIGHTS','PRODUCTS','MARKETING','SUPPLIERS','SURVEY','LOCATIONS']
 
-        # Имена и иконки ниш — из config/niches.yaml (единый источник истины).
+        # Имена и иконки ниш — из data/kz/niches_registry.yaml через self.configs.
         niches_cfg = ((getattr(self, "configs", {}) or {}).get("niches", {}) or {}).get("niches", {}) or {}
 
         self.niche_registry = {}  # {niche_id: {name, icon, formats_count}}
@@ -687,7 +687,7 @@ class ZerekDB:
             cfg_meta = niches_cfg.get(niche_id, {}) or {}
             self.niche_registry[niche_id] = {
                 'niche_id': niche_id,
-                'name': cfg_meta.get('name_rus', niche_id),
+                'name': cfg_meta.get('name_ru', niche_id),
                 'icon': cfg_meta.get('icon', '📋'),
                 'formats_count': fmt_count,
             }
@@ -734,12 +734,13 @@ class ZerekDB:
         return df[mask_fid]
 
     def get_available_niches(self) -> list:
-        """Список ниш из config/niches.yaml с полем `available`.
+        """Список ниш из data/kz/niches_registry.yaml с полем `available`.
 
-        Возвращает ВСЕ ниши из yaml (а не только загруженные xlsx), с пометкой
+        Возвращает ВСЕ ниши из реестра (а не только загруженные xlsx), с пометкой
         available=true|false. Фронт сам решает, скрывать ли недоступные.
-        Для ниш с available=true подтягиваются иконка/имя/кол-во форматов из
-        niche_registry (загруженных xlsx); для остальных — из yaml.
+        Поле `available` теперь производное: True ⇔ status == 'production_ready'.
+        Иконка/имя/кол-во форматов: для available=True — из niche_registry
+        (загруженных xlsx), для остальных — из реестра.
         """
         niches_cfg = ((self.configs or {}).get("niches", {}) or {}).get("niches", {}) or {}
         out = []
@@ -748,20 +749,21 @@ class ZerekDB:
             reg = self.niche_registry.get(nid, {}) or {}
             out.append({
                 "niche_id": nid,
-                "name": reg.get("name") or meta.get("name_rus", nid),
+                "name": reg.get("name") or meta.get("name_ru", nid),
                 "icon": reg.get("icon") or meta.get("icon", "📋"),
                 "category": meta.get("category", ""),
                 "archetype": meta.get("archetype", ""),
                 "formats_count": reg.get("formats_count", 0),
-                "available": bool(meta.get("available", False)),
+                "available": (meta.get("status") == "production_ready"),
             })
         return out
 
     def is_niche_available(self, niche_id: str) -> bool:
-        """Доступна ли ниша для расчёта Quick Check."""
+        """Доступна ли ниша для расчёта Quick Check.
+        После миграции к niches_registry.yaml: True ⇔ status == 'production_ready'."""
         niches_cfg = ((self.configs or {}).get("niches", {}) or {}).get("niches", {}) or {}
         meta = niches_cfg.get(niche_id, {}) or {}
-        return bool(meta.get("available", False))
+        return meta.get("status") == "production_ready"
 
     def get_formats_for_niche(self, niche_id: str) -> list:
         """Список форматов для ниши (уникальные format_id)."""
@@ -1321,7 +1323,8 @@ def compute_block_season(db, result, adaptive):
 
 
 def _load_yaml_configs_on(self):
-    """Загружает config/*.yaml в self.configs. Вызывается из _load_common."""
+    """Загружает config/*.yaml + data/kz/niches_registry.yaml в self.configs.
+    Раздел `niches` синтезируется из registry — единого источника правды."""
     try:
         import yaml
     except ImportError:
@@ -1331,7 +1334,8 @@ def _load_yaml_configs_on(self):
     repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     config_dir = os.path.join(repo_root, "config")
     self.configs = {}
-    for name in ("niches", "archetypes", "locations", "questionnaire"):
+    # archetypes / locations / questionnaire — остаются в config/*.yaml.
+    for name in ("archetypes", "locations", "questionnaire"):
         path = os.path.join(config_dir, f"{name}.yaml")
         if not os.path.exists(path):
             continue
@@ -1341,6 +1345,29 @@ def _load_yaml_configs_on(self):
         except Exception as e:
             print(f"⚠️ Не удалось прочитать {path}: {e}")
             self.configs[name] = {}
+    # Список ниш — из единого реестра data/kz/niches_registry.yaml.
+    # Синтезируем dict-shape, совместимый с прежним config/niches.yaml,
+    # чтобы остальной код продолжал работать без изменений.
+    registry_path = os.path.join(repo_root, "data", "kz", "niches_registry.yaml")
+    synth = {}
+    try:
+        with open(registry_path, "r", encoding="utf-8") as fh:
+            reg = yaml.safe_load(fh) or {}
+        for r in (reg.get("niches") or []):
+            code = r["code"]
+            synth[code] = {
+                "name_ru":   r.get("name_ru") or "",
+                "name_rus":  r.get("name_ru") or "",   # legacy alias во время перехода
+                "archetype": r.get("archetype") or "",
+                "category":  r.get("category") or "",
+                "icon":      r.get("icon") or "📋",
+                "status":    r.get("status") or "",
+                "aliases":   r.get("aliases") or [],
+                "available": (r.get("status") == "production_ready"),
+            }
+    except Exception as e:
+        print(f"⚠️ Не удалось прочитать {registry_path}: {e}")
+    self.configs["niches"] = {"niches": synth}
 
 # bind as method on ZerekDB
 ZerekDB._load_yaml_configs = _load_yaml_configs_on

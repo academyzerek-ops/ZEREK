@@ -178,15 +178,20 @@ _CAPEX_LEVEL_LABELS = {
 
 
 def _niche_name_ru(niche_id: str) -> str:
-    """Русское имя ниши. Читаем из config/niches.yaml."""
+    """Русское имя ниши. Читаем из data/kz/niches_registry.yaml.
+
+    Ищем по code и aliases (напр., REPAIRPHONE → REPAIR_PHONE).
+    """
     try:
         import yaml
-        with open(_REPO_ROOT / "config" / "niches.yaml", "r", encoding="utf-8") as fh:
+        with open(_REPO_ROOT / "data" / "kz" / "niches_registry.yaml", "r", encoding="utf-8") as fh:
             cfg = yaml.safe_load(fh) or {}
-        niches = (cfg.get("niches") or {}).get("niches") or cfg.get("niches") or {}
-        meta = niches.get((niche_id or "").upper())
-        if isinstance(meta, dict):
-            return meta.get("name_rus") or meta.get("name_ru") or niche_id
+        target = (niche_id or "").upper()
+        for r in (cfg.get("niches") or []):
+            code = (r.get("code") or "").upper()
+            aliases = [a.upper() for a in (r.get("aliases") or [])]
+            if target == code or target in aliases:
+                return r.get("name_ru") or niche_id
     except Exception:
         pass
     return niche_id or ""

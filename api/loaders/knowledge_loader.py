@@ -172,7 +172,9 @@ def _convert_niche_to_legacy(fm: Dict[str, Any], body_sections: Dict[str, str]) 
     # ── Метаданные ниши ──
     if "id" in fm:
         out["id"] = fm["id"]
-    if "name_rus" in fm:
+    if "name_ru" in fm:
+        out["niche_name"] = fm["name_ru"]
+    elif "name_rus" in fm:
         out["niche_name"] = fm["name_rus"]
     if "icon" in fm:
         out["icon"] = fm["icon"]

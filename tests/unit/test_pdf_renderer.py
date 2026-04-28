@@ -112,7 +112,7 @@ def test_build_pdf_context_minimal():
     # Обязательные ключи по спецификации шаблона.
     for key in ("inp", "cap", "vrd", "report_id", "today_date", "verdict_class"):
         assert key in ctx, f"отсутствует ключ {key!r}"
-    assert ctx["inp"]["niche_name_ru"]  # из config/niches.yaml
+    assert ctx["inp"]["niche_name_ru"]  # из data/kz/niches_registry.yaml
     assert ctx["report_id"].startswith("QC-")
 
 

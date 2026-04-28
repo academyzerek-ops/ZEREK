@@ -161,24 +161,29 @@ def _today_ru() -> str:
 
 
 # ═══════════════════════════════════════════════════════════
-# Справочники ниш — канон из config/niches.yaml
+# Справочники ниш — канон из data/kz/niches_registry.yaml
 # ═══════════════════════════════════════════════════════════
 
 
 def _load_niche_names() -> dict:
-    """Читает niche_id → name_rus из config/niches.yaml (репозиторный корень)."""
+    """Читает code → name_ru из data/kz/niches_registry.yaml (единый реестр)."""
     import os as _os
-    # __file__ = api/renderers/pdf_renderer.py → подняться на 3 уровня до корня
+    # __file__ = api/renderers/pdf_renderer_reportlab.py → подняться на 3 уровня до корня
     path = _os.path.join(
         _os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))),
-        "config", "niches.yaml",
+        "data", "kz", "niches_registry.yaml",
     )
     try:
         import yaml as _yaml
         with open(path, "r", encoding="utf-8") as fh:
             cfg = _yaml.safe_load(fh) or {}
-        niches = (cfg.get("niches", {}) or {})
-        return {nid: meta.get("name_rus", nid) for nid, meta in niches.items() if isinstance(meta, dict)}
+        out = {}
+        for r in (cfg.get("niches") or []):
+            code = r.get("code")
+            if not code:
+                continue
+            out[code] = r.get("name_ru") or code
+        return out
     except Exception:
         return {}
 
