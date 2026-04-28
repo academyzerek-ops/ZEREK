@@ -655,7 +655,7 @@ niches:
     notes: "Подформат FITNESS — решит Адиль."
 
   - code: HOTEL
-    name_ru: "Гостиница"
+    name_ru: "Гостиничный бизнес (хостел / мини-отель)"
     aliases: []
     archetype: "F"
     category: "hospitality"

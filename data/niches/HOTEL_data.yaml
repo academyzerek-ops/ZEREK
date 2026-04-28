@@ -6,7 +6,7 @@
 
 niche:
   id: HOTEL
-  name_ru: Hotel
+  name_ru: Гостиничный бизнес (хостел / мини-отель)
   industry: hospitality
   trend: stable
   trend_note_ru: 'TODO: ниша без xlsx-данных, требуется калибровка с нуля'
