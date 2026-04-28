@@ -1553,21 +1553,29 @@ table.data tr:nth-child(even) td { background: var(--bg-2); }
         </p>
       </div>
 
-      <h3 class="sub-title">Из чего состоит резерв на 3 месяца</h3>
-      {% if cadq.reserve_breakdown %}
-      <table class="keyvals">
-        {% for item in cadq.reserve_breakdown %}
-        <tr>
-          <td class="k">{{ item.label }}</td>
-          <td class="v">{{ item.amount | money_round }} ₸</td>
-        </tr>
-        {% endfor %}
-        <tr class="total">
-          <td class="k"><strong>Итого резерв</strong></td>
-          <td class="v" style="color: var(--navy);"><strong>{{ cadq.reserve_total | money_round }} ₸</strong></td>
-        </tr>
-      </table>
-      {% endif %}
+      <h3 class="sub-title">Резерв на старте</h3>
+      <div class="avoid-break">
+        <p style="margin: 0 0 8pt 0;">
+          Тебе нужен резерв
+          <strong style="color: var(--navy);">{{ cadq.reserve_total | money_round }} ₸</strong>
+          — это не «деньги на чёрный день», а топливо, на котором бизнес доезжает до точки безубыточности.
+        </p>
+        <p style="margin: 0 0 8pt 0;">
+          Первые 3-4 месяца ты зарабатываешь меньше, чем тратишь. Маркетинг ещё не
+          разогнался, клиентская база ещё не наросла, аренда и зарплаты платятся в
+          полном объёме. Резерв закрывает эту дыру.
+        </p>
+        <p style="margin: 0 0 8pt 0;">
+          Если резерв меньше расчётного — два сценария: либо лезешь в кредиты под
+          высокий процент и съедаешь будущую прибыль, либо закрываешься на 4-5 месяце,
+          не дождавшись разгона. Бизнесы умирают не от плохой идеи, а от того, что
+          закончились деньги до того, как пошёл доход.
+        </p>
+        <p style="margin: 0;">
+          Сезонность добавляет ещё 1-1.5 месяца проседания — учти это сверху, если
+          запускаешься в низкий сезон ниши.
+        </p>
+      </div>
 
       {% if first_year_reality %}
       <div class="avoid-break u-mt-m" style="padding: 14pt 16pt; border: 1px solid var(--gold); background: rgba(201,169,97,0.06); border-radius: 3pt;">
