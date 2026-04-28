@@ -7,7 +7,7 @@ generated_at: 2026-04-28T22:03:24Z
 
 niches:
   - code: ACCOUNTING
-    name_ru: "Бухгалтерские услуги"
+    name_ru: "Бухгалтерский аутсорсинг"
     aliases: []
     archetype: "D"
     category: "b2b"
@@ -97,7 +97,7 @@ niches:
     notes: ""
 
   - code: BEAUTY
-    name_ru: ""
+    name_ru: "Полноформатный салон красоты"
     aliases: []
     archetype: "A"
     category: "beauty"
@@ -115,7 +115,7 @@ niches:
     notes: "Зонтичный код. Решить: дробить или удалить."
 
   - code: BROW
-    name_ru: "Бровист"
+    name_ru: "Брови и ресницы"
     aliases: []
     archetype: "A"
     category: "beauty"
@@ -457,7 +457,7 @@ niches:
     notes: ""
 
   - code: DRYCLEAN
-    name_ru: "Химчистка"
+    name_ru: "Химчистка одежды"
     aliases: []
     archetype: "F"
     category: "services"
@@ -583,7 +583,7 @@ niches:
     notes: "Подниша или самостоятельная — решит Адиль. Калибровки нет."
 
   - code: FRUITSVEGS
-    name_ru: "Овощи-фрукты"
+    name_ru: "Овощи и фрукты"
     aliases: []
     archetype: "C"
     category: "retail"
@@ -763,7 +763,7 @@ niches:
     notes: ""
 
   - code: LOFTFURNITURE
-    name_ru: "Мебель в стиле лофт"
+    name_ru: "Производство лофт-мебели"
     aliases: []
     archetype: "E"
     category: "production"
