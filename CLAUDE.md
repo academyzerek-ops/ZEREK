@@ -157,5 +157,6 @@ Procfile, railway.json, requirements.txt
 - Wiki-обзоры — светлая тема
 - Шрифты Mini App: Geist (UI), Geist Mono (цифры)
 - Шрифты Академии: Playfair Display + Nunito + JetBrains Mono
+- PDF Quick Check использует editorial-палитру (navy #1F3864 + gold #C9A961, Source Sans 3, JetBrains Mono) намеренно. Это не Mini App-стиль (#7C6CFF, Geist) — разные контексты потребления.
 - Mobile-first, max-width 480px (Mini App), 460px (академия)
 - Полный дизайн-контекст: `.impeccable.md` (users, brand personality, aesthetic direction, 5 design principles)
