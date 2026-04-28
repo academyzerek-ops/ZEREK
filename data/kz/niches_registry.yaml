@@ -116,7 +116,7 @@ niches:
 
   - code: BROW
     name_ru: "Брови и ресницы"
-    aliases: []
+    aliases: [LASH]
     archetype: "A"
     category: "beauty"
     icon: "✨"
@@ -723,24 +723,6 @@ niches:
     insight_path: "knowledge/kz/niches/LANGUAGES_insight.md"
     data_path: "data/niches/LANGUAGES_data.yaml"
     calibration_path: null
-    wiki_path: null
-    notes: ""
-
-  - code: LASH
-    name_ru: "Лэшмейкер"
-    aliases: []
-    archetype: "A"
-    category: "beauty"
-    icon: "👁️"
-    status: production_ready
-    cta: quick_check
-    has_insight: true
-    has_data: true
-    has_calibration: true
-    has_wiki: false
-    insight_path: "knowledge/kz/niches/LASH_insight.md"
-    data_path: "data/niches/LASH_data.yaml"
-    calibration_path: "data/kz/niches/niche_formats_LASH.xlsx"
     wiki_path: null
     notes: ""
 
