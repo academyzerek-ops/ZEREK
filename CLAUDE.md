@@ -63,7 +63,7 @@ Procfile, railway.json, requirements.txt
 
 ## API эндпоинты
 - GET /cities — список городов КЗ
-- GET /niches — все ниши с флагом `available: true|false` (фронт решает, скрывать ли недоступные)
+- GET /niches — все ниши из реестра с флагом `available: true|false` (производный: True ⇔ `status == 'production_ready'`; фронт решает, скрывать ли недоступные)
 - GET /formats/{niche_id} — форматы по нише (400 если ниша недоступна)
 - POST /quick-check — главный расчёт (city_id, niche_id, format_id, area_m2, loc_type, capital, start_month, capex_level)
 - POST /quick-check/report — текстовый отчёт
@@ -72,17 +72,36 @@ Procfile, railway.json, requirements.txt
 
 Все эндпоинты принимают city_id в любой форме (ALA / ALMATY / almaty) — нормализация идёт через `normalize_city_id()` на входе.
 
-## Ниши
-Канонический список — в `config/niches.yaml`. Каждая ниша имеет поле `available`:
-- `available: true` — есть `data/kz/niches/niche_formats_{ID}.xlsx` с непустым листом FINANCIALS.
-- `available: false` — xlsx нет (заготовка на будущее; фронт может показать с пометкой «скоро»).
+## Ниши — архитектура данных (post-migration 2026-04-29)
 
-Каждая ниша отнесена к одному из архетипов A–F (см. `config/archetypes.yaml`).
+**Три слоя, все остаются:**
 
-**Состав на 2026-04-29 (после миграции к единому реестру):**
+1. **`data/kz/niches_registry.yaml`** — ЕДИНСТВЕННЫЙ источник правды по списку и статусам ниш. Поля: `code`, `name_ru`, `status` (production_ready / wiki_only / research / idea), `archetype`, `category`, `icon`, `aliases`, флаги наличия и пути артефактов (`has_*`, `*_path`).
+2. **`data/niches/<CODE>_data.yaml`** — бизнес-данные ниши (`formats`, `seasonality`, `risks`, `growth_scenarios`). Per-niche.
+3. **`data/kz/niches/niche_formats_<CODE>.xlsx`** — расчётные параметры калибровки (FORMATS, FINANCIALS, STAFF, CAPEX, …). Per-niche.
+
+**Правила добавления новой ниши:**
+1. Запись в registry со `status: idea`.
+2. Insight-материал в `knowledge/kz/niches/<CODE>_insight.md` → `status: research`.
+3. `data/niches/<CODE>_data.yaml` + `wiki/kz/ZEREK_<CODE>.html` → `status: wiki_only` (CTA «Скоро» неактивна).
+4. Калибровка xlsx → `status: production_ready` (CTA Quick Check активна за 5 000 ₸).
+
+**Правила удаления / переименования:**
+- В registry — добавлять `aliases` при переименовании, не удалять старый код пока живут ссылки в обзорах/коде.
+- При слиянии ниш — добавить алиас удаляемой в той, что остаётся (пример: `BROW.aliases: [LASH]`).
+- При разделении одной ниши на две — старый код становится алиасом одной из новых.
+
+**Убрано из архитектуры в миграции 2026-04-29:**
+- `config/niches.yaml` — удалён. Был дублирующим реестром.
+- Поле `available` — заменено на проверку `status == 'production_ready'` в коде.
+- Поле `name_rus` — переименовано в `name_ru` везде (legacy alias `name_rus` ещё живёт в синтез-shape `db.configs["niches"]` для backwards-compat в течение transition).
+
+**Состав на 2026-04-29:**
 - 49 утверждённых ниш из roadmap (было 50, минус LASH — слита с BROW «Брови и ресницы», alias сохранён).
 - HOTEL осталась одной записью; разделение на HOSTEL/MINIHOTEL отложено до калибровки (см. `docs/niches_todo.md`).
-- Полный реестр (включая wiki-only сироты из аудита): `data/kz/niches_registry.yaml`, 63 записи.
+- Полный реестр (включая wiki-only сироты из аудита): 63 записи.
+
+**Архетипы** (A–F) определены в `config/archetypes.yaml` (отдельный реестр, не мигрирован).
 
 ## Налоги КЗ 2026
 - МРП = 4 325 ₸
@@ -105,7 +124,7 @@ Procfile, railway.json, requirements.txt
 | **Архетипы** (опыт, стратегии маркетинга, антипаттерны) — A1 пилот | `knowledge/archetypes/{ID}.md` | бизнес |
 | **Регионы** (ЗП, население, check_coef) | `knowledge/regions/{city}.md` | бизнес |
 | **Налоги КЗ** (МРП, МЗП, НДС, УД-ставки по городам) | `knowledge/taxes/KZ_{year}.md` | бизнес |
-| Список ниш + иконки + флаг `available` | `config/niches.yaml` | технический реестр |
+| Список ниш + статус + иконки + категории + aliases | `data/kz/niches_registry.yaml` | единый реестр (post-migration 2026-04-29) |
 | Расчётные дефолты Quick Check (скоринг, бенчмарки) | `config/defaults.yaml` | техдеф |
 | Дефолты финмодели (горизонт, OPEX, кредит, WACC) | `config/finmodel_defaults.yaml` | техдеф |
 | Канонические ID городов + legacy_ids + check_coef | `config/constants.yaml` (секция cities) | технический реестр |
