@@ -1,37 +1,43 @@
 # Single source of truth: niche → wiki / data / calibration / insight artefacts.
-# name_ru fields are intentionally empty: the canonical Russian-name list was
-# not provided in this generation pass. Fill via a separate update.
+# Meta-index. Business data lives in data/niches/<CODE>_data.yaml.
+# Engine calibrations live in data/kz/niches/niche_formats_<CODE>.xlsx.
 
 country: kz
-generated_at: 2026-04-27T19:42:19Z
+generated_at: 2026-04-28T22:03:24Z
 
 niches:
   - code: ACCOUNTING
     name_ru: "Бухгалтерские услуги"
     aliases: []
+    archetype: "D"
+    category: "b2b"
+    icon: "📊"
     status: wiki_only
     cta: waitlist
     has_insight: true
     has_data: true
     has_calibration: false
     has_wiki: true
-    insight_path: knowledge/kz/niches/ACCOUNTING_insight.md
-    data_path: data/niches/ACCOUNTING_data.yaml
+    insight_path: "knowledge/kz/niches/ACCOUNTING_insight.md"
+    data_path: "data/niches/ACCOUNTING_data.yaml"
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_Accounting.html
+    wiki_path: "wiki/kz/ZEREK_Accounting.html"
     notes: ""
 
   - code: AUTOPARTS
     name_ru: "Магазин автозапчастей"
     aliases: []
+    archetype: "C"
+    category: "auto"
+    icon: "🔩"
     status: research
     cta: none
     has_insight: true
     has_data: true
     has_calibration: false
     has_wiki: false
-    insight_path: knowledge/kz/niches/AUTOPARTS_insight.md
-    data_path: data/niches/AUTOPARTS_data.yaml
+    insight_path: "knowledge/kz/niches/AUTOPARTS_insight.md"
+    data_path: "data/niches/AUTOPARTS_data.yaml"
     calibration_path: null
     wiki_path: null
     notes: ""
@@ -39,81 +45,99 @@ niches:
   - code: AUTOSERVICE
     name_ru: "Автосервис"
     aliases: []
+    archetype: "F"
+    category: "auto"
+    icon: "🔧"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/AUTOSERVICE_insight.md
-    data_path: data/niches/AUTOSERVICE_data.yaml
-    calibration_path: data/kz/niches/niche_formats_AUTOSERVICE.xlsx
-    wiki_path: wiki/kz/ZEREK_Autoservice.html
+    insight_path: "knowledge/kz/niches/AUTOSERVICE_insight.md"
+    data_path: "data/niches/AUTOSERVICE_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_AUTOSERVICE.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Autoservice.html"
     notes: ""
 
   - code: BAKERY
     name_ru: "Пекарня"
     aliases: []
+    archetype: "B"
+    category: "food"
+    icon: "🥐"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: false
-    insight_path: knowledge/kz/niches/BAKERY_insight.md
-    data_path: data/niches/BAKERY_data.yaml
-    calibration_path: data/kz/niches/niche_formats_BAKERY.xlsx
+    insight_path: "knowledge/kz/niches/BAKERY_insight.md"
+    data_path: "data/niches/BAKERY_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_BAKERY.xlsx"
     wiki_path: null
     notes: ""
 
   - code: BARBER
     name_ru: "Барбершоп"
     aliases: []
+    archetype: "A"
+    category: "beauty"
+    icon: "💈"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/BARBER_insight.md
-    data_path: data/niches/BARBER_data.yaml
-    calibration_path: data/kz/niches/niche_formats_BARBER.xlsx
-    wiki_path: wiki/kz/ZEREK_Barber.html
+    insight_path: "knowledge/kz/niches/BARBER_insight.md"
+    data_path: "data/niches/BARBER_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_BARBER.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Barber.html"
     notes: ""
 
   - code: BEAUTY
     name_ru: ""
     aliases: []
+    archetype: "A"
+    category: "beauty"
+    icon: "💄"
     status: wiki_only
     cta: waitlist
     has_insight: true
     has_data: true
     has_calibration: false
     has_wiki: true
-    insight_path: knowledge/kz/niches/BEAUTY_insight.md
-    data_path: data/niches/BEAUTY_data.yaml
+    insight_path: "knowledge/kz/niches/BEAUTY_insight.md"
+    data_path: "data/niches/BEAUTY_data.yaml"
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_Beauty.html
+    wiki_path: "wiki/kz/ZEREK_Beauty.html"
     notes: "Зонтичный код. Решить: дробить или удалить."
 
   - code: BROW
     name_ru: "Бровист"
     aliases: []
+    archetype: "A"
+    category: "beauty"
+    icon: "✨"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: false
-    insight_path: knowledge/kz/niches/BROW_insight.md
-    data_path: data/niches/BROW_data.yaml
-    calibration_path: data/kz/niches/niche_formats_BROW.xlsx
+    insight_path: "knowledge/kz/niches/BROW_insight.md"
+    data_path: "data/niches/BROW_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_BROW.xlsx"
     wiki_path: null
     notes: ""
 
   - code: BROWLASH
     name_ru: "Бровист и лэшмейкер (объединённый обзор)"
     aliases: []
+    archetype: null
+    category: null
+    icon: null
     status: wiki_only
     cta: waitlist
     has_insight: false
@@ -123,35 +147,41 @@ niches:
     insight_path: null
     data_path: null
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_BrowLash.html
+    wiki_path: "wiki/kz/ZEREK_BrowLash.html"
     notes: "Объединённый обзор бровист+лэшмейкер. Канонические BROW и LASH разделены в движке. Решить: разбить обзор или оставить."
 
   - code: BUBBLETEA
     name_ru: "Бабл-ти"
     aliases: []
+    archetype: "B"
+    category: "food"
+    icon: "🧋"
     status: wiki_only
     cta: waitlist
     has_insight: true
     has_data: true
     has_calibration: false
     has_wiki: true
-    insight_path: knowledge/kz/niches/BUBBLETEA_insight.md
-    data_path: data/niches/BUBBLETEA_data.yaml
+    insight_path: "knowledge/kz/niches/BUBBLETEA_insight.md"
+    data_path: "data/niches/BUBBLETEA_data.yaml"
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_Bubbletea.html
+    wiki_path: "wiki/kz/ZEREK_Bubbletea.html"
     notes: ""
 
   - code: BUILDMAT
     name_ru: "Стройматериалы"
     aliases: []
+    archetype: "C"
+    category: "retail"
+    icon: "🧱"
     status: research
     cta: none
     has_insight: true
     has_data: true
     has_calibration: false
     has_wiki: false
-    insight_path: knowledge/kz/niches/BUILDMAT_insight.md
-    data_path: data/niches/BUILDMAT_data.yaml
+    insight_path: "knowledge/kz/niches/BUILDMAT_insight.md"
+    data_path: "data/niches/BUILDMAT_data.yaml"
     calibration_path: null
     wiki_path: null
     notes: ""
@@ -159,156 +189,189 @@ niches:
   - code: CANTEEN
     name_ru: "Столовая"
     aliases: []
+    archetype: "B"
+    category: "food"
+    icon: "🍲"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/CANTEEN_insight.md
-    data_path: data/niches/CANTEEN_data.yaml
-    calibration_path: data/kz/niches/niche_formats_CANTEEN.xlsx
-    wiki_path: wiki/kz/ZEREK_Canteen.html
+    insight_path: "knowledge/kz/niches/CANTEEN_insight.md"
+    data_path: "data/niches/CANTEEN_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_CANTEEN.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Canteen.html"
     notes: ""
 
   - code: CARGO
     name_ru: "Грузоперевозки"
     aliases: []
+    archetype: "E"
+    category: "services"
+    icon: "🚚"
     status: wiki_only
     cta: waitlist
     has_insight: true
     has_data: true
     has_calibration: false
     has_wiki: true
-    insight_path: knowledge/kz/niches/CARGO_insight.md
-    data_path: data/niches/CARGO_data.yaml
+    insight_path: "knowledge/kz/niches/CARGO_insight.md"
+    data_path: "data/niches/CARGO_data.yaml"
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_Cargo.html
+    wiki_path: "wiki/kz/ZEREK_Cargo.html"
     notes: ""
 
   - code: CARPETCLEAN
     name_ru: "Чистка ковров"
     aliases: []
+    archetype: "F"
+    category: "services"
+    icon: "🪣"
     status: wiki_only
     cta: waitlist
     has_insight: true
     has_data: true
     has_calibration: false
     has_wiki: true
-    insight_path: knowledge/kz/niches/CARPETCLEAN_insight.md
-    data_path: data/niches/CARPETCLEAN_data.yaml
+    insight_path: "knowledge/kz/niches/CARPETCLEAN_insight.md"
+    data_path: "data/niches/CARPETCLEAN_data.yaml"
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_CarpetClean.html
+    wiki_path: "wiki/kz/ZEREK_CarpetClean.html"
     notes: ""
 
   - code: CARWASH
     name_ru: "Автомойка"
     aliases: []
+    archetype: "F"
+    category: "auto"
+    icon: "🚗"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/CARWASH_insight.md
-    data_path: data/niches/CARWASH_data.yaml
-    calibration_path: data/kz/niches/niche_formats_CARWASH.xlsx
-    wiki_path: wiki/kz/ZEREK_Carwash.html
+    insight_path: "knowledge/kz/niches/CARWASH_insight.md"
+    data_path: "data/niches/CARWASH_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_CARWASH.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Carwash.html"
     notes: ""
 
   - code: CATERING
     name_ru: "Кейтеринг"
     aliases: []
+    archetype: "B"
+    category: "food"
+    icon: "🍽️"
     status: wiki_only
     cta: waitlist
     has_insight: true
     has_data: true
     has_calibration: false
     has_wiki: true
-    insight_path: knowledge/kz/niches/CATERING_insight.md
-    data_path: data/niches/CATERING_data.yaml
+    insight_path: "knowledge/kz/niches/CATERING_insight.md"
+    data_path: "data/niches/CATERING_data.yaml"
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_Catering.html
+    wiki_path: "wiki/kz/ZEREK_Catering.html"
     notes: "Под вопросом — решит Адиль."
 
   - code: CLEAN
     name_ru: "Клининг"
     aliases: []
+    archetype: "F"
+    category: "services"
+    icon: "🧹"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/CLEAN_insight.md
-    data_path: data/niches/CLEAN_data.yaml
-    calibration_path: data/kz/niches/niche_formats_CLEAN.xlsx
-    wiki_path: wiki/kz/ZEREK_Clean.html
+    insight_path: "knowledge/kz/niches/CLEAN_insight.md"
+    data_path: "data/niches/CLEAN_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_CLEAN.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Clean.html"
     notes: ""
 
   - code: COFFEE
     name_ru: "Кофейня"
     aliases: []
+    archetype: "B"
+    category: "food"
+    icon: "☕"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/COFFEE_insight.md
-    data_path: data/niches/COFFEE_data.yaml
-    calibration_path: data/kz/niches/niche_formats_COFFEE.xlsx
-    wiki_path: wiki/kz/ZEREK_Coffee.html
+    insight_path: "knowledge/kz/niches/COFFEE_insight.md"
+    data_path: "data/niches/COFFEE_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_COFFEE.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Coffee.html"
     notes: ""
 
   - code: COMPCLUB
     name_ru: "Компьютерный клуб"
     aliases: []
+    archetype: "F"
+    category: "entertainment"
+    icon: "🎮"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: false
-    insight_path: knowledge/kz/niches/COMPCLUB_insight.md
-    data_path: data/niches/COMPCLUB_data.yaml
-    calibration_path: data/kz/niches/niche_formats_COMPCLUB.xlsx
+    insight_path: "knowledge/kz/niches/COMPCLUB_insight.md"
+    data_path: "data/niches/COMPCLUB_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_COMPCLUB.xlsx"
     wiki_path: null
     notes: ""
 
   - code: CONFECTION
     name_ru: "Кондитерская"
     aliases: []
+    archetype: "B"
+    category: "food"
+    icon: "🎂"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/CONFECTION_insight.md
-    data_path: data/niches/CONFECTION_data.yaml
-    calibration_path: data/kz/niches/niche_formats_CONFECTION.xlsx
-    wiki_path: wiki/kz/ZEREK_Confection.html
+    insight_path: "knowledge/kz/niches/CONFECTION_insight.md"
+    data_path: "data/niches/CONFECTION_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_CONFECTION.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Confection.html"
     notes: ""
 
   - code: COSMETOLOGY
     name_ru: "Косметология"
     aliases: []
+    archetype: "A"
+    category: "beauty"
+    icon: "🧴"
     status: wiki_only
     cta: waitlist
     has_insight: true
     has_data: true
     has_calibration: false
     has_wiki: true
-    insight_path: knowledge/kz/niches/COSMETOLOGY_insight.md
-    data_path: data/niches/COSMETOLOGY_data.yaml
+    insight_path: "knowledge/kz/niches/COSMETOLOGY_insight.md"
+    data_path: "data/niches/COSMETOLOGY_data.yaml"
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_Cosmetology.html
+    wiki_path: "wiki/kz/ZEREK_Cosmetology.html"
     notes: ""
 
   - code: CROSSFIT
     name_ru: "Кроссфит"
     aliases: []
+    archetype: "D"
+    category: "sport"
+    icon: "🏋️"
     status: wiki_only
     cta: waitlist
     has_insight: false
@@ -318,87 +381,105 @@ niches:
     insight_path: null
     data_path: null
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_CrossFit.html
+    wiki_path: "wiki/kz/ZEREK_CrossFit.html"
     notes: "Подформат FITNESS или отдельная ниша — решит Адиль."
 
   - code: DENTAL
     name_ru: "Стоматология"
     aliases: []
+    archetype: "A"
+    category: "health"
+    icon: "🦷"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/DENTAL_insight.md
-    data_path: data/niches/DENTAL_data.yaml
-    calibration_path: data/kz/niches/niche_formats_DENTAL.xlsx
-    wiki_path: wiki/kz/ZEREK_Dental.html
+    insight_path: "knowledge/kz/niches/DENTAL_insight.md"
+    data_path: "data/niches/DENTAL_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_DENTAL.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Dental.html"
     notes: ""
 
   - code: DETAILING
     name_ru: "Автодетейлинг"
     aliases: []
+    archetype: "A"
+    category: "auto"
+    icon: "✨"
     status: wiki_only
     cta: waitlist
     has_insight: true
     has_data: true
     has_calibration: false
     has_wiki: true
-    insight_path: knowledge/kz/niches/DETAILING_insight.md
-    data_path: data/niches/DETAILING_data.yaml
+    insight_path: "knowledge/kz/niches/DETAILING_insight.md"
+    data_path: "data/niches/DETAILING_data.yaml"
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_Detailing.html
+    wiki_path: "wiki/kz/ZEREK_Detailing.html"
     notes: ""
 
   - code: DONER
     name_ru: "Донерная"
     aliases: []
+    archetype: "B"
+    category: "food"
+    icon: "🌯"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/DONER_insight.md
-    data_path: data/niches/DONER_data.yaml
-    calibration_path: data/kz/niches/niche_formats_DONER.xlsx
-    wiki_path: wiki/kz/ZEREK_Doner.html
+    insight_path: "knowledge/kz/niches/DONER_insight.md"
+    data_path: "data/niches/DONER_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_DONER.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Doner.html"
     notes: ""
 
   - code: DRIVING
     name_ru: "Автошкола"
     aliases: []
+    archetype: "F"
+    category: "education"
+    icon: "🚘"
     status: wiki_only
     cta: waitlist
     has_insight: true
     has_data: true
     has_calibration: false
     has_wiki: true
-    insight_path: knowledge/kz/niches/DRIVING_insight.md
-    data_path: data/niches/DRIVING_data.yaml
+    insight_path: "knowledge/kz/niches/DRIVING_insight.md"
+    data_path: "data/niches/DRIVING_data.yaml"
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_Driving.html
+    wiki_path: "wiki/kz/ZEREK_Driving.html"
     notes: ""
 
   - code: DRYCLEAN
     name_ru: "Химчистка"
     aliases: []
+    archetype: "F"
+    category: "services"
+    icon: "🧺"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/DRYCLEAN_insight.md
-    data_path: data/niches/DRYCLEAN_data.yaml
-    calibration_path: data/kz/niches/niche_formats_DRYCLEAN.xlsx
-    wiki_path: wiki/kz/ZEREK_DryClean.html
+    insight_path: "knowledge/kz/niches/DRYCLEAN_insight.md"
+    data_path: "data/niches/DRYCLEAN_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_DRYCLEAN.xlsx"
+    wiki_path: "wiki/kz/ZEREK_DryClean.html"
     notes: ""
 
   - code: EPILATION
     name_ru: "Лазерная эпиляция"
     aliases: []
+    archetype: null
+    category: null
+    icon: null
     status: wiki_only
     cta: waitlist
     has_insight: false
@@ -408,12 +489,15 @@ niches:
     insight_path: null
     data_path: null
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_Epilation.html
+    wiki_path: "wiki/kz/ZEREK_Epilation.html"
     notes: "Лазерная эпиляция. Не путать с SUGARING. Возможно подниша COSMETOLOGY."
 
   - code: EVALUATION
     name_ru: "Оценочные услуги"
     aliases: []
+    archetype: "E"
+    category: "b2b"
+    icon: "📐"
     status: wiki_only
     cta: waitlist
     has_insight: false
@@ -423,57 +507,69 @@ niches:
     insight_path: null
     data_path: null
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_Evaluation.html
+    wiki_path: "wiki/kz/ZEREK_Evaluation.html"
     notes: "Оценочные услуги — новая ниша, не в списке 50."
 
   - code: FASTFOOD
     name_ru: "Фастфуд"
     aliases: []
+    archetype: "B"
+    category: "food"
+    icon: "🍔"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/FASTFOOD_insight.md
-    data_path: data/niches/FASTFOOD_data.yaml
-    calibration_path: data/kz/niches/niche_formats_FASTFOOD.xlsx
-    wiki_path: wiki/kz/ZEREK_Fastfood.html
+    insight_path: "knowledge/kz/niches/FASTFOOD_insight.md"
+    data_path: "data/niches/FASTFOOD_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_FASTFOOD.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Fastfood.html"
     notes: ""
 
   - code: FITNESS
     name_ru: "Фитнес-клуб"
     aliases: []
+    archetype: "D"
+    category: "sport"
+    icon: "💪"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/FITNESS_insight.md
-    data_path: data/niches/FITNESS_data.yaml
-    calibration_path: data/kz/niches/niche_formats_FITNESS.xlsx
-    wiki_path: wiki/kz/ZEREK_Fitness.html
+    insight_path: "knowledge/kz/niches/FITNESS_insight.md"
+    data_path: "data/niches/FITNESS_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_FITNESS.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Fitness.html"
     notes: ""
 
   - code: FLOWERS
     name_ru: "Цветочный магазин"
     aliases: []
+    archetype: "C"
+    category: "retail"
+    icon: "💐"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/FLOWERS_insight.md
-    data_path: data/niches/FLOWERS_data.yaml
-    calibration_path: data/kz/niches/niche_formats_FLOWERS.xlsx
-    wiki_path: wiki/kz/ZEREK_Flowers.html
+    insight_path: "knowledge/kz/niches/FLOWERS_insight.md"
+    data_path: "data/niches/FLOWERS_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_FLOWERS.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Flowers.html"
     notes: ""
 
   - code: FOOTBALLSCHOOL
     name_ru: "Футбольная школа"
-    aliases: []
+    aliases: [FOOTBALL_SCHOOL]
+    archetype: "D"
+    category: "sport"
+    icon: "⚽"
     status: wiki_only
     cta: waitlist
     has_insight: false
@@ -483,57 +579,69 @@ niches:
     insight_path: null
     data_path: null
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_FootballSchool.html
+    wiki_path: "wiki/kz/ZEREK_FootballSchool.html"
     notes: "Подниша или самостоятельная — решит Адиль. Калибровки нет."
 
   - code: FRUITSVEGS
     name_ru: "Овощи-фрукты"
     aliases: []
+    archetype: "C"
+    category: "retail"
+    icon: "🥦"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/FRUITSVEGS_insight.md
-    data_path: data/niches/FRUITSVEGS_data.yaml
-    calibration_path: data/kz/niches/niche_formats_FRUITSVEGS.xlsx
-    wiki_path: wiki/kz/ZEREK_Fruitsvegs.html
+    insight_path: "knowledge/kz/niches/FRUITSVEGS_insight.md"
+    data_path: "data/niches/FRUITSVEGS_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_FRUITSVEGS.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Fruitsvegs.html"
     notes: ""
 
   - code: FURNITURE
     name_ru: "Мебельный магазин"
     aliases: []
+    archetype: "E"
+    category: "production"
+    icon: "🪑"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/FURNITURE_insight.md
-    data_path: data/niches/FURNITURE_data.yaml
-    calibration_path: data/kz/niches/niche_formats_FURNITURE.xlsx
-    wiki_path: wiki/kz/ZEREK_Furniture.html
+    insight_path: "knowledge/kz/niches/FURNITURE_insight.md"
+    data_path: "data/niches/FURNITURE_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_FURNITURE.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Furniture.html"
     notes: ""
 
   - code: GROCERY
     name_ru: "Продуктовый магазин"
     aliases: []
+    archetype: "C"
+    category: "retail"
+    icon: "🛒"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: false
-    insight_path: knowledge/kz/niches/GROCERY_insight.md
-    data_path: data/niches/GROCERY_data.yaml
-    calibration_path: data/kz/niches/niche_formats_GROCERY.xlsx
+    insight_path: "knowledge/kz/niches/GROCERY_insight.md"
+    data_path: "data/niches/GROCERY_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_GROCERY.xlsx"
     wiki_path: null
     notes: ""
 
   - code: GROUPFITNESS
     name_ru: "Групповой фитнес"
-    aliases: []
+    aliases: [GROUP_FITNESS]
+    archetype: "D"
+    category: "sport"
+    icon: "🧘"
     status: wiki_only
     cta: waitlist
     has_insight: false
@@ -543,20 +651,23 @@ niches:
     insight_path: null
     data_path: null
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_GroupFitness.html
+    wiki_path: "wiki/kz/ZEREK_GroupFitness.html"
     notes: "Подформат FITNESS — решит Адиль."
 
   - code: HOTEL
     name_ru: "Гостиница"
     aliases: []
+    archetype: "F"
+    category: "hospitality"
+    icon: "🏨"
     status: research
     cta: none
     has_insight: true
     has_data: true
     has_calibration: false
     has_wiki: false
-    insight_path: knowledge/kz/niches/HOTEL_insight.md
-    data_path: data/niches/HOTEL_data.yaml
+    insight_path: "knowledge/kz/niches/HOTEL_insight.md"
+    data_path: "data/niches/HOTEL_data.yaml"
     calibration_path: null
     wiki_path: null
     notes: ""
@@ -564,44 +675,53 @@ niches:
   - code: KIDSCENTER
     name_ru: "Детский центр"
     aliases: []
+    archetype: "D"
+    category: "education"
+    icon: "🧸"
     status: wiki_only
     cta: waitlist
     has_insight: true
     has_data: true
     has_calibration: false
     has_wiki: true
-    insight_path: knowledge/kz/niches/KIDSCENTER_insight.md
-    data_path: data/niches/KIDSCENTER_data.yaml
+    insight_path: "knowledge/kz/niches/KIDSCENTER_insight.md"
+    data_path: "data/niches/KIDSCENTER_data.yaml"
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_KidsCenter.html
+    wiki_path: "wiki/kz/ZEREK_KidsCenter.html"
     notes: ""
 
   - code: KINDERGARTEN
     name_ru: "Частный детский сад"
     aliases: []
+    archetype: "D"
+    category: "education"
+    icon: "👶"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/KINDERGARTEN_insight.md
-    data_path: data/niches/KINDERGARTEN_data.yaml
-    calibration_path: data/kz/niches/niche_formats_KINDERGARTEN.xlsx
-    wiki_path: wiki/kz/ZEREK_Kindergarten.html
+    insight_path: "knowledge/kz/niches/KINDERGARTEN_insight.md"
+    data_path: "data/niches/KINDERGARTEN_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_KINDERGARTEN.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Kindergarten.html"
     notes: ""
 
   - code: LANGUAGES
     name_ru: "Языковая школа"
     aliases: []
+    archetype: "D"
+    category: "education"
+    icon: "🌐"
     status: research
     cta: none
     has_insight: true
     has_data: true
     has_calibration: false
     has_wiki: false
-    insight_path: knowledge/kz/niches/LANGUAGES_insight.md
-    data_path: data/niches/LANGUAGES_data.yaml
+    insight_path: "knowledge/kz/niches/LANGUAGES_insight.md"
+    data_path: "data/niches/LANGUAGES_data.yaml"
     calibration_path: null
     wiki_path: null
     notes: ""
@@ -609,29 +729,35 @@ niches:
   - code: LASH
     name_ru: "Лэшмейкер"
     aliases: []
+    archetype: "A"
+    category: "beauty"
+    icon: "👁️"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: false
-    insight_path: knowledge/kz/niches/LASH_insight.md
-    data_path: data/niches/LASH_data.yaml
-    calibration_path: data/kz/niches/niche_formats_LASH.xlsx
+    insight_path: "knowledge/kz/niches/LASH_insight.md"
+    data_path: "data/niches/LASH_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_LASH.xlsx"
     wiki_path: null
     notes: ""
 
   - code: LAUNDRY
     name_ru: "Прачечная"
     aliases: []
+    archetype: "F"
+    category: "services"
+    icon: "🧼"
     status: research
     cta: none
     has_insight: true
     has_data: true
     has_calibration: false
     has_wiki: false
-    insight_path: knowledge/kz/niches/LAUNDRY_insight.md
-    data_path: data/niches/LAUNDRY_data.yaml
+    insight_path: "knowledge/kz/niches/LAUNDRY_insight.md"
+    data_path: "data/niches/LAUNDRY_data.yaml"
     calibration_path: null
     wiki_path: null
     notes: ""
@@ -639,6 +765,9 @@ niches:
   - code: LOFTFURNITURE
     name_ru: "Мебель в стиле лофт"
     aliases: []
+    archetype: "E"
+    category: "production"
+    icon: "🛋️"
     status: wiki_only
     cta: waitlist
     has_insight: false
@@ -648,27 +777,33 @@ niches:
     insight_path: null
     data_path: null
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_LoftFurniture.html
+    wiki_path: "wiki/kz/ZEREK_LoftFurniture.html"
     notes: "Подформат FURNITURE — решит Адиль."
 
   - code: MANICURE
     name_ru: "Маникюрный салон"
     aliases: []
+    archetype: "A"
+    category: "beauty"
+    icon: "💅"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/MANICURE_insight.md
-    data_path: data/niches/MANICURE_data.yaml
-    calibration_path: data/kz/niches/niche_formats_MANICURE.xlsx
-    wiki_path: wiki/kz/ZEREK_Manicure.html
+    insight_path: "knowledge/kz/niches/MANICURE_insight.md"
+    data_path: "data/niches/MANICURE_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_MANICURE.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Manicure.html"
     notes: ""
 
   - code: MARTIALARTS
     name_ru: "Единоборства"
-    aliases: []
+    aliases: [MARTIAL_ARTS]
+    archetype: "D"
+    category: "sport"
+    icon: "🥊"
     status: wiki_only
     cta: waitlist
     has_insight: false
@@ -678,42 +813,51 @@ niches:
     insight_path: null
     data_path: null
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_MartialArts.html
+    wiki_path: "wiki/kz/ZEREK_MartialArts.html"
     notes: "Подниша единоборств — решит Адиль."
 
   - code: MASSAGE
     name_ru: "Массажный салон"
     aliases: []
+    archetype: "A"
+    category: "beauty"
+    icon: "💆"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/MASSAGE_insight.md
-    data_path: data/niches/MASSAGE_data.yaml
-    calibration_path: data/kz/niches/niche_formats_MASSAGE.xlsx
-    wiki_path: wiki/kz/ZEREK_Massage.html
+    insight_path: "knowledge/kz/niches/MASSAGE_insight.md"
+    data_path: "data/niches/MASSAGE_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_MASSAGE.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Massage.html"
     notes: ""
 
   - code: MEATSHOP
     name_ru: "Мясная лавка"
     aliases: []
+    archetype: "C"
+    category: "retail"
+    icon: "🥩"
     status: wiki_only
     cta: waitlist
     has_insight: true
     has_data: true
     has_calibration: false
     has_wiki: true
-    insight_path: knowledge/kz/niches/MEATSHOP_insight.md
-    data_path: data/niches/MEATSHOP_data.yaml
+    insight_path: "knowledge/kz/niches/MEATSHOP_insight.md"
+    data_path: "data/niches/MEATSHOP_data.yaml"
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_Meatshop.html
+    wiki_path: "wiki/kz/ZEREK_Meatshop.html"
     notes: ""
 
   - code: NOTARY
     name_ru: "Нотариальная контора"
     aliases: []
+    archetype: "A"
+    category: "b2b"
+    icon: "📜"
     status: wiki_only
     cta: waitlist
     has_insight: false
@@ -723,35 +867,41 @@ niches:
     insight_path: null
     data_path: null
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_Notary.html
+    wiki_path: "wiki/kz/ZEREK_Notary.html"
     notes: "Нотариат — новая ниша, не в списке 50."
 
   - code: OPTICS
     name_ru: "Оптика"
     aliases: []
+    archetype: "A"
+    category: "health"
+    icon: "👓"
     status: wiki_only
     cta: waitlist
     has_insight: true
     has_data: true
     has_calibration: false
     has_wiki: true
-    insight_path: knowledge/kz/niches/OPTICS_insight.md
-    data_path: data/niches/OPTICS_data.yaml
+    insight_path: "knowledge/kz/niches/OPTICS_insight.md"
+    data_path: "data/niches/OPTICS_data.yaml"
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_Optics.html
+    wiki_path: "wiki/kz/ZEREK_Optics.html"
     notes: ""
 
   - code: PETSHOP
     name_ru: "Зоомагазин"
     aliases: []
+    archetype: "C"
+    category: "retail"
+    icon: "🐾"
     status: research
     cta: none
     has_insight: true
     has_data: true
     has_calibration: false
     has_wiki: false
-    insight_path: knowledge/kz/niches/PETSHOP_insight.md
-    data_path: data/niches/PETSHOP_data.yaml
+    insight_path: "knowledge/kz/niches/PETSHOP_insight.md"
+    data_path: "data/niches/PETSHOP_data.yaml"
     calibration_path: null
     wiki_path: null
     notes: ""
@@ -759,29 +909,35 @@ niches:
   - code: PHARMACY
     name_ru: "Аптека"
     aliases: []
+    archetype: "C"
+    category: "health"
+    icon: "💊"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/PHARMACY_insight.md
-    data_path: data/niches/PHARMACY_data.yaml
-    calibration_path: data/kz/niches/niche_formats_PHARMACY.xlsx
-    wiki_path: wiki/kz/ZEREK_Pharmacy.html
+    insight_path: "knowledge/kz/niches/PHARMACY_insight.md"
+    data_path: "data/niches/PHARMACY_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_PHARMACY.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Pharmacy.html"
     notes: ""
 
   - code: PHOTO
     name_ru: "Фотостудия"
     aliases: []
+    archetype: "A"
+    category: "services"
+    icon: "📸"
     status: research
     cta: none
     has_insight: true
     has_data: true
     has_calibration: false
     has_wiki: false
-    insight_path: knowledge/kz/niches/PHOTO_insight.md
-    data_path: data/niches/PHOTO_data.yaml
+    insight_path: "knowledge/kz/niches/PHOTO_insight.md"
+    data_path: "data/niches/PHOTO_data.yaml"
     calibration_path: null
     wiki_path: null
     notes: ""
@@ -789,29 +945,35 @@ niches:
   - code: PIZZA
     name_ru: "Пиццерия"
     aliases: []
+    archetype: "B"
+    category: "food"
+    icon: "🍕"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/PIZZA_insight.md
-    data_path: data/niches/PIZZA_data.yaml
-    calibration_path: data/kz/niches/niche_formats_PIZZA.xlsx
-    wiki_path: wiki/kz/ZEREK_Pizza.html
+    insight_path: "knowledge/kz/niches/PIZZA_insight.md"
+    data_path: "data/niches/PIZZA_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_PIZZA.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Pizza.html"
     notes: ""
 
   - code: PRINTING
     name_ru: "Типография"
     aliases: []
+    archetype: "E"
+    category: "production"
+    icon: "🖨️"
     status: research
     cta: none
     has_insight: true
     has_data: true
     has_calibration: false
     has_wiki: false
-    insight_path: knowledge/kz/niches/PRINTING_insight.md
-    data_path: data/niches/PRINTING_data.yaml
+    insight_path: "knowledge/kz/niches/PRINTING_insight.md"
+    data_path: "data/niches/PRINTING_data.yaml"
     calibration_path: null
     wiki_path: null
     notes: ""
@@ -819,148 +981,178 @@ niches:
   - code: PVZ
     name_ru: "Пункт выдачи заказов"
     aliases: []
+    archetype: "F"
+    category: "services"
+    icon: "📦"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/PVZ_insight.md
-    data_path: data/niches/PVZ_data.yaml
-    calibration_path: data/kz/niches/niche_formats_PVZ.xlsx
-    wiki_path: wiki/kz/ZEREK_Pvz.html
+    insight_path: "knowledge/kz/niches/PVZ_insight.md"
+    data_path: "data/niches/PVZ_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_PVZ.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Pvz.html"
     notes: ""
 
   - code: REALTOR
     name_ru: "Риелторское агентство"
     aliases: []
+    archetype: "E"
+    category: "b2b"
+    icon: "🏠"
     status: wiki_only
     cta: waitlist
     has_insight: true
     has_data: true
     has_calibration: false
     has_wiki: true
-    insight_path: knowledge/kz/niches/REALTOR_insight.md
-    data_path: data/niches/REALTOR_data.yaml
+    insight_path: "knowledge/kz/niches/REALTOR_insight.md"
+    data_path: "data/niches/REALTOR_data.yaml"
     calibration_path: null
-    wiki_path: wiki/kz/ZEREK_Realtor.html
+    wiki_path: "wiki/kz/ZEREK_Realtor.html"
     notes: ""
 
   - code: REPAIR_PHONE
     name_ru: "Ремонт телефонов"
     aliases: [REPAIRPHONE]
+    archetype: "A"
+    category: "services"
+    icon: "📱"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/REPAIR_PHONE_insight.md
-    data_path: data/niches/REPAIR_PHONE_data.yaml
-    calibration_path: data/kz/niches/niche_formats_REPAIR_PHONE.xlsx
-    wiki_path: wiki/kz/ZEREK_RepairPhone.html
+    insight_path: "knowledge/kz/niches/REPAIR_PHONE_insight.md"
+    data_path: "data/niches/REPAIR_PHONE_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_REPAIR_PHONE.xlsx"
+    wiki_path: "wiki/kz/ZEREK_RepairPhone.html"
     notes: ""
 
   - code: SEMIFOOD
     name_ru: "Магазин полуфабрикатов"
     aliases: []
+    archetype: "B"
+    category: "food"
+    icon: "🥟"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/SEMIFOOD_insight.md
-    data_path: data/niches/SEMIFOOD_data.yaml
-    calibration_path: data/kz/niches/niche_formats_SEMIFOOD.xlsx
-    wiki_path: wiki/kz/ZEREK_Semifood.html
+    insight_path: "knowledge/kz/niches/SEMIFOOD_insight.md"
+    data_path: "data/niches/SEMIFOOD_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_SEMIFOOD.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Semifood.html"
     notes: ""
 
   - code: SUGARING
     name_ru: "Шугаринг"
     aliases: []
+    archetype: "A"
+    category: "beauty"
+    icon: "🌸"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: false
-    insight_path: knowledge/kz/niches/SUGARING_insight.md
-    data_path: data/niches/SUGARING_data.yaml
-    calibration_path: data/kz/niches/niche_formats_SUGARING.xlsx
+    insight_path: "knowledge/kz/niches/SUGARING_insight.md"
+    data_path: "data/niches/SUGARING_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_SUGARING.xlsx"
     wiki_path: null
     notes: ""
 
   - code: SUSHI
     name_ru: "Суши-бар"
     aliases: []
+    archetype: "B"
+    category: "food"
+    icon: "🍣"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/SUSHI_insight.md
-    data_path: data/niches/SUSHI_data.yaml
-    calibration_path: data/kz/niches/niche_formats_SUSHI.xlsx
-    wiki_path: wiki/kz/ZEREK_Sushi.html
+    insight_path: "knowledge/kz/niches/SUSHI_insight.md"
+    data_path: "data/niches/SUSHI_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_SUSHI.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Sushi.html"
     notes: ""
 
   - code: TAILOR
     name_ru: "Ателье одежды"
     aliases: []
+    archetype: "A"
+    category: "services"
+    icon: "🪡"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/TAILOR_insight.md
-    data_path: data/niches/TAILOR_data.yaml
-    calibration_path: data/kz/niches/niche_formats_TAILOR.xlsx
-    wiki_path: wiki/kz/ZEREK_Tailor.html
+    insight_path: "knowledge/kz/niches/TAILOR_insight.md"
+    data_path: "data/niches/TAILOR_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_TAILOR.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Tailor.html"
     notes: ""
 
   - code: TIRESERVICE
     name_ru: "Шиномонтаж"
     aliases: []
+    archetype: "F"
+    category: "auto"
+    icon: "🛞"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: false
-    insight_path: knowledge/kz/niches/TIRESERVICE_insight.md
-    data_path: data/niches/TIRESERVICE_data.yaml
-    calibration_path: data/kz/niches/niche_formats_TIRESERVICE.xlsx
+    insight_path: "knowledge/kz/niches/TIRESERVICE_insight.md"
+    data_path: "data/niches/TIRESERVICE_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_TIRESERVICE.xlsx"
     wiki_path: null
     notes: ""
 
   - code: WATERPLANT
     name_ru: "Цех очистки воды"
     aliases: []
+    archetype: "C"
+    category: "retail"
+    icon: "💧"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
     has_wiki: true
-    insight_path: knowledge/kz/niches/WATERPLANT_insight.md
-    data_path: data/niches/WATERPLANT_data.yaml
-    calibration_path: data/kz/niches/niche_formats_WATERPLANT.xlsx
-    wiki_path: wiki/kz/ZEREK_Waterplant.html
+    insight_path: "knowledge/kz/niches/WATERPLANT_insight.md"
+    data_path: "data/niches/WATERPLANT_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_WATERPLANT.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Waterplant.html"
     notes: ""
 
   - code: YOGA
     name_ru: "Йога-студия"
     aliases: []
+    archetype: "D"
+    category: "sport"
+    icon: "🧘"
     status: research
     cta: none
     has_insight: true
     has_data: false
     has_calibration: false
     has_wiki: false
-    insight_path: knowledge/kz/niches/YOGA_insight.md
+    insight_path: "knowledge/kz/niches/YOGA_insight.md"
     data_path: null
     calibration_path: null
     wiki_path: null
