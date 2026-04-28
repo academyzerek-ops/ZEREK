@@ -2,10 +2,17 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0;url=app.html">
+<!-- R14.1: cache-bust версия. Меняй при значимых изменениях app.html
+     чтобы Telegram WebView обновил закэшированную копию. -->
+<meta http-equiv="refresh" content="0;url=app.html?v=r14.1">
 <title>ZEREK</title>
 </head>
 <body>
-<script>window.location.replace('app.html' + window.location.search + window.location.hash);</script>
+<script>
+  // Сохраняем существующие query/hash, добавляем ?v=r14.1 (обходит кэш WebView).
+  var qs = window.location.search;
+  qs = qs ? qs + '&v=r14.1' : '?v=r14.1';
+  window.location.replace('app.html' + qs + window.location.hash);
+</script>
 </body>
 </html>
