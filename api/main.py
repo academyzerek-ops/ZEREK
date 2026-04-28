@@ -88,6 +88,10 @@ def health():
     n = list(db.niche_registry.keys()) if db else []
     return {"status":"ok","db_loaded":db is not None,"db_error":db_error,"niches_count":len(n),"niches":n}
 
+@app.get("/healthz")
+def healthz():
+    return {"status": "ok"}
+
 @app.get("/debug")
 def debug():
     f1=[]; f2=[]
