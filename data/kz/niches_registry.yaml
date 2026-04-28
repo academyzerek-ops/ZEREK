@@ -151,7 +151,7 @@ niches:
     notes: "Объединённый обзор бровист+лэшмейкер. Канонические BROW и LASH разделены в движке. Решить: разбить обзор или оставить."
 
   - code: BUBBLETEA
-    name_ru: "Бабл-ти"
+    name_ru: "Островок напитков в ТЦ"
     aliases: []
     archetype: "B"
     category: "food"
