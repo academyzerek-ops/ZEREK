@@ -15,3 +15,14 @@ docs/refactor_history/
 
 # R11 PDF Audit output
 audit/output/
+
+# Defensive hygiene (added 2026-04-29 audit)
+.env
+.env.*
+*.log
+~$*.xlsx
+.idea/
+.vscode/
+venv/
+.venv/
+*.egg-info/
