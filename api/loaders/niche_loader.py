@@ -563,44 +563,61 @@ def load_archetype_yaml(archetype_id):
 def load_niche_yaml(niche_id):
     """Читает данные ниши → dict (с in-process кешем).
 
-    R12.6: сначала пробует knowledge/niches/{NICHE}.md (новый канон,
-    R12.5 пилот = MANICURE), при отсутствии — fallback на
-    data/niches/{NICHE}_data.yaml (legacy для остальных 53 ниш).
+    Архитектура post-cleanup 2026-04-30:
+      · `data/niches/<CODE>_data.yaml` — ИСТОЧНИК ИСТИНЫ для
+        структурированных бизнес-данных (formats, formats_r12,
+        seasonality, risks, growth_scenarios и т.п.).
+      · `knowledge/niches/<CODE>.md` — текстовый материал + frontmatter-meta
+        (name_ru, icon, archetype). Может содержать те же ключи, что и
+        yaml (исторически), но при наличии yaml он ПОБЕЖДАЕТ.
 
-    Возвращает `None` если ниши нет ни там, ни там.
-    Подключается как приоритетный источник в Этапе 7 (YAML-first).
+    Логика:
+      1. Читаем оба источника, если оба есть.
+      2. Merge: knowledge как база, yaml перезаписывает все совпадающие
+         ключи. Knowledge-only ключи (icon, etc.) сохраняются.
+      3. Возвращаем `None` если ниша отсутствует и там, и там.
     """
     if niche_id in _YAML_CACHE:
         return _YAML_CACHE[niche_id]
-    # R12.6: knowledge/-первая попытка (для мигрированных ниш)
+
+    # Knowledge md (textual + meta)
+    kn_data = None
     try:
         from loaders.knowledge_loader import load_knowledge_niche  # noqa: WPS433
         kn_data = load_knowledge_niche(niche_id)
-        if kn_data is not None:
-            _YAML_CACHE[niche_id] = kn_data
-            return kn_data
     except ImportError:
         pass
+
+    # data/niches yaml (structured canon)
+    yml_data = None
     path = os.path.join(_REPO_ROOT, "data", "niches", f"{niche_id}_data.yaml")
-    if not os.path.exists(path):
-        _log.info("niche YAML not found for %s at %s", niche_id, path)
+    if os.path.exists(path):
+        try:
+            import yaml
+            with open(path, "r", encoding="utf-8") as fh:
+                yml_data = yaml.safe_load(fh) or None
+        except ImportError:
+            _log.warning("PyYAML not installed; cannot load %s", path)
+        except Exception as e:
+            _log.warning("failed to parse %s: %s", path, e)
+
+    if kn_data is None and yml_data is None:
+        _log.info("no niche data for %s (neither knowledge md nor data yaml)", niche_id)
         _YAML_CACHE[niche_id] = None
         return None
-    try:
-        import yaml
-    except ImportError:
-        _log.warning("PyYAML not installed; cannot load %s", path)
-        _YAML_CACHE[niche_id] = None
-        return None
-    try:
-        with open(path, "r", encoding="utf-8") as fh:
-            data = yaml.safe_load(fh) or None
-        _YAML_CACHE[niche_id] = data
-        return data
-    except Exception as e:
-        _log.warning("failed to parse %s: %s", path, e)
-        _YAML_CACHE[niche_id] = None
-        return None
+    if yml_data is None:
+        _YAML_CACHE[niche_id] = kn_data
+        return kn_data
+    if kn_data is None:
+        _YAML_CACHE[niche_id] = yml_data
+        return yml_data
+
+    # Both exist: merge with yaml priority on every common key.
+    merged = dict(kn_data)
+    for k, v in yml_data.items():
+        merged[k] = v
+    _YAML_CACHE[niche_id] = merged
+    return merged
 
 
 # ═══════════════════════════════════════════════════════════════════════
