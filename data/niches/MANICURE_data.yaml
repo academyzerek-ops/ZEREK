@@ -417,7 +417,7 @@ formats_r12:
   - middle
   base_check:
     astana: 5250
-  working_days_per_month: 26
+  working_days_per_month: 22
   rent_per_month: 0
   utilities_per_month: 0
   deposit_months: 0
@@ -465,6 +465,7 @@ formats_r12:
   materials_med: 5000
   materials_min: 2750
   materials_max: 7750
+  occupancy_rate: 0.85
 - id: STUDIO
   label_ru: Свой кабинет
   description_short: Соло-мастер арендует отдельный кабинет 8-15 м²
@@ -549,6 +550,7 @@ formats_r12:
     mature_m7_m12_base: 18000
   other_opex_per_month: 8000
   cogs_pct: 0.0
+  occupancy_rate: 0.85
 - id: SALON_RENT
   label_ru: Аренда места в салоне
   description_short: Соло-мастер арендует кресло/место в чужом салоне
@@ -631,6 +633,7 @@ formats_r12:
     mature_m7_m12_base: 10000
   other_opex_per_month: 5000
   cogs_pct: 0.0
+  occupancy_rate: 0.85
 - id: MALL_SOLO
   label_ru: Стойка в торговом центре
   description_short: Соло-мастер арендует стол/стойку в ТЦ
@@ -689,6 +692,7 @@ formats_r12:
   materials_med: 7000
   materials_min: 3850
   materials_max: 10850
+  occupancy_rate: 0.85
 info_blocks_r12:
   materials:
     page: 7

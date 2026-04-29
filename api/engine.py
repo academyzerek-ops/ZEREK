@@ -310,7 +310,15 @@ def _apply_r12_5_overrides(fin, niche_id, format_id, experience='none', strategy
 
     if avg_clients > 0:
         # traffic_med — целое число клиентов в день. Округляем.
-        fin_new['traffic_med'] = max(1, int(round(avg_clients)))
+        # R12.6: opt-in occupancy_rate (загрузка мастера, default 1.0).
+        # 0.85 = реалистичный потолок для beauty-соло (бронирования
+        # никогда не на 100% заняты).
+        occupancy_rate = 1.0
+        if level_data and level_data.get('occupancy_rate') is not None:
+            occupancy_rate = float(level_data.get('occupancy_rate'))
+        elif target.get('occupancy_rate') is not None:
+            occupancy_rate = float(target.get('occupancy_rate'))
+        fin_new['traffic_med'] = max(1, int(round(avg_clients * occupancy_rate)))
 
     wd = target.get('working_days_per_month')
     if wd:

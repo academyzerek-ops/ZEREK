@@ -153,10 +153,11 @@ def calc_breakeven(fin, staff, tax_rate, qty=1):
         return {"тб_₸": 0, "тб_чеков_день": 0, "запас_прочности_%": 0, "чек_для_тб": check, "fixed_total": fixed}
 
     tb_revenue = int(fixed / (1 - variable_pct))
-    tb_checks_day = int(tb_revenue / 30 / check) if check > 0 else 0
+    working_days = _safe_int(fin.get("working_days_per_month"), 30)
+    tb_checks_day = int(tb_revenue / working_days / check) if check > 0 else 0
 
     traffic = _safe_int(fin.get("traffic_med"), 50)
-    rev_full = check * traffic * 30 * qty
+    rev_full = check * traffic * working_days * qty
     safety = round((rev_full - tb_revenue) / rev_full * 100, 1) if rev_full > 0 else 0
 
     return {
@@ -193,7 +194,9 @@ def calc_owner_economics(fin, staff, tax_rate, rent_month_total, qty=1,
     """
     check = _safe_int(fin.get("check_med"), 1000) * check_k
     traffic = _safe_float(fin.get("traffic_med"), 50) * traffic_k
-    revenue = int(check * traffic * 30 * qty)
+    # R12.5+: working_days_per_month из formats_r12 (default 30 для legacy ниш).
+    working_days = _safe_int(fin.get("working_days_per_month"), 30)
+    revenue = int(check * traffic * working_days * qty)
 
     # Materials — два пути:
     #  · R12.6 канон: materials_med = абсолютное значение в ₸/мес
