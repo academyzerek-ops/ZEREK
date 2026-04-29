@@ -128,13 +128,13 @@ formats:
     min_monthly: 6600
     max_monthly: 18600
   other_opex:
-    med_monthly: 5000
-    min_monthly: 2750
-    max_monthly: 7750
+    med_monthly: 3000
+    min_monthly: 1650
+    max_monthly: 4650
   fot:
     monthly: 0
     headcount: 0
-  cogs_pct: 0.12
+  cogs_pct: 0.0
   tax_regime:
     type: ip_simplified
     rate_pct: 3.0
@@ -154,6 +154,9 @@ formats:
   - hiring_no_probation
   - master_contract
   - staff_management
+  materials_med: 5000
+  materials_min: 2750
+  materials_max: 7750
 - id: SOLO
   label_ru: Аренда места в чужом салоне
   description_short: Аренда кабинета 8-12 м², 1 мастер (вы)
@@ -212,17 +215,17 @@ formats:
     start_pct: 0.25
     curve: linear
   marketing:
-    med_monthly: 22000
-    min_monthly: 12100
-    max_monthly: 34100
+    med_monthly: 20000
+    min_monthly: 11000
+    max_monthly: 31000
   other_opex:
-    med_monthly: 11500
-    min_monthly: 6325
-    max_monthly: 17825
+    med_monthly: 6500
+    min_monthly: 3575
+    max_monthly: 10075
   fot:
     monthly: 0
     headcount: 0
-  cogs_pct: 0.1
+  cogs_pct: 0.0
   tax_regime:
     type: ip_simplified
     rate_pct: 3.0
@@ -235,6 +238,9 @@ formats:
   - hiring_no_probation
   - master_contract
   - staff_management
+  materials_med: 8000
+  materials_min: 4400
+  materials_max: 12400
 - id: STANDARD
   label_ru: Своя точка (студия)
   description_short: Своё помещение 25-40 м², 3-4 мастера, владелец-организатор
@@ -287,17 +293,17 @@ formats:
     start_pct: 0.2
     curve: linear
   marketing:
-    med_monthly: 28000
-    min_monthly: 15400
-    max_monthly: 43400
+    med_monthly: 28500
+    min_monthly: 15675
+    max_monthly: 44175
   other_opex:
-    med_monthly: 12500
-    min_monthly: 6875
-    max_monthly: 19375
+    med_monthly: 8500
+    min_monthly: 4675
+    max_monthly: 13175
   fot:
     monthly: 0
     headcount: 0
-  cogs_pct: 0.1
+  cogs_pct: 0.0
   tax_regime:
     type: too_simplified
     rate_pct: 3.0
@@ -314,6 +320,9 @@ formats:
   risks_excluded:
   - physical_health
   - home_sanitation
+  materials_med: 9000
+  materials_min: 4950
+  materials_max: 13950
 - id: PREMIUM
   label_ru: Точка в ТЦ
   description_short: Премиальное помещение 50+ м², брендирование, расширенный сервис
@@ -365,17 +374,17 @@ formats:
     months: 6
     start_pct: 0.2
   marketing:
-    med_monthly: 45000
-    min_monthly: 24750
-    max_monthly: 69750
+    med_monthly: 5000
+    min_monthly: 2750
+    max_monthly: 7750
   other_opex:
-    med_monthly: 18000
-    min_monthly: 9900
-    max_monthly: 27900
+    med_monthly: 5000
+    min_monthly: 2750
+    max_monthly: 7750
   fot:
     monthly: 0
     headcount: 0
-  cogs_pct: 0.12
+  cogs_pct: 0.0
   tax_regime:
     type: too_oer
     rate_pct: 0.2
@@ -393,6 +402,9 @@ formats:
   risks_excluded:
   - physical_health
   - home_sanitation
+  materials_med: 7000
+  materials_min: 3850
+  materials_max: 10850
 formats_r12:
 - id: HOME
   label_ru: Мастер на дому
@@ -437,17 +449,22 @@ formats_r12:
     tuning_m4_m6_base: 54000
     mature_m7_m12_base: 16000
   other_opex_per_month: 5000
-  cogs_pct: 0.12
+  cogs_pct: 0.0
   marketing:
     med_monthly: 12000
     min_monthly: 6600
     max_monthly: 18600
   other_opex:
-    med_monthly: 5000
-    min_monthly: 2750
-    max_monthly: 7750
+    med_monthly: 3000
+    min_monthly: 1650
+    max_monthly: 4650
   commission_pct: 0.0
   rent_per_month_astana: 0
+  rent_min: 0
+  rent_max: 0
+  materials_med: 5000
+  materials_min: 2750
+  materials_max: 7750
 - id: STUDIO
   label_ru: Свой кабинет
   description_short: Соло-мастер арендует отдельный кабинет 8-15 м²
@@ -459,43 +476,47 @@ formats_r12:
   - experienced
   levels:
     simple:
-      label_ru: Простая своя точка
-      description_short: Спальный район, отдельный или общий вход, 10-15 м²
+      label_ru: Простой кабинет (спальный район)
+      description_short: Жилой дом, отдельный или общий вход, 10-15 м²
       base_check_astana: 7000
-      rent_per_month_astana: 50000
-      rent_min: 30000
-      rent_max: 70000
       deposit_months: 2
       commission_pct: 0.0
+      rent_per_month_astana: 50000
+      rent_min: 27500
+      rent_max: 77500
+      materials_med: 8000
+      materials_min: 4400
+      materials_max: 12400
       marketing:
         med_monthly: 22000
         min_monthly: 12100
         max_monthly: 34100
       other_opex:
-        med_monthly: 10000
-        min_monthly: 5500
-        max_monthly: 15500
+        med_monthly: 7000
+        min_monthly: 3850
+        max_monthly: 10850
     nice:
-      label_ru: Приличная своя точка в центре
+      label_ru: Приличный кабинет (центр)
       description_short: Центр города, бизнес-локация, 15-20 м²
       base_check_astana: 7700
-      rent_per_month_astana: 100000
-      rent_min: 70000
-      rent_max: 130000
       deposit_months: 2
       commission_pct: 0.0
+      rent_per_month_astana: 100000
+      rent_min: 55000
+      rent_max: 155000
+      materials_med: 10000
+      materials_min: 5500
+      materials_max: 15500
       marketing:
         med_monthly: 35000
         min_monthly: 19250
         max_monthly: 54250
       other_opex:
-        med_monthly: 15000
-        min_monthly: 8250
-        max_monthly: 23250
+        med_monthly: 10000
+        min_monthly: 5500
+        max_monthly: 15500
   working_days_per_month: 26
-  rent_per_month_astana: 70000
   utilities_per_month: 15000
-  deposit_months: 2
   capex_items:
     equipment:
       label_ru: Оборудование
@@ -527,7 +548,7 @@ formats_r12:
     tuning_m4_m6_base: 50000
     mature_m7_m12_base: 18000
   other_opex_per_month: 8000
-  cogs_pct: 0.1
+  cogs_pct: 0.0
 - id: SALON_RENT
   label_ru: Аренда места в салоне
   description_short: Соло-мастер арендует кресло/место в чужом салоне
@@ -542,32 +563,42 @@ formats_r12:
       label_ru: Стандарт-салон
       description_short: Аренда места в салоне среднего сегмента
       base_check_astana: 7500
-      rent_per_month_astana: 0
       deposit_months: 0
       commission_pct: 0.5
+      rent_per_month_astana: 0
+      rent_min: 0
+      rent_max: 0
+      materials_med: 6000
+      materials_min: 3300
+      materials_max: 9300
       marketing:
         med_monthly: 15000
         min_monthly: 8250
         max_monthly: 23250
       other_opex:
-        med_monthly: 8000
-        min_monthly: 4400
-        max_monthly: 12400
+        med_monthly: 5000
+        min_monthly: 2750
+        max_monthly: 7750
     premium:
       label_ru: Премиум-салон
       description_short: Аренда места в премиум-салоне
       base_check_astana: 9500
-      rent_per_month_astana: 0
       deposit_months: 0
       commission_pct: 0.5
+      rent_per_month_astana: 0
+      rent_min: 0
+      rent_max: 0
+      materials_med: 10000
+      materials_min: 5500
+      materials_max: 15500
       marketing:
-        med_monthly: 30000
-        min_monthly: 16500
-        max_monthly: 46500
+        med_monthly: 25000
+        min_monthly: 13750
+        max_monthly: 38750
       other_opex:
-        med_monthly: 15000
-        min_monthly: 8250
-        max_monthly: 23250
+        med_monthly: 8000
+        min_monthly: 4400
+        max_monthly: 12400
   working_days_per_month: 26
   utilities_per_month: 0
   capex_items_common:
@@ -599,7 +630,7 @@ formats_r12:
     tuning_m4_m6_base: 25000
     mature_m7_m12_base: 10000
   other_opex_per_month: 5000
-  cogs_pct: 0.1
+  cogs_pct: 0.0
 - id: MALL_SOLO
   label_ru: Стойка в торговом центре
   description_short: Соло-мастер арендует стол/стойку в ТЦ
@@ -641,20 +672,23 @@ formats_r12:
     tuning_m4_m6_base: 30000
     mature_m7_m12_base: 15000
   other_opex_per_month: 8000
-  cogs_pct: 0.12
+  cogs_pct: 0.0
   base_check:
     astana: 4500
-  rent_min: 150000
-  rent_max: 300000
+  rent_min: 110000
+  rent_max: 310000
   commission_pct: 0.0
   marketing:
-    med_monthly: 45000
-    min_monthly: 24750
-    max_monthly: 69750
+    med_monthly: 5000
+    min_monthly: 2750
+    max_monthly: 7750
   other_opex:
-    med_monthly: 18000
-    min_monthly: 9900
-    max_monthly: 27900
+    med_monthly: 5000
+    min_monthly: 2750
+    max_monthly: 7750
+  materials_med: 7000
+  materials_min: 3850
+  materials_max: 10850
 info_blocks_r12:
   materials:
     page: 7
@@ -1051,5 +1085,5 @@ meta:
   - MANICURE_insight.md (инсайты)
   - 08_niche_formats.xlsx (откалиброванные данные за 7 раундов)
   - Кейс Костанай (реальный пример из обзора)
-  notes_ru: Перекалибровано как мастер-одиночка (никакого мульти-мастера). Все 4 формата solo. SALON_RENT — 50% салону, остальные
-    без commission_pct.
+  notes_ru: 'Финальная solo-master калибровка (Адиль 2026-04-30). 6 конфигураций: HOME, STUDIO simple/nice, SALON_RENT standard/premium,
+    MALL_SOLO. SALON_RENT — 50% салону. materials_med — абсолют (не % cogs).'
