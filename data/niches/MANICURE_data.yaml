@@ -1,1072 +1,1055 @@
-# =============================================================================
-# MANICURE_data.yaml
-# Машинные данные ниши "Маникюр" для движка ZEREK Quick Check.
-# Источник правды для всех расчётов по этой нише.
-# Обновляется через промпт Коту — не редактировать руками без проверки парсера.
-#
-# Версия: 1.0  | Дата: 2026-04-22  | Автор: Ноа+Адиль
-# =============================================================================
-
 niche:
   id: MANICURE
-  name_ru: "Маникюр и педикюр"
-  name_short: "Маникюр"
-  industry: beauty                      # для группировки в UI
-  description_short: "Регулярная процедура раз в 2-4 недели. Самая массовая ниша в бьюти РК."
-  trend: stable                         # growing | stable | declining
-  trend_note_ru: "Стабильный спрос, не падает в кризис более чем на 10-15%. Рост за счёт расширения услуг (педикюр, дизайн)."
-
-# =============================================================================
-# СЕЗОННОСТЬ (одна на всю нишу, не зависит от формата)
-# =============================================================================
+  name_ru: Маникюрный салон
+  name_short: Маникюр
+  industry: beauty
+  description_short: Регулярная процедура раз в 2-4 недели. Самая массовая ниша в бьюти РК.
+  trend: stable
+  trend_note_ru: Стабильный спрос, не падает в кризис более чем на 10-15%. Рост за счёт расширения услуг (педикюр, дизайн).
 seasonality:
-  pattern: [0.80, 0.85, 1.15, 0.75, 1.10, 1.10, 1.00, 1.00, 1.00, 0.95, 0.85, 1.30]
-  # янв,  фев,  мар,  апр,  май,  июн,  июл,  авг,  сен,  окт,  ноя,  дек
+  pattern:
+  - 0.8
+  - 0.85
+  - 1.15
+  - 0.75
+  - 1.1
+  - 1.1
+  - 1.0
+  - 1.0
+  - 1.0
+  - 0.95
+  - 0.85
+  - 1.3
+  best_start_months:
+  - 3
+  - 4
+  - 5
+  worst_start_months:
+  - 10
+  - 11
+  - 12
+  expert_note_ru: 'Лучше стартовать в марте-мае: к моменту выхода на мощность (4-й месяц)
 
-  best_start_months: [3, 4, 5]          # март-май: разгон попадёт на пик
-  worst_start_months: [10, 11, 12]      # октябрь-декабрь: пик уже к концу разгона
-  expert_note_ru: |
-    Лучше стартовать в марте-мае: к моменту выхода на мощность (4-й месяц)
     попадёте на сезонный пик (май-июнь). Январь-февраль — трудный старт
+
     из-за низкого спроса. Декабрь сам по себе пиковый, но первые месяцы
+
     разгона придутся на провальные январь-февраль.
 
-  # Round-3 §3.2: комментарий к пикам/просадкам для блока сезонности
-  # в PDF. Шаблон читает seasonality.commentary через seasonality_service.
+    '
   commentary:
     peaks:
-      - month: "Март"
-        reason: "8 марта — пик перед праздником, запись уводят на 2 недели вперёд."
-      - month: "Май"
-        reason: "Выпускные и начало свадебного сезона."
-      - month: "Июнь"
-        reason: "Свадебный сезон + отпуска, люди приводят себя в порядок."
-      - month: "Декабрь"
-        reason: "Новый год, корпоративы — пиковый месяц года."
+    - month: Март
+      reason: 8 марта — пик перед праздником, запись уводят на 2 недели вперёд.
+    - month: Май
+      reason: Выпускные и начало свадебного сезона.
+    - month: Июнь
+      reason: Свадебный сезон + отпуска, люди приводят себя в порядок.
+    - month: Декабрь
+      reason: Новый год, корпоративы — пиковый месяц года.
     troughs:
-      - month: "Январь"
-        reason: "После праздников — спад покупательной способности."
-      - month: "Февраль"
-        reason: "Откладывают визит до 8 марта."
-      - month: "Апрель"
-        reason: "После Наурыза (22 марта) — пауза перед майскими."
-      - month: "Ноябрь"
-        reason: "Между октябрьскими и новогодними — минимальная активность."
-
-# =============================================================================
-# ФОРМАТЫ — каждый со своей экономикой
-# =============================================================================
+    - month: Январь
+      reason: После праздников — спад покупательной способности.
+    - month: Февраль
+      reason: Откладывают визит до 8 марта.
+    - month: Апрель
+      reason: После Наурыза (22 марта) — пауза перед майскими.
+    - month: Ноябрь
+      reason: Между октябрьскими и новогодними — минимальная активность.
 formats:
-
-  # ───────────────────────────────────────────────────────────────────────
-  - id: HOME
-    label_ru: "Мастер на дому"
-    description_short: "Работа из своей квартиры, 1 мастер, без аренды"
-    archetype: solo                     # solo | owner_works | with_staff
-    legal_form: ip                      # ip | too — определяет ФОТ-логику
-    needs_location: false               # не нужна аренда
-
-    avg_check:
-      min: 3500                         # синхронизировано с xlsx baseline (Этап 7)
-      med: 5000                         # совпадает с wiki: "3 кл/день × 5000 = 300К"
-      max: 6500
-      currency: KZT
-
-    traffic:
-      max_per_day: 6                    # физический максимум 1 мастера
-      load_med: 0.50                    # реалистичная загрузка после ramp
-      load_min: 0.30
-      load_max: 0.75
-      working_days_per_month: 26
-
-    capex:
-      base_total: 330000                # без обучения (для experience=pro)
-      items:
-        equipment:
-          label_ru: "Оборудование"
-          min: 100000
-          med: 150000
-          max: 250000
-          note_ru: "Лампа UV/LED, фрезер, стерилизатор, расходники"
-        furniture:
-          label_ru: "Мебель и интерьер"
-          min: 20000
-          med: 30000
-          max: 60000
-        first_stock:
-          label_ru: "Первый запас материалов"
-          min: 40000
-          med: 60000
-          max: 100000
-        permits:
-          label_ru: "Разрешения и регистрация"
-          min: 5000
-          med: 10000
-          max: 20000
-        working_capital:
-          label_ru: "Оборотные средства"
-          min: 30000
-          med: 45000
-          max: 60000
-        marketing_start:
-          label_ru: "Стартовый маркетинг"
-          min: 20000
-          med: 30000
-          max: 50000
-        legal:
-          label_ru: "Юридическое оформление"
-          min: 3000
-          med: 5000
-          max: 10000
-
-      # Адаптивная статья — добавляется в зависимости от опыта
-      training:
-        required: true                  # для этой ниши обучение критично
-        amounts_by_experience:
-          none: 150000                  # новичок без опыта
-          some: 40000                   # есть базовое
-          pro: 0                        # профессионал
-
-    ramp_up:
-      months: 3                         # сколько месяцев выходит на мощность
-      start_pct: 0.30                   # с какого % стартует месяц 1
-      curve: linear                     # linear | s-curve
-
-    marketing:
-      # Маркетинг по фазам разгона (₸/мес)
-      phase_1_months: [1, 2, 3]
-      phase_1_amount: 30000
-      phase_2_months: [4, 5, 6, 7, 8]
-      phase_2_amount: 50000
-      phase_3_months: [9, 10, 11, 12]
-      phase_3_amount: 15000
-      # Усреднённое для расчётов (если нужно одно число)
-      med_monthly: 45000
-      min_monthly: 25000
-      max_monthly: 70000
-
-    other_opex:
-      med_monthly: 5000                 # телефон, интернет, мелочи
-      min_monthly: 3000
-      max_monthly: 8000
-
-    fot:
-      monthly: 0                        # ИП = нет ФОТ владельца
-      headcount: 0
-      employer_taxes_pct: 0
-      note_ru: "ИП на упрощёнке — собственный труд не оплачивается отдельно, прибыль = доход в карман"
-
-    cogs_pct: 0.12                      # материалы как % от выручки
-
-    tax_regime:
-      type: ip_simplified
-      rate_pct: 3.0                     # УД ставка (зависит от города, но 3% базовая)
-
-    scenario_coefficients:
-      pessimistic_traffic: 0.65
-      pessimistic_check: 0.90
-      base_traffic: 1.00
-      base_check: 1.00
-      optimistic_traffic: 1.25
-      optimistic_check: 1.10
-
-    risks_format_specific:
-      - id: physical_health
-      - id: income_ceiling_solo
-      - id: home_sanitation
-
-    risks_excluded:                     # риски НЕ применимые к этому формату
-      - rent_overpriced
-      - hiring_no_probation
-      - master_contract
-      - staff_management
-
-  # ───────────────────────────────────────────────────────────────────────
-  - id: SOLO
-    label_ru: "Своя точка, 1 мастер"
-    description_short: "Аренда кабинета 8-12 м², 1 мастер (вы)"
-    archetype: solo
-    legal_form: ip
-    needs_location: true
-    location_type: rented_cabinet       # rented_cabinet | retail_space | salon_room
-
-    avg_check:
-      min: 5500
-      med: 7000
-      max: 10000
-
-    traffic:
-      max_per_day: 7
-      load_med: 0.55
-      load_min: 0.35
-      load_max: 0.80
-      working_days_per_month: 26
-
-    capex:
-      base_total: 850000
-      items:
-        equipment:
-          label_ru: "Оборудование"
-          med: 250000
-        furniture:
-          label_ru: "Мебель и интерьер"
-          med: 150000
-        first_stock:
-          label_ru: "Первый запас материалов"
-          med: 80000
-        renovation:
-          label_ru: "Ремонт и адаптация"
-          med: 100000
-        permits:
-          label_ru: "Разрешения и регистрация"
-          med: 20000
-        working_capital:
-          label_ru: "Оборотные средства"
-          med: 100000
-        marketing_start:
-          label_ru: "Стартовый маркетинг"
-          med: 80000
-        deposit:
-          label_ru: "Депозит за аренду"
-          med: 60000
-        legal:
-          label_ru: "Юридическое оформление"
-          med: 10000
-
-      training:
-        required: true
-        amounts_by_experience:
-          none: 200000
-          some: 50000
-          pro: 0
-
-    ramp_up:
-      months: 4
-      start_pct: 0.25
-      curve: linear
-
-    marketing:
-      phase_1_months: [1, 2, 3]
-      phase_1_amount: 60000
-      phase_2_months: [4, 5, 6, 7, 8]
-      phase_2_amount: 80000
-      phase_3_months: [9, 10, 11, 12]
-      phase_3_amount: 30000
-      med_monthly: 70000
-
-    other_opex:
-      med_monthly: 25000                # коммуналка, интернет, расходники
-
-    fot:
-      monthly: 0
-      headcount: 0
-
-    cogs_pct: 0.13
-    tax_regime:
-      type: ip_simplified
-      rate_pct: 3.0
-
-    rent:
-      use_external_data: true           # брать из 11_rent_benchmarks.xlsx
-      area_m2: 10
-      location_type_for_rent: cabinet_inside_salon
-
-    risks_format_specific:
-      - id: rent_dependency
-      - id: physical_health
-      - id: income_ceiling_solo
-
-    risks_excluded:
-      - hiring_no_probation
-      - master_contract
-      - staff_management
-
-  # ───────────────────────────────────────────────────────────────────────
-  - id: STANDARD
-    label_ru: "Студия, 3-4 мастера"
-    description_short: "Своё помещение 25-40 м², 3-4 мастера, владелец-организатор"
-    archetype: with_staff
-    legal_form: too
-    needs_location: true
-    location_type: retail_space
-
-    avg_check:
-      min: 6000
-      med: 8000
-      max: 12000
-
-    traffic:
-      max_per_day: 24                   # 6 на мастера × 4 мастера
-      load_med: 0.55
-      working_days_per_month: 28
-
-    capex:
-      base_total: 4500000
-      items:
-        equipment:
-          label_ru: "Оборудование"
-          med: 1200000
-        furniture:
-          label_ru: "Мебель и интерьер"
-          med: 800000
-        first_stock:
-          label_ru: "Первый запас материалов"
-          med: 350000
-        renovation:
-          label_ru: "Ремонт"
-          med: 800000
-        permits:
-          label_ru: "Разрешения"
-          med: 50000
-        working_capital:
-          label_ru: "Оборотные средства"
-          med: 600000
-        marketing_start:
-          label_ru: "Стартовый маркетинг"
-          med: 400000
-        deposit:
-          label_ru: "Депозит за аренду"
-          med: 250000
-        legal:
-          label_ru: "Юридическое оформление"
-          med: 50000
-
-      training:
-        # R12.5: STUDIO — это соло-мастер в своём кабинете, обучение
-        # требуется (раньше STANDARD был «студия 3-4 мастера», поэтому
-        # required=false — владелец-организатор). Для R12.5 STUDIO
-        # включаем training.
-        required: true
-
-    ramp_up:
-      months: 5
-      start_pct: 0.20
-      curve: linear
-
-    marketing:
-      phase_1_months: [1, 2, 3]
-      phase_1_amount: 250000
-      phase_2_months: [4, 5, 6, 7, 8]
-      phase_2_amount: 200000
-      phase_3_months: [9, 10, 11, 12]
-      phase_3_amount: 100000
-      med_monthly: 175000
-
-    other_opex:
-      med_monthly: 80000                # коммуналка, охрана, расходники
-
-    fot:
-      monthly: 1200000                  # 4 мастера × 250К + админ 200К
-      headcount: 5
-      employer_taxes_pct: 0.115
-      owner_in_staff: true              # ТОО → собственник в штате
-      owner_salary: 250000
-
-    cogs_pct: 0.18
-
-    tax_regime:
-      type: too_simplified              # ТОО на упрощёнке (или ОУР)
-      rate_pct: 3.0
-
-    rent:
-      use_external_data: true
-      area_m2: 35
-      location_type_for_rent: retail_first_line
-
-    risks_format_specific:
-      - id: rent_overpriced
-      - id: hiring_no_probation
-      - id: master_contract
-      - id: staff_management
-      - id: master_takes_clients
-
-    risks_excluded:
-      - physical_health
-      - home_sanitation
-
-  # ───────────────────────────────────────────────────────────────────────
-  - id: PREMIUM
-    label_ru: "Премиум-салон, 5+ мастеров"
-    description_short: "Премиальное помещение 50+ м², брендирование, расширенный сервис"
-    archetype: with_staff
-    legal_form: too
-    needs_location: true
-    location_type: premium_retail
-
-    avg_check:
-      min: 10000
-      med: 14000
-      max: 25000
-
-    traffic:
-      max_per_day: 35
-      load_med: 0.60
-      working_days_per_month: 30
-
-    capex:
-      base_total: 9500000
-      items:
-        equipment: { label_ru: "Оборудование", med: 2500000 }
-        furniture: { label_ru: "Мебель и интерьер", med: 2000000 }
-        first_stock: { label_ru: "Первый запас", med: 600000 }
-        renovation: { label_ru: "Ремонт премиум", med: 2500000 }
-        permits: { label_ru: "Разрешения", med: 80000 }
-        working_capital: { label_ru: "Оборотные средства", med: 1200000 }
-        marketing_start: { label_ru: "Стартовый маркетинг", med: 800000 }
-        deposit: { label_ru: "Депозит за аренду", med: 600000 }
-        legal: { label_ru: "Юридическое оформление", med: 80000 }
-      training:
-        required: false
-
-    ramp_up:
-      months: 6
-      start_pct: 0.20
-
-    marketing:
-      med_monthly: 350000
-
-    other_opex:
-      med_monthly: 180000
-
-    fot:
-      monthly: 2200000
-      headcount: 7
-      employer_taxes_pct: 0.115
-      owner_in_staff: true
-      owner_salary: 400000
-
-    cogs_pct: 0.22
-
-    tax_regime:
-      type: too_oer                     # ОУР (общеустановленный) с НДС
-      rate_pct: 0.20                    # КПН 20% от прибыли
-
-    rent:
-      use_external_data: true
-      area_m2: 60
-      location_type_for_rent: premium_first_line
-
-    risks_format_specific:
-      - id: rent_overpriced
-      - id: hiring_no_probation
-      - id: master_contract
-      - id: staff_management
-      - id: master_takes_clients
-      - id: premium_market_thin
-
-    risks_excluded:
-      - physical_health
-      - home_sanitation
-
-# =============================================================================
-# R12.5: ФОРМАТЫ v2 — 4 формата с уровнями + интеграция с архетипом A1
-# =============================================================================
-# Источник: ТЗ Адиль R12.5 (2026-04-26).
-# Архитектурный принцип: формат + опыт + стратегия + (для STUDIO/SALON_RENT)
-# уровень. Опыт и стратегия — из data/archetypes/a1_beauty_solo.yaml.
-# Здесь — только нишевые параметры маникюра (базовые чеки, маркетинговые
-# фазы, аренда, working_days).
-#
-# Старый блок `formats:` выше остаётся работать — его использует движок
-# Сессия 1. В Сессии 2 движок переключится на formats_r12, старый
-# блок переименуется в formats_legacy.
-# =============================================================================
-formats_r12:
-
-  # ───────────────────────────────────────────────────────────────────────
-  - id: HOME
-    label_ru: "Мастер на дому"
-    description_short: "Соло-мастер работает у себя дома, без аренды"
-    location_type: home
-    needs_location: false
-    available_for_levels: false  # один уровень — без выбора в анкете
-    available_experience: ["none"]  # фильтр по опыту: только новичок
-
-    base_check:
-      astana: 5250  # base × city_check_multiplier применяется в движке
-
+- id: HOME
+  label_ru: Мастер на дому
+  description_short: Работа из своей квартиры, 1 мастер, без аренды
+  archetype: solo
+  legal_form: ip
+  needs_location: false
+  avg_check:
+    min: 3500
+    med: 5000
+    max: 6500
+    currency: KZT
+  traffic:
+    max_per_day: 6
+    load_med: 0.5
+    load_min: 0.3
+    load_max: 0.75
     working_days_per_month: 26
-    rent_per_month: 0
-    utilities_per_month: 0
-    deposit_months: 0  # без депозита
-
-    # CAPEX-разбивка (без обучения и без депозита).
-    # Обучение добавляется через experience_levels.training_capex.
-    capex_items:
-      equipment:        { label_ru: "Оборудование",            med: 150000 }
-      furniture:        { label_ru: "Мебель и интерьер",       med: 30000 }
-      first_stock:      { label_ru: "Первый запас материалов", med: 60000 }
-      permits:          { label_ru: "Разрешения и регистрация", med: 10000 }
-      working_capital:  { label_ru: "Оборотные средства",      med: 45000 }
-      marketing_start:  { label_ru: "Открытие и брендинг",     med: 30000 }
-      legal:            { label_ru: "Юридическое оформление",  med: 5000 }
-    capex_base_total: 330000  # сумма items без обучения и без депозита
-
-    # Маркетинг: базовые суммы по фазам (для «средней» стратегии).
-    # Для других стратегий движок применяет budget_multiplier из архетипа A1.
-    marketing_phases:
-      ramp_m1_m3_base:   152000  # пик М2 = ramp_m1_m3_base × 1.15
-      tuning_m4_m6_base: 54000
-      mature_m7_m12_base: 16000
-
-    other_opex_per_month: 5000
-    cogs_pct: 0.12
-
-  # ───────────────────────────────────────────────────────────────────────
-  - id: STUDIO
-    label_ru: "Свой кабинет"
-    description_short: "Соло-мастер арендует отдельный кабинет 8-15 м²"
-    location_type: rent_cabinet
-    needs_location: true
-    available_for_levels: true
-    available_experience: ["middle", "experienced"]
-
-    levels:
-      simple:
-        label_ru: "Простой кабинет"
-        description_short: "Базовое оборудование, минимальный ремонт"
-        base_check_astana: 7000
-        capex_furniture_extra: 0   # база
-        capex_renovation_extra: 0
-        capex_marketing_start_extra: 0
-
-      nice:
-        label_ru: "Приличный кабинет"
-        description_short: "Дизайн, качественная мебель, ремонт под бьюти"
-        base_check_astana: 7700  # +10% к простому (учтено base_check)
-        capex_furniture_extra: 100000   # +100K к простому
-        capex_renovation_extra: 130000  # +130K к простому
-        capex_marketing_start_extra: 30000  # +30K (профиль на уровне)
-
-    working_days_per_month: 22
-    rent_per_month_astana: 70000
-    utilities_per_month: 15000
-    deposit_months: 2  # 2 месяца аренды как депозит
-
-    # База CAPEX (для simple). Для nice добавляются capex_*_extra сверху.
-    capex_items:
-      equipment:        { label_ru: "Оборудование",            med: 150000 }
-      furniture:        { label_ru: "Мебель и интерьер",       med: 80000 }
-      renovation:       { label_ru: "Ремонт под бьюти-стандарт", med: 100000 }
-      first_stock:      { label_ru: "Первый запас материалов", med: 60000 }
-      permits:          { label_ru: "Разрешения и регистрация", med: 10000 }
-      working_capital:  { label_ru: "Оборотные средства",      med: 60000 }
-      marketing_start:  { label_ru: "Открытие и брендинг",     med: 50000 }
-      legal:            { label_ru: "Договор аренды",          med: 10000 }
-    capex_base_total: 520000  # для simple. nice = base + 230K extra
-
-    marketing_phases:
-      ramp_m1_m3_base:   130000
-      tuning_m4_m6_base: 50000
-      mature_m7_m12_base: 18000
-
-    other_opex_per_month: 8000
-    cogs_pct: 0.10  # средние материалы (см. info_block про материалы)
-
-  # ───────────────────────────────────────────────────────────────────────
-  - id: SALON_RENT
-    label_ru: "Аренда места в салоне"
-    description_short: "Соло-мастер арендует кресло/место в чужом салоне"
-    location_type: rent_in_salon
-    needs_location: true
-    available_for_levels: true
-    available_experience: ["middle", "experienced"]
-
-    levels:
-      standard:
-        label_ru: "Стандарт-салон"
-        description_short: "Маникюрный салон среднего сегмента"
-        base_check_astana: 7500
-        rent_per_month_astana: 35000
-        deposit_months: 2
-        capex_equipment: 150000
-        capex_marketing_start: 20000
-        available_experience: ["middle", "experienced"]
-
-      premium:
-        label_ru: "Премиум-салон"
-        description_short: "Известный бренд, сильный трафик"
-        base_check_astana: 9500
-        rent_per_month_astana: 60000
-        deposit_months: 2
-        capex_equipment: 80000  # часть оборудования салона
-        capex_marketing_start: 40000  # профиль премиум-уровня
-        available_experience: ["experienced"]  # только опытному
-
-    working_days_per_month: 24
-    utilities_per_month: 0  # входит в аренду
-
-    # Общие CAPEX-итемы (одинаковые для standard/premium, кроме equipment+marketing_start)
-    capex_items_common:
-      first_stock:      { label_ru: "Первый запас материалов", med: 60000 }
-      permits:          { label_ru: "Разрешения и регистрация", med: 10000 }
-      working_capital:  { label_ru: "Оборотные средства",      med: 50000 }
-      legal:            { label_ru: "Юридическое оформление",  med: 10000 }
-    capex_base_total_standard: 300000  # standard без обучения и без депозита
-    capex_base_total_premium: 265000   # premium ниже за счёт equipment
-
-    # Альтернативная модель оплаты — процент с выручки. Информационно,
-    # не используется в базовом расчёте (см. info_blocks).
-    rent_alternative_models:
-      percent_of_revenue:
-        min_pct: 30
-        max_pct: 40
-        med_pct: 35
-
-    marketing_phases_standard:
-      ramp_m1_m3_base:   80000
-      tuning_m4_m6_base: 35000
-      mature_m7_m12_base: 12000
-
-    marketing_phases_premium:
-      ramp_m1_m3_base:   60000  # премиум сам приводит клиентов
-      tuning_m4_m6_base: 25000
-      mature_m7_m12_base: 10000
-
-    other_opex_per_month: 5000
-    cogs_pct: 0.10
-
-  # ───────────────────────────────────────────────────────────────────────
-  - id: MALL_SOLO
-    label_ru: "Стойка в торговом центре"
-    description_short: "Соло-мастер арендует стол/стойку в ТЦ"
-    location_type: mall_kiosk
-    needs_location: true
-    available_for_levels: true
-    available_experience: ["middle"]  # только средний по R12.5
-
-    # Уровни — это сценарии стойки (одиночка/кластер). Не выбираются
-    # в анкете — расчёт ведётся по среднему. Уровни описаны в
-    # info_blocks для пользователя как «сценарий вашей стойки».
-    levels:
-      single:
-        label_ru: "Одиночная стойка"
-        description_short: "Единственный маникюр в этом ТЦ"
-        base_check_astana: 4500
-      cluster:
-        label_ru: "В кластере 4-6 стоек"
-        description_short: "Зона маникюра в ТЦ, демпинг возможен"
-        base_check_astana: 4000
-
-    base_check_average_astana: 4200  # средний между single и cluster
-
-    working_days_per_month: 26  # ТЦ работает почти каждый день
-    rent_per_month_astana: 35000
-    utilities_per_month: 0  # входит в аренду
-    extra_payments_per_month: 15000  # эквайринг + прочие платежи ТЦ
-    deposit_months: 2
-
-    capex_items:
-      equipment:        { label_ru: "Оборудование",            med: 150000 }
-      kiosk_design:     { label_ru: "Оформление стойки",       med: 150000 }
-      first_stock:      { label_ru: "Первый запас материалов", med: 60000 }
-      permits:          { label_ru: "Разрешения и регистрация", med: 10000 }
-      working_capital:  { label_ru: "Оборотные средства",      med: 60000 }
-      marketing_start:  { label_ru: "Вывеска, листовки",       med: 30000 }
-      legal:            { label_ru: "Договор с ТЦ",            med: 10000 }
-    capex_base_total: 470000  # без обучения и без депозита
-
-    marketing_phases:
-      ramp_m1_m3_base:   60000  # трафик ТЦ — основной канал
-      tuning_m4_m6_base: 30000
-      mature_m7_m12_base: 15000
-
-    other_opex_per_month: 8000
-    cogs_pct: 0.10
-
-# =============================================================================
-# R12.5: ИНФОРМАЦИОННЫЕ БЛОКИ ПО ФОРМАТАМ
-# =============================================================================
-# Тексты дословно из R12.5 ТЗ. Появляются на соответствующих стр. PDF
-# при выбранном формате.
+  capex:
+    base_total: 330000
+    items:
+      equipment:
+        label_ru: Оборудование
+        min: 100000
+        med: 150000
+        max: 250000
+        note_ru: Лампа UV/LED, фрезер, стерилизатор, расходники
+      furniture:
+        label_ru: Мебель и интерьер
+        min: 20000
+        med: 30000
+        max: 60000
+      first_stock:
+        label_ru: Первый запас материалов
+        min: 40000
+        med: 60000
+        max: 100000
+      permits:
+        label_ru: Разрешения и регистрация
+        min: 5000
+        med: 10000
+        max: 20000
+      working_capital:
+        label_ru: Оборотные средства
+        min: 30000
+        med: 45000
+        max: 60000
+      marketing_start:
+        label_ru: Стартовый маркетинг
+        min: 20000
+        med: 30000
+        max: 50000
+      legal:
+        label_ru: Юридическое оформление
+        min: 3000
+        med: 5000
+        max: 10000
+    training:
+      required: true
+      amounts_by_experience:
+        none: 150000
+        some: 40000
+        pro: 0
+  ramp_up:
+    months: 3
+    start_pct: 0.3
+    curve: linear
+  marketing:
+    med_monthly: 12000
+    min_monthly: 6600
+    max_monthly: 18600
+  other_opex:
+    med_monthly: 5000
+    min_monthly: 2750
+    max_monthly: 7750
+  fot:
+    monthly: 0
+    headcount: 0
+  cogs_pct: 0.12
+  tax_regime:
+    type: ip_simplified
+    rate_pct: 3.0
+  scenario_coefficients:
+    pessimistic_traffic: 0.65
+    pessimistic_check: 0.9
+    base_traffic: 1.0
+    base_check: 1.0
+    optimistic_traffic: 1.25
+    optimistic_check: 1.1
+  risks_format_specific:
+  - id: physical_health
+  - id: income_ceiling_solo
+  - id: home_sanitation
+  risks_excluded:
+  - rent_overpriced
+  - hiring_no_probation
+  - master_contract
+  - staff_management
+- id: SOLO
+  label_ru: Аренда места в чужом салоне
+  description_short: Аренда кабинета 8-12 м², 1 мастер (вы)
+  archetype: solo
+  legal_form: ip
+  needs_location: true
+  location_type: rented_cabinet
+  avg_check:
+    min: 5500
+    med: 7000
+    max: 10000
+  traffic:
+    max_per_day: 7
+    load_med: 0.55
+    load_min: 0.35
+    load_max: 0.8
+    working_days_per_month: 26
+  capex:
+    base_total: 850000
+    items:
+      equipment:
+        label_ru: Оборудование
+        med: 250000
+      furniture:
+        label_ru: Мебель и интерьер
+        med: 150000
+      first_stock:
+        label_ru: Первый запас материалов
+        med: 80000
+      renovation:
+        label_ru: Ремонт и адаптация
+        med: 100000
+      permits:
+        label_ru: Разрешения и регистрация
+        med: 20000
+      working_capital:
+        label_ru: Оборотные средства
+        med: 100000
+      marketing_start:
+        label_ru: Стартовый маркетинг
+        med: 80000
+      deposit:
+        label_ru: Депозит за аренду
+        med: 60000
+      legal:
+        label_ru: Юридическое оформление
+        med: 10000
+    training:
+      required: true
+      amounts_by_experience:
+        none: 200000
+        some: 50000
+        pro: 0
+  ramp_up:
+    months: 4
+    start_pct: 0.25
+    curve: linear
+  marketing:
+    med_monthly: 22000
+    min_monthly: 12100
+    max_monthly: 34100
+  other_opex:
+    med_monthly: 11500
+    min_monthly: 6325
+    max_monthly: 17825
+  fot:
+    monthly: 0
+    headcount: 0
+  cogs_pct: 0.1
+  tax_regime:
+    type: ip_simplified
+    rate_pct: 3.0
+  rent: null
+  risks_format_specific:
+  - id: rent_dependency
+  - id: physical_health
+  - id: income_ceiling_solo
+  risks_excluded:
+  - hiring_no_probation
+  - master_contract
+  - staff_management
+- id: STANDARD
+  label_ru: Своя точка (студия)
+  description_short: Своё помещение 25-40 м², 3-4 мастера, владелец-организатор
+  archetype: solo
+  legal_form: too
+  needs_location: true
+  location_type: retail_space
+  avg_check:
+    min: 6000
+    med: 8000
+    max: 12000
+  traffic:
+    max_per_day: 24
+    load_med: 0.55
+    working_days_per_month: 28
+  capex:
+    base_total: 4500000
+    items:
+      equipment:
+        label_ru: Оборудование
+        med: 1200000
+      furniture:
+        label_ru: Мебель и интерьер
+        med: 800000
+      first_stock:
+        label_ru: Первый запас материалов
+        med: 350000
+      renovation:
+        label_ru: Ремонт
+        med: 800000
+      permits:
+        label_ru: Разрешения
+        med: 50000
+      working_capital:
+        label_ru: Оборотные средства
+        med: 600000
+      marketing_start:
+        label_ru: Стартовый маркетинг
+        med: 400000
+      deposit:
+        label_ru: Депозит за аренду
+        med: 250000
+      legal:
+        label_ru: Юридическое оформление
+        med: 50000
+    training:
+      required: true
+  ramp_up:
+    months: 5
+    start_pct: 0.2
+    curve: linear
+  marketing:
+    med_monthly: 28000
+    min_monthly: 15400
+    max_monthly: 43400
+  other_opex:
+    med_monthly: 12500
+    min_monthly: 6875
+    max_monthly: 19375
+  fot:
+    monthly: 0
+    headcount: 0
+  cogs_pct: 0.1
+  tax_regime:
+    type: too_simplified
+    rate_pct: 3.0
+  rent:
+    use_external_data: true
+    area_m2: 35
+    location_type_for_rent: retail_first_line
+  risks_format_specific:
+  - id: rent_overpriced
+  - id: hiring_no_probation
+  - id: master_contract
+  - id: staff_management
+  - id: master_takes_clients
+  risks_excluded:
+  - physical_health
+  - home_sanitation
+- id: PREMIUM
+  label_ru: Точка в ТЦ
+  description_short: Премиальное помещение 50+ м², брендирование, расширенный сервис
+  archetype: solo
+  legal_form: too
+  needs_location: true
+  location_type: premium_retail
+  avg_check:
+    min: 10000
+    med: 14000
+    max: 25000
+  traffic:
+    max_per_day: 35
+    load_med: 0.6
+    working_days_per_month: 30
+  capex:
+    base_total: 9500000
+    items:
+      equipment:
+        label_ru: Оборудование
+        med: 2500000
+      furniture:
+        label_ru: Мебель и интерьер
+        med: 2000000
+      first_stock:
+        label_ru: Первый запас
+        med: 600000
+      renovation:
+        label_ru: Ремонт премиум
+        med: 2500000
+      permits:
+        label_ru: Разрешения
+        med: 80000
+      working_capital:
+        label_ru: Оборотные средства
+        med: 1200000
+      marketing_start:
+        label_ru: Стартовый маркетинг
+        med: 800000
+      deposit:
+        label_ru: Депозит за аренду
+        med: 600000
+      legal:
+        label_ru: Юридическое оформление
+        med: 80000
+    training:
+      required: false
+  ramp_up:
+    months: 6
+    start_pct: 0.2
+  marketing:
+    med_monthly: 45000
+    min_monthly: 24750
+    max_monthly: 69750
+  other_opex:
+    med_monthly: 18000
+    min_monthly: 9900
+    max_monthly: 27900
+  fot:
+    monthly: 0
+    headcount: 0
+  cogs_pct: 0.12
+  tax_regime:
+    type: too_oer
+    rate_pct: 0.2
+  rent:
+    use_external_data: true
+    area_m2: 60
+    location_type_for_rent: premium_first_line
+  risks_format_specific:
+  - id: rent_overpriced
+  - id: hiring_no_probation
+  - id: master_contract
+  - id: staff_management
+  - id: master_takes_clients
+  - id: premium_market_thin
+  risks_excluded:
+  - physical_health
+  - home_sanitation
+formats_r12:
+- id: HOME
+  label_ru: Мастер на дому
+  description_short: Соло-мастер работает у себя дома, без аренды
+  location_type: home
+  needs_location: false
+  available_for_levels: false
+  available_experience:
+  - none
+  - middle
+  base_check:
+    astana: 5250
+  working_days_per_month: 26
+  rent_per_month: 0
+  utilities_per_month: 0
+  deposit_months: 0
+  capex_items:
+    equipment:
+      label_ru: Оборудование
+      med: 150000
+    furniture:
+      label_ru: Мебель и интерьер
+      med: 30000
+    first_stock:
+      label_ru: Первый запас материалов
+      med: 60000
+    permits:
+      label_ru: Разрешения и регистрация
+      med: 10000
+    working_capital:
+      label_ru: Оборотные средства
+      med: 45000
+    marketing_start:
+      label_ru: Открытие и брендинг
+      med: 30000
+    legal:
+      label_ru: Юридическое оформление
+      med: 5000
+  capex_base_total: 330000
+  marketing_phases:
+    ramp_m1_m3_base: 152000
+    tuning_m4_m6_base: 54000
+    mature_m7_m12_base: 16000
+  other_opex_per_month: 5000
+  cogs_pct: 0.12
+  marketing:
+    med_monthly: 12000
+    min_monthly: 6600
+    max_monthly: 18600
+  other_opex:
+    med_monthly: 5000
+    min_monthly: 2750
+    max_monthly: 7750
+  commission_pct: 0.0
+  rent_per_month_astana: 0
+- id: STUDIO
+  label_ru: Свой кабинет
+  description_short: Соло-мастер арендует отдельный кабинет 8-15 м²
+  location_type: rent_cabinet
+  needs_location: true
+  available_for_levels: true
+  available_experience:
+  - middle
+  - experienced
+  levels:
+    simple:
+      label_ru: Простая своя точка
+      description_short: Спальный район, отдельный или общий вход, 10-15 м²
+      base_check_astana: 7000
+      rent_per_month_astana: 50000
+      rent_min: 30000
+      rent_max: 70000
+      deposit_months: 2
+      commission_pct: 0.0
+      marketing:
+        med_monthly: 22000
+        min_monthly: 12100
+        max_monthly: 34100
+      other_opex:
+        med_monthly: 10000
+        min_monthly: 5500
+        max_monthly: 15500
+    nice:
+      label_ru: Приличная своя точка в центре
+      description_short: Центр города, бизнес-локация, 15-20 м²
+      base_check_astana: 7700
+      rent_per_month_astana: 100000
+      rent_min: 70000
+      rent_max: 130000
+      deposit_months: 2
+      commission_pct: 0.0
+      marketing:
+        med_monthly: 35000
+        min_monthly: 19250
+        max_monthly: 54250
+      other_opex:
+        med_monthly: 15000
+        min_monthly: 8250
+        max_monthly: 23250
+  working_days_per_month: 26
+  rent_per_month_astana: 70000
+  utilities_per_month: 15000
+  deposit_months: 2
+  capex_items:
+    equipment:
+      label_ru: Оборудование
+      med: 150000
+    furniture:
+      label_ru: Мебель и интерьер
+      med: 80000
+    renovation:
+      label_ru: Ремонт под бьюти-стандарт
+      med: 100000
+    first_stock:
+      label_ru: Первый запас материалов
+      med: 60000
+    permits:
+      label_ru: Разрешения и регистрация
+      med: 10000
+    working_capital:
+      label_ru: Оборотные средства
+      med: 60000
+    marketing_start:
+      label_ru: Открытие и брендинг
+      med: 50000
+    legal:
+      label_ru: Договор аренды
+      med: 10000
+  capex_base_total: 520000
+  marketing_phases:
+    ramp_m1_m3_base: 130000
+    tuning_m4_m6_base: 50000
+    mature_m7_m12_base: 18000
+  other_opex_per_month: 8000
+  cogs_pct: 0.1
+- id: SALON_RENT
+  label_ru: Аренда места в салоне
+  description_short: Соло-мастер арендует кресло/место в чужом салоне
+  location_type: rent_in_salon
+  needs_location: true
+  available_for_levels: true
+  available_experience:
+  - middle
+  - experienced
+  levels:
+    standard:
+      label_ru: Стандарт-салон
+      description_short: Аренда места в салоне среднего сегмента
+      base_check_astana: 7500
+      rent_per_month_astana: 0
+      deposit_months: 0
+      commission_pct: 0.5
+      marketing:
+        med_monthly: 15000
+        min_monthly: 8250
+        max_monthly: 23250
+      other_opex:
+        med_monthly: 8000
+        min_monthly: 4400
+        max_monthly: 12400
+    premium:
+      label_ru: Премиум-салон
+      description_short: Аренда места в премиум-салоне
+      base_check_astana: 9500
+      rent_per_month_astana: 0
+      deposit_months: 0
+      commission_pct: 0.5
+      marketing:
+        med_monthly: 30000
+        min_monthly: 16500
+        max_monthly: 46500
+      other_opex:
+        med_monthly: 15000
+        min_monthly: 8250
+        max_monthly: 23250
+  working_days_per_month: 26
+  utilities_per_month: 0
+  capex_items_common:
+    first_stock:
+      label_ru: Первый запас материалов
+      med: 60000
+    permits:
+      label_ru: Разрешения и регистрация
+      med: 10000
+    working_capital:
+      label_ru: Оборотные средства
+      med: 50000
+    legal:
+      label_ru: Юридическое оформление
+      med: 10000
+  capex_base_total_standard: 300000
+  capex_base_total_premium: 265000
+  rent_alternative_models:
+    percent_of_revenue:
+      min_pct: 30
+      max_pct: 40
+      med_pct: 35
+  marketing_phases_standard:
+    ramp_m1_m3_base: 80000
+    tuning_m4_m6_base: 35000
+    mature_m7_m12_base: 12000
+  marketing_phases_premium:
+    ramp_m1_m3_base: 60000
+    tuning_m4_m6_base: 25000
+    mature_m7_m12_base: 10000
+  other_opex_per_month: 5000
+  cogs_pct: 0.1
+- id: MALL_SOLO
+  label_ru: Стойка в торговом центре
+  description_short: Соло-мастер арендует стол/стойку в ТЦ
+  location_type: mall_kiosk
+  needs_location: true
+  available_for_levels: false
+  available_experience:
+  - middle
+  working_days_per_month: 26
+  rent_per_month_astana: 200000
+  utilities_per_month: 0
+  extra_payments_per_month: 15000
+  deposit_months: 2
+  capex_items:
+    equipment:
+      label_ru: Оборудование
+      med: 150000
+    kiosk_design:
+      label_ru: Оформление стойки
+      med: 150000
+    first_stock:
+      label_ru: Первый запас материалов
+      med: 60000
+    permits:
+      label_ru: Разрешения и регистрация
+      med: 10000
+    working_capital:
+      label_ru: Оборотные средства
+      med: 60000
+    marketing_start:
+      label_ru: Вывеска, листовки
+      med: 30000
+    legal:
+      label_ru: Договор с ТЦ
+      med: 10000
+  capex_base_total: 470000
+  marketing_phases:
+    ramp_m1_m3_base: 60000
+    tuning_m4_m6_base: 30000
+    mature_m7_m12_base: 15000
+  other_opex_per_month: 8000
+  cogs_pct: 0.12
+  base_check:
+    astana: 4500
+  rent_min: 150000
+  rent_max: 300000
+  commission_pct: 0.0
+  marketing:
+    med_monthly: 45000
+    min_monthly: 24750
+    max_monthly: 69750
+  other_opex:
+    med_monthly: 18000
+    min_monthly: 9900
+    max_monthly: 27900
 info_blocks_r12:
-
-  # Блок про материалы — для всех форматов кроме HOME (где cogs 12% жёстко).
   materials:
-    page: 7  # «Расходы»
-    show_for_formats: ["STUDIO", "SALON_RENT", "MALL_SOLO"]
-    title_ru: "Про материалы"
-    body_ru: |
-      Расчёт исходит из материалов среднего уровня — стандартный
+    page: 7
+    show_for_formats:
+    - STUDIO
+    - SALON_RENT
+    - MALL_SOLO
+    title_ru: Про материалы
+    body_ru: 'Расчёт исходит из материалов среднего уровня — стандартный
+
       гель-лак, расходники базового бренда, общая стоимость ~10% от
+
       выручки.
 
+
       Если вы работаете на премиум-материалах (KODI, Vogue, NeoNail) —
+
       закладывайте 12-14% от выручки. Премиум-материалы могут дать
+
       +5-10% к чеку при условии что вы можете их продемонстрировать
+
       клиенту (показать упаковку, рассказать про бренд).
 
+
       Если на эконом-сегменте (несетевые китайские бренды) — может
+
       быть 7-8%, но это влияет на качество, срок носки и количество
+
       жалоб. На длинном сроке экономия на материалах часто оборачивается
+
       потерей клиентов.
 
+
       В среднем чеке учтён уровень доверия к материалам стандартного
+
       качества. Quick Check считает середину спектра — это безопасный
+
       сценарий для большинства мастеров.
 
-  # Блок про две модели аренды — только SALON_RENT.
+      '
   salon_rent_models:
-    page: 7  # «Расходы»
-    show_for_formats: ["SALON_RENT"]
-    title_ru: "Две модели аренды в салоне"
-    body_ru: |
-      ФИКС-АРЕНДА (расчёт основан на ней)
+    page: 7
+    show_for_formats:
+    - SALON_RENT
+    title_ru: Две модели аренды в салоне
+    body_ru: 'ФИКС-АРЕНДА (расчёт основан на ней)
+
       30 000 - 60 000 ₸/мес. Стабильна, удобна для планирования.
+
       В выходящие за норму месяцы (просадка апреля, болезнь) —
+
       платите всё равно.
 
+
       ПРОЦЕНТ С ВЫРУЧКИ
+
       30-40% от того что заработали. Гибкость в просадках, но в
+
       зрелом месяце салон забирает значительно больше — для нашей
+
       выручки 1 050К × 35% = 367К/мес против 35К фикс-аренды.
 
+
       В Казахстане преобладает фикс-аренда в стандартном сегменте.
+
       Процент чаще в премиум-салонах с сильным брендом.
 
+
       Уточняйте конкретные условия в выбранном вами салоне ДО
+
       подписания.
 
-  # Блок про сценарий стойки — только MALL_SOLO.
+      '
   mall_solo_scenarios:
-    page: 13  # «Маркетинг»
-    show_for_formats: ["MALL_SOLO"]
-    title_ru: "Сценарий вашей стойки в ТЦ"
-    body_ru: |
-      В ТЦ маникюр работает в двух сценариях, и от того в каком вы
-      окажетесь зависит экономика. Уточните в администрации ТЦ ДО
-      подписания договора.
-
-      ОДИНОЧНАЯ СТОЙКА. Вы единственный маникюр в этом ТЦ.
-      + Можете держать средний чек 4 500-5 000 ₸ без давления
-        соседей
-      + Вся импульсная клиентура ТЦ ваша
-      − Если место плохо просматривается — рискуете простоять день
-        впустую
-      − «Зоны притяжения» нет, клиенты идут только к вам по сарафану
-      − Аренда обычно немного выше: ТЦ знает что вы единственный
-
-      СТОЙКА В КЛАСТЕРЕ. Рядом ещё 4-6 мастеров маникюра.
-      + Кластер привлекает клиентов как «зона маникюра в ТЦ» —
-        трафик выше
-      + Простой маловероятен — кто-то всё равно зайдёт
-      + Аренда обычно ниже за счёт массовости
-      − Демпинг возможен — соседи снизят цену, придётся следовать
-      − Ваш средний чек тяготеет к самому низкому в кластере
-        (3 800-4 200)
-      − Удержание клиента слабое — он легко уходит к соседу
-        следующий раз
-
-      В Казахстане встречаются оба варианта. В малых городах кластеры
-      встречаются чаще — это новая модель которую активно осваивают
-      ТЦ-операторы.
-
-      Расчёт основан на средней экономике между сценариями: чек
-      4 200 ₸. Если знаете заранее в какой сценарий идёте —
-      скорректируйте ожидания.
-
-# =============================================================================
-# РИСКИ (общая база, привязка к форматам — выше)
-# =============================================================================
+    page: 13
+    show_for_formats:
+    - MALL_SOLO
+    title_ru: Сценарий вашей стойки в ТЦ
+    body_ru: "В ТЦ маникюр работает в двух сценариях, и от того в каком вы\nокажетесь зависит экономика. Уточните в администрации\
+      \ ТЦ ДО\nподписания договора.\n\nОДИНОЧНАЯ СТОЙКА. Вы единственный маникюр в этом ТЦ.\n+ Можете держать средний чек\
+      \ 4 500-5 000 ₸ без давления\n  соседей\n+ Вся импульсная клиентура ТЦ ваша\n− Если место плохо просматривается — рискуете\
+      \ простоять день\n  впустую\n− «Зоны притяжения» нет, клиенты идут только к вам по сарафану\n− Аренда обычно немного\
+      \ выше: ТЦ знает что вы единственный\n\nСТОЙКА В КЛАСТЕРЕ. Рядом ещё 4-6 мастеров маникюра.\n+ Кластер привлекает клиентов\
+      \ как «зона маникюра в ТЦ» —\n  трафик выше\n+ Простой маловероятен — кто-то всё равно зайдёт\n+ Аренда обычно ниже\
+      \ за счёт массовости\n− Демпинг возможен — соседи снизят цену, придётся следовать\n− Ваш средний чек тяготеет к самому\
+      \ низкому в кластере\n  (3 800-4 200)\n− Удержание клиента слабое — он легко уходит к соседу\n  следующий раз\n\nВ Казахстане\
+      \ встречаются оба варианта. В малых городах кластеры\nвстречаются чаще — это новая модель которую активно осваивают\n\
+      ТЦ-операторы.\n\nРасчёт основан на средней экономике между сценариями: чек\n4 200 ₸. Если знаете заранее в какой сценарий\
+      \ идёте —\nскорректируйте ожидания.\n"
 risks:
-
-  # ─── HOME-специфичные ───
-  - id: physical_health
-    title_ru: "Зависимость от физсостояния"
-    body_ru: "Болезнь, беременность, травма рук = ноль дохода. Один человек — единая точка отказа."
-    probability: medium
-    impact: high
-    what_to_do_ru: "Подушка безопасности на 3 мес. Страхование от нетрудоспособности."
-
-  - id: income_ceiling_solo
-    title_ru: "Потолок дохода одного мастера"
-    body_ru: "Максимум 5-7 клиенток в день физически. Чтобы расти дальше — поднимайте средний чек (дизайн, укрепление, уход) или планируйте переезд в свою студию через 1-2 года."
-    probability: high
-    impact: medium
-    what_to_do_ru: "Апсейл: дизайн, укрепление, парафин. План перехода в SOLO/STANDARD через 1-2 года."
-
-  - id: home_sanitation
-    title_ru: "Санитарные нормы без контроля"
-    body_ru: "Дома проще забить на стерилизацию. Один случай грибка/инфекции — репутация уничтожена."
-    probability: medium
-    impact: high
-    what_to_do_ru: "Автоклав или сухожар. Одноразовые инструменты где можно. Фото стерилизации в сторис."
-
-  # ─── STANDARD/PREMIUM-специфичные ───
-  - id: rent_overpriced
-    title_ru: "Аренда дорогого помещения в надежде на поток"
-    body_ru: "Маникюрный сервис не работает на случайном потоке — клиенты записываются. Переплата за проходное место не конвертируется в выручку."
-    probability: medium
-    impact: medium
-    what_to_do_ru: "Считайте долю аренды от прогнозной выручки. Не выше 15% — норма, выше 20% — зона убытка."
-
-  - id: hiring_no_probation
-    title_ru: "Найм мастеров без испытательного срока"
-    body_ru: "Плохая техника или конфликтное поведение мастера разрушают репутацию быстрее, чем любая реклама."
-    probability: medium
-    impact: medium
-    what_to_do_ru: "Испытательный срок 1-2 недели с тестовыми клиентами. Проверка отзывов и портфолио до найма."
-
-  - id: master_contract
-    title_ru: "Игнорирование договора с мастерами"
-    body_ru: "Без чётких условий работы (процент, клиентская база, запрет переманивания) уходящий мастер забирает клиентов и открывает точку рядом."
-    probability: medium
-    impact: medium
-    what_to_do_ru: "Письменный договор: процент, доступ к базе, NDA, штраф за переманивание. Юрист на старте — обязателен."
-
-  - id: master_takes_clients
-    title_ru: "Уход ключевого мастера с клиентской базой"
-    body_ru: "Один мастер, занимающий больше 40% записи — критическая зависимость. Диверсификация мастеров обязательна."
-    probability: medium
-    impact: high
-    what_to_do_ru: "Не давайте одному мастеру более 35% записи. Программа лояльности на бренд салона, не на мастера."
-
-  - id: staff_management
-    title_ru: "Работа без учёта занятости мастеров"
-    body_ru: "Перегрузка ведёт к выгоранию и снижению качества; недозагрузка — к уходу мастера к конкурентам с большим потоком."
-    probability: medium
-    impact: medium
-    what_to_do_ru: "Учёт занятости по каждому мастеру. Балансировать поток через систему записи."
-
-  - id: premium_market_thin
-    title_ru: "Тонкий премиум-сегмент"
-    body_ru: "Реальный платёжеспособный premium в РК узкий. Чек 15-25К найдут только в Алматы/Астане в правильных районах."
-    probability: high
-    impact: high
-    what_to_do_ru: "Перед открытием — реальные интервью с потенциальной аудиторией. Тестируйте через pop-up или партнёрство."
-
-  # ─── Общие риски (применимы ко всем форматам) ───
-  - id: low_loyalty_program
-    title_ru: "Отсутствие программы лояльности с первого дня"
-    body_ru: "Маникюр — регулярная процедура (раз в 2-4 недели). Клиент, вернувшийся трижды, остаётся надолго. Без стимула возвращения теряются до 40% разовых посетителей."
-    probability: medium
-    impact: medium
-    # R7 F.3: расшифровка «Что делать» в едином формате — конкретные
-    # инструменты, не общие фразы.
-    what_to_do_ru: "С первого клиента — карточка постоянного клиента (Notion или Excel). После 5-го визита — бонус. День рождения — скидка 10-15%. Без этого ретеншен на маленькой базе невозможен."
-    formats_applied: [HOME, SOLO, STANDARD, PREMIUM]
-
-  - id: stock_no_norms
-    title_ru: "Закупка расходников «на глаз»"
-    body_ru: "Избыток дорогих материалов замораживает деньги; нехватка в разгар записи — потеря клиентов. Нужны нормы расхода на процедуру."
-    probability: medium
-    impact: medium
-    # R7 F.3: «Что делать» — конкретный инструмент и периодичность.
-    what_to_do_ru: "Excel или Google Sheets со списком расходников. Закупка 1 раз в 2 недели по списку. Запас на 3 рабочих дня минимум, чтобы не срывать запись из-за отсутствия материала."
-    formats_applied: [HOME, SOLO, STANDARD, PREMIUM]
-
-# =============================================================================
-# АПСЕЙЛЫ (для роста среднего чека)
-# =============================================================================
+- id: physical_health
+  title_ru: Зависимость от физсостояния
+  body_ru: Болезнь, беременность, травма рук = ноль дохода. Один человек — единая точка отказа.
+  probability: medium
+  impact: high
+  what_to_do_ru: Подушка безопасности на 3 мес. Страхование от нетрудоспособности.
+- id: income_ceiling_solo
+  title_ru: Потолок дохода одного мастера
+  body_ru: Максимум 5-7 клиенток в день физически. Чтобы расти дальше — поднимайте средний чек (дизайн, укрепление, уход)
+    или планируйте переезд в свою студию через 1-2 года.
+  probability: high
+  impact: medium
+  what_to_do_ru: 'Апсейл: дизайн, укрепление, парафин. План перехода в SOLO/STANDARD через 1-2 года.'
+- id: home_sanitation
+  title_ru: Санитарные нормы без контроля
+  body_ru: Дома проще забить на стерилизацию. Один случай грибка/инфекции — репутация уничтожена.
+  probability: medium
+  impact: high
+  what_to_do_ru: Автоклав или сухожар. Одноразовые инструменты где можно. Фото стерилизации в сторис.
+- id: rent_overpriced
+  title_ru: Аренда дорогого помещения в надежде на поток
+  body_ru: Маникюрный сервис не работает на случайном потоке — клиенты записываются. Переплата за проходное место не конвертируется
+    в выручку.
+  probability: medium
+  impact: medium
+  what_to_do_ru: Считайте долю аренды от прогнозной выручки. Не выше 15% — норма, выше 20% — зона убытка.
+- id: hiring_no_probation
+  title_ru: Найм мастеров без испытательного срока
+  body_ru: Плохая техника или конфликтное поведение мастера разрушают репутацию быстрее, чем любая реклама.
+  probability: medium
+  impact: medium
+  what_to_do_ru: Испытательный срок 1-2 недели с тестовыми клиентами. Проверка отзывов и портфолио до найма.
+- id: master_contract
+  title_ru: Игнорирование договора с мастерами
+  body_ru: Без чётких условий работы (процент, клиентская база, запрет переманивания) уходящий мастер забирает клиентов и
+    открывает точку рядом.
+  probability: medium
+  impact: medium
+  what_to_do_ru: 'Письменный договор: процент, доступ к базе, NDA, штраф за переманивание. Юрист на старте — обязателен.'
+- id: master_takes_clients
+  title_ru: Уход ключевого мастера с клиентской базой
+  body_ru: Один мастер, занимающий больше 40% записи — критическая зависимость. Диверсификация мастеров обязательна.
+  probability: medium
+  impact: high
+  what_to_do_ru: Не давайте одному мастеру более 35% записи. Программа лояльности на бренд салона, не на мастера.
+- id: staff_management
+  title_ru: Работа без учёта занятости мастеров
+  body_ru: Перегрузка ведёт к выгоранию и снижению качества; недозагрузка — к уходу мастера к конкурентам с большим потоком.
+  probability: medium
+  impact: medium
+  what_to_do_ru: Учёт занятости по каждому мастеру. Балансировать поток через систему записи.
+- id: premium_market_thin
+  title_ru: Тонкий премиум-сегмент
+  body_ru: Реальный платёжеспособный premium в РК узкий. Чек 15-25К найдут только в Алматы/Астане в правильных районах.
+  probability: high
+  impact: high
+  what_to_do_ru: Перед открытием — реальные интервью с потенциальной аудиторией. Тестируйте через pop-up или партнёрство.
+- id: low_loyalty_program
+  title_ru: Отсутствие программы лояльности с первого дня
+  body_ru: Маникюр — регулярная процедура (раз в 2-4 недели). Клиент, вернувшийся трижды, остаётся надолго. Без стимула возвращения
+    теряются до 40% разовых посетителей.
+  probability: medium
+  impact: medium
+  what_to_do_ru: С первого клиента — карточка постоянного клиента (Notion или Excel). После 5-го визита — бонус. День рождения
+    — скидка 10-15%. Без этого ретеншен на маленькой базе невозможен.
+  formats_applied:
+  - HOME
+  - SOLO
+  - STANDARD
+  - PREMIUM
+- id: stock_no_norms
+  title_ru: Закупка расходников «на глаз»
+  body_ru: Избыток дорогих материалов замораживает деньги; нехватка в разгар записи — потеря клиентов. Нужны нормы расхода
+    на процедуру.
+  probability: medium
+  impact: medium
+  what_to_do_ru: Excel или Google Sheets со списком расходников. Закупка 1 раз в 2 недели по списку. Запас на 3 рабочих дня
+    минимум, чтобы не срывать запись из-за отсутствия материала.
+  formats_applied:
+  - HOME
+  - SOLO
+  - STANDARD
+  - PREMIUM
 upsells:
-  - name_ru: "Дизайн ногтей"
-    avg_addition: 2500
-    take_rate: 0.40                     # доля клиентов которые покупают
-    margin_pct: 0.85
-    note_ru: "Стемпинг, слайдеры, ручная роспись. Сезонный пик — праздники."
-
-  - name_ru: "Укрепление (гель/акрил)"
-    avg_addition: 3000
-    take_rate: 0.25
-    margin_pct: 0.80
-
-  - name_ru: "Парафинотерапия рук"
-    avg_addition: 3000
-    take_rate: 0.15
-    margin_pct: 0.90
-    note_ru: "Зимой спрос ×2"
-
-  - name_ru: "SPA-уход для кутикулы"
-    avg_addition: 1500
-    take_rate: 0.20
-    margin_pct: 0.85
-
-# =============================================================================
-# СЦЕНАРИИ РАЗВИТИЯ (блок «А что дальше?»)
-# =============================================================================
-# Наставнический блок: показывает клиенту горизонт 2-3 года, а не только первый.
-# Используется growth_service для рендера блока между entrepreneur_income и
-# инфографикой «Ваши первые 12 месяцев».
+- name_ru: Дизайн ногтей
+  avg_addition: 2500
+  take_rate: 0.4
+  margin_pct: 0.85
+  note_ru: Стемпинг, слайдеры, ручная роспись. Сезонный пик — праздники.
+- name_ru: Укрепление (гель/акрил)
+  avg_addition: 3000
+  take_rate: 0.25
+  margin_pct: 0.8
+- name_ru: Парафинотерапия рук
+  avg_addition: 3000
+  take_rate: 0.15
+  margin_pct: 0.9
+  note_ru: Зимой спрос ×2
+- name_ru: SPA-уход для кутикулы
+  avg_addition: 1500
+  take_rate: 0.2
+  margin_pct: 0.85
 growth_scenarios:
   stagnation:
-    label_ru: "Сценарий А: Стагнация"
-    description_ru: |
-      Вы работаете как в первый год. Не растёте как мастер,
-      не развиваете клиентскую базу, средний чек не индексируете
-      на инфляцию.
-    # R7 F.4: две цифры — номинал и реальная покупательная способность,
-    # с честным объяснением что инфляция полностью съедает рост.
-    outcome_ru: "В номинале через 2-3 года: 380-420 тыс ₸/мес. В реальной покупательной способности — те же ~315 тыс ₸/мес: инфляция полностью съедает номинальный рост."
-    warning_ru: "Стагнация мастера, а не бизнеса в строгом смысле — ваше время становится дороже относительно того, что вы из него получаете."
+    label_ru: 'Сценарий А: Стагнация'
+    description_ru: 'Вы работаете как в первый год. Не растёте как мастер,
 
+      не развиваете клиентскую базу, средний чек не индексируете
+
+      на инфляцию.
+
+      '
+    outcome_ru: 'В номинале через 2-3 года: 380-420 тыс ₸/мес. В реальной покупательной способности — те же ~315 тыс ₸/мес:
+      инфляция полностью съедает номинальный рост.'
+    warning_ru: Стагнация мастера, а не бизнеса в строгом смысле — ваше время становится дороже относительно того, что вы
+      из него получаете.
   development:
-    label_ru: "Сценарий Б: Развитие"
-    description_ru: |
-      Растёте как специалист и организатор. Клиенты возвращаются,
+    label_ru: 'Сценарий Б: Развитие'
+    description_ru: 'Растёте как специалист и организатор. Клиенты возвращаются,
+
       работает сарафан, средний чек растёт через допродажи.
-    outcome_year2_ru: "Через 2 года: 450-500 тыс ₸/мес (+40-60%)"
-    outcome_year3_ru: "Через 3 года: 600-700 тыс ₸/мес и выше"
-    # R12 Сессия 1: формат-зависимое описание «Рост». Если формат
-    # есть в этой мапе — он перебивает description_ru. Тексты —
-    # дословно из R12 ТЗ. STUDIO/SALON_RENT/MALL_SOLO готовы под
-    # будущие сессии R12.
+
+      '
+    outcome_year2_ru: 'Через 2 года: 450-500 тыс ₸/мес (+40-60%)'
+    outcome_year3_ru: 'Через 3 года: 600-700 тыс ₸/мес и выше'
     description_by_format:
-      HOME: |
-        Переход в формат STUDIO (свой кабинет) или SALON_RENT (аренда
+      HOME: 'Переход в формат STUDIO (свой кабинет) или SALON_RENT (аренда
+
         места в чужом салоне). Физический потолок выручки увеличивается
+
         на 30-50%, появляется уровень профессионализма выше домашнего.
-      STUDIO: |
-        Переход в формат BEAUTY-салон с наймом 1-2 мастеров.
+
+        '
+      STUDIO: 'Переход в формат BEAUTY-салон с наймом 1-2 мастеров.
+
         Принципиально другая экономика — вы становитесь организатором,
+
         не мастером. Требует CAPEX от 2 млн ₸ и опыта управления людьми.
-      SALON_RENT: |
-        Переход в формат STUDIO (свой кабинет) или открытие собственного
+
+        '
+      SALON_RENT: 'Переход в формат STUDIO (свой кабинет) или открытие собственного
+
         салона. Первый дешевле и логичнее как следующий шаг.
-      MALL_SOLO: |
-        Расширение до многоместной точки в ТЦ — арендуете 3-5 столов,
+
+        '
+      MALL_SOLO: 'Расширение до многоместной точки в ТЦ — арендуете 3-5 столов,
+
         нанимаете мастеров под процент. Принципиально другая экономика.
+
         Первый шаг — вторая стойка через 8-12 месяцев работы первой.
 
+        '
   growth_factors:
-    - id: quality_growth
-      title_ru: "Постоянно повышать квалификацию"
-      body_ru: |
-        Курсы 2-3 раза в год. Новые техники, новые материалы.
-        Мастер который стоит на месте — проигрывает конкурентам
-        через 2 года.
-      universal: true
+  - id: quality_growth
+    title_ru: Постоянно повышать квалификацию
+    body_ru: 'Курсы 2-3 раза в год. Новые техники, новые материалы.
 
-    - id: no_economy_on_quality
-      title_ru: "Не экономить на качестве"
-      body_ru: |
-        Дешёвое оборудование и материалы = клиент не вернётся,
-        даже если цена низкая. Репутация строится годами,
-        разрушается за недели.
-      universal: true
+      Мастер который стоит на месте — проигрывает конкурентам
 
-    - id: loyalty_program
-      title_ru: "Программа лояльности с первого дня"
-      body_ru: |
-        Маникюр — регулярная услуга. Клиент вернувшийся 3 раза,
-        остаётся надолго. Накопительные бонусы окупаются кратно.
-      universal: true
+      через 2 года.
 
-    - id: upsells_mastery
-      title_ru: "Допродажи — главный рычаг роста"
-      body_ru: |
-        Дизайн (+2 500 ₸), укрепление (+3 000 ₸), SPA-уход
-        (+1 500 ₸). Привлечь нового клиента стоит 1 500-3 000 ₸
-        рекламы. Допродать существующей — 0 ₸.
-      universal: false
-      niche_specific: true
+      '
+    universal: true
+  - id: no_economy_on_quality
+    title_ru: Не экономить на качестве
+    body_ru: 'Дешёвое оборудование и материалы = клиент не вернётся,
 
-    - id: retention_over_acquisition
-      title_ru: "Работать с постоянными, не только новыми"
-      body_ru: |
-        Удержание клиента в 5-7 раз дешевле привлечения.
-        Знайте клиентов по имени, запоминайте их предпочтения,
-        аллергии, форму ногтей.
-      universal: false
-      niche_specific: true
+      даже если цена низкая. Репутация строится годами,
 
-# =============================================================================
-# ПЛАН ДЕЙСТВИЙ (адаптивный под experience)
-# =============================================================================
+      разрушается за недели.
+
+      '
+    universal: true
+  - id: loyalty_program
+    title_ru: Программа лояльности с первого дня
+    body_ru: 'Маникюр — регулярная услуга. Клиент вернувшийся 3 раза,
+
+      остаётся надолго. Накопительные бонусы окупаются кратно.
+
+      '
+    universal: true
+  - id: upsells_mastery
+    title_ru: Допродажи — главный рычаг роста
+    body_ru: 'Дизайн (+2 500 ₸), укрепление (+3 000 ₸), SPA-уход
+
+      (+1 500 ₸). Привлечь нового клиента стоит 1 500-3 000 ₸
+
+      рекламы. Допродать существующей — 0 ₸.
+
+      '
+    universal: false
+    niche_specific: true
+  - id: retention_over_acquisition
+    title_ru: Работать с постоянными, не только новыми
+    body_ru: 'Удержание клиента в 5-7 раз дешевле привлечения.
+
+      Знайте клиентов по имени, запоминайте их предпочтения,
+
+      аллергии, форму ногтей.
+
+      '
+    universal: false
+    niche_specific: true
 action_plan:
   experience_none:
-    - week: [1, 2, 3, 4]
-      title_ru: "Обучение и практика"
-      tasks_ru:
-        - "Выбрать школу / курсы по нише"
-        - "Пройти базовый курс (для маникюра — гель-лак + укрепление)"
-        - "Практика на моделях (бесплатно / со скидкой)"
-        - "Собрать первичное портфолио для Instagram"
-    - week: [5, 6]
-      title_ru: "Юридический старт"
-      tasks_ru:
-        - "Открыть ИП (Самозанятый / УСН 3%)"
-        - "Открыть банковский счёт (Kaspi для приёма платежей)"
-    - week: [7, 8]
-      title_ru: "Закупка оборудования и материалов"
-      tasks_ru:
-        - "Закупить оборудование (минимальный набор: лампа UV/LED, фрезер, стерилизатор. Бюджет ≈ 132 тыс ₸. Для профессионального качества может понадобиться больше.)"
-        - "Первичные закупки материалов (≈ 49 тыс ₸)"
-    - week: [9, 10]
-      title_ru: "Подготовка рабочего места"
-      tasks_ru:
-        - "Обустройство рабочего места"
-        - "Страховка инструментов"
-    - week: [11, 12]
-      title_ru: "Запуск маркетинга ДО открытия"
-      tasks_ru:
-        - "Таргетированная реклама (Instagram / TikTok)"
-        - "Договорённости с блогерами города"
-        - "Приём предзаписей"
-    - week: [13, 14]
-      title_ru: "Первые недели работы"
-      tasks_ru:
-        - "Отслеживать конверсию заявок в сделки"
-        - "Отзывы в Instagram + Google Maps (если есть геолокация) — просить клиентов с 1-го дня"
-        - "Еженедельный контроль unit-экономики (выручка/чек/COGS)"
-
+  - week:
+    - 1
+    - 2
+    - 3
+    - 4
+    title_ru: Обучение и практика
+    tasks_ru:
+    - Выбрать школу / курсы по нише
+    - Пройти базовый курс (для маникюра — гель-лак + укрепление)
+    - Практика на моделях (бесплатно / со скидкой)
+    - Собрать первичное портфолио для Instagram
+  - week:
+    - 5
+    - 6
+    title_ru: Юридический старт
+    tasks_ru:
+    - Открыть ИП (Самозанятый / УСН 3%)
+    - Открыть банковский счёт (Kaspi для приёма платежей)
+  - week:
+    - 7
+    - 8
+    title_ru: Закупка оборудования и материалов
+    tasks_ru:
+    - 'Закупить оборудование (минимальный набор: лампа UV/LED, фрезер, стерилизатор. Бюджет ≈ 132 тыс ₸. Для профессионального
+      качества может понадобиться больше.)'
+    - Первичные закупки материалов (≈ 49 тыс ₸)
+  - week:
+    - 9
+    - 10
+    title_ru: Подготовка рабочего места
+    tasks_ru:
+    - Обустройство рабочего места
+    - Страховка инструментов
+  - week:
+    - 11
+    - 12
+    title_ru: Запуск маркетинга ДО открытия
+    tasks_ru:
+    - Таргетированная реклама (Instagram / TikTok)
+    - Договорённости с блогерами города
+    - Приём предзаписей
+  - week:
+    - 13
+    - 14
+    title_ru: Первые недели работы
+    tasks_ru:
+    - Отслеживать конверсию заявок в сделки
+    - Отзывы в Instagram + Google Maps (если есть геолокация) — просить клиентов с 1-го дня
+    - Еженедельный контроль unit-экономики (выручка/чек/COGS)
   experience_some:
-    # план без блока "Обучение"
-    - week: [1, 2]
-      title_ru: "Юридический старт"
-      tasks_ru:
-        - "Открыть ИП (Самозанятый / УСН 3%)"
-        - "Открыть банковский счёт"
-    - week: [3, 4]
-      title_ru: "Дополнительные курсы (опционально)"
-      tasks_ru:
-        - "Прокачать слабые техники (наращивание / дизайн)"
-        - "Обновить портфолио"
-    # дальше как у experience_none с week: 5-6 и далее
-
+  - week:
+    - 1
+    - 2
+    title_ru: Юридический старт
+    tasks_ru:
+    - Открыть ИП (Самозанятый / УСН 3%)
+    - Открыть банковский счёт
+  - week:
+    - 3
+    - 4
+    title_ru: Дополнительные курсы (опционально)
+    tasks_ru:
+    - Прокачать слабые техники (наращивание / дизайн)
+    - Обновить портфолио
   experience_pro:
-    # план без обучения
-    - week: [1, 2]
-      title_ru: "Юридический старт"
-      tasks_ru:
-        - "Открыть ИП (Самозанятый / УСН 3%)"
-        - "Открыть банковский счёт"
-    - week: [3, 4]
-      title_ru: "Закупка оборудования и материалов"
-      tasks_ru:
-        - "Закупить оборудование (минимальный набор)"
-        - "Первичные закупки материалов"
-    # дальше как у experience_none с week: 9-10 и далее
-
-# =============================================================================
-# СПЕЦИФИЧНЫЕ ОСОБЕННОСТИ ДЛЯ ОТЧЁТА
-# =============================================================================
+  - week:
+    - 1
+    - 2
+    title_ru: Юридический старт
+    tasks_ru:
+    - Открыть ИП (Самозанятый / УСН 3%)
+    - Открыть банковский счёт
+  - week:
+    - 3
+    - 4
+    title_ru: Закупка оборудования и материалов
+    tasks_ru:
+    - Закупить оборудование (минимальный набор)
+    - Первичные закупки материалов
 report_overrides:
-
-  # Для HOME форматов конкуренты не из 2GIS, а из Instagram
   market_block_for_home:
     type: home_market_note
-    message_ru: |
-      Для мастера на дому конкуренция формируется в Instagram и TikTok.
+    message_ru: 'Для мастера на дому конкуренция формируется в Instagram и TikTok.
+
       2GIS и агрегаторы не отражают реального рынка домашних мастеров.
+
       Ищите конкурентов через хэштеги Instagram по вашему городу и району.
 
-  # Сравнение с avg_salary только для SOLO/HOME
+      '
   show_avg_salary_comparison: true
-  applies_to_formats: [HOME, SOLO]
-
-# =============================================================================
-# МЕТАДАННЫЕ
-# =============================================================================
+  applies_to_formats:
+  - HOME
+  - SOLO
 meta:
-  version: "1.0"
-  last_updated: "2026-04-22"
+  version: '1.0'
+  last_updated: '2026-04-30'
   data_sources:
-    - "ZEREK_Manicure.html (wiki-обзор)"
-    - "MANICURE_insight.md (инсайты)"
-    - "08_niche_formats.xlsx (откалиброванные данные за 7 раундов)"
-    - "Кейс Костанай (реальный пример из обзора)"
-  notes_ru: |
-    Это первая версия YAML-данных для маникюра.
-    После подключения движка к этому файлу — xlsx 08_niche_formats для MANICURE
-    становится автогенерируемым (не редактировать вручную).
-    Изменения данных — только через этот файл.
+  - ZEREK_Manicure.html (wiki-обзор)
+  - MANICURE_insight.md (инсайты)
+  - 08_niche_formats.xlsx (откалиброванные данные за 7 раундов)
+  - Кейс Костанай (реальный пример из обзора)
+  notes_ru: Перекалибровано как мастер-одиночка (никакого мульти-мастера). Все 4 формата solo. SALON_RENT — 50% салону, остальные
+    без commission_pct.

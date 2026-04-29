@@ -252,12 +252,12 @@ def _apply_r12_5_overrides(fin, niche_id, format_id, experience='none', strategy
         return fin
 
     # Найти формат в formats_r12. Маппим legacy xlsx-суффиксы:
-    # _HOME → HOME, _SOLO → SALON_RENT, _STANDARD → STUDIO, _PREMIUM → нет.
+    # _HOME → HOME, _SOLO → SALON_RENT, _STANDARD → STUDIO, _PREMIUM → MALL_SOLO.
     suffix_to_r12 = {
         '_HOME': 'HOME',
         '_SOLO': 'SALON_RENT',
         '_STANDARD': 'STUDIO',
-        '_PREMIUM': None,
+        '_PREMIUM': 'MALL_SOLO',
     }
     r12_id = None
     for sfx, rid in suffix_to_r12.items():
@@ -356,6 +356,30 @@ def _apply_r12_5_overrides(fin, niche_id, format_id, experience='none', strategy
         commission_pct = target.get('commission_pct')
     if commission_pct is not None:
         fin_new['commission_pct'] = float(commission_pct)
+
+    # marketing / other_opex per-level overrides (R12.6 расширение).
+    # Уровень simple/nice или standard/premium может задать свой набор
+    # marketing.med_monthly / min_monthly / max_monthly + other_opex.{med,min,max}.
+    # Если ни уровень, ни target их не задаёт — fin сохраняет xlsx-значения.
+    def _override_econ_block(src):
+        if not src:
+            return
+        mk = src.get('marketing') if isinstance(src.get('marketing'), dict) else None
+        if mk:
+            for src_key, fin_key in (('med_monthly','marketing_med'),
+                                      ('min_monthly','marketing_min'),
+                                      ('max_monthly','marketing_max')):
+                if src_key in mk and mk[src_key] is not None:
+                    fin_new[fin_key] = int(mk[src_key])
+        ox = src.get('other_opex') if isinstance(src.get('other_opex'), dict) else None
+        if ox:
+            for src_key, fin_key in (('med_monthly','other_opex_med'),
+                                      ('min_monthly','other_opex_min'),
+                                      ('max_monthly','other_opex_max')):
+                if src_key in ox and ox[src_key] is not None:
+                    fin_new[fin_key] = int(ox[src_key])
+    _override_econ_block(level_data)  # уровень имеет приоритет
+    _override_econ_block(target)      # target — fallback (для форматов без levels)
 
     return fin_new
 
