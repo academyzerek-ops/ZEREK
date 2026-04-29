@@ -60,11 +60,13 @@ def calc_cashflow(fin, staff, capex_total, tax_rate, start_month=1, months=12, q
 
     rent = _safe_int(fin.get("rent_med"), 0) * qty
     cogs_pct = _safe_float(fin.get("cogs_pct"), DEFAULTS["cogs_pct"])
+    materials_med = _safe_int(fin.get("materials_med"), 0)
     utilities = _safe_int(fin.get("utilities"), 0) * qty
     marketing = _safe_int(fin.get("marketing"), 0)
     consumables = _safe_int(fin.get("consumables"), 0) * qty
     software = _safe_int(fin.get("software"), 0)
     transport = _safe_int(fin.get("transport"), 0)
+    other_opex_med = _safe_int(fin.get("other_opex_med"), 0)
     loss_pct = _safe_float(fin.get("loss_pct"), DEFAULTS["loss_pct"])
     sez = _safe_int(fin.get("sez_month"), DEFAULTS["sez_month"])
     commission_pct = _safe_float(fin.get("commission_pct"), 0.0)
@@ -74,29 +76,45 @@ def calc_cashflow(fin, staff, capex_total, tax_rate, start_month=1, months=12, q
         cal_month = ((start_month - 1 + i) % 12) + 1
 
         rev = calc_revenue_monthly(fin, cal_month, razgon_month) * qty
-        cogs = int(rev * cogs_pct)
-        gross = rev - cogs
-        losses = int(rev * loss_pct)
-        tax = int(rev * tax_rate)
-        commission = int(rev * commission_pct)
 
-        total_opex = fot_full + rent + utilities + marketing + consumables + software + transport + losses + sez + tax + commission
-        profit = gross - total_opex
+        # Materials: absolute (R12.6) или % (legacy)
+        if materials_med > 0:
+            cogs = materials_med
+        else:
+            cogs = int(rev * cogs_pct)
+
+        # Revenue split + tax от net
+        commission = int(rev * commission_pct)
+        rev_net = rev - commission
+        tax = int(rev_net * tax_rate)
+
+        gross = rev - cogs  # legacy field
+        losses = int(rev * loss_pct)
+
+        # Other: R12.6 канон или legacy fallback
+        other_med = other_opex_med if other_opex_med > 0 else (consumables + software + transport + sez)
+
+        # Total opex для display + расчёт profit
+        # Per Адилевской формуле:
+        #   pocket = revenue_net − (rent + materials + marketing + other) − tax
+        # Плюс legacy: + utilities + losses (если они > 0)
+        total_opex = fot_full + rent + utilities + marketing + other_med + losses + tax + commission
+        profit = rev_net - cogs - (fot_full + rent + utilities + marketing + other_med + losses) - tax
         cumulative += profit
 
         results.append({
             "месяц": i + 1,
             "кал_месяц": SEASON_LABELS[cal_month - 1],
             "выручка": rev,
+            "выручка_net": rev_net,
             "cogs": cogs,
             "валовая_прибыль": gross,
             "фот": fot_full,
             "аренда": rent,
             "коммуналка": utilities,
             "маркетинг": marketing,
-            "расходники": consumables,
-            "софт": software,
-            "транспорт": transport,
+            "расходники": cogs,  # alias for materials in new schema
+            "прочие_opex": other_med,
             "потери": losses,
             "сэз": sez,
             "налог": tax,
@@ -177,9 +195,26 @@ def calc_owner_economics(fin, staff, tax_rate, rent_month_total, qty=1,
     traffic = _safe_float(fin.get("traffic_med"), 50) * traffic_k
     revenue = int(check * traffic * 30 * qty)
 
-    cogs_pct = _safe_float(fin.get("cogs_pct"), DEFAULTS["cogs_pct"])
-    cogs = int(revenue * cogs_pct)
-    gross = revenue - cogs
+    # Materials — два пути:
+    #  · R12.6 канон: materials_med = абсолютное значение в ₸/мес
+    #  · Legacy: cogs_pct = % от revenue
+    # Используется первый ненулевой.
+    materials_med = _safe_int(fin.get("materials_med"), 0)
+    if materials_med > 0:
+        materials = materials_med
+        cogs_pct = 0.0
+    else:
+        cogs_pct = _safe_float(fin.get("cogs_pct"), DEFAULTS["cogs_pct"])
+        materials = int(revenue * cogs_pct)
+    cogs = materials  # legacy alias
+
+    # Revenue split (мастер vs салон).
+    # revenue (brutto) — то что клиент платит. revenue_net — что приходит мастеру.
+    # commission_pct = 0.5 → 50% уходит салону.
+    commission_pct = _safe_float(fin.get("commission_pct"), 0.0)
+    commission_to_salon = int(revenue * commission_pct)
+    revenue_net = revenue - commission_to_salon
+    gross = revenue - cogs  # legacy field
 
     fot_full = _safe_int(staff.get("fot_full_med"), 0)
     if fot_full == 0:
@@ -192,27 +227,32 @@ def calc_owner_economics(fin, staff, tax_rate, rent_month_total, qty=1,
     software = _safe_int(fin.get("software"), 0)
     transport = _safe_int(fin.get("transport"), 0)
     sez = _safe_int(fin.get("sez_month"), DEFAULTS["sez_month"])
-    other = consumables + software + transport + sez
+    # other: R12.6 канон — other_opex_med (консолидированно); legacy — sum
+    other_opex_med = _safe_int(fin.get("other_opex_med"), 0)
+    other = other_opex_med if other_opex_med > 0 else (consumables + software + transport + sez)
 
-    # Revenue split (мастер vs салон). commission_pct = 0.5 means 50% goes
-    # to the salon, master keeps 50%. Treated as an expense line; cogs/tax
-    # are computed from full revenue (the salon-side handles their own).
-    commission_pct = _safe_float(fin.get("commission_pct"), 0.0)
-    commission_to_salon = int(revenue * commission_pct)
-
-    opex_total = fot_full + rent + marketing + utilities + other + commission_to_salon
-    profit_before_tax = gross - opex_total
-    tax_amount = int(revenue * tax_rate)
+    # Tax — от revenue_net (master's actual income). Per Адиль's formula.
+    tax_amount = int(revenue_net * tax_rate)
     social_amount = social if social is not None else calc_owner_social_payments()
+
+    # opex_total для display включает все расходы (включая commission и materials).
+    opex_total = fot_full + rent + marketing + utilities + other + materials + commission_to_salon
+
+    # Pocket = revenue_net − opex_real − tax − social
+    # где opex_real = fot + rent + marketing + utilities + other + materials
+    # (commission_to_salon уже учтён через revenue_net).
+    profit_before_tax = revenue_net - (fot_full + rent + marketing + utilities + other + materials)
     net_in_pocket = profit_before_tax - tax_amount - social_amount
 
     return {
-        "revenue": revenue, "cogs": cogs, "gross": gross,
+        "revenue": revenue, "revenue_net": revenue_net,
+        "cogs": cogs, "materials": materials, "gross": gross,
         "opex_breakdown": {
             "rent": rent,
             "fot": fot_full,
             "marketing": marketing,
             "utilities": utilities,
+            "materials": materials,
             "other": other,
             "commission_to_salon": commission_to_salon,
         },
@@ -288,12 +328,23 @@ def compute_pnl_aggregates(result):
     # в fin — приходит через formats_r12 + _apply_r12_5_overrides).
     working_days = _safe_int(fin.get("working_days_per_month"), 30)
     rev_mature_m = avg_check * traffic * working_days
-    materials_m = int(rev_mature_m * cogs_pct)
-    tax_m = int(rev_mature_m * tax_rate)
+
+    # Materials: absolute (R12.6) или % (legacy).
+    materials_med = _safe_int(fin.get("materials_med"), 0)
+    if materials_med > 0:
+        materials_m = materials_med
+    else:
+        materials_m = int(rev_mature_m * cogs_pct)
+
+    # Revenue split (мастер vs салон): per Адилевской формуле,
+    # tax считается от revenue_net (master's actual income).
     commission_pct = _safe_float(fin.get("commission_pct"), 0.0)
     commission_m = int(rev_mature_m * commission_pct)
-    fixed_m = fot + rent + mk_monthly + ox_monthly + commission_m
-    profit_mature_m = rev_mature_m - materials_m - tax_m - fixed_m
+    rev_net_m = rev_mature_m - commission_m
+    tax_m = int(rev_net_m * tax_rate)
+
+    fixed_m = fot + rent + mk_monthly + ox_monthly  # без commission, без materials
+    profit_mature_m = rev_net_m - materials_m - fixed_m - tax_m
 
     # Шаг 5: средний первый год.
     rev_year_avg = _safe_int((scenarios.get("base") or {}).get("выручка_год"), 0)
@@ -313,8 +364,10 @@ def compute_pnl_aggregates(result):
             "rent_monthly":      rent,
             "marketing_monthly": mk_monthly,
             "other_opex_monthly": ox_monthly,
+            "materials_monthly": materials_m,
             "commission_monthly": commission_m,
             "commission_pct":    commission_pct,
+            "revenue_net_monthly": rev_net_m,
             "cogs_pct":          cogs_pct,
             "tax_rate":          tax_rate,
         },

@@ -323,19 +323,19 @@ def _apply_r12_5_overrides(fin, niche_id, format_id, experience='none', strategy
     # R12.5 Сессия 2 хвост: rent_med + deposit_months из formats_r12.
     # HOME: rent=0, deposit=0. STUDIO/SALON_RENT/MALL_SOLO: rent_per_month
     # из YAML, deposit_months обычно 2 (engine: deposit = rent × months).
-    # SALON_RENT × experienced берёт premium через _resolve_r12_level →
-    # rent=60K → deposit 120K (вместо standard 35K → 70K).
-    rent_per_month = target.get('rent_per_month_astana')
-    if rent_per_month is None and level_data:
+    # ПОРЯДОК: level_data первый (если есть), target fallback.
+    rent_per_month = None
+    if level_data and level_data.get('rent_per_month_astana') is not None:
         rent_per_month = level_data.get('rent_per_month_astana')
-    # MALL_SOLO: rent на верхнем уровне (одинаковый для single/cluster)
-    if rent_per_month is None:
+    elif target.get('rent_per_month_astana') is not None:
         rent_per_month = target.get('rent_per_month_astana')
     if rent_per_month is not None:
         fin_new['rent_med'] = int(rent_per_month)
-    deposit_months = target.get('deposit_months')
-    if deposit_months is None and level_data:
+    deposit_months = None
+    if level_data and level_data.get('deposit_months') is not None:
         deposit_months = level_data.get('deposit_months')
+    elif target.get('deposit_months') is not None:
+        deposit_months = target.get('deposit_months')
     if deposit_months is not None:
         fin_new['deposit_months'] = int(deposit_months)
 
@@ -357,10 +357,10 @@ def _apply_r12_5_overrides(fin, niche_id, format_id, experience='none', strategy
     if commission_pct is not None:
         fin_new['commission_pct'] = float(commission_pct)
 
-    # marketing / other_opex per-level overrides (R12.6 расширение).
-    # Уровень simple/nice или standard/premium может задать свой набор
-    # marketing.med_monthly / min_monthly / max_monthly + other_opex.{med,min,max}.
-    # Если ни уровень, ни target их не задаёт — fin сохраняет xlsx-значения.
+    # marketing / other_opex / materials per-level overrides (R12.6 расширение).
+    # Уровень (simple/nice/standard/premium) может задать свой набор
+    # marketing.{med,min,max}_monthly + other_opex.{med,min,max} + materials_med.
+    # ПОРЯДОК: target первым (база), level_data поверх (уровень побеждает).
     def _override_econ_block(src):
         if not src:
             return
@@ -378,8 +378,12 @@ def _apply_r12_5_overrides(fin, niche_id, format_id, experience='none', strategy
                                       ('max_monthly','other_opex_max')):
                 if src_key in ox and ox[src_key] is not None:
                     fin_new[fin_key] = int(ox[src_key])
-    _override_econ_block(level_data)  # уровень имеет приоритет
-    _override_econ_block(target)      # target — fallback (для форматов без levels)
+        # materials_med — фиксированное абсолютное значение (новый канон, не % от revenue)
+        for k in ('materials_med', 'materials_min', 'materials_max'):
+            if k in src and src[k] is not None:
+                fin_new[k] = int(src[k])
+    _override_econ_block(target)      # target — base
+    _override_econ_block(level_data)  # уровень побеждает
 
     return fin_new
 
