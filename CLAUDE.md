@@ -103,6 +103,18 @@ Procfile, railway.json, requirements.txt
 
 **Архетипы** (A–F) определены в `config/archetypes.yaml` (отдельный реестр, не мигрирован).
 
+---
+
+### Архитектура бизнес-данных внутри ниши (post-cleanup 2026-04-30)
+
+- **`data/niches/<CODE>_data.yaml`** — ИСТОЧНИК ИСТИНЫ для всех структурированных бизнес-данных ниши: форматы (`formats`, `formats_r12`), экономика (`marketing_min/med/max`, `other_opex_min/med/max`), сезонность (`seasonality`), риски (`risks`), сценарии роста (`growth_scenarios`), info-блоки (`info_blocks_r12`), upsells, action_plan.
+- **`data/kz/niches/niche_formats_<CODE>.xlsx`** (лист FINANCIALS и др.) — производный от YAML, является runtime-cache для движка. При изменении YAML — xlsx синхронизируется **вручную**. Расхождение YAML vs xlsx = баг, чинится в пользу YAML.
+- **`knowledge/kz/niches/<CODE>_insight.md`** (для большинства ниш) или **`knowledge/niches/<CODE>.md`** (R12.6 пилот, MANICURE) — текстовый материал: insight, исследование, паттерны. **Без структурированных данных по форматам.** Frontmatter содержит только meta (id, name_ru, icon, archetype) + опциональные текстовые поля; формат-блок `formats:` запрещён (живёт в YAML).
+
+**Загрузчик** (`api/loaders/niche_loader.py::load_niche_yaml`) делает **merge**: knowledge md как база (для insight + meta), `data/niches/<CODE>_data.yaml` перезаписывает все совпадающие ключи. Если yaml отсутствует — используется только knowledge; если knowledge отсутствует — только yaml.
+
+**Правило добавления / изменения**: всегда сначала YAML, потом ручная синхронизация xlsx. **Никогда не вписывать бизнес-данные напрямую в xlsx минуя YAML** — это создаёт рассинхрон.
+
 ## Налоги КЗ 2026
 - МРП = 4 325 ₸
 - Патент ОТМЕНЁН с 01.01.2026 → заменён на «Самозанятый»
