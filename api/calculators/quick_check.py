@@ -396,18 +396,30 @@ class QuickCheckCalculator:
             cogs_pct = float(agg.get("cogs_pct") or fin.get("cogs_pct") or 0.30)
             tax_rate = float(agg.get("tax_rate") or 0.03)
             commission_pct = float(agg.get("commission_pct") or fin.get("commission_pct") or 0.0)
+            materials_med = int(fin.get("materials_med") or 0)
             rampup = int(fin.get("rampup_months") or 3)
             fixed_m = fot_m + rent_m + marketing_m + other_m
 
             cashflow_year1 = []
             for m in months:
                 rev = int(m.get("revenue") or 0)
-                costs_m = int(rev * (cogs_pct + tax_rate + commission_pct)) + fixed_m
-                profit_m = rev - costs_m
+                # Materials: absolute (R12.6) or % (legacy)
+                if materials_med > 0:
+                    mat_m = materials_med
+                else:
+                    mat_m = int(rev * cogs_pct)
+                # Revenue split + tax от net
+                comm_m = int(rev * commission_pct)
+                rev_net = rev - comm_m
+                tax_m = int(rev_net * tax_rate)
+                # Pocket = revenue_net − opex − materials − tax
+                profit_m = rev_net - fixed_m - mat_m - tax_m
+                costs_m = rev - profit_m  # display total
                 cashflow_year1.append({
                     "month_index": int(m.get("n") or 0),
                     "calendar_label": m.get("calendar_label", ""),
                     "revenue": rev,
+                    "revenue_net": rev_net,
                     "total_costs": costs_m,
                     "profit": profit_m,
                     "is_rampup": (m.get("color") == "ramp") or int(m.get("n") or 0) <= rampup,
@@ -417,6 +429,15 @@ class QuickCheckCalculator:
                 danger_zone = compute_danger_zone(cashflow_year1, capex_total)
                 if danger_zone:
                     result["danger_zone"] = danger_zone
+
+                # Year-1 aggregates: total + average (per Адилевской spec)
+                year1_total_net = sum(int(c["profit"]) for c in cashflow_year1)
+                ramp_up_avg = year1_total_net // max(1, len(cashflow_year1))
+                # Expose via owner_economics for downstream (PDF, frontend)
+                oe = result.setdefault("owner_economics", {})
+                oe["mature_pocket"] = oe.get("net_in_pocket", 0)
+                oe["year1_total_net"] = year1_total_net
+                oe["ramp_up_avg"] = ramp_up_avg
         except Exception:
             import traceback
             traceback.print_exc()
