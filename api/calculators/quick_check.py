@@ -395,13 +395,14 @@ class QuickCheckCalculator:
             other_m = int(agg.get("other_opex_monthly") or fin.get("other_opex_med") or 0)
             cogs_pct = float(agg.get("cogs_pct") or fin.get("cogs_pct") or 0.30)
             tax_rate = float(agg.get("tax_rate") or 0.03)
+            commission_pct = float(agg.get("commission_pct") or fin.get("commission_pct") or 0.0)
             rampup = int(fin.get("rampup_months") or 3)
             fixed_m = fot_m + rent_m + marketing_m + other_m
 
             cashflow_year1 = []
             for m in months:
                 rev = int(m.get("revenue") or 0)
-                costs_m = int(rev * (cogs_pct + tax_rate)) + fixed_m
+                costs_m = int(rev * (cogs_pct + tax_rate + commission_pct)) + fixed_m
                 profit_m = rev - costs_m
                 cashflow_year1.append({
                     "month_index": int(m.get("n") or 0),

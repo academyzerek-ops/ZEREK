@@ -67,6 +67,7 @@ def calc_cashflow(fin, staff, capex_total, tax_rate, start_month=1, months=12, q
     transport = _safe_int(fin.get("transport"), 0)
     loss_pct = _safe_float(fin.get("loss_pct"), DEFAULTS["loss_pct"])
     sez = _safe_int(fin.get("sez_month"), DEFAULTS["sez_month"])
+    commission_pct = _safe_float(fin.get("commission_pct"), 0.0)
 
     for i in range(months):
         razgon_month = i + 1
@@ -77,8 +78,9 @@ def calc_cashflow(fin, staff, capex_total, tax_rate, start_month=1, months=12, q
         gross = rev - cogs
         losses = int(rev * loss_pct)
         tax = int(rev * tax_rate)
+        commission = int(rev * commission_pct)
 
-        total_opex = fot_full + rent + utilities + marketing + consumables + software + transport + losses + sez + tax
+        total_opex = fot_full + rent + utilities + marketing + consumables + software + transport + losses + sez + tax + commission
         profit = gross - total_opex
         cumulative += profit
 
@@ -98,6 +100,7 @@ def calc_cashflow(fin, staff, capex_total, tax_rate, start_month=1, months=12, q
             "потери": losses,
             "сэз": sez,
             "налог": tax,
+            "комиссия_салону": commission,
             "opex": total_opex,
             "прибыль": profit,
             "нарастающий": cumulative,
@@ -123,9 +126,10 @@ def calc_breakeven(fin, staff, tax_rate, qty=1):
     software = _safe_int(fin.get("software"), 0)
     transport = _safe_int(fin.get("transport"), 0)
     sez = _safe_int(fin.get("sez_month"), 0)
+    commission_pct = _safe_float(fin.get("commission_pct"), 0.0)
 
     fixed = fot_full + rent + utilities + marketing + consumables + software + transport + sez
-    variable_pct = cogs_pct + loss_pct + tax_rate
+    variable_pct = cogs_pct + loss_pct + tax_rate + commission_pct
 
     if variable_pct >= 1.0:
         return {"тб_₸": 0, "тб_чеков_день": 0, "запас_прочности_%": 0, "чек_для_тб": check, "fixed_total": fixed}
@@ -190,7 +194,13 @@ def calc_owner_economics(fin, staff, tax_rate, rent_month_total, qty=1,
     sez = _safe_int(fin.get("sez_month"), DEFAULTS["sez_month"])
     other = consumables + software + transport + sez
 
-    opex_total = fot_full + rent + marketing + utilities + other
+    # Revenue split (мастер vs салон). commission_pct = 0.5 means 50% goes
+    # to the salon, master keeps 50%. Treated as an expense line; cogs/tax
+    # are computed from full revenue (the salon-side handles their own).
+    commission_pct = _safe_float(fin.get("commission_pct"), 0.0)
+    commission_to_salon = int(revenue * commission_pct)
+
+    opex_total = fot_full + rent + marketing + utilities + other + commission_to_salon
     profit_before_tax = gross - opex_total
     tax_amount = int(revenue * tax_rate)
     social_amount = social if social is not None else calc_owner_social_payments()
@@ -204,6 +214,7 @@ def calc_owner_economics(fin, staff, tax_rate, rent_month_total, qty=1,
             "marketing": marketing,
             "utilities": utilities,
             "other": other,
+            "commission_to_salon": commission_to_salon,
         },
         "opex_total": opex_total,
         "profit_before_tax": profit_before_tax,
@@ -211,6 +222,7 @@ def calc_owner_economics(fin, staff, tax_rate, rent_month_total, qty=1,
         "tax_rate_pct": round(tax_rate * 100, 2),
         "social_payments": social_amount,
         "net_in_pocket": net_in_pocket,
+        "commission_pct": commission_pct,
     }
 
 
@@ -278,7 +290,9 @@ def compute_pnl_aggregates(result):
     rev_mature_m = avg_check * traffic * working_days
     materials_m = int(rev_mature_m * cogs_pct)
     tax_m = int(rev_mature_m * tax_rate)
-    fixed_m = fot + rent + mk_monthly + ox_monthly
+    commission_pct = _safe_float(fin.get("commission_pct"), 0.0)
+    commission_m = int(rev_mature_m * commission_pct)
+    fixed_m = fot + rent + mk_monthly + ox_monthly + commission_m
     profit_mature_m = rev_mature_m - materials_m - tax_m - fixed_m
 
     # Шаг 5: средний первый год.
@@ -299,6 +313,8 @@ def compute_pnl_aggregates(result):
             "rent_monthly":      rent,
             "marketing_monthly": mk_monthly,
             "other_opex_monthly": ox_monthly,
+            "commission_monthly": commission_m,
+            "commission_pct":    commission_pct,
             "cogs_pct":          cogs_pct,
             "tax_rate":          tax_rate,
         },

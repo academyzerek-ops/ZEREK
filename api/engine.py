@@ -346,6 +346,17 @@ def _apply_r12_5_overrides(fin, niche_id, format_id, experience='none', strategy
     if level_key:
         fin_new['r12_level'] = level_key
 
+    # Revenue split: commission_pct из formats_r12 (level или target).
+    # 0.5 = мастер делит 50/50 с салоном (формат «аренда места»).
+    # 0.0 = мастер сам себе хозяин (формат «своя точка»).
+    commission_pct = None
+    if level_data and 'commission_pct' in level_data:
+        commission_pct = level_data.get('commission_pct')
+    elif 'commission_pct' in target:
+        commission_pct = target.get('commission_pct')
+    if commission_pct is not None:
+        fin_new['commission_pct'] = float(commission_pct)
+
     return fin_new
 
 
