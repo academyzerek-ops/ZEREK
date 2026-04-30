@@ -641,6 +641,11 @@ function init(){
 function computeStepPlan(){
   var plan = ['niche'];
   if(!QC.niche_id) return plan;
+  // R14.2: experience ДО format — чтобы при рендере списка форматов знать
+  // опыт пользователя и серить недоступные карточки (например, SOLO/SALON_RENT
+  // для новичка). Раньше experience шёл после format.
+  plan.push('experience');
+  if(!QC.experience) return plan;
   plan.push('format');
   if(!QC.format_id) return plan;
   plan.push('city');
@@ -653,8 +658,6 @@ function computeStepPlan(){
   if(ft === 'KIOSK' || ft === 'STANDARD'){
     plan.push('location');
   }
-  plan.push('experience');
-  if(!QC.experience) return plan;
   // R12.5: для соло-beauty (архетип A1) добавляем шаги уровня и стратегии.
   // - level: только для STUDIO (нынешний format_type=STANDARD) и SALON_RENT
   //   (нынешний format_type=SOLO). HOME без уровней.
@@ -826,7 +829,7 @@ RENDERERS.format = function(root){
    Если для format_id нет хардкод-описания — fallback на class. */
 var FORMAT_DESCRIPTIONS = {
   'MANICURE_HOME':     'Дома у себя · минимальные вложения · сарафан и Instagram',
-  'MANICURE_SOLO':     'Чужой салон · трафик готовый · нужен опыт работы',
+  'MANICURE_SOLO':     'Чужой салон · трафик готовый · минимум вложений',
   'MANICURE_STANDARD': 'Свой кабинет · полный контроль · аренда и коммуналка ваши',
   'MANICURE_PREMIUM':  'Точка в ТЦ · трафик торгового центра'
 };
@@ -846,6 +849,10 @@ function renderFormatList(root, fmts){
       /* Fallback для ниш без хардкод-описания: показать только class. */
       description = f['class'] || '';
     }
+    /* R14.2: SOLO (аренда места в чужом салоне) недоступен новичкам —
+       салоны не берут мастера без опыта. Показываем серой/disabled
+       вместо скрытия — пользователь видит существование формата. */
+    var disabled = (f.format_type === 'SOLO' && QC.experience === 'none');
     var locHint = '';
     if(f.format_type === 'HIGHWAY') locHint = '🛣️ Трасса';
     else if(f.format_type === 'PRODUCTION') locHint = '🏭 Промзона';
@@ -857,10 +864,14 @@ function renderFormatList(root, fmts){
       var ll = locsMeta[f.allowed_locations[0]];
       if(ll) locHint = '📍 ' + ll.label_rus;
     }
-    html += '<div class="opt'+sel+'" onclick="selectFormat(\''+f.format_id+'\')">' +
+    var optClass = 'opt' + sel + (disabled ? ' opt-disabled' : '');
+    var optStyle = disabled ? ' style="opacity:.45;cursor:not-allowed;pointer-events:none"' : '';
+    var disabledNote = disabled ? '<div class="opt-sub" style="color:#9ca3af;font-style:italic">Нужен опыт работы — выбери уровень выше</div>' : '';
+    html += '<div class="'+optClass+'"'+optStyle+(disabled ? '' : ' onclick="selectFormat(\''+f.format_id+'\')"')+'>' +
       '<div class="opt-icon">📐</div>' +
       '<div style="flex:1"><div class="opt-label">'+escapeHtml(f.format_name)+'</div>' +
       (description ? '<div class="opt-sub">'+escapeHtml(description)+'</div>' : '') +
+      disabledNote +
       (locHint ? '<span class="opt-badge">'+locHint+'</span>' : '') +
       '</div></div>';
   });
