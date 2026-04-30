@@ -20,11 +20,17 @@
 - `seasonality` — сезонные коэффициенты
 - `risks`, `growth_scenarios`, `info_blocks_r12`, `upsells`, `action_plan`, `report_overrides`, `meta`
 
-### 3. Engine calibration (xlsx)
+### 3. Engine calibration (xlsx) — ДВА файла на ниши
 
-`data/kz/niches/niche_formats_<CODE>.xlsx` — runtime-cache движка. 14 листов: FORMATS, FINANCIALS, STAFF, CAPEX, GROWTH, TAXES, MARKET, LAUNCH, INSIGHTS, PRODUCTS, MARKETING, SUPPLIERS, SURVEY, LOCATIONS.
+#### 3a. Per-niche xlsx
+`data/kz/niches/niche_formats_<CODE>.xlsx` — runtime-cache движка для конкретной ниши. 14 листов: FORMATS, FINANCIALS, STAFF, CAPEX, GROWTH, TAXES, MARKET, LAUNCH, INSIGHTS, PRODUCTS, MARKETING, SUPPLIERS, SURVEY, LOCATIONS. Используется для финансовых расчётов внутри `/quick-check`.
 
-**Производный от YAML.** При изменении YAML — xlsx синхронизируется ВРУЧНУЮ. Расхождение YAML vs xlsx = баг, чинится в пользу YAML.
+#### 3b. Aggregate xlsx (общий для всех ниш)
+`data/kz/08_niche_formats.xlsx` — **второй runtime-cache, читается отдельным endpoint'ом**. Содержит rows по format_id для каждой niche: format_name, area_m2, capex_standard, class, format_type, typical_staff, allowed_locations.
+
+**Используется в endpoint `/formats-v2/<niche_id>`** (api/loaders/niche_loader.py::get_formats_v2). Это та анкета которую видит юзер в Mini App (`qc-v3.html`) при выборе формата. **Mini App не читает per-niche xlsx, только этот aggregate.**
+
+**Производный от YAML.** При изменении YAML — синхронизируются **оба** xlsx (per-niche FINANCIALS + 08_niche_formats). Расхождение YAML vs xlsx = баг, чинится в пользу YAML. **Если калибрист обновил только per-niche xlsx, юзер всё равно увидит старые данные в анкете** (R14.2 урок: 30.04.2026 Адиль 3 раза присылал скриншот с устаревшими форматами потому что 08-файл не был синхронизирован).
 
 ### 4. Insight (текст)
 
