@@ -474,24 +474,6 @@ niches:
     wiki_path: "wiki/kz/ZEREK_DryClean.html"
     notes: ""
 
-  - code: EPILATION
-    name_ru: "Лазерная эпиляция"
-    aliases: []
-    archetype: null
-    category: null
-    icon: null
-    status: wiki_only
-    cta: waitlist
-    has_insight: false
-    has_data: false
-    has_calibration: false
-    has_wiki: true
-    insight_path: null
-    data_path: null
-    calibration_path: null
-    wiki_path: "wiki/kz/ZEREK_Epilation.html"
-    notes: "Лазерная эпиляция. Не путать с SUGARING. Возможно подниша COSMETOLOGY."
-
   - code: EVALUATION
     name_ru: "Оценочные услуги"
     aliases: []
@@ -1032,23 +1014,23 @@ niches:
     wiki_path: "wiki/kz/ZEREK_Semifood.html"
     notes: ""
 
-  - code: SUGARING
-    name_ru: "Шугаринг"
-    aliases: []
+  - code: EPILATION
+    name_ru: "Эпиляция и депиляция"
+    aliases: [SUGARING]
     archetype: "A"
     category: "beauty"
-    icon: "🌸"
+    icon: "🪒"
     status: production_ready
     cta: quick_check
     has_insight: true
     has_data: true
     has_calibration: true
-    has_wiki: false
-    insight_path: "knowledge/kz/niches/SUGARING_insight.md"
-    data_path: "data/niches/SUGARING_data.yaml"
-    calibration_path: "data/kz/niches/niche_formats_SUGARING.xlsx"
-    wiki_path: null
-    notes: ""
+    has_wiki: true
+    insight_path: "knowledge/kz/niches/EPILATION_insight.md"
+    data_path: "data/niches/EPILATION_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_EPILATION.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Epilation.html"
+    notes: "Зонтичная ниша: шугаринг + воск + лазер + фото. SUGARING — legacy alias (бывшая отдельная запись)."
 
   - code: SUSHI
     name_ru: "Суши-бар"

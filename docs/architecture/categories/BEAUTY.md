@@ -8,7 +8,7 @@
 |---|---|---|---|
 | MANICURE | 4 (HOME / STUDIO simple+nice / SALON_RENT std+prem / MALL_SOLO) | A1 + A2 | ✓ калибрована (2026-04-30) |
 | BROW | 3 (HOME / STUDIO simple+nice / SALON_RENT) | A1 + A2 | □ TBD |
-| SUGARING | 2 (HOME / STUDIO simple+nice) | A1 | □ TBD |
+| EPILATION | 2 (HOME / STUDIO simple+nice) — зонтичная (шугаринг+воск+лазер+фото) | A1 | □ TBD |
 | MASSAGE | 4 (HOME / RENT_FITNESS / OWN_OFFICE / EMPLOYED_SPA) | A1 + A2 | □ TBD |
 | COSMETOLOGY | 2 (STANDARD / PREMIUM) | A1 + B2 | □ TBD |
 | BARBER | 6 (STUDIO simple+nice+mall / SALON_RENT / SHOP_RENT_OUT / SHOP_EMPLOY) | A1 + A2 + B1 + B2 | □ TBD |
@@ -16,7 +16,7 @@
 
 ## Порядок калибровки
 
-`BROW → SUGARING → MASSAGE → COSMETOLOGY → BARBER → BEAUTY салон`
+`BROW → EPILATION → MASSAGE → COSMETOLOGY → BARBER → BEAUTY салон`
 
 (MANICURE как pilot R12.5/R12.6 уже калиброван.)
 
@@ -89,9 +89,15 @@
 
 ---
 
-## SUGARING
+## EPILATION (зонтичная: шугаринг + воск + лазер + фото)
 
-Шугаринг (депиляция сахарной пастой). Узкий сегмент — обычно мастер дома или со своим кабинетом.
+Удаление волос — все 4 метода под одной нишей. Опубликованный обзор `wiki/kz/ZEREK_Epilation.html` («Эпиляция и депиляция») охватывает все методы. SUGARING осталось как `aliases` для backward-compat (бывшая отдельная запись в registry до 2026-04-30).
+
+В обзоре зафиксированы 4 разные модели по технологии:
+- **Шугаринг** (сахарная паста) — низкий вход (CAPEX 200–500K ₸)
+- **Воск** (горячий/тёплый) — близок к шугарингу по экономике
+- **Лазер** (диодный) — высокий вход (аппарат 1.5–15M ₸), медицинская услуга, лицензия
+- **Фото** — упомянута вскользь
 
 ### Форматы (план — TBD калибровка)
 
@@ -107,6 +113,16 @@
 
 - HOME: `none`, `middle`
 - STUDIO: `middle`, `experienced`
+
+### Цифры из обзора (для калибровки)
+
+- Себестоимость: **2–15% от чека** (cogs_pct)
+- Сезонность шугаринг: лето ×2–3 от зимы, зима провал 30–50%
+- Безубыточность HOME: при 30–40% загрузке
+- Потолок: 5–8 клиенток/день HOME
+- Стабильная база: 40–60 клиенток (цикл 3–4 недели)
+- Маркетинг: Instagram = 80% новых клиенток
+- Чек шугаринга в **₸ не указан** — нужна диктовка от Адиля
 
 ---
 
