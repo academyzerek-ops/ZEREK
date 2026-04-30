@@ -819,21 +819,33 @@ RENDERERS.format = function(root){
     renderFormatList(root, FormatsByNiche[QC.niche_id]);
   });
 };
+/* R14.2: описания формата (бизнес-модель), не угаданный CAPEX.
+   CAPEX зависит от 4 параметров (формат × опыт × уровень × стратегия) и
+   считается в финальном отчёте на стр. 6 PDF. В карточке выбора формата
+   показывать одно «угаданное» число — путать пользователя.
+   Если для format_id нет хардкод-описания — fallback на class. */
+var FORMAT_DESCRIPTIONS = {
+  'MANICURE_HOME':     'Дома у себя · минимальные вложения · сарафан и Instagram',
+  'MANICURE_SOLO':     'Чужой салон · трафик готовый · минимум вложений',
+  'MANICURE_STANDARD': 'Свой кабинет · полный контроль · аренда и коммуналка ваши',
+  'MANICURE_PREMIUM':  'Точка в ТЦ · трафик торгового центра · работа 26 дней'
+};
 function renderFormatList(root, fmts){
   var locsMeta = (Configs.locations && Configs.locations.locations) || {};
   var html = '<div class="step">' +
     '<div class="step-kicker">Формат</div>' +
     '<h2>Выберите формат</h2>' +
-    '<div class="step-desc">Формат определяет масштаб, стартовые вложения и типовой штат.</div>' +
+    '<div class="step-desc">Формат определяет бизнес-модель — где работаете, чей трафик, чьи расходы. Точные цифры — в отчёте.</div>' +
     '<div class="options">';
   fmts.forEach(function(f){
     var sel = (QC.format_id === f.format_id) ? ' selected' : '';
-    var staffCnt = (f.typical_staff || []).reduce(function(a,s){ return a+(s.count||0); }, 0);
-    var staffText = staffCnt > 0 ? staffCnt + ' сотр.' : 'работаете сами';
-    var extra = [];
-    if(f['class']) extra.push(f['class']);
-    if(f.area_m2 > 0) extra.push(Math.round(f.area_m2) + ' м²');
-    extra.push(staffText);
+    /* R14.2: убраны CAPEX (capex_standard) и площадь (area_m2) из карточки.
+       Также убран staff count — все наши форматы solo. */
+    var description = FORMAT_DESCRIPTIONS[f.format_id];
+    if(!description){
+      /* Fallback для ниш без хардкод-описания: показать только class. */
+      description = f['class'] || '';
+    }
     var locHint = '';
     if(f.format_type === 'HIGHWAY') locHint = '🛣️ Трасса';
     else if(f.format_type === 'PRODUCTION') locHint = '🏭 Промзона';
@@ -848,7 +860,7 @@ function renderFormatList(root, fmts){
     html += '<div class="opt'+sel+'" onclick="selectFormat(\''+f.format_id+'\')">' +
       '<div class="opt-icon">📐</div>' +
       '<div style="flex:1"><div class="opt-label">'+escapeHtml(f.format_name)+'</div>' +
-      '<div class="opt-sub">Стартовые вложения ≈ '+fmt(f.capex_standard)+' ₸ · ' + extra.join(' · ') + '</div>' +
+      (description ? '<div class="opt-sub">'+escapeHtml(description)+'</div>' : '') +
       (locHint ? '<span class="opt-badge">'+locHint+'</span>' : '') +
       '</div></div>';
   });
