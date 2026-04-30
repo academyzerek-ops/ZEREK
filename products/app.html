@@ -3043,6 +3043,14 @@ function openWiki(file) {
   window.location.href = '../wiki/kz/' + file + '.html';
 }
 
+function openQuickCheckNew() {
+  /* Кнопка «Пройти экспресс-оценку» (line 1968) — переход на R12.5/R13
+     анкету в qc-v3.html. Функция была потеряна при R14.1 удалении
+     embedded survey (commit b9987d5); сама cleanup-секция упоминала
+     её в комментарии ниже, но определение забыли добавить. */
+  window.location.href = 'qc-v3.html';
+}
+
 
 /* ============================================
    R14.1: Quick Check embedded survey удалён.
