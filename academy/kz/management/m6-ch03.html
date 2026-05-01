@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0A0A0F">
+<title>Глава 3 — Высокие vs низкие мотивы</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#0A0A0F !important;color:#E8E8ED;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow-x:hidden;min-height:100vh}
+html::before{content:'';position:fixed;inset:0;background:#0A0A0F;z-index:-1}
+:root{--bg:#0A0A0F;--surface:#16161E;--surface2:#1E1E28;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.10);--text:#E8E8ED;--text2:#A0A0B0;--text3:#6B6B7B;--purple:#A89BFF;--purple-dim:rgba(168,155,255,0.12);--green:#00D4AA;--green-dim:rgba(0,212,170,0.10);--orange:#E8A04C;--orange-dim:rgba(232,160,76,0.10);--red:#E85454;--red-dim:rgba(232,84,84,0.10);--accent:#6C63FF}
+.hdr{position:sticky;top:0;z-index:50;background:#101010;border-bottom:1px solid #2C2C2C;padding:14px 20px 12px}
+.hdr::after{content:'';position:absolute;bottom:-20px;left:0;right:0;height:20px;background:linear-gradient(180deg,#101010 0%,var(--bg) 100%);pointer-events:none;z-index:49}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.hdr-badge{background:var(--purple-dim);color:var(--purple);font-size:11px;font-weight:700;letter-spacing:1.2px;padding:4px 10px;border-radius:6px}
+.hdr-mod{font-size:12px;color:var(--text3);font-weight:600;min-width:0;max-width:52%;text-align:right;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.prog{display:flex;align-items:center;gap:10px}
+.prog-n{font-size:12px;color:var(--text3);font-weight:700;font-variant-numeric:tabular-nums}
+.prog-track{flex:1;height:5px;background:#2C2C2C;border-radius:5px;overflow:hidden}
+.prog-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#6C5CE7,#00B894)}
+.hdr-back{display:flex;align-items:center;gap:4px;background:none;border:1px solid #2C2C2C;border-radius:8px;padding:6px 12px;font-family:inherit;font-size:12px;font-weight:700;color:var(--text3);cursor:pointer;white-space:nowrap}
+.hdr-back:active{background:#1E1E1E}
+.hdr-back svg{width:14px;height:14px;stroke:var(--text3);stroke-width:2.5;fill:none}
+.page{max-width:460px;margin:0 auto;padding:20px 18px 120px}
+.hero{text-align:center;padding:32px 0 24px}
+.hero-ico{font-size:48px;display:block;margin-bottom:12px}
+.hero h1{font-weight:800;font-size:26px;line-height:1.25;color:var(--text);margin-bottom:8px;letter-spacing:-0.01em}
+.hero h1 .o{color:var(--orange)}
+.hero-sub{font-size:14px;color:var(--text3);font-weight:500}
+.c{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 18px;margin-bottom:14px}
+.c p{font-size:15px;color:var(--text2);margin-bottom:10px;line-height:1.8}
+.c p:last-child{margin-bottom:0}
+.c strong{font-weight:700;color:var(--text)}
+.c em{font-style:italic;color:var(--text)}
+.c.al{border-left:3.5px solid var(--accent);background:rgba(108,92,231,0.04)}
+.c.ag{border-left:3.5px solid var(--green);background:rgba(0,212,170,0.04)}
+.c.ao{border-left:3.5px solid var(--orange);background:rgba(232,160,76,0.04)}
+.c.ar{border-left:3.5px solid var(--red);background:rgba(232,84,84,0.04)}
+.lb{display:inline-block;font-size:12px;font-weight:700;letter-spacing:0.5px;padding:5px 11px;border-radius:6px;margin-bottom:14px}
+.lb.purple{color:var(--purple);background:var(--purple-dim)}
+.lb.red{color:var(--red);background:var(--red-dim)}
+.lb.green{color:var(--green);background:var(--green-dim)}
+.lb.orange{color:var(--orange);background:var(--orange-dim)}
+.div{display:flex;align-items:center;gap:12px;margin:22px 0 18px}
+.div .ln{flex:1;height:1px;background:var(--border2)}
+.div .dt{width:5px;height:5px;border-radius:50%;background:var(--text3)}
+.ins{background:linear-gradient(135deg,rgba(108,92,231,0.08) 0%,rgba(0,184,148,0.06) 100%);border:1px solid rgba(108,92,231,0.15);border-radius:14px;padding:22px 18px;margin-bottom:14px;position:relative}
+.ins-ico{position:absolute;top:-10px;left:16px;background:var(--bg);padding:0 4px;font-size:18px;border-radius:4px}
+.ins p{font-size:14.5px;font-weight:500;color:var(--text);line-height:1.65}
+.ins strong{color:var(--purple);font-weight:700}
+.lc-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.lc-num{width:28px;height:28px;border-radius:7px;background:var(--purple-dim);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--purple);font-variant-numeric:tabular-nums}
+.lc-t{font-weight:700;font-size:16px;color:var(--text)}
+.c ul{list-style:none;padding:0}
+.c li{position:relative;padding-left:18px;margin-bottom:8px;font-size:14px;line-height:1.55;color:var(--text2)}
+.c li::before{content:'';position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:2px;background:var(--accent);opacity:0.5}
+.c li strong{font-weight:700;color:var(--text)}
+.tk{background:var(--surface);border:1.5px solid var(--accent);border-radius:14px;padding:22px 18px;margin-bottom:14px;position:relative;overflow:hidden}
+.tk::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#6C5CE7,#00B894,#6C5CE7);background-size:200% 100%;animation:sh 4s ease-in-out infinite}
+@keyframes sh{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.tk-badge{display:inline-block;font-size:12px;font-weight:700;letter-spacing:0.5px;color:var(--purple);background:var(--purple-dim);padding:5px 11px;border-radius:6px;margin-bottom:14px}
+.tk h3{font-weight:800;font-size:20px;line-height:1.3;color:var(--text);margin-bottom:16px;letter-spacing:-0.01em}
+.tk h3 .hl{color:var(--purple)}
+.tk-pt{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.tk-pt:last-child{margin-bottom:0}
+.tk-n{min-width:22px;height:22px;border-radius:6px;background:var(--purple-dim);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--purple);margin-top:2px;font-variant-numeric:tabular-nums}
+.tk-t{font-size:14px;color:var(--text2);line-height:1.6}
+.qt{border-left:3.5px solid var(--orange);background:rgba(232,160,76,0.04);border-radius:0 12px 12px 0;padding:18px 18px;margin-bottom:14px}
+.qt p{font-size:14.5px;font-weight:500;font-style:italic;color:var(--text2);line-height:1.6}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:50;background:#101010;border-top:1px solid #2C2C2C;padding:12px 18px;padding-bottom:max(12px,env(safe-area-inset-bottom));display:flex;gap:10px;max-width:460px;margin:0 auto}
+.nb{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:13px;border-radius:12px;font-family:inherit;font-size:14px;font-weight:700;border:none;cursor:pointer}
+.nb:active{transform:scale(0.97)}
+.nb-prev{background:#1E1E1E;color:var(--text3);border:1px solid #2C2C2C}
+.nb-next{background:var(--accent);color:#fff}
+.nb[disabled]{opacity:0.45;cursor:not-allowed}
+.nb[disabled]:active{transform:none}
+@keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.c,.ins,.tk,.qt{animation:su 0.5s ease-out both}
+.c:nth-of-type(2){animation-delay:0.06s}
+.c:nth-of-type(3){animation-delay:0.12s}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-row"><button class="hdr-back" onclick="location.href='../../../products/app.html?tab=academy'"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Содержание</button>
+    <span class="hdr-badge">MGMT</span>
+    <span class="hdr-mod">Модуль · Команда</span>
+  </div>
+  <div class="prog">
+    <span class="prog-n">3/4</span>
+    <div class="prog-track"><div class="prog-fill" style="width:75%"></div></div>
+  </div>
+</header>
+
+<main class="page">
+
+  <div class="hero">
+    <span class="hero-ico">🎚️</span>
+    <h1>Высокие vs <span class="o">низкие</span> мотивы</h1>
+    <p class="hero-sub">Правильная последовательность мотивации</p>
+  </div>
+
+  <div class="c al">
+    <div class="lb purple">Где мы остановились</div>
+    <p>В прошлой главе мы говорили про порядок как фундамент. Но даже идеальный порядок не работает, если внутри него — пустые люди. Порядок — это форма. Содержание — это <strong>мотивация</strong>. И сейчас будем говорить о том, как она устроена.</p>
+    <p>Большинство собственников думают о мотивации очень упрощённо. «Плати больше — будут работать лучше». «Дай хорошие условия — будут лояльны». «Поставь крутую миссию — будут гореть». Все три утверждения частично верны и все три частично ошибочны. И главная путаница в том, что собственники не понимают, в <strong>каком порядке</strong> работают разные виды мотивации.</p>
+  </div>
+
+  <div class="c">
+    <div class="lb purple">Две категории мотивов</div>
+    <p>Я разделяю мотивы на две большие категории — <strong>низкие</strong> и <strong>высокие</strong>. Без оценочного смысла. «Низкие» не значит «плохие» или «недостойные». «Высокие» не значит «возвышенные» или «лучше». Это просто два уровня.</p>
+    <p><strong>Низкие мотивы</strong> — это базовые, биологические потребности. Деньги, чтобы платить за квартиру и есть. Безопасность — что меня не уволят завтра без причины. Уважение — что мной не помыкают. Стабильность — что условия не поменяются каждые две недели.</p>
+    <p><strong>Высокие мотивы</strong> — это надстройка над базой. Смысл — что моя работа важна. Развитие — что я расту, учусь, становлюсь сильнее. Принадлежность — что я часть чего-то хорошего. Признание — что меня замечают и ценят. Влияние — что мои решения что-то меняют.</p>
+    <p>И вот главное правило, которое объясняет почему мотивация в большинстве малых бизнесов сломана.</p>
+  </div>
+
+  <div class="ins">
+    <span class="ins-ico">⚖️</span>
+    <p><strong>Высокие мотивы не работают, пока не закрыты низкие. Но как только низкие закрыты — высокие становятся сильнее низких.</strong></p>
+  </div>
+
+  <div class="c">
+    <p>Это и есть правильная последовательность. Сначала база. Потом надстройка.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c ar">
+    <div class="lb red">Почему смысл без денег не удерживает</div>
+    <p>Часть собственников малого бизнеса делают ставку на «смыслы и культуру». «У нас атмосфера семьи, мы все за одно дело, мы делаем что-то важное». При этом зарплаты ниже рынка, графики жёсткие, увольнения внезапные.</p>
+    <p>Эта схема может работать <strong>месяц-два</strong>, пока сотрудник не сравнит свою зарплату с рыночной. Как только сравнил — иллюзия лопается. И сотрудник уходит, причём с обидой: его «продали» через смыслы, потому что не могли заплатить деньги.</p>
+    <p>Я скажу прямо: <strong>если вы не платите рыночную зарплату, никакие смыслы вас не спасут</strong>. Сотрудник не идиот. Он сравнивает. И когда у него низкие мотивы не закрыты — то есть он не уверен, что хватит на квартиру, на еду, на детский сад — все ваши слова про «миссию» он слышит как <strong>манипуляцию</strong>.</p>
+    <p>Худшая версия этой схемы — это бизнесы, в которых собственник на словах говорит «мы команда», а на деле задерживает зарплату на две недели. Через год от такой команды остаются только те, кому <strong>некуда идти</strong>, и эти люди работают с минимальной отдачей и максимальной обидой.</p>
+  </div>
+
+  <div class="c ar">
+    <div class="lb red">Почему деньги без смысла тоже не удерживают</div>
+    <p>Противоположная крайность. Собственник говорит «деньги решают всё». Платит выше рынка. Бонусы, премии, дорогие подарки на праздники.</p>
+    <p>При этом — никаких смыслов, никакой культуры, никакого развития. «Я тебе плачу, ты делаешь работу. Точка».</p>
+    <p>Эта схема работает дольше — потому что низкие мотивы у людей закрыты. Но через 1-2 года <strong>появляется выгорание</strong>. Сотрудник начинает чувствовать, что он функция, а не человек. Что его покупают, а не уважают. Что он встаёт каждый день и идёт работать, но не понимает зачем.</p>
+    <p>И тут всплывает закон, который я уже упоминал в L02 на примере Goldman Sachs. Деньги не лечат отсутствие смысла. Сотрудник Goldman'а получал $110,000 в первый год, и всё равно выгорал, потому что 95-часовая работа без смысла — это не работа, это утилизация человека.</p>
+    <p>Сильные сотрудники, которым только платят без смысла, в итоге уходят. На зарплату чуть меньше, но в место, где они <strong>что-то значат</strong>. Слабые остаются — потому что им просто негде столько зарабатывать. И через два года у вас в команде только слабые на больших окладах. Это самая дорогая команда в бизнесе.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c ag">
+    <div class="lb green">Сначала закройте низкие</div>
+    <p>Теперь как это работает в правильном порядке.</p>
+    <p>Это значит:</p>
+    <ul>
+      <li>Зарплата на уровне рынка или чуть выше. Не «насколько я могу заплатить», а «сколько стоит этот человек на рынке плюс небольшой плюс за стабильность с вами».</li>
+      <li>Зарплата платится <strong>в срок</strong>. Без задержек, без «извини, на следующей неделе». Если вы хоть раз задержали — доверие подорвано на месяцы.</li>
+      <li>Базовые условия работы — нормальное помещение, нормальное оборудование, нормальный график. Не курорт, но и не каторга.</li>
+      <li>Безопасность — нет внезапных увольнений, нет публичных разносов, нет токсичности.</li>
+    </ul>
+    <p>Без этого всего любая мотивация выше — <strong>не работает</strong>. Это фундамент.</p>
+  </div>
+
+  <div class="c">
+    <div class="lb purple">Стройте надстройку — пять высоких мотивов</div>
+    <p>Когда фундамент есть — стройте надстройку. Это значит:</p>
+  </div>
+
+  <div class="c">
+    <div class="lc-hdr"><div class="lc-num">1</div><div class="lc-t">Смысл работы</div></div>
+    <p>Сотрудник должен понимать, зачем он это делает. Не «потому что я плачу зарплату», а как его работа влияет на клиента, на компанию, на мир. Это можно объяснять простыми словами, и это надо делать регулярно. Не один раз на собеседовании, а на планёрках, в обратной связи, в разговорах.</p>
+  </div>
+
+  <div class="c">
+    <div class="lc-hdr"><div class="lc-num">2</div><div class="lc-t">Развитие</div></div>
+    <p>Сотрудник должен видеть, что он растёт. Учится новому, осваивает более сложные задачи, получает повышения и признание профессиональное. Если человек два года делает одну и ту же работу одним и тем же способом — он начинает выгорать, даже на хорошей зарплате.</p>
+  </div>
+
+  <div class="c">
+    <div class="lc-hdr"><div class="lc-num">3</div><div class="lc-t">Признание</div></div>
+    <p>Это самое дешёвое и самое недооценённое. Просто говорите людям, когда они хорошо сделали. Конкретно, по делу, при свидетелях. «Жанат, спасибо что вчера за час разрулил ситуацию с Алмазом — это была сложная история, ты с ней справился». Тридцать секунд вашего внимания — и человек неделю горит.</p>
+  </div>
+
+  <div class="c">
+    <div class="lc-hdr"><div class="lc-num">4</div><div class="lc-t">Принадлежность</div></div>
+    <p>Сотрудник должен чувствовать, что он часть команды, а не наёмная рабочая сила. Общие праздники. Общие победы. Общие сложные времена. То самое «мы», которое появляется не от слов, а от реального участия в жизни друг друга.</p>
+  </div>
+
+  <div class="c">
+    <div class="lc-hdr"><div class="lc-num">5</div><div class="lc-t">Влияние</div></div>
+    <p>Сильные сотрудники должны иметь возможность что-то менять. Предлагать улучшения, и видеть что их идеи воплощаются. Принимать решения в своей зоне ответственности. Если каждый шаг согласовывается с собственником — у вас не команда, а филиал вашего мозга.</p>
+  </div>
+
+  <div class="c">
+    <p>Когда эти высокие мотивы добавляются к закрытым низким — вы получаете команду, которая работает не ради зарплаты. И именно эта команда обгоняет конкурентов, которые платят больше, но дают меньше.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c ao">
+    <div class="lb red">Главная ошибка которую делают все</div>
+    <p>Самая частая ошибка собственников малого бизнеса — это <strong>попытка работать только с одним этажом</strong>.</p>
+    <p>Кто-то закрывает только низкие мотивы. «Я плачу, остальное не моё дело». Через год удивляется, почему сотрудники работают вяло.</p>
+    <p>Кто-то пытается работать только высокими. «У нас миссия, у нас семья, у нас важное дело». Через полгода удивляется, почему все ушли.</p>
+    <p>Правильно — <strong>оба этажа одновременно</strong>. Базу платите рынком, а сверху строите смысл, развитие, признание. Это требует от вас и денег, и времени, и эмоциональной работы. Но именно это создаёт команду, которая остаётся.</p>
+  </div>
+
+  <div class="c al">
+    <div class="lb purple">К чему я веду</div>
+  </div>
+
+  <div class="qt">
+    <p>«Мотивация — это не один рычаг, это система. Низкие мотивы — фундамент, без которого всё остальное не держится. Высокие — надстройка, ради которой вообще стоит работать.»</p>
+  </div>
+
+  <div class="c">
+    <p>Если у вас в команде проблемы с мотивацией, то прежде чем «придумывать новые мероприятия для тимбилдинга» — проверьте фундамент. Платите ли вы рынком. Платите ли вовремя. Уважаете ли людей. Безопасно ли с вами работать.</p>
+    <p>Если фундамент есть, а мотивация всё равно проседает — тогда работайте с верхним этажом. Смысл, развитие, признание, принадлежность, влияние. Это и есть та работа, которая отделяет руководителя-исполнителя от руководителя-лидера.</p>
+    <p>В следующей главе мы посмотрим на это с другой стороны. Не «что я могу дать команде», а «что делает команды эффективными изнутри». Расскажу про <strong>Project Aristotle</strong> — самое известное в мире исследование команд от Google. Они два года изучали 180 своих команд и нашли пять факторов эффективности. И первый из них — не тот, который вы ожидаете.</p>
+  </div>
+
+  <div class="tk">
+    <span class="tk-badge">Выводы главы</span>
+    <h3>Сначала база.<br>Потом <span class="hl">надстройка</span>.</h3>
+    <div class="tk-pt"><span class="tk-n">1</span><span class="tk-t">Низкие мотивы (деньги, безопасность, уважение, стабильность) — фундамент. Высокие (смысл, развитие, признание, принадлежность, влияние) — надстройка.</span></div>
+    <div class="tk-pt"><span class="tk-n">2</span><span class="tk-t">Высокие не работают пока не закрыты низкие. Смысл без денег — это манипуляция. Деньги без смысла — выгорание через 1-2 года.</span></div>
+    <div class="tk-pt"><span class="tk-n">3</span><span class="tk-t">Главная ошибка — работать только с одним этажом. Правильно — оба одновременно. Это требует и денег, и эмоциональной работы.</span></div>
+  </div>
+
+</main>
+
+<div class="nav">
+  <button class="nb nb-prev" onclick="location.href='m6-ch02.html'">← Глава 2</button>
+  <button class="nb nb-next" onclick="location.href='m6-ch04.html'">Глава 4 →</button>
+</div>
+
+</body>
+</html>

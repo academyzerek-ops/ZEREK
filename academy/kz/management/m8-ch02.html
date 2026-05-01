@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0A0A0F">
+<title>Глава 2 — Четыре типа токсиков</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#0A0A0F !important;color:#E8E8ED;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow-x:hidden;min-height:100vh}
+html::before{content:'';position:fixed;inset:0;background:#0A0A0F;z-index:-1}
+:root{--bg:#0A0A0F;--surface:#16161E;--surface2:#1E1E28;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.10);--text:#E8E8ED;--text2:#A0A0B0;--text3:#6B6B7B;--purple:#A89BFF;--purple-dim:rgba(168,155,255,0.12);--green:#00D4AA;--green-dim:rgba(0,212,170,0.10);--orange:#E8A04C;--orange-dim:rgba(232,160,76,0.10);--red:#E85454;--red-dim:rgba(232,84,84,0.10);--accent:#6C63FF}
+.hdr{position:sticky;top:0;z-index:50;background:#101010;border-bottom:1px solid #2C2C2C;padding:14px 20px 12px}
+.hdr::after{content:'';position:absolute;bottom:-20px;left:0;right:0;height:20px;background:linear-gradient(180deg,#101010 0%,var(--bg) 100%);pointer-events:none;z-index:49}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.hdr-badge{background:var(--purple-dim);color:var(--purple);font-size:11px;font-weight:700;letter-spacing:1.2px;padding:4px 10px;border-radius:6px}
+.hdr-mod{font-size:12px;color:var(--text3);font-weight:600;min-width:0;max-width:52%;text-align:right;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.prog{display:flex;align-items:center;gap:10px}
+.prog-n{font-size:12px;color:var(--text3);font-weight:700;font-variant-numeric:tabular-nums}
+.prog-track{flex:1;height:5px;background:#2C2C2C;border-radius:5px;overflow:hidden}
+.prog-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#6C5CE7,#00B894)}
+.hdr-back{display:flex;align-items:center;gap:4px;background:none;border:1px solid #2C2C2C;border-radius:8px;padding:6px 12px;font-family:inherit;font-size:12px;font-weight:700;color:var(--text3);cursor:pointer;white-space:nowrap}
+.hdr-back:active{background:#1E1E1E}
+.hdr-back svg{width:14px;height:14px;stroke:var(--text3);stroke-width:2.5;fill:none}
+.page{max-width:460px;margin:0 auto;padding:20px 18px 120px}
+.hero{text-align:center;padding:32px 0 24px}
+.hero-ico{font-size:48px;display:block;margin-bottom:12px}
+.hero h1{font-weight:800;font-size:26px;line-height:1.25;color:var(--text);margin-bottom:8px;letter-spacing:-0.01em}
+.hero h1 .o{color:var(--orange)}
+.hero-sub{font-size:14px;color:var(--text3);font-weight:500}
+.toxic-hdr{text-align:center;padding:18px 0 8px;margin-top:12px}
+.toxic-hdr-num{display:inline-block;font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--red);background:var(--red-dim);padding:5px 12px;border-radius:6px;margin-bottom:8px}
+.toxic-hdr h2{font-weight:800;font-size:22px;line-height:1.25;color:var(--text);letter-spacing:-0.01em;padding:0 12px}
+.c{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 18px;margin-bottom:14px}
+.c p{font-size:15px;color:var(--text2);margin-bottom:10px;line-height:1.8}
+.c p:last-child{margin-bottom:0}
+.c strong{font-weight:700;color:var(--text)}
+.c em{font-style:italic;color:var(--text)}
+.c.al{border-left:3.5px solid var(--accent);background:rgba(108,92,231,0.04)}
+.c.ag{border-left:3.5px solid var(--green);background:rgba(0,212,170,0.04)}
+.c.ao{border-left:3.5px solid var(--orange);background:rgba(232,160,76,0.04)}
+.c.ar{border-left:3.5px solid var(--red);background:rgba(232,84,84,0.04)}
+.lb{display:inline-block;font-size:12px;font-weight:700;letter-spacing:0.5px;padding:5px 11px;border-radius:6px;margin-bottom:14px}
+.lb.purple{color:var(--purple);background:var(--purple-dim)}
+.lb.red{color:var(--red);background:var(--red-dim)}
+.lb.green{color:var(--green);background:var(--green-dim)}
+.lb.orange{color:var(--orange);background:var(--orange-dim)}
+.div{display:flex;align-items:center;gap:12px;margin:22px 0 18px}
+.div .ln{flex:1;height:1px;background:var(--border2)}
+.div .dt{width:5px;height:5px;border-radius:50%;background:var(--text3)}
+.ins{background:linear-gradient(135deg,rgba(108,92,231,0.08) 0%,rgba(0,184,148,0.06) 100%);border:1px solid rgba(108,92,231,0.15);border-radius:14px;padding:22px 18px;margin-bottom:14px;position:relative}
+.ins-ico{position:absolute;top:-10px;left:16px;background:var(--bg);padding:0 4px;font-size:18px;border-radius:4px}
+.ins p{font-size:14.5px;font-weight:500;color:var(--text);line-height:1.65}
+.ins strong{color:var(--purple);font-weight:700}
+.lc-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.lc-num{width:28px;height:28px;border-radius:7px;background:var(--purple-dim);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--purple);font-variant-numeric:tabular-nums}
+.lc-t{font-weight:700;font-size:16px;color:var(--text)}
+.c ul{list-style:none;padding:0}
+.c li{position:relative;padding-left:18px;margin-bottom:8px;font-size:14px;line-height:1.55;color:var(--text2)}
+.c li::before{content:'';position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:2px;background:var(--accent);opacity:0.5}
+.c li strong{font-weight:700;color:var(--text)}
+.tk{background:var(--surface);border:1.5px solid var(--accent);border-radius:14px;padding:22px 18px;margin-bottom:14px;position:relative;overflow:hidden}
+.tk::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#6C5CE7,#00B894,#6C5CE7);background-size:200% 100%;animation:sh 4s ease-in-out infinite}
+@keyframes sh{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.tk-badge{display:inline-block;font-size:12px;font-weight:700;letter-spacing:0.5px;color:var(--purple);background:var(--purple-dim);padding:5px 11px;border-radius:6px;margin-bottom:14px}
+.tk h3{font-weight:800;font-size:20px;line-height:1.3;color:var(--text);margin-bottom:16px;letter-spacing:-0.01em}
+.tk h3 .hl{color:var(--purple)}
+.tk-pt{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.tk-pt:last-child{margin-bottom:0}
+.tk-n{min-width:22px;height:22px;border-radius:6px;background:var(--purple-dim);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--purple);margin-top:2px;font-variant-numeric:tabular-nums}
+.tk-t{font-size:14px;color:var(--text2);line-height:1.6}
+.qt{border-left:3.5px solid var(--orange);background:rgba(232,160,76,0.04);border-radius:0 12px 12px 0;padding:18px 18px;margin-bottom:14px}
+.qt p{font-size:14.5px;font-weight:500;font-style:italic;color:var(--text2);line-height:1.6}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:50;background:#101010;border-top:1px solid #2C2C2C;padding:12px 18px;padding-bottom:max(12px,env(safe-area-inset-bottom));display:flex;gap:10px;max-width:460px;margin:0 auto}
+.nb{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:13px;border-radius:12px;font-family:inherit;font-size:14px;font-weight:700;border:none;cursor:pointer}
+.nb:active{transform:scale(0.97)}
+.nb-prev{background:#1E1E1E;color:var(--text3);border:1px solid #2C2C2C}
+.nb-next{background:var(--accent);color:#fff}
+.nb[disabled]{opacity:0.45;cursor:not-allowed}
+.nb[disabled]:active{transform:none}
+@keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.c,.ins,.tk,.qt{animation:su 0.5s ease-out both}
+.c:nth-of-type(2){animation-delay:0.06s}
+.c:nth-of-type(3){animation-delay:0.12s}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-row"><button class="hdr-back" onclick="location.href='../../../products/app.html?tab=academy'"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Содержание</button>
+    <span class="hdr-badge">MGMT</span>
+    <span class="hdr-mod">Модуль · Расставание</span>
+  </div>
+  <div class="prog">
+    <span class="prog-n">2/4</span>
+    <div class="prog-track"><div class="prog-fill" style="width:50%"></div></div>
+  </div>
+</header>
+
+<main class="page">
+
+  <div class="hero">
+    <span class="hero-ico">☣️</span>
+    <h1>Четыре типа <span class="o">токсиков</span></h1>
+    <p class="hero-sub">Саботажник, Жертва, Звезда-эгоист, Гиена</p>
+  </div>
+
+  <div class="c al">
+    <div class="lb purple">О чём эта глава</div>
+    <p>В прошлой главе мы говорили о балласте — о людях, которые просто не справляются на своём месте. Это одна категория. Сейчас разберём другую, более опасную. <strong>Токсиков</strong>. Это сотрудники, которые не только сами плохо работают, но и <strong>активно отравляют команду</strong> вокруг себя.</p>
+    <p>Я выделяю четыре типа токсиков в малом бизнесе. Каждый работает по-своему, каждый ломает команду по-своему, и каждый требует <strong>немедленного расставания</strong>. Их нельзя перевоспитать. Это не злоба и не пессимизм — это работа с моделями поведения, которые человек <strong>сам в себе не видит</strong> и поэтому не может менять.</p>
+    <p>Главная задача этой главы — научить вас распознавать эти типы рано. Чем раньше вы их видите — тем меньше успевает повредить.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <!-- ТИП 1 — САБОТАЖНИК -->
+  <div class="toxic-hdr">
+    <span class="toxic-hdr-num">ТИП 1</span>
+    <h2>Саботажник</h2>
+  </div>
+
+  <div class="c ar">
+    <div class="lc-hdr"><div class="lc-num">1</div><div class="lc-t">Что вы видите</div></div>
+    <p>Сотрудник на словах со всем согласен. На планёрке кивает, говорит «понял», обещает выполнить. На деле — <strong>делает иначе</strong>. Или вообще не делает. Когда вы спрашиваете почему — у него всегда есть оправдание: «не понял», «так получилось», «коллега не подвёз».</p>
+    <p>Снаружи он выглядит лояльным, исполнительным, спокойным. Никаких открытых конфликтов. Просто <strong>результата нет</strong>.</p>
+  </div>
+
+  <div class="c ar">
+    <div class="lc-hdr"><div class="lc-num">2</div><div class="lc-t">Как он работает</div></div>
+    <p>Саботажник не идёт против вас открыто, потому что боится прямого конфликта. Но <strong>внутренне не согласен</strong> — с правилами, с задачами, с вами как руководителем. И эту несогласованность он выражает через <strong>тихое не-выполнение</strong>.</p>
+    <p>Часто саботажник — это сотрудник, который <strong>раньше был хорошим</strong>. Что-то в его жизни произошло — конфликт с коллегой, не получил повышение, поссорился с вами по личному вопросу. Открыто высказать обиду не смог. И теперь молча её отрабатывает, проваливая задачи. И сам себе оправдывает это рационализациями.</p>
+  </div>
+
+  <div class="c ar">
+    <div class="lc-hdr"><div class="lc-num">3</div><div class="lc-t">Чем опасен</div></div>
+    <p>Саботажника очень тяжело <strong>поймать</strong>. У него всегда есть объяснение. Каждый отдельный косяк выглядит как стечение обстоятельств. Только когда вы наберёте 8-10 косяков за полгода — становится виден <strong>паттерн</strong>. И к тому моменту он уже успел повлиять на проекты, на клиентов, на команду.</p>
+  </div>
+
+  <div class="c ar">
+    <div class="lc-hdr"><div class="lc-num">4</div><div class="lc-t">Как распознать рано</div></div>
+    <p>Главный сигнал — <strong>расхождение между словами и делами</strong>. Скажите ему конкретное задание с конкретным сроком. Если каждый раз он говорит «да, сделаю», а потом не делает или делает по-своему — вы имеете дело с саботажником. И никакие разговоры это не починят, потому что <strong>проблема не в понимании задачи, а во внутреннем отказе её выполнять</strong>.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <!-- ТИП 2 — ЖЕРТВА -->
+  <div class="toxic-hdr">
+    <span class="toxic-hdr-num">ТИП 2</span>
+    <h2>Жертва</h2>
+  </div>
+
+  <div class="c ar">
+    <div class="lc-hdr"><div class="lc-num">1</div><div class="lc-t">Что вы видите</div></div>
+    <p>У этого сотрудника <strong>всегда что-то происходит</strong>. У него вечно семейные проблемы, проблемы со здоровьем, проблемы с транспортом, конфликты с коллегами. Он постоянно объясняет, <strong>почему не получилось</strong>. И каждое объяснение по отдельности звучит уважительно — болезни, дети, бабушка, машина сломалась.</p>
+    <p>Но через полгода вы вдруг замечаете, что у него <strong>всегда</strong> что-то. Что <strong>причины кончаются</strong>, начинается ощущение, что <strong>он сам притягивает проблемы</strong>.</p>
+  </div>
+
+  <div class="c ar">
+    <div class="lc-hdr"><div class="lc-num">2</div><div class="lc-t">Как он работает</div></div>
+    <p>Жертва выработала стратегию выживания: <strong>снять с себя ответственность через постоянные обстоятельства</strong>. Это часто формируется в детстве, и человек сам не замечает, что делает. Для него это <strong>естественный способ</strong> объяснять мир.</p>
+    <p>Жертва не саботирует вас намеренно. Она просто живёт в реальности, где <strong>обстоятельства сильнее её</strong>. И в этой реальности она искренне думает, что не виновата ни в одном из косяков. Потому что — машина, дети, бабушка, начальник, погода.</p>
+  </div>
+
+  <div class="c ar">
+    <div class="lc-hdr"><div class="lc-num">3</div><div class="lc-t">Чем опасна</div></div>
+    <p>Жертва <strong>расхолаживает команду</strong>. Команда видит, что у Жертвы вечно проблемы, и постепенно начинает либо ей помогать (за счёт своего времени), либо её игнорировать. И в обоих случаях команда тратит на Жертву ресурсы. А ещё она <strong>подаёт пример</strong>: «можно прийти и сказать что не получилось из-за обстоятельств, и тебя не трогают». Через полгода у вас в команде половина становится «жертвами по чуть-чуть».</p>
+    <p>И второе — <strong>Жертва съедает вас эмоционально</strong>. Каждый разговор с ней превращается в выслушивание её обстоятельств. Вы выходите истощённым, не получив никакого решения. Это эмоциональный налог, который вы платите за то, что не отпустили её.</p>
+  </div>
+
+  <div class="c ar">
+    <div class="lc-hdr"><div class="lc-num">4</div><div class="lc-t">Как распознать рано</div></div>
+    <p>Главный сигнал — <strong>частота обстоятельств</strong>. Если у сотрудника <strong>каждый месяц</strong> что-то случается — это не плохая удача, это <strong>паттерн</strong>. Реальные жизненные обстоятельства бывают у всех, но не каждый месяц по новой.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <!-- ТИП 3 — ЗВЕЗДА-ЭГОИСТ -->
+  <div class="toxic-hdr">
+    <span class="toxic-hdr-num">ТИП 3</span>
+    <h2>Звезда-эгоист</h2>
+  </div>
+
+  <div class="c ar">
+    <div class="lc-hdr"><div class="lc-num">1</div><div class="lc-t">Что вы видите</div></div>
+    <p>Это <strong>сильный сотрудник</strong>. Он действительно работает хорошо, действительно приносит результат. Он любимец клиентов, у него высокие показатели. Вы его держите за это.</p>
+    <p>Но при этом он <strong>не уважает команду</strong>. Открыто или скрытно унижает коллег. «Я тут вкалываю, а они валяют дурака». На планёрках демонстративно показывает, что он умнее всех. Не помогает другим. Когда команда просит его подключиться к общей задаче — отказывается со словами «это не моё».</p>
+  </div>
+
+  <div class="c ar">
+    <div class="lc-hdr"><div class="lc-num">2</div><div class="lc-t">Как он работает</div></div>
+    <p>Звезда-эгоист действительно силён в своей роли, и он это знает. Эта сила даёт ему <strong>иллюзию вседозволенности</strong>. Он считает, что раз он приносит больше результата — он <strong>выше правил команды</strong>.</p>
+    <p>Часто такой сотрудник — это бывший лидер с предыдущего места работы, который перешёл к вам с амбициями вырасти ещё. И когда роста не происходит достаточно быстро — он начинает выражать своё разочарование через <strong>унижение тех, кто рядом</strong>.</p>
+  </div>
+
+  <div class="c ar">
+    <div class="lc-hdr"><div class="lc-num">3</div><div class="lc-t">Чем опасен</div></div>
+    <p>Это самый <strong>финансово соблазнительный</strong> для собственника тип, потому что Звезда <strong>реально приносит деньги</strong>. Вы смотрите на его выручку и думаете: «ну ладно, он немного резкий, но зато сколько приносит».</p>
+    <p>И вот цена. Команда вокруг Звезды <strong>постепенно деморализуется</strong>. Лучшие сотрудники уходят первыми — потому что не хотят работать в среде, где их унижают. Через год у вас остаётся Звезда плюс несколько слабых, которые терпят его потому что не могут уйти. Бизнес держится на одном человеке. И когда <strong>Звезда сама уйдёт</strong> (а она уйдёт, у Звёзд всегда есть следующая ступенька) — у вас на руках развалившаяся команда без неё.</p>
+    <p>Это самый дорогой токсик в долгосрочной перспективе. Он медленно платит дивиденды, но забирает основу — команду.</p>
+  </div>
+
+  <div class="c ar">
+    <div class="lc-hdr"><div class="lc-num">4</div><div class="lc-t">Как распознать рано</div></div>
+    <p>Главный сигнал — <strong>отношение к команде</strong>. Послушайте, как сотрудник говорит о коллегах в личных разговорах. Если регулярно слышите «они недоумки», «без меня тут ничего не работает», «я тут один за всех» — это Звезда-эгоист, даже если на словах при всех он вежливый.</p>
+    <p>И второй сигнал — <strong>готовность помочь</strong>. Если вы просите Звезду помочь коллеге, и она находит причины не помогать — это диагноз.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <!-- ТИП 4 — ГИЕНА -->
+  <div class="toxic-hdr">
+    <span class="toxic-hdr-num">ТИП 4</span>
+    <h2>Гиена</h2>
+  </div>
+
+  <div class="c ar">
+    <div class="lc-hdr"><div class="lc-num">1</div><div class="lc-t">Что вы видите</div></div>
+    <p>Этот сотрудник <strong>работает чужими руками</strong> и приписывает себе чужие заслуги. На планёрках он первым говорит «вот мы сделали», когда сделали другие. Идеи, которые озвучивают его коллеги, он на следующей встрече подаёт как свои. Когда что-то получилось — он впереди отчитываться. Когда что-то не получилось — он <strong>исчезает</strong> или валит на других.</p>
+    <p>Снаружи Гиена может выглядеть очень активным и инициативным. Особенно с вашей точки зрения, потому что вы видите её <strong>в момент успеха</strong>. То, что за каждым «её» успехом стоит чья-то чужая работа, видят только коллеги.</p>
+  </div>
+
+  <div class="c ar">
+    <div class="lc-hdr"><div class="lc-num">2</div><div class="lc-t">Как она работает</div></div>
+    <p>Гиена — это сотрудник, который понял, что <strong>видимость в малом бизнесе важнее реальности</strong>. Собственник часто перегружен и не успевает разбираться, кто что сделал на самом деле. Достаточно громко рассказать про результат — и приписки станут вашими.</p>
+    <p>Гиена обычно не так уж много делает руками. Её основная работа — <strong>присутствие у успеха</strong>. Она оказывается в нужном месте в нужное время, чтобы засветиться рядом с победой. Реально полезной работы — мало.</p>
+  </div>
+
+  <div class="c ar">
+    <div class="lc-hdr"><div class="lc-num">3</div><div class="lc-t">Чем опасна</div></div>
+    <p>Гиена <strong>разрушает справедливость в команде</strong>. Реальные авторы идей и результатов видят, как их работу присваивают, и <strong>теряют мотивацию делать что-то новое</strong>. «Зачем я буду стараться, если потом всё равно отчитается Алмаз». Через полгода в команде воцаряется молчание — никто не предлагает ничего, потому что предложишь — украдут.</p>
+    <p>И второе — Гиена <strong>дезориентирует руководителя</strong>. Вы перестаёте понимать, кто реально хороший работник, а кто — присвоитель чужих заслуг. И в итоге продвигаете не тех людей.</p>
+  </div>
+
+  <div class="c ar">
+    <div class="lc-hdr"><div class="lc-num">4</div><div class="lc-t">Как распознать рано</div></div>
+    <p>Главный сигнал — <strong>проверьте независимо</strong>, кто что сделал. Когда сотрудник заявляет о результате, спросите у других участников команды: «Кто конкретно делал эту работу? Что он делал? Что делали другие?». Если выясняется, что Алмаз говорил «мы сделали», а на деле он добавил 5%, а основное сделал Жанат — вы имеете дело с Гиеной.</p>
+    <p>И второй сигнал — <strong>поведение в момент косяка</strong>. Гиена пропадает, когда что-то идёт не так. Если её не видно в трудный момент, но она первая в момент победы — диагноз поставлен.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c al">
+    <div class="lb purple">Что общего у всех четырёх типов</div>
+    <p>Несколько важных вещей, которые объединяют все эти типы.</p>
+    <p><strong>Первое — их нельзя перевоспитать.</strong> Это самый важный месседж главы. Каждый из этих типов — не «недостаток воспитания», который можно поправить разговорами. Это <strong>выработанная стратегия выживания</strong>, которая работает у этого человека годами, и которую он <strong>сам в себе не видит</strong>. Саботажник искренне думает, что у него «не получилось». Жертва искренне считает, что «обстоятельства против неё». Звезда искренне верит, что она «выше команды». Гиена искренне говорит «мы сделали».</p>
+    <p>Вы не сможете это починить. Я видел десятки попыток. Все провалились. Не теряйте на это месяцы.</p>
+    <p><strong>Второе — они узнают себя в чужом увольнении.</strong> Если вы расстаётесь с одним токсиком и команда видит <strong>ясную картину</strong> того, почему — другие токсики либо подтягиваются на короткое время, либо уходят сами. Это работает как профилактика.</p>
+    <p><strong>Третье — расставание с токсиком — это акт уважения к команде.</strong> Не наказание для него. А <strong>защита остальных</strong>. Когда вы держите токсика — вы говорите команде: «мне не важно, что вам тяжело с ним работать, мне важно меньше делать». Когда расстаётесь — говорите: «я слышу вас, я держу планку».</p>
+  </div>
+
+  <div class="c al">
+    <div class="lb purple">Главная мысль главы</div>
+  </div>
+
+  <div class="ins">
+    <span class="ins-ico">⚖️</span>
+    <p><strong>Каждый токсик — это выбор между ним и командой. Не оба. Один.</strong></p>
+  </div>
+
+  <div class="c">
+    <p>Если у вас в команде есть один из этих четырёх типов — у вас уже идёт скрытая утечка. Сильные тихо пакуют чемоданы. Слабые подстраиваются под новую норму. И каждый день, что вы откладываете — приближает момент, когда вы потеряете команду.</p>
+    <p>В следующей главе разберём, <strong>как</strong> именно расстаться. Через три структурированные встречи: диагностическая, предупредительная, финальная. Со словами, со сценарием, с тем что говорить и что не говорить. Это то, что превращает страшный «разговор о расставании» в управляемый процесс.</p>
+  </div>
+
+  <div class="tk">
+    <span class="tk-badge">Выводы главы</span>
+    <h3>Перевоспитать <span class="hl">нельзя</span>.<br>Можно только расстаться.</h3>
+    <div class="tk-pt"><span class="tk-n">1</span><span class="tk-t">Саботажник — слова и дела расходятся. Жертва — каждый месяц обстоятельства. Звезда-эгоист — приносит деньги, унижает команду. Гиена — приписывает чужие заслуги.</span></div>
+    <div class="tk-pt"><span class="tk-n">2</span><span class="tk-t">Все четыре типа — это выработанные годами стратегии выживания. Сами себя не видят. Перевоспитать нельзя. Десятки попыток других провалились.</span></div>
+    <div class="tk-pt"><span class="tk-n">3</span><span class="tk-t">Расставание с токсиком — не наказание ему, а акт уважения к остальной команде. Тянуть = говорить команде «мне всё равно что вам тяжело».</span></div>
+  </div>
+
+</main>
+
+<div class="nav">
+  <button class="nb nb-prev" onclick="location.href='m8-ch01.html'">← Глава 1</button>
+  <button class="nb nb-next" onclick="location.href='m8-ch03.html'">Глава 3 →</button>
+</div>
+
+</body>
+</html>

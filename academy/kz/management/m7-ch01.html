@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0A0A0F">
+<title>Глава 1 — Накопление и взрыв</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#0A0A0F !important;color:#E8E8ED;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow-x:hidden;min-height:100vh}
+html::before{content:'';position:fixed;inset:0;background:#0A0A0F;z-index:-1}
+:root{--bg:#0A0A0F;--surface:#16161E;--surface2:#1E1E28;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.10);--text:#E8E8ED;--text2:#A0A0B0;--text3:#6B6B7B;--purple:#A89BFF;--purple-dim:rgba(168,155,255,0.12);--green:#00D4AA;--green-dim:rgba(0,212,170,0.10);--orange:#E8A04C;--orange-dim:rgba(232,160,76,0.10);--red:#E85454;--red-dim:rgba(232,84,84,0.10);--accent:#6C63FF}
+.hdr{position:sticky;top:0;z-index:50;background:#101010;border-bottom:1px solid #2C2C2C;padding:14px 20px 12px}
+.hdr::after{content:'';position:absolute;bottom:-20px;left:0;right:0;height:20px;background:linear-gradient(180deg,#101010 0%,var(--bg) 100%);pointer-events:none;z-index:49}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.hdr-badge{background:var(--purple-dim);color:var(--purple);font-size:11px;font-weight:700;letter-spacing:1.2px;padding:4px 10px;border-radius:6px}
+.hdr-mod{font-size:12px;color:var(--text3);font-weight:600;min-width:0;max-width:52%;text-align:right;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.prog{display:flex;align-items:center;gap:10px}
+.prog-n{font-size:12px;color:var(--text3);font-weight:700;font-variant-numeric:tabular-nums}
+.prog-track{flex:1;height:5px;background:#2C2C2C;border-radius:5px;overflow:hidden}
+.prog-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#6C5CE7,#00B894)}
+.hdr-back{display:flex;align-items:center;gap:4px;background:none;border:1px solid #2C2C2C;border-radius:8px;padding:6px 12px;font-family:inherit;font-size:12px;font-weight:700;color:var(--text3);cursor:pointer;white-space:nowrap}
+.hdr-back:active{background:#1E1E1E}
+.hdr-back svg{width:14px;height:14px;stroke:var(--text3);stroke-width:2.5;fill:none}
+.page{max-width:460px;margin:0 auto;padding:20px 18px 120px}
+.hero{text-align:center;padding:32px 0 24px}
+.hero-ico{font-size:48px;display:block;margin-bottom:12px}
+.hero h1{font-weight:800;font-size:26px;line-height:1.25;color:var(--text);margin-bottom:8px;letter-spacing:-0.01em}
+.hero h1 .o{color:var(--orange)}
+.hero-sub{font-size:14px;color:var(--text3);font-weight:500}
+.c{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 18px;margin-bottom:14px}
+.c p{font-size:15px;color:var(--text2);margin-bottom:10px;line-height:1.8}
+.c p:last-child{margin-bottom:0}
+.c strong{font-weight:700;color:var(--text)}
+.c em{font-style:italic;color:var(--text)}
+.c.al{border-left:3.5px solid var(--accent);background:rgba(108,92,231,0.04)}
+.c.ag{border-left:3.5px solid var(--green);background:rgba(0,212,170,0.04)}
+.c.ao{border-left:3.5px solid var(--orange);background:rgba(232,160,76,0.04)}
+.c.ar{border-left:3.5px solid var(--red);background:rgba(232,84,84,0.04)}
+.lb{display:inline-block;font-size:12px;font-weight:700;letter-spacing:0.5px;padding:5px 11px;border-radius:6px;margin-bottom:14px}
+.lb.purple{color:var(--purple);background:var(--purple-dim)}
+.lb.red{color:var(--red);background:var(--red-dim)}
+.lb.green{color:var(--green);background:var(--green-dim)}
+.lb.orange{color:var(--orange);background:var(--orange-dim)}
+.div{display:flex;align-items:center;gap:12px;margin:22px 0 18px}
+.div .ln{flex:1;height:1px;background:var(--border2)}
+.div .dt{width:5px;height:5px;border-radius:50%;background:var(--text3)}
+.tl{padding-left:28px;position:relative;margin-bottom:18px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 20px 22px 38px}
+.tl::before{content:'';position:absolute;left:18px;top:28px;bottom:28px;width:2px;background:linear-gradient(180deg,#6C5CE7,#E85454);border-radius:2px}
+.tl-i{position:relative;margin-bottom:20px}
+.tl-i:last-child{margin-bottom:0}
+.tl-dot{position:absolute;left:-26px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--surface);border:2.5px solid #6C5CE7;box-shadow:0 0 0 3px rgba(108,92,231,0.15)}
+.tl-i:last-child .tl-dot{border-color:var(--red);box-shadow:0 0 0 3px rgba(232,84,84,0.15)}
+.tl-date{font-size:12px;font-weight:700;color:var(--purple);letter-spacing:0.5px;margin-bottom:4px;font-variant-numeric:tabular-nums}
+.tl-i:last-child .tl-date{color:var(--red)}
+.tl-txt{font-size:14px;color:var(--text2);line-height:1.6}
+.tl-txt strong{font-weight:700;color:var(--text)}
+.ins{background:linear-gradient(135deg,rgba(108,92,231,0.08) 0%,rgba(0,184,148,0.06) 100%);border:1px solid rgba(108,92,231,0.15);border-radius:14px;padding:22px 18px;margin-bottom:14px;position:relative}
+.ins-ico{position:absolute;top:-10px;left:16px;background:var(--bg);padding:0 4px;font-size:18px;border-radius:4px}
+.ins p{font-size:14.5px;font-weight:500;color:var(--text);line-height:1.65}
+.ins strong{color:var(--purple);font-weight:700}
+.lc-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.lc-num{width:28px;height:28px;border-radius:7px;background:var(--purple-dim);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--purple);font-variant-numeric:tabular-nums}
+.lc-t{font-weight:700;font-size:16px;color:var(--text)}
+.c ul{list-style:none;padding:0}
+.c li{position:relative;padding-left:18px;margin-bottom:8px;font-size:14px;line-height:1.55;color:var(--text2)}
+.c li::before{content:'';position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:2px;background:var(--accent);opacity:0.5}
+.c li strong{font-weight:700;color:var(--text)}
+.tk{background:var(--surface);border:1.5px solid var(--accent);border-radius:14px;padding:22px 18px;margin-bottom:14px;position:relative;overflow:hidden}
+.tk::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#6C5CE7,#00B894,#6C5CE7);background-size:200% 100%;animation:sh 4s ease-in-out infinite}
+@keyframes sh{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.tk-badge{display:inline-block;font-size:12px;font-weight:700;letter-spacing:0.5px;color:var(--purple);background:var(--purple-dim);padding:5px 11px;border-radius:6px;margin-bottom:14px}
+.tk h3{font-weight:800;font-size:20px;line-height:1.3;color:var(--text);margin-bottom:16px;letter-spacing:-0.01em}
+.tk h3 .hl{color:var(--purple)}
+.tk-pt{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.tk-pt:last-child{margin-bottom:0}
+.tk-n{min-width:22px;height:22px;border-radius:6px;background:var(--purple-dim);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--purple);margin-top:2px;font-variant-numeric:tabular-nums}
+.tk-t{font-size:14px;color:var(--text2);line-height:1.6}
+.qt{border-left:3.5px solid var(--orange);background:rgba(232,160,76,0.04);border-radius:0 12px 12px 0;padding:18px 18px;margin-bottom:14px}
+.qt p{font-size:14.5px;font-weight:500;font-style:italic;color:var(--text2);line-height:1.6}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:50;background:#101010;border-top:1px solid #2C2C2C;padding:12px 18px;padding-bottom:max(12px,env(safe-area-inset-bottom));display:flex;gap:10px;max-width:460px;margin:0 auto}
+.nb{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:13px;border-radius:12px;font-family:inherit;font-size:14px;font-weight:700;border:none;cursor:pointer}
+.nb:active{transform:scale(0.97)}
+.nb-prev{background:#1E1E1E;color:var(--text3);border:1px solid #2C2C2C}
+.nb-next{background:var(--accent);color:#fff}
+.nb[disabled]{opacity:0.45;cursor:not-allowed}
+.nb[disabled]:active{transform:none}
+@keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.c,.ins,.tk,.qt,.tl{animation:su 0.5s ease-out both}
+.c:nth-of-type(2){animation-delay:0.06s}
+.c:nth-of-type(3){animation-delay:0.12s}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-row"><button class="hdr-back" onclick="location.href='../../../products/app.html?tab=academy'"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Содержание</button>
+    <span class="hdr-badge">MGMT</span>
+    <span class="hdr-mod">Модуль · Дисциплина</span>
+  </div>
+  <div class="prog">
+    <span class="prog-n">1/3</span>
+    <div class="prog-track"><div class="prog-fill" style="width:33%"></div></div>
+  </div>
+</header>
+
+<main class="page">
+
+  <div class="hero">
+    <span class="hero-ico">💥</span>
+    <h1>Накопление и <span class="o">взрыв</span></h1>
+    <p class="hero-sub">Главная причина текучки в малых командах</p>
+  </div>
+
+  <div class="c al">
+    <div class="lb purple">Где мы остановились</div>
+    <p>В предыдущих уроках мы много говорили о том, как поддерживать команду — мотивировать, создавать психологическую безопасность, развивать. Сейчас разговор о другой стороне руководства, без которой первая не работает. О том, как вы <strong>держите дисциплину</strong> в команде. Как реагируете на косяки. Как возвращаете людей к стандартам.</p>
+    <p>И начну я с самого распространённого паттерна, который встречается в постсоветских малых бизнесах. Это паттерн «накопление и взрыв». Он есть у 80% собственников, с которыми я работал. И именно он — главная причина текучки и токсичности в малых командах.</p>
+  </div>
+
+  <div class="c">
+    <div class="lb red">Сцена которую вы знаете</div>
+    <p>Понедельник, утро. Вы заходите в кофейню. Видите, что вчерашний бариста закрыл смену, не помыв до конца кофемашину. На стойке остались две грязные чашки. Касса посчитана с маленькой ошибкой — не критично, но некрасиво.</p>
+    <p>Что вы делаете? В большинстве случаев — ничего. Вы вздыхаете, моете чашки, поправляете кассу, и говорите себе: «ладно, в следующий раз скажу». День насыщенный, разговаривать о грязной кофемашине — лень. Бариста хороший, и из-за такой мелочи разводить серьёзный разговор не хочется.</p>
+  </div>
+
+  <div class="tl">
+    <div class="tl-i">
+      <div class="tl-dot"></div>
+      <div class="tl-date">Понедельник</div>
+      <div class="tl-txt">Кофемашина не помыта. Две грязные чашки. Касса с ошибкой. Молчите. Моете сами. <strong>«Ладно, в следующий раз скажу».</strong></div>
+    </div>
+    <div class="tl-i">
+      <div class="tl-dot"></div>
+      <div class="tl-date">Вторник</div>
+      <div class="tl-txt">Похожая картина. Кофемашина опять не до конца помыта. Снова молчите. Думаете: <strong>«случайно, бывает»</strong>.</div>
+    </div>
+    <div class="tl-i">
+      <div class="tl-dot"></div>
+      <div class="tl-date">Среда</div>
+      <div class="tl-txt">Бариста опоздал на 15 минут. Заметили, но не сказали — он же в целом <strong>хороший работник</strong>.</div>
+    </div>
+    <div class="tl-i">
+      <div class="tl-dot"></div>
+      <div class="tl-date">Четверг</div>
+      <div class="tl-txt">Стандарт обслуживания нарушен — клиента не поприветствовали. Видите, но опять молчите, потому что клиент <strong>уже ушёл</strong>.</div>
+    </div>
+    <div class="tl-i">
+      <div class="tl-dot"></div>
+      <div class="tl-date">Пятница · ВЗРЫВ</div>
+      <div class="tl-txt">Закончилось молоко, потому что вчера никто не сделал заказ. <strong>И вот здесь вы взрываетесь.</strong></div>
+    </div>
+  </div>
+
+  <div class="c ar">
+    <div class="lb red">Что происходит в момент взрыва</div>
+    <p>«Вы что, совсем оборзели? Тут полная разгильдяйность! Я вам три месяца плачу зарплату, а вы даже молоко заказать не можете! У меня бизнес из-за вас рушится!» Вы орёте на бариста, на менеджера, на администратора — на всех, кто в этот момент на точке. Громко. Несправедливо. С обвинениями, которые не относятся к молоку.</p>
+    <p>Через час вы успокаиваетесь. Вам стыдно. Вы понимаете, что переборщили. И что <strong>молоко — это была не основная причина</strong>. Просто за три месяца у вас накопилось столько мелких раздражений, что молоко стало последней каплей.</p>
+    <p>И вот теперь у вас в команде есть <strong>обиженный бариста</strong>, <strong>обиженный менеджер</strong>, <strong>обиженный администратор</strong>. Они на работу теперь приходят с чувством «он бомба замедленного действия». А обида на «несправедливый разнос за молоко» помнится годами.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c">
+    <div class="lb purple">Это и есть «накопление и взрыв»</div>
+    <p>Я называю этот паттерн <strong>«накопление и взрыв»</strong>. Он работает по простой механике.</p>
+    <p><strong>Этап накопления.</strong> Вы видите мелкий косяк. Думаете: «не буду из-за такого разводить разговор». Молчите. Внутри откладывается небольшое раздражение. Видите второй мелкий косяк — снова молчите. Раздражение копится. Третий, пятый, десятый. Через два-три месяца у вас внутри собрался <strong>большой комок недовольства</strong>, накопленный из мелочей.</p>
+    <p><strong>Триггер.</strong> В какой-то момент случается ещё один мелкий косяк. Сам по себе он такой же незначительный, как все предыдущие. Но он становится <strong>триггером</strong>. Накопленное раздражение прорывается.</p>
+    <p><strong>Этап взрыва.</strong> Вы выливаете всё накопленное на одну ситуацию. Реакция получается <strong>непропорциональной</strong> к причине. Вы кричите на команду из-за молока, как будто молоко — это конец света. Но кричите вы на самом деле про три месяца мелочей, о которых раньше молчали.</p>
+    <p><strong>Похмелье.</strong> На следующий день вам стыдно. Вы понимаете, что перегнули палку. Но обратно отыграть нельзя. Команда увидела вас в самом неприятном свете. Доверие подорвано.</p>
+  </div>
+
+  <div class="c al">
+    <div class="lb purple">Почему это происходит</div>
+    <p>Эта схема — не злоба и не плохой характер. Это <strong>сбой в механике обратной связи</strong>.</p>
+    <p>Здоровая обратная связь работает по принципу «маленький косяк — маленькая коррекция». Сделал не так — получил мягкое замечание. Сразу. По делу. Без накопления. Это держит стандарты на уровне, и при этом не накапливает напряжения внутри руководителя.</p>
+    <p>В большинстве малых бизнесов этого механизма нет. Собственник либо <strong>молчит и копит</strong>, либо <strong>орёт несоразмерно</strong>. Промежуточных состояний нет. И сотрудник получает ровно две версии руководителя — «всё хорошо, никаких претензий» и «он бомба замедленного действия». Между этими двумя крайностями нет ничего.</p>
+    <p>Почему собственники молчат на маленьких косяках, я объясню — это важно для понимания.</p>
+    <p>Первое — <strong>страх испортить отношения</strong>. «Если я скажу про эти грязные чашки, он обидится. Я в курсе, он чувствительный». Вы заранее предполагаете, что мягкое замечание вызовет конфликт.</p>
+    <p>Второе — <strong>ощущение что мелочь не стоит разговора</strong>. «Из-за двух чашек разводить разговор — глупо». Вы экономите время и эмоциональную энергию.</p>
+    <p>Третье — <strong>надежда что само исправится</strong>. «Ну может это случайно. Может в следующий раз будет лучше». Без активной коррекции — обычно не будет лучше.</p>
+    <p>Четвёртое — и это ключевое — <strong>отсутствие культуры быстрой обратной связи</strong>. Если вы не выросли в среде, где маленькие коррекции делаются мягко и регулярно — вы не умеете это делать. Не потому что вы плохой человек, а потому что вы этого никогда не видели.</p>
+  </div>
+
+  <div class="c ar">
+    <div class="lb red">Цена накопления для бизнеса</div>
+    <p>Эта схема дорого обходится бизнесу. Перечислю основные убытки.</p>
+    <p><strong>Стандарты тихо проседают.</strong> Косяки, на которые не реагируют, повторяются. Через полгода у вас в команде нормой стало то, что три месяца назад было неприемлемо. Вы привыкли, и команда привыкла. И вы уже не различаете, где «всегда так делалось» и где «было лучше».</p>
+    <p><strong>Сильные сотрудники уходят.</strong> Это самое неприятное. Сильный человек, который сам держит планку, в среде «накопление и взрыв» страдает первым. Он видит, что у других стандарты низкие, что косяки прощаются, и в какой-то момент начинает думать «зачем я выкладываюсь, если другим прощается всё». Через полгода — год сильный уходит, и остаются те, кто комфортно жил в этом режиме.</p>
+    <p><strong>Доверие к руководителю подорвано.</strong> После каждого взрыва команда не возвращается в полное доверие. Внутри сидит мысль «он опять может рвануть». Сотрудники начинают <strong>скрывать</strong> от вас плохие новости — потому что не хотят оказаться рядом, когда вы взорвётесь. Информация перестаёт течь снизу вверх. Через год вы не понимаете, что реально происходит на точке, потому что от вас прячут.</p>
+    <p><strong>Текучка растёт.</strong> Каждый взрыв подталкивает кого-то к мысли «ладно, начну искать другую работу». Через полгода-год у вас текучка в полтора-два раза выше, чем у конкурентов с таким же составом и зарплатой.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c al">
+    <div class="lb purple">Что делать вместо</div>
+    <p>Принцип, который ломает «накопление и взрыв», простой.</p>
+  </div>
+
+  <div class="ins">
+    <span class="ins-ico">⚖️</span>
+    <p><strong>Маленькие косяки — маленькая обратная связь, сразу. Большие косяки — большой разговор, по делу.</strong></p>
+  </div>
+
+  <div class="c">
+    <p>Если вы видите грязные чашки в среду — спокойно говорите бариста в среду. Не разносите, не пугаете, не обижаете. Просто констатируете: «Жанат, я вижу что чашки остались с прошлой смены не помытые. Стандарт у нас — всё чисто к закрытию. Давай в следующий раз закроется в порядке». Тридцать секунд. Без раздражения, потому что у вас раздражение ещё не накопилось — это первая мелочь, к которой вы реагируете.</p>
+    <p>Это и есть <strong>прогрессивное давление</strong>. Маленькое — на маленькое. Большое — на большое. Без срывов, без накоплений, без двойных стандартов.</p>
+    <p>Звучит просто. На практике — сложно, потому что ломается давняя привычка молчать и копить. Но именно этот навык отличает зрелого руководителя от неопытного.</p>
+    <p>В следующей главе я разложу прогрессивное давление по уровням. Четыре уровня воздействия — от лёгкого замечания до серьёзного предупреждения. Каждый со своими словами, своим тоном, своей структурой. Вы поймёте, какой уровень применять в какой ситуации, и как переходить с одного на другой.</p>
+  </div>
+
+  <div class="tk">
+    <span class="tk-badge">Выводы главы</span>
+    <h3>Молчание на мелочах<br>создаёт <span class="hl">взрывы</span>.</h3>
+    <div class="tk-pt"><span class="tk-n">1</span><span class="tk-t">«Накопление и взрыв» — у 80% собственников. Молчите три месяца на мелочах, потом взрываетесь на молоко. Реакция несоразмерна, обиды помнятся годами.</span></div>
+    <div class="tk-pt"><span class="tk-n">2</span><span class="tk-t">Цена паттерна: проседание стандартов, уход сильных, скрывание информации, рост текучки в 1.5-2 раза против конкурентов.</span></div>
+    <div class="tk-pt"><span class="tk-n">3</span><span class="tk-t">Принцип-противоядие: маленькие косяки — маленькая обратная связь, сразу. Большие — большой разговор по делу. Без накопления, без взрывов.</span></div>
+  </div>
+
+</main>
+
+<div class="nav">
+  <button class="nb nb-next" onclick="location.href='m7-ch02.html'">Глава 2 →</button>
+</div>
+
+</body>
+</html>

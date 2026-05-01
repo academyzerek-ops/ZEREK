@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0A0A0F">
+<title>Глава 1 — Когда ты тащишь балласт</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#0A0A0F !important;color:#E8E8ED;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow-x:hidden;min-height:100vh}
+html::before{content:'';position:fixed;inset:0;background:#0A0A0F;z-index:-1}
+:root{--bg:#0A0A0F;--surface:#16161E;--surface2:#1E1E28;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.10);--text:#E8E8ED;--text2:#A0A0B0;--text3:#6B6B7B;--purple:#A89BFF;--purple-dim:rgba(168,155,255,0.12);--green:#00D4AA;--green-dim:rgba(0,212,170,0.10);--orange:#E8A04C;--orange-dim:rgba(232,160,76,0.10);--red:#E85454;--red-dim:rgba(232,84,84,0.10);--accent:#6C63FF}
+.hdr{position:sticky;top:0;z-index:50;background:#101010;border-bottom:1px solid #2C2C2C;padding:14px 20px 12px}
+.hdr::after{content:'';position:absolute;bottom:-20px;left:0;right:0;height:20px;background:linear-gradient(180deg,#101010 0%,var(--bg) 100%);pointer-events:none;z-index:49}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.hdr-badge{background:var(--purple-dim);color:var(--purple);font-size:11px;font-weight:700;letter-spacing:1.2px;padding:4px 10px;border-radius:6px}
+.hdr-mod{font-size:12px;color:var(--text3);font-weight:600;min-width:0;max-width:52%;text-align:right;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.prog{display:flex;align-items:center;gap:10px}
+.prog-n{font-size:12px;color:var(--text3);font-weight:700;font-variant-numeric:tabular-nums}
+.prog-track{flex:1;height:5px;background:#2C2C2C;border-radius:5px;overflow:hidden}
+.prog-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#6C5CE7,#00B894)}
+.hdr-back{display:flex;align-items:center;gap:4px;background:none;border:1px solid #2C2C2C;border-radius:8px;padding:6px 12px;font-family:inherit;font-size:12px;font-weight:700;color:var(--text3);cursor:pointer;white-space:nowrap}
+.hdr-back:active{background:#1E1E1E}
+.hdr-back svg{width:14px;height:14px;stroke:var(--text3);stroke-width:2.5;fill:none}
+.page{max-width:460px;margin:0 auto;padding:20px 18px 120px}
+.hero{text-align:center;padding:32px 0 24px}
+.hero-ico{font-size:48px;display:block;margin-bottom:12px}
+.hero h1{font-weight:800;font-size:26px;line-height:1.25;color:var(--text);margin-bottom:8px;letter-spacing:-0.01em}
+.hero h1 .o{color:var(--orange)}
+.hero-sub{font-size:14px;color:var(--text3);font-weight:500}
+.c{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 18px;margin-bottom:14px}
+.c p{font-size:15px;color:var(--text2);margin-bottom:10px;line-height:1.8}
+.c p:last-child{margin-bottom:0}
+.c strong{font-weight:700;color:var(--text)}
+.c em{font-style:italic;color:var(--text)}
+.c.al{border-left:3.5px solid var(--accent);background:rgba(108,92,231,0.04)}
+.c.ag{border-left:3.5px solid var(--green);background:rgba(0,212,170,0.04)}
+.c.ao{border-left:3.5px solid var(--orange);background:rgba(232,160,76,0.04)}
+.c.ar{border-left:3.5px solid var(--red);background:rgba(232,84,84,0.04)}
+.lb{display:inline-block;font-size:12px;font-weight:700;letter-spacing:0.5px;padding:5px 11px;border-radius:6px;margin-bottom:14px}
+.lb.purple{color:var(--purple);background:var(--purple-dim)}
+.lb.red{color:var(--red);background:var(--red-dim)}
+.lb.green{color:var(--green);background:var(--green-dim)}
+.lb.orange{color:var(--orange);background:var(--orange-dim)}
+.div{display:flex;align-items:center;gap:12px;margin:22px 0 18px}
+.div .ln{flex:1;height:1px;background:var(--border2)}
+.div .dt{width:5px;height:5px;border-radius:50%;background:var(--text3)}
+.ins{background:linear-gradient(135deg,rgba(108,92,231,0.08) 0%,rgba(0,184,148,0.06) 100%);border:1px solid rgba(108,92,231,0.15);border-radius:14px;padding:22px 18px;margin-bottom:14px;position:relative}
+.ins-ico{position:absolute;top:-10px;left:16px;background:var(--bg);padding:0 4px;font-size:18px;border-radius:4px}
+.ins p{font-size:14.5px;font-weight:500;color:var(--text);line-height:1.65}
+.ins strong{color:var(--purple);font-weight:700}
+.lc-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.lc-num{width:28px;height:28px;border-radius:7px;background:var(--purple-dim);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--purple);font-variant-numeric:tabular-nums}
+.lc-t{font-weight:700;font-size:16px;color:var(--text)}
+.c ul{list-style:none;padding:0}
+.c li{position:relative;padding-left:18px;margin-bottom:8px;font-size:14px;line-height:1.55;color:var(--text2)}
+.c li::before{content:'';position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:2px;background:var(--accent);opacity:0.5}
+.c li strong{font-weight:700;color:var(--text)}
+.tk{background:var(--surface);border:1.5px solid var(--accent);border-radius:14px;padding:22px 18px;margin-bottom:14px;position:relative;overflow:hidden}
+.tk::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#6C5CE7,#00B894,#6C5CE7);background-size:200% 100%;animation:sh 4s ease-in-out infinite}
+@keyframes sh{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.tk-badge{display:inline-block;font-size:12px;font-weight:700;letter-spacing:0.5px;color:var(--purple);background:var(--purple-dim);padding:5px 11px;border-radius:6px;margin-bottom:14px}
+.tk h3{font-weight:800;font-size:20px;line-height:1.3;color:var(--text);margin-bottom:16px;letter-spacing:-0.01em}
+.tk h3 .hl{color:var(--purple)}
+.tk-pt{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.tk-pt:last-child{margin-bottom:0}
+.tk-n{min-width:22px;height:22px;border-radius:6px;background:var(--purple-dim);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--purple);margin-top:2px;font-variant-numeric:tabular-nums}
+.tk-t{font-size:14px;color:var(--text2);line-height:1.6}
+.qt{border-left:3.5px solid var(--orange);background:rgba(232,160,76,0.04);border-radius:0 12px 12px 0;padding:18px 18px;margin-bottom:14px}
+.qt p{font-size:14.5px;font-weight:500;font-style:italic;color:var(--text2);line-height:1.6}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:50;background:#101010;border-top:1px solid #2C2C2C;padding:12px 18px;padding-bottom:max(12px,env(safe-area-inset-bottom));display:flex;gap:10px;max-width:460px;margin:0 auto}
+.nb{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:13px;border-radius:12px;font-family:inherit;font-size:14px;font-weight:700;border:none;cursor:pointer}
+.nb:active{transform:scale(0.97)}
+.nb-prev{background:#1E1E1E;color:var(--text3);border:1px solid #2C2C2C}
+.nb-next{background:var(--accent);color:#fff}
+.nb[disabled]{opacity:0.45;cursor:not-allowed}
+.nb[disabled]:active{transform:none}
+@keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.c,.ins,.tk,.qt{animation:su 0.5s ease-out both}
+.c:nth-of-type(2){animation-delay:0.06s}
+.c:nth-of-type(3){animation-delay:0.12s}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-row"><button class="hdr-back" onclick="location.href='../../../products/app.html?tab=academy'"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Содержание</button>
+    <span class="hdr-badge">MGMT</span>
+    <span class="hdr-mod">Модуль · Расставание</span>
+  </div>
+  <div class="prog">
+    <span class="prog-n">1/4</span>
+    <div class="prog-track"><div class="prog-fill" style="width:25%"></div></div>
+  </div>
+</header>
+
+<main class="page">
+
+  <div class="hero">
+    <span class="hero-ico">⚓</span>
+    <h1>Когда ты тащишь <span class="o">балласт</span></h1>
+    <p class="hero-sub">Пять признаков что человек уже не на своём месте</p>
+  </div>
+
+  <div class="c al">
+    <div class="lb purple">Где мы остановились</div>
+    <p>В прошлом уроке мы учились давить на команду без срывов — через прогрессивное давление. Сейчас разговор о ситуации, когда давление <strong>уже не помогает</strong>. Когда сотрудник прошёл все четыре уровня, не исправился, и вы стоите перед самым неприятным решением — расстаться.</p>
+    <p>И первое, что нужно научиться видеть, это <strong>признаки</strong>. Когда человек ещё формально работает, ходит на работу, получает зарплату — но по факту он уже <strong>стал балластом</strong>. И каждый месяц, что вы его держите, обходится бизнесу дорого.</p>
+  </div>
+
+  <div class="c">
+    <div class="lb red">Сцена которую вы знаете</div>
+    <p>У вас есть сотрудник. Назовём его Алмаз. Он работает у вас два года. На старте был активный, толковый, всё шло. Вы его повысили, дали хорошую зарплату, доверяли ответственные задачи.</p>
+    <p>Последние полгода что-то изменилось. Стандарты у него просели. Косяки появляются регулярно. Вы делали мягкие замечания — улучшения короткие, потом всё возвращается. Серьёзный разговор был — на две недели подтянулся, потом снова. Письменное предупреждение писали — две недели, и снова.</p>
+    <p>И вот сейчас вы понимаете: <strong>дальше тащить нельзя</strong>. Но при этом не делаете ничего. Откладываете. Думаете «ну ещё месяц подожду, может сам исправится». Боитесь разговора. Думаете о том, как трудно будет найти замену. Жалеете его — у него семья, дети, ипотека.</p>
+    <p>И каждый день, что вы его держите, у вас в команде происходит что-то незаметное, но дорогое. Об этом и поговорим.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c al">
+    <div class="lb purple">Пять признаков того, что вы тащите балласт</div>
+    <p>Я перечислю пять сигналов. Если вы видите три-четыре из них у одного и того же сотрудника на протяжении нескольких месяцев — пора начинать разговор о расставании.</p>
+  </div>
+
+  <div class="c">
+    <div class="lc-hdr"><div class="lc-num">1</div><div class="lc-t">Стандарты не возвращаются</div></div>
+    <p>Это самый сильный сигнал. Если вы прошли все три уровня прогрессивного давления, и поведение <strong>возвращается к плохому через две-три недели каждый раз</strong> — значит дело не в том, что человек не понял или не услышал. Дело в том, что <strong>он не хочет</strong> или <strong>не может</strong> работать на вашем стандарте. Это два разных диагноза, но клинический результат один: расставание.</p>
+    <p>Не путайте это с естественной адаптацией. Когда новый сотрудник не сразу выходит на стандарт — это нормально, нужно время. Когда сотрудник, который раньше работал нормально, <strong>систематически проседает после каждой коррекции</strong> — это уже не адаптация, это сопротивление.</p>
+  </div>
+
+  <div class="c">
+    <div class="lc-hdr"><div class="lc-num">2</div><div class="lc-t">Он стал источником проблем для команды</div></div>
+    <p>Вы замечаете, что вокруг этого сотрудника начали накапливаться конфликты с коллегами. Кто-то с ним не хочет работать в смену. Кто-то жалуется. Кто-то скрытно избегает. На корпоративе он сидит отдельно, или его сторонятся.</p>
+    <p>Это не всегда означает, что он плохой человек — иногда команда просто несовместима по характерам. Но если вокруг сотрудника <strong>системно</strong> возникает напряжение — это уже признак. Возможно, он не на своём месте.</p>
+  </div>
+
+  <div class="c">
+    <div class="lc-hdr"><div class="lc-num">3</div><div class="lc-t">Его работу регулярно переделывают</div></div>
+    <p>Ваш бухгалтер постоянно правит его отчёты. Ваша управляющая постоянно переделывает его расписание. Вы сами всё чаще проверяете и исправляете. Если так — сотрудник на самом деле <strong>не выполняет свою работу</strong>, её делают за него. И вы платите дважды — ему за «не сделал» и тому, кто за ним переделывает.</p>
+    <p>В малом бизнесе ресурс времени критический. Если на сотрудника тратится 30% времени других людей — он не помощник, он <strong>тормоз</strong>. Это считается простой математикой: его зарплата плюс время команды на исправления — это и есть полная стоимость его пребывания у вас.</p>
+  </div>
+
+  <div class="c">
+    <div class="lc-hdr"><div class="lc-num">4</div><div class="lc-t">Вы откладываете разговоры с ним</div></div>
+    <p>Это очень показательно. Когда у вас есть <strong>здоровый</strong> сотрудник, рабочие разговоры с ним — это нормальная часть дня. Что-то обсудили, договорились, пошли работать. Когда сотрудник стал балластом — каждый разговор с ним вы <strong>откладываете</strong>. Думаете «как-нибудь потом». Не потому что нет времени, а потому что <strong>психологически тяжело</strong>.</p>
+    <p>Спросите себя: с кем из команды я больше всего откладываю разговоры? Кого мне внутренне неприятно видеть утром? Часто это и есть тот человек, которого пора отпускать. Ваше тело уже знает, что разговаривать с ним бесполезно.</p>
+  </div>
+
+  <div class="c">
+    <div class="lc-hdr"><div class="lc-num">5</div><div class="lc-t">Сильные сотрудники начинают вас спрашивать</div></div>
+    <p>Это поздний, но точный сигнал. Когда другие члены команды <strong>сами</strong> начинают намекать, что с этим человеком что-то не так. «Бак, а ты давно с Алмазом разговаривал?». «Слушай, а Алмаз вообще делает свою часть?». Они не хотят жаловаться напрямую, но им нужно, чтобы вы <strong>что-то сделали</strong>.</p>
+    <p>Если до этого дошло — значит проблема видна не только вам. Команда уже измотана этой ситуацией. И каждый день, что вы тянете, <strong>подрывает доверие к вам как к руководителю</strong> в глазах сильных сотрудников. Они смотрят и думают: «он не справляется».</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c ao">
+    <div class="lb red">Почему собственники упорно тянут</div>
+    <p>У этой ситуации есть свои внутренние причины, и я перечислю основные. Чтобы вы могли распознать в себе.</p>
+    <p><strong>Жалость.</strong> «У него семья, у него дети». Это самая частая и самая обманчивая причина. На первый взгляд — благородно. На самом деле это <strong>смешение ролей</strong>. Вы не его социальный работник. Вы — руководитель бизнеса, который обеспечивает работу для <strong>других</strong> людей. Если вы тянете одного из жалости — вы за счёт него <strong>обесцениваете остальных</strong>, тех, кто работает нормально и должен компенсировать его косяки.</p>
+    <p><strong>Страх найма.</strong> «Кого я найду на его место». Этот страх есть у всех собственников малого бизнеса, и он реален — найм действительно сложный. Но он <strong>переоценён</strong>. В большинстве случаев на место балласта приходит обычный человек, который начинает работать <strong>на стандарте</strong>, и через три месяца вы удивляетесь, как раньше тянули предыдущего.</p>
+    <p><strong>Привычка.</strong> «Он со мной два года уже». Привычка — это не аргумент. Лояльность считается <strong>в обе стороны</strong>. Если он два года назад был хорошим сотрудником, а сейчас плохой — это значит, что <strong>он сам разорвал</strong> негласный контракт лояльности. Вы не должны его поддерживать односторонне.</p>
+    <p><strong>Иллюзия что «исправится».</strong> «Может ещё месяц, и у него получится». Если после трёх уровней давления и нескольких месяцев не исправилось — <strong>не исправится</strong>. Это не пессимизм, это статистика. В 95% случаев откладывание просто продлевает агонию.</p>
+    <p><strong>Боязнь разговора.</strong> Самая глубокая причина. Сам разговор о расставании — это эмоционально тяжёлая вещь. Боязно. Неприятно. Хочется отложить. И вот эта чисто эмоциональная боязнь часто становится решающей. Вы не делаете шаг не потому, что у вас нет данных, а потому что <strong>тяжело сделать шаг</strong>.</p>
+  </div>
+
+  <div class="c ar">
+    <div class="lb red">Цена тяга балласта</div>
+    <p>Я перечислю, что бизнес теряет каждый месяц, что вы держите такого сотрудника.</p>
+    <p><strong>Прямые потери.</strong> Зарплата того, кто работает плохо. Время вашей команды на переделку. Клиенты, которых вы теряете из-за его косяков. Это считается в деньгах.</p>
+    <p><strong>Косвенные потери.</strong> Сильные сотрудники видят, что у вас прощают плохую работу, и <strong>постепенно теряют мотивацию</strong>. Через полгода они либо начинают работать так же плохо («раз ему можно»), либо уходят. Текучка среди сильных — главная цена тяга балласта.</p>
+    <p><strong>Утрата вашего авторитета.</strong> Команда видит, что вы не можете принять трудное решение. Это снижает доверие к вам как к руководителю на всё последующее. Каждый раз, когда команда думает «он опять не разруливает» — ваш капитал лидерства тает.</p>
+    <p><strong>Заражение команды.</strong> Если балласт ещё и токсичный — он постепенно <strong>отравляет атмосферу</strong>. Команда становится злее, циничнее, менее доверчивой. О токсиках конкретно поговорим в следующей главе — там четыре типа, и каждый ломает команду по-своему.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c al">
+    <div class="lb purple">Главная мысль главы</div>
+  </div>
+
+  <div class="qt">
+    <p>«Тянуть балласт — это не доброта. Это трусость, замаскированная под доброту.»</p>
+  </div>
+
+  <div class="c">
+    <p>Настоящая доброта в этой ситуации — это <strong>расстаться чётко и уважительно</strong>. Дать человеку понять, что у вас не получается, и помочь ему искать что-то другое. Это лучше для него (он быстрее найдёт место, где будет на своём месте) и лучше для команды.</p>
+    <p>Если вы прочитали эту главу и подумали о ком-то конкретном — у вас, скорее всего, в голове сейчас всплыло имя — это <strong>уже сигнал</strong>. Не ваше тело это придумало. Это ваша интуиция, которая уже месяцами вам говорит то, что разум отказывается принимать.</p>
+    <p>В следующей главе мы разберём четыре конкретных типа токсиков. Это особо опасная категория балласта, которая не только не работает сама, но и <strong>активно вредит</strong> команде. Каждый тип ломает по-своему, и каждый требует своего подхода. И главное — почему ни один из этих типов <strong>нельзя перевоспитать</strong>, и почему попытки их «улучшить» забирают месяцы вашей жизни без результата.</p>
+  </div>
+
+  <div class="tk">
+    <span class="tk-badge">Выводы главы</span>
+    <h3>Тащить балласт —<br>это <span class="hl">трусость</span> в маске доброты.</h3>
+    <div class="tk-pt"><span class="tk-n">1</span><span class="tk-t">5 признаков балласта: стандарты не возвращаются, конфликты вокруг него, его работу переделывают, вы откладываете с ним разговоры, сильные сами вас спрашивают.</span></div>
+    <div class="tk-pt"><span class="tk-n">2</span><span class="tk-t">5 причин почему тянем: жалость, страх найма, привычка, иллюзия «исправится», боязнь разговора. Самая глубокая — последняя.</span></div>
+    <div class="tk-pt"><span class="tk-n">3</span><span class="tk-t">Цена тяга: прямые потери (зарплата + переделка), уход сильных, утрата авторитета, заражение атмосферы. Если в голове всплыло имя — это сигнал.</span></div>
+  </div>
+
+</main>
+
+<div class="nav">
+  <button class="nb nb-next" onclick="location.href='m8-ch02.html'">Глава 2 →</button>
+</div>
+
+</body>
+</html>

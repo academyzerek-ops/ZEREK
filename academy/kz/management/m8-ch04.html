@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0A0A0F">
+<title>Глава 4 — Что говорить команде после ухода</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#0A0A0F !important;color:#E8E8ED;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow-x:hidden;min-height:100vh}
+html::before{content:'';position:fixed;inset:0;background:#0A0A0F;z-index:-1}
+:root{--bg:#0A0A0F;--surface:#16161E;--surface2:#1E1E28;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.10);--text:#E8E8ED;--text2:#A0A0B0;--text3:#6B6B7B;--purple:#A89BFF;--purple-dim:rgba(168,155,255,0.12);--green:#00D4AA;--green-dim:rgba(0,212,170,0.10);--orange:#E8A04C;--orange-dim:rgba(232,160,76,0.10);--red:#E85454;--red-dim:rgba(232,84,84,0.10);--accent:#6C63FF}
+.hdr{position:sticky;top:0;z-index:50;background:#101010;border-bottom:1px solid #2C2C2C;padding:14px 20px 12px}
+.hdr::after{content:'';position:absolute;bottom:-20px;left:0;right:0;height:20px;background:linear-gradient(180deg,#101010 0%,var(--bg) 100%);pointer-events:none;z-index:49}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.hdr-badge{background:var(--purple-dim);color:var(--purple);font-size:11px;font-weight:700;letter-spacing:1.2px;padding:4px 10px;border-radius:6px}
+.hdr-mod{font-size:12px;color:var(--text3);font-weight:600;min-width:0;max-width:52%;text-align:right;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.prog{display:flex;align-items:center;gap:10px}
+.prog-n{font-size:12px;color:var(--text3);font-weight:700;font-variant-numeric:tabular-nums}
+.prog-track{flex:1;height:5px;background:#2C2C2C;border-radius:5px;overflow:hidden}
+.prog-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#6C5CE7,#00B894)}
+.hdr-back{display:flex;align-items:center;gap:4px;background:none;border:1px solid #2C2C2C;border-radius:8px;padding:6px 12px;font-family:inherit;font-size:12px;font-weight:700;color:var(--text3);cursor:pointer;white-space:nowrap}
+.hdr-back:active{background:#1E1E1E}
+.hdr-back svg{width:14px;height:14px;stroke:var(--text3);stroke-width:2.5;fill:none}
+.page{max-width:460px;margin:0 auto;padding:20px 18px 120px}
+.hero{text-align:center;padding:32px 0 24px}
+.hero-ico{font-size:48px;display:block;margin-bottom:12px}
+.hero h1{font-weight:800;font-size:26px;line-height:1.25;color:var(--text);margin-bottom:8px;letter-spacing:-0.01em}
+.hero h1 .o{color:var(--orange)}
+.hero-sub{font-size:14px;color:var(--text3);font-weight:500}
+.c{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 18px;margin-bottom:14px}
+.c p{font-size:15px;color:var(--text2);margin-bottom:10px;line-height:1.8}
+.c p:last-child{margin-bottom:0}
+.c strong{font-weight:700;color:var(--text)}
+.c em{font-style:italic;color:var(--text)}
+.c.al{border-left:3.5px solid var(--accent);background:rgba(108,92,231,0.04)}
+.c.ag{border-left:3.5px solid var(--green);background:rgba(0,212,170,0.04)}
+.c.ao{border-left:3.5px solid var(--orange);background:rgba(232,160,76,0.04)}
+.c.ar{border-left:3.5px solid var(--red);background:rgba(232,84,84,0.04)}
+.lb{display:inline-block;font-size:12px;font-weight:700;letter-spacing:0.5px;padding:5px 11px;border-radius:6px;margin-bottom:14px}
+.lb.purple{color:var(--purple);background:var(--purple-dim)}
+.lb.red{color:var(--red);background:var(--red-dim)}
+.lb.green{color:var(--green);background:var(--green-dim)}
+.lb.orange{color:var(--orange);background:var(--orange-dim)}
+.div{display:flex;align-items:center;gap:12px;margin:22px 0 18px}
+.div .ln{flex:1;height:1px;background:var(--border2)}
+.div .dt{width:5px;height:5px;border-radius:50%;background:var(--text3)}
+.ins{background:linear-gradient(135deg,rgba(108,92,231,0.08) 0%,rgba(0,184,148,0.06) 100%);border:1px solid rgba(108,92,231,0.15);border-radius:14px;padding:22px 18px;margin-bottom:14px;position:relative}
+.ins-ico{position:absolute;top:-10px;left:16px;background:var(--bg);padding:0 4px;font-size:18px;border-radius:4px}
+.ins p{font-size:14.5px;font-weight:500;color:var(--text);line-height:1.65}
+.ins strong{color:var(--purple);font-weight:700}
+.lc-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.lc-num{width:28px;height:28px;border-radius:7px;background:var(--purple-dim);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--purple);font-variant-numeric:tabular-nums}
+.lc-t{font-weight:700;font-size:16px;color:var(--text)}
+.c ul{list-style:none;padding:0}
+.c li{position:relative;padding-left:18px;margin-bottom:8px;font-size:14px;line-height:1.55;color:var(--text2)}
+.c li::before{content:'';position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:2px;background:var(--accent);opacity:0.5}
+.c li strong{font-weight:700;color:var(--text)}
+.tk{background:var(--surface);border:1.5px solid var(--accent);border-radius:14px;padding:22px 18px;margin-bottom:14px;position:relative;overflow:hidden}
+.tk::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#6C5CE7,#00B894,#6C5CE7);background-size:200% 100%;animation:sh 4s ease-in-out infinite}
+@keyframes sh{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.tk-badge{display:inline-block;font-size:12px;font-weight:700;letter-spacing:0.5px;color:var(--purple);background:var(--purple-dim);padding:5px 11px;border-radius:6px;margin-bottom:14px}
+.tk h3{font-weight:800;font-size:20px;line-height:1.3;color:var(--text);margin-bottom:16px;letter-spacing:-0.01em}
+.tk h3 .hl{color:var(--purple)}
+.tk-pt{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.tk-pt:last-child{margin-bottom:0}
+.tk-n{min-width:22px;height:22px;border-radius:6px;background:var(--purple-dim);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--purple);margin-top:2px;font-variant-numeric:tabular-nums}
+.tk-t{font-size:14px;color:var(--text2);line-height:1.6}
+.qt{border-left:3.5px solid var(--orange);background:rgba(232,160,76,0.04);border-radius:0 12px 12px 0;padding:18px 18px;margin-bottom:14px}
+.qt p{font-size:14.5px;font-weight:500;font-style:italic;color:var(--text2);line-height:1.6}
+.farewell{background:linear-gradient(135deg,rgba(108,92,231,0.10) 0%,rgba(0,184,148,0.08) 100%);border:1.5px solid rgba(108,92,231,0.25);border-radius:14px;padding:28px 22px;margin-bottom:14px;text-align:center}
+.farewell-ico{font-size:42px;display:block;margin-bottom:12px}
+.farewell h3{font-weight:800;font-size:22px;color:var(--text);margin-bottom:12px;letter-spacing:-0.01em;line-height:1.3}
+.farewell p{font-size:15px;color:var(--text);line-height:1.7;margin-bottom:10px}
+.farewell p:last-child{margin-bottom:0}
+.farewell strong{color:var(--purple);font-weight:700}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:50;background:#101010;border-top:1px solid #2C2C2C;padding:12px 18px;padding-bottom:max(12px,env(safe-area-inset-bottom));display:flex;gap:10px;max-width:460px;margin:0 auto}
+.nb{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:13px;border-radius:12px;font-family:inherit;font-size:14px;font-weight:700;border:none;cursor:pointer}
+.nb:active{transform:scale(0.97)}
+.nb-prev{background:#1E1E1E;color:var(--text3);border:1px solid #2C2C2C}
+.nb-next{background:var(--accent);color:#fff}
+.nb[disabled]{opacity:0.45;cursor:not-allowed}
+.nb[disabled]:active{transform:none}
+@keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.c,.ins,.tk,.qt,.farewell{animation:su 0.5s ease-out both}
+.c:nth-of-type(2){animation-delay:0.06s}
+.c:nth-of-type(3){animation-delay:0.12s}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-row"><button class="hdr-back" onclick="location.href='../../../products/app.html?tab=academy'"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Содержание</button>
+    <span class="hdr-badge">MGMT</span>
+    <span class="hdr-mod">Модуль · Расставание</span>
+  </div>
+  <div class="prog">
+    <span class="prog-n">4/4</span>
+    <div class="prog-track"><div class="prog-fill" style="width:100%"></div></div>
+  </div>
+</header>
+
+<main class="page">
+
+  <div class="hero">
+    <span class="hero-ico">📢</span>
+    <h1>Что говорить <span class="o">команде</span></h1>
+    <p class="hero-sub">Как объяснить расставание не создав паники</p>
+  </div>
+
+  <div class="c al">
+    <div class="lb purple">Маленькая речь, в которой легко ошибиться</div>
+    <p>В последней главе модуля разберём чувствительный момент, о котором собственники часто не задумываются, и это становится ошибкой. Это <strong>что говорить команде</strong> после того, как сотрудник ушёл.</p>
+    <p>Кажется, что это мелочь. На самом деле — самое важное. От того, <strong>что и как</strong> вы скажете команде, зависит:</p>
+    <ul>
+      <li>Поверит ли команда в справедливость решения.</li>
+      <li>Сохранится ли ваш авторитет как руководителя.</li>
+      <li>Не пойдёт ли паника «следующим могу быть я».</li>
+      <li>Останется ли уважение к ушедшему как к человеку.</li>
+    </ul>
+    <p>Это маленькая речь, но в ней очень легко ошибиться. И сейчас разберём как.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c ar">
+    <div class="lb red">Что нельзя говорить команде</div>
+    <p>Начнём с того, чего <strong>категорически избегать</strong>. Эти ошибки обычно делают собственники, которые сами эмоционально не отпустили ситуацию.</p>
+  </div>
+
+  <div class="c ar">
+    <div class="lc-hdr"><div class="lc-num">1</div><div class="lc-t">Устраивать судебный процесс</div></div>
+    <p>«Вот вы все знаете, что Алмаз постоянно опаздывал, не выполнял задания, я его три раза предупреждал…». Не надо публично перечислять косяки ушедшего. Это унижение, которое команда заметит. Они подумают: «значит, и про меня будет так же говорить, когда уйду».</p>
+  </div>
+
+  <div class="c ar">
+    <div class="lc-hdr"><div class="lc-num">2</div><div class="lc-t">Оправдываться</div></div>
+    <p>«Ребята, я вообще не хотел, я долго думал, я не знал что делать…». Это говорит команде, что вы <strong>сами не уверены</strong> в решении. И они начинают сомневаться вместе с вами. Расставание должно подаваться как <strong>спокойное решение</strong>, а не как мучительная агония.</p>
+  </div>
+
+  <div class="c ar">
+    <div class="lc-hdr"><div class="lc-num">3</div><div class="lc-t">Превращать в драму</div></div>
+    <p>«У нас сегодня тяжёлый день, мы потеряли одного из наших…». Не делайте мелодраму. Тон должен быть <strong>деловой и спокойный</strong>.</p>
+  </div>
+
+  <div class="c ar">
+    <div class="lc-hdr"><div class="lc-num">4</div><div class="lc-t">Обещать «такого больше не будет»</div></div>
+    <p>«Я обещаю, что мы внимательнее будем нанимать, чтобы это не повторилось». Это заявление в реальности невыполнимое (расставания неизбежны в любом бизнесе), и команда это чувствует. Лучше не давайте обещаний, которые не сможете держать.</p>
+  </div>
+
+  <div class="c ar">
+    <div class="lc-hdr"><div class="lc-num">5</div><div class="lc-t">Обсуждать с одним, потом с другим, и ещё с третьим</div></div>
+    <p>Когда вы повторяете одну и ту же историю в разных версиях разным людям — что-то обязательно меняется. И через неделю по команде ходит <strong>пять разных версий</strong> того, что произошло. И в каждой версии вы выглядите чуть по-разному. Это разрушает доверие.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c ag">
+    <div class="lb green">Что нужно сказать команде</div>
+    <p>А теперь — <strong>как</strong> говорить правильно. Структура простая, и она работает.</p>
+  </div>
+
+  <div class="c ag">
+    <div class="lc-hdr"><div class="lc-num">1</div><div class="lc-t">Шаг 1 — собрать всех вместе</div></div>
+    <p>Не по одному. Не по двое. <strong>Всех сразу</strong>, в одном помещении. Это критично. Когда вы собираете команду полностью — у всех одна и та же информация, одно и то же впечатление. Никто не получает «эксклюзивную версию», никто не чувствует себя обделённым.</p>
+  </div>
+
+  <div class="c ag">
+    <div class="lc-hdr"><div class="lc-num">2</div><div class="lc-t">Шаг 2 — короткое объявление, 2-3 минуты</div></div>
+    <p>Структура такая:</p>
+    <p>«Хочу вам сказать важную вещь. С [дата] Алмаз больше не работает в нашей команде. Мы расстались по обоюдному согласию. У нас были обсуждения, и мы пришли к выводу, что это не его место.</p>
+    <p>Я хочу попросить две вещи. Первое — не обсуждайте это в чатах или с клиентами. Алмаз — взрослый человек, у него своя история, и он заслуживает уважения. Второе — если у кого-то есть вопросы или беспокойство, приходите ко мне напрямую. Я отвечу прозрачно, в рамках того что могу обсуждать.</p>
+    <p>В части его работы — мы перераспределим. [Конкретно: что и кому переходит до того как наймём замену]. Поиск нового сотрудника начнём на этой неделе.</p>
+    <p>Спасибо. Если есть короткие вопросы — могу ответить сейчас».</p>
+  </div>
+
+  <div class="c ag">
+    <div class="lc-hdr"><div class="lc-num">3</div><div class="lc-t">Шаг 3 — ответить на вопросы коротко</div></div>
+    <p>Если кто-то спрашивает — отвечайте <strong>коротко и по делу</strong>. Не уходите в детали и не обсуждайте косяки ушедшего. «Это были долгие обсуждения, мы пришли к решению вместе. Подробности — это его частная информация, я не считаю себя в праве их раскрывать».</p>
+    <p>Это важно: <strong>не раскрывать конкретику</strong>. Часть команды будет любопытствовать. Они хотят знать «за что». Но если вы расскажете «за что» — вы создадите прецедент: «значит, и моя ситуация может стать публичной, если я уйду». Это сильно подрывает безопасность для всех.</p>
+  </div>
+
+  <div class="c ag">
+    <div class="lc-hdr"><div class="lc-num">4</div><div class="lc-t">Шаг 4 — закрыть встречу нейтрально</div></div>
+    <p>«Спасибо. Возвращаемся к работе. Если будут вопросы — приходите ко мне».</p>
+    <p>И всё. Никаких длинных речей. Никакой драмы. Объявили — поговорили коротко — расходимся.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c al">
+    <div class="lb purple">Почему именно так</div>
+    <p>Я объясню логику этой структуры.</p>
+    <p><strong>«Расстались по обоюдному согласию» — даже если это формально не так.</strong> Это уважительная формулировка, которая защищает ушедшего и не унижает вас. Команда понимает, что вы говорите осторожно, чтобы не подставить человека. Это <strong>признак зрелости</strong> руководителя, а не лжи.</p>
+    <p>Реально, в большинстве случаев, к финальной встрече сотрудник <strong>сам</strong> соглашается на расставание. Вы предлагаете уйти по соглашению — он принимает. Так что формулировка не сильно неточна. А психологически она более правильная — и для ушедшего, и для команды.</p>
+    <p><strong>«Подробности — это его частная информация».</strong> Это блокирует все попытки выпытать у вас «а что он сделал?». И одновременно показывает команде, что вы <strong>уважаете приватность</strong>. Они подумают: «значит, и про меня он не будет рассказывать». Это укрепляет доверие.</p>
+    <p><strong>«Перераспределим, начнём поиск».</strong> Команде нужна <strong>операционная ясность</strong>. Они должны знать, что будет с задачами, которые тянул ушедший. Если этого не сказать — все начнут беспокоиться: «а кто теперь это будет делать? на меня свалится?». Озвучьте план чётко.</p>
+    <p><strong>Короткая встреча.</strong> Чем дольше длится разговор — тем больше деталей всплывает, тем больше слухов потом. Идеальное время — 5-10 минут включая вопросы. Не дольше.</p>
+  </div>
+
+  <div class="c">
+    <div class="lb purple">Что делать дальше</div>
+    <p>После общего объявления — несколько важных шагов в первые дни.</p>
+    <p><strong>Первое — не возвращайтесь к теме без необходимости.</strong> Если кто-то из команды через два дня снова поднимает разговор — спокойно перенаправляйте. «Мы это уже обсудили на общей встрече. Сейчас давай вернёмся к [рабочему вопросу]». Чем меньше разговоров — тем быстрее команда переходит в обычный режим.</p>
+    <p><strong>Второе — наблюдайте за командой первые две недели.</strong> После ухода токсика обычно происходит одно из двух. Либо команда <strong>вздыхает с облегчением</strong> и работа становится легче — тогда вы знаете, что приняли правильное решение. Либо появляется тревога — «кто следующий». В этом случае нужны короткие индивидуальные разговоры с ключевыми сотрудниками: «у нас всё в порядке, твоя позиция в команде стабильна, расставание было разовым решением».</p>
+    <p><strong>Третье — не нанимайте замену в спешке.</strong> Соблазн быстро закрыть позицию велик, но это часто приводит к плохому найму. Помните уроки L05 — лучше две недели подождать и взять адаптанта, чем за неделю набрать «кого-нибудь». Иначе через три месяца повторите тот же цикл.</p>
+    <p><strong>Четвёртое — не обсуждайте ушедшего с новым сотрудником.</strong> Когда вы наймёте замену — не вводите его в историю «а вот тут до тебя был Алмаз, который…». Новый человек не должен начинать работу через знание о провале предыдущего. Это создаст у него страх «значит, мне не простят ничего». Просто рассказывайте про задачи и стандарты, как будто его предшественника не было.</p>
+  </div>
+
+  <div class="c al">
+    <div class="lb purple">Главная мысль главы</div>
+  </div>
+
+  <div class="qt">
+    <p>«Расставание заканчивается не тогда, когда сотрудник ушёл. Оно заканчивается тогда, когда команда переварила это и вернулась в нормальный рабочий ритм. Эту вторую половину пути обеспечивает то, как вы говорите о случившемся.»</p>
+  </div>
+
+  <div class="c">
+    <p>Если делаете это правильно — через две недели команда работает нормально, без напряжения. Если ошибаетесь — последствия могут тянуться месяцами в виде слухов, тревоги и подорванного доверия.</p>
+    <p>Один совет напоследок. <strong>Никогда не плохо говорите об ушедшем сотруднике</strong>. Даже если он реально вёл себя ужасно. Даже если у вас есть полное право его раскритиковать.</p>
+    <p>Не потому что нужно врать. А потому что то, как вы говорите об <strong>отсутствующих</strong> — это сигнал команде, как вы будете говорить <strong>о них</strong>, когда они уйдут. Если вы поливаете грязью одного — каждый член команды думает «значит, и обо мне он скажет так же». Доверие подрывается на всех.</p>
+    <p>Лучшая позиция — нейтральная. «Алмаз ушёл. У нас не сложилось, у него своя дорога. Желаю ему успехов на новом месте». Точка.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c">
+    <div class="lb purple">Подведём итог всему уроку L08</div>
+    <p>Мы прошли четыре главы про расставание.</p>
+    <p><strong>В первой</strong> — пять признаков, что сотрудник стал балластом, и почему собственники тянут вместо того чтобы расстаться.</p>
+    <p><strong>Во второй</strong> — четыре типа токсиков (Саботажник, Жертва, Звезда-эгоист, Гиена) и почему каждый ломает команду по-своему. И почему ни один из них нельзя перевоспитать.</p>
+    <p><strong>В третьей</strong> — три встречи (диагностическая, предупредительная, финальная), через которые расставание превращается из страшного «разговора» в управляемый процесс.</p>
+    <p><strong>В четвёртой</strong> — что говорить команде после ухода, чтобы сохранить доверие и не создать панику.</p>
+    <p>Если из всего урока запомнить одну фразу:</p>
+  </div>
+
+  <div class="ins">
+    <span class="ins-ico">⚖️</span>
+    <p><strong>Правильное расставание — это акт уважения к команде, которая остаётся. Если вы тянете токсика — вы предаёте остальных.</strong></p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <!-- КОНЕЦ МОДУЛЯ -->
+  <div class="farewell">
+    <span class="farewell-ico">🎓</span>
+    <h3>Конец модуля<br>«Менеджмент малого бизнеса»</h3>
+    <p>Это финальный урок модуля. У вас на руках полная карта работы с командой малого бизнеса: от первого собственника, попавшего в ловушку джинна, до зрелого руководителя, который умеет нанимать, мотивировать, давить, прощаться.</p>
+    <p>Спасибо что прошли его с нами.</p>
+  </div>
+
+  <div class="c">
+    <p>Я хочу закончить одной мыслью, которая проходит через весь модуль красной нитью.</p>
+    <p><strong>Управление командой — это не одна суперспособность.</strong> Это набор простых, скучных, регулярных навыков, которые в совокупности дают команду, которая работает на вас годами. Маленькие замечания вместо разносов. Прямой фидбэк вместо сэндвича. Регулярные планёрки вместо «когда соберёмся». Стандарты, которые соблюдаются. Тащильщики, которых ценят. Признание, которое раздаётся за конкретное.</p>
+    <p>Ничто из этого не выглядит как «волшебная пуля». Никаких мгновенных результатов, никаких ярких книг с громкими обещаниями. Просто <strong>ежедневная работа</strong> с системой и людьми.</p>
+    <p>Но именно эта незаметная работа — то, что отличает бизнес, который живёт пять-десять лет с одной и той же командой, от бизнеса, который год за годом нанимает и увольняет, не понимая, что <strong>проблема не в людях, а в системе</strong>.</p>
+    <p>У вас в руках теперь есть карта. Применяйте по одной идею за раз. Через год вы вернётесь к этому модулю и удивитесь, насколько он стал про вас.</p>
+  </div>
+
+  <div class="tk">
+    <span class="tk-badge">Выводы урока L08</span>
+    <h3>Расставание — это не <span class="hl">конец</span>.<br>Это начало для команды.</h3>
+    <div class="tk-pt"><span class="tk-n">1</span><span class="tk-t">Что нельзя: судебный процесс, оправдания, драма, обещания «такого не повторится», обсуждение по одному. Это разрушает доверие.</span></div>
+    <div class="tk-pt"><span class="tk-n">2</span><span class="tk-t">Что нужно: собрать всех вместе, 2-3 минуты объявления, «по обоюдному согласию», «подробности — частная информация», операционный план, короткая встреча 5-10 минут.</span></div>
+    <div class="tk-pt"><span class="tk-n">3</span><span class="tk-t">Никогда не плохо говорите об ушедших. Как вы говорите об отсутствующих — это сигнал команде, как вы будете говорить о них.</span></div>
+  </div>
+
+</main>
+
+<div class="nav">
+  <button class="nb nb-prev" onclick="location.href='m8-ch03.html'">← Глава 3</button>
+  <button class="nb nb-next" disabled title="Модуль завершён">Конец модуля</button>
+</div>
+
+</body>
+</html>
