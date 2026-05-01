@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0A0A0F">
+<title>Глава 2 — Закон подобия: почему вы нанимаете не тех</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+html,body{
+  background:#0A0A0F !important;
+  color:#E8E8ED;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+html::before{
+  content:'';position:fixed;inset:0;
+  background:#0A0A0F;z-index:-1;
+}
+
+:root{
+  --bg:#0A0A0F;
+  --surface:#16161E;
+  --surface2:#1E1E28;
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.10);
+  --text:#E8E8ED;
+  --text2:#A0A0B0;
+  --text3:#6B6B7B;
+  --purple:#A89BFF;
+  --purple-dim:rgba(168,155,255,0.12);
+  --green:#00D4AA;
+  --green-dim:rgba(0,212,170,0.10);
+  --orange:#E8A04C;
+  --orange-dim:rgba(232,160,76,0.10);
+  --red:#E85454;
+  --red-dim:rgba(232,84,84,0.10);
+  --accent:#6C63FF;
+}
+
+/* ══════ HEADER ══════ */
+.hdr{
+  position:sticky;top:0;z-index:50;
+  background:#101010;
+  border-bottom:1px solid #2C2C2C;
+  padding:14px 20px 12px;
+}
+.hdr::after{
+  content:'';
+  position:absolute;
+  bottom:-20px;left:0;right:0;
+  height:20px;
+  background:linear-gradient(180deg,#101010 0%,var(--bg) 100%);
+  pointer-events:none;
+  z-index:49;
+}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.hdr-badge{
+  background:var(--purple-dim);color:var(--purple);
+  font-size:11px;font-weight:700;
+  letter-spacing:1.2px;padding:4px 10px;border-radius:6px;
+}
+.hdr-mod{font-size:12px;color:var(--text3);font-weight:600;min-width:0;max-width:52%;text-align:right;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.prog{display:flex;align-items:center;gap:10px}
+.prog-n{font-size:12px;color:var(--text3);font-weight:700;font-variant-numeric:tabular-nums}
+.prog-track{flex:1;height:5px;background:#2C2C2C;border-radius:5px;overflow:hidden}
+.prog-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#6C5CE7,#00B894)}
+.hdr-back{display:flex;align-items:center;gap:4px;background:none;border:1px solid #2C2C2C;border-radius:8px;padding:6px 12px;font-family:inherit;font-size:12px;font-weight:700;color:var(--text3);cursor:pointer;white-space:nowrap}
+.hdr-back:active{background:#1E1E1E}
+.hdr-back svg{width:14px;height:14px;stroke:var(--text3);stroke-width:2.5;fill:none}
+
+/* ══════ MAIN ══════ */
+.page{max-width:460px;margin:0 auto;padding:20px 18px 120px}
+
+/* ══════ HERO ══════ */
+.hero{text-align:center;padding:32px 0 24px}
+.hero-ico{font-size:48px;display:block;margin-bottom:12px}
+.hero h1{
+  font-weight:800;font-size:26px;line-height:1.25;
+  color:var(--text);margin-bottom:8px;letter-spacing:-0.01em;
+}
+.hero h1 .o{color:var(--orange)}
+.hero-sub{font-size:14px;color:var(--text3);font-weight:500}
+
+/* ══════ CARD ══════ */
+.c{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:20px 18px;
+  margin-bottom:14px;
+}
+.c p{font-size:15px;color:var(--text2);margin-bottom:10px;line-height:1.8}
+.c p:last-child{margin-bottom:0}
+.c strong{font-weight:700;color:var(--text)}
+.c em{font-style:italic;color:var(--text)}
+
+.c.al{border-left:3.5px solid var(--accent);background:rgba(108,92,231,0.04)}
+.c.ag{border-left:3.5px solid var(--green);background:rgba(0,212,170,0.04)}
+.c.ao{border-left:3.5px solid var(--orange);background:rgba(232,160,76,0.04)}
+
+/* ══════ LABEL ══════ */
+.lb{
+  display:inline-block;
+  font-size:12px;font-weight:700;
+  letter-spacing:0.5px;
+  padding:5px 11px;border-radius:6px;margin-bottom:14px;
+}
+.lb.purple{color:var(--purple);background:var(--purple-dim)}
+.lb.red{color:var(--red);background:var(--red-dim)}
+.lb.green{color:var(--green);background:var(--green-dim)}
+.lb.orange{color:var(--orange);background:var(--orange-dim)}
+
+/* ══════ VS GRID ══════ */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.vs-i{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:18px 14px;
+  text-align:center;
+}
+.vs-i.gold{border-top:3.5px solid var(--orange);background:rgba(232,160,76,0.04)}
+.vs-i.paper{border-top:3.5px solid var(--green);background:rgba(0,212,170,0.04)}
+.vs-ico{font-size:32px;margin-bottom:6px;display:block}
+.vs-t{font-weight:700;font-size:15px;color:var(--text);margin-bottom:4px}
+.vs-d{font-size:12.5px;color:var(--text3);line-height:1.5}
+
+/* ══════ DIVIDER ══════ */
+.div{display:flex;align-items:center;gap:12px;margin:22px 0 18px}
+.div .ln{flex:1;height:1px;background:var(--border2)}
+.div .dt{width:5px;height:5px;border-radius:50%;background:var(--text3)}
+
+/* ══════ TIMELINE ══════ */
+.tl{
+  padding-left:28px;position:relative;margin-bottom:18px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:22px 20px 22px 38px;
+}
+.tl::before{
+  content:'';position:absolute;left:18px;top:28px;bottom:28px;
+  width:2px;background:linear-gradient(180deg,#6C5CE7,#00B894);border-radius:2px;
+}
+.tl-i{position:relative;margin-bottom:20px}
+.tl-i:last-child{margin-bottom:0}
+.tl-dot{
+  position:absolute;left:-26px;top:4px;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--surface);border:2.5px solid #6C5CE7;
+  box-shadow:0 0 0 3px rgba(108,92,231,0.15);
+}
+.tl-i:last-child .tl-dot{border-color:#00B894;box-shadow:0 0 0 3px rgba(0,184,148,0.15)}
+.tl-date{
+  font-size:12px;font-weight:700;color:var(--purple);
+  letter-spacing:0.5px;margin-bottom:4px;
+  font-variant-numeric:tabular-nums;
+}
+.tl-i:last-child .tl-date{color:var(--green)}
+.tl-txt{font-size:14px;color:var(--text2);line-height:1.6}
+.tl-txt strong{font-weight:700;color:var(--text)}
+
+/* ══════ INSIGHT ══════ */
+.ins{
+  background:linear-gradient(135deg,rgba(108,92,231,0.08) 0%,rgba(0,184,148,0.06) 100%);
+  border:1px solid rgba(108,92,231,0.15);
+  border-radius:14px;
+  padding:22px 18px;
+  margin-bottom:14px;
+  position:relative;
+}
+.ins-ico{
+  position:absolute;top:-10px;left:16px;
+  background:var(--bg);padding:0 4px;font-size:18px;
+  border-radius:4px;
+}
+.ins p{font-size:14.5px;font-weight:500;color:var(--text);line-height:1.65}
+.ins strong{color:var(--purple);font-weight:700}
+
+/* ══════ FACT SCROLL ══════ */
+.fs{
+  display:flex;gap:10px;overflow-x:auto;
+  scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+  padding:2px 0 12px;margin-bottom:14px;
+}
+.fs::-webkit-scrollbar{display:none}
+.fc{
+  flex:0 0 auto;scroll-snap-align:start;
+  width:200px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;
+  padding:14px;
+}
+.fc-ico{font-size:20px;margin-bottom:6px;display:block}
+.fc-txt{font-size:12.5px;color:var(--text2);line-height:1.5}
+.fc-txt strong{color:var(--orange);font-weight:700}
+
+/* ══════ LIST CARD ══════ */
+.lc-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.lc-num{
+  width:28px;height:28px;border-radius:7px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:var(--purple);
+  font-variant-numeric:tabular-nums;
+}
+.lc-t{font-weight:700;font-size:16px;color:var(--text)}
+.c ul{list-style:none;padding:0}
+.c li{position:relative;padding-left:18px;margin-bottom:8px;font-size:14px;line-height:1.55;color:var(--text2)}
+.c li::before{
+  content:'';position:absolute;left:0;top:8px;
+  width:6px;height:6px;border-radius:2px;background:var(--accent);opacity:0.5;
+}
+.c li strong{font-weight:700;color:var(--text)}
+
+/* ══════ EXPANDABLE ══════ */
+.ex{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;margin-bottom:10px;overflow:hidden;
+}
+.ex-h{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;cursor:pointer;
+  user-select:none;-webkit-user-select:none;
+}
+.ex-h:active{background:var(--surface2)}
+.ex-q{font-size:14px;font-weight:600;color:var(--text);flex:1;padding-right:8px}
+.ex-arr{
+  width:24px;height:24px;border-radius:6px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  transition:transform 0.3s;flex-shrink:0;
+}
+.ex-arr svg{width:12px;height:12px;stroke:var(--purple);stroke-width:2.5;fill:none}
+.ex.open .ex-arr{transform:rotate(180deg)}
+.ex-b{max-height:0;overflow:hidden;transition:max-height 0.35s ease;padding:0 16px}
+.ex.open .ex-b{max-height:400px;padding:0 16px 16px}
+.ex-b p{font-size:13.5px;color:var(--text2);line-height:1.7;margin-bottom:6px}
+.ex-b p:last-child{margin-bottom:0}
+.ex-b strong{color:var(--text)}
+
+/* ══════ TAKEAWAY ══════ */
+.tk{
+  background:var(--surface);
+  border:1.5px solid var(--accent);
+  border-radius:14px;
+  padding:22px 18px;
+  margin-bottom:14px;
+  position:relative;overflow:hidden;
+}
+.tk::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,#6C5CE7,#00B894,#6C5CE7);
+  background-size:200% 100%;
+  animation:sh 4s ease-in-out infinite;
+}
+@keyframes sh{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.tk-badge{
+  display:inline-block;
+  font-size:12px;font-weight:700;
+  letter-spacing:0.5px;
+  color:var(--purple);background:var(--purple-dim);
+  padding:5px 11px;border-radius:6px;margin-bottom:14px;
+}
+.tk h3{
+  font-weight:800;
+  font-size:20px;line-height:1.3;color:var(--text);margin-bottom:16px;
+  letter-spacing:-0.01em;
+}
+.tk h3 .hl{color:var(--purple)}
+.tk-pt{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.tk-pt:last-child{margin-bottom:0}
+.tk-n{
+  min-width:22px;height:22px;border-radius:6px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:var(--purple);
+  margin-top:2px;
+  font-variant-numeric:tabular-nums;
+}
+.tk-t{font-size:14px;color:var(--text2);line-height:1.6}
+
+/* ══════ QUOTE ══════ */
+.qt{
+  border-left:3.5px solid var(--orange);
+  background:rgba(232,160,76,0.04);
+  border-radius:0 12px 12px 0;
+  padding:18px 18px;margin-bottom:14px;
+}
+.qt p{font-size:14.5px;font-weight:500;font-style:italic;color:var(--text2);line-height:1.6}
+
+/* ══════ TABLE ══════ */
+.tbl{
+  width:100%;
+  border-collapse:separate;border-spacing:0;
+  margin-bottom:14px;
+  font-size:13.5px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+}
+.tbl th, .tbl td{
+  padding:11px 12px;
+  text-align:left;
+  border-bottom:1px solid var(--border);
+  color:var(--text2);
+  vertical-align:top;
+  line-height:1.45;
+}
+.tbl thead th{
+  background:var(--surface2);
+  color:var(--text3);
+  font-weight:700;
+  font-size:10.5px;
+  letter-spacing:0.6px;
+  text-transform:uppercase;
+}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl td.num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.tbl td strong{color:var(--text)}
+.tbl td.hot{color:var(--orange);font-weight:800;font-size:15.5px;letter-spacing:-0.01em}
+
+/* ══════ NAV ══════ */
+.nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:50;
+  background:#101010;
+  border-top:1px solid #2C2C2C;
+  padding:12px 18px;
+  padding-bottom:max(12px,env(safe-area-inset-bottom));
+  display:flex;gap:10px;
+  max-width:460px;margin:0 auto;
+}
+.nb{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:13px;border-radius:12px;
+  font-family:inherit;font-size:14px;font-weight:700;
+  border:none;cursor:pointer;
+}
+.nb:active{transform:scale(0.97)}
+.nb-prev{
+  background:#1E1E1E;color:var(--text3);
+  border:1px solid #2C2C2C;
+}
+.nb-next{
+  background:var(--accent);color:#fff;
+}
+.nb[disabled]{
+  opacity:0.45;cursor:not-allowed;
+}
+.nb[disabled]:active{transform:none}
+
+/* ══════ ANIM ══════ */
+@keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.c,.vs,.tl,.ins,.fs,.ex,.tk,.qt,.tbl{animation:su 0.5s ease-out both}
+.c:nth-of-type(2){animation-delay:0.06s}
+.c:nth-of-type(3){animation-delay:0.12s}
+</style>
+
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-row"><button class="hdr-back" onclick="location.href='../../../products/app.html?tab=academy'"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Содержание</button>
+    <span class="hdr-badge">MGMT</span>
+    <span class="hdr-mod">Модуль · Найм под функцию</span>
+  </div>
+  <div class="prog">
+    <span class="prog-n">2/3</span>
+    <div class="prog-track"><div class="prog-fill" style="width:66%"></div></div>
+  </div>
+</header>
+
+<main class="page">
+
+  <div class="hero">
+    <span class="hero-ico">🪞</span>
+    <h1>Закон <span class="o">подобия</span></h1>
+    <p class="hero-sub">Почему вы рефлекторно нанимаете копии самого себя</p>
+  </div>
+
+  <div class="c al">
+    <div class="lb purple">О чём эта глава</div>
+    <p>В этой главе я расскажу про феномен, о котором почти никто не знает — но из-за которого половина решений по найму в малом бизнесе принимается неправильно. Это <strong>закон подобия</strong>. И главная подлость его в том, что он работает на уровне, до которого ваше сознание не достаёт.</p>
+  </div>
+
+  <div class="c">
+    <div class="lb red">Что вы делаете на собеседовании на самом деле</div>
+    <p>Представьте типичную ситуацию. Вы собеседуете кандидата на должность администратора. Час, спокойная беседа, кофе. Кандидат приятный, образованный, отвечает грамотно, у него опыт. Но у вас в груди что-то не сходится. «Не лежит душа». Вы вежливо прощаетесь и в итоге не нанимаете.</p>
+    <p>Потом приходит другой кандидат. По резюме слабее, опыт меньше. Но через десять минут разговора вы расслабляетесь и понимаете «свой человек». В голове возникает картина «он впишется». Вы нанимаете его.</p>
+    <p>Через три месяца становится понятно, что <strong>вы наняли копию самого себя</strong>. У него те же сильные стороны, что у вас. И, что хуже, <strong>те же слабые</strong>. Если вы не любите системно вести документацию — он тоже не будет её вести. Если вы избегаете сложных разговоров с поставщиками — он тоже будет избегать. И в результате у вас в команде <strong>никто не закрывает ту функцию</strong>, которую вы плохо закрываете сами. Вы наняли подкрепление к своим сильным сторонам и удвоили свои слабые.</p>
+    <p>Это и есть <strong>закон подобия</strong>. На научном языке — <em>similarity-attraction effect</em>. Доказан десятками исследований. Но вы его не замечаете, потому что он работает в <strong>бессознательной части</strong> вашего мозга.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c al">
+    <div class="lb purple">Как это устроено механически</div>
+    <p>Когда вы говорите с человеком, ваш мозг за первые 30 секунд принимает решение «свой / чужой». Это решение не логическое. Оно основано на десятках мельчайших сигналов:</p>
+    <ul>
+      <li>Темп речи похож на ваш или нет.</li>
+      <li>Словарь, обороты, юмор — близко вашему или чужие.</li>
+      <li>Базовые ценности — что человек считает важным в работе, в жизни, в команде.</li>
+      <li>Образование, происхождение, окружение — есть ли пересечения.</li>
+      <li>Внешний вид, манера держаться, мимика.</li>
+    </ul>
+    <p>Если по большинству сигналов есть совпадение — мозг отмечает «свой». Вы расслабляетесь. Разговор течёт легко. Вы видите кандидата в позитивном свете и заранее готовы взять.</p>
+    <p>Если совпадений мало — мозг отмечает «чужой». Вы напрягаетесь. Каждое слово кандидата интерпретируется с подозрением. Вы видите минусы и не видите плюсов. Решение «не лежит душа» — это <strong>не интуиция о его профессиональных качествах</strong>. Это просто отсутствие совпадения по бытовым сигналам.</p>
+    <p>Я подчеркну это специально. Когда у вас «не лежит душа» к кандидату — в 90% случаев это говорит <strong>не о его качествах</strong>. Это говорит о том, что он на вас не похож.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c ao">
+    <div class="lb red">Почему это убивает малый бизнес</div>
+    <p>В корпорации этот феномен сглаживается. Там есть HR, есть несколько раундов собеседований, есть структурированные вопросы и оценочные шкалы. Решение принимают несколько человек, и закон подобия размывается.</p>
+    <p>В малом бизнесе всего этого нет. Решение принимаете <strong>вы один</strong>. Час разговора. И вы рефлекторно собираете команду из тех, кто похож на вас.</p>
+    <p>Через два года у вас в команде <strong>пять копий себя самого</strong>.</p>
+    <p>Если вы хороший продажник — у вас все пять продают неплохо, но <strong>никто не считает деньги, не ведёт документы, не выстраивает процессы</strong>. Бизнес растёт хаотично, прибыль течёт через дыры. Вы постоянно «затыкаете дыры», но не понимаете, что эти дыры — это <strong>функции, которые вы не нанимали</strong>, потому что не любите эту работу сами.</p>
+    <p>Если вы хороший аналитик — у вас все пять думают и считают, но <strong>никто не общается с клиентом эмоционально</strong>. Сервис холодный, отзывы посредственные, клиенты не возвращаются. У вас в команде нет «душевных» людей, потому что они вам на собеседовании казались «несерьёзными».</p>
+    <p>Если вы перфекционист — у вас все пять делают идеально, но <strong>медленно и мало</strong>. Бизнес отстаёт от рынка, конкуренты опережают по скорости, вы упускаете возможности.</p>
+    <p>Закон подобия — это <strong>главный архитектурный сбой</strong> малого бизнеса в найме. Большинство «слабых команд» — это команды, которые собрались по этому закону.</p>
+  </div>
+
+  <div class="ins">
+    <span class="ins-ico">🌍</span>
+    <p>McKinsey несколько лет публиковал исследования про то, что <strong>разнообразные команды</strong> показывают лучшие результаты, чем однородные. В одной из работ приводились цифры: компании в верхней четверти по разнообразию команды показывают на <strong>25% лучшую финансовую результативность</strong>, чем компании в нижней четверти.</p>
+  </div>
+
+  <div class="c">
+    <p>«Разнообразие» здесь — это не только пол и возраст. Это <strong>разнообразие типов мышления</strong>, профессионального бэкграунда, стиля коммуникации, базовых ценностей. То есть прямо то, что закон подобия в вашей голове отсекает.</p>
+    <p>Это работает не только на уровне корпораций. В малом бизнесе эффект <strong>ещё сильнее</strong>, потому что там вы не можете позволить себе «избыточную ёмкость» — каждая роль критична, и если она не закрыта, то весь бизнес не работает.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c al">
+    <div class="lb purple">Как сломать закон подобия</div>
+    <p>Я не буду давать вам пять вопросов на собеседовании, которые «вычисляют закон подобия». Это инфоцыганщина. Сломать его в моменте не получится — он работает быстрее вашего сознания.</p>
+    <p>Но есть три практических шага, которые работают.</p>
+  </div>
+
+  <div class="c ag">
+    <div class="lc-hdr">
+      <div class="lc-num">1</div>
+      <div class="lc-t">Список черт на бумаге</div>
+    </div>
+    <p><strong>Перед собеседованием выпишите список черт характера и навыков, которые вам нужны.</strong> Не в голове, а <strong>на бумаге</strong>. Не «приятный человек», а «умеет слушать долгий монолог клиента не перебивая». Не «командный игрок», а «способен спорить со мной, когда я не прав». Этот список — ваш якорь. Когда после собеседования вам захочется сказать «свой человек» или «не лежит душа», вы достанете список и проверите кандидата <strong>по нему</strong>, а не по ощущению.</p>
+  </div>
+
+  <div class="c ag">
+    <div class="lc-hdr">
+      <div class="lc-num">2</div>
+      <div class="lc-t">Намеренно ищите «не своих»</div>
+    </div>
+    <p><strong>Намеренно ищите людей, которые на вас не похожи.</strong> Если вы интроверт — нанимайте экстраверта на роль, где нужно общаться. Если вы хаотичный креатив — нанимайте систематичного администратора. Если вы прагматик — ищите эмоционального человека для работы с клиентами.</p>
+    <p>Звучит просто. На практике сделать сложно, потому что в момент собеседования с «не вашим типом» вам будет физически неприятно. Хочется сократить разговор, отказать, прекратить мучения. <strong>Это и есть тот момент, когда нужно нажать паузу</strong> и спросить себя: я отказываю ему по списку или по ощущению?</p>
+  </div>
+
+  <div class="c ag">
+    <div class="lc-hdr">
+      <div class="lc-num">3</div>
+      <div class="lc-t">Не решайте в одиночку</div>
+    </div>
+    <p><strong>Никогда не принимайте решение в одиночку, если можно его не принимать.</strong> Привлеките второго человека к собеседованию. Управляющую, опытного сотрудника, друга-консультанта. Двое — уже чуть-чуть размывают закон подобия, потому что у этих двоих разные шаблоны «свой / чужой».</p>
+    <p>И идеальный шаг — на котором весь смысл следующей главы — это не пытаться принять решение по часу разговора. А <strong>посмотреть на человека в работе</strong>, и принять решение по фактам.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c al">
+    <div class="lb purple">К чему я веду</div>
+    <p>Закон подобия — это рефлекс, и одной волей вы его не перебьёте. Но вы можете построить <strong>процесс найма так, чтобы закон подобия имел меньше веса</strong>. Через структурированный список требований. Через намеренное приглашение «не своих». Через коллективные решения. И через <strong>тестовую неделю</strong>, на которой человек показывает себя в реальности, а не в разговоре.</p>
+    <p>В следующей главе мы поговорим именно про тестовую неделю. И я расскажу одну из самых известных в мировой практике историй про то, как один спортивный менеджер перевернул всю систему оценки людей, отказавшись от субъективных мнений в пользу проверки в действии. Эта история — про бейсбольный клуб <strong>Окленд Эйс</strong> и метод <strong>Moneyball</strong>. И она прямо применима к вашему малому бизнесу — даже если вы никогда не интересовались бейсболом.</p>
+  </div>
+
+  <div class="tk">
+    <span class="tk-badge">Выводы главы</span>
+    <h3>«Не лежит душа» —<br>это про <span class="hl">непохожесть</span>, не про качества.</h3>
+    <div class="tk-pt"><span class="tk-n">1</span><span class="tk-t">Закон подобия (similarity-attraction effect) работает в бессознательной части мозга — в первые 30 секунд он решает «свой/чужой» по бытовым сигналам, не по профессиональным качествам.</span></div>
+    <div class="tk-pt"><span class="tk-n">2</span><span class="tk-t">Через два года у собственника в команде пять копий себя самого. Дублирующиеся сильные стороны, удвоенные слабые. Никто не закрывает функцию, которую плохо закрывает сам собственник.</span></div>
+    <div class="tk-pt"><span class="tk-n">3</span><span class="tk-t">Три практических шага: список черт на бумаге, намеренный поиск «не своих», коллективное решение. Идеальный четвёртый — тестовая неделя в работе, не в разговоре.</span></div>
+  </div>
+
+</main>
+
+<div class="nav">
+  <button class="nb nb-prev" onclick="location.href='m5-ch01.html'">← Глава 1</button>
+  <button class="nb nb-next" onclick="location.href='m5-ch03.html'">Глава 3 →</button>
+</div>
+
+</body>
+</html>

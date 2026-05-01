@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0A0A0F">
+<title>Глава 3 — Тестовая неделя как настоящее интервью</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+html,body{
+  background:#0A0A0F !important;
+  color:#E8E8ED;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+html::before{
+  content:'';position:fixed;inset:0;
+  background:#0A0A0F;z-index:-1;
+}
+
+:root{
+  --bg:#0A0A0F;
+  --surface:#16161E;
+  --surface2:#1E1E28;
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.10);
+  --text:#E8E8ED;
+  --text2:#A0A0B0;
+  --text3:#6B6B7B;
+  --purple:#A89BFF;
+  --purple-dim:rgba(168,155,255,0.12);
+  --green:#00D4AA;
+  --green-dim:rgba(0,212,170,0.10);
+  --orange:#E8A04C;
+  --orange-dim:rgba(232,160,76,0.10);
+  --red:#E85454;
+  --red-dim:rgba(232,84,84,0.10);
+  --accent:#6C63FF;
+}
+
+/* ══════ HEADER ══════ */
+.hdr{
+  position:sticky;top:0;z-index:50;
+  background:#101010;
+  border-bottom:1px solid #2C2C2C;
+  padding:14px 20px 12px;
+}
+.hdr::after{
+  content:'';
+  position:absolute;
+  bottom:-20px;left:0;right:0;
+  height:20px;
+  background:linear-gradient(180deg,#101010 0%,var(--bg) 100%);
+  pointer-events:none;
+  z-index:49;
+}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.hdr-badge{
+  background:var(--purple-dim);color:var(--purple);
+  font-size:11px;font-weight:700;
+  letter-spacing:1.2px;padding:4px 10px;border-radius:6px;
+}
+.hdr-mod{font-size:12px;color:var(--text3);font-weight:600;min-width:0;max-width:52%;text-align:right;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.prog{display:flex;align-items:center;gap:10px}
+.prog-n{font-size:12px;color:var(--text3);font-weight:700;font-variant-numeric:tabular-nums}
+.prog-track{flex:1;height:5px;background:#2C2C2C;border-radius:5px;overflow:hidden}
+.prog-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#6C5CE7,#00B894)}
+.hdr-back{display:flex;align-items:center;gap:4px;background:none;border:1px solid #2C2C2C;border-radius:8px;padding:6px 12px;font-family:inherit;font-size:12px;font-weight:700;color:var(--text3);cursor:pointer;white-space:nowrap}
+.hdr-back:active{background:#1E1E1E}
+.hdr-back svg{width:14px;height:14px;stroke:var(--text3);stroke-width:2.5;fill:none}
+
+/* ══════ MAIN ══════ */
+.page{max-width:460px;margin:0 auto;padding:20px 18px 120px}
+
+/* ══════ HERO ══════ */
+.hero{text-align:center;padding:32px 0 24px}
+.hero-ico{font-size:48px;display:block;margin-bottom:12px}
+.hero h1{
+  font-weight:800;font-size:26px;line-height:1.25;
+  color:var(--text);margin-bottom:8px;letter-spacing:-0.01em;
+}
+.hero h1 .o{color:var(--orange)}
+.hero-sub{font-size:14px;color:var(--text3);font-weight:500}
+
+/* ══════ CARD ══════ */
+.c{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:20px 18px;
+  margin-bottom:14px;
+}
+.c p{font-size:15px;color:var(--text2);margin-bottom:10px;line-height:1.8}
+.c p:last-child{margin-bottom:0}
+.c strong{font-weight:700;color:var(--text)}
+.c em{font-style:italic;color:var(--text)}
+
+.c.al{border-left:3.5px solid var(--accent);background:rgba(108,92,231,0.04)}
+.c.ag{border-left:3.5px solid var(--green);background:rgba(0,212,170,0.04)}
+.c.ao{border-left:3.5px solid var(--orange);background:rgba(232,160,76,0.04)}
+
+/* ══════ LABEL ══════ */
+.lb{
+  display:inline-block;
+  font-size:12px;font-weight:700;
+  letter-spacing:0.5px;
+  padding:5px 11px;border-radius:6px;margin-bottom:14px;
+}
+.lb.purple{color:var(--purple);background:var(--purple-dim)}
+.lb.red{color:var(--red);background:var(--red-dim)}
+.lb.green{color:var(--green);background:var(--green-dim)}
+.lb.orange{color:var(--orange);background:var(--orange-dim)}
+
+/* ══════ VS GRID ══════ */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.vs-i{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:18px 14px;
+  text-align:center;
+}
+.vs-i.gold{border-top:3.5px solid var(--orange);background:rgba(232,160,76,0.04)}
+.vs-i.paper{border-top:3.5px solid var(--green);background:rgba(0,212,170,0.04)}
+.vs-ico{font-size:32px;margin-bottom:6px;display:block}
+.vs-t{font-weight:700;font-size:15px;color:var(--text);margin-bottom:4px}
+.vs-d{font-size:12.5px;color:var(--text3);line-height:1.5}
+
+/* ══════ DIVIDER ══════ */
+.div{display:flex;align-items:center;gap:12px;margin:22px 0 18px}
+.div .ln{flex:1;height:1px;background:var(--border2)}
+.div .dt{width:5px;height:5px;border-radius:50%;background:var(--text3)}
+
+/* ══════ TIMELINE ══════ */
+.tl{
+  padding-left:28px;position:relative;margin-bottom:18px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:22px 20px 22px 38px;
+}
+.tl::before{
+  content:'';position:absolute;left:18px;top:28px;bottom:28px;
+  width:2px;background:linear-gradient(180deg,#6C5CE7,#00B894);border-radius:2px;
+}
+.tl-i{position:relative;margin-bottom:20px}
+.tl-i:last-child{margin-bottom:0}
+.tl-dot{
+  position:absolute;left:-26px;top:4px;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--surface);border:2.5px solid #6C5CE7;
+  box-shadow:0 0 0 3px rgba(108,92,231,0.15);
+}
+.tl-i:last-child .tl-dot{border-color:#00B894;box-shadow:0 0 0 3px rgba(0,184,148,0.15)}
+.tl-date{
+  font-size:12px;font-weight:700;color:var(--purple);
+  letter-spacing:0.5px;margin-bottom:4px;
+  font-variant-numeric:tabular-nums;
+}
+.tl-i:last-child .tl-date{color:var(--green)}
+.tl-txt{font-size:14px;color:var(--text2);line-height:1.6}
+.tl-txt strong{font-weight:700;color:var(--text)}
+
+/* ══════ INSIGHT ══════ */
+.ins{
+  background:linear-gradient(135deg,rgba(108,92,231,0.08) 0%,rgba(0,184,148,0.06) 100%);
+  border:1px solid rgba(108,92,231,0.15);
+  border-radius:14px;
+  padding:22px 18px;
+  margin-bottom:14px;
+  position:relative;
+}
+.ins-ico{
+  position:absolute;top:-10px;left:16px;
+  background:var(--bg);padding:0 4px;font-size:18px;
+  border-radius:4px;
+}
+.ins p{font-size:14.5px;font-weight:500;color:var(--text);line-height:1.65}
+.ins strong{color:var(--purple);font-weight:700}
+
+/* ══════ FACT SCROLL ══════ */
+.fs{
+  display:flex;gap:10px;overflow-x:auto;
+  scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+  padding:2px 0 12px;margin-bottom:14px;
+}
+.fs::-webkit-scrollbar{display:none}
+.fc{
+  flex:0 0 auto;scroll-snap-align:start;
+  width:200px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;
+  padding:14px;
+}
+.fc-ico{font-size:20px;margin-bottom:6px;display:block}
+.fc-txt{font-size:12.5px;color:var(--text2);line-height:1.5}
+.fc-txt strong{color:var(--orange);font-weight:700}
+
+/* ══════ LIST CARD ══════ */
+.lc-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.lc-num{
+  width:28px;height:28px;border-radius:7px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:var(--purple);
+  font-variant-numeric:tabular-nums;
+}
+.lc-t{font-weight:700;font-size:16px;color:var(--text)}
+.c ul{list-style:none;padding:0}
+.c li{position:relative;padding-left:18px;margin-bottom:8px;font-size:14px;line-height:1.55;color:var(--text2)}
+.c li::before{
+  content:'';position:absolute;left:0;top:8px;
+  width:6px;height:6px;border-radius:2px;background:var(--accent);opacity:0.5;
+}
+.c li strong{font-weight:700;color:var(--text)}
+
+/* ══════ EXPANDABLE ══════ */
+.ex{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;margin-bottom:10px;overflow:hidden;
+}
+.ex-h{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;cursor:pointer;
+  user-select:none;-webkit-user-select:none;
+}
+.ex-h:active{background:var(--surface2)}
+.ex-q{font-size:14px;font-weight:600;color:var(--text);flex:1;padding-right:8px}
+.ex-arr{
+  width:24px;height:24px;border-radius:6px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  transition:transform 0.3s;flex-shrink:0;
+}
+.ex-arr svg{width:12px;height:12px;stroke:var(--purple);stroke-width:2.5;fill:none}
+.ex.open .ex-arr{transform:rotate(180deg)}
+.ex-b{max-height:0;overflow:hidden;transition:max-height 0.35s ease;padding:0 16px}
+.ex.open .ex-b{max-height:400px;padding:0 16px 16px}
+.ex-b p{font-size:13.5px;color:var(--text2);line-height:1.7;margin-bottom:6px}
+.ex-b p:last-child{margin-bottom:0}
+.ex-b strong{color:var(--text)}
+
+/* ══════ TAKEAWAY ══════ */
+.tk{
+  background:var(--surface);
+  border:1.5px solid var(--accent);
+  border-radius:14px;
+  padding:22px 18px;
+  margin-bottom:14px;
+  position:relative;overflow:hidden;
+}
+.tk::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,#6C5CE7,#00B894,#6C5CE7);
+  background-size:200% 100%;
+  animation:sh 4s ease-in-out infinite;
+}
+@keyframes sh{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.tk-badge{
+  display:inline-block;
+  font-size:12px;font-weight:700;
+  letter-spacing:0.5px;
+  color:var(--purple);background:var(--purple-dim);
+  padding:5px 11px;border-radius:6px;margin-bottom:14px;
+}
+.tk h3{
+  font-weight:800;
+  font-size:20px;line-height:1.3;color:var(--text);margin-bottom:16px;
+  letter-spacing:-0.01em;
+}
+.tk h3 .hl{color:var(--purple)}
+.tk-pt{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.tk-pt:last-child{margin-bottom:0}
+.tk-n{
+  min-width:22px;height:22px;border-radius:6px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:var(--purple);
+  margin-top:2px;
+  font-variant-numeric:tabular-nums;
+}
+.tk-t{font-size:14px;color:var(--text2);line-height:1.6}
+
+/* ══════ QUOTE ══════ */
+.qt{
+  border-left:3.5px solid var(--orange);
+  background:rgba(232,160,76,0.04);
+  border-radius:0 12px 12px 0;
+  padding:18px 18px;margin-bottom:14px;
+}
+.qt p{font-size:14.5px;font-weight:500;font-style:italic;color:var(--text2);line-height:1.6}
+
+/* ══════ TABLE ══════ */
+.tbl{
+  width:100%;
+  border-collapse:separate;border-spacing:0;
+  margin-bottom:14px;
+  font-size:13.5px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+}
+.tbl th, .tbl td{
+  padding:11px 12px;
+  text-align:left;
+  border-bottom:1px solid var(--border);
+  color:var(--text2);
+  vertical-align:top;
+  line-height:1.45;
+}
+.tbl thead th{
+  background:var(--surface2);
+  color:var(--text3);
+  font-weight:700;
+  font-size:10.5px;
+  letter-spacing:0.6px;
+  text-transform:uppercase;
+}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl td.num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.tbl td strong{color:var(--text)}
+.tbl td.hot{color:var(--orange);font-weight:800;font-size:15.5px;letter-spacing:-0.01em}
+
+/* ══════ NAV ══════ */
+.nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:50;
+  background:#101010;
+  border-top:1px solid #2C2C2C;
+  padding:12px 18px;
+  padding-bottom:max(12px,env(safe-area-inset-bottom));
+  display:flex;gap:10px;
+  max-width:460px;margin:0 auto;
+}
+.nb{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:13px;border-radius:12px;
+  font-family:inherit;font-size:14px;font-weight:700;
+  border:none;cursor:pointer;
+}
+.nb:active{transform:scale(0.97)}
+.nb-prev{
+  background:#1E1E1E;color:var(--text3);
+  border:1px solid #2C2C2C;
+}
+.nb-next{
+  background:var(--accent);color:#fff;
+}
+.nb[disabled]{
+  opacity:0.45;cursor:not-allowed;
+}
+.nb[disabled]:active{transform:none}
+
+/* ══════ ANIM ══════ */
+@keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.c,.vs,.tl,.ins,.fs,.ex,.tk,.qt,.tbl{animation:su 0.5s ease-out both}
+.c:nth-of-type(2){animation-delay:0.06s}
+.c:nth-of-type(3){animation-delay:0.12s}
+</style>
+
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-row"><button class="hdr-back" onclick="location.href='../../../products/app.html?tab=academy'"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Содержание</button>
+    <span class="hdr-badge">MGMT</span>
+    <span class="hdr-mod">Модуль · Найм под функцию</span>
+  </div>
+  <div class="prog">
+    <span class="prog-n">3/3</span>
+    <div class="prog-track"><div class="prog-fill" style="width:100%"></div></div>
+  </div>
+</header>
+
+<main class="page">
+
+  <div class="hero">
+    <span class="hero-ico">⚾</span>
+    <h1>Тестовая <span class="o">неделя</span></h1>
+    <p class="hero-sub">Окленд Эйс 2002 — как заменить мнение на факт</p>
+  </div>
+
+  <div class="c al">
+    <div class="lb purple">Где мы остановились</div>
+    <p>В двух предыдущих главах мы выяснили две вещи. Первое — что вам в основном нужны не звёзды с резюме, а адаптанты, которых вы вырастите под свою систему. Второе — что ваше собственное чутьё на собеседовании работает против вас, потому что закон подобия отсекает именно тех, кто вам нужен.</p>
+    <p>Возникает естественный вопрос. Если опыт в резюме — ненадёжный сигнал, и собственное чутьё — тоже ненадёжный сигнал, то <strong>по чему вообще принимать решение</strong>?</p>
+    <p>Ответ простой. По работе.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c al">
+    <div class="lb purple">⚾ Окленд Эйс · 2002</div>
+    <p>Я расскажу одну из самых поучительных историй современного спортивного менеджмента. Она про бейсбол, но её принцип работает в любой области, где нужно нанимать людей.</p>
+    <p>В начале 2000-х бейсбольный клуб <strong>Oakland Athletics</strong> (Окленд Эйс) находился в очень неудобной позиции. Это маленький клуб в Калифорнии, с одним из <strong>самых низких бюджетов в Главной лиге бейсбола</strong>. У них не было денег конкурировать с большими клубами — Yankees, Red Sox, Dodgers — за лучших игроков. Каждый раз, когда у них появлялся выдающийся игрок, его перекупали богатые клубы, и Окленду приходилось искать новых людей с минимальным бюджетом.</p>
+    <p>В 1997 году у клуба новый генеральный менеджер — <strong>Билли Бин</strong>. Он сам был игроком, потом скаутом, видел всю систему изнутри. И он понял, что <strong>играть по правилам больших клубов невозможно</strong>. Все скауты в лиге оценивают игроков примерно одинаково — по бэттинг-эверидж, по хоум-ранам, по визуальной красоте подачи. Лучшие игроки по этим метрикам стоят дороже всего, и их перекупают. Окленду оставались только «отбракованные».</p>
+    <p>Бин нанял молодого статистика по имени <strong>Пол ДеПодеста</strong> — выпускника Гарварда, никогда не игравшего профессионально. И вместе они начали смотреть на бейсбольную статистику <strong>по-другому</strong>. Они задались вопросом: какие метрики игрока действительно предсказывают, что он принесёт команде победу?</p>
+    <p>Оказалось, что традиционная метрика «бэттинг-эверидж» — то есть процент успешных попаданий — переоценена. А метрика <strong>on-base percentage</strong> — то есть как часто игрок вообще попадает на базу любым способом, включая «уолки» (когда подающий не смог подать корректно) — недооценена. Игроки с высоким OBP стоили дёшево, потому что <strong>никто их не ценил</strong>, но они приносили команде победы.</p>
+    <p>Бин и ДеПодеста начали собирать команду из таких «отбракованных» игроков, которых другие скауты считали средними или слабыми. У этих игроков были метрики, которые ценили только Окленд. Поэтому их можно было купить за копейки.</p>
+    <p>Сезон 2002 года стал шоковым. Окленд при бюджете в три раза меньше Yankees выиграл <strong>103 матча</strong> — лучший результат в Американской лиге. И в середине сезона установил исторический рекорд — <strong>20 побед подряд</strong>, который не побит до сих пор.</p>
+    <p>История Бина легла в основу книги <strong>«Moneyball»</strong> Майкла Льюиса 2003 года, и фильма с Брэдом Питтом 2011 года. С тех пор «Moneyball» стало нарицательным словом для подхода, в котором вы <strong>сознательно игнорируете популярные сигналы</strong> и нанимаете по тем, которые <strong>никто не смотрит</strong>.</p>
+  </div>
+
+  <div class="c">
+    <div class="lb purple">Что это значит для малого бизнеса</div>
+    <p>Урок Бина для малого бизнеса не в том, чтобы считать статистику кандидатов. Никто не будет вести базу данных по продавцам.</p>
+    <p>Урок в другом. Бин понял, что <strong>в найме можно оценивать кандидата не по мнениям, а по фактам</strong>. Раньше скауты говорили «у этого парня хорошее движение», и доверяли своему опыту. Бин сказал: «Не важно, что вам кажется. Важно — как часто этот парень попадает на базу в реальной игре». То есть <strong>мнение скаута заменили на проверяемый результат</strong>.</p>
+    <p>В малом бизнесе вы можете сделать то же самое. Не нужно полагаться на час собеседования, на «он мне понравился», на «у него хороший опыт». Дайте человеку <strong>поработать одну неделю</strong> и посмотрите, что он на самом деле умеет.</p>
+    <p>Это и есть <strong>тестовая неделя</strong>.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c al">
+    <div class="lb purple">Как она устроена</div>
+    <p>Тестовая неделя — это короткая пробная работа кандидата у вас в команде. Обычно 5-7 рабочих дней. На реальных задачах, в реальной обстановке, с вашими сотрудниками.</p>
+    <p>Это <strong>оплачиваемая</strong> работа. По дневной ставке, привязанной к будущей зарплате. Не «бесплатная стажировка» — это вызывает справедливое недовольство, и хорошие кандидаты на это не идут. Если человек неделю работает на ваш бизнес, он должен получить деньги за эту неделю независимо от того, наймёте вы его в итоге или нет.</p>
+    <p>В конце недели вы принимаете решение: брать в команду или нет. И решение принимаете по <strong>наблюдаемым фактам</strong>, а не по ощущению с собеседования.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c">
+    <div class="lb purple">Что вы видите за тестовую неделю</div>
+    <p>Вот это — главное. На собеседовании человек показывает свой «парадный фасад». Подготовился, выгладил рубашку, продумал ответы. На тестовой неделе вы видите его <strong>в обычном рабочем режиме</strong>, и именно так он будет работать у вас всегда.</p>
+    <p>Что становится видно.</p>
+  </div>
+
+  <div class="c">
+    <div class="lc-hdr">
+      <div class="lc-num">1</div>
+      <div class="lc-t">Скорость обучения</div>
+    </div>
+    <p>Сколько раз вам надо объяснить одно и то же. Как быстро человек запоминает имена коллег, расположение товара, систему кассы. Это <strong>самый сильный сигнал</strong> для малого бизнеса. Адаптант, который быстро учится, через месяц работает как звезда. Кандидат, которому надо повторять три раза, через год так и будет переспрашивать.</p>
+  </div>
+
+  <div class="c">
+    <div class="lc-hdr">
+      <div class="lc-num">2</div>
+      <div class="lc-t">Реакция на ошибки</div>
+    </div>
+    <p>В первую неделю кандидат <strong>обязательно ошибётся</strong> — это нормально. Важно как он реагирует. Признаёт ошибку и идёт исправлять? Замалчивает в надежде что не заметят? Сваливает на коллег или на «непонятную инструкцию»? Это видно сразу, и это <strong>черта характера</strong>, которая не лечится.</p>
+  </div>
+
+  <div class="c">
+    <div class="lc-hdr">
+      <div class="lc-num">3</div>
+      <div class="lc-t">Отношения с командой</div>
+    </div>
+    <p>Через 3-4 дня человек либо стал частью команды, либо остался островом. Команда либо включила его в свои чаты, шутки, перерывы — либо вежливо игнорирует. Команда чувствует «свой / чужой» точнее вашего собеседования, и доверять её сигналу важнее доверять своему.</p>
+  </div>
+
+  <div class="c">
+    <div class="lc-hdr">
+      <div class="lc-num">4</div>
+      <div class="lc-t">Отношения с клиентами</div>
+    </div>
+    <p>Это видно с первого взаимодействия. Как человек встречает клиента, как он реагирует на сложного клиента, как держится в стрессовой ситуации, как продаёт без давления. На собеседовании про это не узнаешь — там нет реальных клиентов.</p>
+  </div>
+
+  <div class="c">
+    <div class="lc-hdr">
+      <div class="lc-num">5</div>
+      <div class="lc-t">Уровень энергии</div>
+    </div>
+    <p>Кандидат на собеседовании всегда «с энергией» — он мобилизован. На пятый день недели становится видно, <strong>какой у него реальный уровень энергии в обычном режиме</strong>. Кто-то выдыхается уже в среду. Кто-то стабильно держит темп всю неделю. Это критично — потому что настоящая работа это не одно выступление, это <strong>марафон месяц за месяцем</strong>.</p>
+  </div>
+
+  <div class="c">
+    <div class="lc-hdr">
+      <div class="lc-num">6</div>
+      <div class="lc-t">Совпадение ценностей</div>
+    </div>
+    <p>Это самое тонкое и самое важное. Вы видите, как человек <strong>относится к вашей системе</strong>. Принимает её как «как должно быть» — или начинает «улучшать», игнорировать, обходить. Если на тестовой неделе уже «начинает учить вас, как надо» — через три месяца он будет вашим главным саботажником.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c ao">
+    <div class="lb red">Что вы себе должны разрешить</div>
+    <p>Самое сложное в тестовой неделе — это <strong>разрешить себе сказать «нет»</strong> в конце.</p>
+    <p>Многие собственники, проведя кандидата через 5-7 дней работы, чувствуют психологическое обязательство его взять. «Ну он же неделю с нами работал, неудобно теперь отказывать». Это ловушка. <strong>Тестовая неделя — это и есть собеседование</strong>. Кандидат знает, что в конце возможен отказ. Он не за это получает деньги, он получает за работу. Если по итогам недели не подходит — спокойно, по-человечески, не обвиняя, объясняете почему и расходитесь.</p>
+    <p>Я скажу больше. Если вы провели тестовую неделю и <strong>не отказали ни разу за свою карьеру</strong> — значит, вы её не используете правильно. Реальный отказ из 4-5 кандидатов — это нормальная статистика. И это говорит, что у вас <strong>планка достаточно высокая</strong>.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c al">
+    <div class="lb purple">Главная мысль урока</div>
+  </div>
+
+  <div class="qt">
+    <p>«Найм — это процесс, а не одно собеседование. Час разговора не покажет вам человека. Неделя работы — покажет.»</p>
+  </div>
+
+  <div class="c">
+    <p>Это требует от вас больше времени и больше усилий, чем стандартный «провести час, нанять, надеяться, что повезёт». Но это <strong>единственный способ</strong> в малом бизнесе системно нанимать тех, кто остаётся.</p>
+    <p>Подведу итог всему уроку L05.</p>
+    <p>В малом бизнесе вам не нужны звёзды — вам нужны обучаемые адаптанты, которых вы вырастите под свою систему. Чтобы их видеть, нужно отключить рефлекс «закон подобия» — он ведёт вас к копиям самого себя и собирает вам команду с дублирующимися сильными сторонами и удвоенными слабыми. И вместо того чтобы доверять часу собеседования, нужно использовать тестовую неделю — где кандидат показывает себя в работе, а не в разговоре.</p>
+    <p>Это медленнее, чем «нанял по резюме за день». Но через год вы увидите, что у вас в команде остаются люди, которых вы наняли — а не вечно вращающаяся карусель «нанял-расстался». А через два года эта разница превращается в принципиально другой бизнес.</p>
+  </div>
+
+  <div class="tk">
+    <span class="tk-badge">Выводы урока</span>
+    <h3>Мнение скаута заменить<br>на <span class="hl">проверяемый</span> результат.</h3>
+    <div class="tk-pt"><span class="tk-n">1</span><span class="tk-t">Окленд Эйс 2002 при бюджете в 3 раза меньше Yankees выиграл 103 матча и установил рекорд из 20 побед подряд. Бин и ДеПодеста перестали смотреть «популярные» метрики и начали смотреть те, что предсказывают победу.</span></div>
+    <div class="tk-pt"><span class="tk-n">2</span><span class="tk-t">Тестовая неделя — оплачиваемая, 5-7 дней, на реальных задачах. Видно скорость обучения, реакцию на ошибки, отношения с командой и клиентами, уровень энергии, совпадение ценностей.</span></div>
+    <div class="tk-pt"><span class="tk-n">3</span><span class="tk-t">Самое сложное — разрешить себе сказать «нет» в конце. Если ни разу за карьеру не отказали — значит, не используете тестовую неделю правильно. Реальный отказ из 4-5 кандидатов — норма.</span></div>
+  </div>
+
+  <div class="qt">
+    <p>«В следующем уроке — Project Aristotle от Google. Они два года изучали, что делает команды эффективными, и пришли к выводам, которые сильно противоречат интуиции собственника.»</p>
+    <p>→ <strong>Урок L06 — Команда: кто играет, кто тащит рояль</strong></p>
+  </div>
+
+</main>
+
+<div class="nav">
+  <button class="nb nb-prev" onclick="location.href='m5-ch02.html'">← Глава 2</button>
+  <button class="nb nb-next" disabled title="L06 ещё не опубликован">L06 →</button>
+</div>
+
+</body>
+</html>
