@@ -11,7 +11,7 @@
 
 1. Скопировать `data/niches/MANICURE_data.yaml` → `data/niches/{NICHE}_data.yaml`.
 2. Заполнить поля для всех форматов ниши.
-3. Прописать `available: true` в `config/niches.yaml`.
+3. Прописать ниши в `data/kz/niches_registry.yaml` (поле `status: production_ready` или `wiki_only`).
 4. Обновить `niche_loader.overlay_yaml_on_xlsx`: добавить niche_id в whitelist.
 5. Прогон через API: `/quick-check` с новым `niche_id`.
 
@@ -136,17 +136,27 @@ upsells:
 
 ---
 
-## Шаг 3. Включить нишу в `config/niches.yaml`
+## Шаг 3. Включить нишу в `data/kz/niches_registry.yaml`
 
 ```yaml
 niches:
-  niches:
-    BARBER:
-      name_rus: "Барбершоп"
-      icon: "💈"
-      category: beauty
-      archetype: A              # A=услуги, B=общепит, C=retail, D=абонементы, E=проектный, F=мощность
-      available: true           # ⬅ ВАЖНО! Без этого ниша не появится в /niches
+  - code: BARBER
+    name_ru: "Барбершоп"
+    aliases: []
+    archetype: "A"             # A=услуги, B=общепит, C=retail, D=абонементы, E=проектный, F=мощность
+    category: "beauty"
+    icon: "💈"
+    status: production_ready   # production_ready | wiki_only | research — определяет видимость в /niches
+    cta: quick_check
+    has_insight: true
+    has_data: true
+    has_calibration: true
+    has_wiki: true
+    insight_path: "knowledge/kz/niches/BARBER_insight.md"
+    data_path: "data/niches/BARBER_data.yaml"
+    calibration_path: "data/kz/niches/niche_formats_BARBER.xlsx"
+    wiki_path: "wiki/kz/ZEREK_Barber.html"
+    notes: ""
 ```
 
 ---
@@ -242,7 +252,7 @@ def test_barber_home_pipeline():
 После успеха через локальную регрессию:
 
 ```bash
-git add data/niches/BARBER_data.yaml config/niches.yaml api/loaders/niche_loader.py tests/integration/test_quick_check.py
+git add data/niches/BARBER_data.yaml data/kz/niches_registry.yaml api/loaders/niche_loader.py tests/integration/test_quick_check.py
 git commit -m "feat(niche): add BARBER YAML data + enable for Quick Check"
 git push origin claude/...
 # → PR в main → Railway деплой

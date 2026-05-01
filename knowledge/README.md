@@ -58,7 +58,7 @@ check_coef: 1.05
 
 1. Скопируй `_templates/niche_template.md` → `niches/BARBER.md`.
 2. Заполни frontmatter (форматы, чеки, аренда, риски).
-3. В `config/niches.yaml` отметь `BARBER: { available: true }`.
+3. В `data/kz/niches_registry.yaml` поставь `status: production_ready` для нужного `code: BARBER` (после полной калибровки) или `wiki_only` (на промежуточном этапе).
 4. Сохрани в Obsidian.
 5. Через 30 минут (auto-commit Obsidian Git) изменение в репо → пуш на GitHub → Railway пересоберёт.
 

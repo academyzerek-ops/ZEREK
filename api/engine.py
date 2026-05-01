@@ -1393,7 +1393,8 @@ def _load_yaml_configs_on(self):
             print(f"⚠️ Не удалось прочитать {path}: {e}")
             self.configs[name] = {}
     # Список ниш — из единого реестра data/kz/niches_registry.yaml.
-    # Синтезируем dict-shape, совместимый с прежним config/niches.yaml,
+    # Синтезируем dict-shape, совместимый с прежним форматом
+    # (config/niches.yaml удалён 2026-05-01 в рамках чистки),
     # чтобы остальной код продолжал работать без изменений.
     registry_path = os.path.join(repo_root, "data", "kz", "niches_registry.yaml")
     synth = {}

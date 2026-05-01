@@ -22,8 +22,8 @@ questionnaire:
         required: true
         type: niche_select
         label_rus: "Выберите нишу бизнеса"
-        help_rus: "57 ниш, сгруппированы по категориям"
-        source: "config/niches.yaml"
+        help_rus: "Ниши сгруппированы по категориям"
+        source: "data/kz/niches_registry.yaml"
         triggers:
           - set: archetype
           - load_formats_for_niche
