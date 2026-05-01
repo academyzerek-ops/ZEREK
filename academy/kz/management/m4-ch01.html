@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0A0A0F">
+<title>Глава 1 — Три системы оплаты и под какие задачи их выбирать</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+html,body{
+  background:#0A0A0F !important;
+  color:#E8E8ED;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+html::before{
+  content:'';position:fixed;inset:0;
+  background:#0A0A0F;z-index:-1;
+}
+
+:root{
+  --bg:#0A0A0F;
+  --surface:#16161E;
+  --surface2:#1E1E28;
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.10);
+  --text:#E8E8ED;
+  --text2:#A0A0B0;
+  --text3:#6B6B7B;
+  --purple:#A89BFF;
+  --purple-dim:rgba(168,155,255,0.12);
+  --green:#00D4AA;
+  --green-dim:rgba(0,212,170,0.10);
+  --orange:#E8A04C;
+  --orange-dim:rgba(232,160,76,0.10);
+  --red:#E85454;
+  --red-dim:rgba(232,84,84,0.10);
+  --accent:#6C63FF;
+}
+
+/* ══════ HEADER ══════ */
+.hdr{
+  position:sticky;top:0;z-index:50;
+  background:#101010;
+  border-bottom:1px solid #2C2C2C;
+  padding:14px 20px 12px;
+}
+.hdr::after{
+  content:'';
+  position:absolute;
+  bottom:-20px;left:0;right:0;
+  height:20px;
+  background:linear-gradient(180deg,#101010 0%,var(--bg) 100%);
+  pointer-events:none;
+  z-index:49;
+}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.hdr-badge{
+  background:var(--purple-dim);color:var(--purple);
+  font-size:11px;font-weight:700;
+  letter-spacing:1.2px;padding:4px 10px;border-radius:6px;
+}
+.hdr-mod{font-size:12px;color:var(--text3);font-weight:600;min-width:0;max-width:52%;text-align:right;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.prog{display:flex;align-items:center;gap:10px}
+.prog-n{font-size:12px;color:var(--text3);font-weight:700;font-variant-numeric:tabular-nums}
+.prog-track{flex:1;height:5px;background:#2C2C2C;border-radius:5px;overflow:hidden}
+.prog-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#6C5CE7,#00B894)}
+.hdr-back{display:flex;align-items:center;gap:4px;background:none;border:1px solid #2C2C2C;border-radius:8px;padding:6px 12px;font-family:inherit;font-size:12px;font-weight:700;color:var(--text3);cursor:pointer;white-space:nowrap}
+.hdr-back:active{background:#1E1E1E}
+.hdr-back svg{width:14px;height:14px;stroke:var(--text3);stroke-width:2.5;fill:none}
+
+/* ══════ MAIN ══════ */
+.page{max-width:460px;margin:0 auto;padding:20px 18px 120px}
+
+/* ══════ HERO ══════ */
+.hero{text-align:center;padding:32px 0 24px}
+.hero-ico{font-size:48px;display:block;margin-bottom:12px}
+.hero h1{
+  font-weight:800;font-size:26px;line-height:1.25;
+  color:var(--text);margin-bottom:8px;letter-spacing:-0.01em;
+}
+.hero h1 .o{color:var(--orange)}
+.hero-sub{font-size:14px;color:var(--text3);font-weight:500}
+
+/* ══════ CARD ══════ */
+.c{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:20px 18px;
+  margin-bottom:14px;
+}
+.c p{font-size:15px;color:var(--text2);margin-bottom:10px;line-height:1.8}
+.c p:last-child{margin-bottom:0}
+.c strong{font-weight:700;color:var(--text)}
+.c em{font-style:italic;color:var(--text)}
+
+.c.al{border-left:3.5px solid var(--accent);background:rgba(108,92,231,0.04)}
+.c.ag{border-left:3.5px solid var(--green);background:rgba(0,212,170,0.04)}
+.c.ao{border-left:3.5px solid var(--orange);background:rgba(232,160,76,0.04)}
+
+/* ══════ LABEL ══════ */
+.lb{
+  display:inline-block;
+  font-size:12px;font-weight:700;
+  letter-spacing:0.5px;
+  padding:5px 11px;border-radius:6px;margin-bottom:14px;
+}
+.lb.purple{color:var(--purple);background:var(--purple-dim)}
+.lb.red{color:var(--red);background:var(--red-dim)}
+.lb.green{color:var(--green);background:var(--green-dim)}
+.lb.orange{color:var(--orange);background:var(--orange-dim)}
+
+/* ══════ VS GRID ══════ */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.vs-i{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:18px 14px;
+  text-align:center;
+}
+.vs-i.gold{border-top:3.5px solid var(--orange);background:rgba(232,160,76,0.04)}
+.vs-i.paper{border-top:3.5px solid var(--green);background:rgba(0,212,170,0.04)}
+.vs-ico{font-size:32px;margin-bottom:6px;display:block}
+.vs-t{font-weight:700;font-size:15px;color:var(--text);margin-bottom:4px}
+.vs-d{font-size:12.5px;color:var(--text3);line-height:1.5}
+
+/* ══════ DIVIDER ══════ */
+.div{display:flex;align-items:center;gap:12px;margin:22px 0 18px}
+.div .ln{flex:1;height:1px;background:var(--border2)}
+.div .dt{width:5px;height:5px;border-radius:50%;background:var(--text3)}
+
+/* ══════ TIMELINE ══════ */
+.tl{
+  padding-left:28px;position:relative;margin-bottom:18px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:22px 20px 22px 38px;
+}
+.tl::before{
+  content:'';position:absolute;left:18px;top:28px;bottom:28px;
+  width:2px;background:linear-gradient(180deg,#6C5CE7,#00B894);border-radius:2px;
+}
+.tl-i{position:relative;margin-bottom:20px}
+.tl-i:last-child{margin-bottom:0}
+.tl-dot{
+  position:absolute;left:-26px;top:4px;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--surface);border:2.5px solid #6C5CE7;
+  box-shadow:0 0 0 3px rgba(108,92,231,0.15);
+}
+.tl-i:last-child .tl-dot{border-color:#00B894;box-shadow:0 0 0 3px rgba(0,184,148,0.15)}
+.tl-date{
+  font-size:12px;font-weight:700;color:var(--purple);
+  letter-spacing:0.5px;margin-bottom:4px;
+  font-variant-numeric:tabular-nums;
+}
+.tl-i:last-child .tl-date{color:var(--green)}
+.tl-txt{font-size:14px;color:var(--text2);line-height:1.6}
+.tl-txt strong{font-weight:700;color:var(--text)}
+
+/* ══════ INSIGHT ══════ */
+.ins{
+  background:linear-gradient(135deg,rgba(108,92,231,0.08) 0%,rgba(0,184,148,0.06) 100%);
+  border:1px solid rgba(108,92,231,0.15);
+  border-radius:14px;
+  padding:22px 18px;
+  margin-bottom:14px;
+  position:relative;
+}
+.ins-ico{
+  position:absolute;top:-10px;left:16px;
+  background:var(--bg);padding:0 4px;font-size:18px;
+  border-radius:4px;
+}
+.ins p{font-size:14.5px;font-weight:500;color:var(--text);line-height:1.65}
+.ins strong{color:var(--purple);font-weight:700}
+
+/* ══════ FACT SCROLL ══════ */
+.fs{
+  display:flex;gap:10px;overflow-x:auto;
+  scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+  padding:2px 0 12px;margin-bottom:14px;
+}
+.fs::-webkit-scrollbar{display:none}
+.fc{
+  flex:0 0 auto;scroll-snap-align:start;
+  width:200px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;
+  padding:14px;
+}
+.fc-ico{font-size:20px;margin-bottom:6px;display:block}
+.fc-txt{font-size:12.5px;color:var(--text2);line-height:1.5}
+.fc-txt strong{color:var(--orange);font-weight:700}
+
+/* ══════ LIST CARD ══════ */
+.lc-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.lc-num{
+  width:28px;height:28px;border-radius:7px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:var(--purple);
+  font-variant-numeric:tabular-nums;
+}
+.lc-t{font-weight:700;font-size:16px;color:var(--text)}
+.c ul{list-style:none;padding:0}
+.c li{position:relative;padding-left:18px;margin-bottom:8px;font-size:14px;line-height:1.55;color:var(--text2)}
+.c li::before{
+  content:'';position:absolute;left:0;top:8px;
+  width:6px;height:6px;border-radius:2px;background:var(--accent);opacity:0.5;
+}
+.c li strong{font-weight:700;color:var(--text)}
+
+/* ══════ EXPANDABLE ══════ */
+.ex{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;margin-bottom:10px;overflow:hidden;
+}
+.ex-h{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;cursor:pointer;
+  user-select:none;-webkit-user-select:none;
+}
+.ex-h:active{background:var(--surface2)}
+.ex-q{font-size:14px;font-weight:600;color:var(--text);flex:1;padding-right:8px}
+.ex-arr{
+  width:24px;height:24px;border-radius:6px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  transition:transform 0.3s;flex-shrink:0;
+}
+.ex-arr svg{width:12px;height:12px;stroke:var(--purple);stroke-width:2.5;fill:none}
+.ex.open .ex-arr{transform:rotate(180deg)}
+.ex-b{max-height:0;overflow:hidden;transition:max-height 0.35s ease;padding:0 16px}
+.ex.open .ex-b{max-height:400px;padding:0 16px 16px}
+.ex-b p{font-size:13.5px;color:var(--text2);line-height:1.7;margin-bottom:6px}
+.ex-b p:last-child{margin-bottom:0}
+.ex-b strong{color:var(--text)}
+
+/* ══════ TAKEAWAY ══════ */
+.tk{
+  background:var(--surface);
+  border:1.5px solid var(--accent);
+  border-radius:14px;
+  padding:22px 18px;
+  margin-bottom:14px;
+  position:relative;overflow:hidden;
+}
+.tk::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,#6C5CE7,#00B894,#6C5CE7);
+  background-size:200% 100%;
+  animation:sh 4s ease-in-out infinite;
+}
+@keyframes sh{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.tk-badge{
+  display:inline-block;
+  font-size:12px;font-weight:700;
+  letter-spacing:0.5px;
+  color:var(--purple);background:var(--purple-dim);
+  padding:5px 11px;border-radius:6px;margin-bottom:14px;
+}
+.tk h3{
+  font-weight:800;
+  font-size:20px;line-height:1.3;color:var(--text);margin-bottom:16px;
+  letter-spacing:-0.01em;
+}
+.tk h3 .hl{color:var(--purple)}
+.tk-pt{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.tk-pt:last-child{margin-bottom:0}
+.tk-n{
+  min-width:22px;height:22px;border-radius:6px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:var(--purple);
+  margin-top:2px;
+  font-variant-numeric:tabular-nums;
+}
+.tk-t{font-size:14px;color:var(--text2);line-height:1.6}
+
+/* ══════ QUOTE ══════ */
+.qt{
+  border-left:3.5px solid var(--orange);
+  background:rgba(232,160,76,0.04);
+  border-radius:0 12px 12px 0;
+  padding:18px 18px;margin-bottom:14px;
+}
+.qt p{font-size:14.5px;font-weight:500;font-style:italic;color:var(--text2);line-height:1.6}
+
+/* ══════ TABLE ══════ */
+.tbl{
+  width:100%;
+  border-collapse:separate;border-spacing:0;
+  margin-bottom:14px;
+  font-size:13.5px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+}
+.tbl th, .tbl td{
+  padding:11px 12px;
+  text-align:left;
+  border-bottom:1px solid var(--border);
+  color:var(--text2);
+  vertical-align:top;
+  line-height:1.45;
+}
+.tbl thead th{
+  background:var(--surface2);
+  color:var(--text3);
+  font-weight:700;
+  font-size:10.5px;
+  letter-spacing:0.6px;
+  text-transform:uppercase;
+}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl td.num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.tbl td strong{color:var(--text)}
+.tbl td.hot{color:var(--orange);font-weight:800;font-size:15.5px;letter-spacing:-0.01em}
+
+/* ══════ NAV ══════ */
+.nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:50;
+  background:#101010;
+  border-top:1px solid #2C2C2C;
+  padding:12px 18px;
+  padding-bottom:max(12px,env(safe-area-inset-bottom));
+  display:flex;gap:10px;
+  max-width:460px;margin:0 auto;
+}
+.nb{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:13px;border-radius:12px;
+  font-family:inherit;font-size:14px;font-weight:700;
+  border:none;cursor:pointer;
+}
+.nb:active{transform:scale(0.97)}
+.nb-prev{
+  background:#1E1E1E;color:var(--text3);
+  border:1px solid #2C2C2C;
+}
+.nb-next{
+  background:var(--accent);color:#fff;
+}
+.nb[disabled]{
+  opacity:0.45;cursor:not-allowed;
+}
+.nb[disabled]:active{transform:none}
+
+/* ══════ ANIM ══════ */
+@keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.c,.vs,.tl,.ins,.fs,.ex,.tk,.qt,.tbl{animation:su 0.5s ease-out both}
+.c:nth-of-type(2){animation-delay:0.06s}
+.c:nth-of-type(3){animation-delay:0.12s}
+</style>
+
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-row"><button class="hdr-back" onclick="location.href='../../../products/app.html?tab=academy'"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Содержание</button>
+    <span class="hdr-badge">MGMT</span>
+    <span class="hdr-mod">Модуль · Системы оплаты и KPI</span>
+  </div>
+  <div class="prog">
+    <span class="prog-n">1/4</span>
+    <div class="prog-track"><div class="prog-fill" style="width:25%"></div></div>
+  </div>
+</header>
+
+<main class="page">
+
+  <div class="hero">
+    <span class="hero-ico">💰</span>
+    <h1>Три системы <span class="o">оплаты</span></h1>
+    <p class="hero-sub">Оклад, сделка, гибрид — на примере барбершопа</p>
+  </div>
+
+  <div class="c al">
+    <div class="lb purple">Где мы остановились</div>
+    <p>В предыдущем уроке мы говорили о тех, кого вы боитесь потерять — о ключевых сотрудниках, которым нужна доля. В этом уроке речь о всех остальных. О людях, которые делают свою работу за фиксированную оплату. И большинство вашей команды — именно такие, потому что бизнес не может состоять из одних партнёров.</p>
+    <p>И первый вопрос, на который мы ответим в этой главе — какую <strong>форму оплаты</strong> дать сотруднику. Оклад, процент или что-то третье. Это вопрос, на который собственники обычно отвечают по привычке, не задумываясь — «у нас все на окладе, потому что у нас в индустрии так принято». Или наоборот: «у нас все на проценте, потому что я не хочу платить тем, кто ничего не приносит». Оба ответа — упрощения, которые рано или поздно бьют по бизнесу.</p>
+  </div>
+
+  <div class="c">
+    <div class="lb purple">Сцена с барбершопом</div>
+    <p>Давайте на конкретном примере. Вы открыли барбершоп. У вас работают три мастера. Им нужно платить. Подходят три способа.</p>
+  </div>
+
+  <div class="c">
+    <div class="lb purple">Способ 1 · Оклад</div>
+    <p>Вы говорите мастеру: «Я плачу тебе 350 тысяч в месяц. Работаешь по графику с 10 до 21. Сколько клиентов у тебя за день — твой вопрос, главное чтобы услуги были на уровне». Через месяц вы заходите в зал в среду в 14:00 и видите такую картину. У одного мастера сидит клиент. Двое других сидят в телефонах. На вопрос «почему вы не звоните постоянным клиентам, не приглашаете людей с улицы» получаете ответ «у нас оклад, что нужно — то делаем». И это правда. Они не подписывались на маркетинг. Они подписались работать с тем потоком, который вы им даёте.</p>
+  </div>
+
+  <div class="c ao">
+    <div class="lb red">Способ 2 · Сделка</div>
+    <p>Вы говорите мастеру: «Никакого оклада. Получаешь 50% с каждой стрижки. Сколько настриг — столько твоё». Через месяц вы заходите в зал и видите другую картину. Мастер активно общается с клиентом. Уговаривает его на дополнительную процедуру — оформление бороды, «королевский» уход, бритьё с компрессом. Клиент ушёл с чеком 12 тысяч вместо стандартных 5. Через две недели этот клиент пишет на 2GIS негативный отзыв: «Развели на лишние услуги, в следующий раз пойду в другое место». Мастер заработал хорошо в этом месяце. Вы потеряли клиента на всю жизнь.</p>
+  </div>
+
+  <div class="c ag">
+    <div class="lb green">Способ 3 · Гибрид</div>
+    <p>Оклад 150 тысяч + 30% сверх плана выработки 600 тысяч в месяц. Здесь сотрудник получает базовую безопасность от оклада и стимул работать сверх. Этот вариант чаще всего работает. Но и он не магическая палочка — у него есть свои подводные камни, которые я тоже разберу.</p>
+  </div>
+
+  <div class="c">
+    <p>Сцена простая, но за ней стоит важный вывод.</p>
+  </div>
+
+  <div class="ins">
+    <span class="ins-ico">💡</span>
+    <p><strong>Не существует «лучшей» системы оплаты. Каждая решает свои задачи и создаёт свои проблемы. Ваша работа как руководителя — выбрать правильный инструмент под правильную задачу.</strong></p>
+  </div>
+
+  <div class="c">
+    <p>Пройдёмся по каждой системе подробнее.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c">
+    <div class="lb purple">Когда нужен оклад</div>
+    <p>Оклад — это плата за <strong>присутствие и стабильность</strong>. Он работает там, где вам важно, чтобы сотрудник просто пришёл, был на месте, и сделал то, что вы попросите. Не больше и не меньше.</p>
+    <p>Оклад правильно использовать в трёх случаях.</p>
+    <p>Первый — <strong>роли, не связанные напрямую с продажами</strong>. Бухгалтер, администратор, повар на кухне, уборщик, водитель. Их задача — выполнять стандарт. Бухгалтер не «продаёт» отчёты, повар не «продаёт» блюда — они их готовят по технологической карте. Связывать их зарплату с выручкой бизнеса — значит создавать конфликт мотивации. Бухгалтеру выгодно, чтобы прошло больше операций, и он будет торопиться. Повару выгодно, чтобы было больше заказов, и он начнёт срезать углы.</p>
+    <p>Второй случай — <strong>новички в первые 1-2 месяца</strong>. Когда сотрудник только пришёл, привязывать его доход к результату — это запрограммированная демотивация. Он ещё не научился. Он не знает ваших клиентов, продуктов, процессов. Если в первый месяц он будет получать 30% оклада плюс маленький процент — он психологически будет уходить, не дав себе времени освоиться. Дайте ему нормальный оклад на адаптацию, и через два месяца переводите на ту систему, которая подходит его роли.</p>
+    <p>Третий — <strong>высокотехничные специалисты, которых сложно перепроверить</strong>. Если у вас работает айтишник, который пишет код для вашего сайта — оклад. Юрист — оклад. Опытный технолог — оклад. Их работа сложная, результат проявляется не сегодня, и придумывать формулу «процент с прибыли от хорошего кода» — это глупость. Профессионал, которого пытаются мотивировать процентом, обычно уходит, потому что чувствует недоверие.</p>
+    <p>Главная ловушка оклада я уже показал на барбершопе. Когда мастер на окладе сидит в телефоне в пустом зале — это не его лень, это <strong>встроенный логический результат</strong> системы оплаты, которую вы выбрали. Не надо это лечить разносами. Это лечится сменой системы оплаты для этой конкретной роли.</p>
+  </div>
+
+  <div class="c ao">
+    <div class="lb red">Когда нужна сделка</div>
+    <p>Сделка — это плата за <strong>результат прямо сейчас</strong>. Сотрудник получает столько, сколько произвёл. Не пришёл — не заработал. Произвёл вдвое больше — получил вдвое больше.</p>
+    <p>Сделка хорошо работает в <strong>продажах</strong> и в <strong>производстве на сдельную выработку</strong>. Менеджер по продажам, продавец-консультант в магазине, мастер в нише где <strong>результат измеряется штучно</strong> — стрижка, маникюр, пошив, ремонт. Везде, где можно посчитать «единицу работы» и привязать к ней процент — сделка может быть честной системой оплаты.</p>
+    <p>Главная ловушка сделки — это <strong>искажение поведения</strong>. Я её уже показал на примере барбера, который втюхивает клиенту лишние услуги. Когда сотрудник получает только за объём, он начнёт оптимизировать свой объём за счёт интересов клиента и компании. Менеджер на проценте начнёт давать обещания, которые не сможет выполнить, потому что ему надо закрыть сделку <strong>сегодня</strong>, а проблемы клиента всплывут через месяц — но к тому времени деньги уже у него в кармане. Продавец на проценте начнёт впихивать самое дорогое, потому что от него процент выше, а не то что нужно покупателю.</p>
+    <p>Сделку нужно обязательно дополнять либо <strong>минимальным окладом для базовой безопасности</strong>, либо <strong>качественными метриками</strong>, привязанными к бонусу — об этом будет в следующих главах. Чистая сделка без подпорок работает только в очень узких случаях, и обычно через год-два она вырождается в одну из двух проблем: либо люди уходят (потому что нестабильность), либо клиенты уходят (потому что сервис ломается).</p>
+  </div>
+
+  <div class="c ag">
+    <div class="lb green">Когда нужен гибрид</div>
+    <p>Гибрид — это попытка взять лучшее от обоих миров. Базовая безопасность от оклада плюс стимул выработки от процента. Это самая распространённая и обычно правильная схема для большинства ролей в малом бизнесе.</p>
+    <p>Простейшая формула гибрида: <strong>оклад + процент сверх плана</strong>. Например, тому самому мастеру в барбершопе: оклад 150 тысяч + 30% сверх личной выручки в 600 тысяч. Если мастер настриг на 600 тысяч в месяц — он получает свои 150 тысяч оклада, без процентов. Если настриг на 900 — получает 150 + 30% от (900 − 600) = 150 + 90 = 240 тысяч. Если настриг на 1.2 миллиона — получает 150 + 180 = 330 тысяч.</p>
+    <p>Этот гибрид решает обе проблемы. Мастеру не страшно прийти на работу — он знает, что в любом случае получит свои 150. И мастеру есть смысл стараться — потому что сверх плана он получает существенный кусок.</p>
+    <p>Но и у гибрида есть подводные камни. Главный — <strong>правильно поставить план</strong>. Если поставить план слишком низкий — все будут перевыполнять и вы будете платить процент даже за обычную работу. Если слишком высокий — никто не будет дотягивать, и оклад превратится в полный доход без стимула. Правильный план — это обычно 70-80% средней выработки сильного мастера в этой нише в вашем городе. Чтобы перевыполнять было реально, но не само собой.</p>
+    <p>Второй подводный камень — <strong>что входит в выработку</strong>. Если только своя выручка, то у вас в команде каждый сам по себе. Если общая выручка точки — тогда сильные начнут возмущаться, что они тащат слабых. Универсального ответа здесь нет, нужно подбирать под конкретную нишу и команду. Часто работает компромисс: основная часть процента — от личной выработки, маленькая часть — от общей точки, чтобы команда была заинтересована работать как команда, а не как пять одиночек в одном помещении.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c al">
+    <div class="lb purple">Что вы должны вынести из этой главы</div>
+    <p>Главное — у вас в голове должна быть карта, по которой вы понимаете, какую систему оплаты использовать для какой роли. Не «у нас все на окладе» и не «у нас все на проценте». А <strong>разные системы для разных ролей в одной и той же команде</strong>.</p>
+    <p>Бухгалтеру — оклад. Мастеру в зале — гибрид. Менеджеру по продажам — сделка с минимальным окладом. Уборщику — оклад. Управляющей — гибрид с процентом от общей выручки точки. И так далее.</p>
+    <p>Это требует немного больше работы при настройке, чем универсальная схема «у нас все получают так-то». Но эта работа — единоразовая. А выигрыш от того, что у каждого человека система оплаты соответствует характеру его работы, вы получаете каждый день в течение всех лет существования бизнеса.</p>
+    <p>В следующей главе мы разберём то, что обычно надстраивается <strong>поверх</strong> базовой системы оплаты — KPI. Заранее предупреждаю: это самый часто неправильно используемый инструмент управления в постсоветском малом бизнесе. И сейчас я объясню, в чём разница между рабочим KPI и KPI, который убивает команду.</p>
+  </div>
+
+  <div class="tk">
+    <span class="tk-badge">Выводы главы</span>
+    <h3>Не «универсальная схема»,<br>а <span class="hl">правильный инструмент</span> под роль.</h3>
+    <div class="tk-pt"><span class="tk-n">1</span><span class="tk-t">Оклад покупает присутствие. Сделка — выработку. Гибрид — лучшее от обоих. Не существует «лучшей» системы — каждая решает свои задачи и создаёт свои проблемы.</span></div>
+    <div class="tk-pt"><span class="tk-n">2</span><span class="tk-t">Оклад нужен: для не-продажных ролей, для новичков 1-2 месяца, для высокотехничных специалистов которых сложно перепроверить. Сделка — для продаж и сдельной выработки.</span></div>
+    <div class="tk-pt"><span class="tk-n">3</span><span class="tk-t">Гибрид (оклад + процент сверх плана) — самая распространённая правильная схема. Главное — правильно поставить план: 70-80% средней выработки сильного мастера.</span></div>
+  </div>
+
+</main>
+
+<div class="nav">
+  <button class="nb nb-next" onclick="location.href='m4-ch02.html'">Глава 2 →</button>
+</div>
+
+</body>
+</html>

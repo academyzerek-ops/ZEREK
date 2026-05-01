@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0A0A0F">
+<title>Глава 4 — Пять смертельных ошибок KPI в малом бизнесе</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+html,body{
+  background:#0A0A0F !important;
+  color:#E8E8ED;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+html::before{
+  content:'';position:fixed;inset:0;
+  background:#0A0A0F;z-index:-1;
+}
+
+:root{
+  --bg:#0A0A0F;
+  --surface:#16161E;
+  --surface2:#1E1E28;
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.10);
+  --text:#E8E8ED;
+  --text2:#A0A0B0;
+  --text3:#6B6B7B;
+  --purple:#A89BFF;
+  --purple-dim:rgba(168,155,255,0.12);
+  --green:#00D4AA;
+  --green-dim:rgba(0,212,170,0.10);
+  --orange:#E8A04C;
+  --orange-dim:rgba(232,160,76,0.10);
+  --red:#E85454;
+  --red-dim:rgba(232,84,84,0.10);
+  --accent:#6C63FF;
+}
+
+/* ══════ HEADER ══════ */
+.hdr{
+  position:sticky;top:0;z-index:50;
+  background:#101010;
+  border-bottom:1px solid #2C2C2C;
+  padding:14px 20px 12px;
+}
+.hdr::after{
+  content:'';
+  position:absolute;
+  bottom:-20px;left:0;right:0;
+  height:20px;
+  background:linear-gradient(180deg,#101010 0%,var(--bg) 100%);
+  pointer-events:none;
+  z-index:49;
+}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.hdr-badge{
+  background:var(--purple-dim);color:var(--purple);
+  font-size:11px;font-weight:700;
+  letter-spacing:1.2px;padding:4px 10px;border-radius:6px;
+}
+.hdr-mod{font-size:12px;color:var(--text3);font-weight:600;min-width:0;max-width:52%;text-align:right;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.prog{display:flex;align-items:center;gap:10px}
+.prog-n{font-size:12px;color:var(--text3);font-weight:700;font-variant-numeric:tabular-nums}
+.prog-track{flex:1;height:5px;background:#2C2C2C;border-radius:5px;overflow:hidden}
+.prog-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#6C5CE7,#00B894)}
+.hdr-back{display:flex;align-items:center;gap:4px;background:none;border:1px solid #2C2C2C;border-radius:8px;padding:6px 12px;font-family:inherit;font-size:12px;font-weight:700;color:var(--text3);cursor:pointer;white-space:nowrap}
+.hdr-back:active{background:#1E1E1E}
+.hdr-back svg{width:14px;height:14px;stroke:var(--text3);stroke-width:2.5;fill:none}
+
+/* ══════ MAIN ══════ */
+.page{max-width:460px;margin:0 auto;padding:20px 18px 120px}
+
+/* ══════ HERO ══════ */
+.hero{text-align:center;padding:32px 0 24px}
+.hero-ico{font-size:48px;display:block;margin-bottom:12px}
+.hero h1{
+  font-weight:800;font-size:26px;line-height:1.25;
+  color:var(--text);margin-bottom:8px;letter-spacing:-0.01em;
+}
+.hero h1 .o{color:var(--orange)}
+.hero-sub{font-size:14px;color:var(--text3);font-weight:500}
+
+/* ══════ ERROR HEADER ══════ */
+.err-hdr{
+  text-align:center;padding:18px 0 8px;margin-top:12px;
+}
+.err-hdr-num{
+  display:inline-block;
+  font-family:inherit;font-size:11px;font-weight:700;
+  letter-spacing:1.5px;
+  color:var(--red);background:var(--red-dim);
+  padding:5px 12px;border-radius:6px;margin-bottom:8px;
+}
+.err-hdr h2{
+  font-weight:800;font-size:22px;line-height:1.25;
+  color:var(--text);letter-spacing:-0.01em;
+  padding:0 12px;
+}
+
+/* ══════ CARD ══════ */
+.c{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:20px 18px;
+  margin-bottom:14px;
+}
+.c p{font-size:15px;color:var(--text2);margin-bottom:10px;line-height:1.8}
+.c p:last-child{margin-bottom:0}
+.c strong{font-weight:700;color:var(--text)}
+.c em{font-style:italic;color:var(--text)}
+
+.c.al{border-left:3.5px solid var(--accent);background:rgba(108,92,231,0.04)}
+.c.ag{border-left:3.5px solid var(--green);background:rgba(0,212,170,0.04)}
+.c.ao{border-left:3.5px solid var(--orange);background:rgba(232,160,76,0.04)}
+
+/* ══════ LABEL ══════ */
+.lb{
+  display:inline-block;
+  font-size:12px;font-weight:700;
+  letter-spacing:0.5px;
+  padding:5px 11px;border-radius:6px;margin-bottom:14px;
+}
+.lb.purple{color:var(--purple);background:var(--purple-dim)}
+.lb.red{color:var(--red);background:var(--red-dim)}
+.lb.green{color:var(--green);background:var(--green-dim)}
+.lb.orange{color:var(--orange);background:var(--orange-dim)}
+
+/* ══════ VS GRID ══════ */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.vs-i{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:18px 14px;
+  text-align:center;
+}
+.vs-i.gold{border-top:3.5px solid var(--orange);background:rgba(232,160,76,0.04)}
+.vs-i.paper{border-top:3.5px solid var(--green);background:rgba(0,212,170,0.04)}
+.vs-ico{font-size:32px;margin-bottom:6px;display:block}
+.vs-t{font-weight:700;font-size:15px;color:var(--text);margin-bottom:4px}
+.vs-d{font-size:12.5px;color:var(--text3);line-height:1.5}
+
+/* ══════ DIVIDER ══════ */
+.div{display:flex;align-items:center;gap:12px;margin:22px 0 18px}
+.div .ln{flex:1;height:1px;background:var(--border2)}
+.div .dt{width:5px;height:5px;border-radius:50%;background:var(--text3)}
+
+/* ══════ TIMELINE ══════ */
+.tl{
+  padding-left:28px;position:relative;margin-bottom:18px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:22px 20px 22px 38px;
+}
+.tl::before{
+  content:'';position:absolute;left:18px;top:28px;bottom:28px;
+  width:2px;background:linear-gradient(180deg,#6C5CE7,#00B894);border-radius:2px;
+}
+.tl-i{position:relative;margin-bottom:20px}
+.tl-i:last-child{margin-bottom:0}
+.tl-dot{
+  position:absolute;left:-26px;top:4px;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--surface);border:2.5px solid #6C5CE7;
+  box-shadow:0 0 0 3px rgba(108,92,231,0.15);
+}
+.tl-i:last-child .tl-dot{border-color:#00B894;box-shadow:0 0 0 3px rgba(0,184,148,0.15)}
+.tl-date{
+  font-size:12px;font-weight:700;color:var(--purple);
+  letter-spacing:0.5px;margin-bottom:4px;
+  font-variant-numeric:tabular-nums;
+}
+.tl-i:last-child .tl-date{color:var(--green)}
+.tl-txt{font-size:14px;color:var(--text2);line-height:1.6}
+.tl-txt strong{font-weight:700;color:var(--text)}
+
+/* ══════ INSIGHT ══════ */
+.ins{
+  background:linear-gradient(135deg,rgba(108,92,231,0.08) 0%,rgba(0,184,148,0.06) 100%);
+  border:1px solid rgba(108,92,231,0.15);
+  border-radius:14px;
+  padding:22px 18px;
+  margin-bottom:14px;
+  position:relative;
+}
+.ins-ico{
+  position:absolute;top:-10px;left:16px;
+  background:var(--bg);padding:0 4px;font-size:18px;
+  border-radius:4px;
+}
+.ins p{font-size:14.5px;font-weight:500;color:var(--text);line-height:1.65}
+.ins strong{color:var(--purple);font-weight:700}
+
+/* ══════ FACT SCROLL ══════ */
+.fs{
+  display:flex;gap:10px;overflow-x:auto;
+  scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+  padding:2px 0 12px;margin-bottom:14px;
+}
+.fs::-webkit-scrollbar{display:none}
+.fc{
+  flex:0 0 auto;scroll-snap-align:start;
+  width:200px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;
+  padding:14px;
+}
+.fc-ico{font-size:20px;margin-bottom:6px;display:block}
+.fc-txt{font-size:12.5px;color:var(--text2);line-height:1.5}
+.fc-txt strong{color:var(--orange);font-weight:700}
+
+/* ══════ LIST CARD ══════ */
+.lc-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.lc-num{
+  width:28px;height:28px;border-radius:7px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:var(--purple);
+  font-variant-numeric:tabular-nums;
+}
+.lc-t{font-weight:700;font-size:16px;color:var(--text)}
+.c ul{list-style:none;padding:0}
+.c li{position:relative;padding-left:18px;margin-bottom:8px;font-size:14px;line-height:1.55;color:var(--text2)}
+.c li::before{
+  content:'';position:absolute;left:0;top:8px;
+  width:6px;height:6px;border-radius:2px;background:var(--accent);opacity:0.5;
+}
+.c li strong{font-weight:700;color:var(--text)}
+
+/* ══════ EXPANDABLE ══════ */
+.ex{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;margin-bottom:10px;overflow:hidden;
+}
+.ex-h{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;cursor:pointer;
+  user-select:none;-webkit-user-select:none;
+}
+.ex-h:active{background:var(--surface2)}
+.ex-q{font-size:14px;font-weight:600;color:var(--text);flex:1;padding-right:8px}
+.ex-arr{
+  width:24px;height:24px;border-radius:6px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  transition:transform 0.3s;flex-shrink:0;
+}
+.ex-arr svg{width:12px;height:12px;stroke:var(--purple);stroke-width:2.5;fill:none}
+.ex.open .ex-arr{transform:rotate(180deg)}
+.ex-b{max-height:0;overflow:hidden;transition:max-height 0.35s ease;padding:0 16px}
+.ex.open .ex-b{max-height:400px;padding:0 16px 16px}
+.ex-b p{font-size:13.5px;color:var(--text2);line-height:1.7;margin-bottom:6px}
+.ex-b p:last-child{margin-bottom:0}
+.ex-b strong{color:var(--text)}
+
+/* ══════ TAKEAWAY ══════ */
+.tk{
+  background:var(--surface);
+  border:1.5px solid var(--accent);
+  border-radius:14px;
+  padding:22px 18px;
+  margin-bottom:14px;
+  position:relative;overflow:hidden;
+}
+.tk::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,#6C5CE7,#00B894,#6C5CE7);
+  background-size:200% 100%;
+  animation:sh 4s ease-in-out infinite;
+}
+@keyframes sh{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.tk-badge{
+  display:inline-block;
+  font-size:12px;font-weight:700;
+  letter-spacing:0.5px;
+  color:var(--purple);background:var(--purple-dim);
+  padding:5px 11px;border-radius:6px;margin-bottom:14px;
+}
+.tk h3{
+  font-weight:800;
+  font-size:20px;line-height:1.3;color:var(--text);margin-bottom:16px;
+  letter-spacing:-0.01em;
+}
+.tk h3 .hl{color:var(--purple)}
+.tk-pt{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.tk-pt:last-child{margin-bottom:0}
+.tk-n{
+  min-width:22px;height:22px;border-radius:6px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:var(--purple);
+  margin-top:2px;
+  font-variant-numeric:tabular-nums;
+}
+.tk-t{font-size:14px;color:var(--text2);line-height:1.6}
+
+/* ══════ QUOTE ══════ */
+.qt{
+  border-left:3.5px solid var(--orange);
+  background:rgba(232,160,76,0.04);
+  border-radius:0 12px 12px 0;
+  padding:18px 18px;margin-bottom:14px;
+}
+.qt p{font-size:14.5px;font-weight:500;font-style:italic;color:var(--text2);line-height:1.6}
+
+/* ══════ TABLE ══════ */
+.tbl{
+  width:100%;
+  border-collapse:separate;border-spacing:0;
+  margin-bottom:14px;
+  font-size:13.5px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+}
+.tbl th, .tbl td{
+  padding:11px 12px;
+  text-align:left;
+  border-bottom:1px solid var(--border);
+  color:var(--text2);
+  vertical-align:top;
+  line-height:1.45;
+}
+.tbl thead th{
+  background:var(--surface2);
+  color:var(--text3);
+  font-weight:700;
+  font-size:10.5px;
+  letter-spacing:0.6px;
+  text-transform:uppercase;
+}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl td.num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.tbl td strong{color:var(--text)}
+.tbl td.hot{color:var(--orange);font-weight:800;font-size:15.5px;letter-spacing:-0.01em}
+
+/* ══════ NAV ══════ */
+.nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:50;
+  background:#101010;
+  border-top:1px solid #2C2C2C;
+  padding:12px 18px;
+  padding-bottom:max(12px,env(safe-area-inset-bottom));
+  display:flex;gap:10px;
+  max-width:460px;margin:0 auto;
+}
+.nb{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:13px;border-radius:12px;
+  font-family:inherit;font-size:14px;font-weight:700;
+  border:none;cursor:pointer;
+}
+.nb:active{transform:scale(0.97)}
+.nb-prev{
+  background:#1E1E1E;color:var(--text3);
+  border:1px solid #2C2C2C;
+}
+.nb-next{
+  background:var(--accent);color:#fff;
+}
+.nb[disabled]{
+  opacity:0.45;cursor:not-allowed;
+}
+.nb[disabled]:active{transform:none}
+
+/* ══════ ANIM ══════ */
+@keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.c,.vs,.tl,.ins,.fs,.ex,.tk,.qt,.tbl{animation:su 0.5s ease-out both}
+.c:nth-of-type(2){animation-delay:0.06s}
+.c:nth-of-type(3){animation-delay:0.12s}
+</style>
+
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-row"><button class="hdr-back" onclick="location.href='../../../products/app.html?tab=academy'"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Содержание</button>
+    <span class="hdr-badge">MGMT</span>
+    <span class="hdr-mod">Модуль · Системы оплаты и KPI</span>
+  </div>
+  <div class="prog">
+    <span class="prog-n">4/4</span>
+    <div class="prog-track"><div class="prog-fill" style="width:100%"></div></div>
+  </div>
+</header>
+
+<main class="page">
+
+  <div class="hero">
+    <span class="hero-ico">⚠️</span>
+    <h1>Пять смертельных <span class="o">ошибок</span></h1>
+    <p class="hero-sub">Пять способов сломать систему даже если всё правильно понимаете</p>
+  </div>
+
+  <div class="c al">
+    <div class="lb purple">Что внутри</div>
+    <p>В предыдущих главах мы построили нормальную систему оплаты и KPI. В этой главе я хочу рассказать о пяти <strong>типичных способах эту систему сломать</strong>. Каждая ошибка — это сценарий, который я наблюдал в десятках малых бизнесов за двадцать лет работы. Один и тот же паттерн: собственник внедряет KPI с лучшими намерениями, и через полгода-год оказывается, что у него либо выгоревшая команда, либо потерянные клиенты, либо обман в отчётах.</p>
+    <p>Я расскажу каждую ошибку в формате мини-истории — что собственник хотел, что получилось, и почему это произошло. Узнаете один или два сценария — поправьте у себя пораньше, пока не дошло до катастрофы.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <!-- ОШИБКА 1 -->
+  <div class="err-hdr">
+    <span class="err-hdr-num">ОШИБКА №1</span>
+    <h2>KPI как инструмент штрафа</h2>
+  </div>
+
+  <div class="c">
+    <div class="lb purple">Что хотели</div>
+    <p>Собственник хотел замотивировать команду работать лучше. Прочитал статью про KPI, вызвал бухгалтера, ввёл систему: у каждого сотрудника есть план. Не выполнил план — премия урезается. Не выполнил три месяца подряд — увольнение.</p>
+  </div>
+
+  <div class="c ao">
+    <div class="lb red">Что получилось</div>
+    <p>Через два месяца команда работает в режиме <strong>выживания</strong>, а не результата. Все боятся, никто не предлагает идей. Сильные сотрудники начинают потихоньку искать новую работу — потому что там, где KPI работает как страх, талантливые люди не задерживаются. Через полгода у собственника текучка 60% в год, и приходится постоянно нанимать новых.</p>
+  </div>
+
+  <div class="c">
+    <div class="lb purple">Почему</div>
+    <p>Когда KPI вычитается из базовой зарплаты, человек воспринимает это <strong>как штраф</strong>. Не как мотивацию заработать больше, а как наказание за то, что не дотянул. Психологически разница огромная: премия за результат включает желание работать лучше, штраф за невыполнение включает желание защищаться и обманывать.</p>
+  </div>
+
+  <div class="c ag">
+    <div class="lb green">Как правильно</div>
+    <p>KPI должен <strong>добавляться сверху</strong>, а не вычитаться. Базовый оклад остаётся неизменным. Бонус — это <strong>дополнение</strong> за хорошую работу, а не возврат «полной» зарплаты при выполнении плана.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <!-- ОШИБКА 2 -->
+  <div class="err-hdr">
+    <span class="err-hdr-num">ОШИБКА №2</span>
+    <h2>KPI на всё подряд</h2>
+  </div>
+
+  <div class="c">
+    <div class="lb purple">Что хотели</div>
+    <p>Собственник хотел контролировать всё, что происходит на точке. Поэтому он навесил на каждого сотрудника по 8-12 метрик: выручка, средний чек, скорость обслуживания, отзывы, опоздания, чистота рабочего места, посещение собраний, количество предложенных идей и так далее. Каждая метрика приносит маленький бонус или маленький штраф.</p>
+  </div>
+
+  <div class="c ao">
+    <div class="lb red">Что получилось</div>
+    <p>Через месяц у бариста на стене висит таблица из 12 строк. Никто не понимает, что важнее. Сотрудники начинают выбирать самые <strong>простые для рисования</strong> показатели и забивать на сложные. Например, чистоту легко поставить себе высокую — никто не проверяет. А вот реальную выручку нарисовать нельзя — она в кассе. И сотрудники концентрируются на чистоте и посещаемости собраний, при этом выручка стоит на месте.</p>
+  </div>
+
+  <div class="c">
+    <div class="lb purple">Почему</div>
+    <p>Человеческое внимание — ограниченный ресурс. Когда метрик слишком много, мозг автоматически фокусируется на тех, что <strong>проще выполнять</strong>, а не на тех, что <strong>важнее для бизнеса</strong>. Это не лень — это нейрофизиология.</p>
+  </div>
+
+  <div class="c ag">
+    <div class="lb green">Как правильно</div>
+    <p><strong>3-5 метрик максимум</strong> на одну роль. Если в голове не помещается «зачем мне нужны эти 5 цифр» — значит уже слишком сложно.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <!-- ОШИБКА 3 -->
+  <div class="err-hdr">
+    <span class="err-hdr-num">ОШИБКА №3</span>
+    <h2>KPI без объяснения</h2>
+  </div>
+
+  <div class="c">
+    <div class="lb purple">Что хотели</div>
+    <p>Собственник нанял консультанта или прочитал умную книгу, разработал хорошую систему KPI, и просто <strong>внедрил</strong> её. Объявил на планёрке: «С первого числа у нас новая система мотивации, документ повешен в чате». Сел и стал ждать улучшений.</p>
+  </div>
+
+  <div class="c ao">
+    <div class="lb red">Что получилось</div>
+    <p>Через две недели текучка увеличилась. Сотрудники стали проявлять пассивную агрессию — выполняют задачи формально, не предлагают улучшений, недовольны. Никто не понял, <strong>зачем</strong> это всё. Создалось ощущение, что собственник «выпендривается» и «пытается их зажать».</p>
+  </div>
+
+  <div class="c">
+    <div class="lb purple">Почему</div>
+    <p>Любая система мотивации работает только тогда, когда сотрудник её <strong>внутренне принял</strong>. Принял — это не просто «согласился, потому что иначе уволят». Принял — это <strong>понял</strong>, что эта система помогает и компании, и ему лично. Без объяснения «зачем мы это делаем» любая, даже идеально настроенная, KPI воспринимается как угроза.</p>
+  </div>
+
+  <div class="c ag">
+    <div class="lb green">Как правильно</div>
+    <p>Перед запуском новой системы — общая встреча. Собственник лично рассказывает: какую проблему мы решаем, как новая система это решит, в чём она выгодна сотруднику, в чём выгодна компании. Дальше — индивидуальные разговоры с каждым ключевым сотрудником, обсуждение его метрик. И только потом запуск.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <!-- ОШИБКА 4 -->
+  <div class="err-hdr">
+    <span class="err-hdr-num">ОШИБКА №4</span>
+    <h2>Платим за то, что вредно бизнесу</h2>
+  </div>
+
+  <div class="c">
+    <div class="lb purple">Что хотели</div>
+    <p>Собственник магазина электроники хотел повысить продажи. Поставил продавцам KPI: процент с каждой продажи, дополнительный бонус за продажу самых дорогих моделей. «Чем дороже продал — тем больше получил».</p>
+  </div>
+
+  <div class="c ao">
+    <div class="lb red">Что получилось</div>
+    <p>Через три месяца выручка точки выросла на 25%. Но через полгода начали падать возвраты — клиенты приходят с купленным ноутбуком за 800 тысяч и говорят: «Мне сказали, что это самая лучшая модель, а на самом деле она для геймеров, а мне нужна была рабочая для офиса». Возвратов и негативных отзывов в 2GIS становится больше, новых клиентов меньше, точка теряет репутацию.</p>
+  </div>
+
+  <div class="c">
+    <div class="lb purple">Почему</div>
+    <p>Собственник платил за <strong>краткосрочную метрику</strong> (выручка с продажи), не учитывая <strong>долгосрочную метрику</strong> (удовлетворённость клиента, репутация). Когда мотивация продавца противоречит интересам клиента — клиент это в итоге понимает, и уходит.</p>
+    <p>Это <strong>самая дорогая ошибка</strong> из всех, потому что она маскируется под успех на коротком горизонте. Выручка растёт, и собственник радуется. А подкожно его бизнес уже разрушается.</p>
+  </div>
+
+  <div class="c ag">
+    <div class="lb green">Как правильно</div>
+    <p>KPI должен быть <strong>сбалансирован</strong>. Продажа без возврата клиента — это не продажа, это снятие денег один раз. Привяжите часть бонуса к LTV клиента или к проценту возвратных покупок. Тогда продавец сам начнёт продавать <strong>то, что нужно</strong>, а не самое дорогое.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <!-- ОШИБКА 5 -->
+  <div class="err-hdr">
+    <span class="err-hdr-num">ОШИБКА №5</span>
+    <h2>Пилот без подготовки</h2>
+  </div>
+
+  <div class="c">
+    <div class="lb purple">Что хотели</div>
+    <p>Собственник прочитал главу про KPI (например, эту), вдохновился, и в понедельник утром объявил команде: «С сегодняшнего дня внедряем новую систему мотивации». Цифры взял из головы, метрики — те, что вспомнил.</p>
+  </div>
+
+  <div class="c ao">
+    <div class="lb red">Что получилось</div>
+    <p>Через две недели обнаруживается, что одна из метрик считается некорректно — нет даже инструмента её измерения. Другая метрика противоречит другой (например, скорость обслуживания vs средний чек). Третья оказалась нереально завышенной — её никто не выполняет, и команда деморализована. Собственник в спешке отменяет всё. Доверие к будущим инициативам у команды падает.</p>
+  </div>
+
+  <div class="c">
+    <div class="lb purple">Почему</div>
+    <p>KPI — это сложная система, которую нельзя запустить с понедельника. Нужно сначала <strong>проверить, что вы вообще можете измерять то, что собираетесь</strong>. Нужно <strong>проверить цифры на пилоте</strong> — взять одну точку или одного сотрудника, попробовать в течение месяца-двух, посмотреть что получается.</p>
+  </div>
+
+  <div class="c ag">
+    <div class="lb green">Как правильно — внедрение в три этапа</div>
+    <p><strong>Первый этап (1-2 месяца) — наблюдение без премирования.</strong> Вы вводите метрики, начинаете их собирать, но <strong>зарплата сотрудников не зависит от них</strong>. Никто не нервничает, никто не подрисовывает цифры. Вы видите реальный уровень и можете калибровать план.</p>
+    <p><strong>Второй этап (1-2 месяца) — пилот на одной точке или одной роли.</strong> Запускаете полную систему, но только на ограниченной группе. Если что-то не так — поправляете без катастрофы.</p>
+    <p><strong>Третий этап — масштабирование.</strong> Когда система пилотно отработала и видны реальные эффекты, разворачиваете на всю команду.</p>
+    <p>Этот подход забирает 4-5 месяцев вместо «понедельника». Но он не разваливает команду.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c al">
+    <div class="lb purple">Подведём итог всему уроку L04</div>
+    <p>Мы прошли длинный путь. Три системы оплаты и где какую применять. KPI как инструмент настройки, а не штрафа. Конкретные метрики для четырёх типовых ролей. И пять способов сломать всё это даже если вы всё правильно понимаете в теории.</p>
+    <p>Если из всего урока запомнить <strong>одну вещь</strong> — пусть это будет такая.</p>
+  </div>
+
+  <div class="ins">
+    <span class="ins-ico">💡</span>
+    <p><strong>Система оплаты и KPI — это не таблица в Excel. Это разговор с командой, оформленный в цифрах. Без разговора цифры не работают. С разговором — даже несовершенные цифры начинают работать.</strong></p>
+  </div>
+
+  <div class="c">
+    <p>Если в вашей команде есть проблемы с мотивацией, текучкой, или с тем что «делают вид что работают» — большинство этих проблем растёт из неправильной системы оплаты или сломанного KPI. Начните чинить с этого.</p>
+    <p>В следующем уроке мы перейдём к одной из самых важных тем для растущего бизнеса — <strong>найму</strong>. Потому что даже идеальная система мотивации не спасёт вас, если вы наняли не тех людей. Будем говорить о методе <strong>Moneyball</strong> — о том как нанимать не «звёзд», а правильных людей под конкретные функции. О тестовой неделе как настоящем интервью. И о том, почему вы рефлекторно нанимаете не тех, кто нужен бизнесу.</p>
+  </div>
+
+  <div class="tk">
+    <span class="tk-badge">Выводы урока</span>
+    <h3>Не таблица в Excel,<br>а <span class="hl">разговор</span> в цифрах.</h3>
+    <div class="tk-pt"><span class="tk-n">1</span><span class="tk-t">Пять смертельных ошибок: KPI-штраф, KPI на всё подряд, KPI без объяснения, платим за то что вредно бизнесу, пилот без подготовки. Каждая встречается в десятках малых бизнесов.</span></div>
+    <div class="tk-pt"><span class="tk-n">2</span><span class="tk-t">Самая дорогая — четвёртая. Маскируется под успех: выручка растёт, собственник радуется, бизнес подкожно разрушается. Лекарство — балансировать метрику LTV или возвратных покупок.</span></div>
+    <div class="tk-pt"><span class="tk-n">3</span><span class="tk-t">Внедрение в три этапа: 1-2 мес наблюдения без премирования → 1-2 мес пилот на одной точке → масштабирование. 4-5 месяцев вместо «понедельника» — но без разваленной команды.</span></div>
+  </div>
+
+  <div class="qt">
+    <p>«В следующем уроке — найм по методу Moneyball. Почему вы рефлекторно нанимаете не тех, и как тестовая неделя становится настоящим интервью. Без идеальной системы мотивации никакой найм не спасёт.»</p>
+    <p>→ <strong>Урок L05 — Найм под функцию: метод Moneyball</strong></p>
+  </div>
+
+</main>
+
+<div class="nav">
+  <button class="nb nb-prev" onclick="location.href='m4-ch03.html'">← Глава 3</button>
+  <button class="nb nb-next" disabled title="L05 ещё не опубликован">L05 →</button>
+</div>
+
+</body>
+</html>
