@@ -1963,7 +1963,7 @@ p { line-height: 1.4; font-weight: 400; }
           <div class="product-name">Экспресс-оценка</div>
           <div class="product-desc">Оценим ваш проект с учётом конкретных данных.</div>
         </div>
-        <div class="product-price">5 000 ₸</div>
+        <div class="product-price">$10</div>
       </div>
       <button class="product-cta product-cta-primary" onclick="openQuickCheckNew()">Пройти экспресс-оценку →</button>
     </div>
@@ -1978,7 +1978,7 @@ p { line-height: 1.4; font-weight: 400; }
           <div class="product-name">Финансовая модель</div>
           <div class="product-desc">Профессиональная расчётная модель на основе многих параметров.</div>
         </div>
-        <div class="product-price">9 000 ₸</div>
+        <div class="product-price">$20</div>
       </div>
       <button class="product-cta product-cta-primary" onclick="goToChat('Хочу заказать финансовую модель')">Заказать финмодель →</button>
     </div>
@@ -1990,10 +1990,10 @@ p { line-height: 1.4; font-weight: 400; }
           <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
         </div>
         <div class="product-info">
-          <div class="product-name">Бизнес-план + Презентация</div>
+          <div class="product-name">BizPlan + питч</div>
           <div class="product-desc">Заполненный документ для банков, комиссий, инвесторов.</div>
         </div>
-        <div class="product-price">15 000 ₸</div>
+        <div class="product-price">$20</div>
       </div>
       <button class="product-cta product-cta-disabled">Скоро →</button>
     </div>
@@ -2559,10 +2559,10 @@ function getStubResponse(text) {
     return 'Барбершоп \u2014 ниша с высокой маржой (60-70%) и быстрой окупаемостью. Средние инвестиции: 2-5 млн ₸.\n\nДля точного расчёта перейди в "Расчёты" → "Экспресс-оценка".';
   }
   if (t.indexOf('финмодел') !== -1 || t.indexOf('фин модел') !== -1) {
-    return 'Финансовая модель \u2014 это Excel-файл с прогнозом на 36 месяцев: доходы, расходы, Cash Flow, P&L.\n\nСтоимость: 9 000 ₸. Для заказа сначала пройди экспресс-оценку, и на основе неё мы сгенерируем детальную модель.';
+    return 'Финансовая модель \u2014 это Excel-файл с прогнозом на 36 месяцев: доходы, расходы, Cash Flow, P&L.\n\nСтоимость: $20. Для заказа сначала пройди экспресс-оценку, и на основе неё мы сгенерируем детальную модель.';
   }
   if (t.indexOf('бизнес-план') !== -1 || t.indexOf('грант') !== -1 || t.indexOf('бастау') !== -1) {
-    return 'Бизнес-план для гранта "Бастау Бизнес" (400 МРП = 1 730 000 ₸) \u2014 скоро будет доступен.\n\nСтоимость: 15 000 ₸. Включает полный бизнес-план + презентацию.';
+    return 'Бизнес-план для гранта "Бастау Бизнес" (400 МРП = 1 730 000 ₸) \u2014 скоро будет доступен.\n\nСтоимость: $20. Включает полный БП + питч-презентацию.';
   }
   if (t.indexOf('привет') !== -1 || t.indexOf('здравств') !== -1 || t.indexOf('салам') !== -1) {
     return 'Привет! Чем могу помочь?\n\n\u2022 Проверить бизнес-идею\n\u2022 Рассказать про нишу\n\u2022 Помочь с обучением';
