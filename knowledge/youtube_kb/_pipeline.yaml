@@ -1,14 +1,11 @@
-# ZEREK Knowledge Base — очередь YouTube-видео
-# Адиль добавляет в pending. batch_extract_v3.py обрабатывает.
-
 pending:
-  # Пример:
-  # - url: https://youtube.com/watch?v=ABC123
-  #   note: "Кратко для себя — что это"
+  - url: https://youtu.be/BB39qYx_Fho
+    note: "Test 1"
+  - url: https://youtu.be/vLBxeWiHfGk
+    note: "Test 2"
+  - url: https://youtu.be/Pz3ZdWGnHOY
+    note: "Test 3"
 
 in_progress: []
-
 done: []
-
 failed: []
-
