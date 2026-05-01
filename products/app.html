@@ -1798,7 +1798,7 @@ p { line-height: 1.4; font-weight: 400; }
       <div class="level-stripe level-stripe-amber"></div>
       <div class="level-card-body">
         <div class="level-name">Менеджмент малого бизнеса</div>
-        <div class="level-age">собственники 1–10 человек</div>
+        <div class="level-age">собственники 1–15 человек</div>
         <div class="level-desc">Для тех, кто уже открыл — и для тех, кто планирует в ближайшие 1–2 года</div>
         <div class="level-meta">27 глав · 8 уроков</div>
         <div class="level-btn">Начать обучение →</div>
@@ -2848,7 +2848,7 @@ var ACADEMY_DATA = {
   },
   mgmt: {
     title: 'Менеджмент малого бизнеса',
-    subtitle: 'Для собственников 1–10 человек и тех, кто планирует открывать',
+    subtitle: 'Для собственников 1–15 человек и тех, кто планирует открывать',
     folder: '../academy/kz/management/',
     modules: [
       { name: 'Узкое горлышко: почему фаундер сам душит свой бизнес', chStart: 1, chapters: [
@@ -2902,6 +2902,15 @@ var academyView = 'main'; // main | modules | chapters | content
 var currentLevel = null;
 var currentModuleIdx = null;
 
+function pluralChapters(n) {
+  var mod10 = n % 10;
+  var mod100 = n % 100;
+  if (mod100 >= 11 && mod100 <= 14) return n + ' глав';
+  if (mod10 === 1) return n + ' глава';
+  if (mod10 >= 2 && mod10 <= 4) return n + ' главы';
+  return n + ' глав';
+}
+
 function openLevel(levelId) {
   currentLevel = levelId;
   var data = ACADEMY_DATA[levelId];
@@ -2914,7 +2923,7 @@ function openLevel(levelId) {
     html += '<button type="button" class="module-item" data-mod="' + i + '">' +
       '<div class="module-num">' + (i + 1) + '</div>' +
       '<div class="module-info"><div class="module-name">' + m.name + '</div>' +
-      '<div class="module-chapters">' + m.chapters.length + ' глав</div></div>' +
+      '<div class="module-chapters">' + pluralChapters(m.chapters.length) + '</div></div>' +
       '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>';
   }
   document.getElementById('module-items').innerHTML = html;
