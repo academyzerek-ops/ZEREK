@@ -722,6 +722,7 @@ p { line-height: 1.4; font-weight: 400; }
 .level-stripe { height: 3px; }
 .level-stripe-gold { background: var(--color-success); }
 .level-stripe-teal { background: var(--color-accent); }
+.level-stripe-amber { background: var(--color-warning); }
 .level-card-body { padding: 16px 18px; }
 .level-badge { display: none; }
 .level-name {
@@ -1792,6 +1793,17 @@ p { line-height: 1.4; font-weight: 400; }
         <div class="level-btn">Начать обучение →</div>
       </div>
     </button>
+
+    <button class="level-card" id="level-mgmt" type="button">
+      <div class="level-stripe level-stripe-amber"></div>
+      <div class="level-card-body">
+        <div class="level-name">Менеджмент малого бизнеса</div>
+        <div class="level-age">собственники 1–10 человек</div>
+        <div class="level-desc">Для тех, кто уже открыл — и для тех, кто планирует в ближайшие 1–2 года</div>
+        <div class="level-meta">3 главы · урок 1 из 8</div>
+        <div class="level-btn">Начать обучение →</div>
+      </div>
+    </button>
   </div>
 
   <!-- Module list view -->
@@ -2833,6 +2845,18 @@ var ACADEMY_DATA = {
         'Один против всех (MrBeast)'
       ]}
     ]
+  },
+  mgmt: {
+    title: 'Менеджмент малого бизнеса',
+    subtitle: 'Для собственников 1–10 человек и тех, кто планирует открывать',
+    folder: '../academy/kz/management/',
+    modules: [
+      { name: 'Узкое горлышко: почему фаундер сам душит свой бизнес', chStart: 1, chapters: [
+        'Джинн в бутылке',
+        'Проблема Баке',
+        'Капитан и драйка палубы'
+      ]}
+    ]
   }
 };
 
@@ -3116,6 +3140,9 @@ function init() {
   });
   document.getElementById('level-arch').addEventListener('click', function(e) {
     e.preventDefault(); openLevel('arch');
+  });
+  document.getElementById('level-mgmt').addEventListener('click', function(e) {
+    e.preventDefault(); openLevel('mgmt');
   });
   initAcademyListeners();
 

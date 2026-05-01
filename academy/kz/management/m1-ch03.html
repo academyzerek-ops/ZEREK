@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0A0A0F">
+<title>Глава 3 — Капитан и драйка палубы</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+html,body{
+  background:#0A0A0F !important;
+  color:#E8E8ED;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+html::before{
+  content:'';position:fixed;inset:0;
+  background:#0A0A0F;z-index:-1;
+}
+
+:root{
+  --bg:#0A0A0F;
+  --surface:#16161E;
+  --surface2:#1E1E28;
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.10);
+  --text:#E8E8ED;
+  --text2:#A0A0B0;
+  --text3:#6B6B7B;
+  --purple:#A89BFF;
+  --purple-dim:rgba(168,155,255,0.12);
+  --green:#00D4AA;
+  --green-dim:rgba(0,212,170,0.10);
+  --orange:#E8A04C;
+  --orange-dim:rgba(232,160,76,0.10);
+  --red:#E85454;
+  --red-dim:rgba(232,84,84,0.10);
+  --accent:#6C63FF;
+}
+
+/* ══════ HEADER ══════ */
+.hdr{
+  position:sticky;top:0;z-index:50;
+  background:#101010;
+  border-bottom:1px solid #2C2C2C;
+  padding:14px 20px 12px;
+}
+.hdr::after{
+  content:'';
+  position:absolute;
+  bottom:-20px;left:0;right:0;
+  height:20px;
+  background:linear-gradient(180deg,#101010 0%,var(--bg) 100%);
+  pointer-events:none;
+  z-index:49;
+}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.hdr-badge{
+  background:var(--purple-dim);color:var(--purple);
+  font-size:11px;font-weight:700;
+  letter-spacing:1.2px;padding:4px 10px;border-radius:6px;
+}
+.hdr-mod{font-size:12px;color:var(--text3);font-weight:600;min-width:0;max-width:52%;text-align:right;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.prog{display:flex;align-items:center;gap:10px}
+.prog-n{font-size:12px;color:var(--text3);font-weight:700;font-variant-numeric:tabular-nums}
+.prog-track{flex:1;height:5px;background:#2C2C2C;border-radius:5px;overflow:hidden}
+.prog-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#6C5CE7,#00B894)}
+.hdr-back{display:flex;align-items:center;gap:4px;background:none;border:1px solid #2C2C2C;border-radius:8px;padding:6px 12px;font-family:inherit;font-size:12px;font-weight:700;color:var(--text3);cursor:pointer;white-space:nowrap}
+.hdr-back:active{background:#1E1E1E}
+.hdr-back svg{width:14px;height:14px;stroke:var(--text3);stroke-width:2.5;fill:none}
+
+/* ══════ MAIN ══════ */
+.page{max-width:460px;margin:0 auto;padding:20px 18px 120px}
+
+/* ══════ HERO ══════ */
+.hero{text-align:center;padding:32px 0 24px}
+.hero-ico{font-size:48px;display:block;margin-bottom:12px}
+.hero h1{
+  font-weight:800;font-size:26px;line-height:1.25;
+  color:var(--text);margin-bottom:8px;letter-spacing:-0.01em;
+}
+.hero h1 .o{color:var(--orange)}
+.hero-sub{font-size:14px;color:var(--text3);font-weight:500}
+
+/* ══════ CARD ══════ */
+.c{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:20px 18px;
+  margin-bottom:14px;
+}
+.c p{font-size:15px;color:var(--text2);margin-bottom:10px;line-height:1.8}
+.c p:last-child{margin-bottom:0}
+.c strong{font-weight:700;color:var(--text)}
+
+.c.al{border-left:3.5px solid var(--accent);background:rgba(108,92,231,0.04)}
+.c.ag{border-left:3.5px solid var(--green);background:rgba(0,212,170,0.04)}
+.c.ao{border-left:3.5px solid var(--orange);background:rgba(232,160,76,0.04)}
+
+/* ══════ LABEL ══════ */
+.lb{
+  display:inline-block;
+  font-size:12px;font-weight:700;
+  letter-spacing:0.5px;
+  padding:5px 11px;border-radius:6px;margin-bottom:14px;
+}
+.lb.purple{color:var(--purple);background:var(--purple-dim)}
+.lb.red{color:var(--red);background:var(--red-dim)}
+.lb.green{color:var(--green);background:var(--green-dim)}
+.lb.orange{color:var(--orange);background:var(--orange-dim)}
+
+/* ══════ VS GRID ══════ */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.vs-i{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:18px 14px;
+  text-align:center;
+}
+.vs-i.gold{border-top:3.5px solid var(--orange);background:rgba(232,160,76,0.04)}
+.vs-i.paper{border-top:3.5px solid var(--green);background:rgba(0,212,170,0.04)}
+.vs-ico{font-size:32px;margin-bottom:6px;display:block}
+.vs-t{font-weight:700;font-size:15px;color:var(--text);margin-bottom:4px}
+.vs-d{font-size:12.5px;color:var(--text3);line-height:1.5}
+
+/* ══════ DIVIDER ══════ */
+.div{display:flex;align-items:center;gap:12px;margin:22px 0 18px}
+.div .ln{flex:1;height:1px;background:var(--border2)}
+.div .dt{width:5px;height:5px;border-radius:50%;background:var(--text3)}
+
+/* ══════ TIMELINE ══════ */
+.tl{
+  padding-left:28px;position:relative;margin-bottom:18px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:22px 20px 22px 38px;
+}
+.tl::before{
+  content:'';position:absolute;left:18px;top:28px;bottom:28px;
+  width:2px;background:linear-gradient(180deg,#6C5CE7,#00B894);border-radius:2px;
+}
+.tl-i{position:relative;margin-bottom:20px}
+.tl-i:last-child{margin-bottom:0}
+.tl-dot{
+  position:absolute;left:-26px;top:4px;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--surface);border:2.5px solid #6C5CE7;
+  box-shadow:0 0 0 3px rgba(108,92,231,0.15);
+}
+.tl-i:last-child .tl-dot{border-color:#00B894;box-shadow:0 0 0 3px rgba(0,184,148,0.15)}
+.tl-date{
+  font-size:12px;font-weight:700;color:var(--purple);
+  letter-spacing:0.5px;margin-bottom:4px;
+  font-variant-numeric:tabular-nums;
+}
+.tl-i:last-child .tl-date{color:var(--green)}
+.tl-txt{font-size:14px;color:var(--text2);line-height:1.6}
+.tl-txt strong{font-weight:700;color:var(--text)}
+
+/* ══════ INSIGHT ══════ */
+.ins{
+  background:linear-gradient(135deg,rgba(108,92,231,0.08) 0%,rgba(0,184,148,0.06) 100%);
+  border:1px solid rgba(108,92,231,0.15);
+  border-radius:14px;
+  padding:22px 18px;
+  margin-bottom:14px;
+  position:relative;
+}
+.ins-ico{
+  position:absolute;top:-10px;left:16px;
+  background:var(--bg);padding:0 4px;font-size:18px;
+  border-radius:4px;
+}
+.ins p{font-size:14.5px;font-weight:500;color:var(--text);line-height:1.65}
+.ins strong{color:var(--purple);font-weight:700}
+
+/* ══════ FACT SCROLL ══════ */
+.fs{
+  display:flex;gap:10px;overflow-x:auto;
+  scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+  padding:2px 0 12px;margin-bottom:14px;
+}
+.fs::-webkit-scrollbar{display:none}
+.fc{
+  flex:0 0 auto;scroll-snap-align:start;
+  width:200px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;
+  padding:14px;
+}
+.fc-ico{font-size:20px;margin-bottom:6px;display:block}
+.fc-txt{font-size:12.5px;color:var(--text2);line-height:1.5}
+.fc-txt strong{color:var(--orange);font-weight:700}
+
+/* ══════ LIST CARD ══════ */
+.lc-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.lc-num{
+  width:28px;height:28px;border-radius:7px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:var(--purple);
+  font-variant-numeric:tabular-nums;
+}
+.lc-t{font-weight:700;font-size:16px;color:var(--text)}
+.c ul{list-style:none;padding:0}
+.c li{position:relative;padding-left:18px;margin-bottom:8px;font-size:14px;line-height:1.55;color:var(--text2)}
+.c li::before{
+  content:'';position:absolute;left:0;top:8px;
+  width:6px;height:6px;border-radius:2px;background:var(--accent);opacity:0.5;
+}
+.c li strong{font-weight:700;color:var(--text)}
+
+/* ══════ EXPANDABLE ══════ */
+.ex{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;margin-bottom:10px;overflow:hidden;
+}
+.ex-h{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;cursor:pointer;
+  user-select:none;-webkit-user-select:none;
+}
+.ex-h:active{background:var(--surface2)}
+.ex-q{font-size:14px;font-weight:600;color:var(--text);flex:1;padding-right:8px}
+.ex-arr{
+  width:24px;height:24px;border-radius:6px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  transition:transform 0.3s;flex-shrink:0;
+}
+.ex-arr svg{width:12px;height:12px;stroke:var(--purple);stroke-width:2.5;fill:none}
+.ex.open .ex-arr{transform:rotate(180deg)}
+.ex-b{max-height:0;overflow:hidden;transition:max-height 0.35s ease;padding:0 16px}
+.ex.open .ex-b{max-height:400px;padding:0 16px 16px}
+.ex-b p{font-size:13.5px;color:var(--text2);line-height:1.7;margin-bottom:6px}
+.ex-b p:last-child{margin-bottom:0}
+.ex-b strong{color:var(--text)}
+
+/* ══════ TAKEAWAY ══════ */
+.tk{
+  background:var(--surface);
+  border:1.5px solid var(--accent);
+  border-radius:14px;
+  padding:22px 18px;
+  margin-bottom:14px;
+  position:relative;overflow:hidden;
+}
+.tk::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,#6C5CE7,#00B894,#6C5CE7);
+  background-size:200% 100%;
+  animation:sh 4s ease-in-out infinite;
+}
+@keyframes sh{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.tk-badge{
+  display:inline-block;
+  font-size:12px;font-weight:700;
+  letter-spacing:0.5px;
+  color:var(--purple);background:var(--purple-dim);
+  padding:5px 11px;border-radius:6px;margin-bottom:14px;
+}
+.tk h3{
+  font-weight:800;
+  font-size:20px;line-height:1.3;color:var(--text);margin-bottom:16px;
+  letter-spacing:-0.01em;
+}
+.tk h3 .hl{color:var(--purple)}
+.tk-pt{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.tk-pt:last-child{margin-bottom:0}
+.tk-n{
+  min-width:22px;height:22px;border-radius:6px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:var(--purple);
+  margin-top:2px;
+  font-variant-numeric:tabular-nums;
+}
+.tk-t{font-size:14px;color:var(--text2);line-height:1.6}
+
+/* ══════ QUOTE ══════ */
+.qt{
+  border-left:3.5px solid var(--orange);
+  background:rgba(232,160,76,0.04);
+  border-radius:0 12px 12px 0;
+  padding:18px 18px;margin-bottom:14px;
+}
+.qt p{font-size:14.5px;font-weight:500;font-style:italic;color:var(--text2);line-height:1.6}
+
+/* ══════ NAV ══════ */
+.nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:50;
+  background:#101010;
+  border-top:1px solid #2C2C2C;
+  padding:12px 18px;
+  padding-bottom:max(12px,env(safe-area-inset-bottom));
+  display:flex;gap:10px;
+  max-width:460px;margin:0 auto;
+}
+.nb{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:13px;border-radius:12px;
+  font-family:inherit;font-size:14px;font-weight:700;
+  border:none;cursor:pointer;
+}
+.nb:active{transform:scale(0.97)}
+.nb-prev{
+  background:#1E1E1E;color:var(--text3);
+  border:1px solid #2C2C2C;
+}
+.nb-next{
+  background:var(--accent);color:#fff;
+}
+.nb[disabled]{
+  opacity:0.45;cursor:not-allowed;
+}
+.nb[disabled]:active{transform:none}
+
+/* ══════ ANIM ══════ */
+@keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.c,.vs,.tl,.ins,.fs,.ex,.tk,.qt{animation:su 0.5s ease-out both}
+.c:nth-of-type(2){animation-delay:0.06s}
+.c:nth-of-type(3){animation-delay:0.12s}
+</style>
+
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-row"><button class="hdr-back" onclick="location.href='../../../products/app.html?tab=academy'"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Содержание</button>
+    <span class="hdr-badge">MGMT</span>
+    <span class="hdr-mod">Модуль · Узкое горлышко</span>
+  </div>
+  <div class="prog">
+    <span class="prog-n">3/3</span>
+    <div class="prog-track"><div class="prog-fill" style="width:100%"></div></div>
+  </div>
+</header>
+
+<main class="page">
+
+  <div class="hero">
+    <span class="hero-ico">⚓</span>
+    <h1>Капитан и драйка <span class="o">палубы</span></h1>
+    <p class="hero-sub">Как выйти из бутылки</p>
+  </div>
+
+  <div class="c al">
+    <div class="lb purple">Где мы остановились</div>
+    <p>В двух предыдущих главах мы разобрали обе стенки бутылки. В первой — собственник тонет в операционке и теряет главное: способность думать. Во второй — отношения с командой остаются плоскими, и команда не видит, когда нужно переключаться в рабочий режим.</p>
+    <p>Я обещал в этой главе показать, как выйти из обеих стенок одновременно. И обещание выполнимое — потому что обе они разваливаются от одного и того же действия.</p>
+  </div>
+
+  <div class="c">
+    <div class="lb purple">Метафора капитана</div>
+    <p>Я называю это <strong>переходом в режим капитана</strong>.</p>
+    <p>На корабле капитан не варит еду на камбузе. Не драит палубу. Не чинит двигатель. На это у него есть кок, матросы, механик. Капитан занят одним: он смотрит на горизонт. Его задача — знать, куда идёт корабль. И постоянно напоминать команде, в какой порт они держат курс.</p>
+    <p>Это его главная работа. Не помогать всем со всем. Не быть лучшим во всём. Не успевать тушить каждый пожар. А — удерживать курс.</p>
+    <p>Когда вы переключаетесь в этот режим — обе стенки бутылки рушатся одним движением. Стенка операционки — потому что вы перестаёте делать руками то, что должны делать другие. И стенка Баке — потому что между «я с вами на равных» и «я капитан корабля» возникает естественная граница. Не холодная — функциональная. Команда видит её и автоматически переключается тоже.</p>
+    <p>Вопрос только в том, <strong>как</strong> переключиться. Это не делается силой воли «с понедельника я не буду влезать в операционку». Так не работает. Нужен инструмент, который перестроит каждый разговор с сотрудниками. И этот инструмент простой.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c al">
+    <div class="lb purple">Главное правило: «Проблема + Решение»</div>
+    <p>Самая сильная привычка, которая переводит вас в режим капитана — это правило «Проблема + Решение».</p>
+    <p>Суть простая. Любой сотрудник, который приходит к вам с вопросом, должен приносить <strong>не вопрос, а вопрос со своим вариантом ответа</strong>.</p>
+  </div>
+
+  <div class="c ag">
+    <div class="lb green">Как это звучит на практике</div>
+    <p>Не «Что делать с клиентом, который требует скидку?» — а «Клиент требует скидку 15%, я предлагаю дать 7% при условии оплаты вперёд. Если согласен — отвечаю ему сразу».</p>
+    <p>Не «Поставщик не привёз молоко, что делать?» — а «Поставщик не привёз молоко, я уже позвонил Серикбаю, он подвезёт через час. Срыва не будет. Сообщаю на всякий случай».</p>
+    <p>Не «Как нам провести корпоратив на 8 марта?» — а «Я предлагаю провести в субботу в „Шафране", бюджет 200 тысяч, программу набросала. Если согласен — заказываю».</p>
+  </div>
+
+  <div class="c">
+    <p>Ваша роль меняется фундаментально. Вы больше <strong>не источник решений</strong>. Вы — <strong>фильтр решений</strong>, которые приносит команда. Утвердить. Скорректировать. Отклонить. Всё.</p>
+    <p>И вот тут происходит то, что одновременно решает обе стенки бутылки.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c">
+    <div class="lb purple">Что меняется со стороны операционки</div>
+    <p>Раньше каждый вопрос команды забирал у вас 5–15 минут активной работы мозга. Тридцать вопросов в день — это два-три часа интеллектуального труда, потраченных на чужие задачи.</p>
+    <p>Теперь 70–80% решений, которые приносит команда, утверждаются за десять секунд. «Окей, делай». Остальные 20–30% уточняются за минуту-две: «А что если поставщик опять подведёт? Запасной вариант есть?». Команда уходит и решает дальше.</p>
+    <p>У вас появляется час, два, три в день, которых раньше не было. Те самые часы тишины, в которые рождаются мысли. Бизнес снова начинает расти как идея, а не только как ежедневное тушение пожаров.</p>
+  </div>
+
+  <div class="c">
+    <div class="lb purple">Что меняется со стороны Баке</div>
+    <p>И вот здесь — то, что мало кто замечает.</p>
+    <p>Сотрудник, который приходит с готовым решением, <strong>автоматически перестаёт быть младшим членом семьи</strong> в этой коммуникации. Он профессионал, который пришёл со своим планом. Он не «Баке, помоги», а «вот мой вариант, скажи окей».</p>
+    <p>Тон разговора меняется без вашего давления, без прямого «давайте теперь будем строже». Граница возникает сама — потому что её рисует <strong>формат</strong>, а не ваш голос.</p>
+    <p>И здесь же тот переключатель, о котором мы говорили в прошлой главе. В рабочей коммуникации — «Проблема + Решение», профессионально. В личной — что угодно: ДР, шутки, разговоры про детей. Команда видит обе ваши роли и не путает их, потому что разговор про работу всегда начинается с конкретного формата.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c ao">
+    <div class="lb red">Что будет в первые недели</div>
+    <p>Сразу скажу честно: это не работает мгновенно.</p>
+    <p>Первые две-три недели команда будет сопротивляться. Привычка приходить с вопросом «Баке, что делать?» очень сильная. Они будут забывать новое правило. Будут говорить: «ну ты же знаешь как, скажи быстрее».</p>
+    <p>В этот момент важно не сдаваться. Не отвечать. Возвращать вопрос вместе с фразой: <strong>«А что ты предлагаешь?»</strong>.</p>
+    <p>Сначала это будет вызывать у людей раздражение. Они будут говорить «откуда я знаю, ты же руководитель». Но если вы держите эту линию неделю, две, три — что-то происходит. Команда привыкает думать сама. Сотрудники начинают приходить уже с вариантами. Слабые при этом могут уйти — те, кто хотел оставаться в детской позиции «начальник скажет, я сделаю». Это нормально и в целом полезно. Сильные, наоборот, расцветают, потому что наконец-то могут принимать решения.</p>
+    <p>Через два-три месяца у вас будет другая команда. Не другие люди — другая команда из тех же людей.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c">
+    <div class="lb purple">Несколько маленьких границ, которые помогают</div>
+    <p>Само правило «Проблема + Решение» уже делает 70% работы. Но есть несколько мелочей, которые помогают сделать переключение режима ещё более видимым.</p>
+    <p><strong>Каналы.</strong> Рабочие вопросы — в одном канале (рабочий чат, рабочая почта). Личное — в другом. Сотрудник, написавший вам в личку про срочную проблему с клиентом, мягко перенаправляется в рабочий чат: «Давай это в общий, чтобы не потерялось». Маленькая, но важная граница.</p>
+    <p><strong>Планерки в чёткое время.</strong> Регулярные планерки в чёткое время — не «когда соберёмся». Это создаёт видимый момент переключения: вот сейчас мы экипаж, обсуждаем курс. До и после — мы можем быть кем угодно друг для друга.</p>
+    <p><strong>Не доделывать руками.</strong> И самое тяжёлое — не доделывать за сотрудника косяк руками. Если бариста не помыл кофемашину — не мыть за него ночью. Возвращать утром. Если менеджер не отправил счёт клиенту — не отправлять самому. Напомнить, дождаться, чтобы отправил он. Это самая болезненная вещь для перфекциониста-собственника. Но именно это держит границу.</p>
+  </div>
+
+  <div class="c al">
+    <div class="lb purple">Чтобы не пугаться</div>
+    <p>Многие собственники, услышав про режим капитана, пугаются: я не хочу быть холодным начальником, я хочу нормально общаться со своими ребятами.</p>
+    <p>Так и общайтесь. Никто не запрещает. Ходите с ними на ДР, заказывайте пиццу, спрашивайте как дети. Капитан — это не холодный командир, который не спускается к команде. Это человек, который <strong>знает, в какой момент он капитан</strong>, и команда тоже это знает. Граница не в дистанции. Граница в переключении режима.</p>
+    <p>Дружба остаётся. Просто к ней добавляется вторая профессия.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c">
+    <div class="lb purple">Конец первого урока</div>
+    <p>Подведу итог всего, что мы разобрали.</p>
+    <p>Малый бизнес рано или поздно ставит собственника в ловушку из двух стенок. В первой он тонет в операционке, теряя способность думать о бизнесе как об идее. Во второй отношения с командой остаются плоскими, и команда не видит момент, когда нужно переключаться.</p>
+    <p>Обе стенки решаются одним: переходом в режим капитана. Через простую механику «Проблема + Решение» — когда вы перестаёте быть источником решений и становитесь их фильтром. Через несколько маленьких видимых границ. Через готовность не доделывать за людьми их работу.</p>
+    <p>Это не про то, чтобы стать другим человеком. Это про то, чтобы добавить вторую профессию — руководителя — к своей первой профессии специалиста.</p>
+  </div>
+
+  <div class="tk">
+    <span class="tk-badge">Выводы урока</span>
+    <h3>Капитан смотрит на горизонт.<br>Команда — <span class="hl">драит палубу</span>.</h3>
+    <div class="tk-pt"><span class="tk-n">1</span><span class="tk-t">Переход в режим капитана разваливает обе стенки бутылки одним движением. Стенку операционки — вы перестаёте делать руками. Стенку Баке — между ролями возникает естественная граница.</span></div>
+    <div class="tk-pt"><span class="tk-n">2</span><span class="tk-t">Главный инструмент — правило «Проблема + Решение». Сотрудник несёт не вопрос, а вопрос со своим вариантом ответа. Вы становитесь фильтром, а не источником решений.</span></div>
+    <div class="tk-pt"><span class="tk-n">3</span><span class="tk-t">Граница не в дистанции, а в видимом переключении режима. Дружба остаётся. К ней добавляется вторая профессия — руководителя.</span></div>
+  </div>
+
+  <div class="qt">
+    <p>«В следующем уроке — о том, что команда вашего возраста и команда младше вас уже два разных мира. И о тихом увольнении, которое касается не только зумеров.»</p>
+    <p>→ <strong>Урок L02 — С кем ты работаешь: миллениалы, зумеры и тихое увольнение</strong></p>
+  </div>
+
+</main>
+
+<div class="nav">
+  <button class="nb nb-prev" onclick="location.href='m1-ch02.html'">← Глава 2</button>
+  <button class="nb nb-next" disabled title="L02 ещё не опубликован">L02 →</button>
+</div>
+
+</body>
+</html>
