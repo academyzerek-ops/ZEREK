@@ -1,4 +1,4 @@
-"""api/calculators/bizplan.py — BizPlan 15 000 ₸ (заглушка).
+"""api/calculators/bizplan.py — BizPlan + питч $20 (заглушка).
 
 Заглушка для будущей реализации BizPlan. Спека продукта в разработке
 у продуктового владельца (Адиль через Ноа). Реализация после Этапа 7+.
@@ -13,7 +13,7 @@
 
 
 class BizPlanCalculator:
-    """BizPlan 15 000 ₸ — генератор бизнес-плана для банка/гранта.
+    """BizPlan + питч $20 — генератор бизнес-плана для банка/гранта.
 
     Заглушка: вызов `run` пока бросает NotImplementedError.
     Текущий рабочий код — api/grant_bp.py + main.grant_bp_endpoint.

@@ -1,4 +1,4 @@
-"""api/calculators/finmodel.py — FinModel 9 000 ₸ калькулятор.
+"""api/calculators/finmodel.py — FinModel $20 калькулятор.
 
 Перенесено из api/main.py в Этапе 8.4 рефакторинга.
 
@@ -355,7 +355,7 @@ def build_params_from_request(req, qc_result):
 
 
 class FinModelCalculator:
-    """FinModel 9 000 ₸ — фасад для финмодели.
+    """FinModel $20 — фасад для финмодели.
 
     Сейчас инкапсулирует основные шаги:
     - apply_adaptive_answers(req) — мутация req из specific_answers

@@ -349,7 +349,7 @@ def compute_block10_next_steps(db, result, adaptive, block1=None, block2=None):
                 f"Можно пробовать."
             ).replace("  ", " ").strip()
         out["cta_buttons"] = [
-            {"label_rus": "Купить Финансовую модель — 9 000 ₸", "action": "buy_finmodel"},
+            {"label_rus": "Купить Финансовую модель — $20", "action": "buy_finmodel"},
             {"label_rus": "Скачать PDF отчёта", "action": "download_pdf"},
         ]
     elif color == "yellow":
@@ -360,7 +360,7 @@ def compute_block10_next_steps(db, result, adaptive, block1=None, block2=None):
         )
         out["cta_buttons"] = [
             {"label_rus": "Пересмотреть параметры", "action": "restart_survey"},
-            {"label_rus": "Купить Финмодель — 9 000 ₸", "action": "buy_finmodel"},
+            {"label_rus": "Купить Финмодель — $20", "action": "buy_finmodel"},
         ]
     else:  # red
         out["alternatives"] = _red_alternatives(block1, block2, result, db)
@@ -371,7 +371,7 @@ def compute_block10_next_steps(db, result, adaptive, block1=None, block2=None):
         out["cta_buttons"] = [
             {"label_rus": "Пересчитать с другим форматом", "action": "change_format"},
             {"label_rus": "Пересчитать с другим городом", "action": "change_city"},
-            {"label_rus": "Подробный анализ провала (9 000 ₸)", "action": "buy_finmodel"},
+            {"label_rus": "Подробный анализ провала ($20)", "action": "buy_finmodel"},
         ]
 
     return out

@@ -22,7 +22,7 @@ from pydantic import BaseModel, field_validator
 
 
 class QuickCheckRequest(BaseModel):
-    """Запрос Quick Check 5 000 ₸.
+    """Запрос Quick Check $10.
 
     Pydantic ловит ошибки типов на границе. Бизнес-валидации (start_month
     range, HOME/SOLO marketing калибровки) — в QuickCheckCalculator,

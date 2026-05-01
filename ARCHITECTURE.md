@@ -55,8 +55,8 @@ ZEREK/
 │   │   └── verdict_service.py          # 388 LOC — Block 1 светофор + 8 score-ов
 │   │
 │   ├── calculators/                    # 702 LOC — фасады продуктов
-│   │   ├── quick_check.py              # 285 LOC — Quick Check 5 000 ₸ (главный фасад)
-│   │   ├── finmodel.py                 # 388 LOC — FinModel 9 000 ₸
+│   │   ├── quick_check.py              # 285 LOC — Quick Check $10 (главный фасад)
+│   │   ├── finmodel.py                 # 388 LOC — FinModel $20
 │   │   └── bizplan.py                  # 29 LOC — заглушка (BizPlan TBD)
 │   │
 │   ├── renderers/                      # 1 988 LOC — UI-форматирование
@@ -249,10 +249,10 @@ validator → calculator → renderer
 | `/insights/{niche_id}/{format_id}` | GET | Инсайты |
 | `/survey/{niche_id}` | GET | Анкета v3 (legacy) |
 | `/niche-risks/{niche_id}` | GET | Структурированные риски через Gemini |
-| **`/quick-check`** | POST | **Quick Check 5 000 ₸ — главный расчёт** |
+| **`/quick-check`** | POST | **Quick Check $10 — главный расчёт** |
 | `/quick-check/pdf` | POST | PDF отчёт Quick Check |
 | `/pdf-health` | GET | Диагностика PDF-генератора |
-| **`/finmodel`** | POST | **FinModel 9 000 ₸ — генерация xlsx + HTML** |
+| **`/finmodel`** | POST | **FinModel $20 — генерация xlsx + HTML** |
 | `/finmodel/report` | POST | HTML-отчёт по финмодели |
 | `/grant-bp` | POST | Бизнес-план на грант 400 МРП (.docx) |
 | `/download/{token}` | GET | Скачать сгенерированный файл |

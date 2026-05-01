@@ -596,7 +596,7 @@ def render_finmodel_report(data: dict) -> str:
 
     # ═══ БЛОК 13: CTA ═══
     h += '<div class="section" style="border:none;">'
-    h += '<a class="btn btn-secondary" href="#" onclick="alert(\'Бизнес-план скоро будет доступен\');return false;">📋 Заказать бизнес-план — 15 000 ₸</a>'
+    h += '<a class="btn btn-secondary" href="#" onclick="alert(\'Бизнес-план скоро будет доступен\');return false;">📋 Заказать БП + питч — $20</a>'
     h += '<a class="btn btn-secondary" href="#" onclick="alert(\'AI-чат скоро будет доступен\');return false;">💬 Обсудить с AI-консультантом</a>'
     h += '</div>'
 
