@@ -35,7 +35,7 @@
 | Налоги КЗ 2026 | `data/external/kz_tax_constants_2026.yaml` |
 | Ниши и форматы | `data/kz/niches_registry.yaml` |
 | Цены продуктов | `data/products.yaml` |
-| Архитектура движка | `ARCHITECTURE.md` (корень репо) |
+| Архитектура движка | `docs/ARCHITECTURE.md` |
 | Архетипы (A1 и др.) | `knowledge/archetypes/*.md` |
 
 Полный протокол изменений и запреты на дублирование — в `10_OPERATIONS.md` (раздел «Source of Truth и протокол изменений»).

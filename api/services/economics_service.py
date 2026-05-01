@@ -1,6 +1,6 @@
 """api/services/economics_service.py — P&L, окупаемость, breakeven, юнит-эко.
 
-Ядро расчётов Quick Check согласно `ZEREK_QuickCheck_Calculation_Spec.md`:
+Ядро расчётов Quick Check согласно `docs/specs/QC_Calculation_Spec.md`:
 - Шаг 3: зрелый месячный P&L (ramp=1, season=1)
 - Шаг 4: 12-мес P&L с ramp+season (через calc_cashflow)
 - Шаг 5: средние годовые показатели

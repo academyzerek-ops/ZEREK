@@ -36,7 +36,7 @@ Python 3.12 / FastAPI / WeasyPrint / Gemini Flash RAG. Frontend — чистый
 | Налоги КЗ 2026 | `data/external/kz_tax_constants_2026.yaml` |
 | Ниши и форматы | `data/kz/niches_registry.yaml` |
 | Цены продуктов | `data/products.yaml` |
-| Архитектура движка | `ARCHITECTURE.md` |
+| Архитектура движка | `docs/ARCHITECTURE.md` |
 | Архетипы | `knowledge/archetypes/*.md` |
 
 Протокол изменений и запреты на дублирование — в [`docs/context/10_OPERATIONS.md`](./docs/context/10_OPERATIONS.md).

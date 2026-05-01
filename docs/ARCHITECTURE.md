@@ -1,7 +1,7 @@
 # ZEREK — Архитектура
 
 > Слоистая архитектура ZEREK Quick Check / FinModel / BizPlan.
-> Источник истины формул — `ZEREK_QuickCheck_Calculation_Spec.md`.
+> Источник истины формул — `specs/QC_Calculation_Spec.md`.
 >
 > Версия: **2.0** (финал рефакторинга, Этап 8 завершён, 2026-04-23).
 
@@ -105,9 +105,15 @@ ZEREK/
 ├── knowledge/                          # insights для RAG и Block 9
 ├── templates/                          # шаблоны (finmodel xlsx, bizplan docx)
 ├── products/                           # frontend Mini App (qc-v3.html, app.html)
-├── ARCHITECTURE.md                     # этот файл
-├── CLAUDE.md                           # инструкции для Claude Code
-├── ZEREK_QuickCheck_Calculation_Spec.md # спека расчётов
+├── docs/
+│   ├── ARCHITECTURE.md                 # этот файл
+│   ├── DESIGN_CONTEXT.md               # users / JTBD / тон
+│   ├── ADDING_NEW_NICHE.md             # как добавить нишу
+│   ├── audit_history/                  # архив аудитов (2026-04-21, 2026-04-29)
+│   ├── context/                        # 12 контекстных документов проекта
+│   └── specs/
+│       └── QC_Calculation_Spec.md      # спека расчётов
+├── CLAUDE.md                           # навигатор для Claude
 └── README.md
 ```
 
