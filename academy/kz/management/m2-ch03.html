@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0A0A0F">
+<title>Глава 3 — Маркеры разрыва</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+html,body{
+  background:#0A0A0F !important;
+  color:#E8E8ED;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+html::before{
+  content:'';position:fixed;inset:0;
+  background:#0A0A0F;z-index:-1;
+}
+
+:root{
+  --bg:#0A0A0F;
+  --surface:#16161E;
+  --surface2:#1E1E28;
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.10);
+  --text:#E8E8ED;
+  --text2:#A0A0B0;
+  --text3:#6B6B7B;
+  --purple:#A89BFF;
+  --purple-dim:rgba(168,155,255,0.12);
+  --green:#00D4AA;
+  --green-dim:rgba(0,212,170,0.10);
+  --orange:#E8A04C;
+  --orange-dim:rgba(232,160,76,0.10);
+  --red:#E85454;
+  --red-dim:rgba(232,84,84,0.10);
+  --accent:#6C63FF;
+}
+
+/* ══════ HEADER ══════ */
+.hdr{
+  position:sticky;top:0;z-index:50;
+  background:#101010;
+  border-bottom:1px solid #2C2C2C;
+  padding:14px 20px 12px;
+}
+.hdr::after{
+  content:'';
+  position:absolute;
+  bottom:-20px;left:0;right:0;
+  height:20px;
+  background:linear-gradient(180deg,#101010 0%,var(--bg) 100%);
+  pointer-events:none;
+  z-index:49;
+}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.hdr-badge{
+  background:var(--purple-dim);color:var(--purple);
+  font-size:11px;font-weight:700;
+  letter-spacing:1.2px;padding:4px 10px;border-radius:6px;
+}
+.hdr-mod{font-size:12px;color:var(--text3);font-weight:600;min-width:0;max-width:52%;text-align:right;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.prog{display:flex;align-items:center;gap:10px}
+.prog-n{font-size:12px;color:var(--text3);font-weight:700;font-variant-numeric:tabular-nums}
+.prog-track{flex:1;height:5px;background:#2C2C2C;border-radius:5px;overflow:hidden}
+.prog-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#6C5CE7,#00B894)}
+.hdr-back{display:flex;align-items:center;gap:4px;background:none;border:1px solid #2C2C2C;border-radius:8px;padding:6px 12px;font-family:inherit;font-size:12px;font-weight:700;color:var(--text3);cursor:pointer;white-space:nowrap}
+.hdr-back:active{background:#1E1E1E}
+.hdr-back svg{width:14px;height:14px;stroke:var(--text3);stroke-width:2.5;fill:none}
+
+/* ══════ MAIN ══════ */
+.page{max-width:460px;margin:0 auto;padding:20px 18px 120px}
+
+/* ══════ HERO ══════ */
+.hero{text-align:center;padding:32px 0 24px}
+.hero-ico{font-size:48px;display:block;margin-bottom:12px}
+.hero h1{
+  font-weight:800;font-size:26px;line-height:1.25;
+  color:var(--text);margin-bottom:8px;letter-spacing:-0.01em;
+}
+.hero h1 .o{color:var(--orange)}
+.hero-sub{font-size:14px;color:var(--text3);font-weight:500}
+
+/* ══════ CARD ══════ */
+.c{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:20px 18px;
+  margin-bottom:14px;
+}
+.c p{font-size:15px;color:var(--text2);margin-bottom:10px;line-height:1.8}
+.c p:last-child{margin-bottom:0}
+.c strong{font-weight:700;color:var(--text)}
+.c em{font-style:italic;color:var(--text)}
+
+.c.al{border-left:3.5px solid var(--accent);background:rgba(108,92,231,0.04)}
+.c.ag{border-left:3.5px solid var(--green);background:rgba(0,212,170,0.04)}
+.c.ao{border-left:3.5px solid var(--orange);background:rgba(232,160,76,0.04)}
+
+/* ══════ LABEL ══════ */
+.lb{
+  display:inline-block;
+  font-size:12px;font-weight:700;
+  letter-spacing:0.5px;
+  padding:5px 11px;border-radius:6px;margin-bottom:14px;
+}
+.lb.purple{color:var(--purple);background:var(--purple-dim)}
+.lb.red{color:var(--red);background:var(--red-dim)}
+.lb.green{color:var(--green);background:var(--green-dim)}
+.lb.orange{color:var(--orange);background:var(--orange-dim)}
+
+/* ══════ VS GRID ══════ */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.vs-i{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:18px 14px;
+  text-align:center;
+}
+.vs-i.gold{border-top:3.5px solid var(--orange);background:rgba(232,160,76,0.04)}
+.vs-i.paper{border-top:3.5px solid var(--green);background:rgba(0,212,170,0.04)}
+.vs-ico{font-size:32px;margin-bottom:6px;display:block}
+.vs-t{font-weight:700;font-size:15px;color:var(--text);margin-bottom:4px}
+.vs-d{font-size:12.5px;color:var(--text3);line-height:1.5}
+
+/* ══════ DIVIDER ══════ */
+.div{display:flex;align-items:center;gap:12px;margin:22px 0 18px}
+.div .ln{flex:1;height:1px;background:var(--border2)}
+.div .dt{width:5px;height:5px;border-radius:50%;background:var(--text3)}
+
+/* ══════ TIMELINE ══════ */
+.tl{
+  padding-left:28px;position:relative;margin-bottom:18px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:22px 20px 22px 38px;
+}
+.tl::before{
+  content:'';position:absolute;left:18px;top:28px;bottom:28px;
+  width:2px;background:linear-gradient(180deg,#6C5CE7,#00B894);border-radius:2px;
+}
+.tl-i{position:relative;margin-bottom:20px}
+.tl-i:last-child{margin-bottom:0}
+.tl-dot{
+  position:absolute;left:-26px;top:4px;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--surface);border:2.5px solid #6C5CE7;
+  box-shadow:0 0 0 3px rgba(108,92,231,0.15);
+}
+.tl-i:last-child .tl-dot{border-color:#00B894;box-shadow:0 0 0 3px rgba(0,184,148,0.15)}
+.tl-date{
+  font-size:12px;font-weight:700;color:var(--purple);
+  letter-spacing:0.5px;margin-bottom:4px;
+  font-variant-numeric:tabular-nums;
+}
+.tl-i:last-child .tl-date{color:var(--green)}
+.tl-txt{font-size:14px;color:var(--text2);line-height:1.6}
+.tl-txt strong{font-weight:700;color:var(--text)}
+
+/* ══════ INSIGHT ══════ */
+.ins{
+  background:linear-gradient(135deg,rgba(108,92,231,0.08) 0%,rgba(0,184,148,0.06) 100%);
+  border:1px solid rgba(108,92,231,0.15);
+  border-radius:14px;
+  padding:22px 18px;
+  margin-bottom:14px;
+  position:relative;
+}
+.ins-ico{
+  position:absolute;top:-10px;left:16px;
+  background:var(--bg);padding:0 4px;font-size:18px;
+  border-radius:4px;
+}
+.ins p{font-size:14.5px;font-weight:500;color:var(--text);line-height:1.65}
+.ins strong{color:var(--purple);font-weight:700}
+
+/* ══════ FACT SCROLL ══════ */
+.fs{
+  display:flex;gap:10px;overflow-x:auto;
+  scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+  padding:2px 0 12px;margin-bottom:14px;
+}
+.fs::-webkit-scrollbar{display:none}
+.fc{
+  flex:0 0 auto;scroll-snap-align:start;
+  width:200px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;
+  padding:14px;
+}
+.fc-ico{font-size:20px;margin-bottom:6px;display:block}
+.fc-txt{font-size:12.5px;color:var(--text2);line-height:1.5}
+.fc-txt strong{color:var(--orange);font-weight:700}
+
+/* ══════ LIST CARD ══════ */
+.lc-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.lc-num{
+  width:28px;height:28px;border-radius:7px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:var(--purple);
+  font-variant-numeric:tabular-nums;
+}
+.lc-t{font-weight:700;font-size:16px;color:var(--text)}
+.c ul{list-style:none;padding:0}
+.c li{position:relative;padding-left:18px;margin-bottom:8px;font-size:14px;line-height:1.55;color:var(--text2)}
+.c li::before{
+  content:'';position:absolute;left:0;top:8px;
+  width:6px;height:6px;border-radius:2px;background:var(--accent);opacity:0.5;
+}
+.c li strong{font-weight:700;color:var(--text)}
+
+/* ══════ EXPANDABLE ══════ */
+.ex{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;margin-bottom:10px;overflow:hidden;
+}
+.ex-h{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;cursor:pointer;
+  user-select:none;-webkit-user-select:none;
+}
+.ex-h:active{background:var(--surface2)}
+.ex-q{font-size:14px;font-weight:600;color:var(--text);flex:1;padding-right:8px}
+.ex-arr{
+  width:24px;height:24px;border-radius:6px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  transition:transform 0.3s;flex-shrink:0;
+}
+.ex-arr svg{width:12px;height:12px;stroke:var(--purple);stroke-width:2.5;fill:none}
+.ex.open .ex-arr{transform:rotate(180deg)}
+.ex-b{max-height:0;overflow:hidden;transition:max-height 0.35s ease;padding:0 16px}
+.ex.open .ex-b{max-height:400px;padding:0 16px 16px}
+.ex-b p{font-size:13.5px;color:var(--text2);line-height:1.7;margin-bottom:6px}
+.ex-b p:last-child{margin-bottom:0}
+.ex-b strong{color:var(--text)}
+
+/* ══════ TAKEAWAY ══════ */
+.tk{
+  background:var(--surface);
+  border:1.5px solid var(--accent);
+  border-radius:14px;
+  padding:22px 18px;
+  margin-bottom:14px;
+  position:relative;overflow:hidden;
+}
+.tk::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,#6C5CE7,#00B894,#6C5CE7);
+  background-size:200% 100%;
+  animation:sh 4s ease-in-out infinite;
+}
+@keyframes sh{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.tk-badge{
+  display:inline-block;
+  font-size:12px;font-weight:700;
+  letter-spacing:0.5px;
+  color:var(--purple);background:var(--purple-dim);
+  padding:5px 11px;border-radius:6px;margin-bottom:14px;
+}
+.tk h3{
+  font-weight:800;
+  font-size:20px;line-height:1.3;color:var(--text);margin-bottom:16px;
+  letter-spacing:-0.01em;
+}
+.tk h3 .hl{color:var(--purple)}
+.tk-pt{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.tk-pt:last-child{margin-bottom:0}
+.tk-n{
+  min-width:22px;height:22px;border-radius:6px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:var(--purple);
+  margin-top:2px;
+  font-variant-numeric:tabular-nums;
+}
+.tk-t{font-size:14px;color:var(--text2);line-height:1.6}
+
+/* ══════ QUOTE ══════ */
+.qt{
+  border-left:3.5px solid var(--orange);
+  background:rgba(232,160,76,0.04);
+  border-radius:0 12px 12px 0;
+  padding:18px 18px;margin-bottom:14px;
+}
+.qt p{font-size:14.5px;font-weight:500;font-style:italic;color:var(--text2);line-height:1.6}
+
+/* ══════ NAV ══════ */
+.nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:50;
+  background:#101010;
+  border-top:1px solid #2C2C2C;
+  padding:12px 18px;
+  padding-bottom:max(12px,env(safe-area-inset-bottom));
+  display:flex;gap:10px;
+  max-width:460px;margin:0 auto;
+}
+.nb{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:13px;border-radius:12px;
+  font-family:inherit;font-size:14px;font-weight:700;
+  border:none;cursor:pointer;
+}
+.nb:active{transform:scale(0.97)}
+.nb-prev{
+  background:#1E1E1E;color:var(--text3);
+  border:1px solid #2C2C2C;
+}
+.nb-next{
+  background:var(--accent);color:#fff;
+}
+.nb[disabled]{
+  opacity:0.45;cursor:not-allowed;
+}
+.nb[disabled]:active{transform:none}
+
+/* ══════ ANIM ══════ */
+@keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.c,.vs,.tl,.ins,.fs,.ex,.tk,.qt{animation:su 0.5s ease-out both}
+.c:nth-of-type(2){animation-delay:0.06s}
+.c:nth-of-type(3){animation-delay:0.12s}
+</style>
+
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-row"><button class="hdr-back" onclick="location.href='../../../products/app.html?tab=academy'"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Содержание</button>
+    <span class="hdr-badge">MGMT</span>
+    <span class="hdr-mod">Модуль · Поколения и тихое увольнение</span>
+  </div>
+  <div class="prog">
+    <span class="prog-n">3/3</span>
+    <div class="prog-track"><div class="prog-fill" style="width:100%"></div></div>
+  </div>
+</header>
+
+<main class="page">
+
+  <div class="hero">
+    <span class="hero-ico">🔍</span>
+    <h1>Маркеры <span class="o">разрыва</span></h1>
+    <p class="hero-sub">Как отличить здоровую границу от психологического ухода</p>
+  </div>
+
+  <div class="c al">
+    <div class="lb purple">Две задачи этой главы</div>
+    <p>В этой главе нам нужно решить две задачи. Первая — научиться <strong>видеть</strong> тихое увольнение, не путая его с обычной зрелой работой взрослого человека. Вторая — понять, что с этим делать.</p>
+    <p>И сразу важная оговорка, без которой эта глава не имеет смысла.</p>
+  </div>
+
+  <div class="c ag">
+    <div class="lb green">Граница между «ушёл» и «вырос»</div>
+    <p>Не каждый сотрудник, который перестал гореть на работе и не задерживается до полуночи, <strong>тихо уволился</strong>. И собственник, который этого не понимает, рискует разрушить нормальные рабочие отношения с лучшими людьми в команде.</p>
+    <p>Когда взрослый профессионал отказывается отвечать на сообщения в одиннадцать вечера — это не тихое увольнение. Это здоровая граница. Когда сотрудник перестаёт бегать делать всё на свете и начинает делать только то, что входит в его роль — это тоже не разрыв. Это рост. У молодого специалиста часто нет границ, он берёт всё подряд и сгорает за два года. У зрелого — границы есть, и это <strong>признак профессионализма</strong>, а не признак разрыва.</p>
+    <p>Поэтому следующие маркеры нужно читать не по одному, а <strong>в комбинации</strong>. Один признак сам по себе ничего не значит. Три-четыре, накопившиеся постепенно, — это уже сигнал.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c">
+    <div class="lc-hdr">
+      <div class="lc-num">7</div>
+      <div class="lc-t">Сигналов, которые стоит замечать</div>
+    </div>
+    <p>Я расскажу про семь поведенческих сдвигов. Здоровая граница — это статичная вещь: человек как умел отказывать в одиннадцать вечера, так и умеет. Тихое увольнение — это <strong>сдвиг во времени</strong>: было одно, стало другое. Поэтому смотрите не на текущее состояние сотрудника, а на изменение по сравнению с тем, как он работал год назад.</p>
+    <ul>
+      <li><strong>Первое — пропадание инициативы.</strong> Раньше он приносил идеи. Не обязательно гениальные, но приносил. На планёрках спорил, предлагал альтернативы, видел проблемы которые вы пропустили. Теперь он молчит. Любое решение — ваше. На «как ты думаешь?» отвечает «как скажете, Бак, я сделаю». Это не уважение к вашему авторитету. Это сигнал, что человек <strong>перестал вкладывать голову</strong> в общий результат.</li>
+      <li><strong>Второе — формальная коммуникация.</strong> Раньше в чатах он шутил, делился наблюдениями, кидал смешное. Теперь — только по делу. Только в рабочее время. Эмоциональная температура общения упала до нуля. Внешне всё профессионально и корректно — и именно это первый звонок.</li>
+      <li><strong>Третье — снижение скорости реакции.</strong> Не катастрофически. Просто на сообщение в среду он раньше отвечал через десять минут, а теперь — через два часа. Документ присылал к концу дня, теперь — на следующее утро. Каждое отдельное опоздание объяснимо. Накопленная картина за месяц — нет.</li>
+      <li><strong>Четвёртое — отсутствие любопытства.</strong> Раньше, когда вы рассказывали о новой стратегии, новом клиенте, новом направлении — он задавал вопросы. Хотел понимать. Теперь — кивает. Никаких уточнений. Ему <strong>всё равно</strong>, куда идёт бизнес. Это самое тревожное, потому что это значит, что для него ваша компания превратилась в работу, как ходить в магазин за хлебом — функцию, которая не вызывает интереса.</li>
+      <li><strong>Пятое — отказ от роста.</strong> Когда вы предлагаете новую интересную задачу, новый проект, повышение — он находит причины не браться. «Я лучше на своей роли», «у меня сейчас не получится», «спасибо, но не время». При этом речь идёт о росте, который раньше его бы зажёг. Если человек отказывается от движения вперёд — это значит, он уже <strong>внутренне выбрал стоять на месте</strong>.</li>
+      <li><strong>Шестое — отсутствие реакции на похвалу и критику.</strong> Это редко замечают, но это сильный маркер. Когда вы хвалите тихо уволившегося — он принимает это вежливо, без оживления. Когда критикуете — без сопротивления, без оправданий, без напряжения. Внешне выглядит как зрелость. На самом деле — это <strong>эмоциональное отключение</strong>. Человеку всё равно, как вы оцениваете его работу.</li>
+      <li><strong>Седьмое — социальная изоляция внутри команды.</strong> Раньше пил кофе с коллегами в перерыве. Теперь — на телефоне в одиночестве. На корпоратив приходит на час и исчезает. На дни рождения сбрасывает деньги, но не приходит. Это не «он стал интровертом». Это его <strong>ноги уже за дверью</strong>, осталось дождаться удобного момента уйти физически. Или, в случае ипотеки, — не уйти никогда, но и не прийти эмоционально.</li>
+    </ul>
+    <p>Если у одного из ваших сотрудников вы находите три-четыре из этих признаков, накопившихся за полгода-год, — он, скорее всего, тихо ушёл. И ему нужен не очередной разговор «нам нужно поднажать». Ему нужно что-то другое.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c ao">
+    <div class="lb red">Что обычно делает собственник</div>
+    <p>Стандартная реакция на признаки разрыва — три варианта, и все они <strong>не работают</strong>.</p>
+    <p>Первый вариант — игнорировать. «Ну да, не такой как раньше, но работает же. Что мне с этого». Это самая дорогая ошибка, потому что тихое увольнение заразно. Один тихо ушедший в команде из десяти означает, что через год их будет трое.</p>
+    <p>Второй вариант — поднять зарплату. Мы уже разбирали в прошлой главе: эффект на две-три недели, потом возврат к тому же режиму. Деньги не лечат отсутствие смысла.</p>
+    <p>Третий вариант — устроить разнос. «Ты что, не вкладываешься?». Это вообще катастрофа — разнос ускоряет уход вдвое. Сотрудник либо начинает играть в обиженного и ещё глубже уходит в апатию, либо действительно увольняется (если ипотеки нет), либо — самое опасное — становится <strong>активно токсичным</strong> и начинает портить настроение остальной команде.</p>
+    <p>Все три не работают, потому что бьют не туда.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c al">
+    <div class="lb purple">Что работает на самом деле</div>
+    <p>Это самый сложный момент главы, и я скажу честно: универсального решения нет. Тихое увольнение лечится не одним инструментом, а комплексом изменений в вашем стиле управления. Но один важный шаг можно сделать сразу, и он даёт эффект быстро.</p>
+  </div>
+
+  <div class="qt">
+    <p>«Один разговор. Один на один. Без планёрки, без других людей, без срочных задач сверху. Час времени.»</p>
+  </div>
+
+  <div class="c">
+    <p>Не для разноса. Не для прибавки. Не для нового задания. Для <strong>разговора о том, что происходит</strong>.</p>
+    <p>Структура такого разговора простая. Вы открыто называете то, что видите: «Жанат, я заметил, что ты стал реже предлагать идеи на планёрках. Раньше ты приносил по две-три за встречу. Сейчас — почти никогда. Не разносить тебя за это пришёл, просто хочу понять, что меняется». Дальше <strong>слушаете</strong>. Долго. Без перебивания, без объяснений, без оправданий со своей стороны. И не пытаетесь решить проблему в этот разговор.</p>
+    <p>Иногда вы услышите конкретные вещи, которые можно поправить — нагрузка выросла, обещанного повышения нет, проблема в коллеге. Тогда фиксируйте и работайте с этим отдельно.</p>
+    <p>Иногда вы услышите что-то более глубокое — «я устал», «я не вижу смысла», «не могу больше так». В этом случае не пытайтесь сразу починить. Поблагодарите за откровенность. Скажите что подумаете. И через неделю вернитесь с предложением — изменить роль, дать другой проект, перевести на другую функцию. Иногда — да, отпустить, потому что человек уже всё для себя решил.</p>
+    <p>Иногда сотрудник скажет «всё нормально, просто устал, отдохну в отпуске». В девяти случаях из десяти это вежливое «не хочу ничего обсуждать». Не давите. Дайте отпуск. После отпуска посмотрите на маркеры. Если они на месте — назначайте второй разговор через два месяца, более прямой.</p>
+  </div>
+
+  <div class="c ao">
+    <div class="lb red">Что не работает в этом разговоре</div>
+    <p>Что <strong>не работает</strong> в этом разговоре, я тоже скажу. Не работают ультиматумы — «если ты не выкладываешься, я тебя уволю». Не работает торговля — «если ты вернёшься в форму, я подниму зарплату». Не работает гипноз — «ну вспомни, как ты горел три года назад». Все эти приёмы говорят сотруднику одно и то же: <strong>тебя как человека я не вижу, я вижу свой инструмент, который сломался</strong>. И это последний толчок, после которого он точно уходит.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c">
+    <div class="lb purple">Самое главное</div>
+    <p>Подведу итог всего урока.</p>
+    <p>В вашей команде сидят разные поколения с разными ожиданиями от работы. Самая большая ошибка — управлять всеми по своей собственной мерке.</p>
+    <p>Самое опасное явление в современных командах — это <strong>тихое увольнение</strong>. Не зумерское, а взрослое. Носитель — не вчерашний студент, а ваш проверенный 35-летний сотрудник с ипотекой. Это не новая мода — это унаследованная постсоветская привычка с новым именем. Деньги не лечат.</p>
+    <p>Видеть тихое увольнение можно по сдвигам в поведении: пропавшая инициатива, формальная коммуникация, замедление, отсутствие любопытства, отказ от роста, эмоциональное отключение, изоляция. Три-четыре из семи — сигнал. Один разговор-один-на-один, в котором вы готовы слушать, может перевернуть ситуацию. Стандартные реакции — игнор, прибавка, разнос — не работают.</p>
+    <p>И ещё одно. Если вы прочитали эту главу и подумали о ком-то конкретном — а у вас, скорее всего, в голове появилось имя — не идите в этот разговор сегодня же на эмоциях. Возьмите два-три дня. Подумайте. Подготовьте конкретные наблюдения, не оценки. И тогда заходите.</p>
+    <p>Половина успеха такого разговора — в том, что собственник пришёл слушать, а не решать.</p>
+  </div>
+
+  <div class="tk">
+    <span class="tk-badge">Выводы урока</span>
+    <h3>Сначала <span class="hl">слушать</span>.<br>Потом — может быть — решать.</h3>
+    <div class="tk-pt"><span class="tk-n">1</span><span class="tk-t">Не каждый, кто перестал гореть, тихо уволился. Здоровая граница — это рост, не разрыв. Маркеры читать в комбинации: три-четыре из семи за полгода-год — сигнал.</span></div>
+    <div class="tk-pt"><span class="tk-n">2</span><span class="tk-t">Стандартные реакции — игнор, прибавка, разнос — не работают. Все три бьют не туда. Разнос вообще ускоряет уход вдвое и часто превращает сотрудника в активно токсичного.</span></div>
+    <div class="tk-pt"><span class="tk-n">3</span><span class="tk-t">Что работает — один разговор-один-на-один. Не для разноса, не для прибавки. Для того чтобы слушать. Без ультиматумов, торговли и гипноза «вспомни как ты горел». Половина успеха — в позиции «пришёл слушать, а не решать».</span></div>
+  </div>
+
+  <div class="qt">
+    <p>«В следующем уроке — как удержать сильного сотрудника, который не тихо уволился, а наоборот горит и которого вот-вот перекупит конкурент. И о главном инструменте, который не дают в малом бизнесе из страха его дать. О доле.»</p>
+    <p>→ <strong>Урок L03 — Как удержать сильного сотрудника</strong></p>
+  </div>
+
+</main>
+
+<div class="nav">
+  <button class="nb nb-prev" onclick="location.href='m2-ch02.html'">← Глава 2</button>
+  <button class="nb nb-next" disabled title="L03 ещё не опубликован">L03 →</button>
+</div>
+
+</body>
+</html>

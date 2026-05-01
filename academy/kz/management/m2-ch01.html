@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0A0A0F">
+<title>Глава 1 — Поколение твоей команды</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+html,body{
+  background:#0A0A0F !important;
+  color:#E8E8ED;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+html::before{
+  content:'';position:fixed;inset:0;
+  background:#0A0A0F;z-index:-1;
+}
+
+:root{
+  --bg:#0A0A0F;
+  --surface:#16161E;
+  --surface2:#1E1E28;
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.10);
+  --text:#E8E8ED;
+  --text2:#A0A0B0;
+  --text3:#6B6B7B;
+  --purple:#A89BFF;
+  --purple-dim:rgba(168,155,255,0.12);
+  --green:#00D4AA;
+  --green-dim:rgba(0,212,170,0.10);
+  --orange:#E8A04C;
+  --orange-dim:rgba(232,160,76,0.10);
+  --red:#E85454;
+  --red-dim:rgba(232,84,84,0.10);
+  --accent:#6C63FF;
+}
+
+/* ══════ HEADER ══════ */
+.hdr{
+  position:sticky;top:0;z-index:50;
+  background:#101010;
+  border-bottom:1px solid #2C2C2C;
+  padding:14px 20px 12px;
+}
+.hdr::after{
+  content:'';
+  position:absolute;
+  bottom:-20px;left:0;right:0;
+  height:20px;
+  background:linear-gradient(180deg,#101010 0%,var(--bg) 100%);
+  pointer-events:none;
+  z-index:49;
+}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.hdr-badge{
+  background:var(--purple-dim);color:var(--purple);
+  font-size:11px;font-weight:700;
+  letter-spacing:1.2px;padding:4px 10px;border-radius:6px;
+}
+.hdr-mod{font-size:12px;color:var(--text3);font-weight:600;min-width:0;max-width:52%;text-align:right;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.prog{display:flex;align-items:center;gap:10px}
+.prog-n{font-size:12px;color:var(--text3);font-weight:700;font-variant-numeric:tabular-nums}
+.prog-track{flex:1;height:5px;background:#2C2C2C;border-radius:5px;overflow:hidden}
+.prog-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#6C5CE7,#00B894)}
+.hdr-back{display:flex;align-items:center;gap:4px;background:none;border:1px solid #2C2C2C;border-radius:8px;padding:6px 12px;font-family:inherit;font-size:12px;font-weight:700;color:var(--text3);cursor:pointer;white-space:nowrap}
+.hdr-back:active{background:#1E1E1E}
+.hdr-back svg{width:14px;height:14px;stroke:var(--text3);stroke-width:2.5;fill:none}
+
+/* ══════ MAIN ══════ */
+.page{max-width:460px;margin:0 auto;padding:20px 18px 120px}
+
+/* ══════ HERO ══════ */
+.hero{text-align:center;padding:32px 0 24px}
+.hero-ico{font-size:48px;display:block;margin-bottom:12px}
+.hero h1{
+  font-weight:800;font-size:26px;line-height:1.25;
+  color:var(--text);margin-bottom:8px;letter-spacing:-0.01em;
+}
+.hero h1 .o{color:var(--orange)}
+.hero-sub{font-size:14px;color:var(--text3);font-weight:500}
+
+/* ══════ CARD ══════ */
+.c{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:20px 18px;
+  margin-bottom:14px;
+}
+.c p{font-size:15px;color:var(--text2);margin-bottom:10px;line-height:1.8}
+.c p:last-child{margin-bottom:0}
+.c strong{font-weight:700;color:var(--text)}
+.c em{font-style:italic;color:var(--text)}
+
+.c.al{border-left:3.5px solid var(--accent);background:rgba(108,92,231,0.04)}
+.c.ag{border-left:3.5px solid var(--green);background:rgba(0,212,170,0.04)}
+.c.ao{border-left:3.5px solid var(--orange);background:rgba(232,160,76,0.04)}
+
+/* ══════ LABEL ══════ */
+.lb{
+  display:inline-block;
+  font-size:12px;font-weight:700;
+  letter-spacing:0.5px;
+  padding:5px 11px;border-radius:6px;margin-bottom:14px;
+}
+.lb.purple{color:var(--purple);background:var(--purple-dim)}
+.lb.red{color:var(--red);background:var(--red-dim)}
+.lb.green{color:var(--green);background:var(--green-dim)}
+.lb.orange{color:var(--orange);background:var(--orange-dim)}
+
+/* ══════ VS GRID ══════ */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.vs-i{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:18px 14px;
+  text-align:center;
+}
+.vs-i.gold{border-top:3.5px solid var(--orange);background:rgba(232,160,76,0.04)}
+.vs-i.paper{border-top:3.5px solid var(--green);background:rgba(0,212,170,0.04)}
+.vs-ico{font-size:32px;margin-bottom:6px;display:block}
+.vs-t{font-weight:700;font-size:15px;color:var(--text);margin-bottom:4px}
+.vs-d{font-size:12.5px;color:var(--text3);line-height:1.5}
+
+/* ══════ DIVIDER ══════ */
+.div{display:flex;align-items:center;gap:12px;margin:22px 0 18px}
+.div .ln{flex:1;height:1px;background:var(--border2)}
+.div .dt{width:5px;height:5px;border-radius:50%;background:var(--text3)}
+
+/* ══════ TIMELINE ══════ */
+.tl{
+  padding-left:28px;position:relative;margin-bottom:18px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:22px 20px 22px 38px;
+}
+.tl::before{
+  content:'';position:absolute;left:18px;top:28px;bottom:28px;
+  width:2px;background:linear-gradient(180deg,#6C5CE7,#00B894);border-radius:2px;
+}
+.tl-i{position:relative;margin-bottom:20px}
+.tl-i:last-child{margin-bottom:0}
+.tl-dot{
+  position:absolute;left:-26px;top:4px;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--surface);border:2.5px solid #6C5CE7;
+  box-shadow:0 0 0 3px rgba(108,92,231,0.15);
+}
+.tl-i:last-child .tl-dot{border-color:#00B894;box-shadow:0 0 0 3px rgba(0,184,148,0.15)}
+.tl-date{
+  font-size:12px;font-weight:700;color:var(--purple);
+  letter-spacing:0.5px;margin-bottom:4px;
+  font-variant-numeric:tabular-nums;
+}
+.tl-i:last-child .tl-date{color:var(--green)}
+.tl-txt{font-size:14px;color:var(--text2);line-height:1.6}
+.tl-txt strong{font-weight:700;color:var(--text)}
+
+/* ══════ INSIGHT ══════ */
+.ins{
+  background:linear-gradient(135deg,rgba(108,92,231,0.08) 0%,rgba(0,184,148,0.06) 100%);
+  border:1px solid rgba(108,92,231,0.15);
+  border-radius:14px;
+  padding:22px 18px;
+  margin-bottom:14px;
+  position:relative;
+}
+.ins-ico{
+  position:absolute;top:-10px;left:16px;
+  background:var(--bg);padding:0 4px;font-size:18px;
+  border-radius:4px;
+}
+.ins p{font-size:14.5px;font-weight:500;color:var(--text);line-height:1.65}
+.ins strong{color:var(--purple);font-weight:700}
+
+/* ══════ FACT SCROLL ══════ */
+.fs{
+  display:flex;gap:10px;overflow-x:auto;
+  scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+  padding:2px 0 12px;margin-bottom:14px;
+}
+.fs::-webkit-scrollbar{display:none}
+.fc{
+  flex:0 0 auto;scroll-snap-align:start;
+  width:200px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;
+  padding:14px;
+}
+.fc-ico{font-size:20px;margin-bottom:6px;display:block}
+.fc-txt{font-size:12.5px;color:var(--text2);line-height:1.5}
+.fc-txt strong{color:var(--orange);font-weight:700}
+
+/* ══════ LIST CARD ══════ */
+.lc-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.lc-num{
+  width:28px;height:28px;border-radius:7px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:var(--purple);
+  font-variant-numeric:tabular-nums;
+}
+.lc-t{font-weight:700;font-size:16px;color:var(--text)}
+.c ul{list-style:none;padding:0}
+.c li{position:relative;padding-left:18px;margin-bottom:8px;font-size:14px;line-height:1.55;color:var(--text2)}
+.c li::before{
+  content:'';position:absolute;left:0;top:8px;
+  width:6px;height:6px;border-radius:2px;background:var(--accent);opacity:0.5;
+}
+.c li strong{font-weight:700;color:var(--text)}
+
+/* ══════ EXPANDABLE ══════ */
+.ex{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;margin-bottom:10px;overflow:hidden;
+}
+.ex-h{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;cursor:pointer;
+  user-select:none;-webkit-user-select:none;
+}
+.ex-h:active{background:var(--surface2)}
+.ex-q{font-size:14px;font-weight:600;color:var(--text);flex:1;padding-right:8px}
+.ex-arr{
+  width:24px;height:24px;border-radius:6px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  transition:transform 0.3s;flex-shrink:0;
+}
+.ex-arr svg{width:12px;height:12px;stroke:var(--purple);stroke-width:2.5;fill:none}
+.ex.open .ex-arr{transform:rotate(180deg)}
+.ex-b{max-height:0;overflow:hidden;transition:max-height 0.35s ease;padding:0 16px}
+.ex.open .ex-b{max-height:400px;padding:0 16px 16px}
+.ex-b p{font-size:13.5px;color:var(--text2);line-height:1.7;margin-bottom:6px}
+.ex-b p:last-child{margin-bottom:0}
+.ex-b strong{color:var(--text)}
+
+/* ══════ TAKEAWAY ══════ */
+.tk{
+  background:var(--surface);
+  border:1.5px solid var(--accent);
+  border-radius:14px;
+  padding:22px 18px;
+  margin-bottom:14px;
+  position:relative;overflow:hidden;
+}
+.tk::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,#6C5CE7,#00B894,#6C5CE7);
+  background-size:200% 100%;
+  animation:sh 4s ease-in-out infinite;
+}
+@keyframes sh{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.tk-badge{
+  display:inline-block;
+  font-size:12px;font-weight:700;
+  letter-spacing:0.5px;
+  color:var(--purple);background:var(--purple-dim);
+  padding:5px 11px;border-radius:6px;margin-bottom:14px;
+}
+.tk h3{
+  font-weight:800;
+  font-size:20px;line-height:1.3;color:var(--text);margin-bottom:16px;
+  letter-spacing:-0.01em;
+}
+.tk h3 .hl{color:var(--purple)}
+.tk-pt{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.tk-pt:last-child{margin-bottom:0}
+.tk-n{
+  min-width:22px;height:22px;border-radius:6px;
+  background:var(--purple-dim);display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:var(--purple);
+  margin-top:2px;
+  font-variant-numeric:tabular-nums;
+}
+.tk-t{font-size:14px;color:var(--text2);line-height:1.6}
+
+/* ══════ QUOTE ══════ */
+.qt{
+  border-left:3.5px solid var(--orange);
+  background:rgba(232,160,76,0.04);
+  border-radius:0 12px 12px 0;
+  padding:18px 18px;margin-bottom:14px;
+}
+.qt p{font-size:14.5px;font-weight:500;font-style:italic;color:var(--text2);line-height:1.6}
+
+/* ══════ NAV ══════ */
+.nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:50;
+  background:#101010;
+  border-top:1px solid #2C2C2C;
+  padding:12px 18px;
+  padding-bottom:max(12px,env(safe-area-inset-bottom));
+  display:flex;gap:10px;
+  max-width:460px;margin:0 auto;
+}
+.nb{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:13px;border-radius:12px;
+  font-family:inherit;font-size:14px;font-weight:700;
+  border:none;cursor:pointer;
+}
+.nb:active{transform:scale(0.97)}
+.nb-prev{
+  background:#1E1E1E;color:var(--text3);
+  border:1px solid #2C2C2C;
+}
+.nb-next{
+  background:var(--accent);color:#fff;
+}
+.nb[disabled]{
+  opacity:0.45;cursor:not-allowed;
+}
+.nb[disabled]:active{transform:none}
+
+/* ══════ ANIM ══════ */
+@keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.c,.vs,.tl,.ins,.fs,.ex,.tk,.qt{animation:su 0.5s ease-out both}
+.c:nth-of-type(2){animation-delay:0.06s}
+.c:nth-of-type(3){animation-delay:0.12s}
+</style>
+
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-row"><button class="hdr-back" onclick="location.href='../../../products/app.html?tab=academy'"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Содержание</button>
+    <span class="hdr-badge">MGMT</span>
+    <span class="hdr-mod">Модуль · Поколения и тихое увольнение</span>
+  </div>
+  <div class="prog">
+    <span class="prog-n">1/3</span>
+    <div class="prog-track"><div class="prog-fill" style="width:33%"></div></div>
+  </div>
+</header>
+
+<main class="page">
+
+  <div class="hero">
+    <span class="hero-ico">👥</span>
+    <h1>Поколение твоей <span class="o">команды</span></h1>
+    <p class="hero-sub">Что собственник видит как лень и что происходит на самом деле</p>
+  </div>
+
+  <div class="c al">
+    <div class="lb purple">О чём этот урок</div>
+    <p>В команде малого бизнеса, в которой работает хотя бы пять-семь человек, у вас почти наверняка сидят рядом представители трёх разных поколений. Они смотрят на одни и те же события с разных точек, и слышат одни и те же ваши слова — по-разному.</p>
+    <p>Это не философская проблема. Это операционная. Когда вы говорите команде «нам нужно поднажать», 38-летний менеджер слышит одно, 27-летний дизайнер — другое, а 21-летний стажёр — третье. И часть конфликтов в вашей команде, которые кажутся вам «у них характеры не сошлись», — это на самом деле культурный разрыв, который вы как руководитель просто не видите.</p>
+    <p>Эта глава — не про возрастные стереотипы. Не про то, что зумеры ленивые, а миллениалы выгоревшие. Это про то, что <strong>ожидания</strong> от работы у этих трёх поколений сформировались в трёх разных эпохах. И если собственник этого не учитывает, его команда начинает разваливаться по линиям, которые он не видит.</p>
+  </div>
+
+  <div class="c">
+    <div class="lb red">Картина которая знакома</div>
+    <p>Представьте сцену. Понедельник, утро, планёрка. На прошлой неделе вы потеряли крупного клиента из-за срыва дедлайна. Вы заходите в комнату на взводе.</p>
+    <p>Ваш старший менеджер — назовём его Жанатом, ему 38, у него двое детей и ипотека на 18 лет — сидит молча, смотрит в стол. Лицо непроницаемое. Когда вы спрашиваете, почему сорвали сроки, он коротко отвечает «ну, не успели подготовить» и больше ничего не добавляет.</p>
+    <p>Дизайнер Айгерим, 27 лет, активная, начинает объяснять контекст: что заказ пришёл поздно, что согласований было много, что менеджер по продажам пообещал клиенту нереальный срок. Всё это правда — но звучит как «не я виновата».</p>
+    <p>Стажёр Алинур, 21 год, поработал у вас три месяца, тихо встаёт и говорит: «Слушайте, мне такая атмосфера не подходит. Я ухожу». Через час пишет заявление.</p>
+    <p>Вы в шоке. <strong>Что только что произошло?</strong></p>
+    <p>С вашей точки зрения, вы просто нормально разобрали косяк — без крика, без оскорблений. Стажёр уволился из-за разговора, в котором его даже не упомянули.</p>
+    <p>С его точки зрения — он зашёл в комнату, в которой старшие коллеги не защитили команду перед руководителем, виноватого не назвали, и атмосфера была «как в школе перед родительским собранием». Для него это сигнал: здесь не обсуждают системные проблемы, здесь ищут виноватого. В такой среде он работать не хочет.</p>
+    <p>А Жанат тем временем думает: «опять пожар, как всегда. Главное молчать, переждать, потом разрулим». Жанат уже видел десять таких пожаров. У него ипотека. Он никуда не уйдёт. Но из этого разговора он вынесет ровно ноль.</p>
+    <p>Три человека, один разговор, три разные реальности.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c al">
+    <div class="lb purple">Почему так происходит</div>
+    <p>Поколение — это не возраст. Это <strong>набор ожиданий от работы</strong>, который сформировался в эпоху взросления человека. И в постсоветских реалиях три поколения, которые сейчас работают вместе в малом бизнесе, взрослели в трёх <strong>разных мирах</strong>.</p>
+  </div>
+
+  <div class="c ao">
+    <div class="lb orange">Поколение X · 44–60</div>
+    <p>Взрослело в эпоху позднего СССР и распада. Их базовая установка — работа это <strong>выживание</strong>. Где платят — там работаешь. Стабильность важнее интереса. Начальник может орать, главное — деньги вовремя. Это поколение строило 90-е и нулевые, и для них «нормальная работа» — это та, на которой не подводят с зарплатой. Эмоциональный климат — десятый вопрос. В вашей команде это, скорее всего, бухгалтер, заведующая производством, опытный мастер.</p>
+  </div>
+
+  <div class="c al">
+    <div class="lb purple">Поколение Y · миллениалы · 28–43</div>
+    <p>Это первое поколение, которое выросло уже не в СССР. Они застали старые правила игры (работай где взяли, терпи), но застали и новые (можно выбирать, можно учиться, можно уехать). Они видели, как родители всю жизнь работали на одном месте — и потом потеряли всё в кризис. Поэтому миллениалы не верят в «компанию-семью». Они верят в <strong>сделку</strong>: я даю результат, вы даёте деньги и условия. Когда сделка перестаёт устраивать — они уходят, без скандала. У большинства из них уже есть ипотека, дети, и они умеют молчать когда надо. Это самый незаметный слой вашей команды. И — как мы увидим в следующей главе — самый опасный с точки зрения тихого увольнения.</p>
+  </div>
+
+  <div class="c ag">
+    <div class="lb green">Поколение Z · зумеры · до 27</div>
+    <p>Выросли уже в интернете, в эпоху, когда любая работа находится за один день в Telegram-каналах, и ту работу, которая не нравится, можно бросить за час без серьёзных потерь. Их базовая установка — <strong>смысл, среда, развитие</strong>. Деньги они тоже ценят, но если на работе атмосфера токсичная — никакие деньги их не удержат. Они уйдут, и не будут стесняться. Это первое поколение, которое всерьёз воспринимает «культуру компании» как реальный фактор найма.</p>
+  </div>
+
+  <div class="c">
+    <p>Эти три картины мира — не лучше и не хуже друг друга. Они просто разные. И когда собственник управляет всеми тремя из своей одной картины — обычно это X-картина или ранне-Y — он попадает в ловушку.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c ao">
+    <div class="lb red">Главная ошибка собственника</div>
+    <p>Собственник в малом бизнесе обычно сам относится к Поколению X или старшим миллениалам. И он мерит свою команду <strong>по своей собственной молодости</strong>.</p>
+    <p>Он смотрит на 21-летнего стажёра и думает: «когда я был в его возрасте, я в три смены работал и не пикнул». Это правда. Но когда вы были в его возрасте, у вас не было выбора. У стажёра выбор есть.</p>
+    <p>Он смотрит на миллениала-менеджера и думает: «Жанат уже семь лет у меня работает, надёжный человек, всё нормально». Это тоже может быть правдой — а может быть тревожным знаком. Жанат может семь лет работать и при этом <strong>давно перестать вкладываться в результат</strong>. Об этом — в следующей главе.</p>
+    <p>Главная ошибка — считать что культура работы у всех одна и она ваша. Это не так уже двадцать лет. И малый бизнес обычно понимает это последним, потому что в корпорациях есть HR, который замечает поколенческие сдвиги, а у вас нет — есть только вы и ваше восприятие.</p>
+  </div>
+
+  <div class="div"><span class="ln"></span><span class="dt"></span><span class="ln"></span></div>
+
+  <div class="c al">
+    <div class="lb purple">Что с этим делать</div>
+    <p>Я не буду давать вам список «как разговаривать с зумером, как разговаривать с миллениалом». Это инфоцыганщина и упрощение. У реальных людей характеры важнее поколений.</p>
+    <p>Но один практический сдвиг сделать стоит. И он простой.</p>
+  </div>
+
+  <div class="qt">
+    <p>«Перестаньте управлять командой как одной массой. Начните видеть в ней разных людей с разными мотивами.»</p>
+  </div>
+
+  <div class="c">
+    <p>Когда вы говорите всем «нам нужно поднажать» — для X это значит «опять надо терпеть», для Y «понятно, дополнительная нагрузка без оплаты», для Z «здесь не уважают мои границы». Разные люди, разные интерпретации одной и той же фразы.</p>
+    <p>Это не значит, что вы должны говорить с каждым на его языке. Это значит, что вы должны <strong>знать</strong>, что одна фраза вызывает три разных эффекта. И когда вы видите, что после планёрки старший менеджер замкнулся, дизайнер раздражена, а стажёр молчит — это не «они дружно обиделись». Это три разных реакции на одно событие.</p>
+    <p>Дальше из этого следует второй важный шаг — научиться отличать <strong>обычную реакцию</strong> на сложный разговор от реакции, которая означает, что человек уже от вас ушёл. Внутри. Просто пока физически на месте.</p>
+    <p>Это и есть тема следующей главы.</p>
+  </div>
+
+  <div class="tk">
+    <span class="tk-badge">Выводы главы</span>
+    <h3>Одна фраза руководителя —<br><span class="hl">три разные</span> реальности.</h3>
+    <div class="tk-pt"><span class="tk-n">1</span><span class="tk-t">Поколение — это не возраст, а набор ожиданий от работы, сформированный эпохой взросления. У X, Y и Z эти ожидания разные.</span></div>
+    <div class="tk-pt"><span class="tk-n">2</span><span class="tk-t">Собственник обычно сам из X или ранних Y и мерит команду по своей молодости. Это главная ошибка — культура работы у всех одна давно перестала быть нормой.</span></div>
+    <div class="tk-pt"><span class="tk-n">3</span><span class="tk-t">Практический сдвиг один: видеть в команде разных людей с разными мотивами. Одна фраза вызывает три разных эффекта — это нужно учитывать.</span></div>
+  </div>
+
+</main>
+
+<div class="nav">
+  <button class="nb nb-next" onclick="location.href='m2-ch02.html'">Глава 2 →</button>
+</div>
+
+</body>
+</html>
