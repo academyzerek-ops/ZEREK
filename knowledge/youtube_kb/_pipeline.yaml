@@ -1,16 +1,28 @@
 pending: []
 in_progress: []
-done: []
-failed:
+done:
 - url: https://youtu.be/BB39qYx_Fho
   entry_id: yt_b6bc3e98e913
-  failed_at: '2026-05-01T23:11:00.980921+00:00'
-  reason: ArtifactsAPI.generate_report() got an unexpected keyword argument 'report_type'
+  notebook_id: f3a65d9b-9e2a-4de5-ab2f-714bdb4799c2
+  completed_at: '2026-05-01T23:28:45.648218+00:00'
+  primary_topic: marketing
+  target_folder: marketing
+  classification_confidence: high
+  md_path: knowledge/youtube_kb/marketing/yt_b6bc3e98e913.md
 - url: https://youtu.be/vLBxeWiHfGk
   entry_id: yt_d35ee0be7b55
-  failed_at: '2026-05-01T23:11:04.462765+00:00'
-  reason: ArtifactsAPI.generate_report() got an unexpected keyword argument 'report_type'
+  notebook_id: 14ef0d2c-e6e9-426d-aea4-48104f35dddb
+  completed_at: '2026-05-01T23:29:19.462501+00:00'
+  primary_topic: marketing
+  target_folder: marketing
+  classification_confidence: high
+  md_path: knowledge/youtube_kb/marketing/yt_d35ee0be7b55.md
 - url: https://youtu.be/Pz3ZdWGnHOY
   entry_id: yt_b2dd8f1099dc
-  failed_at: '2026-05-01T23:11:07.194644+00:00'
-  reason: ArtifactsAPI.generate_report() got an unexpected keyword argument 'report_type'
+  notebook_id: 01a859f0-3147-45a5-a47d-e7970aabb7bd
+  completed_at: '2026-05-01T23:29:42.298239+00:00'
+  primary_topic: _inbox
+  target_folder: _inbox
+  classification_confidence: low
+  md_path: knowledge/youtube_kb/_inbox/yt_b2dd8f1099dc.md
+failed: []
