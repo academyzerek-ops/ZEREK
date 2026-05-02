@@ -67,7 +67,7 @@ knowledge/niches/<CODE>_insight.md    ← текстовая часть, для 
 
 **Что это.** Подархетип A для beauty-индустрии. Описывает, как уровень опыта мастера (нет опыта / средний / опытный) одновременно меняет производительность, средний чек и CAPEX обучения. Полная таблица параметров — в SoT.
 
-**Текущее применение.** Архетип A1 разработан и реально работает только на нише **MANICURE** (единственная ниша с `formats_r12` блоком в production). Применение на остальные beauty-ниши — план калибровки в порядке: **BROW → SUGARING → MASSAGE → COSMETOLOGY → BARBER → BEAUTY**.
+**Текущее применение.** Архетип A1 разработан и реально работает только на нише **MANICURE** (единственная ниша с `formats_r12` блоком в production). Применение на остальные beauty-ниши — план калибровки в порядке: **BROW → EPILATION → MASSAGE → COSMETOLOGY → BARBER → BEAUTY**.
 
 До момента применения A1 ниша работает по legacy-ветке (`r12.is_r12 = False`) — без матрицы опыта мастера и без блок-предупреждения об антипаттерне.
 
@@ -80,7 +80,7 @@ knowledge/niches/<CODE>_insight.md    ← текстовая часть, для 
 | **MASSAGE** | HOME / RENT_FITNESS / OWN_OFFICE / EMPLOYED_SPA |
 | **COSMETOLOGY** | STANDARD-сам / PREMIUM-владелец-найм |
 | **BROW** | HOME / STUDIO simple / STUDIO nice / SALON_RENT (без ТЦ) |
-| **SUGARING** | HOME / STUDIO simple / STUDIO nice (без салона, без ТЦ) |
+| **EPILATION** | HOME / STUDIO simple / STUDIO nice (без салона, без ТЦ). Зонтичная ниша: шугаринг + воск + лазер + фото. SUGARING — legacy alias |
 | **BARBER** | мастер: STUDIO simple / STUDIO nice / mall / SALON_RENT — владелец: SHOP_RENT_OUT / SHOP_EMPLOY (без HOME) |
 | **BEAUTY** (полноформатный салон) | PASSIVE × ACTIVE — × suburb / center / mall |
 
@@ -88,7 +88,7 @@ knowledge/niches/<CODE>_insight.md    ← текстовая часть, для 
 - Стойка / маникюрный остров: 30–70K ₸/мес
 - Бутик: 5–10K ₸ за м²
 
-**Порядок калибровки beauty:** BROW → SUGARING → MASSAGE → COSMETOLOGY → BARBER → BEAUTY.
+**Порядок калибровки beauty:** BROW → EPILATION → MASSAGE → COSMETOLOGY → BARBER → BEAUTY.
 
 ## Маркетинг — 3-я ось анкеты QC (универсально)
 
@@ -176,7 +176,7 @@ knowledge/niches/<CODE>_insight.md    ← текстовая часть, для 
 
 ## На горизонте (по нишам)
 
-- Завершение beauty-категории (BROW, SUGARING, MASSAGE, COSMETOLOGY, BARBER, BEAUTY) — порядок выше
+- Завершение beauty-категории (BROW, EPILATION, MASSAGE, COSMETOLOGY, BARBER, BEAUTY) — порядок выше
 - Миграция всех insight-файлов в Obsidian vault структуру `01_NICHES/<NICHE>/insight.md`
 - Калибровка ниш со статусом `wiki_only` (есть insight, нет калибровки QC) — список в `data/kz/niches_registry.yaml`
 - Расширение карты ниш — счёт идёт на сотни, не на 50

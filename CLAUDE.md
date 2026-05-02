@@ -21,7 +21,7 @@
 
 **Статус ниш:** актуальный счётчик и поля `status` (production_ready / wiki_only / research) — в `data/kz/niches_registry.yaml`.
 
-**В работе:** beauty по порядку → BROW → SUGARING → MASSAGE → COSMETOLOGY → BARBER → BEAUTY. Параллельно — миграция insight-файлов в Obsidian vault структуру.
+**В работе:** beauty по порядку → BROW → EPILATION → MASSAGE → COSMETOLOGY → BARBER → BEAUTY. Параллельно — миграция insight-файлов в Obsidian vault структуру.
 
 **Цены (зафиксированы 2026-05-01):** QC $10 · FinModel $20 · BizPlan + питч $20 · Wiki бесплатно · Academy бесплатно навсегда. Source of Truth: `data/products.yaml`. Расчёты бизнеса клиента — в тенге, прайс ZEREK — в долларах.
 
