@@ -27,5 +27,90 @@ done:
   md_path: knowledge/youtube_kb/cinema/yt_b2dd8f1099dc.md
   reclassified_at: '2026-05-02T00:00:00+00:00'
   reclassified_by: noa
-  reclassification_note: "Был классифицирован как _inbox (low confidence). Вручную переложен в cinema — добавлена ниша CINEMA в реестр niches_registry.yaml."
-failed: []
+  reclassification_note: Был классифицирован как _inbox (low confidence). Вручную
+    переложен в cinema — добавлена ниша CINEMA в реестр niches_registry.yaml.
+- url: https://youtu.be/j1i_-KUpTZA
+  entry_id: yt_6336df21e279
+  notebook_id: 93004a5b-2229-4f5c-a2bf-5d1625f1f080
+  completed_at: '2026-05-02T13:00:43.837288+00:00'
+  primary_topic: marketing
+  target_folder: marketing
+  classification_confidence: high
+  md_path: knowledge/youtube_kb/marketing/yt_6336df21e279.md
+- url: https://youtu.be/m9J6rvwsMuw
+  entry_id: yt_a2e864564c24
+  notebook_id: 49dae7e2-004d-43e2-895c-08822421dd27
+  completed_at: '2026-05-02T13:01:16.432648+00:00'
+  primary_topic: marketing
+  target_folder: marketing
+  classification_confidence: high
+  md_path: knowledge/youtube_kb/marketing/yt_a2e864564c24.md
+- url: https://youtu.be/zLjsOmE4VIM
+  entry_id: yt_0e6bd4086563
+  notebook_id: 6a4612a3-7271-4cb2-b884-498bbeeb631e
+  completed_at: '2026-05-02T13:01:37.892815+00:00'
+  primary_topic: marketing
+  target_folder: marketing
+  classification_confidence: high
+  md_path: knowledge/youtube_kb/marketing/yt_0e6bd4086563.md
+- url: https://youtu.be/bAP0ZuNJUVw
+  entry_id: yt_f8c0fc480eb1
+  notebook_id: 6701fdb7-766f-4733-8eac-271fe1a11b87
+  completed_at: '2026-05-02T13:02:01.546332+00:00'
+  primary_topic: marketing
+  target_folder: marketing
+  classification_confidence: high
+  md_path: knowledge/youtube_kb/marketing/yt_f8c0fc480eb1.md
+- url: https://youtu.be/2HENa6iieJg
+  entry_id: yt_bc78e965bb0f
+  notebook_id: f41f3b4d-885b-40e1-945a-a60f3361f582
+  completed_at: '2026-05-02T13:02:24.397726+00:00'
+  primary_topic: marketing
+  target_folder: marketing
+  classification_confidence: high
+  md_path: knowledge/youtube_kb/marketing/yt_bc78e965bb0f.md
+- url: https://youtu.be/bxcH2FHguqs
+  entry_id: yt_b99db81d5b8c
+  notebook_id: 1b7ab3f3-3504-4007-9792-d6bdf2bb9cbd
+  completed_at: '2026-05-02T13:02:57.434829+00:00'
+  primary_topic: marketing
+  target_folder: marketing
+  classification_confidence: high
+  md_path: knowledge/youtube_kb/marketing/yt_b99db81d5b8c.md
+- url: https://youtu.be/VWwxG-9YNPo
+  entry_id: yt_2c0780f9a770
+  notebook_id: 8b1e2c1b-037c-4384-835a-5e680cba4ad6
+  completed_at: '2026-05-02T13:03:18.998654+00:00'
+  primary_topic: general
+  target_folder: general
+  classification_confidence: high
+  md_path: knowledge/youtube_kb/general/yt_2c0780f9a770.md
+- url: https://youtu.be/ryKZiXL-ZlQ
+  entry_id: yt_58b90eacdcf1
+  notebook_id: 5fab275a-c30d-4b03-8ceb-e75a789015db
+  completed_at: '2026-05-02T13:03:41.720347+00:00'
+  primary_topic: marketing
+  target_folder: marketing
+  classification_confidence: high
+  md_path: knowledge/youtube_kb/marketing/yt_58b90eacdcf1.md
+- url: https://youtu.be/gGJWqglgwQU
+  entry_id: yt_03d367138390
+  notebook_id: e4b3bbae-49e0-49df-b12a-bc3642dbc987
+  completed_at: '2026-05-02T13:04:15.599969+00:00'
+  primary_topic: marketing
+  target_folder: marketing
+  classification_confidence: high
+  md_path: knowledge/youtube_kb/marketing/yt_03d367138390.md
+- url: https://youtu.be/mWoBgQwAfLk
+  entry_id: yt_82adb675198e
+  notebook_id: b924434c-830e-432c-9dd3-57deb83e83f8
+  completed_at: '2026-05-02T13:04:48.413481+00:00'
+  primary_topic: marketing
+  target_folder: marketing
+  classification_confidence: high
+  md_path: knowledge/youtube_kb/marketing/yt_82adb675198e.md
+failed:
+- url: https://youtu.be/KwM9k2InHy4
+  entry_id: yt_5ffc3b3d0562
+  failed_at: '2026-05-02T13:00:10.351995+00:00'
+  reason: 'API returned no data for URL: https://youtu.be/KwM9k2InHy4'
