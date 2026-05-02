@@ -294,6 +294,24 @@ niches:
     wiki_path: "wiki/kz/ZEREK_Clean.html"
     notes: ""
 
+  - code: CINEMA
+    name_ru: "Кинотеатр"
+    aliases: []
+    archetype: "F"
+    category: "entertainment"
+    icon: "🎬"
+    status: research
+    cta: none
+    has_insight: false
+    has_data: false
+    has_calibration: false
+    has_wiki: false
+    insight_path: null
+    data_path: null
+    calibration_path: null
+    wiki_path: null
+    notes: "Новая ниша, добавлена 2026-05-02. Сырой источник в knowledge/youtube_kb/_inbox/yt_b2dd8f1099dc.md (4-зальный киноцентр, оперэкономика). Нужны ещё 2+ видеоразбора для полноценного insight."
+
   - code: COFFEE
     name_ru: "Кофейня"
     aliases: []

@@ -21,8 +21,11 @@ done:
   entry_id: yt_b2dd8f1099dc
   notebook_id: 01a859f0-3147-45a5-a47d-e7970aabb7bd
   completed_at: '2026-05-01T23:29:42.298239+00:00'
-  primary_topic: _inbox
-  target_folder: _inbox
-  classification_confidence: low
-  md_path: knowledge/youtube_kb/_inbox/yt_b2dd8f1099dc.md
+  primary_topic: cinema
+  target_folder: cinema
+  classification_confidence: manual
+  md_path: knowledge/youtube_kb/cinema/yt_b2dd8f1099dc.md
+  reclassified_at: '2026-05-02T00:00:00+00:00'
+  reclassified_by: noa
+  reclassification_note: "Был классифицирован как _inbox (low confidence). Вручную переложен в cinema — добавлена ниша CINEMA в реестр niches_registry.yaml."
 failed: []
