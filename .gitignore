@@ -26,3 +26,6 @@ audit/output/
 venv/
 .venv/
 *.egg-info/
+~/.notebooklm/
+secrets/
+knowledge/logs/
