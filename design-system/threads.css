@@ -1,45 +1,49 @@
 /* ==========================================================================
-   ZEREK · Threads design system
-   Dark by default. Monochrome with single accent. System fonts.
+   ZEREK · Threads design system — V16 palette (премиум-уголь + амбер)
+   Dark by default. Monochrome with amber accent. Inter + Newsreader.
+   Migrated 2026-05-04 (Кисa).
    ========================================================================== */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&display=swap');
+
 :root {
-  /* Background */
-  --color-bg: #101010;
-  --color-bg-card: #181818;
-  --color-bg-elevated: #1E1E1E;
-  --color-bg-hover: #252525;
-  --color-bg-wash: #0A0A0A;
+  /* Background — премиум-уголь V16 (мягче чем чёрный) */
+  --color-bg: #1A1A22;
+  --color-bg-card: #22222C;
+  --color-bg-elevated: #2C2C38;
+  --color-bg-hover: #363644;
+  --color-bg-wash: #1E1E26;
 
   /* Text */
-  --color-text-primary: #F3F5F7;
-  --color-text-secondary: #999999;
-  --color-text-tertiary: #666666;
-  --color-text-inverse: #000000;
+  --color-text-primary: #F5F5F0;
+  --color-text-secondary: #B5B5BC;
+  --color-text-tertiary: #7A7A82;
+  --color-text-inverse: #1A1A22;
 
   /* Border */
-  --color-border: #2C2C2C;
-  --color-border-light: #222222;
+  --color-border: rgba(255,255,255,0.07);
+  --color-border-light: rgba(255,255,255,0.04);
 
-  /* Accent (Threads blue) */
-  --color-accent: #0095F6;
-  --color-accent-hover: #1AA1F7;
+  /* Accent — V16 амбер (заменяет Threads-blue) */
+  --color-accent: #E8A04C;
+  --color-accent-hover: #F0823E;
 
-  /* Semantic */
-  --color-success: #00BA7C;
-  --color-error:   #FF3040;
-  --color-warning: #F5A623;
-  --color-like:    #FF3040;
+  /* Semantic — V16 calibrated */
+  --color-success: #5FB87C;
+  --color-error:   #E85454;
+  --color-warning: #E8C84C;
+  --color-like:    #E85454;
 
   /* Button */
-  --color-btn-primary-bg: #F3F5F7;
-  --color-btn-primary-text: #000000;
+  --color-btn-primary-bg: #E8A04C;
+  --color-btn-primary-text: #1A1A22;
   --color-btn-secondary-bg: transparent;
-  --color-btn-secondary-border: #2C2C2C;
+  --color-btn-secondary-border: rgba(255,255,255,0.07);
 
-  /* Typography — системный стек как у Threads */
-  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-mono:   "SF Mono", "Roboto Mono", "Menlo", monospace;
+  /* Typography — Inter (тело) + Newsreader (заголовки) */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: 'Newsreader', Georgia, serif;
+  --font-mono:    "JetBrains Mono", "SF Mono", "Roboto Mono", "Menlo", monospace;
   --font-xs:  11px;
   --font-sm:  13px;
   --font-base: 15px;
