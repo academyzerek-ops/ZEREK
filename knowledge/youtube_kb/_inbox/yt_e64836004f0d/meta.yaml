@@ -1,0 +1,12 @@
+entry_id: yt_e64836004f0d
+source_url: https://youtu.be/RacwVDwHuFk
+video_title: 'Аналитический отчет: Особенности и экономика аптечного бизнеса'
+primary_topic: _inbox
+completed_at: '2026-05-03T14:55:57.575427+00:00'
+notebook_id: c0712771-c3ba-482c-bc1a-790f0da2e6c6
+classification_confidence: low
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_e64836004f0d/briefing.md
+    generated_at: '2026-05-03T14:55:57.573681+00:00'
+    method: notebooklm

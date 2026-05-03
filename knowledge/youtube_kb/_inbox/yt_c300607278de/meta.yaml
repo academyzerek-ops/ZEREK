@@ -1,0 +1,12 @@
+entry_id: yt_c300607278de
+source_url: https://youtu.be/q2pFTfPbXHE
+video_title: 'Промышленное выращивание бананов в Казахстане: Аналитический бриф'
+primary_topic: _inbox
+completed_at: '2026-05-03T14:58:54.029642+00:00'
+notebook_id: 52ffe30b-9c11-46db-a900-60ad81b9714e
+classification_confidence: low
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_c300607278de/briefing.md
+    generated_at: '2026-05-03T14:58:54.027934+00:00'
+    method: notebooklm

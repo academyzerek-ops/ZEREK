@@ -1,0 +1,13 @@
+entry_id: yt_bc78e965bb0f
+source_url: https://youtu.be/2HENa6iieJg
+video_title: 'Локальный маркетинг для малого бизнеса: Стратегии, аналитика и практические
+  инструменты'
+primary_topic: marketing
+completed_at: '2026-05-02T13:02:24.397726+00:00'
+notebook_id: f41f3b4d-885b-40e1-945a-a60f3361f582
+classification_confidence: high
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/marketing/yt_bc78e965bb0f/briefing.md
+    generated_at: '2026-05-02T13:02:24.396497+00:00'
+    method: notebooklm

@@ -1,0 +1,12 @@
+entry_id: yt_0972ab43774b
+source_url: https://youtu.be/mpmD_8iUyYg
+video_title: 'Аналитический брифинг: Этапы развития бизнеса и феномен стартапа'
+primary_topic: general
+completed_at: '2026-05-03T14:49:02.941294+00:00'
+notebook_id: 166b16ca-db94-47b5-ac1a-f2b518212805
+classification_confidence: high
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/general/yt_0972ab43774b/briefing.md
+    generated_at: '2026-05-03T14:49:02.939532+00:00'
+    method: notebooklm

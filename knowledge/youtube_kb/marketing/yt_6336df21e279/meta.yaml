@@ -1,0 +1,12 @@
+entry_id: yt_6336df21e279
+source_url: https://youtu.be/j1i_-KUpTZA
+video_title: 'Маркетинговая стратегия: От тактического хаоса к системному росту'
+primary_topic: marketing
+completed_at: '2026-05-02T13:00:43.837288+00:00'
+notebook_id: 93004a5b-2229-4f5c-a2bf-5d1625f1f080
+classification_confidence: high
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/marketing/yt_6336df21e279/briefing.md
+    generated_at: '2026-05-02T13:00:43.833539+00:00'
+    method: notebooklm

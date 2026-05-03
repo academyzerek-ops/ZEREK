@@ -1,0 +1,12 @@
+entry_id: yt_b54b00900534
+source_url: https://youtu.be/7ExRCC5HjSU
+video_title: 'Аналитический бриф: Особенности открытия и ведения цветочного бизнеса'
+primary_topic: _inbox
+completed_at: '2026-05-03T14:58:10.580828+00:00'
+notebook_id: bf1ea33c-65f3-4671-83f9-6721a7cb385f
+classification_confidence: low
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_b54b00900534/briefing.md
+    generated_at: '2026-05-03T14:58:10.579061+00:00'
+    method: notebooklm

@@ -1,0 +1,13 @@
+entry_id: yt_c740da4b99ad
+source_url: https://youtu.be/nFvoGe8bPE4
+video_title: 'Экономика внимания: как человеческий фокус стал самым дорогим товаром
+  в мире'
+primary_topic: marketing
+completed_at: '2026-05-03T14:53:33.378840+00:00'
+notebook_id: 0baf09cc-0022-4c5e-922f-9524bbfec29f
+classification_confidence: high
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/marketing/yt_c740da4b99ad/briefing.md
+    generated_at: '2026-05-03T14:53:33.377050+00:00'
+    method: notebooklm

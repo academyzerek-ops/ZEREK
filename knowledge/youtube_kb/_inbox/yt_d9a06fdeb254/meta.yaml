@@ -1,0 +1,12 @@
+entry_id: yt_d9a06fdeb254
+source_url: https://youtu.be/r3FlgyZg0tE
+video_title: 'Аналитический бриф: Сеть доставки роллов и пиццы «Инь-Янь»'
+primary_topic: _inbox
+completed_at: '2026-05-03T14:57:04.324826+00:00'
+notebook_id: 604e564e-884c-4524-82f2-749fe87ed516
+classification_confidence: low
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_d9a06fdeb254/briefing.md
+    generated_at: '2026-05-03T14:57:04.323049+00:00'
+    method: notebooklm

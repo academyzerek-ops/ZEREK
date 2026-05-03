@@ -1,0 +1,13 @@
+entry_id: yt_58b90eacdcf1
+source_url: https://youtu.be/ryKZiXL-ZlQ
+video_title: 'Стратегии и инструменты привлечения клиентов для малого бизнеса: Аналитический
+  отчет'
+primary_topic: marketing
+completed_at: '2026-05-02T13:03:41.720347+00:00'
+notebook_id: 5fab275a-c30d-4b03-8ceb-e75a789015db
+classification_confidence: high
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/marketing/yt_58b90eacdcf1/briefing.md
+    generated_at: '2026-05-02T13:03:41.718945+00:00'
+    method: notebooklm

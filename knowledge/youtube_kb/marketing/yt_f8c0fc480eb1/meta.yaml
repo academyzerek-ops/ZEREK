@@ -1,0 +1,12 @@
+entry_id: yt_f8c0fc480eb1
+source_url: https://youtu.be/bAP0ZuNJUVw
+video_title: 'Стратегия маркетинга Apple: Ценности и философия Стива Джобса'
+primary_topic: marketing
+completed_at: '2026-05-02T13:02:01.546332+00:00'
+notebook_id: 6701fdb7-766f-4733-8eac-271fe1a11b87
+classification_confidence: high
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/marketing/yt_f8c0fc480eb1/briefing.md
+    generated_at: '2026-05-02T13:02:01.544488+00:00'
+    method: notebooklm

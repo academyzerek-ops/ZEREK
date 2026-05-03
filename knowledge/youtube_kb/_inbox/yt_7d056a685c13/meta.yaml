@@ -1,0 +1,12 @@
+entry_id: yt_7d056a685c13
+source_url: https://youtu.be/C5mO6gLOo6w
+video_title: 'Анализ цветочного бизнеса: Стратегия открытия и управления магазином'
+primary_topic: _inbox
+completed_at: '2026-05-03T14:57:48.152580+00:00'
+notebook_id: cd2f77fe-e2f2-47ec-bf96-9bfc7f47eacf
+classification_confidence: low
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_7d056a685c13/briefing.md
+    generated_at: '2026-05-03T14:57:48.150816+00:00'
+    method: notebooklm

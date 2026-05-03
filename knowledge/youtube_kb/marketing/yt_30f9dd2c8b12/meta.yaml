@@ -1,0 +1,13 @@
+entry_id: yt_30f9dd2c8b12
+source_url: https://youtu.be/Y2tvAd8lhqA
+video_title: 'Маркетинг, автоматизация и построение отделов продаж в Казахстане: Аналитический
+  обзор'
+primary_topic: marketing
+completed_at: '2026-05-03T14:47:54.400644+00:00'
+notebook_id: c841a839-9256-462c-8bc6-c17284b841fe
+classification_confidence: high
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/marketing/yt_30f9dd2c8b12/briefing.md
+    generated_at: '2026-05-03T14:47:54.398513+00:00'
+    method: notebooklm

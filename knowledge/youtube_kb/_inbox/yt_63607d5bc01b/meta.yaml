@@ -1,0 +1,13 @@
+entry_id: yt_63607d5bc01b
+source_url: https://youtu.be/8-_lu1cYyhw
+video_title: 'Аналитический отчет по итогам интервью с Сабиной Бейсембай: Маркетинг,
+  Личный бренд и Трансформация бизнеса в Казахстане'
+primary_topic: _inbox
+completed_at: '2026-05-03T14:50:10.728527+00:00'
+notebook_id: 80afa867-cb01-4d2b-bf32-108a6bd32da1
+classification_confidence: low
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_63607d5bc01b/briefing.md
+    generated_at: '2026-05-03T14:50:10.726552+00:00'
+    method: notebooklm

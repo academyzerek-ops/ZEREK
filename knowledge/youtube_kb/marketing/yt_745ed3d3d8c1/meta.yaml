@@ -1,0 +1,12 @@
+entry_id: yt_745ed3d3d8c1
+source_url: https://youtu.be/B7HuEekuOTk
+video_title: 'Стратегия и инструменты спортивного маркетинга: Кейс «Кинопоиска»'
+primary_topic: marketing
+completed_at: '2026-05-03T14:51:42.069637+00:00'
+notebook_id: 4343eb2a-5560-46a5-b56b-dcd25d408d08
+classification_confidence: high
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/marketing/yt_745ed3d3d8c1/briefing.md
+    generated_at: '2026-05-03T14:51:42.067948+00:00'
+    method: notebooklm

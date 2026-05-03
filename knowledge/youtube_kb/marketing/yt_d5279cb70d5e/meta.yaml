@@ -1,0 +1,12 @@
+entry_id: yt_d5279cb70d5e
+source_url: https://youtu.be/A7hFbui2-24
+video_title: 'Маркетинговые стратегии, изменившие историю: Аналитический обзор'
+primary_topic: marketing
+completed_at: '2026-05-03T14:52:26.197218+00:00'
+notebook_id: 6476c121-5b53-4a79-8eb0-b5580cc1840c
+classification_confidence: high
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/marketing/yt_d5279cb70d5e/briefing.md
+    generated_at: '2026-05-03T14:52:26.195452+00:00'
+    method: notebooklm

@@ -1,0 +1,16 @@
+entry_id: yt_b2dd8f1099dc
+source_url: https://youtu.be/Pz3ZdWGnHOY
+video_title: 'Кинобизнес: Анализ операционной модели и финансовых показателей'
+primary_topic: cinema
+completed_at: '2026-05-01T23:29:42.298239+00:00'
+notebook_id: 01a859f0-3147-45a5-a47d-e7970aabb7bd
+classification_confidence: manual
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/cinema/yt_b2dd8f1099dc/briefing.md
+    generated_at: '2026-05-01T23:29:42.296286+00:00'
+    method: notebooklm
+reclassified_at: '2026-05-02T00:00:00+00:00'
+reclassified_by: noa
+reclassification_note: Был классифицирован как _inbox (low confidence). Вручную переложен
+  в cinema — добавлена ниша CINEMA в реестр niches_registry.yaml.

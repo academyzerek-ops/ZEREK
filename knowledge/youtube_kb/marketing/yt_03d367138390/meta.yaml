@@ -1,0 +1,12 @@
+entry_id: yt_03d367138390
+source_url: https://youtu.be/gGJWqglgwQU
+video_title: 'Революция в маркетинге: От рекламы к бизнес-стратегии'
+primary_topic: marketing
+completed_at: '2026-05-02T13:04:15.599969+00:00'
+notebook_id: e4b3bbae-49e0-49df-b12a-bc3642dbc987
+classification_confidence: high
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/marketing/yt_03d367138390/briefing.md
+    generated_at: '2026-05-02T13:04:15.598680+00:00'
+    method: notebooklm

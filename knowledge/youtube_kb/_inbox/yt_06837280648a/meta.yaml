@@ -1,0 +1,13 @@
+entry_id: yt_06837280648a
+source_url: https://youtu.be/ERdcwemIQNE
+video_title: 'Аналитический отчет по запуску и масштабированию сети кофеен: Опыт «Эталон
+  Кофе»'
+primary_topic: _inbox
+completed_at: '2026-05-03T14:56:30.839695+00:00'
+notebook_id: f41d810f-4604-489f-8f55-8d6378cd9d10
+classification_confidence: low
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_06837280648a/briefing.md
+    generated_at: '2026-05-03T14:56:30.837938+00:00'
+    method: notebooklm

@@ -1,0 +1,13 @@
+entry_id: yt_b99db81d5b8c
+source_url: https://youtu.be/bxcH2FHguqs
+video_title: 'Система масштабирования бизнеса через эффективный маркетинг: Полное
+  руководство'
+primary_topic: marketing
+completed_at: '2026-05-02T13:02:57.434829+00:00'
+notebook_id: 1b7ab3f3-3504-4007-9792-d6bdf2bb9cbd
+classification_confidence: high
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/marketing/yt_b99db81d5b8c/briefing.md
+    generated_at: '2026-05-02T13:02:57.433247+00:00'
+    method: notebooklm

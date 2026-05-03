@@ -1,0 +1,12 @@
+entry_id: yt_82adb675198e
+source_url: https://youtu.be/mWoBgQwAfLk
+video_title: 'Эдуард Бернейс и рождение индустрии согласия: Аналитический обзор'
+primary_topic: marketing
+completed_at: '2026-05-02T13:04:48.413481+00:00'
+notebook_id: b924434c-830e-432c-9dd3-57deb83e83f8
+classification_confidence: high
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/marketing/yt_82adb675198e/briefing.md
+    generated_at: '2026-05-02T13:04:48.412132+00:00'
+    method: notebooklm

@@ -1,0 +1,12 @@
+entry_id: yt_0f808829ea34
+source_url: https://youtu.be/fR9_YOJfbF8
+video_title: 'Гениальные маркетинговые ходы: Анализ стратегий, перевернувших рынок'
+primary_topic: marketing
+completed_at: '2026-05-03T14:52:59.380802+00:00'
+notebook_id: 45750f59-84b3-4aac-8fe7-aaef9dd78c2f
+classification_confidence: high
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/marketing/yt_0f808829ea34/briefing.md
+    generated_at: '2026-05-03T14:52:59.379646+00:00'
+    method: notebooklm

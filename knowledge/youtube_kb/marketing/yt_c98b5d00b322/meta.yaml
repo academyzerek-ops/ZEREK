@@ -1,0 +1,12 @@
+entry_id: yt_c98b5d00b322
+source_url: https://youtu.be/tNcjQr8yEiU
+video_title: 'История и эволюция рекламы: от античности до алгоритмов современности'
+primary_topic: marketing
+completed_at: '2026-05-03T14:54:29.393874+00:00'
+notebook_id: c8a66103-d574-4e31-b486-752c09eb82fd
+classification_confidence: high
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/marketing/yt_c98b5d00b322/briefing.md
+    generated_at: '2026-05-03T14:54:29.392095+00:00'
+    method: notebooklm

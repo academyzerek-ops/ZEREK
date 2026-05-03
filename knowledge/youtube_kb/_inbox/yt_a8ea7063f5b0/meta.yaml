@@ -1,0 +1,13 @@
+entry_id: yt_a8ea7063f5b0
+source_url: https://youtu.be/EuHIjikt6LM
+video_title: 'Открытие суши-ресторана в 2026 году: Экономика, инфраструктура и стратегия
+  развития'
+primary_topic: _inbox
+completed_at: '2026-05-03T14:57:26.312600+00:00'
+notebook_id: 189e9f72-4a8d-41fe-9a39-139950da761f
+classification_confidence: low
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_a8ea7063f5b0/briefing.md
+    generated_at: '2026-05-03T14:57:26.310875+00:00'
+    method: notebooklm

@@ -8,7 +8,13 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_b6bc3e98e913.md
+  video_title: 'Основы современного маркетинга: Стратегическое руководство по продвижению
+    и анализу'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_b6bc3e98e913/briefing.md
+      generated_at: '2026-05-01T23:28:45.648218+00:00'
+      method: notebooklm
 - url: https://youtu.be/vLBxeWiHfGk
   entry_id: yt_d35ee0be7b55
   notebook_id: 14ef0d2c-e6e9-426d-aea4-48104f35dddb
@@ -16,7 +22,13 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_d35ee0be7b55.md
+  video_title: 'Маркетинговые стратегии и философия бизнеса: Аналитический брифинг
+    по материалам интервью Виктора Шкипина'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_d35ee0be7b55/briefing.md
+      generated_at: '2026-05-01T23:29:19.462501+00:00'
+      method: notebooklm
 - url: https://youtu.be/Pz3ZdWGnHOY
   entry_id: yt_b2dd8f1099dc
   notebook_id: 01a859f0-3147-45a5-a47d-e7970aabb7bd
@@ -24,11 +36,16 @@ done:
   primary_topic: cinema
   target_folder: cinema
   classification_confidence: manual
-  md_path: knowledge/youtube_kb/cinema/yt_b2dd8f1099dc.md
   reclassified_at: '2026-05-02T00:00:00+00:00'
   reclassified_by: noa
   reclassification_note: Был классифицирован как _inbox (low confidence). Вручную
     переложен в cinema — добавлена ниша CINEMA в реестр niches_registry.yaml.
+  video_title: 'Кинобизнес: Анализ операционной модели и финансовых показателей'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/cinema/yt_b2dd8f1099dc/briefing.md
+      generated_at: '2026-05-01T23:29:42.298239+00:00'
+      method: notebooklm
 - url: https://youtu.be/j1i_-KUpTZA
   entry_id: yt_6336df21e279
   notebook_id: 93004a5b-2229-4f5c-a2bf-5d1625f1f080
@@ -36,7 +53,12 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_6336df21e279.md
+  video_title: 'Маркетинговая стратегия: От тактического хаоса к системному росту'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_6336df21e279/briefing.md
+      generated_at: '2026-05-02T13:00:43.837288+00:00'
+      method: notebooklm
 - url: https://youtu.be/m9J6rvwsMuw
   entry_id: yt_a2e864564c24
   notebook_id: 49dae7e2-004d-43e2-895c-08822421dd27
@@ -44,7 +66,13 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_a2e864564c24.md
+  video_title: 'Стратегия продвижения 2026: Аналитический отчет по итогам встречи
+    Игоря Манна и Оскара Хартманна'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_a2e864564c24/briefing.md
+      generated_at: '2026-05-02T13:01:16.432648+00:00'
+      method: notebooklm
 - url: https://youtu.be/zLjsOmE4VIM
   entry_id: yt_0e6bd4086563
   notebook_id: 6a4612a3-7271-4cb2-b884-498bbeeb631e
@@ -52,7 +80,13 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_0e6bd4086563.md
+  video_title: 'Маркетинг 2025–2040: Руководство по фундаментальной стратегии и системному
+    подходу'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_0e6bd4086563/briefing.md
+      generated_at: '2026-05-02T13:01:37.892815+00:00'
+      method: notebooklm
 - url: https://youtu.be/bAP0ZuNJUVw
   entry_id: yt_f8c0fc480eb1
   notebook_id: 6701fdb7-766f-4733-8eac-271fe1a11b87
@@ -60,7 +94,12 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_f8c0fc480eb1.md
+  video_title: 'Стратегия маркетинга Apple: Ценности и философия Стива Джобса'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_f8c0fc480eb1/briefing.md
+      generated_at: '2026-05-02T13:02:01.546332+00:00'
+      method: notebooklm
 - url: https://youtu.be/2HENa6iieJg
   entry_id: yt_bc78e965bb0f
   notebook_id: f41f3b4d-885b-40e1-945a-a60f3361f582
@@ -68,7 +107,13 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_bc78e965bb0f.md
+  video_title: 'Локальный маркетинг для малого бизнеса: Стратегии, аналитика и практические
+    инструменты'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_bc78e965bb0f/briefing.md
+      generated_at: '2026-05-02T13:02:24.397726+00:00'
+      method: notebooklm
 - url: https://youtu.be/bxcH2FHguqs
   entry_id: yt_b99db81d5b8c
   notebook_id: 1b7ab3f3-3504-4007-9792-d6bdf2bb9cbd
@@ -76,7 +121,13 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_b99db81d5b8c.md
+  video_title: 'Система масштабирования бизнеса через эффективный маркетинг: Полное
+    руководство'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_b99db81d5b8c/briefing.md
+      generated_at: '2026-05-02T13:02:57.434829+00:00'
+      method: notebooklm
 - url: https://youtu.be/VWwxG-9YNPo
   entry_id: yt_2c0780f9a770
   notebook_id: 8b1e2c1b-037c-4384-835a-5e680cba4ad6
@@ -84,7 +135,13 @@ done:
   primary_topic: general
   target_folder: general
   classification_confidence: high
-  md_path: knowledge/youtube_kb/general/yt_2c0780f9a770.md
+  video_title: 'Создание автономного и масштабируемого бизнеса: по материалам книги
+    Джона Уорриллоу «Создан для продажи»'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/general/yt_2c0780f9a770/briefing.md
+      generated_at: '2026-05-02T13:03:18.998654+00:00'
+      method: notebooklm
 - url: https://youtu.be/ryKZiXL-ZlQ
   entry_id: yt_58b90eacdcf1
   notebook_id: 5fab275a-c30d-4b03-8ceb-e75a789015db
@@ -92,7 +149,13 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_58b90eacdcf1.md
+  video_title: 'Стратегии и инструменты привлечения клиентов для малого бизнеса: Аналитический
+    отчет'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_58b90eacdcf1/briefing.md
+      generated_at: '2026-05-02T13:03:41.720347+00:00'
+      method: notebooklm
 - url: https://youtu.be/gGJWqglgwQU
   entry_id: yt_03d367138390
   notebook_id: e4b3bbae-49e0-49df-b12a-bc3642dbc987
@@ -100,7 +163,12 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_03d367138390.md
+  video_title: 'Революция в маркетинге: От рекламы к бизнес-стратегии'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_03d367138390/briefing.md
+      generated_at: '2026-05-02T13:04:15.599969+00:00'
+      method: notebooklm
 - url: https://youtu.be/mWoBgQwAfLk
   entry_id: yt_82adb675198e
   notebook_id: b924434c-830e-432c-9dd3-57deb83e83f8
@@ -108,7 +176,12 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_82adb675198e.md
+  video_title: 'Эдуард Бернейс и рождение индустрии согласия: Аналитический обзор'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_82adb675198e/briefing.md
+      generated_at: '2026-05-02T13:04:48.413481+00:00'
+      method: notebooklm
 - url: https://youtu.be/-sG3QDDflOk
   entry_id: yt_ec629c6e0bde
   notebook_id: 1ff26359-1dba-40dc-bc96-4780cd9b852c
@@ -116,7 +189,13 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_ec629c6e0bde.md
+  video_title: 'Маркетинг в Казахстане: От управления рекламой к управлению клиентским
+    путем'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_ec629c6e0bde/briefing.md
+      generated_at: '2026-05-03T14:42:12.691894+00:00'
+      method: notebooklm
 - url: https://youtu.be/Y2tvAd8lhqA
   entry_id: yt_30f9dd2c8b12
   notebook_id: c841a839-9256-462c-8bc6-c17284b841fe
@@ -124,7 +203,13 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_30f9dd2c8b12.md
+  video_title: 'Маркетинг, автоматизация и построение отделов продаж в Казахстане:
+    Аналитический обзор'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_30f9dd2c8b12/briefing.md
+      generated_at: '2026-05-03T14:47:54.400644+00:00'
+      method: notebooklm
 - url: https://youtu.be/sHqQgXKI-gE
   entry_id: yt_cfa8dac47855
   notebook_id: 8d9d918a-cabb-44f8-9863-65e189685f9c
@@ -132,7 +217,12 @@ done:
   primary_topic: _inbox
   target_folder: _inbox
   classification_confidence: low
-  md_path: knowledge/youtube_kb/_inbox/yt_cfa8dac47855.md
+  video_title: 'Маркетинг и креатив: Философия взаимодействия и кейсы Веры Филенко'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_cfa8dac47855/briefing.md
+      generated_at: '2026-05-03T14:48:29.011811+00:00'
+      method: notebooklm
 - url: https://youtu.be/mpmD_8iUyYg
   entry_id: yt_0972ab43774b
   notebook_id: 166b16ca-db94-47b5-ac1a-f2b518212805
@@ -140,7 +230,12 @@ done:
   primary_topic: general
   target_folder: general
   classification_confidence: high
-  md_path: knowledge/youtube_kb/general/yt_0972ab43774b.md
+  video_title: 'Аналитический брифинг: Этапы развития бизнеса и феномен стартапа'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/general/yt_0972ab43774b/briefing.md
+      generated_at: '2026-05-03T14:49:02.941294+00:00'
+      method: notebooklm
 - url: https://youtu.be/r__PNjSTQPI
   entry_id: yt_2ee5f593087c
   notebook_id: 1363d1ba-84e5-4307-b0f5-73b5f321d923
@@ -148,7 +243,13 @@ done:
   primary_topic: _inbox
   target_folder: _inbox
   classification_confidence: low
-  md_path: knowledge/youtube_kb/_inbox/yt_2ee5f593087c.md
+  video_title: 'Брифинг по итогам анализа дискуссии «Ночь факапов»: Стратегии, кризисы
+    и уроки масштабирования бизнеса'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_2ee5f593087c/briefing.md
+      generated_at: '2026-05-03T14:49:37.553863+00:00'
+      method: notebooklm
 - url: https://youtu.be/8-_lu1cYyhw
   entry_id: yt_63607d5bc01b
   notebook_id: 80afa867-cb01-4d2b-bf32-108a6bd32da1
@@ -156,7 +257,13 @@ done:
   primary_topic: _inbox
   target_folder: _inbox
   classification_confidence: low
-  md_path: knowledge/youtube_kb/_inbox/yt_63607d5bc01b.md
+  video_title: 'Аналитический отчет по итогам интервью с Сабиной Бейсембай: Маркетинг,
+    Личный бренд и Трансформация бизнеса в Казахстане'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_63607d5bc01b/briefing.md
+      generated_at: '2026-05-03T14:50:10.728527+00:00'
+      method: notebooklm
 - url: https://youtu.be/P1zzFkifvBo
   entry_id: yt_e2e3d53f2ad6
   notebook_id: 9a35a4a2-1cff-4a9f-8972-c70ed372d919
@@ -164,7 +271,13 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_e2e3d53f2ad6.md
+  video_title: 'Аналитический обзор индустрии SMM: Стратегии, платформы и рыночные
+    реалии'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_e2e3d53f2ad6/briefing.md
+      generated_at: '2026-05-03T14:50:44.548732+00:00'
+      method: notebooklm
 - url: https://youtu.be/i5L0CKqA7Kg
   entry_id: yt_e0a079b3124e
   notebook_id: 1e4c870b-80ac-44ea-828f-ffff5e141bc9
@@ -172,7 +285,13 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_e0a079b3124e.md
+  video_title: 'Аналитический бриф: Разбор маркетинговых стратегий для стартапов и
+    B2B-сегмента'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_e0a079b3124e/briefing.md
+      generated_at: '2026-05-03T14:51:07.765803+00:00'
+      method: notebooklm
 - url: https://youtu.be/B7HuEekuOTk
   entry_id: yt_745ed3d3d8c1
   notebook_id: 4343eb2a-5560-46a5-b56b-dcd25d408d08
@@ -180,7 +299,12 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_745ed3d3d8c1.md
+  video_title: 'Стратегия и инструменты спортивного маркетинга: Кейс «Кинопоиска»'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_745ed3d3d8c1/briefing.md
+      generated_at: '2026-05-03T14:51:42.069637+00:00'
+      method: notebooklm
 - url: https://youtu.be/oAn-1V9lF-k
   entry_id: yt_cf69cc188d93
   notebook_id: 2b24a5b7-5c51-48c4-95b1-fc3578963ea0
@@ -188,7 +312,12 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_cf69cc188d93.md
+  video_title: 'Стратегии продвижения клининговой компании: Маркетинговый бриф'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_cf69cc188d93/briefing.md
+      generated_at: '2026-05-03T14:52:04.187629+00:00'
+      method: notebooklm
 - url: https://youtu.be/A7hFbui2-24
   entry_id: yt_d5279cb70d5e
   notebook_id: 6476c121-5b53-4a79-8eb0-b5580cc1840c
@@ -196,7 +325,12 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_d5279cb70d5e.md
+  video_title: 'Маркетинговые стратегии, изменившие историю: Аналитический обзор'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_d5279cb70d5e/briefing.md
+      generated_at: '2026-05-03T14:52:26.197218+00:00'
+      method: notebooklm
 - url: https://youtu.be/fR9_YOJfbF8
   entry_id: yt_0f808829ea34
   notebook_id: 45750f59-84b3-4aac-8fe7-aaef9dd78c2f
@@ -204,7 +338,12 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_0f808829ea34.md
+  video_title: 'Гениальные маркетинговые ходы: Анализ стратегий, перевернувших рынок'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_0f808829ea34/briefing.md
+      generated_at: '2026-05-03T14:52:59.380802+00:00'
+      method: notebooklm
 - url: https://youtu.be/nFvoGe8bPE4
   entry_id: yt_c740da4b99ad
   notebook_id: 0baf09cc-0022-4c5e-922f-9524bbfec29f
@@ -212,7 +351,13 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_c740da4b99ad.md
+  video_title: 'Экономика внимания: как человеческий фокус стал самым дорогим товаром
+    в мире'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_c740da4b99ad/briefing.md
+      generated_at: '2026-05-03T14:53:33.378840+00:00'
+      method: notebooklm
 - url: https://youtu.be/Djh6KrQE5r8
   entry_id: yt_7dc4ff179962
   notebook_id: 63c2837b-0e96-4c69-8b85-c4470026e42d
@@ -220,7 +365,12 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_7dc4ff179962.md
+  video_title: 'Стратегия продвижения через Reels в 2025–2026 годах: Полное руководство'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_7dc4ff179962/briefing.md
+      generated_at: '2026-05-03T14:54:07.037151+00:00'
+      method: notebooklm
 - url: https://youtu.be/tNcjQr8yEiU
   entry_id: yt_c98b5d00b322
   notebook_id: c8a66103-d574-4e31-b486-752c09eb82fd
@@ -228,7 +378,12 @@ done:
   primary_topic: marketing
   target_folder: marketing
   classification_confidence: high
-  md_path: knowledge/youtube_kb/marketing/yt_c98b5d00b322.md
+  video_title: 'История и эволюция рекламы: от античности до алгоритмов современности'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/marketing/yt_c98b5d00b322/briefing.md
+      generated_at: '2026-05-03T14:54:29.393874+00:00'
+      method: notebooklm
 - url: https://youtu.be/Bw5W3Oz0J8U
   entry_id: yt_ff6168f625f1
   notebook_id: 41e890f5-c62c-414b-9abc-1215fd243b4f
@@ -236,7 +391,13 @@ done:
   primary_topic: _inbox
   target_folder: _inbox
   classification_confidence: low
-  md_path: knowledge/youtube_kb/_inbox/yt_ff6168f625f1.md
+  video_title: 'Аналитический обзор бизнеса: Пекарня ремесленного хлеба «Капрановский
+    хлеб»'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_ff6168f625f1/briefing.md
+      generated_at: '2026-05-03T14:54:51.206068+00:00'
+      method: notebooklm
 - url: https://youtu.be/YwZ0GYwU_u4
   entry_id: yt_65b7e39c856d
   notebook_id: dd2659b4-a34f-4a72-a425-d4190225b2eb
@@ -244,7 +405,13 @@ done:
   primary_topic: _inbox
   target_folder: _inbox
   classification_confidence: low
-  md_path: knowledge/youtube_kb/_inbox/yt_65b7e39c856d.md
+  video_title: 'Аналитический бриф: Бизнес-модель шашлычной и шаурмы (на примере заведения
+    «Вкусный шашлык»)'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_65b7e39c856d/briefing.md
+      generated_at: '2026-05-03T14:55:24.788380+00:00'
+      method: notebooklm
 - url: https://youtu.be/RacwVDwHuFk
   entry_id: yt_e64836004f0d
   notebook_id: c0712771-c3ba-482c-bc1a-790f0da2e6c6
@@ -252,7 +419,12 @@ done:
   primary_topic: _inbox
   target_folder: _inbox
   classification_confidence: low
-  md_path: knowledge/youtube_kb/_inbox/yt_e64836004f0d.md
+  video_title: 'Аналитический отчет: Особенности и экономика аптечного бизнеса'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_e64836004f0d/briefing.md
+      generated_at: '2026-05-03T14:55:57.575427+00:00'
+      method: notebooklm
 - url: https://youtu.be/ERdcwemIQNE
   entry_id: yt_06837280648a
   notebook_id: f41d810f-4604-489f-8f55-8d6378cd9d10
@@ -260,7 +432,13 @@ done:
   primary_topic: _inbox
   target_folder: _inbox
   classification_confidence: low
-  md_path: knowledge/youtube_kb/_inbox/yt_06837280648a.md
+  video_title: 'Аналитический отчет по запуску и масштабированию сети кофеен: Опыт
+    «Эталон Кофе»'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_06837280648a/briefing.md
+      generated_at: '2026-05-03T14:56:30.839695+00:00'
+      method: notebooklm
 - url: https://youtu.be/r3FlgyZg0tE
   entry_id: yt_d9a06fdeb254
   notebook_id: 604e564e-884c-4524-82f2-749fe87ed516
@@ -268,7 +446,12 @@ done:
   primary_topic: _inbox
   target_folder: _inbox
   classification_confidence: low
-  md_path: knowledge/youtube_kb/_inbox/yt_d9a06fdeb254.md
+  video_title: 'Аналитический бриф: Сеть доставки роллов и пиццы «Инь-Янь»'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_d9a06fdeb254/briefing.md
+      generated_at: '2026-05-03T14:57:04.324826+00:00'
+      method: notebooklm
 - url: https://youtu.be/EuHIjikt6LM
   entry_id: yt_a8ea7063f5b0
   notebook_id: 189e9f72-4a8d-41fe-9a39-139950da761f
@@ -276,7 +459,13 @@ done:
   primary_topic: _inbox
   target_folder: _inbox
   classification_confidence: low
-  md_path: knowledge/youtube_kb/_inbox/yt_a8ea7063f5b0.md
+  video_title: 'Открытие суши-ресторана в 2026 году: Экономика, инфраструктура и стратегия
+    развития'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_a8ea7063f5b0/briefing.md
+      generated_at: '2026-05-03T14:57:26.312600+00:00'
+      method: notebooklm
 - url: https://youtu.be/C5mO6gLOo6w
   entry_id: yt_7d056a685c13
   notebook_id: cd2f77fe-e2f2-47ec-bf96-9bfc7f47eacf
@@ -284,7 +473,12 @@ done:
   primary_topic: _inbox
   target_folder: _inbox
   classification_confidence: low
-  md_path: knowledge/youtube_kb/_inbox/yt_7d056a685c13.md
+  video_title: 'Анализ цветочного бизнеса: Стратегия открытия и управления магазином'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_7d056a685c13/briefing.md
+      generated_at: '2026-05-03T14:57:48.152580+00:00'
+      method: notebooklm
 - url: https://youtu.be/7ExRCC5HjSU
   entry_id: yt_b54b00900534
   notebook_id: bf1ea33c-65f3-4671-83f9-6721a7cb385f
@@ -292,7 +486,12 @@ done:
   primary_topic: _inbox
   target_folder: _inbox
   classification_confidence: low
-  md_path: knowledge/youtube_kb/_inbox/yt_b54b00900534.md
+  video_title: 'Аналитический бриф: Особенности открытия и ведения цветочного бизнеса'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_b54b00900534/briefing.md
+      generated_at: '2026-05-03T14:58:10.580828+00:00'
+      method: notebooklm
 - url: https://youtu.be/-Z0P4zpx8Bg
   entry_id: yt_c2f29d98c8e0
   notebook_id: 921ee27c-963d-494f-93ca-f1a2d1e8ab9b
@@ -300,7 +499,12 @@ done:
   primary_topic: _inbox
   target_folder: _inbox
   classification_confidence: low
-  md_path: knowledge/youtube_kb/_inbox/yt_c2f29d98c8e0.md
+  video_title: 'Аналитический бриф: Организация и управление бизнесом на пилораме'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_c2f29d98c8e0/briefing.md
+      generated_at: '2026-05-03T14:58:32.361275+00:00'
+      method: notebooklm
 - url: https://youtu.be/q2pFTfPbXHE
   entry_id: yt_c300607278de
   notebook_id: 52ffe30b-9c11-46db-a900-60ad81b9714e
@@ -308,7 +512,12 @@ done:
   primary_topic: _inbox
   target_folder: _inbox
   classification_confidence: low
-  md_path: knowledge/youtube_kb/_inbox/yt_c300607278de.md
+  video_title: 'Промышленное выращивание бананов в Казахстане: Аналитический бриф'
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_c300607278de/briefing.md
+      generated_at: '2026-05-03T14:58:54.029642+00:00'
+      method: notebooklm
 failed:
 - url: https://youtu.be/KwM9k2InHy4
   entry_id: yt_5ffc3b3d0562

@@ -1,0 +1,13 @@
+entry_id: yt_b6bc3e98e913
+source_url: https://youtu.be/BB39qYx_Fho
+video_title: 'Основы современного маркетинга: Стратегическое руководство по продвижению
+  и анализу'
+primary_topic: marketing
+completed_at: '2026-05-01T23:28:45.648218+00:00'
+notebook_id: f3a65d9b-9e2a-4de5-ab2f-714bdb4799c2
+classification_confidence: high
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/marketing/yt_b6bc3e98e913/briefing.md
+    generated_at: '2026-05-01T23:28:45.645247+00:00'
+    method: notebooklm

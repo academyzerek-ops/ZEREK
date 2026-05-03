@@ -1,0 +1,12 @@
+entry_id: yt_e2e3d53f2ad6
+source_url: https://youtu.be/P1zzFkifvBo
+video_title: 'Аналитический обзор индустрии SMM: Стратегии, платформы и рыночные реалии'
+primary_topic: marketing
+completed_at: '2026-05-03T14:50:44.548732+00:00'
+notebook_id: 9a35a4a2-1cff-4a9f-8972-c70ed372d919
+classification_confidence: high
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/marketing/yt_e2e3d53f2ad6/briefing.md
+    generated_at: '2026-05-03T14:50:44.546024+00:00'
+    method: notebooklm

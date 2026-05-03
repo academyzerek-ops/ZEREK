@@ -1,0 +1,12 @@
+entry_id: yt_cf69cc188d93
+source_url: https://youtu.be/oAn-1V9lF-k
+video_title: 'Стратегии продвижения клининговой компании: Маркетинговый бриф'
+primary_topic: marketing
+completed_at: '2026-05-03T14:52:04.187629+00:00'
+notebook_id: 2b24a5b7-5c51-48c4-95b1-fc3578963ea0
+classification_confidence: high
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/marketing/yt_cf69cc188d93/briefing.md
+    generated_at: '2026-05-03T14:52:04.185782+00:00'
+    method: notebooklm

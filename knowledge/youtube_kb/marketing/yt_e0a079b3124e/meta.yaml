@@ -1,0 +1,12 @@
+entry_id: yt_e0a079b3124e
+source_url: https://youtu.be/i5L0CKqA7Kg
+video_title: 'Аналитический бриф: Разбор маркетинговых стратегий для стартапов и B2B-сегмента'
+primary_topic: marketing
+completed_at: '2026-05-03T14:51:07.765803+00:00'
+notebook_id: 1e4c870b-80ac-44ea-828f-ffff5e141bc9
+classification_confidence: high
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/marketing/yt_e0a079b3124e/briefing.md
+    generated_at: '2026-05-03T14:51:07.763758+00:00'
+    method: notebooklm

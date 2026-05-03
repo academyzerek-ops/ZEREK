@@ -1,0 +1,12 @@
+entry_id: yt_cfa8dac47855
+source_url: https://youtu.be/sHqQgXKI-gE
+video_title: 'Маркетинг и креатив: Философия взаимодействия и кейсы Веры Филенко'
+primary_topic: _inbox
+completed_at: '2026-05-03T14:48:29.011811+00:00'
+notebook_id: 8d9d918a-cabb-44f8-9863-65e189685f9c
+classification_confidence: low
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_cfa8dac47855/briefing.md
+    generated_at: '2026-05-03T14:48:29.009131+00:00'
+    method: notebooklm
