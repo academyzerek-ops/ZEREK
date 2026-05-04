@@ -94,10 +94,32 @@ def transcribe(
         tmp = Path(tmp_root)
         out_prefix = tmp / "out"
 
+        # whisper-cli (whisper.cpp) принимает только WAV 16kHz mono PCM.
+        # mp3/m4a/flac → конвертим через ffmpeg в tmp.
+        if audio_path.suffix.lower() != ".wav":
+            ffmpeg = shutil.which("ffmpeg")
+            if not ffmpeg:
+                raise WhisperError(
+                    "ffmpeg не найден в PATH. Установка: brew install ffmpeg"
+                )
+            wav_path = tmp / "input.wav"
+            conv = subprocess.run(
+                [ffmpeg, "-y", "-i", str(audio_path), "-ar", "16000", "-ac", "1",
+                 "-c:a", "pcm_s16le", str(wav_path)],
+                capture_output=True, text=True, timeout=600,
+            )
+            if conv.returncode != 0 or not wav_path.exists():
+                raise WhisperError(
+                    f"ffmpeg conversion failed: {conv.stderr.strip()[:300]}"
+                )
+            audio_for_whisper = wav_path
+        else:
+            audio_for_whisper = audio_path
+
         cmd = [
             binary,
             "-m", str(model_path),
-            "-f", str(audio_path),
+            "-f", str(audio_for_whisper),
             "-l", lang,
             "-otxt",
             "-of", str(out_prefix),

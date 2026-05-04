@@ -32,3 +32,6 @@ knowledge/logs/
 *.bak
 *.bak.*
 
+
+# YouTube audio cache (NotebookLM downloads) — large, regenerable
+data/raw/

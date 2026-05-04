@@ -373,6 +373,11 @@ done:
       path: knowledge/youtube_kb/marketing/yt_e2e3d53f2ad6/briefing.md
       generated_at: '2026-05-03T14:50:44.548732+00:00'
       method: notebooklm
+    audio_transcript:
+      path: knowledge/youtube_kb/marketing/yt_e2e3d53f2ad6/audio_transcript.md
+      generated_at: '2026-05-04T09:04:30.612325+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 - url: https://youtu.be/i5L0CKqA7Kg
   entry_id: yt_e0a079b3124e
   notebook_id: 1e4c870b-80ac-44ea-828f-ffff5e141bc9
