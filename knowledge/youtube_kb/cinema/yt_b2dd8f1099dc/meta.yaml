@@ -15,6 +15,11 @@ artifacts:
     generated_at: '2026-05-04T08:32:37.542646+00:00'
     method: subtitles+gemini
     subtitle_lang: ru
+  audio_transcript:
+    path: knowledge/youtube_kb/cinema/yt_b2dd8f1099dc/audio_transcript.md
+    generated_at: '2026-05-04T08:38:25.447186+00:00'
+    method: notebooklm_audio+whisper
+    whisper_model: small
 reclassified_at: '2026-05-02T00:00:00+00:00'
 reclassified_by: noa
 reclassification_note: Был классифицирован как _inbox (low confidence). Вручную переложен

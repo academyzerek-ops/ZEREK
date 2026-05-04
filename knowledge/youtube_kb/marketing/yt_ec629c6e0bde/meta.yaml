@@ -11,3 +11,13 @@ artifacts:
     path: knowledge/youtube_kb/marketing/yt_ec629c6e0bde/briefing.md
     generated_at: '2026-05-03T14:42:12.688009+00:00'
     method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/marketing/yt_ec629c6e0bde/insight.md
+    generated_at: '2026-05-04T08:40:45.339419+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
+  audio_transcript:
+    path: knowledge/youtube_kb/marketing/yt_ec629c6e0bde/audio_transcript.md
+    generated_at: '2026-05-04T08:55:38.972717+00:00'
+    method: notebooklm_audio+whisper
+    whisper_model: small

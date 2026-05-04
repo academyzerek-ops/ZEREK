@@ -11,3 +11,8 @@ artifacts:
     path: knowledge/youtube_kb/marketing/yt_c740da4b99ad/briefing.md
     generated_at: '2026-05-03T14:53:33.377050+00:00'
     method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/marketing/yt_c740da4b99ad/insight.md
+    generated_at: '2026-05-04T08:50:36.011644+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
