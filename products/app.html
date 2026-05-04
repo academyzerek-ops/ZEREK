@@ -8,8 +8,8 @@
 <meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#1A1A22">
 <title>ZEREK — AI-платформа</title>
-<!-- v17.2 fix: drawer вынесен из main, заглушки тестов в Академии и drawer, role/aria для overlay -->
-<link rel="stylesheet" href="../design-system/threads.css?v=17.2">
+<!-- v17.3: drawer — лестница уровней Моллюск→Кит, иконки пунктов, Связь с нами -->
+<link rel="stylesheet" href="../design-system/threads.css?v=17.3">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&display=swap" rel="stylesheet">
@@ -358,9 +358,51 @@ a{color:inherit;text-decoration:none}
 .cabinet-link:active{background:rgba(255,255,255,0.04)}
 .cabinet-link .ant-icon{width:18px;height:18px;fill:currentColor;color:var(--text-2);flex-shrink:0;opacity:0.85}
 .cabinet-link-counter{justify-content:space-between}
-.cabinet-counter{font-family:var(--sans);font-feature-settings:"tnum" 1;font-size:12px;font-weight:600;color:var(--text-3);background:var(--surface);padding:3px 9px;border-radius:100px;letter-spacing:0.02em}
+.cabinet-counter{font-family:var(--sans);font-feature-settings:"tnum" 1;font-size:12px;font-weight:600;color:var(--text-3);background:var(--surface);padding:3px 9px;border-radius:100px;letter-spacing:0.02em;display:inline-flex;align-items:center;gap:5px}
+.cabinet-counter.lock svg{width:11px;height:11px;stroke:currentColor;stroke-width:1.8;fill:none}
+.cabinet-link-ic{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:18px;color:var(--text-2);opacity:0.85}
+.cabinet-link-ic svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.8;fill:none}
+.cabinet-link-arr{margin-left:auto;color:var(--text-3);font-family:var(--serif);font-style:italic;font-size:18px;font-weight:300}
 
 #cab-reports{margin:0 -2px 8px}
+
+/* ============== CABINET — user row + ladder уровней (V17 ключевой компонент) ============== */
+.cabinet-user-row{position:relative;z-index:1;display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--border)}
+.cabinet-avatar{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--amber),var(--amber-deep));display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 18px rgba(232,160,76,0.4),inset 0 1px 0 rgba(255,255,255,0.2);position:relative;overflow:hidden}
+.cabinet-avatar::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,rgba(255,255,255,0.18),transparent);pointer-events:none}
+.cabinet-avatar svg{width:22px;height:22px;color:var(--bg);position:relative;z-index:1;stroke:currentColor;stroke-width:1.8;fill:none}
+.cabinet-user-info{flex:1;min-width:0;position:relative;z-index:1}
+
+.ladder{position:relative;z-index:1;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:var(--r);padding:14px 14px 12px;margin-bottom:18px}
+.ladder-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.ladder-label{font-size:10.5px;font-weight:600;color:var(--text-3);letter-spacing:0.14em;text-transform:uppercase}
+.ladder-meta{font-size:10.5px;color:var(--text-4);font-weight:500;font-variant-numeric:tabular-nums}
+.lvl-card{position:relative;cursor:pointer}
+.lvl{display:flex;align-items:center;gap:12px;padding:9px 4px;position:relative;border-radius:8px}
+.lvl-card + .lvl-card .lvl::before{content:'';position:absolute;top:-9px;left:18px;width:1.5px;height:18px;background:var(--surface-3);opacity:0.6}
+.lvl-emoji{flex-shrink:0;width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;position:relative;z-index:1}
+.lvl.done .lvl-emoji{background:var(--green-dim);border-color:var(--green);opacity:0.9}
+.lvl.current .lvl-emoji{background:var(--amber);border-color:var(--amber);box-shadow:0 0 16px rgba(232,160,76,0.5);transform:scale(1.08)}
+.lvl.locked .lvl-emoji{opacity:0.55;filter:grayscale(40%)}
+.lvl-info{flex:1;min-width:0}
+.lvl-name{font-family:var(--serif);font-weight:500;font-size:15px;color:var(--text);letter-spacing:-0.005em;line-height:1.2}
+.lvl.done .lvl-name{color:var(--text-2)}
+.lvl.current .lvl-name{color:var(--amber);font-weight:600}
+.lvl.locked .lvl-name{color:var(--text-3)}
+.lvl-status{font-size:10.5px;color:var(--text-3);margin-top:1px;letter-spacing:0.04em;font-weight:500}
+.lvl.done .lvl-status{color:var(--green)}
+.lvl.current .lvl-status{color:var(--amber);font-weight:600}
+.lvl-icon{color:var(--text-3);flex-shrink:0;transition:transform 0.25s ease}
+.lvl-icon svg{width:14px;height:14px;stroke:currentColor;stroke-width:2;fill:none}
+.lvl.done .lvl-icon{color:var(--green)}
+.lvl-card.open .lvl-icon{transform:rotate(180deg)}
+.lvl-body{max-height:0;overflow:hidden;transition:max-height 0.32s ease,padding 0.32s ease,margin 0.32s ease;margin:0 0 0 44px;padding:0 14px;background:rgba(255,255,255,0.025);border-left:2px solid var(--amber);border-radius:0 var(--rs) var(--rs) 0}
+.lvl-card.open .lvl-body{max-height:320px;padding:11px 14px;margin:4px 0 8px 44px}
+.lvl-body p{font-size:12.5px;color:var(--text-2);line-height:1.55;margin-bottom:6px}
+.lvl-body p:last-child{margin-bottom:0}
+.lvl-body strong{color:var(--text);font-weight:600}
+.lvl-body em{font-style:normal;color:var(--amber);font-weight:600}
+.ladder-divider{margin:14px 0 8px;padding-top:12px;border-top:1px dashed var(--border);font-size:10px;font-weight:600;color:var(--text-4);letter-spacing:0.14em;text-transform:uppercase;text-align:center}
 
 /* ============== CHAT OVERLAY (для контекстных вопросов из других экранов) ============== */
 .chat-overlay-bg{position:absolute;inset:0;background:rgba(0,0,0,0.6);opacity:0;display:none;transition:opacity 0.25s ease;z-index:80;pointer-events:none}
@@ -717,28 +759,144 @@ a{color:inherit;text-decoration:none}
   <button class="cabinet-close" onclick="closeCabinet()" aria-label="Закрыть кабинет">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
   </button>
-  <div class="cabinet-user">
-    <div class="cabinet-user-name" id="cab-name">Гость</div>
-    <div class="cabinet-user-handle" id="cab-handle"></div>
+
+  <div class="cabinet-user-row">
+    <div class="cabinet-avatar">
+      <svg viewBox="0 0 24 24"><rect x="2.5" y="7" width="19" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="2.5" y1="13" x2="21.5" y2="13"/></svg>
+    </div>
+    <div class="cabinet-user-info">
+      <div class="cabinet-user-name" id="cab-name">Гость</div>
+      <div class="cabinet-user-handle" id="cab-handle"></div>
+    </div>
   </div>
 
-  <div class="cabinet-section-title">Мой прогресс</div>
-  <button class="cabinet-link cabinet-link-counter" onclick="alert('Тесты — скоро')">
-    <span>Мои тесты</span><span class="cabinet-counter">0&thinsp;/&thinsp;5</span>
-  </button>
-  <button class="cabinet-link cabinet-link-counter" onclick="alert('Бонусы — скоро')">
-    <span>Мои бонусы</span><span class="cabinet-counter">0</span>
-  </button>
+  <!-- ЛЕСТНИЦА УРОВНЕЙ -->
+  <div class="ladder">
+    <div class="ladder-head">
+      <span class="ladder-label">Уровни ученика</span>
+      <span class="ladder-meta">0&thinsp;/&thinsp;35 глав</span>
+    </div>
 
+    <div class="lvl-card" onclick="this.classList.toggle('open')">
+      <div class="lvl current">
+        <div class="lvl-emoji">🐚</div>
+        <div class="lvl-info"><div class="lvl-name">Моллюск</div><div class="lvl-status">Сейчас здесь</div></div>
+        <div class="lvl-icon"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="lvl-body">
+        <p><strong>Стартовый уровень.</strong> Получаешь автоматически при первом входе. Открывает доступ к треку <em>Фундамент</em> — базовая фин-грамотность с нуля.</p>
+      </div>
+    </div>
+
+    <div class="lvl-card" onclick="this.classList.toggle('open')">
+      <div class="lvl locked">
+        <div class="lvl-emoji">🦐</div>
+        <div class="lvl-info"><div class="lvl-name">Креветка</div><div class="lvl-status">Заблокирован</div></div>
+        <div class="lvl-icon"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="lvl-body">
+        <p><strong>Чтобы стать Креветкой:</strong> пройти <em>Фундамент</em> и <em>Архитектор</em>, сдать 5 тестов.</p>
+        <p>Это даст понимание <strong>что такое бизнес</strong> и <strong>базовую фин-грамотность</strong>.</p>
+      </div>
+    </div>
+
+    <div class="lvl-card" onclick="this.classList.toggle('open')">
+      <div class="lvl locked">
+        <div class="lvl-emoji">🐟</div>
+        <div class="lvl-info"><div class="lvl-name">Щука</div><div class="lvl-status">Заблокирован</div></div>
+        <div class="lvl-icon"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="lvl-body">
+        <p><strong>Чтобы стать Щукой:</strong> уже 7 тестов, включая <em>Маркетинг</em>, <em>Финансы</em> и <em>Менеджмент</em>.</p>
+        <p>Базовые знания, чтобы <strong>применять в реалиях бизнеса</strong>.</p>
+      </div>
+    </div>
+
+    <div class="lvl-card" onclick="this.classList.toggle('open')">
+      <div class="lvl locked">
+        <div class="lvl-emoji">🐬</div>
+        <div class="lvl-info"><div class="lvl-name">Дельфин</div><div class="lvl-status">Заблокирован</div></div>
+        <div class="lvl-icon"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="lvl-body">
+        <p><strong>Чтобы стать Дельфином:</strong> добавляется <em>юридический блок</em>, усиленные тесты + решение <em>5 кейсов</em>.</p>
+      </div>
+    </div>
+
+    <div class="lvl-card" onclick="this.classList.toggle('open')">
+      <div class="lvl locked">
+        <div class="lvl-emoji">🦈</div>
+        <div class="lvl-info"><div class="lvl-name">Акула</div><div class="lvl-status">Заблокирован</div></div>
+        <div class="lvl-icon"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="lvl-body">
+        <p><strong>Чтобы стать Акулой:</strong> добавляется понимание <em>макроэкономики Казахстана</em> и <em>симуляция реалистичных кейсов</em>.</p>
+      </div>
+    </div>
+
+    <div class="ladder-divider">— другая ветка —</div>
+
+    <div class="lvl-card" onclick="this.classList.toggle('open')">
+      <div class="lvl locked">
+        <div class="lvl-emoji">🐋</div>
+        <div class="lvl-info"><div class="lvl-name">Кит</div><div class="lvl-status">Инвестор</div></div>
+        <div class="lvl-icon"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="lvl-body">
+        <p><strong>Кит — это инвестор.</strong> Бизнес ты уже умеешь вести, теперь надо уметь <em>инвестировать</em>, чтобы деньги работали на тебя.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- МОЙ КАБИНЕТ -->
   <div class="cabinet-section-title">Мой кабинет</div>
-  <div id="cab-reports">
-    <div class="cabinet-empty">Пока нет отчётов</div>
-  </div>
+  <button type="button" class="cabinet-link cabinet-link-counter" onclick="closeCabinet(); switchTab('calc');">
+    <span class="cabinet-link-ic"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><rect x="7" y="13" width="3" height="5"/><rect x="12" y="9" width="3" height="9"/><rect x="17" y="5" width="3" height="13"/></svg></span>
+    <span>Мои отчёты</span>
+    <span class="cabinet-counter">0</span>
+  </button>
+  <button type="button" class="cabinet-link cabinet-link-counter" onclick="alert('Тесты — скоро')">
+    <span class="cabinet-link-ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+    <span>Мои тесты</span>
+    <span class="cabinet-counter">0&thinsp;/&thinsp;5</span>
+  </button>
+  <button type="button" class="cabinet-link cabinet-link-counter" onclick="alert('Бонусы откроются с уровня Щука')">
+    <span class="cabinet-link-ic"><svg viewBox="0 0 24 24"><polygon points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.8 5.8 21 7 14 2 9.3 9 8.5"/></svg></span>
+    <span>Мои бонусы</span>
+    <span class="cabinet-counter lock"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>с 🐟</span>
+  </button>
+  <div id="cab-reports" aria-hidden="true"></div>
 
+  <!-- СВЯЗЬ С НАМИ -->
+  <div class="cabinet-section-title">Связь с нами</div>
+  <button type="button" class="cabinet-link" onclick="closeCabinet(); goToChat('Хочу поделиться идеей про ZEREK: ');">
+    <span class="cabinet-link-ic"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+    <span>Поделиться идеей</span>
+    <span class="cabinet-link-arr">→</span>
+  </button>
+  <button type="button" class="cabinet-link" onclick="closeCabinet(); goToChat('Хочу отправить свой кейс: ');">
+    <span class="cabinet-link-ic"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="14" x2="15" y2="14"/></svg></span>
+    <span>Отправить свой кейс</span>
+    <span class="cabinet-link-arr">→</span>
+  </button>
+
+  <!-- О ПЛАТФОРМЕ -->
   <div class="cabinet-section-title">О платформе</div>
-  <button class="cabinet-link" onclick="alert('Скоро!')">Язык: Русский</button>
-  <a class="cabinet-link" href="../about.html" target="_blank">О платформе</a>
-  <a class="cabinet-link" href="../privacy.html" target="_blank">Политика конфиденциальности</a>
+  <button type="button" class="cabinet-link cabinet-link-counter" onclick="alert('Скоро будут другие языки')">
+    <span class="cabinet-link-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
+    <span>Язык</span>
+    <span class="cabinet-counter">Русский</span>
+  </button>
+  <a class="cabinet-link" href="../about.html" target="_blank">
+    <span class="cabinet-link-ic"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>
+    <span>О платформе</span>
+    <span class="cabinet-link-arr">→</span>
+  </a>
+  <a class="cabinet-link" href="../privacy.html" target="_blank">
+    <span class="cabinet-link-ic"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+    <span>Политика конфиденциальности</span>
+    <span class="cabinet-link-arr">→</span>
+  </a>
 </div>
 
 <!-- AI BAR persistent (V17 — visible когда не в чате) -->
