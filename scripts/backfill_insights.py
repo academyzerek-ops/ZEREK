@@ -19,7 +19,9 @@ from __future__ import annotations
 
 import argparse
 import logging
+import random
 import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -28,7 +30,12 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-from extract_subtitles import download_subtitles, SubtitleError  # noqa: E402
+from extract_subtitles import (  # noqa: E402
+    download_subtitles,
+    SubtitleError,
+    RateLimitStopError,
+    RateLimitTracker,
+)
 from generate_insight import generate_insight, is_empty_insight, InsightError  # noqa: E402
 
 KB_DIR = REPO_ROOT / "knowledge" / "youtube_kb"
@@ -76,8 +83,11 @@ def find_targets(pipeline: dict, args) -> list[dict]:
     return targets
 
 
-def backfill_one(entry: dict, dry_run: bool) -> bool:
-    """Возвращает True если успешно сгенерил insight.md."""
+def backfill_one(entry: dict, dry_run: bool, tracker: RateLimitTracker) -> bool:
+    """
+    Возвращает True если успешно сгенерил insight.md.
+    Поднимает RateLimitStopError — её ловит main_loop, чтобы остановить весь батч.
+    """
     entry_id = entry["entry_id"]
     url = entry.get("url")
     topic = entry.get("primary_topic") or entry.get("target_folder") or "_inbox"
@@ -92,10 +102,11 @@ def backfill_one(entry: dict, dry_run: bool) -> bool:
         return False
 
     try:
-        transcript, lang, title = download_subtitles(url)
+        transcript, lang, title = download_subtitles(url, tracker=tracker)
     except SubtitleError as e:
         log.warning(f"  ✗ субтитры: {e}")
         return False
+    # RateLimitStopError всплывает наверх — обрабатывается в main_async
     log.info(f"  ✓ субтитры: {lang}, {len(transcript)} chars")
 
     try:
@@ -154,6 +165,10 @@ def main():
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--topic", help="ограничить определённой папкой (marketing, finance, ...)")
     parser.add_argument("--entry", help="один entry_id (yt_xxx)")
+    parser.add_argument("--video-delay-min", type=float, default=3.0,
+                        help="минимальная пауза между видео (сек) — защита от 429 YouTube")
+    parser.add_argument("--video-delay-max", type=float, default=5.0,
+                        help="максимальная пауза между видео (сек)")
     args = parser.parse_args()
 
     pipeline = load_pipeline()
@@ -164,19 +179,37 @@ def main():
         log.info(f"Ограничено до {len(targets)}")
 
     counters = {"ok": 0, "skip": 0, "fail": 0}
-    for entry in targets:
-        try:
-            ok = backfill_one(entry, args.dry_run)
-            counters["ok" if ok else "skip"] += 1
-        except Exception as e:
-            log.error(f"  непредвиденная ошибка: {e}")
-            counters["fail"] += 1
+    tracker = RateLimitTracker()  # один на весь батч — счётчик 429 не сбрасывается между видео
+    stopped_early = False
+
+    try:
+        for i, entry in enumerate(targets):
+            if i > 0:
+                pause = random.uniform(args.video_delay_min, args.video_delay_max)
+                log.debug(f"  пауза {pause:.1f}s перед следующим видео")
+                time.sleep(pause)
+            try:
+                ok = backfill_one(entry, args.dry_run, tracker)
+                counters["ok" if ok else "skip"] += 1
+            except RateLimitStopError:
+                raise  # пробрасываем наружу, чтобы остановить батч
+            except Exception as e:
+                log.error(f"  непредвиденная ошибка: {e}")
+                counters["fail"] += 1
+    except RateLimitStopError as e:
+        log.error("=" * 60)
+        log.error(f"BATCH STOPPED: {e}")
+        stopped_early = True
 
     if not args.dry_run:
-        save_pipeline(pipeline)
+        save_pipeline(pipeline)  # сохраняем прогресс даже при раннем выходе
 
     log.info("=" * 60)
     log.info(f"OK: {counters['ok']}  пропущено: {counters['skip']}  ошибок: {counters['fail']}")
+    if stopped_early:
+        log.warning(f"Батч остановлен досрочно из-за HTTP 429. Обработано: "
+                    f"{counters['ok'] + counters['skip'] + counters['fail']}/{len(targets)}")
+        sys.exit(3)
 
 
 if __name__ == "__main__":
