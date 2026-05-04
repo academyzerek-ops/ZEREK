@@ -8,8 +8,8 @@
 <meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#1A1A22">
 <title>ZEREK — AI-платформа</title>
-<!-- v17.1 fix: tapbar объединён, overlay вынесен из main, display:none по умолчанию -->
-<link rel="stylesheet" href="../design-system/threads.css?v=17.1">
+<!-- v17.2 fix: drawer вынесен из main, заглушки тестов в Академии и drawer, role/aria для overlay -->
+<link rel="stylesheet" href="../design-system/threads.css?v=17.2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&display=swap" rel="stylesheet">
@@ -217,6 +217,26 @@ a{color:inherit;text-decoration:none}
 .module-chapters{font-size:11.5px;color:var(--text-3);font-weight:500}
 .module-item svg,.chapter-item svg{flex-shrink:0;color:var(--text-3)}
 
+/* Заглушки тестов под каждым уровнем (V17) */
+.test-cta{
+  display:flex;align-items:center;gap:14px;
+  width:100%;text-align:left;
+  background:transparent;
+  border:1px dashed rgba(232,160,76,0.35);
+  border-radius:var(--r);padding:13px 16px;margin:-4px 0 14px;
+  color:var(--text);
+}
+.test-cta:active{background:var(--amber-soft);border-color:rgba(232,160,76,0.6)}
+.test-cta-body{flex:1;min-width:0}
+.test-cta-title{font-family:var(--serif);font-size:14px;font-weight:600;color:var(--amber);letter-spacing:-0.005em;margin-bottom:2px}
+.test-cta-meta{font-size:11.5px;color:var(--text-3);font-weight:500;letter-spacing:0.02em}
+.test-cta-arrow{flex-shrink:0;color:var(--amber);font-family:var(--serif);font-size:18px;font-weight:600}
+.test-cta-locked{
+  border-color:var(--border);background:var(--bg-3);
+}
+.test-cta-locked .test-cta-title{color:var(--text-3);font-style:italic}
+.test-cta-locked .test-cta-arrow{color:var(--text-4)}
+
 /* ============== SCREEN: CASES ============== */
 .cases-filter{display:flex;gap:6px;overflow-x:auto;margin-bottom:18px;scrollbar-width:none;padding:2px 0}
 .cases-filter::-webkit-scrollbar{display:none}
@@ -337,6 +357,8 @@ a{color:inherit;text-decoration:none}
 }
 .cabinet-link:active{background:rgba(255,255,255,0.04)}
 .cabinet-link .ant-icon{width:18px;height:18px;fill:currentColor;color:var(--text-2);flex-shrink:0;opacity:0.85}
+.cabinet-link-counter{justify-content:space-between}
+.cabinet-counter{font-family:var(--sans);font-feature-settings:"tnum" 1;font-size:12px;font-weight:600;color:var(--text-3);background:var(--surface);padding:3px 9px;border-radius:100px;letter-spacing:0.02em}
 
 #cab-reports{margin:0 -2px 8px}
 
@@ -496,28 +518,6 @@ a{color:inherit;text-decoration:none}
 
 <main class="app-main" id="app-main">
 
-<!-- CABINET OVERLAY (V17: drawer слева) -->
-<div class="cabinet-backdrop" id="cabinet-backdrop" onclick="closeCabinet()" aria-hidden="true"></div>
-<div class="cabinet-panel" id="cabinet-panel" role="dialog" aria-label="Личный кабинет" aria-modal="true">
-  <button class="cabinet-close" onclick="closeCabinet()" aria-label="Закрыть кабинет">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-  </button>
-  <div class="cabinet-user">
-    <div class="cabinet-user-name" id="cab-name">Гость</div>
-    <div class="cabinet-user-handle" id="cab-handle"></div>
-  </div>
-
-  <div class="cabinet-section-title">Мой кабинет</div>
-  <div id="cab-reports">
-    <div class="cabinet-empty">Пока нет отчётов</div>
-  </div>
-
-  <div class="cabinet-section-title">О платформе</div>
-  <button class="cabinet-link" onclick="alert('Скоро!')">Язык: Русский</button>
-  <a class="cabinet-link" href="../about.html" target="_blank">О платформе</a>
-  <a class="cabinet-link" href="../privacy.html" target="_blank">Политика конфиденциальности</a>
-</div>
-
 <!-- SCREEN: CHAT -->
 <div class="screen active" id="screen-chat" role="region" aria-label="AI-чат">
   <div class="chat-messages" id="chat-messages" role="log" aria-live="polite" aria-atomic="false" aria-label="История сообщений"></div>
@@ -549,6 +549,13 @@ a{color:inherit;text-decoration:none}
         <div class="level-btn">Начать обучение →</div>
       </div>
     </button>
+    <button class="test-cta" type="button" onclick="alert('Тесты появятся в следующей итерации')">
+      <div class="test-cta-body">
+        <div class="test-cta-title">Готов проверить себя?</div>
+        <div class="test-cta-meta">3 теста · сдано 0&thinsp;/&thinsp;3</div>
+      </div>
+      <div class="test-cta-arrow">→</div>
+    </button>
 
     <button class="level-card" id="level-arch" type="button">
       <div class="level-stripe level-stripe-teal"></div>
@@ -559,6 +566,13 @@ a{color:inherit;text-decoration:none}
         <div class="level-meta">26 глав</div>
         <div class="level-btn">Начать обучение →</div>
       </div>
+    </button>
+    <button class="test-cta" type="button" onclick="alert('Тесты появятся в следующей итерации')">
+      <div class="test-cta-body">
+        <div class="test-cta-title">Готов проверить себя?</div>
+        <div class="test-cta-meta">2 теста · сдано 0&thinsp;/&thinsp;2</div>
+      </div>
+      <div class="test-cta-arrow">→</div>
     </button>
 
     <button class="level-card" id="level-mgmt" type="button">
@@ -571,6 +585,13 @@ a{color:inherit;text-decoration:none}
         <div class="level-btn">Начать обучение →</div>
       </div>
     </button>
+    <div class="test-cta test-cta-locked" aria-disabled="true">
+      <div class="test-cta-body">
+        <div class="test-cta-title">Тесты появятся с запуском трека</div>
+        <div class="test-cta-meta">в работе</div>
+      </div>
+      <div class="test-cta-arrow">⋯</div>
+    </div>
   </div>
 
   <div class="screen-content module-list" id="module-list">
@@ -690,6 +711,36 @@ a{color:inherit;text-decoration:none}
 
 </main>
 
+<!-- CABINET DRAWER (V17: вынесен из main, чтобы покрывать всё, включая tapbar и ai-bar) -->
+<div class="cabinet-backdrop" id="cabinet-backdrop" onclick="closeCabinet()" aria-hidden="true"></div>
+<div class="cabinet-panel" id="cabinet-panel" role="dialog" aria-label="Личный кабинет" aria-modal="true">
+  <button class="cabinet-close" onclick="closeCabinet()" aria-label="Закрыть кабинет">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <div class="cabinet-user">
+    <div class="cabinet-user-name" id="cab-name">Гость</div>
+    <div class="cabinet-user-handle" id="cab-handle"></div>
+  </div>
+
+  <div class="cabinet-section-title">Мой прогресс</div>
+  <button class="cabinet-link cabinet-link-counter" onclick="alert('Тесты — скоро')">
+    <span>Мои тесты</span><span class="cabinet-counter">0&thinsp;/&thinsp;5</span>
+  </button>
+  <button class="cabinet-link cabinet-link-counter" onclick="alert('Бонусы — скоро')">
+    <span>Мои бонусы</span><span class="cabinet-counter">0</span>
+  </button>
+
+  <div class="cabinet-section-title">Мой кабинет</div>
+  <div id="cab-reports">
+    <div class="cabinet-empty">Пока нет отчётов</div>
+  </div>
+
+  <div class="cabinet-section-title">О платформе</div>
+  <button class="cabinet-link" onclick="alert('Скоро!')">Язык: Русский</button>
+  <a class="cabinet-link" href="../about.html" target="_blank">О платформе</a>
+  <a class="cabinet-link" href="../privacy.html" target="_blank">Политика конфиденциальности</a>
+</div>
+
 <!-- AI BAR persistent (V17 — visible когда не в чате) -->
 <aside class="ai-bar" id="ai-bar" aria-label="ZEREK AI">
   <button class="ai-bar-icon" onclick="openChatOverlay()" aria-label="Что может ZEREK">
@@ -713,7 +764,7 @@ a{color:inherit;text-decoration:none}
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
   </div>
-  <div class="chat-messages" id="chat-messages-overlay"></div>
+  <div class="chat-messages" id="chat-messages-overlay" role="log" aria-live="polite" aria-atomic="false"></div>
   <div class="chat-input-wrap">
     <input class="chat-input" id="chat-input-overlay" type="text" placeholder="Есть вопросы?" autocomplete="off">
     <button class="voice-btn" id="voice-btn-overlay" onclick="toggleVoice()" aria-label="Голос">
