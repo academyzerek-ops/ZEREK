@@ -10,6 +10,11 @@ artifacts:
     path: knowledge/youtube_kb/cinema/yt_b2dd8f1099dc/briefing.md
     generated_at: '2026-05-01T23:29:42.296286+00:00'
     method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/cinema/yt_b2dd8f1099dc/insight.md
+    generated_at: '2026-05-04T08:32:37.542646+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
 reclassified_at: '2026-05-02T00:00:00+00:00'
 reclassified_by: noa
 reclassification_note: Был классифицирован как _inbox (low confidence). Вручную переложен
