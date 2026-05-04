@@ -8,8 +8,8 @@
 <meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#1A1A22">
 <title>ZEREK — AI-платформа</title>
-<!-- v17.7: топбар прозрачный (pointer-events:none) — avatar и каждый таб локальные чипы со своим blur-фоном, как в прототипе -->
-<link rel="stylesheet" href="../design-system/threads.css?v=17.7">
+<!-- v17.8: табы разной ширины — Академия 1.4, Кейсы 0.85, Обзоры 0.95, Расчёты 1.05 (пропорционально длине слова) -->
+<link rel="stylesheet" href="../design-system/threads.css?v=17.8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;0,6..72,800;1,6..72,400;1,6..72,500;1,6..72,600&display=swap" rel="stylesheet">
@@ -53,9 +53,14 @@ a{color:inherit;text-decoration:none}
 .avatar:active{transform:scale(0.96);opacity:0.9}
 .avatar svg{width:16px;height:16px;color:#1A1A22;position:relative;z-index:1;stroke-width:2}
 
-.tabs{flex:1;display:flex;gap:5px;justify-content:space-between;overflow:hidden;padding:0 0 0 8px;position:relative;min-width:0}
+.tabs{flex:1;display:flex;gap:5px;justify-content:space-between;overflow:hidden;padding:0 0 0 6px;position:relative;min-width:0}
 .tab-bubble{display:none}
-.tab{flex:1 1 0;min-width:0;font-size:12px;font-weight:500;color:var(--text-2);padding:7px 6px;white-space:nowrap;text-align:center;overflow:hidden;text-overflow:ellipsis;position:relative;z-index:1;transition:all 0.2s;background:rgba(54,54,68,0.4);border:1px solid rgba(255,255,255,0.06);border-radius:100px;backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);box-shadow:0 2px 8px rgba(0,0,0,0.18)}
+.tab{flex:1 1 0;min-width:0;font-size:12px;font-weight:500;color:var(--text-2);padding:7px 5px;white-space:nowrap;text-align:center;position:relative;z-index:1;transition:all 0.2s;background:rgba(54,54,68,0.4);border:1px solid rgba(255,255,255,0.06);border-radius:100px;backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);box-shadow:0 2px 8px rgba(0,0,0,0.18)}
+/* Разная ширина чипов под длину слов: Академия > Расчёты > Обзоры > Кейсы */
+.tab[data-page="academy"]{flex:1.4 1 0}
+.tab[data-page="cases"]{flex:0.85 1 0}
+.tab[data-page="wiki"]{flex:0.95 1 0}
+.tab[data-page="calc"]{flex:1.05 1 0}
 .tab:active{background:rgba(64,64,80,0.6)}
 .tab.active{color:var(--text);font-weight:600;background:rgba(74,74,90,0.65);border-color:rgba(255,255,255,0.12)}
 .tab.active::after{content:'';position:absolute;bottom:-3px;left:50%;transform:translateX(-50%);width:16px;height:2px;background:var(--amber);border-radius:2px}
