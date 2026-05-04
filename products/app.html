@@ -8,8 +8,8 @@
 <meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#1A1A22">
 <title>ZEREK — AI-платформа</title>
-<!-- v17.3: drawer — лестница уровней Моллюск→Кит, иконки пунктов, Связь с нами -->
-<link rel="stylesheet" href="../design-system/threads.css?v=17.3">
+<!-- v17.4: full V17 — Академия (posbanner + Глава дня + funnel + 4 locked), Обзоры (market-signal + niche-list), Расчёты (trust + prod-preview), Кейсы (Кейс недели), action-sheet «Что может ZEREK» -->
+<link rel="stylesheet" href="../design-system/threads.css?v=17.4">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&display=swap" rel="stylesheet">
@@ -167,75 +167,117 @@ a{color:inherit;text-decoration:none}
 .chat-send.visible{display:flex}
 
 /* ============== SCREEN: ACADEMY ============== */
-.level-card{
-  display:block;width:100%;text-align:left;
-  background:var(--bg-2);border:1px solid var(--border);
-  border-radius:var(--rl);padding:18px 20px 16px;margin-bottom:12px;
-  position:relative;overflow:hidden;
-  transition:transform 0.12s;
-}
-.level-card:active{transform:scale(0.99)}
-.level-stripe{position:absolute;top:0;bottom:0;left:0;width:3px;border-radius:0 3px 3px 0}
-.level-stripe-gold{background:var(--green)}
-.level-stripe-teal{background:var(--amber)}
-.level-stripe-amber{background:var(--amber-warm)}
-.level-card-body{padding-left:0}
-.level-name{font-family:var(--serif);font-size:21px;font-weight:600;letter-spacing:-0.018em;line-height:1.18;color:var(--text);margin-bottom:4px;font-variation-settings:"opsz" 21}
-.level-age{font-size:11px;font-weight:600;color:var(--text-3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px;display:block}
-.level-desc{font-size:13.5px;color:var(--text-2);line-height:1.6;margin-bottom:12px}
-.level-meta{font-size:11px;color:var(--text-3);font-weight:500;margin-bottom:14px;letter-spacing:0.04em}
-.level-btn{
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  width:100%;background:var(--amber);color:var(--bg);
-  font-weight:700;font-size:14px;padding:12px;border-radius:100px;
-  letter-spacing:-0.005em;box-shadow:0 4px 18px rgba(232,160,76,0.25);
-}
+/* Page header (используется на всех экранах: Академия / Кейсы / Обзоры / Расчёты) */
+.ph{margin-bottom:18px;display:flex;align-items:flex-end;justify-content:space-between;gap:14px}
+.ph-left{flex:1}
+.ph-kicker{font-size:10.5px;font-weight:600;color:var(--amber);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:6px}
+.ph-title{font-family:var(--serif);font-size:26px;font-weight:600;letter-spacing:-0.02em;line-height:1.1;color:var(--text);font-variation-settings:"opsz" 26}
+.ph-title .em{font-style:italic;font-weight:500;color:var(--amber)}
+.ph-stamp{font-size:10.5px;font-weight:500;color:var(--text-4);letter-spacing:0.05em;text-align:right;line-height:1.4;flex-shrink:0;padding-bottom:4px}
+.ph-stamp .v{color:var(--text-3);font-weight:600}
+
+/* Positioning banner — Академия */
+.posbanner{display:flex;align-items:flex-start;gap:12px;background:linear-gradient(135deg,var(--amber-soft),rgba(232,118,62,0.06));border:1px solid rgba(232,160,76,0.22);border-radius:var(--r);padding:12px 14px;margin-bottom:18px}
+.posbanner-ic{flex-shrink:0;width:28px;height:28px;border-radius:8px;background:var(--amber);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-style:italic;font-weight:600;font-size:14px}
+.posbanner-text{flex:1;font-size:12.5px;line-height:1.55;color:var(--text-2)}
+.posbanner-text strong{color:var(--text);font-weight:700}
+
+/* FEATURED — Глава дня / Кейс недели / Сейчас на рынке */
+.feat{background:linear-gradient(160deg,var(--bg-2) 0%,var(--bg-3) 100%);border:1px solid var(--sunset-soft);border-radius:var(--rl);padding:20px;margin-bottom:22px;position:relative;overflow:hidden;display:block;width:100%;text-align:left;cursor:pointer}
+.feat-head{display:flex;align-items:center;gap:8px;margin-bottom:14px;position:relative;z-index:1;flex-wrap:wrap}
+.feat-badge{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;background:var(--sunset);color:var(--bg);padding:4px 10px;border-radius:100px;letter-spacing:0.1em;text-transform:uppercase;box-shadow:0 2px 12px rgba(240,130,62,0.4)}
+.feat-badge::before{content:'★';font-size:9px}
+.feat-meta{font-size:11px;color:var(--text-3);font-weight:500;letter-spacing:0.04em}
+.feat-meta .dot{margin:0 6px;color:var(--text-4)}
+.feat-title{font-family:var(--serif);font-size:22px;font-weight:600;letter-spacing:-0.018em;line-height:1.2;color:var(--text);margin-bottom:10px;position:relative;z-index:1;font-variation-settings:"opsz" 22}
+.feat-title .em{font-style:italic;color:var(--sunset);font-weight:500}
+.feat-quote{font-family:var(--serif);font-style:italic;font-size:16px;line-height:1.55;color:var(--text);padding:0 0 0 16px;border-left:2px solid var(--sunset);margin:14px 0;position:relative;z-index:1;font-weight:500}
+.feat-stat{display:flex;align-items:baseline;gap:14px;padding:14px 0 4px;border-top:1px dashed var(--border);margin-top:14px;position:relative;z-index:1}
+.feat-stat-num{font-family:var(--serif);font-size:34px;font-weight:600;color:var(--sunset);letter-spacing:-0.03em;line-height:1;font-variation-settings:"opsz" 34}
+.feat-stat-num.red{color:var(--red)}
+.feat-stat-lab{font-size:12px;color:var(--text-3);line-height:1.45;flex:1;font-weight:500}
+.feat-cta{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-size:13.5px;font-weight:600;color:var(--sunset);position:relative;z-index:1}
+.feat-cta .arr{font-family:var(--serif);font-style:italic;font-weight:500;font-size:16px}
+
+/* Section divider */
+.sd{display:flex;align-items:center;gap:12px;margin:8px 0 14px;padding:0 4px}
+.sd-label{font-size:10.5px;font-weight:600;color:var(--text-3);letter-spacing:0.16em;text-transform:uppercase}
+.sd-line{flex:1;height:1px;background:var(--border)}
+.sd-count{font-size:10.5px;font-weight:500;color:var(--text-4);letter-spacing:0.04em}
+
+/* TRACK — карточка трека Академии (заменяет .level-card) */
+.track{display:block;width:100%;text-align:left;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--rl);padding:18px 20px 16px;margin-bottom:12px;position:relative;overflow:hidden;cursor:pointer;transition:transform 0.12s}
+.track:active{transform:scale(0.997)}
+.track::before{content:'';position:absolute;top:0;bottom:0;left:0;width:3px;background:var(--amber);border-radius:0 3px 3px 0}
+.track.green::before{background:var(--green)}
+.track.deep::before{background:var(--amber-warm)}
+.track-row{display:flex;align-items:flex-start;gap:14px;margin-bottom:10px}
+.track-num{font-family:var(--serif);font-size:28px;font-weight:600;color:var(--text-3);line-height:1;flex-shrink:0;letter-spacing:-0.02em;width:32px;font-variation-settings:"opsz" 28}
+.track-info{flex:1;min-width:0}
+.track-age{font-size:10.5px;font-weight:600;color:var(--text-3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:4px}
+.track-title{font-family:var(--serif);font-size:21px;font-weight:600;letter-spacing:-0.018em;line-height:1.18;color:var(--text);font-variation-settings:"opsz" 21}
+.track-desc{font-size:13.5px;color:var(--text-2);line-height:1.6;margin-bottom:14px}
+.track-funnel{margin-bottom:14px;padding:12px 14px;background:rgba(255,255,255,0.025);border-radius:var(--r);border:1px solid var(--border-2)}
+.tf-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.tf-label{font-size:10.5px;font-weight:600;color:var(--text-3);letter-spacing:0.1em;text-transform:uppercase}
+.tf-meta{font-size:11px;color:var(--text-3);font-weight:500}
+.tf-bar{height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden;display:flex;margin-bottom:8px}
+.tf-fill{height:100%}
+.tf-fill.started{background:var(--text-3)}
+.tf-fill.finished{background:var(--amber)}
+.tf-stats{display:flex;justify-content:space-between;font-size:11.5px;flex-wrap:wrap;gap:6px}
+.tf-stats .it{display:flex;align-items:center;gap:5px}
+.tf-stats .dt{width:6px;height:6px;border-radius:2px}
+.tf-stats .dt.gray{background:var(--text-3)}
+.tf-stats .dt.amber{background:var(--amber)}
+.tf-stats .lab{color:var(--text-3)}
+.tf-stats .num{color:var(--text);font-weight:600}
+
+/* TRACK locked — будущий курс */
+.track.locked{background:rgba(34,34,44,0.4);border-style:dashed;border-color:var(--border-2);padding:14px 20px 14px;margin-bottom:8px;cursor:default}
+.track.locked:active{transform:none}
+.track.locked::before{background:var(--text-4);opacity:0.5}
+.track.locked .track-row{margin-bottom:6px}
+.track.locked .track-num{color:var(--text-4);font-size:22px}
+.track.locked .track-title{color:var(--text-2);font-size:17px}
+.track.locked .track-desc{color:var(--text-3);font-size:12.5px;margin-bottom:0;line-height:1.5}
+.track-lock{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-2);font-size:11.5px;color:var(--text-3);font-weight:500}
+.track-lock svg{width:13px;height:13px;stroke:var(--text-3);stroke-width:1.8;fill:none;flex-shrink:0}
+.track-lock .lvl{color:var(--amber);font-weight:700}
+
+.btn-primary{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--amber);color:var(--bg);font-weight:700;font-size:14px;padding:12px;border-radius:100px;letter-spacing:-0.005em;transition:transform 0.12s;box-shadow:0 4px 18px rgba(232,160,76,0.25);cursor:pointer;border:none;font-family:inherit}
+.btn-primary:active{transform:scale(0.98)}
+.btn-primary .arr{font-family:var(--serif);font-style:italic;font-weight:500}
+.btn-disabled{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;background:var(--surface);color:var(--text-3);font-weight:500;font-size:13px;padding:11px;border-radius:100px;cursor:not-allowed;border:none;font-family:inherit}
 
 .module-list,.chapter-list,.chapter-content{display:none}
 .module-list.active,.chapter-list.active,.chapter-content.active{display:block}
-.module-back{
-  display:inline-flex;align-items:center;gap:6px;
-  font-size:13.5px;font-weight:600;color:var(--amber);
-  padding:6px 0;margin-bottom:14px;
-}
+.module-back{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:var(--amber);padding:6px 0;margin-bottom:14px}
 .module-back svg{width:16px;height:16px;stroke:currentColor;stroke-width:2.5;fill:none}
 
-.module-item,.chapter-item{
-  display:flex;align-items:center;gap:14px;width:100%;text-align:left;
-  background:var(--bg-2);border:1px solid var(--border);
-  border-radius:var(--r);padding:14px 16px;margin-bottom:8px;
-}
+.module-item,.chapter-item{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:8px}
 .module-item:active,.chapter-item:active{background:var(--surface)}
-.module-num{
-  flex-shrink:0;width:28px;height:28px;border-radius:8px;
-  background:var(--amber-soft);color:var(--amber);
-  font-family:var(--serif);font-weight:700;font-size:14px;
-  display:flex;align-items:center;justify-content:center;
-}
+.module-num{flex-shrink:0;width:28px;height:28px;border-radius:8px;background:var(--amber-soft);color:var(--amber);font-family:var(--serif);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
 .module-info{flex:1;min-width:0}
 .module-name{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--text);line-height:1.3;letter-spacing:-0.005em;margin-bottom:2px}
 .module-chapters{font-size:11.5px;color:var(--text-3);font-weight:500}
 .module-item svg,.chapter-item svg{flex-shrink:0;color:var(--text-3)}
 
-/* Заглушки тестов под каждым уровнем (V17) */
-.test-cta{
-  display:flex;align-items:center;gap:14px;
-  width:100%;text-align:left;
-  background:transparent;
-  border:1px dashed rgba(232,160,76,0.35);
-  border-radius:var(--r);padding:13px 16px;margin:-4px 0 14px;
-  color:var(--text);
-}
-.test-cta:active{background:var(--amber-soft);border-color:rgba(232,160,76,0.6)}
-.test-cta-body{flex:1;min-width:0}
-.test-cta-title{font-family:var(--serif);font-size:14px;font-weight:600;color:var(--amber);letter-spacing:-0.005em;margin-bottom:2px}
-.test-cta-meta{font-size:11.5px;color:var(--text-3);font-weight:500;letter-spacing:0.02em}
-.test-cta-arrow{flex-shrink:0;color:var(--amber);font-family:var(--serif);font-size:18px;font-weight:600}
-.test-cta-locked{
-  border-color:var(--border);background:var(--bg-3);
-}
-.test-cta-locked .test-cta-title{color:var(--text-3);font-style:italic}
-.test-cta-locked .test-cta-arrow{color:var(--text-4)}
+/* Тест-CTA под треком (V17 — с иконкой) */
+.test-cta{margin-top:8px;padding:10px 14px;background:rgba(255,255,255,0.025);border:1px dashed var(--border);border-radius:var(--rs);display:flex;align-items:center;gap:10px;width:100%;text-align:left;color:var(--text);font-family:inherit;cursor:pointer}
+.test-cta:active{background:var(--amber-soft);border-color:rgba(232,160,76,0.45)}
+.test-cta-ic{flex-shrink:0;width:30px;height:30px;border-radius:8px;background:var(--amber-soft);color:var(--amber);display:flex;align-items:center;justify-content:center}
+.test-cta-ic svg{width:15px;height:15px;stroke:currentColor;stroke-width:2;fill:none}
+.test-cta-info{flex:1;min-width:0}
+.test-cta-t{font-family:var(--serif);font-size:13.5px;font-weight:600;color:var(--text);letter-spacing:-0.005em;line-height:1.2}
+.test-cta-s{font-size:11px;color:var(--text-3);margin-top:2px}
+.test-cta-arr{color:var(--amber);font-family:var(--serif);font-style:italic;font-size:18px;font-weight:300;flex-shrink:0}
+.test-cta.locked{opacity:0.6;border-style:dashed;border-color:var(--border-2);cursor:default}
+.test-cta.locked:active{background:rgba(255,255,255,0.025)}
+.test-cta.locked .test-cta-ic{background:var(--surface);color:var(--text-3)}
+.test-cta.locked .test-cta-arr{display:none}
+.test-cta.locked .test-cta-meta-lock{font-size:10.5px;color:var(--text-3);font-weight:500;letter-spacing:0.04em;flex-shrink:0;display:flex;align-items:center;gap:4px}
+.test-cta.locked .test-cta-meta-lock svg{width:11px;height:11px;stroke:currentColor;stroke-width:1.8;fill:none}
 
 /* ============== SCREEN: CASES ============== */
 .cases-filter{display:flex;gap:6px;overflow-x:auto;margin-bottom:18px;scrollbar-width:none;padding:2px 0}
@@ -269,23 +311,44 @@ a{color:inherit;text-decoration:none}
 .case-excerpt{font-size:13.5px;color:var(--text-2);line-height:1.6}
 
 /* ============== SCREEN: WIKI ============== */
-.wiki-section-heading{
-  font-size:10.5px;font-weight:600;letter-spacing:0.16em;
-  color:var(--amber);text-transform:uppercase;
-  margin:22px 0 10px;padding:0 4px;
-  display:flex;align-items:center;gap:10px;
-}
+/* Featured market-signal */
+.market-signal{margin-top:14px;border:none;padding:0;background:transparent;position:relative;z-index:1}
+.ms-rows{display:flex;flex-direction:column;gap:10px}
+.ms-row{display:flex;align-items:center;gap:10px;font-size:13px}
+.ms-row-name{flex:1;color:var(--text-2);font-weight:500}
+.ms-row-bar{width:80px;height:5px;background:var(--surface-2);border-radius:3px;overflow:hidden;display:inline-block}
+.ms-row-bar-fill{height:100%;border-radius:3px;display:block}
+.ms-row-bar-fill.r{background:var(--red)}
+.ms-row-bar-fill.y{background:var(--yellow)}
+.ms-row-bar-fill.g{background:var(--green)}
+.ms-row-val{font-size:12px;color:var(--text-3);font-weight:600;min-width:48px;text-align:right;font-variant-numeric:tabular-nums}
+
+.wiki-section-heading{font-size:10.5px;font-weight:600;letter-spacing:0.16em;color:var(--amber);text-transform:uppercase;margin:22px 0 10px;padding:0 4px;display:flex;align-items:center;gap:10px}
 .wiki-section-heading::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
 .wiki-section-heading:first-child{margin-top:0}
+.wiki-section-heading .cnt{color:var(--text-4);font-weight:500;font-size:10px}
 .wiki-empty{padding:14px;color:var(--text-3);font-size:13px;font-style:italic;background:var(--bg-2);border:1px dashed var(--border);border-radius:var(--rs);margin-bottom:14px}
 
 .wiki-list{}
-.wiki-item{
-  display:flex;align-items:center;gap:14px;
-  background:var(--bg-2);border:1px solid var(--border);
-  border-radius:var(--r);padding:13px 16px;margin-bottom:6px;
-  cursor:pointer;
-}
+/* Niche-list (V17 — list-стиль вместо отдельных карточек) */
+.niche-list{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:14px}
+.niche{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:12px;padding:13px 16px;border-bottom:0.5px solid var(--border-2);cursor:pointer;width:100%;text-align:left;background:transparent;color:inherit;font-family:inherit}
+.niche:last-child{border-bottom:none}
+.niche:active{background:rgba(255,255,255,0.025)}
+.niche-ico{width:36px;height:36px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.niche.ready .niche-ico{background:var(--amber-soft);border-color:var(--amber)}
+.niche-info{display:flex;flex-direction:column;gap:2px;min-width:0}
+.niche-name{font-family:var(--serif);font-weight:500;font-size:15.5px;color:var(--text);letter-spacing:-0.005em}
+.niche-stats{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text-3);font-variant-numeric:tabular-nums;flex-wrap:wrap}
+.niche-stats .sep{color:var(--text-4)}
+.niche-stats .warn{color:var(--red)}
+.niche-stats .ok{color:var(--green)}
+.niche-meta{font-size:10.5px;font-weight:600;color:var(--text-3);letter-spacing:0.04em;white-space:nowrap}
+.niche.ready .niche-meta{color:var(--amber)}
+.niche-arr{color:var(--text-3);font-family:var(--serif);font-style:italic;font-size:18px;font-weight:300}
+
+/* Старые wiki-item стили — оставлены как fallback */
+.wiki-item{display:flex;align-items:center;gap:14px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r);padding:13px 16px;margin-bottom:6px;cursor:pointer}
 .wiki-item:active{background:var(--surface)}
 .wiki-item-icon{flex-shrink:0;width:36px;height:36px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px}
 .wiki-item-info{flex:1;min-width:0}
@@ -312,6 +375,35 @@ a{color:inherit;text-decoration:none}
 }
 .product-cta-primary{background:var(--amber);color:var(--bg);box-shadow:0 4px 18px rgba(232,160,76,0.25)}
 .product-cta-disabled{background:var(--surface);color:var(--text-3);cursor:not-allowed}
+
+/* Trust-strip + prod-preview (V17) */
+.trust-strip{display:flex;align-items:center;gap:10px;background:var(--bg-2);border:1px solid var(--amber-soft);border-radius:var(--r);padding:12px 14px;margin-bottom:18px;font-size:12.5px;color:var(--text-2)}
+.trust-ic{width:28px;height:28px;border-radius:50%;background:var(--amber-soft);color:var(--amber);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.trust-text{flex:1;line-height:1.45}
+.trust-text strong{color:var(--text);font-weight:700;font-variant-numeric:tabular-nums}
+
+.prod-preview{background:var(--bg-3);border:1px dashed var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:14px}
+.prod-preview-lab{font-size:10.5px;font-weight:600;color:var(--text-3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px}
+.prev-traffic{display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap}
+.prev-light{width:18px;height:18px;border-radius:50%;background:var(--surface-2);flex-shrink:0}
+.prev-light.on.r{background:var(--red);box-shadow:0 0 12px rgba(232,84,84,0.6)}
+.prev-light.on.y{background:var(--yellow);box-shadow:0 0 12px rgba(232,200,76,0.6)}
+.prev-light.on.g{background:var(--green);box-shadow:0 0 12px rgba(95,184,124,0.6)}
+.prev-conn{width:14px;height:1.5px;background:var(--text-4);opacity:0.4;flex-shrink:0}
+.prev-verdict{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--yellow);font-weight:500;flex:1;min-width:120px}
+.prev-stat{display:flex;justify-content:space-between;font-size:11.5px;color:var(--text-3);padding-top:8px;border-top:1px solid var(--border-2);font-variant-numeric:tabular-nums;gap:8px}
+.prev-stat strong{color:var(--text);font-family:var(--serif);font-weight:600}
+.prev-scen{display:flex;gap:8px;margin-bottom:10px}
+.prev-scen-cell{flex:1;text-align:center;padding:10px 6px;border-radius:8px;background:var(--surface);border:1px solid var(--border-2)}
+.prev-scen-cell.base{border-color:var(--amber);background:var(--amber-soft)}
+.prev-scen-name{font-size:10px;font-weight:600;color:var(--text-3);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px}
+.prev-scen-val{font-family:var(--serif);font-size:14px;font-weight:600;color:var(--text);letter-spacing:-0.01em;line-height:1.1}
+.prev-scen-cell.base .prev-scen-val{color:var(--amber)}
+.prev-prog-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.prev-prog-lab{font-size:11.5px;color:var(--text-2);font-weight:500}
+.prev-prog-pct{font-family:var(--serif);font-size:14px;font-weight:600;color:var(--amber);letter-spacing:-0.01em}
+.prev-prog-bar{height:4px;background:var(--surface-2);border-radius:2px;overflow:hidden}
+.prev-prog-fill{height:100%;background:var(--amber);border-radius:2px}
 
 .my-reports-section{margin-top:24px;padding-top:18px;border-top:1px dashed var(--border)}
 .my-reports-title{font-family:var(--serif);font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px}
@@ -513,6 +605,29 @@ a{color:inherit;text-decoration:none}
 
 .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
+/* ============== ACTION SHEET — Что может ZEREK (V17) ============== */
+.asheet-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.55);opacity:0;display:none;transition:opacity 0.25s ease;z-index:75;pointer-events:none}
+.asheet-overlay.open{display:block;opacity:1;pointer-events:auto}
+.asheet{position:absolute;bottom:0;left:0;right:0;max-height:75vh;max-height:75dvh;background:var(--bg-2);border-radius:22px 22px 0 0;transform:translateY(100%);transition:transform 0.34s var(--ease);z-index:85;display:none;flex-direction:column;box-shadow:0 -10px 40px rgba(0,0,0,0.5);border-top:1px solid var(--border);pointer-events:none}
+.asheet.open{display:flex;transform:translateY(0);pointer-events:auto}
+.asheet::before{content:'';position:absolute;top:0;left:0;right:0;height:160px;background:radial-gradient(ellipse 80% 100% at 50% 0%,rgba(232,118,62,0.18),transparent 65%);pointer-events:none;border-radius:22px 22px 0 0}
+.asheet-handle{flex-shrink:0;display:flex;justify-content:center;padding:10px 0 4px;position:relative;z-index:1;cursor:pointer}
+.asheet-handle::before{content:'';width:40px;height:4px;background:var(--surface-3);border-radius:2px}
+.asheet-head{flex-shrink:0;padding:8px 22px 16px;border-bottom:0.5px solid var(--border);position:relative;z-index:1}
+.asheet-kicker{font-size:10.5px;font-weight:600;color:var(--amber);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:6px}
+.asheet-title{font-family:var(--serif);font-size:22px;font-weight:600;letter-spacing:-0.018em;color:var(--text);font-variation-settings:"opsz" 22}
+.asheet-title .em{font-style:italic;color:var(--amber);font-weight:500}
+.asheet-body{flex:1;overflow-y:auto;padding:14px 16px 18px;padding-bottom:max(18px,env(safe-area-inset-bottom));position:relative;z-index:1}
+.ai-action{width:100%;display:flex;align-items:center;gap:12px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px;text-align:left;cursor:pointer;transition:background 0.15s,border-color 0.15s;font-family:inherit;color:inherit}
+.ai-action:active{background:var(--surface-2);border-color:var(--surface-3)}
+.ai-action-ic{flex-shrink:0;width:38px;height:38px;border-radius:10px;background:var(--amber-soft);color:var(--amber);display:flex;align-items:center;justify-content:center}
+.ai-action-ic svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none}
+.ai-action-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.ai-action-title{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--text);line-height:1.2;letter-spacing:-0.01em}
+.ai-action-desc{font-size:12px;color:var(--text-3);line-height:1.4}
+.ai-action-arr{flex-shrink:0;color:var(--text-3);font-family:var(--serif);font-style:italic;font-size:18px;font-weight:300}
+.asheet-foot{margin-top:8px;padding:10px 14px;font-size:11.5px;color:var(--text-4);text-align:center;font-style:italic;font-family:var(--serif);line-height:1.5}
+
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
 </style>
 <link rel="manifest" href="../manifest.json">
@@ -578,61 +693,139 @@ a{color:inherit;text-decoration:none}
 <!-- SCREEN: ACADEMY -->
 <div class="screen" id="screen-academy">
   <div class="screen-content" id="academy-main">
-    <div class="screen-title">ZEREK Academy</div>
-    <div class="screen-subtitle">Обучение финграмотности и бизнесу</div>
+    <div class="ph">
+      <div class="ph-left">
+        <div class="ph-kicker">Обучение</div>
+        <h1 class="ph-title">Академия</h1>
+      </div>
+      <div class="ph-stamp">3 трека · 4 заперты<br><span class="v">v.2026.05</span></div>
+    </div>
 
-    <button class="level-card" id="level-fund" type="button">
-      <div class="level-stripe level-stripe-gold"></div>
-      <div class="level-card-body">
-        <div class="level-age">12–15 лет</div>
-        <div class="level-name">Фундамент</div>
-        <div class="level-desc">Финансовая грамотность с нуля</div>
-        <div class="level-meta">23 главы</div>
-        <div class="level-btn">Начать обучение →</div>
-      </div>
-    </button>
-    <button class="test-cta" type="button" onclick="alert('Тесты появятся в следующей итерации')">
-      <div class="test-cta-body">
-        <div class="test-cta-title">Готов проверить себя?</div>
-        <div class="test-cta-meta">3 теста · сдано 0&thinsp;/&thinsp;3</div>
-      </div>
-      <div class="test-cta-arrow">→</div>
-    </button>
+    <div class="posbanner">
+      <div class="posbanner-ic">⌬</div>
+      <div class="posbanner-text">Это <strong>не онлайн-курс</strong>. Это <strong>симулятор бизнеса с уровнями</strong> — каждый новый уровень открывает новые знания и партнёрские бонусы.</div>
+    </div>
 
-    <button class="level-card" id="level-arch" type="button">
-      <div class="level-stripe level-stripe-teal"></div>
-      <div class="level-card-body">
-        <div class="level-age">16+</div>
-        <div class="level-name">Архитектор</div>
-        <div class="level-desc">Стартап-мышление и предпринимательство</div>
-        <div class="level-meta">26 глав</div>
-        <div class="level-btn">Начать обучение →</div>
+    <a class="feat" href="../academy/kz/junior/m1-ch01.html">
+      <div class="feat-head">
+        <span class="feat-badge">Глава дня</span>
+        <span class="feat-meta">Фундамент<span class="dot">·</span>3 мин<span class="dot">·</span>М1 Г1</span>
       </div>
-    </button>
-    <button class="test-cta" type="button" onclick="alert('Тесты появятся в следующей итерации')">
-      <div class="test-cta-body">
-        <div class="test-cta-title">Готов проверить себя?</div>
-        <div class="test-cta-meta">2 теста · сдано 0&thinsp;/&thinsp;2</div>
+      <h2 class="feat-title">Когда денег <span class="em">не было</span> (Бартер)</h2>
+      <p class="feat-quote">«Эпоха, когда за сапоги платили рыбой. Спойлер: это плохо кончилось.»</p>
+      <div class="feat-stat">
+        <span class="feat-stat-num">~6 000</span>
+        <span class="feat-stat-lab">лет назад человечество начало искать «третий предмет» вместо обмена товара на товар</span>
       </div>
-      <div class="test-cta-arrow">→</div>
-    </button>
+      <div class="feat-cta">Читать главу <span class="arr">→</span></div>
+    </a>
 
-    <button class="level-card" id="level-mgmt" type="button">
-      <div class="level-stripe level-stripe-amber"></div>
-      <div class="level-card-body">
-        <div class="level-age">собственники 1–15 человек</div>
-        <div class="level-name">Менеджмент малого бизнеса</div>
-        <div class="level-desc">Для тех, кто уже открыл — и для тех, кто планирует в ближайшие 1–2 года</div>
-        <div class="level-meta">27 глав · 8 уроков</div>
-        <div class="level-btn">Начать обучение →</div>
+    <div class="sd"><span class="sd-label">Открытые треки</span><span class="sd-line"></span><span class="sd-count">3 трека</span></div>
+
+    <div class="track green">
+      <div class="track-row">
+        <div class="track-num">01</div>
+        <div class="track-info"><div class="track-age">12–15 лет</div><div class="track-title">Фундамент</div></div>
       </div>
-    </button>
-    <div class="test-cta test-cta-locked" aria-disabled="true">
-      <div class="test-cta-body">
-        <div class="test-cta-title">Тесты появятся с запуском трека</div>
-        <div class="test-cta-meta">в работе</div>
+      <p class="track-desc">Откуда взялись деньги, бартер, инфляция, кредит. Базовая фин-грамотность для тех, кому её не дали ни в школе, ни в универе.</p>
+      <div class="track-funnel">
+        <div class="tf-head"><span class="tf-label">Воронка вовлечённости</span><span class="tf-meta">23 главы</span></div>
+        <div class="tf-bar"><div class="tf-fill started" style="width:12%"></div><div class="tf-fill finished" style="width:3%"></div></div>
+        <div class="tf-stats"><div class="it"><span class="dt gray"></span><span class="lab">Начали</span><span class="num">12%</span></div><div class="it"><span class="dt amber"></span><span class="lab">Дошли</span><span class="num">3%</span></div><div class="it"><span class="lab">Время</span><span class="num">~4 ч</span></div></div>
       </div>
-      <div class="test-cta-arrow">⋯</div>
+      <button class="btn-primary" id="level-fund" type="button">Начать обучение <span class="arr">→</span></button>
+      <button class="test-cta" type="button" onclick="alert('Тесты появятся в следующей итерации')">
+        <div class="test-cta-ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <div class="test-cta-info"><div class="test-cta-t">Готов проверить себя?</div><div class="test-cta-s">3 теста по модулям Фундамента · 0&thinsp;/&thinsp;3 сдано</div></div>
+        <span class="test-cta-arr">→</span>
+      </button>
+    </div>
+
+    <div class="track">
+      <div class="track-row">
+        <div class="track-num">02</div>
+        <div class="track-info"><div class="track-age">16+ лет</div><div class="track-title">Архитектор</div></div>
+      </div>
+      <p class="track-desc">Стартап-мышление: видеть проблему, проверять гипотезу, считать unit-экономику. Чтобы не сжечь чужие деньги в первой попытке.</p>
+      <div class="track-funnel">
+        <div class="tf-head"><span class="tf-label">Воронка вовлечённости</span><span class="tf-meta">26 глав</span></div>
+        <div class="tf-bar"><div class="tf-fill started" style="width:8%"></div><div class="tf-fill finished" style="width:1%"></div></div>
+        <div class="tf-stats"><div class="it"><span class="dt gray"></span><span class="lab">Начали</span><span class="num">8%</span></div><div class="it"><span class="dt amber"></span><span class="lab">Дошли</span><span class="num">1%</span></div><div class="it"><span class="lab">Время</span><span class="num">~6 ч</span></div></div>
+      </div>
+      <button class="btn-primary" id="level-arch" type="button">Начать обучение <span class="arr">→</span></button>
+      <button class="test-cta" type="button" onclick="alert('Тесты появятся в следующей итерации')">
+        <div class="test-cta-ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <div class="test-cta-info"><div class="test-cta-t">Готов проверить себя?</div><div class="test-cta-s">2 теста по модулям Архитектора · 0&thinsp;/&thinsp;2 сдано</div></div>
+        <span class="test-cta-arr">→</span>
+      </button>
+    </div>
+
+    <div class="track deep">
+      <div class="track-row">
+        <div class="track-num">03</div>
+        <div class="track-info"><div class="track-age">Собственники 1–15 чел.</div><div class="track-title">Менеджмент малого бизнеса</div></div>
+      </div>
+      <p class="track-desc">ФОТ, найм, делегирование, P&amp;L, налоги Казахстана 2026. Для тех, кто уже открыл — и для тех, кто планирует в ближайший год.</p>
+      <div class="track-funnel">
+        <div class="tf-head"><span class="tf-label">Бета-доступ</span><span class="tf-meta">8 уроков · 27 глав</span></div>
+        <div class="tf-bar"><div class="tf-fill finished" style="width:90%"></div></div>
+        <div class="tf-stats"><div class="it"><span class="lab">Готово</span><span class="num">8 / 8 уроков</span></div><div class="it"><span class="lab">Тесты</span><span class="num">июль 2026</span></div></div>
+      </div>
+      <button class="btn-primary" id="level-mgmt" type="button">Начать обучение <span class="arr">→</span></button>
+      <div class="test-cta locked" aria-disabled="true">
+        <div class="test-cta-ic"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
+        <div class="test-cta-info"><div class="test-cta-t">Тесты появятся с запуском</div><div class="test-cta-s">Менеджмент малого бизнеса · июль 2026</div></div>
+      </div>
+    </div>
+
+    <div class="sd"><span class="sd-label">Откроется по уровням</span><span class="sd-line"></span><span class="sd-count">4 трека</span></div>
+
+    <div class="track locked">
+      <div class="track-row">
+        <div class="track-num">04</div>
+        <div class="track-info"><div class="track-age">Маркетинг</div><div class="track-title">Маркетинг малого бизнеса</div></div>
+      </div>
+      <p class="track-desc">Привлечение клиентов через 2ГИС, Instagram, реферальные программы. Без бюджета — для одиночек.</p>
+      <div class="track-lock">
+        <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        Откроется на уровне <span class="lvl">🐟 Щука</span>
+      </div>
+    </div>
+
+    <div class="track locked">
+      <div class="track-row">
+        <div class="track-num">05</div>
+        <div class="track-info"><div class="track-age">Финансы</div><div class="track-title">Финансы предпринимателя</div></div>
+      </div>
+      <p class="track-desc">P&amp;L, кэшфлоу, оборотный капитал. Что считать, чтобы не уйти в минус незаметно.</p>
+      <div class="track-lock">
+        <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        Откроется на уровне <span class="lvl">🐬 Дельфин</span>
+      </div>
+    </div>
+
+    <div class="track locked">
+      <div class="track-row">
+        <div class="track-num">06</div>
+        <div class="track-info"><div class="track-age">Право</div><div class="track-title">Юриспруденция для бизнеса</div></div>
+      </div>
+      <p class="track-desc">Договоры, ИП vs ТОО, трудовое право, налоговая. Минимум, чтобы не сесть и не разориться на штрафах.</p>
+      <div class="track-lock">
+        <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        Откроется на уровне <span class="lvl">🦈 Акула</span>
+      </div>
+    </div>
+
+    <div class="track locked">
+      <div class="track-row">
+        <div class="track-num">07</div>
+        <div class="track-info"><div class="track-age">Локально</div><div class="track-title">Экономика Казахстана</div></div>
+      </div>
+      <p class="track-desc">Налоговые режимы 2026, Самозанятый и УСН, региональные ставки. Только то, что надо знать предпринимателю РК.</p>
+      <div class="track-lock">
+        <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        Откроется на уровне <span class="lvl">🦈 Акула</span>
+      </div>
     </div>
   </div>
 
@@ -661,8 +854,27 @@ a{color:inherit;text-decoration:none}
 <!-- SCREEN: CASES -->
 <div class="screen" id="screen-cases">
   <div class="screen-content" id="cases-main">
-    <div class="screen-title">Реальные кейсы</div>
-    <div class="screen-subtitle">Тут публикуются реальные истории из практики и книг — чтобы вы учились на чужом опыте.</div>
+    <div class="ph">
+      <div class="ph-left">
+        <div class="ph-kicker">Чужие грабли</div>
+        <h1 class="ph-title">Кейсы</h1>
+      </div>
+      <div class="ph-stamp">17 историй<br><span class="v">v.2026.05</span></div>
+    </div>
+
+    <a class="feat" href="../cases/case-001.html">
+      <div class="feat-head">
+        <span class="feat-badge">Кейс недели</span>
+        <span class="feat-meta">Уральск<span class="dot">·</span>2019<span class="dot">·</span>5 мин чтения</span>
+      </div>
+      <h2 class="feat-title">Дорогой <span class="em">диплом</span> ценой в 19 миллионов</h2>
+      <p class="feat-quote">«Я был уверен, что люди оценят вкус и атмосферу — ведь в Алматы же работает.»</p>
+      <div class="feat-stat">
+        <span class="feat-stat-num red">−19 млн ₸</span>
+        <span class="feat-stat-lab">прямые потери. Кофейня закрылась за 8 месяцев. Главная ошибка — игнорирование рынка.</span>
+      </div>
+      <div class="feat-cta">Читать историю <span class="arr">→</span></div>
+    </a>
 
     <div class="cases-filter" id="cases-filter" role="tablist" aria-label="Фильтр кейсов">
       <button type="button" class="cases-filter-pill active" data-filter="all"   onclick="filterCases('all', this)">Все</button>
@@ -696,8 +908,30 @@ a{color:inherit;text-decoration:none}
 <!-- SCREEN: WIKI -->
 <div class="screen" id="screen-wiki">
   <div class="screen-content">
-    <div class="screen-title">Обзоры рынка</div>
-    <div class="screen-subtitle">Бизнес-ниши Казахстана — аналитика и данные</div>
+    <div class="ph">
+      <div class="ph-left">
+        <div class="ph-kicker">База знаний</div>
+        <h1 class="ph-title">Обзоры рынка</h1>
+      </div>
+      <div class="ph-stamp">48 ниш<br><span class="v">v.2026.05</span></div>
+    </div>
+
+    <div class="feat">
+      <div class="feat-head">
+        <span class="feat-badge">Сейчас на рынке</span>
+        <span class="feat-meta">Май 2026<span class="dot">·</span>обновлено сегодня</span>
+      </div>
+      <h2 class="feat-title">Beauty всё ещё <span class="em">перенасыщен</span>. Общепит дышит.</h2>
+      <div class="market-signal">
+        <div class="ms-rows">
+          <div class="ms-row"><span class="ms-row-name">Парикмахерские</span><span class="ms-row-bar"><span class="ms-row-bar-fill r" style="width:96%"></span></span><span class="ms-row-val">2 984</span></div>
+          <div class="ms-row"><span class="ms-row-name">Маникюр</span><span class="ms-row-bar"><span class="ms-row-bar-fill r" style="width:100%"></span></span><span class="ms-row-val">3 803</span></div>
+          <div class="ms-row"><span class="ms-row-name">Кофейни</span><span class="ms-row-bar"><span class="ms-row-bar-fill y" style="width:55%"></span></span><span class="ms-row-val">1 740</span></div>
+          <div class="ms-row"><span class="ms-row-name">Донерные</span><span class="ms-row-bar"><span class="ms-row-bar-fill g" style="width:32%"></span></span><span class="ms-row-val">980</span></div>
+        </div>
+      </div>
+    </div>
+
     <div class="wiki-list" id="wiki-list"></div>
   </div>
 </div>
@@ -705,29 +939,60 @@ a{color:inherit;text-decoration:none}
 <!-- SCREEN: CALC -->
 <div class="screen" id="screen-calc">
   <div class="screen-content" id="calc-main">
-    <div class="screen-title">Расчёты</div>
-    <div class="screen-subtitle">Финансовые инструменты для вашего бизнеса</div>
+    <div class="ph">
+      <div class="ph-left">
+        <div class="ph-kicker">Финансовые инструменты</div>
+        <h1 class="ph-title">Расчёты до старта</h1>
+      </div>
+      <div class="ph-stamp">3 продукта<br><span class="v">v.2026.05</span></div>
+    </div>
+
+    <div class="trust-strip">
+      <div class="trust-ic">✓</div>
+      <div class="trust-text">Лучше <strong>$10</strong> сейчас, чем <strong>10 000 000&thinsp;₸</strong> в трубу. Калибровка по реальным данным 32 ниш Казахстана.</div>
+    </div>
 
     <div class="product-card">
       <div class="product-card-top">
-        <div class="product-icon-wrap"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+        <div class="product-icon-wrap"><svg viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
         <div class="product-info">
           <div class="product-name">Экспресс-оценка</div>
-          <div class="product-desc">Оценим ваш проект с учётом конкретных данных.</div>
+          <div class="product-desc">Зелёный / жёлтый / красный + расчёт под твою нишу и город. Честный вердикт без воды.</div>
         </div>
         <div class="product-price">$10</div>
+      </div>
+      <div class="prod-preview">
+        <div class="prod-preview-lab">Пример выхлопа</div>
+        <div class="prev-traffic">
+          <div class="prev-light r"></div><div class="prev-conn"></div>
+          <div class="prev-light on y"></div><div class="prev-conn"></div>
+          <div class="prev-light g"></div>
+          <div class="prev-verdict">Жёлтый — рискованно, но возможно</div>
+        </div>
+        <div class="prev-stat"><span>Прибыль М6–12</span><strong>+250–500&thinsp;тыс ₸/мес</strong></div>
+        <div class="prev-stat"><span>Окупаемость</span><strong>14–22 мес.</strong></div>
       </div>
       <button class="product-cta product-cta-primary" onclick="openQuickCheckNew()">Пройти экспресс-оценку →</button>
     </div>
 
     <div class="product-card">
       <div class="product-card-top">
-        <div class="product-icon-wrap"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg></div>
+        <div class="product-icon-wrap"><svg viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg></div>
         <div class="product-info">
           <div class="product-name">Финансовая модель</div>
-          <div class="product-desc">Профессиональная расчётная модель на основе многих параметров.</div>
+          <div class="product-desc">Расчёт на 36 месяцев. Три сценария — пессимистичный, реалистичный, оптимистичный.</div>
         </div>
         <div class="product-price">$20</div>
+      </div>
+      <div class="prod-preview">
+        <div class="prod-preview-lab">Пример выхлопа · 3 сценария</div>
+        <div class="prev-scen">
+          <div class="prev-scen-cell"><div class="prev-scen-name">Песс.</div><div class="prev-scen-val">−2.4M</div></div>
+          <div class="prev-scen-cell base"><div class="prev-scen-name">База</div><div class="prev-scen-val">+4.8M</div></div>
+          <div class="prev-scen-cell"><div class="prev-scen-name">Опт.</div><div class="prev-scen-val">+11M</div></div>
+        </div>
+        <div class="prev-stat"><span>Точка безубыточности</span><strong>М7</strong></div>
+        <div class="prev-stat"><span>ROI 36 мес.</span><strong>184%</strong></div>
       </div>
       <button class="product-cta product-cta-primary" onclick="goToChat('Хочу заказать финансовую модель')">Заказать финмодель →</button>
     </div>
@@ -737,11 +1002,16 @@ a{color:inherit;text-decoration:none}
         <div class="product-icon-wrap"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
         <div class="product-info">
           <div class="product-name">BizPlan + питч</div>
-          <div class="product-desc">Заполненный документ для банков, комиссий, инвесторов.</div>
+          <div class="product-desc">Готовый документ для банков, грант-комиссий, инвесторов. Со структурой питч-презентации.</div>
         </div>
         <div class="product-price">$20</div>
       </div>
-      <button class="product-cta product-cta-disabled">Скоро →</button>
+      <div class="prod-preview">
+        <div class="prod-preview-lab">Готовится</div>
+        <div class="prev-prog-row"><div class="prev-prog-lab">Структура шаблона</div><div class="prev-prog-pct">75%</div></div>
+        <div class="prev-prog-bar"><div class="prev-prog-fill" style="width:75%"></div></div>
+      </div>
+      <button class="product-cta product-cta-disabled">Запуск · июль 2026</button>
     </div>
 
     <div class="my-reports-section">
@@ -901,7 +1171,7 @@ a{color:inherit;text-decoration:none}
 
 <!-- AI BAR persistent (V17 — visible когда не в чате) -->
 <aside class="ai-bar" id="ai-bar" aria-label="ZEREK AI">
-  <button class="ai-bar-icon" onclick="openChatOverlay()" aria-label="Что может ZEREK">
+  <button class="ai-bar-icon" onclick="openActionSheet()" aria-label="Что может ZEREK">
     <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
       <circle cx="7" cy="7" r="2"/><circle cx="17" cy="7" r="2"/>
       <circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>
@@ -909,6 +1179,49 @@ a{color:inherit;text-decoration:none}
   </button>
   <button class="ai-bar-pill" onclick="openChatOverlay()">Спросить ZEREK…</button>
 </aside>
+
+<!-- ACTION SHEET — Что может ZEREK -->
+<div class="asheet-overlay" id="asheet-overlay" onclick="closeActionSheet()" aria-hidden="true"></div>
+<div class="asheet" id="asheet" role="dialog" aria-label="Что может ZEREK" aria-modal="true">
+  <div class="asheet-handle" onclick="closeActionSheet()" aria-hidden="true"></div>
+  <div class="asheet-head">
+    <div class="asheet-kicker">Возможности ИИ</div>
+    <div class="asheet-title">Что может <span class="em">ZEREK</span></div>
+  </div>
+  <div class="asheet-body">
+    <button class="ai-action" type="button" onclick="aiAction('section')">
+      <span class="ai-action-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span>
+      <span class="ai-action-info"><span class="ai-action-title">Спросить про этот раздел</span><span class="ai-action-desc">Задай вопрос — ответ с учётом, где ты сейчас</span></span>
+      <span class="ai-action-arr">→</span>
+    </button>
+    <button class="ai-action" type="button" onclick="aiAction('product')">
+      <span class="ai-action-ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h11"/></svg></span>
+      <span class="ai-action-info"><span class="ai-action-title">Помочь выбрать продукт</span><span class="ai-action-desc">Какой инструмент тебе сейчас нужен — оценка, модель или питч</span></span>
+      <span class="ai-action-arr">→</span>
+    </button>
+    <button class="ai-action" type="button" onclick="aiAction('term')">
+      <span class="ai-action-ic"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+      <span class="ai-action-info"><span class="ai-action-title">Объяснить термин</span><span class="ai-action-desc">ФОТ, маржа, LTV, УСН — простыми словами</span></span>
+      <span class="ai-action-arr">→</span>
+    </button>
+    <button class="ai-action" type="button" onclick="aiAction('compare')">
+      <span class="ai-action-ic"><svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M8 21H3v-5"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg></span>
+      <span class="ai-action-info"><span class="ai-action-title">Сравнить две ниши</span><span class="ai-action-desc">Например: «Кофейня vs донерная для Актобе»</span></span>
+      <span class="ai-action-arr">→</span>
+    </button>
+    <button class="ai-action" type="button" onclick="aiAction('case')">
+      <span class="ai-action-ic"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+      <span class="ai-action-info"><span class="ai-action-title">Найти кейс по проблеме</span><span class="ai-action-desc">«У меня уходит мастер с базой» — найдём похожую историю</span></span>
+      <span class="ai-action-arr">→</span>
+    </button>
+    <button class="ai-action" type="button" onclick="aiAction('next')">
+      <span class="ai-action-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88"/></svg></span>
+      <span class="ai-action-info"><span class="ai-action-title">Подсказать следующий шаг</span><span class="ai-action-desc">«Что мне делать дальше в ZEREK?»</span></span>
+      <span class="ai-action-arr">→</span>
+    </button>
+    <div class="asheet-foot">Часть функций пока в разработке — мы готовим контекстную память</div>
+  </div>
+</div>
 
 <!-- CHAT OVERLAY (вынесено из main, чтобы не клипалось) -->
 <div class="chat-overlay-bg" id="chat-overlay-bg" onclick="closeChatOverlay()"></div>
@@ -1407,6 +1720,46 @@ function sendMessageOverlay() {
 }
 
 /* ============================================
+   ACTION SHEET — Что может ZEREK
+   ============================================ */
+function openActionSheet() {
+  var ov = document.getElementById('asheet-overlay');
+  var sh = document.getElementById('asheet');
+  if (!ov || !sh) return;
+  ov.classList.add('open');
+  sh.classList.add('open');
+}
+
+function closeActionSheet() {
+  var ov = document.getElementById('asheet-overlay');
+  var sh = document.getElementById('asheet');
+  if (!ov || !sh) return;
+  ov.classList.remove('open');
+  sh.classList.remove('open');
+}
+
+function aiAction(type) {
+  var presets = {
+    section: 'Расскажи про этот раздел подробнее',
+    product: 'Какой инструмент мне сейчас нужен — оценка, модель или питч?',
+    term:    'Объясни термин: ',
+    compare: 'Сравни две ниши: ',
+    case:    'Найди кейс по моей проблеме: ',
+    next:    'Что мне делать дальше в ZEREK?'
+  };
+  var preset = presets[type] || '';
+  closeActionSheet();
+  setTimeout(function() {
+    openChatOverlay();
+    var input = document.getElementById('chat-input-overlay');
+    if (input) {
+      input.value = preset;
+      setTimeout(function() { input.focus(); }, 280);
+    }
+  }, 180);
+}
+
+/* ============================================
    VOICE INPUT
    ============================================ */
 var recognition = null;
@@ -1658,6 +2011,37 @@ var WIKI_CATEGORIES = [
   ]}
 ];
 
+/* Карта готовности ниш — production_ready по data/kz/niches_registry.yaml + опциональная маржа */
+var WIKI_READY = {
+  'ZEREK_Coffee':       {margin:'15–22%', mc:'ok',   note:'10 городов'},
+  'ZEREK_Doner':        {margin:'18–28%', mc:'ok',   note:'8 городов'},
+  'ZEREK_Manicure':     {margin:'8–25%',  mc:'warn', note:'надомники'},
+  'ZEREK_Barber':       {margin:'10–22%', mc:'ok',   note:'стабильный'},
+  'ZEREK_BrowLash':     {ready:true},
+  'ZEREK_Epilation':    {ready:true},
+  'ZEREK_Massage':      {ready:true},
+  'ZEREK_Confection':   {ready:true},
+  'ZEREK_Pizza':        {ready:true},
+  'ZEREK_Sushi':        {ready:true},
+  'ZEREK_Canteen':      {ready:true},
+  'ZEREK_Fastfood':     {ready:true},
+  'ZEREK_Fruitsvegs':   {ready:true},
+  'ZEREK_Semifood':     {ready:true},
+  'ZEREK_Waterplant':   {ready:true},
+  'ZEREK_Pharmacy':     {ready:true},
+  'ZEREK_Dental':       {ready:true},
+  'ZEREK_Fitness':      {ready:true},
+  'ZEREK_Clean':        {ready:true},
+  'ZEREK_Carwash':      {ready:true},
+  'ZEREK_Autoservice':  {ready:true},
+  'ZEREK_DryClean':     {ready:true},
+  'ZEREK_Tailor':       {ready:true},
+  'ZEREK_Pvz':          {ready:true},
+  'ZEREK_Kindergarten': {ready:true},
+  'ZEREK_Flowers':      {ready:true},
+  'ZEREK_RepairPhone':  {ready:true}
+};
+
 function renderWiki() { renderWikiList(); }
 
 function renderWikiList() {
@@ -1665,16 +2049,31 @@ function renderWikiList() {
   var html = '';
   for (var c = 0; c < WIKI_CATEGORIES.length; c++) {
     var cat = WIKI_CATEGORIES[c];
-    html += '<div class="wiki-section-heading">' + cat.title + '</div>';
+    html += '<div class="wiki-section-heading">' + cat.title + '<span class="cnt">' + cat.niches.length + ' ниш</span></div>';
     if (cat.niches.length === 0) { html += '<div class="wiki-empty">Скоро появятся обзоры</div>'; continue; }
+    html += '<div class="niche-list">';
     for (var i = 0; i < cat.niches.length; i++) {
       var n = cat.niches[i];
-      html += '<div class="wiki-item" onclick="openWiki(\'' + n.file + '\')">' +
-        '<div class="wiki-item-icon">' + n.icon + '</div>' +
-        '<div class="wiki-item-info"><div class="wiki-item-name">' + n.name + '</div></div>' +
-        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>' +
-        '</div>';
+      var meta = WIKI_READY[n.file] || {};
+      var ready = meta.ready || meta.margin;
+      var statsHtml = '';
+      if (meta.margin) {
+        statsHtml = 'Маржа <span class="' + (meta.mc || '') + '">' + meta.margin + '</span>';
+        if (meta.note) statsHtml += '<span class="sep">·</span>' + meta.note;
+      } else if (meta.ready) {
+        statsHtml = 'Калибровка готова';
+      } else {
+        statsHtml = 'Базовый обзор';
+      }
+      var metaLabel = ready ? 'оценка $10' : 'обзор';
+      html += '<button type="button" class="niche' + (ready ? ' ready' : '') + '" onclick="openWiki(\'' + n.file + '\')">' +
+        '<div class="niche-ico">' + n.icon + '</div>' +
+        '<div class="niche-info"><div class="niche-name">' + n.name + '</div><div class="niche-stats">' + statsHtml + '</div></div>' +
+        '<div class="niche-meta">' + metaLabel + '</div>' +
+        '<div class="niche-arr">→</div>' +
+        '</button>';
     }
+    html += '</div>';
   }
   container.innerHTML = html;
 }
