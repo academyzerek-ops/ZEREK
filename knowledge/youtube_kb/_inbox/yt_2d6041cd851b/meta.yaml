@@ -1,0 +1,15 @@
+entry_id: yt_2d6041cd851b
+source_url: https://youtu.be/IPezWxZRMV0
+video_title: 'Анализ бизнеса по производству мясных снеков: компания «Мясное ремесло»'
+primary_topic: _inbox
+completed_at: '2026-05-06T16:38:26.124372+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_2d6041cd851b/briefing.md
+    generated_at: '2026-05-06T16:27:31.484361+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_2d6041cd851b/insight.md
+    generated_at: '2026-05-06T16:28:22.489460+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
