@@ -1,0 +1,16 @@
+entry_id: yt_66b24ff1ec33
+source_url: https://youtu.be/HRLQ_5dTukQ
+video_title: 'Открытие и управление пекарней по франшизе: Аналитический отчет на примере
+  сети «Хлебник»'
+primary_topic: _inbox
+completed_at: '2026-05-06T18:20:57.931170+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_66b24ff1ec33/briefing.md
+    generated_at: '2026-05-06T18:10:11.074900+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_66b24ff1ec33/insight.md
+    generated_at: '2026-05-06T18:10:54.235437+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

@@ -1,0 +1,15 @@
+entry_id: yt_e90aa028c4d2
+source_url: https://youtu.be/rTWaDDBfeYA
+video_title: 'Бизнес-разбор: Стратегия открытия и развития прибыльной СТО в Казахстане'
+primary_topic: _inbox
+completed_at: '2026-05-06T18:32:00.996478+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_e90aa028c4d2/briefing.md
+    generated_at: '2026-05-06T18:21:19.815990+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_e90aa028c4d2/insight.md
+    generated_at: '2026-05-06T18:21:56.965023+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

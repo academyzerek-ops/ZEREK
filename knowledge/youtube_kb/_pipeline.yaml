@@ -1,10 +1,4 @@
 pending:
-- url: https://youtu.be/HRLQ_5dTukQ
-  added_at: '2026-05-04T13:00:02.967800+00:00'
-  source: gdoc
-- url: https://youtu.be/rTWaDDBfeYA
-  added_at: '2026-05-04T13:00:02.967800+00:00'
-  source: gdoc
 - url: https://youtu.be/xt3ISXIeNJw
   added_at: '2026-05-04T13:00:02.967800+00:00'
   source: gdoc
@@ -339,8 +333,8 @@ pending:
   added_at: '2026-05-06T13:00:08.974583+00:00'
   source: gdoc
 in_progress:
-- url: https://youtu.be/HRLQ_5dTukQ
-  started_at: '2026-05-06T18:09:39.001434+00:00'
+- url: https://youtu.be/xt3ISXIeNJw
+  started_at: '2026-05-06T18:32:01.044558+00:00'
 done:
 - url: https://youtu.be/BB39qYx_Fho
   entry_id: yt_b6bc3e98e913
@@ -1161,6 +1155,40 @@ done:
     insight:
       path: knowledge/youtube_kb/_inbox/yt_c46c7e32c61e/insight.md
       generated_at: '2026-05-06T17:59:34.563855+00:00'
+      method: subtitles+gemini
+      subtitle_lang: ru
+- url: https://youtu.be/HRLQ_5dTukQ
+  entry_id: yt_66b24ff1ec33
+  notebook_id: e66a5b3c-912b-4d6c-a2ed-6368b8c714aa
+  completed_at: '2026-05-06T18:20:57.931170+00:00'
+  primary_topic: _inbox
+  target_folder: _inbox
+  classification_confidence: low
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_66b24ff1ec33/briefing.md
+      generated_at: '2026-05-06T18:10:11.074900+00:00'
+      method: notebooklm
+    insight:
+      path: knowledge/youtube_kb/_inbox/yt_66b24ff1ec33/insight.md
+      generated_at: '2026-05-06T18:10:54.235437+00:00'
+      method: subtitles+gemini
+      subtitle_lang: ru
+- url: https://youtu.be/rTWaDDBfeYA
+  entry_id: yt_e90aa028c4d2
+  notebook_id: c12fec6e-91b3-4c4e-a4b6-a84d570819cf
+  completed_at: '2026-05-06T18:32:00.996478+00:00'
+  primary_topic: _inbox
+  target_folder: _inbox
+  classification_confidence: low
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_e90aa028c4d2/briefing.md
+      generated_at: '2026-05-06T18:21:19.815990+00:00'
+      method: notebooklm
+    insight:
+      path: knowledge/youtube_kb/_inbox/yt_e90aa028c4d2/insight.md
+      generated_at: '2026-05-06T18:21:56.965023+00:00'
       method: subtitles+gemini
       subtitle_lang: ru
 failed:
