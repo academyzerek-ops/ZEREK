@@ -1,0 +1,15 @@
+entry_id: yt_793b26843126
+source_url: https://youtu.be/Bjjn8xH82HA
+video_title: 'Бизнес-анализ: Открытие и управление шиномонтажной мастерской'
+primary_topic: _inbox
+completed_at: '2026-05-06T19:57:57.840751+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_793b26843126/briefing.md
+    generated_at: '2026-05-06T19:57:11.446545+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_793b26843126/insight.md
+    generated_at: '2026-05-06T19:57:56.406157+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

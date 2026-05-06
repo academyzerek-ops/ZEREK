@@ -1,0 +1,15 @@
+entry_id: yt_07cd571febd5
+source_url: https://youtu.be/arFnCcY663A
+video_title: 'Бизнес-кейс: Открытие и развитие кабинета массажа'
+primary_topic: _inbox
+completed_at: '2026-05-06T19:59:09.536282+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_07cd571febd5/briefing.md
+    generated_at: '2026-05-06T19:58:30.647834+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_07cd571febd5/insight.md
+    generated_at: '2026-05-06T19:59:07.807816+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

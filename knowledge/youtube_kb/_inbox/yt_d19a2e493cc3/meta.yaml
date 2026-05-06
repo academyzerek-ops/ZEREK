@@ -1,0 +1,15 @@
+entry_id: yt_d19a2e493cc3
+source_url: https://youtu.be/fEbdBWi2TZY
+video_title: 'Брифинг: Анализ бизнес-модели автомойки и детейлинг-студии'
+primary_topic: _inbox
+completed_at: '2026-05-06T20:00:24.097674+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_d19a2e493cc3/briefing.md
+    generated_at: '2026-05-06T19:59:42.180418+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_d19a2e493cc3/insight.md
+    generated_at: '2026-05-06T20:00:22.601803+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

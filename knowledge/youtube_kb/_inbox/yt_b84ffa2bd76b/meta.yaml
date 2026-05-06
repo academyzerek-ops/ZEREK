@@ -1,0 +1,15 @@
+entry_id: yt_b84ffa2bd76b
+source_url: https://youtu.be/A9E7wA7lis8
+video_title: 'Аналитический бриф: Организация и развитие столярного бизнеса'
+primary_topic: _inbox
+completed_at: '2026-05-06T20:02:59.614599+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_b84ffa2bd76b/briefing.md
+    generated_at: '2026-05-06T20:02:08.073968+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_b84ffa2bd76b/insight.md
+    generated_at: '2026-05-06T20:02:57.827543+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

@@ -1,0 +1,15 @@
+entry_id: yt_789331349d63
+source_url: https://youtu.be/1uOsOcfcVcc
+video_title: 'Анализ банного бизнеса в Казахстане: Тренды, Форматы и Инвестиции'
+primary_topic: _inbox
+completed_at: '2026-05-06T20:03:57.264853+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_789331349d63/briefing.md
+    generated_at: '2026-05-06T20:03:21.583064+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_789331349d63/insight.md
+    generated_at: '2026-05-06T20:03:55.809813+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

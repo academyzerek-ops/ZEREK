@@ -1,0 +1,15 @@
+entry_id: yt_b77add5cd8b9
+source_url: https://youtu.be/fX3s3lWpXvY
+video_title: 'Аналитический обзор экосистемы Ruda Games: Индустрия развлечений и бизнес-модель'
+primary_topic: _inbox
+completed_at: '2026-05-06T19:51:22.088752+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_b77add5cd8b9/briefing.md
+    generated_at: '2026-05-06T19:40:37.662197+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_b77add5cd8b9/insight.md
+    generated_at: '2026-05-06T19:41:18.116223+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

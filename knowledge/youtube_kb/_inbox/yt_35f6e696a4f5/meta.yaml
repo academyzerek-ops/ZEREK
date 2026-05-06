@@ -1,0 +1,15 @@
+entry_id: yt_35f6e696a4f5
+source_url: https://youtu.be/CzJPKUDPChs
+video_title: 'Брифинг: Реставрация и ремонт изделий из кожи'
+primary_topic: _inbox
+completed_at: '2026-05-06T20:01:35.132407+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_35f6e696a4f5/briefing.md
+    generated_at: '2026-05-06T20:00:47.127642+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_35f6e696a4f5/insight.md
+    generated_at: '2026-05-06T20:01:33.418491+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
