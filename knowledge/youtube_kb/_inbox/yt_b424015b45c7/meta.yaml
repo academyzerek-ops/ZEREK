@@ -1,0 +1,16 @@
+entry_id: yt_b424015b45c7
+source_url: https://youtu.be/YLFyc00Kg9c
+video_title: 'Аналитический брифинг: Бизнес-модель и операционная деятельность сельского
+  продуктового магазина'
+primary_topic: _inbox
+completed_at: '2026-05-06T17:58:23.782395+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_b424015b45c7/briefing.md
+    generated_at: '2026-05-06T17:47:29.060179+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_b424015b45c7/insight.md
+    generated_at: '2026-05-06T17:48:20.038103+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

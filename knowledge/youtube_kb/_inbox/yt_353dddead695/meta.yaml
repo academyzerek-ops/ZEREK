@@ -1,0 +1,15 @@
+entry_id: yt_353dddead695
+source_url: https://youtu.be/-nasxcrgzog
+video_title: 'Обзор деятельности компании EVOS: Лидер рынка фастфуда Узбекистана'
+primary_topic: _inbox
+completed_at: '2026-05-06T17:46:56.532718+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_353dddead695/briefing.md
+    generated_at: '2026-05-06T17:36:11.998882+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_353dddead695/insight.md
+    generated_at: '2026-05-06T17:36:53.116162+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
