@@ -1,0 +1,16 @@
+entry_id: yt_f99501d4f9e2
+source_url: https://youtu.be/ixfUPjaX0n4
+video_title: Анализ операционной деятельности и стратегии развития сети «Вкусно —
+  и точка»
+primary_topic: _inbox
+completed_at: '2026-05-06T17:35:38.669225+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_f99501d4f9e2/briefing.md
+    generated_at: '2026-05-06T17:24:44.133552+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_f99501d4f9e2/insight.md
+    generated_at: '2026-05-06T17:25:34.717544+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

@@ -1,0 +1,15 @@
+entry_id: yt_19c14ca6ea54
+source_url: https://youtu.be/1Skwr9DNOas
+video_title: 'Отчет по проекту: Запуск кофейни «Meren Coffee» с нуля'
+primary_topic: _inbox
+completed_at: '2026-05-06T17:12:46.634455+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_19c14ca6ea54/briefing.md
+    generated_at: '2026-05-06T17:01:51.004540+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_19c14ca6ea54/insight.md
+    generated_at: '2026-05-06T17:02:42.593408+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

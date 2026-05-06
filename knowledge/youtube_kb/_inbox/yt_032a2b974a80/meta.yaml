@@ -1,0 +1,16 @@
+entry_id: yt_032a2b974a80
+source_url: https://youtu.be/kLfccwUWjnM
+video_title: 'Брифинг: Стратегия и технологии масштабного текстильного производства
+  и индустрии мерча'
+primary_topic: _inbox
+completed_at: '2026-05-06T17:24:10.146462+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_032a2b974a80/briefing.md
+    generated_at: '2026-05-06T17:13:19.413096+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_032a2b974a80/insight.md
+    generated_at: '2026-05-06T17:14:06.631360+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
