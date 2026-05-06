@@ -1,0 +1,16 @@
+entry_id: yt_8de9de58be74
+source_url: https://youtu.be/_VFVAbp4H6E
+video_title: 'Стратегия и операционное управление бизнесом в нише ремонта квартир:
+  Аналитический отчет'
+primary_topic: _inbox
+completed_at: '2026-05-06T19:17:10.595920+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_8de9de58be74/briefing.md
+    generated_at: '2026-05-06T19:06:25.334377+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_8de9de58be74/insight.md
+    generated_at: '2026-05-06T19:07:07.128010+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

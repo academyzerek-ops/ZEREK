@@ -1,13 +1,4 @@
 pending:
-- url: https://youtu.be/_VFVAbp4H6E
-  added_at: '2026-05-04T13:00:02.967800+00:00'
-  source: gdoc
-- url: https://youtu.be/HmWKnccb9To
-  added_at: '2026-05-04T13:00:02.967800+00:00'
-  source: gdoc
-- url: https://youtu.be/TwhabOdJLlU
-  added_at: '2026-05-04T13:00:02.967800+00:00'
-  source: gdoc
 - url: https://youtu.be/fX3s3lWpXvY
   added_at: '2026-05-04T13:00:02.967800+00:00'
   source: gdoc
@@ -324,8 +315,8 @@ pending:
   added_at: '2026-05-06T13:00:08.974583+00:00'
   source: gdoc
 in_progress:
-- url: https://youtu.be/_VFVAbp4H6E
-  started_at: '2026-05-06T19:05:52.025086+00:00'
+- url: https://youtu.be/fX3s3lWpXvY
+  started_at: '2026-05-06T19:40:04.045134+00:00'
 done:
 - url: https://youtu.be/BB39qYx_Fho
   entry_id: yt_b6bc3e98e913
@@ -1231,6 +1222,57 @@ done:
     insight:
       path: knowledge/youtube_kb/_inbox/yt_d590be94b524/insight.md
       generated_at: '2026-05-06T18:55:48.412186+00:00'
+      method: subtitles+gemini
+      subtitle_lang: ru
+- url: https://youtu.be/_VFVAbp4H6E
+  entry_id: yt_8de9de58be74
+  notebook_id: c60a3540-f107-48c8-bff9-1bf772a0784b
+  completed_at: '2026-05-06T19:17:10.595920+00:00'
+  primary_topic: _inbox
+  target_folder: _inbox
+  classification_confidence: low
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_8de9de58be74/briefing.md
+      generated_at: '2026-05-06T19:06:25.334377+00:00'
+      method: notebooklm
+    insight:
+      path: knowledge/youtube_kb/_inbox/yt_8de9de58be74/insight.md
+      generated_at: '2026-05-06T19:07:07.128010+00:00'
+      method: subtitles+gemini
+      subtitle_lang: ru
+- url: https://youtu.be/HmWKnccb9To
+  entry_id: yt_76a500212c78
+  notebook_id: 62d62433-94b5-4543-9b65-1e5700a0ba73
+  completed_at: '2026-05-06T19:28:41.843370+00:00'
+  primary_topic: _inbox
+  target_folder: _inbox
+  classification_confidence: low
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_76a500212c78/briefing.md
+      generated_at: '2026-05-06T19:17:43.354140+00:00'
+      method: notebooklm
+    insight:
+      path: knowledge/youtube_kb/_inbox/yt_76a500212c78/insight.md
+      generated_at: '2026-05-06T19:18:36.985064+00:00'
+      method: subtitles+gemini
+      subtitle_lang: ru
+- url: https://youtu.be/TwhabOdJLlU
+  entry_id: yt_b9f50469e039
+  notebook_id: b376dcbf-15b6-418a-890e-ede2112fc8dc
+  completed_at: '2026-05-06T19:40:04.006062+00:00'
+  primary_topic: _inbox
+  target_folder: _inbox
+  classification_confidence: low
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_b9f50469e039/briefing.md
+      generated_at: '2026-05-06T19:29:15.222209+00:00'
+      method: notebooklm
+    insight:
+      path: knowledge/youtube_kb/_inbox/yt_b9f50469e039/insight.md
+      generated_at: '2026-05-06T19:30:00.175268+00:00'
       method: subtitles+gemini
       subtitle_lang: ru
 failed:
