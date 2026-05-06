@@ -1,0 +1,15 @@
+entry_id: yt_d590be94b524
+source_url: https://youtu.be/FrTgOi7c4k4
+video_title: 'Инструкция по открытию и управлению пекарней: Аналитический отчет'
+primary_topic: _inbox
+completed_at: '2026-05-06T19:05:51.985533+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_d590be94b524/briefing.md
+    generated_at: '2026-05-06T18:54:57.169276+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_d590be94b524/insight.md
+    generated_at: '2026-05-06T18:55:48.412186+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

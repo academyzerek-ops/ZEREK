@@ -1,0 +1,16 @@
+entry_id: yt_cb8dae2b9bee
+source_url: https://youtu.be/xHCLED2Lazg
+video_title: 'Мебельный бизнес: Стратегия запуска, оптимизация производства и управление
+  доходностью'
+primary_topic: general
+completed_at: '2026-05-06T18:54:34.352796+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/general/yt_cb8dae2b9bee/briefing.md
+    generated_at: '2026-05-06T18:43:52.731513+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/general/yt_cb8dae2b9bee/insight.md
+    generated_at: '2026-05-06T18:44:30.983097+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

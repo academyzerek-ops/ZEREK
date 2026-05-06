@@ -1,0 +1,15 @@
+entry_id: yt_e51adb0537b7
+source_url: https://youtu.be/xt3ISXIeNJw
+video_title: 'Руководство по запуску и управлению бизнесом: Шиномонтаж'
+primary_topic: _inbox
+completed_at: '2026-05-06T18:43:19.110433+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_e51adb0537b7/briefing.md
+    generated_at: '2026-05-06T18:32:35.011572+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_e51adb0537b7/insight.md
+    generated_at: '2026-05-06T18:33:15.272650+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
