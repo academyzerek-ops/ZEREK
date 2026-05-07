@@ -1,0 +1,16 @@
+entry_id: yt_f84259c9fcea
+source_url: https://youtu.be/K5Kve4Abjtw
+video_title: 'Анализ бизнеса JB Collection: Производство и розничная торговля изделиями
+  из натуральной кожи'
+primary_topic: _inbox
+completed_at: '2026-05-07T13:41:52.242084+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_f84259c9fcea/briefing.md
+    generated_at: '2026-05-07T13:39:12.222508+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_f84259c9fcea/insight.md
+    generated_at: '2026-05-07T13:39:57.620976+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

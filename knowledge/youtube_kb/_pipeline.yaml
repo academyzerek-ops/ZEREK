@@ -1,19 +1,4 @@
 pending:
-- url: https://youtu.be/tNEDWfKOoKk
-  added_at: '2026-05-04T13:00:02.967800+00:00'
-  source: gdoc
-- url: https://youtu.be/qUlrK8lYLDY
-  added_at: '2026-05-04T13:00:02.967800+00:00'
-  source: gdoc
-- url: https://youtu.be/BYu6QLOvyPc
-  added_at: '2026-05-04T13:00:02.967800+00:00'
-  source: gdoc
-- url: https://youtu.be/iJJSW8po2yk
-  added_at: '2026-05-04T13:00:02.967800+00:00'
-  source: gdoc
-- url: https://youtu.be/K5Kve4Abjtw
-  added_at: '2026-05-04T13:00:02.967800+00:00'
-  source: gdoc
 - url: https://youtu.be/vJJZQLYtUuw
   added_at: '2026-05-04T13:00:02.967800+00:00'
   source: gdoc
@@ -242,9 +227,7 @@ pending:
 - url: https://youtu.be/cZkQX8oQnFI
   added_at: '2026-05-07T13:00:08.080068+00:00'
   source: gdoc
-in_progress:
-- url: https://youtu.be/tNEDWfKOoKk
-  started_at: '2026-05-07T13:28:51.920254+00:00'
+in_progress: []
 done:
 - url: https://youtu.be/BB39qYx_Fho
   entry_id: yt_b6bc3e98e913
@@ -1798,6 +1781,57 @@ done:
       generated_at: '2026-05-07T13:28:50.560792+00:00'
       method: subtitles+gemini
       subtitle_lang: ru
+- url: https://youtu.be/tNEDWfKOoKk
+  entry_id: yt_8ad1fac85e5e
+  notebook_id: 12130f66-f3fe-4cc0-a1ea-acc0f3d9b654
+  completed_at: '2026-05-07T13:36:07.434190+00:00'
+  primary_topic: _inbox
+  target_folder: _inbox
+  classification_confidence: low
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_8ad1fac85e5e/briefing.md
+      generated_at: '2026-05-07T13:29:24.504098+00:00'
+      method: notebooklm
+    insight:
+      path: knowledge/youtube_kb/_inbox/yt_8ad1fac85e5e/insight.md
+      generated_at: '2026-05-07T13:30:06.724969+00:00'
+      method: subtitles+gemini
+      subtitle_lang: ru
+- url: https://youtu.be/iJJSW8po2yk
+  entry_id: yt_a5bc18396713
+  notebook_id: ad66113b-5ed8-41d8-97a0-d1dd2edcca1b
+  completed_at: '2026-05-07T13:38:39.630687+00:00'
+  primary_topic: _inbox
+  target_folder: _inbox
+  classification_confidence: low
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_a5bc18396713/briefing.md
+      generated_at: '2026-05-07T13:36:44.171139+00:00'
+      method: notebooklm
+    insight:
+      path: knowledge/youtube_kb/_inbox/yt_a5bc18396713/insight.md
+      generated_at: '2026-05-07T13:37:25.009817+00:00'
+      method: subtitles+gemini
+      subtitle_lang: ru
+- url: https://youtu.be/K5Kve4Abjtw
+  entry_id: yt_f84259c9fcea
+  notebook_id: 18b7ef6a-566b-4dad-bb6b-3be96c57efd0
+  completed_at: '2026-05-07T13:41:52.242084+00:00'
+  primary_topic: _inbox
+  target_folder: _inbox
+  classification_confidence: low
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_f84259c9fcea/briefing.md
+      generated_at: '2026-05-07T13:39:12.222508+00:00'
+      method: notebooklm
+    insight:
+      path: knowledge/youtube_kb/_inbox/yt_f84259c9fcea/insight.md
+      generated_at: '2026-05-07T13:39:57.620976+00:00'
+      method: subtitles+gemini
+      subtitle_lang: ru
 failed:
 - url: https://youtu.be/KwM9k2InHy4
   entry_id: yt_5ffc3b3d0562
@@ -1815,3 +1849,11 @@ failed:
   entry_id: yt_e277ed5389ba
   failed_at: '2026-05-07T13:27:41.562948+00:00'
   reason: 'briefing: Server error 502 calling LIST_ARTIFACTS: Bad Gateway'
+- url: https://youtu.be/qUlrK8lYLDY
+  entry_id: yt_aad1af0ac4e8
+  failed_at: '2026-05-07T13:36:11.111796+00:00'
+  reason: 'briefing: Server error 502 calling GET_NOTEBOOK: Bad Gateway'
+- url: https://youtu.be/BYu6QLOvyPc
+  entry_id: yt_c8eb26c49965
+  failed_at: '2026-05-07T13:36:11.405218+00:00'
+  reason: 'briefing: Server error 502 calling CREATE_NOTEBOOK: Bad Gateway'
