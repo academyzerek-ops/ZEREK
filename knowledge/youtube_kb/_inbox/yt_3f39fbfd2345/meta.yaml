@@ -1,0 +1,15 @@
+entry_id: yt_3f39fbfd2345
+source_url: https://youtu.be/eUKAP67n0nI
+video_title: 'Аналитический отчет: Модель и запуск ателье как семейного бизнеса'
+primary_topic: _inbox
+completed_at: '2026-05-07T13:04:29.041094+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_3f39fbfd2345/briefing.md
+    generated_at: '2026-05-07T13:03:48.424713+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_3f39fbfd2345/insight.md
+    generated_at: '2026-05-07T13:04:27.599804+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

@@ -1,0 +1,16 @@
+entry_id: yt_64919b3dc561
+source_url: https://youtu.be/9pFrkpVweFw
+video_title: 'Аналитический бриф: Бизнес-модель новогодних поздравлений (Дед Мороз
+  и Снегурочка)'
+primary_topic: _inbox
+completed_at: '2026-05-07T13:24:41.242682+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_64919b3dc561/briefing.md
+    generated_at: '2026-05-07T13:24:02.857458+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_64919b3dc561/insight.md
+    generated_at: '2026-05-07T13:24:39.928830+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

@@ -1,0 +1,15 @@
+entry_id: yt_e353b2f90845
+source_url: https://youtu.be/P4VVB2XOpec
+video_title: 'Аналитический бриф: Модель экспресс-парикмахерских «Быстрые ножницы»'
+primary_topic: _inbox
+completed_at: '2026-05-07T13:13:42.390561+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_e353b2f90845/briefing.md
+    generated_at: '2026-05-07T13:12:56.242229+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_e353b2f90845/insight.md
+    generated_at: '2026-05-07T13:13:40.954800+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

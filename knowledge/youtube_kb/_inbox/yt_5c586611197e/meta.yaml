@@ -1,0 +1,15 @@
+entry_id: yt_5c586611197e
+source_url: https://youtu.be/huK6ro0b8Vs
+video_title: 'Бизнес на химчистке мебели: Стратегия запуска и операционная модель'
+primary_topic: _inbox
+completed_at: '2026-05-07T13:08:43.844405+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_5c586611197e/briefing.md
+    generated_at: '2026-05-07T13:08:13.896577+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_5c586611197e/insight.md
+    generated_at: '2026-05-07T13:08:42.521051+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
