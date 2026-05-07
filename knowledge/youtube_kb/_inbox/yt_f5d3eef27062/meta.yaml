@@ -1,7 +1,6 @@
 entry_id: yt_f5d3eef27062
 source_url: https://youtu.be/VSD2B8LC214
-video_title: 'Аналитический отчет: Построение и масштабирование транспортно-экспедиторской
-  компании (на примере «АС логистика»)'
+video_title: 'Аналитический отчет: Построение и масштабирование транспортно-экспедиторской компании (на примере «АС логистика»)'
 primary_topic: _inbox
 completed_at: '2026-05-06T19:52:39.390010+00:00'
 artifacts:
@@ -14,3 +13,4 @@ artifacts:
     generated_at: '2026-05-06T19:52:37.784244+00:00'
     method: subtitles+gemini
     subtitle_lang: ru
+niche_code: CARGO

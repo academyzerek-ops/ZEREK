@@ -1,7 +1,6 @@
 entry_id: yt_d35ee0be7b55
 source_url: https://youtu.be/vLBxeWiHfGk
-video_title: 'Маркетинговые стратегии и философия бизнеса: Аналитический брифинг по
-  материалам интервью Виктора Шкипина'
+video_title: 'Маркетинговые стратегии и философия бизнеса: Аналитический брифинг по материалам интервью Виктора Шкипина'
 primary_topic: marketing
 completed_at: '2026-05-01T23:29:19.462501+00:00'
 notebook_id: 14ef0d2c-e6e9-426d-aea4-48104f35dddb
@@ -21,3 +20,4 @@ artifacts:
     generated_at: '2026-05-04T08:37:36.722674+00:00'
     method: notebooklm_audio+whisper
     whisper_model: small
+niche_code: null

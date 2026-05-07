@@ -1,7 +1,6 @@
 entry_id: yt_0c1007e0d4f8
 source_url: https://youtu.be/HU3xPXUGj08
-video_title: 'Отчет по открытию и управлению автосервисом: Опыт, аналитика и финансовая
-  модель'
+video_title: 'Отчет по открытию и управлению автосервисом: Опыт, аналитика и финансовая модель'
 primary_topic: _inbox
 completed_at: '2026-05-06T17:01:17.591874+00:00'
 artifacts:
@@ -14,3 +13,4 @@ artifacts:
     generated_at: '2026-05-06T16:51:13.623823+00:00'
     method: subtitles+gemini
     subtitle_lang: ru
+niche_code: AUTOSERVICE

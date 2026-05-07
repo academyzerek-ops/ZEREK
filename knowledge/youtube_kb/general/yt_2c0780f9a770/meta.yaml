@@ -1,7 +1,6 @@
 entry_id: yt_2c0780f9a770
 source_url: https://youtu.be/VWwxG-9YNPo
-video_title: 'Создание автономного и масштабируемого бизнеса: по материалам книги
-  Джона Уорриллоу «Создан для продажи»'
+video_title: 'Создание автономного и масштабируемого бизнеса: по материалам книги Джона Уорриллоу «Создан для продажи»'
 primary_topic: general
 completed_at: '2026-05-02T13:03:18.998654+00:00'
 notebook_id: 8b1e2c1b-037c-4384-835a-5e680cba4ad6
@@ -21,3 +20,4 @@ artifacts:
     generated_at: '2026-05-04T08:49:14.135885+00:00'
     method: notebooklm_audio+whisper
     whisper_model: small
+niche_code: null

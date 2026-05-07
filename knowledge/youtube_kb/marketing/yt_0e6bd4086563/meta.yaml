@@ -1,7 +1,6 @@
 entry_id: yt_0e6bd4086563
 source_url: https://youtu.be/zLjsOmE4VIM
-video_title: 'Маркетинг 2025–2040: Руководство по фундаментальной стратегии и системному
-  подходу'
+video_title: 'Маркетинг 2025–2040: Руководство по фундаментальной стратегии и системному подходу'
 primary_topic: marketing
 completed_at: '2026-05-02T13:01:37.892815+00:00'
 notebook_id: 6a4612a3-7271-4cb2-b884-498bbeeb631e
@@ -21,3 +20,4 @@ artifacts:
     generated_at: '2026-05-04T08:43:07.554496+00:00'
     method: notebooklm_audio+whisper
     whisper_model: small
+niche_code: null

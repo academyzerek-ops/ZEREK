@@ -1,7 +1,6 @@
 entry_id: yt_ec629c6e0bde
 source_url: https://youtu.be/-sG3QDDflOk
-video_title: 'Маркетинг в Казахстане: От управления рекламой к управлению клиентским
-  путем'
+video_title: 'Маркетинг в Казахстане: От управления рекламой к управлению клиентским путем'
 primary_topic: marketing
 completed_at: '2026-05-03T14:42:12.691894+00:00'
 notebook_id: 1ff26359-1dba-40dc-bc96-4780cd9b852c
@@ -21,3 +20,4 @@ artifacts:
     generated_at: '2026-05-04T08:55:38.972717+00:00'
     method: notebooklm_audio+whisper
     whisper_model: small
+niche_code: null

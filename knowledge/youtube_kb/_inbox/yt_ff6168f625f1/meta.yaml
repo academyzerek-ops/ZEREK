@@ -1,7 +1,6 @@
 entry_id: yt_ff6168f625f1
 source_url: https://youtu.be/Bw5W3Oz0J8U
-video_title: 'Аналитический обзор бизнеса: Пекарня ремесленного хлеба «Капрановский
-  хлеб»'
+video_title: 'Аналитический обзор бизнеса: Пекарня ремесленного хлеба «Капрановский хлеб»'
 primary_topic: _inbox
 completed_at: '2026-05-03T14:54:51.206068+00:00'
 notebook_id: 41e890f5-c62c-414b-9abc-1215fd243b4f
@@ -16,3 +15,4 @@ artifacts:
     generated_at: '2026-05-04T08:52:33.648131+00:00'
     method: subtitles+gemini
     subtitle_lang: ru
+niche_code: BAKERY

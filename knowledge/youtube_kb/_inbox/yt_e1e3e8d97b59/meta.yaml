@@ -1,7 +1,6 @@
 entry_id: yt_e1e3e8d97b59
 source_url: https://youtu.be/Gg1tvH0Jx8Q
-video_title: 'Бизнес-модель краткосрочной аренды жилой недвижимости: операционный
-  анализ и стратегии масштабирования'
+video_title: 'Бизнес-модель краткосрочной аренды жилой недвижимости: операционный анализ и стратегии масштабирования'
 primary_topic: _inbox
 completed_at: '2026-05-06T16:49:53.099953+00:00'
 artifacts:
@@ -14,3 +13,4 @@ artifacts:
     generated_at: '2026-05-06T16:39:49.465050+00:00'
     method: subtitles+gemini
     subtitle_lang: ru
+niche_code: null

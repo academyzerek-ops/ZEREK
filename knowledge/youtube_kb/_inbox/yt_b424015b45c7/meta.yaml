@@ -1,7 +1,6 @@
 entry_id: yt_b424015b45c7
 source_url: https://youtu.be/YLFyc00Kg9c
-video_title: 'Аналитический брифинг: Бизнес-модель и операционная деятельность сельского
-  продуктового магазина'
+video_title: 'Аналитический брифинг: Бизнес-модель и операционная деятельность сельского продуктового магазина'
 primary_topic: _inbox
 completed_at: '2026-05-06T17:58:23.782395+00:00'
 artifacts:
@@ -14,3 +13,4 @@ artifacts:
     generated_at: '2026-05-06T17:48:20.038103+00:00'
     method: subtitles+gemini
     subtitle_lang: ru
+niche_code: GROCERY

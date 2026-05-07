@@ -22,5 +22,5 @@ artifacts:
     whisper_model: small
 reclassified_at: '2026-05-02T00:00:00+00:00'
 reclassified_by: noa
-reclassification_note: Был классифицирован как _inbox (low confidence). Вручную переложен
-  в cinema — добавлена ниша CINEMA в реестр niches_registry.yaml.
+reclassification_note: Был классифицирован как _inbox (low confidence). Вручную переложен в cinema — добавлена ниша CINEMA в реестр niches_registry.yaml.
+niche_code: CINEMA
