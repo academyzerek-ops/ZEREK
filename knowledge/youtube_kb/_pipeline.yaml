@@ -1,10 +1,4 @@
 pending:
-- url: https://youtu.be/YPga63B_A_s
-  added_at: '2026-05-05T13:00:09.007769+00:00'
-  source: gdoc
-- url: https://youtu.be/uaEJWuZyCcY
-  added_at: '2026-05-05T13:00:09.007769+00:00'
-  source: gdoc
 - url: https://youtu.be/TX2HJWl-TGw
   added_at: '2026-05-05T13:00:09.007769+00:00'
   source: gdoc
@@ -282,8 +276,8 @@ pending:
   added_at: '2026-05-08T13:00:08.277914+00:00'
   source: gdoc
 in_progress:
-- url: https://youtu.be/YPga63B_A_s
-  started_at: '2026-05-08T15:37:32.884736+00:00'
+- url: https://youtu.be/TX2HJWl-TGw
+  started_at: '2026-05-08T16:00:52.496039+00:00'
 done:
 - url: https://youtu.be/BB39qYx_Fho
   entry_id: yt_b6bc3e98e913
@@ -2126,6 +2120,45 @@ done:
       generated_at: '2026-05-08T15:27:28.814888+00:00'
       method: subtitles+gemini
       subtitle_lang: ru
+- url: https://youtu.be/YPga63B_A_s
+  entry_id: yt_9ba434d78be4
+  notebook_id: fdc8e9a4-ff4f-4682-94d5-5635fa1bf858
+  completed_at: '2026-05-08T15:48:59.475174+00:00'
+  primary_topic: _inbox
+  target_folder: _inbox
+  classification_confidence: low
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_9ba434d78be4/briefing.md
+      generated_at: '2026-05-08T15:38:06.036827+00:00'
+      method: notebooklm
+    insight:
+      path: knowledge/youtube_kb/_inbox/yt_9ba434d78be4/insight.md
+      generated_at: '2026-05-08T15:38:55.958969+00:00'
+      method: subtitles+gemini
+      subtitle_lang: ru
+- url: https://youtu.be/uaEJWuZyCcY
+  entry_id: yt_d1416ac1d00f
+  notebook_id: a83f53cd-bd3d-47fb-9375-8b1de7fc7be5
+  completed_at: '2026-05-08T16:00:52.442538+00:00'
+  primary_topic: management
+  target_folder: management
+  classification_confidence: high
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/management/yt_d1416ac1d00f/briefing.md
+      generated_at: '2026-05-08T15:49:31.963717+00:00'
+      method: notebooklm
+    insight:
+      path: knowledge/youtube_kb/management/yt_d1416ac1d00f/insight.md
+      generated_at: '2026-05-08T15:50:23.286167+00:00'
+      method: subtitles+gemini
+      subtitle_lang: ru
+    audio_transcript:
+      path: knowledge/youtube_kb/management/yt_d1416ac1d00f/audio_transcript.md
+      generated_at: '2026-05-08T16:00:52.437129+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 failed:
 - url: https://youtu.be/KwM9k2InHy4
   entry_id: yt_5ffc3b3d0562

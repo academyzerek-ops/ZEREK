@@ -1,0 +1,21 @@
+entry_id: yt_d1416ac1d00f
+source_url: https://youtu.be/uaEJWuZyCcY
+video_title: 'Брифинг-документ: Стратегии масштабирования и профессионализации клинингового
+  бизнеса'
+primary_topic: management
+completed_at: '2026-05-08T16:00:52.442538+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/management/yt_d1416ac1d00f/briefing.md
+    generated_at: '2026-05-08T15:49:31.963717+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/management/yt_d1416ac1d00f/insight.md
+    generated_at: '2026-05-08T15:50:23.286167+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
+  audio_transcript:
+    path: knowledge/youtube_kb/management/yt_d1416ac1d00f/audio_transcript.md
+    generated_at: '2026-05-08T16:00:52.437129+00:00'
+    method: notebooklm_audio+whisper
+    whisper_model: small
