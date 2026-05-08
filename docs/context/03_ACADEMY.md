@@ -225,7 +225,7 @@
 |---|---|---|
 | Источник правды по архитектуре Академии (этот документ) | `docs/context/03_ACADEMY.md` | Cowork |
 | Рабочая копия для совместной работы Ноа + Адиль | Vault `04_ACADEMY/` | Ноа (web-чат) + Адиль |
-| HTML-уроки (junior, startup, management) | `academy/kz/` | Кот через Claude Code |
+| HTML-уроки (junior, architect, management) | `academy/kz/` | Кот через Claude Code |
 | Drive-черновики модулей (brain dump) | Google Drive (папка Академии) | Адиль |
 
 При расхождениях источник правды — этот файл (`03_ACADEMY.md` в репо).

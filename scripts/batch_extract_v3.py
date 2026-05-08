@@ -417,12 +417,28 @@ async def process_one(client, url: str, args) -> tuple[str, dict]:
     # 2. Переносим в правильный topic folder
     target_folder = topic if topic in VALID_TOPICS else INBOX_TOPIC
     final_dir = KB_DIR / target_folder / entry_id
-    final_dir.parent.mkdir(parents=True, exist_ok=True)
-    if final_dir.exists():
-        # перетираем (повторный запуск)
-        import shutil
-        shutil.rmtree(final_dir)
-    tmp_dir.rename(final_dir)
+
+    try:
+        # Корнер-кейс: low-confidence → topic = INBOX_TOPIC ⇒ tmp_dir == final_dir.
+        # Раньше тут делали shutil.rmtree(final_dir) + rename, что удаляло свежий briefing
+        # и валило весь батч с FileNotFoundError на rename (см. лог 2026-05-05/06).
+        if tmp_dir.resolve() == final_dir.resolve():
+            log.info(f"  topic == _inbox — briefing уже на месте, rename не нужен")
+        else:
+            final_dir.parent.mkdir(parents=True, exist_ok=True)
+            if final_dir.exists():
+                # повторная обработка: перетираем старую папку
+                import shutil
+                shutil.rmtree(final_dir)
+            tmp_dir.rename(final_dir)
+    except Exception as e:
+        log.error(f"  ✗ move {tmp_dir} → {final_dir}: {e}")
+        return "failed", {
+            "url": url, "entry_id": entry_id,
+            "failed_at": now_iso(),
+            "reason": f"move tmp→final: {str(e)[:200]}",
+        }
+
     # Чистим пустую _inbox/<entry_id> папку и пустую _inbox если она опустела
     inbox_root = KB_DIR / "_inbox"
     if inbox_root.exists() and not any(inbox_root.iterdir()):
@@ -521,7 +537,19 @@ async def main_async(args):
             pipeline["in_progress"].append({"url": url, "started_at": now_iso()})
             save_pipeline(pipeline)
 
-            status, payload = await process_one(client, url, args)
+            try:
+                status, payload = await process_one(client, url, args)
+            except Exception as e:
+                # Любая непредвиденная ошибка → видео в failed, цикл продолжается.
+                # Без этого guard'а одна сломанная ссылка валит весь батч (см. лог 2026-05-05/06).
+                log.exception(f"  ✗ непредвиденная ошибка на {url}: {e}")
+                status = "failed"
+                payload = {
+                    "url": url,
+                    "entry_id": url_to_entry_id(url),
+                    "failed_at": now_iso(),
+                    "reason": f"unhandled: {type(e).__name__}: {str(e)[:200]}",
+                }
 
             pipeline["in_progress"] = [x for x in pipeline["in_progress"] if x["url"] != url]
             pipeline["pending"] = [x for x in pipeline["pending"] if x["url"] != url]
