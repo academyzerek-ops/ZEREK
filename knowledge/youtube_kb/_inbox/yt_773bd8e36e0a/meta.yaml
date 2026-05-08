@@ -1,0 +1,15 @@
+entry_id: yt_773bd8e36e0a
+source_url: https://youtu.be/nGX8YWmqW6Y
+video_title: 'Бизнес на блинах: Стратегический анализ и кейс трансформации сети «Блинок»'
+primary_topic: _inbox
+completed_at: '2026-05-08T15:37:32.813672+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_773bd8e36e0a/briefing.md
+    generated_at: '2026-05-08T15:26:48.646992+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_773bd8e36e0a/insight.md
+    generated_at: '2026-05-08T15:27:28.814888+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
