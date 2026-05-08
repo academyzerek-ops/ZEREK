@@ -1,0 +1,15 @@
+entry_id: yt_e55050c3e7aa
+source_url: https://youtu.be/bqHIotxBj9A
+video_title: 'Бизнес на полуфабрикатах: Стратегия запуска и развития домашнего производства'
+primary_topic: _inbox
+completed_at: '2026-05-08T13:22:21.524941+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_e55050c3e7aa/briefing.md
+    generated_at: '2026-05-08T13:11:52.794192+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_e55050c3e7aa/insight.md
+    generated_at: '2026-05-08T13:12:17.996343+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
