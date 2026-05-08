@@ -1,0 +1,20 @@
+# Предпринимательский кодекс РК — метаданные источника
+source:
+  type: official_law
+  country: KZ
+  full_title: "Предпринимательский кодекс РК"
+  law_number: "375-V ЗРК от 29.10.2015"
+  effective_from: "2016-01-01"
+  publisher: ИЗПИ (Институт законодательства и правовой информации РК)
+
+original_file:
+  filename: "Предпринимательский кодекс РК.docx"
+  size_bytes: 289339
+  sha256: "cd15d8ec643220c9360e4650ca9fe0c8cc0c12635dec4507e4ae3f31356348a5"
+
+conversion:
+  tool: pandoc + custom regex transform
+  converted_at: "2026-05-08T18:42:20.867583+00:00"
+  sections: 7
+
+note: "Базовый закон для МСБ — определяет субъекты МСБ, господдержку, разрешения, контроль."

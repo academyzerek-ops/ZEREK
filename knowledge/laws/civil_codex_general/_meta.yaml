@@ -1,0 +1,20 @@
+# Гражданский кодекс РК (Общая часть) — метаданные источника
+source:
+  type: official_law
+  country: KZ
+  full_title: "Гражданский кодекс РК (Общая часть)"
+  law_number: "268-XIII от 27.12.1994"
+  effective_from: "1995-03-01"
+  publisher: ИЗПИ (Институт законодательства и правовой информации РК)
+
+original_file:
+  filename: "Гражданский кодекс РК.docx"
+  size_bytes: 209692
+  sha256: "4417dd708d8a44275e7b4d6ebfe9e3aef27fda9eb2f15ebb2ddb518c3201e743"
+
+conversion:
+  tool: pandoc + custom regex transform
+  converted_at: "2026-05-08T18:42:20.546543+00:00"
+  sections: 3
+
+note: "ВНИМАНИЕ: только Общая часть. Особенная часть — отдельный кодекс №409-I от 01.07.1999."

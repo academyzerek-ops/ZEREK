@@ -1,0 +1,20 @@
+# Кодекс РК об административных правонарушениях — метаданные источника
+source:
+  type: official_law
+  country: KZ
+  full_title: "Кодекс РК об административных правонарушениях"
+  law_number: "235-V ЗРК от 05.07.2014"
+  effective_from: "2015-01-01"
+  publisher: ИЗПИ (Институт законодательства и правовой информации РК)
+
+original_file:
+  filename: "КоАП РК.docx"
+  size_bytes: 567832
+  sha256: "18723a25ed3cb35705448133fb1198de70d18f0b290272bb763a0c86aeedc0df"
+
+conversion:
+  tool: pandoc + custom regex transform
+  converted_at: "2026-05-08T18:42:20.761594+00:00"
+  sections: 5
+
+note: "1071 статья. Раздел 2 содержит составы правонарушений (штрафы) — ключевой для бизнеса."
