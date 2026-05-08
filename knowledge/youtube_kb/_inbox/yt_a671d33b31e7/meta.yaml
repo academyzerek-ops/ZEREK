@@ -1,0 +1,16 @@
+entry_id: yt_a671d33b31e7
+source_url: https://youtu.be/Ic4IQGrVZHo
+video_title: 'Аналитический отчет: Сравнительный анализ моделей классической автомойки
+  и мойки самообслуживания'
+primary_topic: _inbox
+completed_at: '2026-05-08T14:06:43.090991+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_a671d33b31e7/briefing.md
+    generated_at: '2026-05-08T13:56:04.668692+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_a671d33b31e7/insight.md
+    generated_at: '2026-05-08T13:56:39.602182+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

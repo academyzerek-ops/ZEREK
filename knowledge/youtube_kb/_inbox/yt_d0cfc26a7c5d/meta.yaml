@@ -1,0 +1,15 @@
+entry_id: yt_d0cfc26a7c5d
+source_url: https://youtu.be/a0r2awYa8Wk
+video_title: 'Аналитический брифинг: Открытие и управление автосервисом'
+primary_topic: _inbox
+completed_at: '2026-05-08T13:55:31.223980+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_d0cfc26a7c5d/briefing.md
+    generated_at: '2026-05-08T13:44:50.961810+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_d0cfc26a7c5d/insight.md
+    generated_at: '2026-05-08T13:45:27.526675+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

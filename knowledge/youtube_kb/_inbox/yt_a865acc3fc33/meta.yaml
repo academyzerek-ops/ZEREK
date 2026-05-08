@@ -1,0 +1,16 @@
+entry_id: yt_a865acc3fc33
+source_url: https://youtu.be/Tqk9uyvrAgs
+video_title: 'Аналитический отчет по кейсу семейного бизнеса Frozen Good: от производства
+  до пельменной'
+primary_topic: _inbox
+completed_at: '2026-05-08T13:44:28.734645+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_a865acc3fc33/briefing.md
+    generated_at: '2026-05-08T13:33:38.381289+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_a865acc3fc33/insight.md
+    generated_at: '2026-05-08T13:34:25.129090+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
