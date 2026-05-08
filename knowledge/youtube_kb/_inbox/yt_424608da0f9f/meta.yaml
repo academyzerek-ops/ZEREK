@@ -1,0 +1,15 @@
+entry_id: yt_424608da0f9f
+source_url: https://youtu.be/Z2F_-HViC3Y
+video_title: 'Бизнес-анализ: Открытие и управление студией лазерной эпиляции'
+primary_topic: _inbox
+completed_at: '2026-05-08T17:25:40.508111+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_424608da0f9f/briefing.md
+    generated_at: '2026-05-08T17:24:58.390326+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_424608da0f9f/insight.md
+    generated_at: '2026-05-08T17:25:39.141700+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
