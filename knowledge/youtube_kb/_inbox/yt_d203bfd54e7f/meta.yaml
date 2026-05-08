@@ -1,0 +1,15 @@
+entry_id: yt_d203bfd54e7f
+source_url: https://youtu.be/RzVb0T0QYtQ
+video_title: 'Аналитический отчет: Бизнес-модель частного детского сада'
+primary_topic: _inbox
+completed_at: '2026-05-08T14:40:42.319667+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_d203bfd54e7f/briefing.md
+    generated_at: '2026-05-08T14:30:01.896687+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_d203bfd54e7f/insight.md
+    generated_at: '2026-05-08T14:30:38.536542+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
