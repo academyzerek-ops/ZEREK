@@ -8,8 +8,8 @@
 <meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#1A1A22">
 <title>ZEREK — AI-платформа</title>
-<!-- v18.6: refresh hero-фото 35 ниш карусели из обзоров (см. scripts/refresh_niche_thumbs.py) -->
-<link rel="stylesheet" href="../design-system/threads.css?v=18.6">
+<!-- v18.7: убрано приветствие «Салем, бизнесмен» с главной, контент сдвинут вверх -->
+<link rel="stylesheet" href="../design-system/threads.css?v=18.7">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;0,6..72,800;1,6..72,400;1,6..72,500;1,6..72,600&display=swap" rel="stylesheet">
@@ -290,9 +290,7 @@ a{color:inherit;text-decoration:none}
 .prev-prog-fill{height:100%;background:var(--amber);border-radius:2px}
 
 /* ─── HOME (V18) ─── */
-.home-greet{padding:18px 22px 6px}
-.home-hi{font-family:var(--serif);font-size:38px;font-weight:600;letter-spacing:-0.022em;line-height:1.05;color:var(--text);font-variation-settings:"opsz" 38;margin-bottom:4px}
-.home-hi .em{font-style:italic;color:var(--amber);font-weight:500}
+#page-home>.carousel-shelf:first-child{margin-top:8px}
 
 .shelf-head{display:flex;align-items:baseline;justify-content:space-between;padding:0 22px;margin-bottom:12px}
 .shelf-title{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--text);letter-spacing:-0.014em;line-height:1.2;font-variation-settings:"opsz" 21}
@@ -509,10 +507,6 @@ a{color:inherit;text-decoration:none}
 
     <!-- ═══ ГЛАВНАЯ (V18) ═══ -->
     <section class="page active" id="page-home">
-      <div class="home-greet">
-        <h1 class="home-hi">Салем, <span class="em">бизнесмен!</span></h1>
-      </div>
-
       <div class="carousel-shelf">
         <div class="shelf-head">
           <h2 class="shelf-title">Обзоры бизнесов</h2>
