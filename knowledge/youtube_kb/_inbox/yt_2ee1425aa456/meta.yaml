@@ -1,0 +1,16 @@
+entry_id: yt_2ee1425aa456
+source_url: https://youtu.be/St7f6qEMzz8
+video_title: 'Руководство по запуску онлайн-магазина детской одежды: Стратегия и практические
+  рекомендации'
+primary_topic: _inbox
+completed_at: '2026-05-09T14:03:59.239345+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_2ee1425aa456/briefing.md
+    generated_at: '2026-05-09T13:53:15.951175+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_2ee1425aa456/insight.md
+    generated_at: '2026-05-09T13:53:55.178084+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

@@ -1,0 +1,16 @@
+entry_id: yt_95f7ac3e7af0
+source_url: https://youtu.be/GsQ5CLcKpRE
+video_title: 'Аналитический брифинг: Стратегии развития бизнеса в сфере услуг для
+  домашних животных в России'
+primary_topic: _inbox
+completed_at: '2026-05-07T13:18:37.130863+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_95f7ac3e7af0/briefing.md
+    generated_at: '2026-05-07T13:17:58.693669+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_95f7ac3e7af0/insight.md
+    generated_at: '2026-05-07T13:18:35.691379+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

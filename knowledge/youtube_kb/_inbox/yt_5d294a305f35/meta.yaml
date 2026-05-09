@@ -1,0 +1,15 @@
+entry_id: yt_5d294a305f35
+source_url: https://youtu.be/x7ZODiRac2Y
+video_title: 'Аналитический бриф: Обзор и экономика цветочного бизнеса «Вау Букет»'
+primary_topic: _inbox
+completed_at: '2026-05-09T13:52:42.845538+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_5d294a305f35/briefing.md
+    generated_at: '2026-05-09T13:42:07.167502+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_5d294a305f35/insight.md
+    generated_at: '2026-05-09T13:42:38.984532+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

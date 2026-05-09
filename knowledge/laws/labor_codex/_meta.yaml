@@ -1,0 +1,20 @@
+# Трудовой кодекс РК — метаданные источника
+source:
+  type: official_law
+  country: KZ
+  full_title: "Трудовой кодекс РК"
+  law_number: "414-V ЗРК от 23.11.2015"
+  effective_from: "2016-01-01"
+  publisher: ИЗПИ
+
+original_file:
+  filename: "Трудовой кодекс Республики Казахстан.docx"
+  size_bytes: 180137
+  sha256: "58fafcc6c27e6ee44a1a8bf177f4ce9666bb90d8323df93b61abb4d9fee3d431"
+
+conversion:
+  tool: pandoc + custom regex transform
+  converted_at: "2026-05-08T18:48:28.134468+00:00"
+  sections: 5
+
+note: "Первоисточник для трудовых отношений: приём/увольнение, рабочее время, отпуска, охрана труда. Используется для всех ниш с наёмными работниками."

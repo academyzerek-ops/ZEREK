@@ -1,0 +1,15 @@
+entry_id: yt_675c352c07ab
+source_url: https://youtu.be/HJBEdGS-xzQ
+video_title: 'Организация бюджетной свадьбы своими руками: Полный гид от А до Я'
+primary_topic: _inbox
+completed_at: '2026-05-09T13:26:21.608798+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_675c352c07ab/briefing.md
+    generated_at: '2026-05-09T13:25:33.742328+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_675c352c07ab/insight.md
+    generated_at: '2026-05-09T13:26:20.043191+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

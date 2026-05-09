@@ -1,0 +1,15 @@
+entry_id: yt_8ad1fac85e5e
+source_url: https://youtu.be/tNEDWfKOoKk
+video_title: 'Брифинг: Анализ бизнес-модели и стратегии развития бренда «Вспомни»'
+primary_topic: _inbox
+completed_at: '2026-05-07T13:36:07.434190+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_8ad1fac85e5e/briefing.md
+    generated_at: '2026-05-07T13:29:24.504098+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_8ad1fac85e5e/insight.md
+    generated_at: '2026-05-07T13:30:06.724969+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

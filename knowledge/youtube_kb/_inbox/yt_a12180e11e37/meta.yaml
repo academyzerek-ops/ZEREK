@@ -1,0 +1,15 @@
+entry_id: yt_a12180e11e37
+source_url: https://youtu.be/RsOOL4RiRQ8
+video_title: 'Производство полуфабрикатов ручной лепки: Аналитический обзор и бизнес-стратегия'
+primary_topic: _inbox
+completed_at: '2026-05-08T13:33:15.929363+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_a12180e11e37/briefing.md
+    generated_at: '2026-05-08T13:22:43.611843+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_a12180e11e37/insight.md
+    generated_at: '2026-05-08T13:23:12.816689+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

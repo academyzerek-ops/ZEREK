@@ -1,7 +1,6 @@
 entry_id: yt_84a96b615778
 source_url: https://youtu.be/lDpon3PCVAw
-video_title: 'Бизнес на сдаче автомобилей в аренду под такси: Стратегия запуска и
-  управления'
+video_title: 'Бизнес на сдаче автомобилей в аренду под такси: Стратегия запуска и управления'
 primary_topic: _inbox
 completed_at: '2026-05-06T19:55:18.163248+00:00'
 artifacts:
@@ -14,3 +13,4 @@ artifacts:
     generated_at: '2026-05-06T19:55:16.186890+00:00'
     method: subtitles+gemini
     subtitle_lang: ru
+niche_code: null

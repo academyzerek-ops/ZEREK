@@ -1,0 +1,15 @@
+entry_id: yt_1bba05b8064f
+source_url: https://youtu.be/HAVG7XvQDUg
+video_title: Руководство по запуску и управлению бизнесом в сфере пассажирских перевозок
+primary_topic: _inbox
+completed_at: '2026-05-08T16:23:31.440848+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_1bba05b8064f/briefing.md
+    generated_at: '2026-05-08T16:12:44.490850+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_1bba05b8064f/insight.md
+    generated_at: '2026-05-08T16:13:28.011504+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

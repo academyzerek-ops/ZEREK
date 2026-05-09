@@ -1,7 +1,6 @@
 entry_id: yt_c46c7e32c61e
 source_url: https://youtu.be/hiCQjTo3-eY
-video_title: 'Брифинг по компании «Сады Придонья»: Анализ крупнейшего производства
-  соков в России'
+video_title: 'Брифинг по компании «Сады Придонья»: Анализ крупнейшего производства соков в России'
 primary_topic: _inbox
 completed_at: '2026-05-06T18:09:38.962437+00:00'
 artifacts:
@@ -14,3 +13,4 @@ artifacts:
     generated_at: '2026-05-06T17:59:34.563855+00:00'
     method: subtitles+gemini
     subtitle_lang: ru
+niche_code: null

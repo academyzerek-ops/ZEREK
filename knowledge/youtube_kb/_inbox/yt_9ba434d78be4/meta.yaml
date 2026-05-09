@@ -1,0 +1,15 @@
+entry_id: yt_9ba434d78be4
+source_url: https://youtu.be/YPga63B_A_s
+video_title: 'Обзор агрокластера «Фуд Сити»: Структура, экономика и бизнес-модель'
+primary_topic: _inbox
+completed_at: '2026-05-08T15:48:59.475174+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_9ba434d78be4/briefing.md
+    generated_at: '2026-05-08T15:38:06.036827+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_9ba434d78be4/insight.md
+    generated_at: '2026-05-08T15:38:55.958969+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

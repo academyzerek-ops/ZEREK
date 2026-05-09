@@ -1,0 +1,16 @@
+entry_id: yt_4ab19f709d8c
+source_url: https://youtu.be/cuN0bpI_0Qs
+video_title: 'Аналитический отчет: Стратегии успеха и внутренняя кухня агентства детских
+  праздников «Индиго»'
+primary_topic: _inbox
+completed_at: '2026-05-09T13:28:49.439910+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_4ab19f709d8c/briefing.md
+    generated_at: '2026-05-09T13:28:05.989920+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_4ab19f709d8c/insight.md
+    generated_at: '2026-05-09T13:28:47.593200+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

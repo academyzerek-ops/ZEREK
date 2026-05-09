@@ -1,0 +1,15 @@
+entry_id: yt_2564b3a58255
+source_url: https://youtu.be/_V8LE7bQdhI
+video_title: 'Аналитический бриф: Стратегия запуска и развития бренда одежды «SPOSOB»'
+primary_topic: _inbox
+completed_at: '2026-05-07T13:23:39.918274+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_2564b3a58255/briefing.md
+    generated_at: '2026-05-07T13:22:57.086841+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_2564b3a58255/insight.md
+    generated_at: '2026-05-07T13:23:38.480541+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

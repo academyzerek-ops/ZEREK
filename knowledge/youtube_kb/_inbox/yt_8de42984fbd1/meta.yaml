@@ -1,0 +1,15 @@
+entry_id: yt_8de42984fbd1
+source_url: https://youtu.be/RdJawsb-lLU
+video_title: 'Аналитический бриф: Бизнес-модель компьютерного клуба в Казахстане'
+primary_topic: _inbox
+completed_at: '2026-05-09T13:03:51.148903+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_8de42984fbd1/briefing.md
+    generated_at: '2026-05-09T13:03:05.471848+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_8de42984fbd1/insight.md
+    generated_at: '2026-05-09T13:03:49.542656+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

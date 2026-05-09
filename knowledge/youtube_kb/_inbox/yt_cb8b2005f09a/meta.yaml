@@ -1,0 +1,15 @@
+entry_id: yt_cb8b2005f09a
+source_url: https://youtu.be/C11k7Th_vaY
+video_title: 'Становление свадебного бизнеса в 22 года: опыт и стратегии Анны Ланкович'
+primary_topic: _inbox
+completed_at: '2026-05-09T13:21:36.994049+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_cb8b2005f09a/briefing.md
+    generated_at: '2026-05-09T13:21:01.691756+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_cb8b2005f09a/insight.md
+    generated_at: '2026-05-09T13:21:35.577486+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

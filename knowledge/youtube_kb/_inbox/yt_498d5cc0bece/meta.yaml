@@ -1,0 +1,16 @@
+entry_id: yt_498d5cc0bece
+source_url: https://youtu.be/on9G-pILHV4
+video_title: 'Аналитический брифинг: Бизнес-модель и операционные стратегии сети табачных
+  магазинов «Мостабак»'
+primary_topic: _inbox
+completed_at: '2026-05-07T13:12:34.225988+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_498d5cc0bece/briefing.md
+    generated_at: '2026-05-07T13:11:43.309523+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_498d5cc0bece/insight.md
+    generated_at: '2026-05-07T13:12:32.576320+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

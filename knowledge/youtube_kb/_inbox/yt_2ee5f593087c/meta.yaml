@@ -1,7 +1,6 @@
 entry_id: yt_2ee5f593087c
 source_url: https://youtu.be/r__PNjSTQPI
-video_title: 'Брифинг по итогам анализа дискуссии «Ночь факапов»: Стратегии, кризисы
-  и уроки масштабирования бизнеса'
+video_title: 'Брифинг по итогам анализа дискуссии «Ночь факапов»: Стратегии, кризисы и уроки масштабирования бизнеса'
 primary_topic: _inbox
 completed_at: '2026-05-03T14:49:37.553863+00:00'
 notebook_id: 1363d1ba-84e5-4307-b0f5-73b5f321d923
@@ -21,3 +20,4 @@ artifacts:
     generated_at: '2026-05-04T09:01:34.518740+00:00'
     method: notebooklm_audio+whisper
     whisper_model: small
+niche_code: null

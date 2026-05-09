@@ -1,0 +1,15 @@
+entry_id: yt_d96206acb642
+source_url: https://youtu.be/Ohy_fdZ3svE
+video_title: 'Детейлинг как бизнес: Опыт и стратегии развития центра G Mask в Казахстане'
+primary_topic: _inbox
+completed_at: '2026-05-08T17:21:01.905050+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_d96206acb642/briefing.md
+    generated_at: '2026-05-08T17:20:17.558303+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_d96206acb642/insight.md
+    generated_at: '2026-05-08T17:21:00.491106+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

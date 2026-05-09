@@ -1,0 +1,16 @@
+entry_id: yt_a406e472183c
+source_url: https://youtu.be/BxDgXWGf1qU
+video_title: 'Открытие и масштабирование зоомагазина: Стратегический анализ и практический
+  опыт'
+primary_topic: _inbox
+completed_at: '2026-05-07T13:16:08.354284+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_a406e472183c/briefing.md
+    generated_at: '2026-05-07T13:15:22.770761+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_a406e472183c/insight.md
+    generated_at: '2026-05-07T13:16:06.980335+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

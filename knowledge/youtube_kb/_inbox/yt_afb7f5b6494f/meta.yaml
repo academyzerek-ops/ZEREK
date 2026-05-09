@@ -1,0 +1,15 @@
+entry_id: yt_afb7f5b6494f
+source_url: https://youtu.be/0y3JFlZAyhE
+video_title: 'Аналитический брифинг: Бизнес в сфере ремонта смартфонов и электроники'
+primary_topic: _inbox
+completed_at: '2026-05-09T13:11:22.965588+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_afb7f5b6494f/briefing.md
+    generated_at: '2026-05-09T13:10:41.247120+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_afb7f5b6494f/insight.md
+    generated_at: '2026-05-09T13:11:21.401949+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

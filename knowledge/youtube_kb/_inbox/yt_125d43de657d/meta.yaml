@@ -1,0 +1,16 @@
+entry_id: yt_125d43de657d
+source_url: https://youtu.be/aPpmzvJOcak
+video_title: 'Анализ бизнес-кейса: Открытие и эксплуатация компьютерного клуба в малом
+  городе'
+primary_topic: _inbox
+completed_at: '2026-05-09T13:10:08.548429+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_125d43de657d/briefing.md
+    generated_at: '2026-05-09T13:09:30.966303+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_125d43de657d/insight.md
+    generated_at: '2026-05-09T13:10:07.155655+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

@@ -1,0 +1,66 @@
+# Социальный кодекс РК 2023 — метаданные источника
+source:
+  type: official_law
+  country: KZ
+  law_number: "224-VII ЗРК"
+  signed_date: "2023-04-20"
+  effective_from: "2023-07-01"
+  publisher: ИЗПИ (Институт законодательства и правовой информации РК)
+  full_title: "Социальный кодекс Республики Казахстан"
+  constitutional_review: "Постановление Конституционного Суда РК от 08.04.2023 № 8-НП"
+
+original_file:
+  filename: "Социальный кодекс РК №224-VII от 20.04.2023.docx"
+  size_bytes: 267673
+  sha256: "f3c10dcc8ef7cdf5ad565cdea598fc38b1538ab6106de3d799e30736fe872c51"
+
+conversion:
+  tool: pandoc + custom regex transform
+  converted_at: "2026-05-08T18:36:07.242771+00:00"
+  intermediate_lines: 7209
+  sections: 5
+  chapters_count: 23
+  paragraphs_count: 35
+  articles_count: 272
+
+structure:
+  hierarchy:
+    - "# ОБЩАЯ ЧАСТЬ / ОСОБЕННАЯ ЧАСТЬ"
+    - "## РАЗДЕЛ"
+    - "### Глава"
+    - "#### Параграф"
+    - "##### Статья"
+
+usage:
+  - "RAG-источник для AI-консультаций (Mini App)"
+  - "Источник для тестов в Академии (трудовое и социальное право)"
+  - "Сверка ставок ОПВ/ОПВР/СО в data/external/kz_tax_constants_2026.yaml"
+  - "Контроль расчётов в QC и FinModel (соцплатежи в ФОТ)"
+
+key_articles:
+  social_contributions:
+    article: 244
+    section_file: "04_contributions_pension.md"
+    rate_2025_onward: "5%"
+    base: "доход работника - ОПВ - доходы из ст.400 НК"
+  pension_employee:
+    article: 249
+    section_file: "04_contributions_pension.md"
+    rate: "10%"
+    base: "ежемесячный доход, не более 50 МЗП"
+  pension_employer:
+    article: 251
+    section_file: "04_contributions_pension.md"
+    rate_schedule:
+      "2024": "1.5%"
+      "2025": "2.5%"
+      "2026": "3.5%"
+      "2027": "4.5%"
+      "2028": "5.0%"
+    base: "ежемесячный доход работника, от 1 МЗП до 50 МЗП"
+
+notes:
+  - "Заменил Закон РК №105-V от 21.06.2013 «О пенсионном обеспечении» (утратил силу с 01.07.2023)"
+  - "Заменил Закон РК «Об обязательном социальном страховании» от 25.04.2003 №405 (утратил силу с 01.07.2023)"
+  - "Заменил Закон РК «О занятости населения» от 06.04.2016 №482-V (утратил силу с 01.07.2023)"
+  - "Все ставки социальных платежей в SoT yaml ссылаются на статьи этого Кодекса"

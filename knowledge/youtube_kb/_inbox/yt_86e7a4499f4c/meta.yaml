@@ -1,0 +1,16 @@
+entry_id: yt_86e7a4499f4c
+source_url: https://youtu.be/Zb-e3uKue1Y
+video_title: 'История успеха Толкуна Тагаева: От водителя-блогера до руководителя
+  международного таксопарка'
+primary_topic: _inbox
+completed_at: '2026-05-09T13:18:15.362916+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_86e7a4499f4c/briefing.md
+    generated_at: '2026-05-09T13:17:41.359420+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_86e7a4499f4c/insight.md
+    generated_at: '2026-05-09T13:18:13.973719+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

@@ -1,7 +1,6 @@
 entry_id: yt_f67eed97e504
 source_url: https://youtu.be/3dzRjcTFrGY
-video_title: 'Аналитический обзор бизнеса по производству бетона: Экономика, технологии
-  и операционные стратегии'
+video_title: 'Аналитический обзор бизнеса по производству бетона: Экономика, технологии и операционные стратегии'
 primary_topic: _inbox
 completed_at: '2026-05-06T16:26:58.118108+00:00'
 artifacts:
@@ -14,3 +13,4 @@ artifacts:
     generated_at: '2026-05-06T16:16:54.116227+00:00'
     method: subtitles+gemini
     subtitle_lang: ru
+niche_code: null

@@ -1,0 +1,16 @@
+entry_id: yt_9588696c7a6a
+source_url: https://youtu.be/vJJZQLYtUuw
+video_title: 'Брифинг: История развития и стратегии роста производства полуфабрикатов
+  Айдара Саттарова'
+primary_topic: _inbox
+completed_at: '2026-05-08T13:11:31.300930+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_9588696c7a6a/briefing.md
+    generated_at: '2026-05-08T13:00:42.460154+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_9588696c7a6a/insight.md
+    generated_at: '2026-05-08T13:01:27.814640+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

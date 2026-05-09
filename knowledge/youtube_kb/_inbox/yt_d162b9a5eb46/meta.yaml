@@ -1,0 +1,16 @@
+entry_id: yt_d162b9a5eb46
+source_url: https://youtu.be/tsXySo_5KNs
+video_title: 'Аналитический отчет: Создание и управление охранным агентством на примере
+  Mergen Group'
+primary_topic: _inbox
+completed_at: '2026-05-08T17:24:26.119004+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_d162b9a5eb46/briefing.md
+    generated_at: '2026-05-08T17:23:49.844325+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_d162b9a5eb46/insight.md
+    generated_at: '2026-05-08T17:24:24.527372+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

@@ -1,0 +1,16 @@
+entry_id: yt_128a1dbfa5ef
+source_url: https://youtu.be/F_LGHIB29A8
+video_title: 'Аналитический обзор индустрии интимных товаров и экспертного коучинга:
+  Опыт и стратегии Евгения Гришанина'
+primary_topic: _inbox
+completed_at: '2026-05-08T17:22:12.726754+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_128a1dbfa5ef/briefing.md
+    generated_at: '2026-05-08T17:21:35.224862+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_128a1dbfa5ef/insight.md
+    generated_at: '2026-05-08T17:22:11.309862+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

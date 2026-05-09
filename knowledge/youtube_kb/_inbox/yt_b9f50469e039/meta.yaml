@@ -1,7 +1,6 @@
 entry_id: yt_b9f50469e039
 source_url: https://youtu.be/TwhabOdJLlU
-video_title: 'Аналитический обзор бизнес-модели сети «ВЛАВАШЕ»: Трансформация рынка
-  стритфуда'
+video_title: 'Аналитический обзор бизнес-модели сети «ВЛАВАШЕ»: Трансформация рынка стритфуда'
 primary_topic: _inbox
 completed_at: '2026-05-06T19:40:04.006062+00:00'
 artifacts:
@@ -14,3 +13,4 @@ artifacts:
     generated_at: '2026-05-06T19:30:00.175268+00:00'
     method: subtitles+gemini
     subtitle_lang: ru
+niche_code: FASTFOOD

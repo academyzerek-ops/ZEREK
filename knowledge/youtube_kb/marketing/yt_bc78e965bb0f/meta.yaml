@@ -1,7 +1,6 @@
 entry_id: yt_bc78e965bb0f
 source_url: https://youtu.be/2HENa6iieJg
-video_title: 'Локальный маркетинг для малого бизнеса: Стратегии, аналитика и практические
-  инструменты'
+video_title: 'Локальный маркетинг для малого бизнеса: Стратегии, аналитика и практические инструменты'
 primary_topic: marketing
 completed_at: '2026-05-02T13:02:24.397726+00:00'
 notebook_id: f41f3b4d-885b-40e1-945a-a60f3361f582
@@ -21,3 +20,4 @@ artifacts:
     generated_at: '2026-05-04T08:46:31.370205+00:00'
     method: notebooklm_audio+whisper
     whisper_model: small
+niche_code: null

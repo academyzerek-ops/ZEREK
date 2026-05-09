@@ -1,0 +1,16 @@
+entry_id: yt_795af3a87f78
+source_url: https://youtu.be/yl9aX6Z4qAE
+video_title: 'Аналитический брифинг: Индустрия компьютерных клубов на примере кейса
+  Shaker X'
+primary_topic: _inbox
+completed_at: '2026-05-09T13:09:08.819518+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_795af3a87f78/briefing.md
+    generated_at: '2026-05-09T13:08:24.452663+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_795af3a87f78/insight.md
+    generated_at: '2026-05-09T13:09:07.342855+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

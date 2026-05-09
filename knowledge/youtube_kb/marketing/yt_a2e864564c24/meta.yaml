@@ -1,7 +1,6 @@
 entry_id: yt_a2e864564c24
 source_url: https://youtu.be/m9J6rvwsMuw
-video_title: 'Стратегия продвижения 2026: Аналитический отчет по итогам встречи Игоря
-  Манна и Оскара Хартманна'
+video_title: 'Стратегия продвижения 2026: Аналитический отчет по итогам встречи Игоря Манна и Оскара Хартманна'
 primary_topic: marketing
 completed_at: '2026-05-02T13:01:16.432648+00:00'
 notebook_id: 49dae7e2-004d-43e2-895c-08822421dd27
@@ -21,3 +20,4 @@ artifacts:
     generated_at: '2026-05-04T08:41:35.227202+00:00'
     method: notebooklm_audio+whisper
     whisper_model: small
+niche_code: null

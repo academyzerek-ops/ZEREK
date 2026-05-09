@@ -1,0 +1,16 @@
+entry_id: yt_dc870ca05750
+source_url: https://youtu.be/uslf1Fe2f5M
+video_title: Отчет об открытии и результатах первых двух недель работы компьютерного
+  клуба в Санкт-Петербурге
+primary_topic: _inbox
+completed_at: '2026-05-09T13:07:51.382121+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_dc870ca05750/briefing.md
+    generated_at: '2026-05-09T13:07:03.145237+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_dc870ca05750/insight.md
+    generated_at: '2026-05-09T13:07:49.871896+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

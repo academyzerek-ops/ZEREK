@@ -1,0 +1,16 @@
+entry_id: yt_37c3d92b6d5d
+source_url: https://youtu.be/hissBsEM3SM
+video_title: 'Аналитический брифинг: Опыт создания и масштабирования центра детского
+  развития «Brainfit»'
+primary_topic: _inbox
+completed_at: '2026-05-08T14:51:57.685848+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_37c3d92b6d5d/briefing.md
+    generated_at: '2026-05-08T14:41:16.670732+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_37c3d92b6d5d/insight.md
+    generated_at: '2026-05-08T14:41:54.055155+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

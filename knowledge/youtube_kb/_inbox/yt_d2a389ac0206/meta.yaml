@@ -1,0 +1,16 @@
+entry_id: yt_d2a389ac0206
+source_url: https://youtu.be/c2ptd0ItQiU
+video_title: 'Аналитический отчет: Бизнес-модель и операционная деятельность салона
+  красоты в Казахстане (на примере Beauty Life)'
+primary_topic: _inbox
+completed_at: '2026-05-07T13:02:15.649167+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_d2a389ac0206/briefing.md
+    generated_at: '2026-05-07T13:01:40.991521+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_d2a389ac0206/insight.md
+    generated_at: '2026-05-07T13:02:14.195175+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

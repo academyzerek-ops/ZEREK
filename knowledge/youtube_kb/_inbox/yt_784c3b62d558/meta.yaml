@@ -1,0 +1,16 @@
+entry_id: yt_784c3b62d558
+source_url: https://youtu.be/QLQv2Pea7Xo
+video_title: 'Бизнес-брифинг: Выращивание микрозелени как перспективная ниша малого
+  бизнеса'
+primary_topic: _inbox
+completed_at: '2026-05-08T17:23:17.116008+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_784c3b62d558/briefing.md
+    generated_at: '2026-05-08T17:22:34.732919+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_784c3b62d558/insight.md
+    generated_at: '2026-05-08T17:23:15.707006+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

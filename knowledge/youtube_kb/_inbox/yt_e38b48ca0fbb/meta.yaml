@@ -1,7 +1,6 @@
 entry_id: yt_e38b48ca0fbb
 source_url: https://youtu.be/XzuUdilMZUg
-video_title: 'Аналитический обзор бизнеса компании Stax: стратегия, масштабирование
-  и операционная эффективность'
+video_title: 'Аналитический обзор бизнеса компании Stax: стратегия, масштабирование и операционная эффективность'
 primary_topic: _inbox
 completed_at: '2026-05-06T19:54:03.813536+00:00'
 artifacts:
@@ -14,3 +13,4 @@ artifacts:
     generated_at: '2026-05-06T19:54:02.238696+00:00'
     method: subtitles+gemini
     subtitle_lang: ru
+niche_code: null

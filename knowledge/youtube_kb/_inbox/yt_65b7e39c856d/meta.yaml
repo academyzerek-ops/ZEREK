@@ -1,7 +1,6 @@
 entry_id: yt_65b7e39c856d
 source_url: https://youtu.be/YwZ0GYwU_u4
-video_title: 'Аналитический бриф: Бизнес-модель шашлычной и шаурмы (на примере заведения
-  «Вкусный шашлык»)'
+video_title: 'Аналитический бриф: Бизнес-модель шашлычной и шаурмы (на примере заведения «Вкусный шашлык»)'
 primary_topic: _inbox
 completed_at: '2026-05-03T14:55:24.788380+00:00'
 notebook_id: dd2659b4-a34f-4a72-a425-d4190225b2eb
@@ -16,3 +15,4 @@ artifacts:
     generated_at: '2026-05-04T08:53:23.500521+00:00'
     method: subtitles+gemini
     subtitle_lang: ru
+niche_code: FASTFOOD

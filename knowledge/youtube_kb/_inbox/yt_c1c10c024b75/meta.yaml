@@ -1,0 +1,16 @@
+entry_id: yt_c1c10c024b75
+source_url: https://youtu.be/wNsHppCt5mY
+video_title: 'Аналитический брифинг: Состояние и перспективы рынка таксопарков в 2025
+  году'
+primary_topic: _inbox
+completed_at: '2026-05-09T13:19:14.059770+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_c1c10c024b75/briefing.md
+    generated_at: '2026-05-09T13:18:37.507968+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_c1c10c024b75/insight.md
+    generated_at: '2026-05-09T13:19:12.332786+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

@@ -1,0 +1,20 @@
+# Земельный кодекс РК — метаданные источника
+source:
+  type: official_law
+  country: KZ
+  full_title: "Земельный кодекс РК"
+  law_number: "442 от 20.06.2003"
+  effective_from: "2003-06-20"
+  publisher: ИЗПИ
+
+original_file:
+  filename: "земельный кодекс рк.docx"
+  size_bytes: 228000
+  sha256: "cf4e08ba6a97bef389cc82314a651b4add0020a19243c0dddb7a939d5928f054"
+
+conversion:
+  tool: pandoc + custom regex transform
+  converted_at: "2026-05-08T18:48:28.096481+00:00"
+  sections: 5
+
+note: "Земельные отношения, право землепользования, категории земель. Важно для бизнеса с участком: производство, кафе с террасой, склады, КФХ."

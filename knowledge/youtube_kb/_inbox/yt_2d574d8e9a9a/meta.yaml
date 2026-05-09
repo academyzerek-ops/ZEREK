@@ -1,0 +1,16 @@
+entry_id: yt_2d574d8e9a9a
+source_url: https://youtu.be/OTsfbGAKGKs
+video_title: 'Аналитический отчет: Модель и экономика малого копицентра (на примере
+  салона «Принтов»)'
+primary_topic: _inbox
+completed_at: '2026-05-08T14:18:05.648476+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_2d574d8e9a9a/briefing.md
+    generated_at: '2026-05-08T14:07:15.431692+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_2d574d8e9a9a/insight.md
+    generated_at: '2026-05-08T14:08:00.293003+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

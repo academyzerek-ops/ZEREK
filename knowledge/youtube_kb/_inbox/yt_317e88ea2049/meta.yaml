@@ -1,0 +1,16 @@
+entry_id: yt_317e88ea2049
+source_url: https://youtu.be/CFnQ767ZK7c
+video_title: 'Бизнес-брифинг: Рынок и операционная модель моек самообслуживания в
+  Казахстане'
+primary_topic: _inbox
+completed_at: '2026-05-08T17:28:14.023940+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_317e88ea2049/briefing.md
+    generated_at: '2026-05-08T17:27:36.878506+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_317e88ea2049/insight.md
+    generated_at: '2026-05-08T17:28:12.607855+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

@@ -1,0 +1,16 @@
+entry_id: yt_ecbd4c6ff4bf
+source_url: https://youtu.be/a7kIvzl0_3c
+video_title: 'Аналитический брифинг: Бизнес-модель и операционная деятельность тату-студии
+  «Вода»'
+primary_topic: _inbox
+completed_at: '2026-05-09T13:20:29.059046+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_ecbd4c6ff4bf/briefing.md
+    generated_at: '2026-05-09T13:19:47.126050+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_ecbd4c6ff4bf/insight.md
+    generated_at: '2026-05-09T13:20:27.580152+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

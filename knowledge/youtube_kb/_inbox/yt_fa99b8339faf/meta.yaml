@@ -1,0 +1,15 @@
+entry_id: yt_fa99b8339faf
+source_url: https://youtu.be/Px8RQOXGq74
+video_title: 'Брифинг: Открытие и управление блинной «Жёлтая зебра» в Солигорске'
+primary_topic: _inbox
+completed_at: '2026-05-08T16:46:08.881682+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_fa99b8339faf/briefing.md
+    generated_at: '2026-05-08T16:35:19.047246+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_fa99b8339faf/insight.md
+    generated_at: '2026-05-08T16:36:05.455158+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

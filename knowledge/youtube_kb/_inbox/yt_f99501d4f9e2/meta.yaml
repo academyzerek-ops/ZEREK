@@ -1,7 +1,6 @@
 entry_id: yt_f99501d4f9e2
 source_url: https://youtu.be/ixfUPjaX0n4
-video_title: Анализ операционной деятельности и стратегии развития сети «Вкусно —
-  и точка»
+video_title: Анализ операционной деятельности и стратегии развития сети «Вкусно — и точка»
 primary_topic: _inbox
 completed_at: '2026-05-06T17:35:38.669225+00:00'
 artifacts:
@@ -14,3 +13,4 @@ artifacts:
     generated_at: '2026-05-06T17:25:34.717544+00:00'
     method: subtitles+gemini
     subtitle_lang: ru
+niche_code: FASTFOOD

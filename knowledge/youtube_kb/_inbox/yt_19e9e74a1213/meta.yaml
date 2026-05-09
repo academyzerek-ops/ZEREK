@@ -1,0 +1,15 @@
+entry_id: yt_19e9e74a1213
+source_url: https://youtu.be/SKTcd4PnAmw
+video_title: 'Аналитический отчет: Бизнес на выездной химчистке мягкой мебели'
+primary_topic: _inbox
+completed_at: '2026-05-08T17:19:55.418930+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_19e9e74a1213/briefing.md
+    generated_at: '2026-05-08T17:09:12.678720+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_19e9e74a1213/insight.md
+    generated_at: '2026-05-08T17:09:51.778651+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

@@ -1,0 +1,16 @@
+entry_id: yt_626e92aebbcd
+source_url: https://youtu.be/oTGy_rm1Yng
+video_title: 'Аналитический отчет: Бизнес-модель и операционная стратегия компании
+  «Едет Груз»'
+primary_topic: _inbox
+completed_at: '2026-05-08T16:34:56.690180+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_626e92aebbcd/briefing.md
+    generated_at: '2026-05-08T16:24:03.852653+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_626e92aebbcd/insight.md
+    generated_at: '2026-05-08T16:24:52.928925+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

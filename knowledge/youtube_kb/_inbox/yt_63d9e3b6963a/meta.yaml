@@ -1,0 +1,16 @@
+entry_id: yt_63d9e3b6963a
+source_url: https://youtu.be/XV2aSfZ133o
+video_title: 'Бизнес на овощах и фруктах: Анализ модели и стратегии успеха торгового
+  павильона'
+primary_topic: _inbox
+completed_at: '2026-05-08T16:57:36.793994+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_63d9e3b6963a/briefing.md
+    generated_at: '2026-05-08T16:46:41.420890+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_63d9e3b6963a/insight.md
+    generated_at: '2026-05-08T16:47:33.431023+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

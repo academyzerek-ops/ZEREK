@@ -1,0 +1,15 @@
+entry_id: yt_4fbba081f6f4
+source_url: https://youtu.be/TX2HJWl-TGw
+video_title: 'Обзор экосистемы Яндекс Лавки: от производства до «последней мили»'
+primary_topic: _inbox
+completed_at: '2026-05-08T16:12:11.718089+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_4fbba081f6f4/briefing.md
+    generated_at: '2026-05-08T16:01:27.601578+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_4fbba081f6f4/insight.md
+    generated_at: '2026-05-08T16:02:08.207414+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
