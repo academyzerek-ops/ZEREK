@@ -1,0 +1,16 @@
+entry_id: yt_66fcb841b444
+source_url: https://youtu.be/cXtl2klTcjs
+video_title: 'Домашний кондитерский бизнес: Стратегии запуска, масштабирования и операционной
+  эффективности'
+primary_topic: _inbox
+completed_at: '2026-05-09T13:02:41.285841+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_66fcb841b444/briefing.md
+    generated_at: '2026-05-09T13:01:58.108983+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_66fcb841b444/insight.md
+    generated_at: '2026-05-09T13:02:39.869343+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

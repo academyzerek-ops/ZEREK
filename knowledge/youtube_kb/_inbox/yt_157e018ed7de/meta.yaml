@@ -1,0 +1,16 @@
+entry_id: yt_157e018ed7de
+source_url: https://youtu.be/UBv1-HExzMg
+video_title: 'Аналитический бриф: Индустрия наращивания ресниц — от старта с нуля
+  до профессионального успеха'
+primary_topic: _inbox
+completed_at: '2026-05-09T13:01:24.714001+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_157e018ed7de/briefing.md
+    generated_at: '2026-05-09T13:00:32.188633+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_157e018ed7de/insight.md
+    generated_at: '2026-05-09T13:01:23.210018+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

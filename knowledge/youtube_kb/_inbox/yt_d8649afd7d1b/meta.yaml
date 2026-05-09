@@ -1,0 +1,15 @@
+entry_id: yt_d8649afd7d1b
+source_url: https://youtu.be/dzDrc0Z9KiA
+video_title: 'Открытие магазина автозапчастей в Казахстане: Аналитический отчет'
+primary_topic: _inbox
+completed_at: '2026-05-09T13:14:52.642349+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_d8649afd7d1b/briefing.md
+    generated_at: '2026-05-09T13:14:08.518898+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_d8649afd7d1b/insight.md
+    generated_at: '2026-05-09T13:14:51.128178+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

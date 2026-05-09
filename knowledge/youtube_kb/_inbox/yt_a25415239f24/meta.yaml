@@ -1,0 +1,16 @@
+entry_id: yt_a25415239f24
+source_url: https://youtu.be/GWeIp-yd7Ic
+video_title: 'Стратегия открытия компьютерного клуба в 2026 году: Анализ и рекомендации
+  Strike Arena'
+primary_topic: _inbox
+completed_at: '2026-05-09T13:16:00.037513+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_a25415239f24/briefing.md
+    generated_at: '2026-05-09T13:15:25.429259+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_a25415239f24/insight.md
+    generated_at: '2026-05-09T13:15:58.387549+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

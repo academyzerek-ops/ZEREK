@@ -1,0 +1,15 @@
+entry_id: yt_69ecef87a09d
+source_url: https://youtu.be/-S87UQY3sH8
+video_title: Брифинг по запуску и текущему состоянию сервисного центра «Перехват-Сервис»
+primary_topic: _inbox
+completed_at: '2026-05-09T13:12:26.073425+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_69ecef87a09d/briefing.md
+    generated_at: '2026-05-09T13:11:45.424193+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_69ecef87a09d/insight.md
+    generated_at: '2026-05-09T13:12:24.601395+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

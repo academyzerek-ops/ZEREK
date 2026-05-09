@@ -1,0 +1,16 @@
+entry_id: yt_5723e757352e
+source_url: https://youtu.be/lSB7nmyopK8
+video_title: 'Аналитический брифинг: Бизнес-модель и стратегия развития сети сервисных
+  центров Pedant.ru'
+primary_topic: _inbox
+completed_at: '2026-05-09T13:13:46.390255+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_5723e757352e/briefing.md
+    generated_at: '2026-05-09T13:12:58.649563+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_5723e757352e/insight.md
+    generated_at: '2026-05-09T13:13:44.805376+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

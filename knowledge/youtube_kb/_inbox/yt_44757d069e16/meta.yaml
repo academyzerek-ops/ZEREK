@@ -1,0 +1,16 @@
+entry_id: yt_44757d069e16
+source_url: https://youtu.be/N_dx3uTi2a8
+video_title: 'Аналитический обзор индустрии компьютерных клубов: Бизнес-модель сети
+  Colizeum'
+primary_topic: _inbox
+completed_at: '2026-05-09T13:05:04.595283+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_44757d069e16/briefing.md
+    generated_at: '2026-05-09T13:04:24.319196+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_44757d069e16/insight.md
+    generated_at: '2026-05-09T13:05:03.171290+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
