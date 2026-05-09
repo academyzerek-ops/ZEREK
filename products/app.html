@@ -8,8 +8,8 @@
 <meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#1A1A22">
 <title>ZEREK — AI-платформа</title>
-<!-- v18.9: hero Cosmetology → Микронидлинг, hooks-shelf ближе к карусели, старт карусели со 2-й карточки -->
-<link rel="stylesheet" href="../design-system/threads.css?v=18.9">
+<!-- v18.11: фикс старта карусели на 2-й карточке через прямой scrollLeft (вместо scrollIntoView с behavior:instant — он ненадёжен в WebView) -->
+<link rel="stylesheet" href="../design-system/threads.css?v=18.11">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;0,6..72,800;1,6..72,400;1,6..72,500;1,6..72,600&display=swap" rel="stylesheet">
@@ -2070,10 +2070,13 @@ function initHomeCarousels() {
     }
     carousel.addEventListener('scroll', function() { requestAnimationFrame(updateActive); }, {passive:true});
     setTimeout(function() {
-      var mid = cards[1] || cards[0];
-      if (mid) mid.scrollIntoView({behavior:'instant', inline:'center', block:'nearest'});
+      var target = cards[1] || cards[0];
+      if (target) {
+        var center = target.offsetLeft + target.offsetWidth / 2 - carousel.clientWidth / 2;
+        carousel.scrollLeft = Math.max(0, center);
+      }
       updateActive();
-    }, 50);
+    }, 80);
   })();
 
   // Hooks-полка с автопрокруткой каждые 4.5 сек
