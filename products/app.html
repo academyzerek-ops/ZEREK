@@ -8,8 +8,8 @@
 <meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#1A1A22">
 <title>ZEREK — AI-платформа</title>
-<!-- v18.13: лого business ZEREK справа в topbar (белая версия на прозрачном фоне) -->
-<link rel="stylesheet" href="../design-system/threads.css?v=18.13">
+<!-- v18.14: лого ZEREK в центр табов как кнопка goHome, акула переехала в drawer (личный кабинет) справа -->
+<link rel="stylesheet" href="../design-system/threads.css?v=18.14">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;0,6..72,800;1,6..72,400;1,6..72,500;1,6..72,600&display=swap" rel="stylesheet">
@@ -48,11 +48,9 @@ a{color:inherit;text-decoration:none}
 .topbar{position:absolute;top:0;left:0;right:0;height:calc(var(--topbar-h) + env(safe-area-inset-top));display:flex;align-items:center;gap:10px;padding:0 14px;padding-top:env(safe-area-inset-top);background:transparent;z-index:20;pointer-events:none}
 .topbar > *{pointer-events:auto}
 
-.btn-home{flex-shrink:0;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--amber) 0%,var(--amber-deep) 100%);display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.10);box-shadow:0 2px 12px rgba(232,160,76,0.28), inset 0 1px 0 rgba(255,255,255,0.18);position:relative;overflow:hidden;padding:0}
-.btn-home::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,rgba(255,255,255,0.18),transparent);pointer-events:none}
-.btn-home:active{transform:scale(0.94);opacity:0.9}
-.btn-home img{width:30px;height:auto;display:block;position:relative;z-index:1}
-.topbar-logo{flex-shrink:0;height:22px;width:auto;display:block;opacity:0.92;align-self:center}
+.topbar-logo{flex-shrink:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;padding:0 6px;cursor:pointer}
+.topbar-logo img{height:22px;width:auto;display:block;opacity:0.92;transition:opacity 0.15s ease}
+.topbar-logo:active img{opacity:0.6}
 .mascot-shark{transform-origin:center;animation:shark-cycle 21s ease-in-out infinite;will-change:transform}
 @keyframes shark-cycle{
   0%,22%{transform:rotate(0) translateX(0) scale(1)}
@@ -429,6 +427,7 @@ a{color:inherit;text-decoration:none}
 .drawer::before{content:'';position:absolute;top:0;left:0;right:0;height:180px;background:radial-gradient(ellipse 100% 80% at 30% 0%,var(--amber-glow),transparent 60%);pointer-events:none}
 
 .dr-user{position:relative;z-index:1;display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:18px;border-bottom:1px solid var(--border)}
+.dr-shark{width:38px;height:auto;flex-shrink:0;margin-left:auto;opacity:0.85}
 .dr-avatar{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--amber),var(--amber-deep));display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 18px rgba(232,160,76,0.4),inset 0 1px 0 rgba(255,255,255,0.2);position:relative;overflow:hidden}
 .dr-avatar::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,rgba(255,255,255,0.18),transparent)}
 .dr-avatar svg{width:22px;height:22px;color:#1A1A22;position:relative;z-index:1}
@@ -491,17 +490,16 @@ a{color:inherit;text-decoration:none}
 
   <!-- TOP BAR -->
   <header class="topbar">
-    <button class="btn-home" onclick="goHome()" aria-label="На главную">
-      <img src="_assets/shark_only.png" alt="ZEREK" class="mascot-shark" />
-    </button>
     <nav class="tabs" id="tabs">
       <div class="tab-bubble" id="tab-bubble"></div>
       <button class="tab" data-page="academy">Академия</button>
       <button class="tab" data-page="cases">Кейсы</button>
+      <button class="topbar-logo" onclick="goHome()" aria-label="На главную">
+        <img src="_assets/zerek_logo.png" alt="ZEREK" />
+      </button>
       <button class="tab" data-page="wiki">Обзоры</button>
       <button class="tab" data-page="calc">Расчёты</button>
     </nav>
-    <img class="topbar-logo" src="_assets/zerek_logo.png" alt="ZEREK" />
   </header>
 
   <!-- CONTENT -->
@@ -1311,6 +1309,7 @@ a{color:inherit;text-decoration:none}
         <div class="dr-uname" id="cab-name">Гость</div>
         <div class="dr-uhandle" id="cab-handle"></div>
       </div>
+      <img class="dr-shark" src="_assets/shark_only.png" alt="ZEREK" />
     </div>
 
     <!-- ЛЕСТНИЦА УРОВНЕЙ -->
@@ -2208,7 +2207,7 @@ function init() {
   initSwipeGestures();
   // haptic на тапы
   document.addEventListener('click', function(e) {
-    if (!e.target.closest('button, a, .case, .niche, .lvl-card, .sg, .feat, .test-cta, .ai-action, .dr-item, .module-item, .chapter-item, .hero-card, .hook-card, .shelf-link, .btn-home')) return;
+    if (!e.target.closest('button, a, .case, .niche, .lvl-card, .sg, .feat, .test-cta, .ai-action, .dr-item, .module-item, .chapter-item, .hero-card, .hook-card, .shelf-link, .topbar-logo')) return;
     hapticTap();
   }, true);
   // приложение всегда стартует с главной
