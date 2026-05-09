@@ -8,8 +8,8 @@
 <meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#1A1A22">
 <title>ZEREK — AI-платформа</title>
-<!-- v18.4: убраны бейджи Calibrated/Wiki, точки → счётчик «X / 48», маскот-акула с CSS-анимацией -->
-<link rel="stylesheet" href="../design-system/threads.css?v=18.4">
+<!-- v18.5: hero-фото для всех 48 ниш карусели — auto-extract из base64 в обзорах (см. scripts/extract_niche_thumbs.py) -->
+<link rel="stylesheet" href="../design-system/threads.css?v=18.5">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;0,6..72,800;1,6..72,400;1,6..72,500;1,6..72,600&display=swap" rel="stylesheet">
@@ -520,7 +520,7 @@ a{color:inherit;text-decoration:none}
         </div>
         <div class="carousel" id="carousel-niches">
           <article class="hero-card" onclick="openWiki('ZEREK_Autoservice')">
-            <div class="hero-cover cv-niche"><span class="hero-emoji">🔧</span></div>
+            <div class="hero-cover"><img src="_assets/niches/autoservice.jpg" alt="Автосервис" loading="lazy"></div>
             <div class="hero-body">
               <h3 class="hero-title">Автосервис</h3>
               <p class="hero-meta">AUTO</p>
@@ -534,7 +534,7 @@ a{color:inherit;text-decoration:none}
             </div>
           </article>
           <article class="hero-card" onclick="openWiki('ZEREK_Canteen')">
-            <div class="hero-cover cv-niche"><span class="hero-emoji">🍲</span></div>
+            <div class="hero-cover"><img src="_assets/niches/canteen.jpg" alt="Столовая" loading="lazy"></div>
             <div class="hero-body">
               <h3 class="hero-title">Столовая</h3>
               <p class="hero-meta">FOOD</p>
@@ -562,7 +562,7 @@ a{color:inherit;text-decoration:none}
             </div>
           </article>
           <article class="hero-card" onclick="openWiki('ZEREK_Confection')">
-            <div class="hero-cover cv-niche"><span class="hero-emoji">🎂</span></div>
+            <div class="hero-cover"><img src="_assets/niches/confection.jpg" alt="Кондитерская" loading="lazy"></div>
             <div class="hero-body">
               <h3 class="hero-title">Кондитерская</h3>
               <p class="hero-meta">FOOD</p>
@@ -590,7 +590,7 @@ a{color:inherit;text-decoration:none}
             </div>
           </article>
           <article class="hero-card" onclick="openWiki('ZEREK_Epilation')">
-            <div class="hero-cover cv-niche"><span class="hero-emoji">🪒</span></div>
+            <div class="hero-cover"><img src="_assets/niches/epilation.jpg" alt="Эпиляция и депиляция" loading="lazy"></div>
             <div class="hero-body">
               <h3 class="hero-title">Эпиляция и депиляция</h3>
               <p class="hero-meta">BEAUTY</p>
@@ -625,7 +625,7 @@ a{color:inherit;text-decoration:none}
             </div>
           </article>
           <article class="hero-card" onclick="openWiki('ZEREK_Furniture')">
-            <div class="hero-cover cv-niche"><span class="hero-emoji">🪑</span></div>
+            <div class="hero-cover"><img src="_assets/niches/furniture.jpg" alt="Мебельный магазин" loading="lazy"></div>
             <div class="hero-body">
               <h3 class="hero-title">Мебельный магазин</h3>
               <p class="hero-meta">PRODUCTION</p>
@@ -667,14 +667,14 @@ a{color:inherit;text-decoration:none}
             </div>
           </article>
           <article class="hero-card" onclick="openWiki('ZEREK_Pvz')">
-            <div class="hero-cover cv-niche"><span class="hero-emoji">📦</span></div>
+            <div class="hero-cover"><img src="_assets/niches/pvz.jpg" alt="Пункт выдачи заказов" loading="lazy"></div>
             <div class="hero-body">
               <h3 class="hero-title">Пункт выдачи заказов</h3>
               <p class="hero-meta">SERVICES</p>
             </div>
           </article>
           <article class="hero-card" onclick="openWiki('ZEREK_RepairPhone')">
-            <div class="hero-cover cv-niche"><span class="hero-emoji">📱</span></div>
+            <div class="hero-cover"><img src="_assets/niches/repairphone.jpg" alt="Ремонт телефонов" loading="lazy"></div>
             <div class="hero-body">
               <h3 class="hero-title">Ремонт телефонов</h3>
               <p class="hero-meta">SERVICES</p>
@@ -709,14 +709,14 @@ a{color:inherit;text-decoration:none}
             </div>
           </article>
           <article class="hero-card" onclick="openWiki('ZEREK_Accounting')">
-            <div class="hero-cover cv-niche"><span class="hero-emoji">📊</span></div>
+            <div class="hero-cover"><img src="_assets/niches/accounting.jpg" alt="Бухгалтерский аутсорсинг" loading="lazy"></div>
             <div class="hero-body">
               <h3 class="hero-title">Бухгалтерский аутсорсинг</h3>
               <p class="hero-meta">B2B</p>
             </div>
           </article>
           <article class="hero-card" onclick="openWiki('ZEREK_Beauty')">
-            <div class="hero-cover cv-niche"><span class="hero-emoji">💄</span></div>
+            <div class="hero-cover"><img src="_assets/niches/beauty.jpg" alt="Полноформатный салон красоты" loading="lazy"></div>
             <div class="hero-body">
               <h3 class="hero-title">Полноформатный салон красоты</h3>
               <p class="hero-meta">BEAUTY</p>
@@ -737,7 +737,7 @@ a{color:inherit;text-decoration:none}
             </div>
           </article>
           <article class="hero-card" onclick="openWiki('ZEREK_Cargo')">
-            <div class="hero-cover cv-niche"><span class="hero-emoji">🚚</span></div>
+            <div class="hero-cover"><img src="_assets/niches/cargo.jpg" alt="Грузоперевозки" loading="lazy"></div>
             <div class="hero-body">
               <h3 class="hero-title">Грузоперевозки</h3>
               <p class="hero-meta">SERVICES</p>
@@ -751,7 +751,7 @@ a{color:inherit;text-decoration:none}
             </div>
           </article>
           <article class="hero-card" onclick="openWiki('ZEREK_Catering')">
-            <div class="hero-cover cv-niche"><span class="hero-emoji">🍽️</span></div>
+            <div class="hero-cover"><img src="_assets/niches/catering.jpg" alt="Кейтеринг" loading="lazy"></div>
             <div class="hero-body">
               <h3 class="hero-title">Кейтеринг</h3>
               <p class="hero-meta">FOOD</p>
@@ -786,7 +786,7 @@ a{color:inherit;text-decoration:none}
             </div>
           </article>
           <article class="hero-card" onclick="openWiki('ZEREK_Evaluation')">
-            <div class="hero-cover cv-niche"><span class="hero-emoji">📐</span></div>
+            <div class="hero-cover"><img src="_assets/niches/evaluation.jpg" alt="Оценочные услуги" loading="lazy"></div>
             <div class="hero-body">
               <h3 class="hero-title">Оценочные услуги</h3>
               <p class="hero-meta">B2B</p>
@@ -800,28 +800,28 @@ a{color:inherit;text-decoration:none}
             </div>
           </article>
           <article class="hero-card" onclick="openWiki('ZEREK_GroupFitness')">
-            <div class="hero-cover cv-niche"><span class="hero-emoji">🧘</span></div>
+            <div class="hero-cover"><img src="_assets/niches/groupfitness.jpg" alt="Групповой фитнес" loading="lazy"></div>
             <div class="hero-body">
               <h3 class="hero-title">Групповой фитнес</h3>
               <p class="hero-meta">SPORT</p>
             </div>
           </article>
           <article class="hero-card" onclick="openWiki('ZEREK_KidsCenter')">
-            <div class="hero-cover cv-niche"><span class="hero-emoji">🧸</span></div>
+            <div class="hero-cover"><img src="_assets/niches/kidscenter.jpg" alt="Детский центр" loading="lazy"></div>
             <div class="hero-body">
               <h3 class="hero-title">Детский центр</h3>
               <p class="hero-meta">EDUCATION</p>
             </div>
           </article>
           <article class="hero-card" onclick="openWiki('ZEREK_LoftFurniture')">
-            <div class="hero-cover cv-niche"><span class="hero-emoji">🛋️</span></div>
+            <div class="hero-cover"><img src="_assets/niches/loftfurniture.jpg" alt="Производство лофт-мебели" loading="lazy"></div>
             <div class="hero-body">
               <h3 class="hero-title">Производство лофт-мебели</h3>
               <p class="hero-meta">PRODUCTION</p>
             </div>
           </article>
           <article class="hero-card" onclick="openWiki('ZEREK_MartialArts')">
-            <div class="hero-cover cv-niche"><span class="hero-emoji">🥊</span></div>
+            <div class="hero-cover"><img src="_assets/niches/martialarts.webp" alt="Единоборства" loading="lazy"></div>
             <div class="hero-body">
               <h3 class="hero-title">Единоборства</h3>
               <p class="hero-meta">SPORT</p>
@@ -835,7 +835,7 @@ a{color:inherit;text-decoration:none}
             </div>
           </article>
           <article class="hero-card" onclick="openWiki('ZEREK_Notary')">
-            <div class="hero-cover cv-niche"><span class="hero-emoji">📜</span></div>
+            <div class="hero-cover"><img src="_assets/niches/notary.jpg" alt="Нотариальная контора" loading="lazy"></div>
             <div class="hero-body">
               <h3 class="hero-title">Нотариальная контора</h3>
               <p class="hero-meta">B2B</p>
@@ -849,7 +849,7 @@ a{color:inherit;text-decoration:none}
             </div>
           </article>
           <article class="hero-card" onclick="openWiki('ZEREK_Realtor')">
-            <div class="hero-cover cv-niche"><span class="hero-emoji">🏠</span></div>
+            <div class="hero-cover"><img src="_assets/niches/realtor.jpg" alt="Риелторское агентство" loading="lazy"></div>
             <div class="hero-body">
               <h3 class="hero-title">Риелторское агентство</h3>
               <p class="hero-meta">B2B</p>
