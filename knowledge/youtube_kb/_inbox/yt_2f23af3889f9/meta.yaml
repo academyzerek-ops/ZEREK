@@ -1,0 +1,15 @@
+entry_id: yt_2f23af3889f9
+source_url: https://youtu.be/Fr2hhfQgQfA
+video_title: 'Индустрия организации мероприятий: Анализ бизнеса и практический опыт'
+primary_topic: _inbox
+completed_at: '2026-05-09T13:23:49.786218+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_2f23af3889f9/briefing.md
+    generated_at: '2026-05-09T13:23:19.598874+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_2f23af3889f9/insight.md
+    generated_at: '2026-05-09T13:23:48.373283+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

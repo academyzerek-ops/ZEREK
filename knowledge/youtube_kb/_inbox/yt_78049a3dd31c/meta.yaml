@@ -1,0 +1,21 @@
+entry_id: yt_78049a3dd31c
+source_url: https://youtu.be/BlD1WxhYGPk
+video_title: 'Анализ бизнес-модели в сфере детских праздников: от стратегии запуска
+  до масштабирования'
+primary_topic: _inbox
+completed_at: '2026-05-09T13:41:44.221255+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_78049a3dd31c/briefing.md
+    generated_at: '2026-05-09T13:30:35.217756+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_78049a3dd31c/insight.md
+    generated_at: '2026-05-09T13:31:10.999245+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
+  audio_transcript:
+    path: knowledge/youtube_kb/_inbox/yt_78049a3dd31c/audio_transcript.md
+    generated_at: '2026-05-09T13:41:44.218657+00:00'
+    method: notebooklm_audio+whisper
+    whisper_model: small

@@ -1,0 +1,15 @@
+entry_id: yt_9b4565ab41bb
+source_url: https://youtu.be/ZCi6fW6tbf0
+video_title: 'Анализ бизнеса детских праздников: Кейс сети лофтов «Чудо чердачок»'
+primary_topic: _inbox
+completed_at: '2026-05-09T13:27:32.905695+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_9b4565ab41bb/briefing.md
+    generated_at: '2026-05-09T13:26:54.752672+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_9b4565ab41bb/insight.md
+    generated_at: '2026-05-09T13:27:31.512247+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

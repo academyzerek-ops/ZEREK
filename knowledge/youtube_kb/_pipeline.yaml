@@ -1,34 +1,4 @@
 pending:
-- url: https://youtu.be/a7kIvzl0_3c
-  added_at: '2026-05-06T13:00:08.974583+00:00'
-  source: gdoc
-- url: https://youtu.be/C11k7Th_vaY
-  added_at: '2026-05-06T13:00:08.974583+00:00'
-  source: gdoc
-- url: https://youtu.be/LMuxwRAMiJk
-  added_at: '2026-05-06T13:00:08.974583+00:00'
-  source: gdoc
-- url: https://youtu.be/Fr2hhfQgQfA
-  added_at: '2026-05-06T13:00:08.974583+00:00'
-  source: gdoc
-- url: https://youtu.be/jdCIpr-BlQo
-  added_at: '2026-05-06T13:00:08.974583+00:00'
-  source: gdoc
-- url: https://youtu.be/HJBEdGS-xzQ
-  added_at: '2026-05-06T13:00:08.974583+00:00'
-  source: gdoc
-- url: https://youtu.be/ZCi6fW6tbf0
-  added_at: '2026-05-06T13:00:08.974583+00:00'
-  source: gdoc
-- url: https://youtu.be/cuN0bpI_0Qs
-  added_at: '2026-05-06T13:00:08.974583+00:00'
-  source: gdoc
-- url: https://youtu.be/igMQXAs6zm4
-  added_at: '2026-05-06T13:00:08.974583+00:00'
-  source: gdoc
-- url: https://youtu.be/BlD1WxhYGPk
-  added_at: '2026-05-06T13:00:08.974583+00:00'
-  source: gdoc
 - url: https://youtu.be/x7ZODiRac2Y
   added_at: '2026-05-06T13:00:08.974583+00:00'
   source: gdoc
@@ -360,8 +330,8 @@ pending:
   added_at: '2026-05-09T13:00:08.282414+00:00'
   source: gdoc
 in_progress:
-- url: https://youtu.be/a7kIvzl0_3c
-  started_at: '2026-05-09T13:19:14.131335+00:00'
+- url: https://youtu.be/x7ZODiRac2Y
+  started_at: '2026-05-09T13:41:44.275057+00:00'
 done:
 - url: https://youtu.be/BB39qYx_Fho
   entry_id: yt_b6bc3e98e913
@@ -2753,6 +2723,181 @@ done:
       generated_at: '2026-05-09T13:19:12.332786+00:00'
       method: subtitles+gemini
       subtitle_lang: ru
+- url: https://youtu.be/a7kIvzl0_3c
+  entry_id: yt_ecbd4c6ff4bf
+  notebook_id: cab95b69-1dba-430b-af46-6bb5854787d8
+  completed_at: '2026-05-09T13:20:29.059046+00:00'
+  primary_topic: _inbox
+  target_folder: _inbox
+  classification_confidence: low
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_ecbd4c6ff4bf/briefing.md
+      generated_at: '2026-05-09T13:19:47.126050+00:00'
+      method: notebooklm
+    insight:
+      path: knowledge/youtube_kb/_inbox/yt_ecbd4c6ff4bf/insight.md
+      generated_at: '2026-05-09T13:20:27.580152+00:00'
+      method: subtitles+gemini
+      subtitle_lang: ru
+- url: https://youtu.be/C11k7Th_vaY
+  entry_id: yt_cb8b2005f09a
+  notebook_id: 566190b4-0b74-4331-b703-c189a80f7c9f
+  completed_at: '2026-05-09T13:21:36.994049+00:00'
+  primary_topic: _inbox
+  target_folder: _inbox
+  classification_confidence: low
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_cb8b2005f09a/briefing.md
+      generated_at: '2026-05-09T13:21:01.691756+00:00'
+      method: notebooklm
+    insight:
+      path: knowledge/youtube_kb/_inbox/yt_cb8b2005f09a/insight.md
+      generated_at: '2026-05-09T13:21:35.577486+00:00'
+      method: subtitles+gemini
+      subtitle_lang: ru
+- url: https://youtu.be/LMuxwRAMiJk
+  entry_id: yt_992e47d4199a
+  notebook_id: 750d36c6-08e6-4262-b707-b98ba8975290
+  completed_at: '2026-05-09T13:22:57.466369+00:00'
+  primary_topic: _inbox
+  target_folder: _inbox
+  classification_confidence: low
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_992e47d4199a/briefing.md
+      generated_at: '2026-05-09T13:22:09.932975+00:00'
+      method: notebooklm
+    insight:
+      path: knowledge/youtube_kb/_inbox/yt_992e47d4199a/insight.md
+      generated_at: '2026-05-09T13:22:56.057059+00:00'
+      method: subtitles+gemini
+      subtitle_lang: ru
+- url: https://youtu.be/Fr2hhfQgQfA
+  entry_id: yt_2f23af3889f9
+  notebook_id: 2287f305-fdfc-47d2-92a3-76db7dcc8f49
+  completed_at: '2026-05-09T13:23:49.786218+00:00'
+  primary_topic: _inbox
+  target_folder: _inbox
+  classification_confidence: low
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_2f23af3889f9/briefing.md
+      generated_at: '2026-05-09T13:23:19.598874+00:00'
+      method: notebooklm
+    insight:
+      path: knowledge/youtube_kb/_inbox/yt_2f23af3889f9/insight.md
+      generated_at: '2026-05-09T13:23:48.373283+00:00'
+      method: subtitles+gemini
+      subtitle_lang: ru
+- url: https://youtu.be/jdCIpr-BlQo
+  entry_id: yt_1f4f863db5db
+  notebook_id: 20c9fc7a-e2f2-4de3-8aa2-3963fae7c574
+  completed_at: '2026-05-09T13:25:00.257874+00:00'
+  primary_topic: _inbox
+  target_folder: _inbox
+  classification_confidence: low
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_1f4f863db5db/briefing.md
+      generated_at: '2026-05-09T13:24:23.198045+00:00'
+      method: notebooklm
+    insight:
+      path: knowledge/youtube_kb/_inbox/yt_1f4f863db5db/insight.md
+      generated_at: '2026-05-09T13:24:58.751358+00:00'
+      method: subtitles+gemini
+      subtitle_lang: ru
+- url: https://youtu.be/HJBEdGS-xzQ
+  entry_id: yt_675c352c07ab
+  notebook_id: c0eee173-8142-49f0-bf08-bd4bd7708356
+  completed_at: '2026-05-09T13:26:21.608798+00:00'
+  primary_topic: _inbox
+  target_folder: _inbox
+  classification_confidence: low
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_675c352c07ab/briefing.md
+      generated_at: '2026-05-09T13:25:33.742328+00:00'
+      method: notebooklm
+    insight:
+      path: knowledge/youtube_kb/_inbox/yt_675c352c07ab/insight.md
+      generated_at: '2026-05-09T13:26:20.043191+00:00'
+      method: subtitles+gemini
+      subtitle_lang: ru
+- url: https://youtu.be/ZCi6fW6tbf0
+  entry_id: yt_9b4565ab41bb
+  notebook_id: 67d4eb09-acb2-48d7-a653-8ab774a56fd2
+  completed_at: '2026-05-09T13:27:32.905695+00:00'
+  primary_topic: _inbox
+  target_folder: _inbox
+  classification_confidence: low
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_9b4565ab41bb/briefing.md
+      generated_at: '2026-05-09T13:26:54.752672+00:00'
+      method: notebooklm
+    insight:
+      path: knowledge/youtube_kb/_inbox/yt_9b4565ab41bb/insight.md
+      generated_at: '2026-05-09T13:27:31.512247+00:00'
+      method: subtitles+gemini
+      subtitle_lang: ru
+- url: https://youtu.be/cuN0bpI_0Qs
+  entry_id: yt_4ab19f709d8c
+  notebook_id: bf56165c-15af-466b-b26b-621b84f82ecc
+  completed_at: '2026-05-09T13:28:49.439910+00:00'
+  primary_topic: _inbox
+  target_folder: _inbox
+  classification_confidence: low
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_4ab19f709d8c/briefing.md
+      generated_at: '2026-05-09T13:28:05.989920+00:00'
+      method: notebooklm
+    insight:
+      path: knowledge/youtube_kb/_inbox/yt_4ab19f709d8c/insight.md
+      generated_at: '2026-05-09T13:28:47.593200+00:00'
+      method: subtitles+gemini
+      subtitle_lang: ru
+- url: https://youtu.be/igMQXAs6zm4
+  entry_id: yt_279ab7e7e647
+  notebook_id: a323ec0b-b992-479b-a0e7-eb1efcb92616
+  completed_at: '2026-05-09T13:30:01.804064+00:00'
+  primary_topic: _inbox
+  target_folder: _inbox
+  classification_confidence: low
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_279ab7e7e647/briefing.md
+      generated_at: '2026-05-09T13:29:22.057068+00:00'
+      method: notebooklm
+    insight:
+      path: knowledge/youtube_kb/_inbox/yt_279ab7e7e647/insight.md
+      generated_at: '2026-05-09T13:30:00.245642+00:00'
+      method: subtitles+gemini
+      subtitle_lang: ru
+- url: https://youtu.be/BlD1WxhYGPk
+  entry_id: yt_78049a3dd31c
+  notebook_id: 304cb2b9-5363-4315-aae6-ecc4d4fc7a9f
+  completed_at: '2026-05-09T13:41:44.221255+00:00'
+  primary_topic: _inbox
+  target_folder: _inbox
+  classification_confidence: low
+  artifacts:
+    briefing:
+      path: knowledge/youtube_kb/_inbox/yt_78049a3dd31c/briefing.md
+      generated_at: '2026-05-09T13:30:35.217756+00:00'
+      method: notebooklm
+    insight:
+      path: knowledge/youtube_kb/_inbox/yt_78049a3dd31c/insight.md
+      generated_at: '2026-05-09T13:31:10.999245+00:00'
+      method: subtitles+gemini
+      subtitle_lang: ru
+    audio_transcript:
+      path: knowledge/youtube_kb/_inbox/yt_78049a3dd31c/audio_transcript.md
+      generated_at: '2026-05-09T13:41:44.218657+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 failed:
 - url: https://youtu.be/KwM9k2InHy4
   entry_id: yt_5ffc3b3d0562
