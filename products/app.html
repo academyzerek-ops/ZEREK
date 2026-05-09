@@ -8,8 +8,8 @@
 <meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#1A1A22">
 <title>ZEREK — AI-платформа</title>
-<!-- v18.11: фикс старта карусели на 2-й карточке через прямой scrollLeft (вместо scrollIntoView с behavior:instant — он ненадёжен в WebView) -->
-<link rel="stylesheet" href="../design-system/threads.css?v=18.11">
+<!-- v18.12: приложение всегда стартует с главной (убран URL-redirect через ?tab=, добавлен явный goHome в init) -->
+<link rel="stylesheet" href="../design-system/threads.css?v=18.12">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;0,6..72,800;1,6..72,400;1,6..72,500;1,6..72,600&display=swap" rel="stylesheet">
@@ -2209,12 +2209,8 @@ function init() {
     if (!e.target.closest('button, a, .case, .niche, .lvl-card, .sg, .feat, .test-cta, .ai-action, .dr-item, .module-item, .chapter-item, .hero-card, .hook-card, .shelf-link, .btn-home')) return;
     hapticTap();
   }, true);
-  // start tab from URL ?tab=
-  try {
-    var p = new URLSearchParams(window.location.search);
-    var t = p.get('tab');
-    if (t && document.getElementById('page-' + t)) activateTab(t);
-  } catch(e) {}
+  // приложение всегда стартует с главной
+  goHome();
 }
 
 document.addEventListener('DOMContentLoaded', init);
