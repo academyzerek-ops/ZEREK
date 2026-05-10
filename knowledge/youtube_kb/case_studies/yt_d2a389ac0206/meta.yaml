@@ -1,0 +1,16 @@
+entry_id: yt_d2a389ac0206
+source_url: https://youtu.be/c2ptd0ItQiU
+video_title: 'Аналитический отчет: Бизнес-модель и операционная деятельность салона
+  красоты в Казахстане'
+primary_topic: case_studies
+completed_at: '2026-05-10T13:05:24.517185+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/case_studies/yt_d2a389ac0206/briefing.md
+    generated_at: '2026-05-10T13:02:23.381103+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/case_studies/yt_d2a389ac0206/insight.md
+    generated_at: '2026-05-10T13:03:14.654296+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
