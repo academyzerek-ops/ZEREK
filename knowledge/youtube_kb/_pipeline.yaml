@@ -1211,6 +1211,11 @@ done:
       path: knowledge/youtube_kb/marketing/yt_e0a079b3124e/briefing.md
       generated_at: '2026-05-03T14:51:07.765803+00:00'
       method: notebooklm
+    audio_transcript:
+      path: knowledge/youtube_kb/marketing/yt_e0a079b3124e/audio_transcript.md
+      generated_at: '2026-05-11T20:31:15.425550+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 - url: https://youtu.be/B7HuEekuOTk
   entry_id: yt_745ed3d3d8c1
   notebook_id: 4343eb2a-5560-46a5-b56b-dcd25d408d08
@@ -1224,6 +1229,11 @@ done:
       path: knowledge/youtube_kb/marketing/yt_745ed3d3d8c1/briefing.md
       generated_at: '2026-05-03T14:51:42.069637+00:00'
       method: notebooklm
+    audio_transcript:
+      path: knowledge/youtube_kb/marketing/yt_745ed3d3d8c1/audio_transcript.md
+      generated_at: '2026-05-11T20:32:06.771895+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 - url: https://youtu.be/oAn-1V9lF-k
   entry_id: yt_cf69cc188d93
   notebook_id: 2b24a5b7-5c51-48c4-95b1-fc3578963ea0
@@ -1237,6 +1247,11 @@ done:
       path: knowledge/youtube_kb/marketing/yt_cf69cc188d93/briefing.md
       generated_at: '2026-05-03T14:52:04.187629+00:00'
       method: notebooklm
+    audio_transcript:
+      path: knowledge/youtube_kb/marketing/yt_cf69cc188d93/audio_transcript.md
+      generated_at: '2026-05-11T20:33:40.376197+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 - url: https://youtu.be/A7hFbui2-24
   entry_id: yt_d5279cb70d5e
   notebook_id: 6476c121-5b53-4a79-8eb0-b5580cc1840c
@@ -1250,6 +1265,11 @@ done:
       path: knowledge/youtube_kb/marketing/yt_d5279cb70d5e/briefing.md
       generated_at: '2026-05-03T14:52:26.197218+00:00'
       method: notebooklm
+    audio_transcript:
+      path: knowledge/youtube_kb/marketing/yt_d5279cb70d5e/audio_transcript.md
+      generated_at: '2026-05-11T20:35:22.918644+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 - url: https://youtu.be/fR9_YOJfbF8
   entry_id: yt_0f808829ea34
   notebook_id: 45750f59-84b3-4aac-8fe7-aaef9dd78c2f
