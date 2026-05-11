@@ -85,39 +85,62 @@ def find_targets(pipeline: dict, args) -> list[dict]:
 
 async def fetch_audio(client, notebook_id, source_url: str,
                       audio_path: Path, processing_timeout: int):
-    """Возвращает 'reused' / 'new_notebook' / None (если не получилось)."""
+    """Стратегия:
+    1. Если notebook_id есть → list_audio() — ищем уже готовое (status=completed/ready/done).
+       Если есть — download_audio и вернуть 'downloaded'.
+    2. Если нет готового → generate_audio (НЕ ждём долго), вернуть 'triggered'.
+       Следующий backfill через ~4 часа подберёт когда NotebookLM сгенерит.
+    Возвращает: 'downloaded' / 'triggered' / None.
+    """
     if not notebook_id:
-        # Создаём новый notebook
-        log.info("  [audio] notebook_id отсутствует — создаю новый")
-        nb = await client.notebooks.create(f"ZEREK backfill audio {source_url[-11:]}")
-        await client.sources.add_url(nb.id, source_url, wait=True)
-        notebook_id = nb.id
-        result_tag = "new_notebook"
-    else:
-        result_tag = "reused"
-
-    gen = getattr(client.artifacts, "generate_audio_overview", None) or \
-          getattr(client.artifacts, "generate_audio", None)
-    if gen is None:
-        log.warning("  [audio] notebooklm-py: нет generate_audio_overview")
-        return None
-    status = await gen(notebook_id, language="ru")
-    wait = getattr(client.artifacts, "wait_for_completion", None)
-    if wait and getattr(status, "task_id", None):
-        await wait(notebook_id, status.task_id, timeout=processing_timeout)
-
-    dl = getattr(client.artifacts, "download_audio", None)
-    if dl:
-        await dl(notebook_id, output_path=str(audio_path))
-    else:
-        audio_url = getattr(status, "url", None) or getattr(status, "audio_url", None)
-        if not audio_url:
-            log.warning("  [audio] нет URL аудио в ответе")
+        log.info("  [audio] notebook_id отсутствует — создаю новый и триггерю")
+        try:
+            nb = await client.notebooks.create(f"ZEREK backfill audio {source_url[-11:]}")
+            await client.sources.add_url(nb.id, source_url, wait=True)
+            notebook_id = nb.id
+            await client.artifacts.generate_audio(notebook_id, language="ru")
+            log.info("  [audio] триггер отправлен — следующий backfill (4ч) подберёт")
+        except Exception as e:
+            log.warning(f"  [audio] не удалось создать notebook: {e}")
             return None
-        r = requests.get(audio_url, timeout=180)
-        r.raise_for_status()
-        audio_path.write_bytes(r.content)
-    return result_tag
+        return "triggered"
+
+    # 1. Проверяем существующие audio артефакты
+    try:
+        existing = await client.artifacts.list_audio(notebook_id)
+    except Exception as e:
+        log.warning(f"  [audio] list_audio упал: {e}")
+        existing = []
+
+    ready_art = None
+    for art in (existing or []):
+        # NotebookLM-py: status — это число-enum, но есть удобный bool is_completed
+        is_ready = bool(getattr(art, "is_completed", False))
+        if not is_ready:
+            # fallback на старые версии где is_completed нет
+            status = str(getattr(art, "status", "") or getattr(art, "state", "")).lower()
+            is_ready = status in ("completed", "ready", "done")
+        if is_ready and getattr(art, "id", None):
+            ready_art = art
+            break
+
+    if ready_art:
+        log.info("  [audio] найден готовый артефакт — скачиваю")
+        try:
+            await client.artifacts.download_audio(notebook_id, output_path=str(audio_path))
+            return "downloaded"
+        except Exception as e:
+            log.warning(f"  [audio] download упал: {e}")
+            return None
+
+    # 2. Готового нет — триггерим без ожидания
+    log.info("  [audio] готового нет — отправляю триггер, следующий backfill подберёт")
+    try:
+        await client.artifacts.generate_audio(notebook_id, language="ru")
+    except Exception as e:
+        log.warning(f"  [audio] generate упал: {e}")
+        return None
+    return "triggered"
 
 
 async def backfill_one(client, entry: dict, args) -> bool:
@@ -145,6 +168,9 @@ async def backfill_one(client, entry: dict, args) -> bool:
                                     processing_timeout=args.processing_timeout)
             if tag is None:
                 log.warning("  ✗ не удалось получить audio")
+                return False
+            if tag == "triggered":
+                # триггер отправлен, аудио ещё не готово — пропускаем, в следующий запуск подберём
                 return False
             log.info(f"  [audio] получено ({tag}, {audio_path.stat().st_size / 1024 / 1024:.1f} MB)")
         except Exception as e:

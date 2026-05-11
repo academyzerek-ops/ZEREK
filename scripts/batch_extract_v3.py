@@ -418,11 +418,15 @@ async def process_one(client, url: str, args) -> tuple[str, dict]:
     target_folder = topic if topic in VALID_TOPICS else INBOX_TOPIC
     final_dir = KB_DIR / target_folder / entry_id
     final_dir.parent.mkdir(parents=True, exist_ok=True)
-    if final_dir.exists():
-        # перетираем (повторный запуск)
-        import shutil
-        shutil.rmtree(final_dir)
-    tmp_dir.rename(final_dir)
+    if tmp_dir.resolve() == final_dir.resolve():
+        # уже на правильном месте (topic = _inbox, tmp и final совпадают)
+        pass
+    else:
+        if final_dir.exists():
+            # перетираем (повторный запуск)
+            import shutil
+            shutil.rmtree(final_dir)
+        tmp_dir.rename(final_dir)
     # Чистим пустую _inbox/<entry_id> папку и пустую _inbox если она опустела
     inbox_root = KB_DIR / "_inbox"
     if inbox_root.exists() and not any(inbox_root.iterdir()):

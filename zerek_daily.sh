@@ -44,14 +44,20 @@ if [ "$1" = "--read-only" ]; then
     exit 0
 fi
 
-# Шаг 2 — обрабатываем очередь (3 источника на видео)
+# Шаг 2 — обрабатываем очередь (briefing + insight, audio триггерится но не ждёт)
 echo ""
-echo "▶ [2/3] Обрабатываю pending видео (briefing + insight + audio)"
+echo "▶ [2/4] Обрабатываю pending видео (briefing + insight + триггер audio)"
 python scripts/batch_extract_v3.py
 
-# Шаг 3 — зеркалирование в Vault
+# Шаг 3 — подбираем готовые audio overview от NotebookLM
+# (audio генерится часами после триггера, backfill подбирает накопившееся)
 echo ""
-echo "▶ [3/3] Зеркалирую в Obsidian Vault (knowledge → vault)"
+echo "▶ [3/4] Подбираю готовые audio overview из NotebookLM"
+python scripts/backfill_audio.py --processing-timeout 60 || echo "[!] backfill_audio упал — не критично, повтор через 4 часа"
+
+# Шаг 4 — зеркалирование в Vault
+echo ""
+echo "▶ [4/4] Зеркалирую в Obsidian Vault (knowledge → vault)"
 python scripts/mirror_to_vault.py
 
 echo "═══════════════════════════════════════════════════════════"
