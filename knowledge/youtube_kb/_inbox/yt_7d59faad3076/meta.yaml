@@ -1,0 +1,16 @@
+entry_id: yt_7d59faad3076
+source_url: https://youtu.be/CwRDlTufKSo
+video_title: 'Брифинг: Развитие бизнеса по переработке шин и производству резиновой
+  плитки'
+primary_topic: _inbox
+completed_at: '2026-05-11T16:34:21.815736+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_7d59faad3076/briefing.md
+    generated_at: '2026-05-11T16:23:48.073655+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_7d59faad3076/insight.md
+    generated_at: '2026-05-11T16:24:18.133006+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

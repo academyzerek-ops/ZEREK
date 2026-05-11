@@ -910,9 +910,7 @@ pending:
   source: gdoc
 in_progress:
 - url: https://youtu.be/CwRDlTufKSo
-  started_at: '2026-05-10T13:05:24.573137+00:00'
-- url: https://youtu.be/CwRDlTufKSo
-  started_at: '2026-05-11T13:00:09.304099+00:00'
+  started_at: '2026-05-11T16:23:25.507564+00:00'
 done:
 - url: https://youtu.be/BB39qYx_Fho
   entry_id: yt_b6bc3e98e913
