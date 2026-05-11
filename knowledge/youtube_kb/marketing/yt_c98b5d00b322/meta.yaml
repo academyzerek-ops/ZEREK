@@ -10,3 +10,8 @@ artifacts:
     path: knowledge/youtube_kb/marketing/yt_c98b5d00b322/briefing.md
     generated_at: '2026-05-03T14:54:29.392095+00:00'
     method: notebooklm
+  audio_transcript:
+    path: knowledge/youtube_kb/marketing/yt_c98b5d00b322/audio_transcript.md
+    generated_at: '2026-05-11T20:41:47.108200+00:00'
+    method: notebooklm_audio+whisper
+    whisper_model: small
