@@ -1,0 +1,15 @@
+entry_id: yt_f84259c9fcea
+source_url: https://youtu.be/K5Kve4Abjtw
+video_title: 'Анализ бизнеса по производству изделий из кожи: Кейс бренда JB Collection'
+primary_topic: _inbox
+completed_at: '2026-05-11T17:18:16.065388+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_f84259c9fcea/briefing.md
+    generated_at: '2026-05-11T17:17:39.021238+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_f84259c9fcea/insight.md
+    generated_at: '2026-05-11T17:18:14.434228+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

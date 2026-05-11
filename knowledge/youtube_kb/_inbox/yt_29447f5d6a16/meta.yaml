@@ -1,0 +1,16 @@
+entry_id: yt_29447f5d6a16
+source_url: https://youtu.be/yCXmEFd_Ty0
+video_title: 'Аналитический отчет: Модель и специфика бизнеса фермы 3D-печати на примере
+  компании Formfactor'
+primary_topic: _inbox
+completed_at: '2026-05-11T17:09:14.442105+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_29447f5d6a16/briefing.md
+    generated_at: '2026-05-11T17:08:31.476887+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_29447f5d6a16/insight.md
+    generated_at: '2026-05-11T17:09:12.440449+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

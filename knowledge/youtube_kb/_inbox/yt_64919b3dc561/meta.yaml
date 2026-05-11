@@ -1,0 +1,15 @@
+entry_id: yt_64919b3dc561
+source_url: https://youtu.be/9pFrkpVweFw
+video_title: 'Аналитический отчет: Бизнес-модель новогодних поздравлений Деда Мороза'
+primary_topic: _inbox
+completed_at: '2026-05-11T17:06:47.626628+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_64919b3dc561/briefing.md
+    generated_at: '2026-05-11T17:06:07.271720+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_64919b3dc561/insight.md
+    generated_at: '2026-05-11T17:06:45.903891+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

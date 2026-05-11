@@ -1,0 +1,15 @@
+entry_id: yt_6405bccd4783
+source_url: https://youtu.be/AsLLPXI7zTE
+video_title: 'Брифинг: Анализ бизнес-модели сети студий воздушной гимнастики «Мирекси»'
+primary_topic: _inbox
+completed_at: '2026-05-11T17:11:45.316000+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_6405bccd4783/briefing.md
+    generated_at: '2026-05-11T17:11:04.532721+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_6405bccd4783/insight.md
+    generated_at: '2026-05-11T17:11:43.682337+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

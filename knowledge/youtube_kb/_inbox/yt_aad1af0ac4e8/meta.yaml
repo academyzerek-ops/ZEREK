@@ -1,0 +1,15 @@
+entry_id: yt_aad1af0ac4e8
+source_url: https://youtu.be/qUlrK8lYLDY
+video_title: 'Аналитический брифинг: Бизнес-модель школы танцев для детей'
+primary_topic: _inbox
+completed_at: '2026-05-11T17:14:24.281049+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_aad1af0ac4e8/briefing.md
+    generated_at: '2026-05-11T17:13:42.856624+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_aad1af0ac4e8/insight.md
+    generated_at: '2026-05-11T17:14:22.397068+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

@@ -1,0 +1,15 @@
+entry_id: yt_9588696c7a6a
+source_url: https://youtu.be/vJJZQLYtUuw
+video_title: 'Брифинг: Стратегии успеха и масштабирования производства полуфабрикатов'
+primary_topic: _inbox
+completed_at: '2026-05-11T17:19:31.063939+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_9588696c7a6a/briefing.md
+    generated_at: '2026-05-11T17:18:49.248919+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_9588696c7a6a/insight.md
+    generated_at: '2026-05-11T17:19:29.402024+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

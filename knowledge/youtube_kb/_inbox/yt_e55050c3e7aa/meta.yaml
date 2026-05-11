@@ -1,0 +1,15 @@
+entry_id: yt_e55050c3e7aa
+source_url: https://youtu.be/bqHIotxBj9A
+video_title: 'Бизнес на полуфабрикатах на дому: Аналитический отчет и ключевые рекомендации'
+primary_topic: _inbox
+completed_at: '2026-05-11T17:20:20.359834+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_e55050c3e7aa/briefing.md
+    generated_at: '2026-05-11T17:19:53.090514+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_e55050c3e7aa/insight.md
+    generated_at: '2026-05-11T17:20:18.881253+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

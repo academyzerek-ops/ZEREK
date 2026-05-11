@@ -1,0 +1,15 @@
+entry_id: yt_2564b3a58255
+source_url: https://youtu.be/_V8LE7bQdhI
+video_title: Аналитический брифинг по развитию бренда одежды «SPOSOB»
+primary_topic: _inbox
+completed_at: '2026-05-11T17:05:44.190051+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_2564b3a58255/briefing.md
+    generated_at: '2026-05-11T17:05:01.237545+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_2564b3a58255/insight.md
+    generated_at: '2026-05-11T17:05:42.128077+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

@@ -1,0 +1,16 @@
+entry_id: yt_a5bc18396713
+source_url: https://youtu.be/iJJSW8po2yk
+video_title: 'Аналитический обзор: Бизнес по производству нишевого шоколада «Маяк
+  вкуса»'
+primary_topic: _inbox
+completed_at: '2026-05-11T17:17:05.411726+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_a5bc18396713/briefing.md
+    generated_at: '2026-05-11T17:16:24.528266+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_a5bc18396713/insight.md
+    generated_at: '2026-05-11T17:17:03.941715+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

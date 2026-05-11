@@ -1,0 +1,16 @@
+entry_id: yt_e277ed5389ba
+source_url: https://youtu.be/0oPeSkLriKM
+video_title: 'Аналитический брифинг: Стратегия открытия и управления рестораном в
+  2025 году'
+primary_topic: _inbox
+completed_at: '2026-05-11T17:10:30.972556+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_e277ed5389ba/briefing.md
+    generated_at: '2026-05-11T17:09:48.204205+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_e277ed5389ba/insight.md
+    generated_at: '2026-05-11T17:10:29.303873+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
