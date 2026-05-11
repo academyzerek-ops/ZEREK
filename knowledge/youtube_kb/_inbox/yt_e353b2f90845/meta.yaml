@@ -1,0 +1,16 @@
+entry_id: yt_e353b2f90845
+source_url: https://youtu.be/P4VVB2XOpec
+video_title: Аналитический отчет по бизнес-модели сети эконом-парикмахерских «Быстрые
+  ножницы»
+primary_topic: _inbox
+completed_at: '2026-05-11T16:55:56.508595+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_e353b2f90845/briefing.md
+    generated_at: '2026-05-11T16:55:22.375747+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_e353b2f90845/insight.md
+    generated_at: '2026-05-11T16:55:54.928413+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

@@ -1,0 +1,15 @@
+entry_id: yt_a406e472183c
+source_url: https://youtu.be/BxDgXWGf1qU
+video_title: 'Открытие нового зоомагазина: Стратегия, вызовы и практический опыт'
+primary_topic: _inbox
+completed_at: '2026-05-11T16:58:17.579279+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_a406e472183c/briefing.md
+    generated_at: '2026-05-11T16:57:33.167532+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_a406e472183c/insight.md
+    generated_at: '2026-05-11T16:58:15.754606+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

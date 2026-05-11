@@ -13,3 +13,8 @@ artifacts:
     generated_at: '2026-05-06T18:55:48.412186+00:00'
     method: subtitles+gemini
     subtitle_lang: ru
+  audio_transcript:
+    path: knowledge/youtube_kb/_inbox/yt_d590be94b524/audio_transcript.md
+    generated_at: '2026-05-11T17:01:53.886730+00:00'
+    method: notebooklm_audio+whisper
+    whisper_model: small

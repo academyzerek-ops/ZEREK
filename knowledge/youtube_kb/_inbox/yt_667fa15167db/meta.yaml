@@ -1,0 +1,16 @@
+entry_id: yt_667fa15167db
+source_url: https://youtu.be/mk3cIv-TgUk
+video_title: 'Бизнес на аренде малогабаритных студий: Стратегия создания пассивного
+  дохода'
+primary_topic: _inbox
+completed_at: '2026-05-11T16:48:27.981519+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_667fa15167db/briefing.md
+    generated_at: '2026-05-11T16:47:37.861367+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_667fa15167db/insight.md
+    generated_at: '2026-05-11T16:48:26.336411+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

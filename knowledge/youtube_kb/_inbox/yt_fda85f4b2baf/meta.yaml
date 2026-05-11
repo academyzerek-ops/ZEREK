@@ -1,0 +1,15 @@
+entry_id: yt_fda85f4b2baf
+source_url: https://youtu.be/3epaJwhHyCs
+video_title: 'Брифинг: Запуск и управление барбершопом с нуля на примере кейса «Якорь»'
+primary_topic: _inbox
+completed_at: '2026-05-11T16:53:22.225823+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_fda85f4b2baf/briefing.md
+    generated_at: '2026-05-11T16:52:43.320376+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_fda85f4b2baf/insight.md
+    generated_at: '2026-05-11T16:53:20.738502+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

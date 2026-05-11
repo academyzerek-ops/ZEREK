@@ -1,0 +1,15 @@
+entry_id: yt_5c586611197e
+source_url: https://youtu.be/huK6ro0b8Vs
+video_title: 'Анализ бизнес-модели: Химчистка мебели с минимальными вложениями'
+primary_topic: _inbox
+completed_at: '2026-05-11T16:50:57.332034+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_5c586611197e/briefing.md
+    generated_at: '2026-05-11T16:50:12.280177+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_5c586611197e/insight.md
+    generated_at: '2026-05-11T16:50:55.735353+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

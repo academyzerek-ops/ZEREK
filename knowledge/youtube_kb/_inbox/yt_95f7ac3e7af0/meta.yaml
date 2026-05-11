@@ -1,0 +1,15 @@
+entry_id: yt_95f7ac3e7af0
+source_url: https://youtu.be/GsQ5CLcKpRE
+video_title: 'Бизнес на услугах для домашних питомцев: Стратегии успеха и анализ рынка'
+primary_topic: _inbox
+completed_at: '2026-05-11T17:00:33.582330+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_95f7ac3e7af0/briefing.md
+    generated_at: '2026-05-11T17:00:01.169824+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_95f7ac3e7af0/insight.md
+    generated_at: '2026-05-11T17:00:31.989763+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

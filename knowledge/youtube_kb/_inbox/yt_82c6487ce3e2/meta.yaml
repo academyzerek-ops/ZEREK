@@ -1,0 +1,16 @@
+entry_id: yt_82c6487ce3e2
+source_url: https://youtu.be/f4XmDX-Te4o
+video_title: 'Открытие стоматологической клиники: этапы, проектирование, реализация
+  и финансовые показатели'
+primary_topic: _inbox
+completed_at: '2026-05-11T16:47:04.310195+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_82c6487ce3e2/briefing.md
+    generated_at: '2026-05-11T16:46:12.482363+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_82c6487ce3e2/insight.md
+    generated_at: '2026-05-11T16:47:02.741984+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

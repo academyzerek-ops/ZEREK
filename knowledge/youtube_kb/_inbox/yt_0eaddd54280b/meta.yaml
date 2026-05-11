@@ -1,0 +1,16 @@
+entry_id: yt_0eaddd54280b
+source_url: https://youtu.be/EyMeCZfS3QM
+video_title: 'Аналитический брифинг: Бизнес по выращиванию шампиньонов в гаражных
+  условиях'
+primary_topic: _inbox
+completed_at: '2026-05-11T16:57:09.339671+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_0eaddd54280b/briefing.md
+    generated_at: '2026-05-11T16:56:18.848401+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_0eaddd54280b/insight.md
+    generated_at: '2026-05-11T16:57:07.575955+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

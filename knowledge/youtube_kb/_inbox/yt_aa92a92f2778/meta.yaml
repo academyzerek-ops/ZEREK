@@ -1,0 +1,16 @@
+entry_id: yt_aa92a92f2778
+source_url: https://youtu.be/hEYzw9yd5Rs
+video_title: 'Анализ и стратегия развития регионального салона красоты: Кейс студии
+  «Фамамс»'
+primary_topic: _inbox
+completed_at: '2026-05-11T17:03:17.623201+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_aa92a92f2778/briefing.md
+    generated_at: '2026-05-11T17:02:31.568674+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_aa92a92f2778/insight.md
+    generated_at: '2026-05-11T17:03:15.691270+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

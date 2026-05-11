@@ -1,0 +1,16 @@
+entry_id: yt_cfc8c454f4bc
+source_url: https://youtu.be/J0K2ZibLKBk
+video_title: 'Бизнес на кофейнях самообслуживания: Аналитический отчет по запуску
+  по агентской схеме'
+primary_topic: general
+completed_at: '2026-05-11T16:52:10.320688+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/general/yt_cfc8c454f4bc/briefing.md
+    generated_at: '2026-05-11T16:51:30.153596+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/general/yt_cfc8c454f4bc/insight.md
+    generated_at: '2026-05-11T16:52:08.800136+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

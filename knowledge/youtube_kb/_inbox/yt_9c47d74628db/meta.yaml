@@ -1,0 +1,15 @@
+entry_id: yt_9c47d74628db
+source_url: https://youtu.be/HlVjOtTFBMU
+video_title: 'Бизнес-брифинг: Запуск и управление фитнес-клубом в современных реалиях'
+primary_topic: _inbox
+completed_at: '2026-05-11T17:01:58.639491+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_9c47d74628db/briefing.md
+    generated_at: '2026-05-11T17:01:06.561715+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_9c47d74628db/insight.md
+    generated_at: '2026-05-11T17:01:56.963413+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

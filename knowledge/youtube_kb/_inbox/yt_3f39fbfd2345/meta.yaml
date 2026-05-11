@@ -1,0 +1,16 @@
+entry_id: yt_3f39fbfd2345
+source_url: https://youtu.be/eUKAP67n0nI
+video_title: 'Аналитический отчет: Бизнес-модель и операционная деятельность современного
+  ателье'
+primary_topic: _inbox
+completed_at: '2026-05-11T16:45:38.557825+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_3f39fbfd2345/briefing.md
+    generated_at: '2026-05-11T16:34:55.556462+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_3f39fbfd2345/insight.md
+    generated_at: '2026-05-11T16:35:35.405763+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

@@ -1,0 +1,16 @@
+entry_id: yt_c397a1db40e4
+source_url: https://youtu.be/G0tSWe_YTOQ
+video_title: 'Аналитический бриф: Бизнес-модель сети сервисов шиномонтажа «Честные
+  шины»'
+primary_topic: _inbox
+completed_at: '2026-05-11T17:04:38.797053+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_c397a1db40e4/briefing.md
+    generated_at: '2026-05-11T17:03:50.946668+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_c397a1db40e4/insight.md
+    generated_at: '2026-05-11T17:04:37.174261+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
