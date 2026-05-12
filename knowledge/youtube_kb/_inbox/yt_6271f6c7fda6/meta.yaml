@@ -1,0 +1,16 @@
+entry_id: yt_6271f6c7fda6
+source_url: https://youtu.be/1f4ONw7NT2g
+video_title: 'Аналитический отчет: Стратегия и операционная деятельность успешного
+  хостела в Алматы'
+primary_topic: _inbox
+completed_at: '2026-05-12T13:51:59.928135+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_6271f6c7fda6/briefing.md
+    generated_at: '2026-05-12T13:41:17.210346+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_6271f6c7fda6/insight.md
+    generated_at: '2026-05-12T13:41:56.016924+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
