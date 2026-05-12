@@ -1,0 +1,20 @@
+entry_id: yt_317e88ea2049
+source_url: https://youtu.be/CFnQ767ZK7c
+video_title: 'Аналитический бриф: Бизнес моек самообслуживания в Казахстане'
+primary_topic: _inbox
+completed_at: '2026-05-12T14:03:30.019868+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_317e88ea2049/briefing.md
+    generated_at: '2026-05-12T13:52:33.726105+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_317e88ea2049/insight.md
+    generated_at: '2026-05-12T13:53:26.567278+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
+  audio_transcript:
+    path: knowledge/youtube_kb/_inbox/yt_317e88ea2049/audio_transcript.md
+    generated_at: '2026-05-12T14:25:37.298414+00:00'
+    method: notebooklm_audio+whisper
+    whisper_model: small

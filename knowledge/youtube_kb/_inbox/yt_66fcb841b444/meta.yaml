@@ -1,0 +1,15 @@
+entry_id: yt_66fcb841b444
+source_url: https://youtu.be/cXtl2klTcjs
+video_title: 'Аналитический бриф: Развитие и управление домашним кондитерским бизнесом'
+primary_topic: _inbox
+completed_at: '2026-05-12T14:18:52.116288+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_66fcb841b444/briefing.md
+    generated_at: '2026-05-12T14:08:04.846359+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_66fcb841b444/insight.md
+    generated_at: '2026-05-12T14:08:48.300984+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
