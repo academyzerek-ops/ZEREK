@@ -1950,6 +1950,11 @@ done:
       generated_at: '2026-05-06T19:54:02.238696+00:00'
       method: subtitles+gemini
       subtitle_lang: ru
+    audio_transcript:
+      path: knowledge/youtube_kb/_inbox/yt_e38b48ca0fbb/audio_transcript.md
+      generated_at: '2026-05-12T16:02:05.489235+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 - url: https://youtu.be/lDpon3PCVAw
   entry_id: yt_84a96b615778
   notebook_id: 59011da9-bbf5-44fc-ad2c-244d2703e82e
@@ -1967,6 +1972,11 @@ done:
       generated_at: '2026-05-06T19:55:16.186890+00:00'
       method: subtitles+gemini
       subtitle_lang: ru
+    audio_transcript:
+      path: knowledge/youtube_kb/_inbox/yt_84a96b615778/audio_transcript.md
+      generated_at: '2026-05-12T16:04:10.269436+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 - url: https://youtu.be/s4pYQj9XNSw
   entry_id: yt_9a85d38c1795
   notebook_id: 1a897bf1-4d0b-4bb5-9a2e-ddf80c0e4003
@@ -1984,6 +1994,11 @@ done:
       generated_at: '2026-05-06T19:56:37.330758+00:00'
       method: subtitles+gemini
       subtitle_lang: ru
+    audio_transcript:
+      path: knowledge/youtube_kb/_inbox/yt_9a85d38c1795/audio_transcript.md
+      generated_at: '2026-05-12T16:06:19.898733+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 - url: https://youtu.be/Bjjn8xH82HA
   entry_id: yt_793b26843126
   notebook_id: 5d22c8e5-7a4c-4874-9df6-98588f2047df
@@ -2001,6 +2016,11 @@ done:
       generated_at: '2026-05-06T19:57:56.406157+00:00'
       method: subtitles+gemini
       subtitle_lang: ru
+    audio_transcript:
+      path: knowledge/youtube_kb/_inbox/yt_793b26843126/audio_transcript.md
+      generated_at: '2026-05-12T16:08:28.364543+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 - url: https://youtu.be/arFnCcY663A
   entry_id: yt_07cd571febd5
   notebook_id: ea406c5e-c761-4299-a3b8-6b430066149f
@@ -2018,6 +2038,11 @@ done:
       generated_at: '2026-05-06T19:59:07.807816+00:00'
       method: subtitles+gemini
       subtitle_lang: ru
+    audio_transcript:
+      path: knowledge/youtube_kb/_inbox/yt_07cd571febd5/audio_transcript.md
+      generated_at: '2026-05-12T16:10:39.420850+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 - url: https://youtu.be/fEbdBWi2TZY
   entry_id: yt_d19a2e493cc3
   notebook_id: ce507b8b-f14c-444f-8a1d-ab8f67ab4f4d
@@ -3136,6 +3161,11 @@ done:
       generated_at: '2026-05-12T14:08:48.300984+00:00'
       method: subtitles+gemini
       subtitle_lang: ru
+    audio_transcript:
+      path: knowledge/youtube_kb/_inbox/yt_66fcb841b444/audio_transcript.md
+      generated_at: '2026-05-12T16:14:19.247737+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 failed:
 - url: https://youtu.be/KwM9k2InHy4
   entry_id: yt_5ffc3b3d0562
