@@ -1403,6 +1403,11 @@ done:
       path: knowledge/youtube_kb/_inbox/yt_65b7e39c856d/briefing.md
       generated_at: '2026-05-03T14:55:24.788380+00:00'
       method: notebooklm
+    audio_transcript:
+      path: knowledge/youtube_kb/_inbox/yt_65b7e39c856d/audio_transcript.md
+      generated_at: '2026-05-12T15:48:14.836281+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 - url: https://youtu.be/RacwVDwHuFk
   entry_id: yt_e64836004f0d
   notebook_id: c0712771-c3ba-482c-bc1a-790f0da2e6c6
@@ -1416,6 +1421,11 @@ done:
       path: knowledge/youtube_kb/_inbox/yt_e64836004f0d/briefing.md
       generated_at: '2026-05-03T14:55:57.575427+00:00'
       method: notebooklm
+    audio_transcript:
+      path: knowledge/youtube_kb/_inbox/yt_e64836004f0d/audio_transcript.md
+      generated_at: '2026-05-12T15:50:15.820641+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 - url: https://youtu.be/ERdcwemIQNE
   entry_id: yt_06837280648a
   notebook_id: f41d810f-4604-489f-8f55-8d6378cd9d10
@@ -1443,6 +1453,11 @@ done:
       path: knowledge/youtube_kb/_inbox/yt_d9a06fdeb254/briefing.md
       generated_at: '2026-05-03T14:57:04.324826+00:00'
       method: notebooklm
+    audio_transcript:
+      path: knowledge/youtube_kb/_inbox/yt_d9a06fdeb254/audio_transcript.md
+      generated_at: '2026-05-12T15:51:24.518136+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 - url: https://youtu.be/EuHIjikt6LM
   entry_id: yt_a8ea7063f5b0
   notebook_id: 189e9f72-4a8d-41fe-9a39-139950da761f
@@ -1457,6 +1472,11 @@ done:
       path: knowledge/youtube_kb/_inbox/yt_a8ea7063f5b0/briefing.md
       generated_at: '2026-05-03T14:57:26.312600+00:00'
       method: notebooklm
+    audio_transcript:
+      path: knowledge/youtube_kb/_inbox/yt_a8ea7063f5b0/audio_transcript.md
+      generated_at: '2026-05-12T15:52:15.485249+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 - url: https://youtu.be/C5mO6gLOo6w
   entry_id: yt_7d056a685c13
   notebook_id: cd2f77fe-e2f2-47ec-bf96-9bfc7f47eacf
@@ -1470,6 +1490,11 @@ done:
       path: knowledge/youtube_kb/_inbox/yt_7d056a685c13/briefing.md
       generated_at: '2026-05-03T14:57:48.152580+00:00'
       method: notebooklm
+    audio_transcript:
+      path: knowledge/youtube_kb/_inbox/yt_7d056a685c13/audio_transcript.md
+      generated_at: '2026-05-12T15:53:19.477303+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 - url: https://youtu.be/7ExRCC5HjSU
   entry_id: yt_b54b00900534
   notebook_id: bf1ea33c-65f3-4671-83f9-6721a7cb385f
@@ -1483,6 +1508,11 @@ done:
       path: knowledge/youtube_kb/_inbox/yt_b54b00900534/briefing.md
       generated_at: '2026-05-03T14:58:10.580828+00:00'
       method: notebooklm
+    audio_transcript:
+      path: knowledge/youtube_kb/_inbox/yt_b54b00900534/audio_transcript.md
+      generated_at: '2026-05-12T15:54:37.312892+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 - url: https://youtu.be/-Z0P4zpx8Bg
   entry_id: yt_c2f29d98c8e0
   notebook_id: 921ee27c-963d-494f-93ca-f1a2d1e8ab9b
@@ -1496,6 +1526,11 @@ done:
       path: knowledge/youtube_kb/_inbox/yt_c2f29d98c8e0/briefing.md
       generated_at: '2026-05-03T14:58:32.361275+00:00'
       method: notebooklm
+    audio_transcript:
+      path: knowledge/youtube_kb/_inbox/yt_c2f29d98c8e0/audio_transcript.md
+      generated_at: '2026-05-12T15:56:01.862831+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 - url: https://youtu.be/q2pFTfPbXHE
   entry_id: yt_c300607278de
   notebook_id: 52ffe30b-9c11-46db-a900-60ad81b9714e
@@ -1509,6 +1544,11 @@ done:
       path: knowledge/youtube_kb/_inbox/yt_c300607278de/briefing.md
       generated_at: '2026-05-03T14:58:54.029642+00:00'
       method: notebooklm
+    audio_transcript:
+      path: knowledge/youtube_kb/_inbox/yt_c300607278de/audio_transcript.md
+      generated_at: '2026-05-12T15:57:57.949285+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 - url: https://youtu.be/U1VVI027xio
   entry_id: yt_d6e5152bb4ec
   notebook_id: 50705143-5028-4c41-a7f5-1edfb52ed0e5
@@ -1526,6 +1566,11 @@ done:
       generated_at: '2026-05-06T15:59:28.514483+00:00'
       method: subtitles+gemini
       subtitle_lang: ru
+    audio_transcript:
+      path: knowledge/youtube_kb/_inbox/yt_d6e5152bb4ec/audio_transcript.md
+      generated_at: '2026-05-12T15:59:00.207334+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 - url: https://youtu.be/MuLLnum4iis
   entry_id: yt_04f7b51ef9a8
   notebook_id: 15d2ee7f-7d0b-47e2-8d6b-d6b1f67e7c39
@@ -1883,6 +1928,11 @@ done:
       generated_at: '2026-05-06T19:52:37.784244+00:00'
       method: subtitles+gemini
       subtitle_lang: ru
+    audio_transcript:
+      path: knowledge/youtube_kb/_inbox/yt_f5d3eef27062/audio_transcript.md
+      generated_at: '2026-05-12T16:00:04.101248+00:00'
+      method: notebooklm_audio+whisper
+      whisper_model: small
 - url: https://youtu.be/XzuUdilMZUg
   entry_id: yt_e38b48ca0fbb
   notebook_id: 0d0f82df-88dd-4e0d-b18d-6909a905b594
