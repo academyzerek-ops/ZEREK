@@ -1,0 +1,16 @@
+entry_id: yt_dfb06af4fbe4
+source_url: https://youtu.be/zkvbGZuDcbw
+video_title: 'Клининг как высокодоходная индустрия: Стратегия запуска и масштабирования
+  в 2025 году'
+primary_topic: _inbox
+completed_at: '2026-05-12T13:13:35.184349+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_dfb06af4fbe4/briefing.md
+    generated_at: '2026-05-12T13:12:42.986263+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_dfb06af4fbe4/insight.md
+    generated_at: '2026-05-12T13:13:33.314057+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

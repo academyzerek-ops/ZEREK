@@ -1,0 +1,15 @@
+entry_id: yt_d203bfd54e7f
+source_url: https://youtu.be/RzVb0T0QYtQ
+video_title: 'Аналитический бриф: Кейс по открытию и управлению частным детским садом'
+primary_topic: _inbox
+completed_at: '2026-05-12T13:08:18.919158+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_d203bfd54e7f/briefing.md
+    generated_at: '2026-05-12T13:07:37.610079+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_d203bfd54e7f/insight.md
+    generated_at: '2026-05-12T13:08:17.329241+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

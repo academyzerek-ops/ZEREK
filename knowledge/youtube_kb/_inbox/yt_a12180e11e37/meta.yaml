@@ -1,0 +1,15 @@
+entry_id: yt_a12180e11e37
+source_url: https://youtu.be/RsOOL4RiRQ8
+video_title: 'Аналитический отчет: Модель бизнеса по производству мясных полуфабрикатов'
+primary_topic: _inbox
+completed_at: '2026-05-12T13:01:08.578452+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_a12180e11e37/briefing.md
+    generated_at: '2026-05-12T13:00:29.623504+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_a12180e11e37/insight.md
+    generated_at: '2026-05-12T13:01:07.080400+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

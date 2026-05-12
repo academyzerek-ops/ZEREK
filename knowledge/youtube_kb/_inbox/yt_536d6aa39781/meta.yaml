@@ -1,0 +1,16 @@
+entry_id: yt_536d6aa39781
+source_url: https://youtu.be/wAExG1WEq8M
+video_title: 'Бизнес-руководство: Запуск и управление клининговой компанией (на примере
+  Brutal Clean)'
+primary_topic: _inbox
+completed_at: '2026-05-12T13:12:09.765082+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_536d6aa39781/briefing.md
+    generated_at: '2026-05-12T13:11:27.778850+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_536d6aa39781/insight.md
+    generated_at: '2026-05-12T13:12:08.196010+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

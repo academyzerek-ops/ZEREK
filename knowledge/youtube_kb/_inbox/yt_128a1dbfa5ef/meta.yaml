@@ -1,0 +1,16 @@
+entry_id: yt_128a1dbfa5ef
+source_url: https://youtu.be/F_LGHIB29A8
+video_title: 'Аналитический брифинг: Индустрия товаров для взрослых и экспертное наставничество
+  в сфере отношений'
+primary_topic: _inbox
+completed_at: '2026-05-12T13:26:54.272356+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_128a1dbfa5ef/briefing.md
+    generated_at: '2026-05-12T13:26:09.638770+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_128a1dbfa5ef/insight.md
+    generated_at: '2026-05-12T13:26:52.641768+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

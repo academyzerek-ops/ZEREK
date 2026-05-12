@@ -1,0 +1,16 @@
+entry_id: yt_d1416ac1d00f
+source_url: https://youtu.be/uaEJWuZyCcY
+video_title: 'Аналитический брифинг по итогам обмена опытом: Масштабирование и систематизация
+  клинингового бизнеса'
+primary_topic: management
+completed_at: '2026-05-12T13:17:27.060140+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/management/yt_d1416ac1d00f/briefing.md
+    generated_at: '2026-05-12T13:16:51.639791+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/management/yt_d1416ac1d00f/insight.md
+    generated_at: '2026-05-12T13:17:25.342946+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

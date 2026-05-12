@@ -1,0 +1,16 @@
+entry_id: yt_2d574d8e9a9a
+source_url: https://youtu.be/OTsfbGAKGKs
+video_title: 'Бизнес-брифинг: Открытие и управление копицентром (на примере фотосалона
+  «Принтов»)'
+primary_topic: _inbox
+completed_at: '2026-05-12T13:06:09.280007+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_2d574d8e9a9a/briefing.md
+    generated_at: '2026-05-12T13:05:32.305131+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_2d574d8e9a9a/insight.md
+    generated_at: '2026-05-12T13:06:07.478727+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

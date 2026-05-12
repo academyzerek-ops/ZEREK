@@ -1,0 +1,15 @@
+entry_id: yt_897e8eacad3c
+source_url: https://youtu.be/6gloFXl9UJY
+video_title: 'Производство лофт-мебели в гараже: Анализ бизнес-модели и пути масштабирования'
+primary_topic: _inbox
+completed_at: '2026-05-12T13:23:56.887122+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_897e8eacad3c/briefing.md
+    generated_at: '2026-05-12T13:23:10.906183+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_897e8eacad3c/insight.md
+    generated_at: '2026-05-12T13:23:55.419097+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

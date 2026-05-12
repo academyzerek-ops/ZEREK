@@ -1,0 +1,15 @@
+entry_id: yt_68a9e8ae1e47
+source_url: https://youtu.be/n7WK7O7BFGQ
+video_title: 'Брифинг: Создание и управление частным детским садом по системе Монтессори'
+primary_topic: _inbox
+completed_at: '2026-05-12T13:07:14.624637+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_68a9e8ae1e47/briefing.md
+    generated_at: '2026-05-12T13:06:32.447966+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_68a9e8ae1e47/insight.md
+    generated_at: '2026-05-12T13:07:13.157638+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

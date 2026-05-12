@@ -1,0 +1,16 @@
+entry_id: yt_13a64ade2a76
+source_url: https://youtu.be/opKsNJoePuk
+video_title: 'Аналитический брифинг: Стратегии открытия и масштабирования детского
+  центра'
+primary_topic: management
+completed_at: '2026-05-12T13:10:54.504738+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/management/yt_13a64ade2a76/briefing.md
+    generated_at: '2026-05-12T13:10:09.559298+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/management/yt_13a64ade2a76/insight.md
+    generated_at: '2026-05-12T13:10:52.362933+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

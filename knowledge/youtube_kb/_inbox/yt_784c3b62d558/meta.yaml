@@ -1,0 +1,15 @@
+entry_id: yt_784c3b62d558
+source_url: https://youtu.be/QLQv2Pea7Xo
+video_title: 'Бизнес на микрозелени: Стратегия запуска и развития городской фермы'
+primary_topic: _inbox
+completed_at: '2026-05-12T13:27:58.312582+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_784c3b62d558/briefing.md
+    generated_at: '2026-05-12T13:27:17.003495+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_784c3b62d558/insight.md
+    generated_at: '2026-05-12T13:27:56.669752+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

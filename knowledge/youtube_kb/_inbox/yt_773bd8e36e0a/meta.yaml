@@ -1,0 +1,16 @@
+entry_id: yt_773bd8e36e0a
+source_url: https://youtu.be/nGX8YWmqW6Y
+video_title: 'Аналитический отчет: Трансформация бизнеса на блинах — от привокзального
+  кафе до международной сети'
+primary_topic: _inbox
+completed_at: '2026-05-12T13:14:48.914901+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_773bd8e36e0a/briefing.md
+    generated_at: '2026-05-12T13:14:09.113841+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_773bd8e36e0a/insight.md
+    generated_at: '2026-05-12T13:14:47.278187+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

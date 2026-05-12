@@ -1,0 +1,16 @@
+entry_id: yt_37c3d92b6d5d
+source_url: https://youtu.be/hissBsEM3SM
+video_title: 'Брифинг-документ: Анализ стратегии создания и масштабирования детского
+  центра развития (Кейс Алии и Жанаргуль Акаевых)'
+primary_topic: _inbox
+completed_at: '2026-05-12T13:09:33.919651+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_37c3d92b6d5d/briefing.md
+    generated_at: '2026-05-12T13:08:52.586419+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_37c3d92b6d5d/insight.md
+    generated_at: '2026-05-12T13:09:32.139204+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

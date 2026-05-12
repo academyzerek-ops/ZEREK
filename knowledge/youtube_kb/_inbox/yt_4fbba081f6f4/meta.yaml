@@ -1,0 +1,15 @@
+entry_id: yt_4fbba081f6f4
+source_url: https://youtu.be/TX2HJWl-TGw
+video_title: Операционная модель и производственные процессы сервиса «Яндекс Лавка»
+primary_topic: _inbox
+completed_at: '2026-05-12T13:18:40.396966+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_4fbba081f6f4/briefing.md
+    generated_at: '2026-05-12T13:18:00.246728+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_4fbba081f6f4/insight.md
+    generated_at: '2026-05-12T13:18:38.122106+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

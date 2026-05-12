@@ -1,0 +1,16 @@
+entry_id: yt_a671d33b31e7
+source_url: https://youtu.be/Ic4IQGrVZHo
+video_title: 'Аналитический бриф: Сравнение моделей бизнеса классической автомойки
+  и мойки самообслуживания'
+primary_topic: _inbox
+completed_at: '2026-05-12T13:04:57.935292+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_a671d33b31e7/briefing.md
+    generated_at: '2026-05-12T13:04:06.193396+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_a671d33b31e7/insight.md
+    generated_at: '2026-05-12T13:04:56.450247+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

@@ -1,0 +1,15 @@
+entry_id: yt_d0cfc26a7c5d
+source_url: https://youtu.be/a0r2awYa8Wk
+video_title: 'Аналитическая записка: Создание и управление автосервисом с нуля'
+primary_topic: _inbox
+completed_at: '2026-05-12T13:03:20.418014+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_d0cfc26a7c5d/briefing.md
+    generated_at: '2026-05-12T13:02:34.434592+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_d0cfc26a7c5d/insight.md
+    generated_at: '2026-05-12T13:03:18.838983+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

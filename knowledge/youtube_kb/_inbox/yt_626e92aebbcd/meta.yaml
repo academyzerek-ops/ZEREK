@@ -1,0 +1,15 @@
+entry_id: yt_626e92aebbcd
+source_url: https://youtu.be/oTGy_rm1Yng
+video_title: 'Бизнес на грузоперевозках: Аналитический обзор компании «Едет груз»'
+primary_topic: _inbox
+completed_at: '2026-05-12T13:21:12.028875+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_626e92aebbcd/briefing.md
+    generated_at: '2026-05-12T13:20:19.241361+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_626e92aebbcd/insight.md
+    generated_at: '2026-05-12T13:21:10.519296+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

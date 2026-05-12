@@ -1,0 +1,16 @@
+entry_id: yt_1bba05b8064f
+source_url: https://youtu.be/HAVG7XvQDUg
+video_title: 'Аналитический брифинг: Запуск и управление бизнесом в сфере пассажирских
+  перевозок'
+primary_topic: _inbox
+completed_at: '2026-05-12T13:19:45.876408+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_1bba05b8064f/briefing.md
+    generated_at: '2026-05-12T13:19:02.341323+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_1bba05b8064f/insight.md
+    generated_at: '2026-05-12T13:19:44.447083+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru

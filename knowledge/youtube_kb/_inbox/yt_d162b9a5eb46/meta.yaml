@@ -1,0 +1,16 @@
+entry_id: yt_d162b9a5eb46
+source_url: https://youtu.be/tsXySo_5KNs
+video_title: 'Аналитический обзор охранного бизнеса: Опыт и стратегии агентства Mergen
+  Berkut'
+primary_topic: _inbox
+completed_at: '2026-05-12T13:29:21.348747+00:00'
+artifacts:
+  briefing:
+    path: knowledge/youtube_kb/_inbox/yt_d162b9a5eb46/briefing.md
+    generated_at: '2026-05-12T13:28:31.930443+00:00'
+    method: notebooklm
+  insight:
+    path: knowledge/youtube_kb/_inbox/yt_d162b9a5eb46/insight.md
+    generated_at: '2026-05-12T13:29:19.722160+00:00'
+    method: subtitles+gemini
+    subtitle_lang: ru
